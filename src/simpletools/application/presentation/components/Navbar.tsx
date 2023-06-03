@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Menu, MenuItemProps} from 'semantic-ui-react';
+import {Menu} from 'semantic-ui-react';
 import {IMenuItem, INavbarItem} from '../../types/navbar.type';
 
 interface IProps {
@@ -12,7 +12,6 @@ const isMenuItem = (item: any): item is IMenuItem => item.to !== undefined && it
 const Navbar = ({navbarItems, navigateTo}: IProps) => {
 
   const [activeItem, setActiveItem] = useState<string>('home');
-  const handleItemClick = (event: any, data: MenuItemProps) => setActiveItem(data.name as string);
 
   return (
     <Menu inverted={true}>
@@ -24,8 +23,8 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
               name={item.name}
               active={item.name === activeItem}
               onClick={() => {
+                setActiveItem(item.name);
                 navigateTo(item.to);
-                handleItemClick(null, {name: item.name});
               }}
             />
           );
