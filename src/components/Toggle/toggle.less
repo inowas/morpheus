@@ -1,0 +1,59 @@
+.toggleContainer {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 0;
+  width: fit-content;
+  border: 1px solid @light-grey;
+  border-radius: 20px;
+  background: @light-grey;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: @orange;
+  cursor: pointer;
+}
+
+.toggleContainer::before {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  left: 0;
+  border-radius: 20px;
+  background: white;
+  transition: all 0.3s;
+}
+
+.toggleContainer .toggleSwitch {
+  padding: 5px 10px;
+  text-align: center;
+  z-index: 1;
+}
+
+.toggleCheckbox:checked + .toggleContainer::before {
+  left: 50%;
+}
+
+.toggleCheckbox {
+  display: none;
+}
+
+.toggleCheckbox:checked + .toggleContainer .toggleSwitch:first-child {
+  color: #5555;
+  transition: color 0.3s;
+}
+
+.toggleCheckbox:checked + .toggleContainer .toggleSwitch:last-child {
+  color: @orange;
+  transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer .toggleSwitch:first-child {
+  color: @orange;
+  transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer .toggleSwitch:last-child {
+  color: #5555;
+  transition: color 0.3s;
+}

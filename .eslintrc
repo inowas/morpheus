@@ -1,0 +1,99 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "tsconfigRootDir": "./",
+    "project": [
+      "./tsconfig.json",
+      "./jest.config.ts",
+      "./src/setupTests.ts"
+    ]
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react-hooks",
+    "testing-library",
+    "import",
+    "react",
+    "jsx-a11y"
+  ],
+  "extends": [
+    "airbnb-typescript",
+    "plugin:jest-dom/recommended",
+    "plugin:testing-library/react",
+    "plugin:storybook/recommended"
+  ],
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "@typescript-eslint/no-redeclare": [
+      2,
+      {
+        "builtinGlobals": false
+      }
+    ],
+    "react-hooks/exhaustive-deps": "warn",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/default-param-last": "off",
+    "@typescript-eslint/object-curly-spacing": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react/jsx-indent-props": "off",
+    "react/jsx-tag-spacing": "off",
+    "react/jsx-boolean-value": [
+      1,
+      "always"
+    ],
+    "react/jsx-closing-bracket-location": [
+      1,
+      "line-aligned"
+    ],
+    "react/jsx-first-prop-new-line": "warn",
+    "react/jsx-max-props-per-line": [
+      1,
+      {
+        "maximum": 2,
+        "when": "always"
+      }
+    ],
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "import/prefer-default-export": "off",
+    "max-len": [
+      "warn",
+      {
+        "code": 256
+      }
+    ],
+    "yoda": [
+      "warn",
+      "always"
+    ],
+    "class-methods-use-this": "off"
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    }
+  },
+  "ignorePatterns": [
+    "jest.config.ts",
+    "webpack.config.ts",
+    "dist"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "./styleguide/**/*.stories.js|jsx|ts|tsx)"
+      ],
+      "rules": {
+        "storybook/hierarchy-separator": "error",
+        "storybook/default-exports": "off"
+      }
+    }
+  ]
+}

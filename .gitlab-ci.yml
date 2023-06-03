@@ -1,0 +1,14 @@
+stages:
+  - test
+
+test:
+  image: node:20
+  stage: test
+  script:
+    - npm install --legacy-peer-deps
+    - npm run test:coverage
+    - npm run depcruise:app
+  artifacts:
+    paths:
+      - coverage/lcov.info
+    expire_in: 7 days
