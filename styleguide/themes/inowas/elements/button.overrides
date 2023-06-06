@@ -1,3 +1,26 @@
 /*******************************
          Theme Overrides
 *******************************/
+@menu-color-light: #8494b2;
+@menu-color-active: #002557;
+
+.ui.button.mainMenuButton {
+    transition: background-color 300ms;
+    background-color: @menu-color-light;
+    color: #fff ;
+    padding-right: 17px;
+    font-size: 1rem;
+    line-height: 6.25rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    padding: 0 17px;
+    margin: 0;
+    white-space: nowrap;
+    border-radius: 0;
+
+    &:hover,
+    &:focus {
+        background-color: @menu-color-active;
+    }
+}
