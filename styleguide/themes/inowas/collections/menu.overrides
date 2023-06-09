@@ -2,25 +2,87 @@
          Theme Overrides
 *******************************/
 
-@menu-color: #666666;
-@menu-color-active: #002557;
-@menu-color-light: #8494b2;
-@menu-color-border: #e9e9e9;
-@menu-color-hoverBorder: #5a7094;
 
 .ui.secondary.mainMenu.menu {
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     border-bottom: none;
     margin: 0;
+    background-color: @white;
 
-    .mainMenuLogo {
-        height: 35px;
-        width: auto;
-        max-width: 100%;
+    @media (min-width: @breakpoint-tablet-horizontal) {
+      position: relative;
+    }
+    
+    &::before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100vw;
+        height: 40px;
+        box-shadow: rgba(50, 50, 50, 0.06) 0px 3px 2px 0px;
+        bottom: 0;
+        left: calc(50% - 50vw);
+        z-index: 0;
     }
 
-    .container {
-        margin-left: auto;
+    .mainMenuLogo {
+        padding: 1em 0;
+
+        a {
+          display: block;
+          width: auto;
+        }
+
+        img{
+            height: 35px;
+            width: auto;
+            max-width: 100%;
+        }
+
+        .description{
+            font-size: 12px;
+            line-height: 14px;
+            margin-bottom: 0;
+        }
+
+    }
+
+    .navbar {
+        background-color: @white;
+        position: absolute;
+        top: 99%;
+        left: 0;
+        width: 100%;
+        z-index: -1;
+        overflow-y: auto;
+        -ms-overflow-style: none;  /* Internet Explorer 10+ */
+        scrollbar-width: none;  /* Firefox */
+
+        &::-webkit-scrollbar { 
+            display: none;  /* Safari and Chrome */
+        }
+
+        @media (min-width: @breakpoint-tablet-horizontal) {
+            z-index: 0;
+            display: flex;
+            position: static;
+            width: auto;
+            margin-left: auto;
+            padding: 0;
+            overflow: initial;
+        }
+
+        & > .container {
+            margin: 0;
+            padding: 1em 0 40px;
+            @media (min-width: @breakpoint-tablet-horizontal) {
+                display: flex;
+                width: auto;    
+                padding: 0;
+            }
+        }        
     }
 
     .item {
@@ -31,20 +93,37 @@
         text-transform: uppercase;
         padding: 0;
         margin: 0;
+        width: 100%;
         line-height: 6.25rem;
         white-space: nowrap;
         color: @menu-color;
-        // border-left: 1px solid @menu-color-border;
-        border: none;
-        // border-bottom: 6px solid transparent;
         position: relative;
+        border-width:  1px 1px 0 1px;
+        border-style: solid;
+        border-color: @menu-color-border;
+
+        &:hover,
+        &:focus {
+            color: @menu-color-active!important;
+            & > .text::before {
+                background-color: @menu-color-active;
+            }
+        }
+
+        @media (min-width: @breakpoint-tablet-horizontal) {
+            width: auto;
+            border: none;
+            border-left: 1px solid @menu-color-border;
+        }
     }
 
     .text {
         display: block;
         position: relative;
         padding: 0 17px;
+        width: 100%;
         &::before{
+            transition: background-color 300ms;
             content: '';
             position: absolute;
             width: 100%;
@@ -53,582 +132,235 @@
             right: 0;
             left: 0;
             height: 6px;
-            background-color: red;
-            z-index: 12;
-        }
-
-    }
-
-    .dropdown.item:hover,
-    .link.item:hover, 
-    a.item:hover{
-        color: @menu-color;
-        // border-left: 1px solid @menu-color-border;
-        border-bottom-color: @menu-color-active; 
-
-    }
-
-    .subMenu {
-        border-radius: 0 !important;
-        margin-top: 6px !important;
-        box-shadow: none;
-        // border: 1px solid @menu-color-border;
-        .item {
-            border-left: none;
-            border-right: none;
-        }
-
-        .item:hover{
-            color: @menu-color-active !important;
-            // border-bottom-color: @menu-color-hoverBorder;   
+            z-index: 1;
+            background-color: transparent;
         }
     }
 
     /*
-    * FIXME: Dropdown
+    *  Dropdown wrapper
     */
     .item.dropdown {
-        &:hover > .menu{
+        flex-direction: column;
+
+        &.visible > .menu {
             display: block;
-            visibility: visible;   
+            visibility: visible;         
+        }
+
+
+        &.visible:not(:hover) > .menu {
+          @media (min-width: @breakpoint-tablet-horizontal) {
+            display: none;
+            visibility: hidden;  
+          }    
+        }
+
+        &:hover > .menu,
+        &:focus > .menu {
+            @media (min-width: @breakpoint-tablet-horizontal) {
+                display: block;
+                visibility: visible;   
+            }
+        }
+
+        .itemDropdown{
+            border: none;
+        }
+
+        .itemDropdown:hover{
+            border-color: @menu-color-border;
+        }
+
+        // // Dropdown
+        .dropdownMenu {
+            border: none;
+            border-radius: 0 !important;
+            margin-top: 0 !important;
+            box-shadow: none;
+            position: static;
+            @media (min-width: @breakpoint-tablet-horizontal) {
+                position: absolute;
+                border: 1px solid @menu-color-border;
+            }
+        }
+        .dropdownMenu > .item {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            line-height: 2rem !important;
+            text-transform: uppercase !important;
+            padding: 0 !important;
+            background: transparent !important;
+            color: @menu-color !important;
+            letter-spacing: 0;
+            border-left: none;
+            border-right: none;
+            border-top: 1px solid @menu-color-border;
+
+            &:last-child{
+                border-bottom: 1px solid @menu-color-border;
+            }
+            
+
+            &:hover,
+            &:focus {
+                color: @menu-color-active!important;
+                & > .text::before {
+                    background-color: @menu-color-hoverBorder;
+                }
+            }
+
+            &.active{
+                color: @menu-color-active!important;
+                & > .text::before {
+                    background-color: @menu-color-active;
+                }
+            }
+        }
+        .dropdownMenu > .item .text {
+            padding: 8px 18px !important;
+
+            @media (min-width: @breakpoint-tablet) {
+                padding: 12px 35px !important;
+            }
+            @media (min-width: @breakpoint-tablet-horizontal) {
+                padding: 8px 18px !important;
+            }
+        }
+        .btnDropdown {
+            cursor: pointer;
+            position: absolute;
+            right: 0;
+            top: 0;
+            border: none;
+            width: 60px;
+            height: 88px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            border-left: 1px solid @menu-color-border;
+
+
+            .icon {
+                display: block;
+                transform: rotate(0);
+                width: 13px;
+                height: 13px;
+                transition: 0.4s ease;
+                margin: 0;
+    
+                &::before,
+                &::after {
+                    content: "";
+                    transition: 0.4s ease;
+                    background-color: transparent;
+                    width: 2px;
+                    height: 10px;
+                    display: inline-block;
+                    position: absolute;
+                    top: 0;
+                    border-bottom: 12px solid @menu-color-burger;
+                }
+    
+                &::before{
+                    transform: rotate(-45deg);
+                    left: 2px;
+                }
+                &::after{
+                    transform: rotate(45deg);
+                    right: 2px;
+                }
+            }
+        }
+        &.visible .icon {
+            transform: translate(0, 6px);
+            &::before{
+                transform: rotate(-135deg);
+            }
+            &::after{
+                transform: rotate(135deg);
+            }
         }
     }
 
-    .item.dropdown .item {
-        font-size: 13px !important;
-        font-weight: 600 !important;
-        line-height: 2rem;
-        text-transform: uppercase !important;
-        letter-spacing: 0;
-        padding: 8px 18px !important;
-        background: transparent !important;
-        color: @menu-color !important;
-
-        &:not(:first-child){
-            // border-top: 1px solid @menu-color-border;
-        }
-    }
-
-    // active
+    /*
+    * Open dropdown
+    */
     .active.item,
-    .active.dropdown.item,
-    .active.item:hover{
+    .active.dropdown.item{
         font-weight: 600;
         position: relative;
         color: @menu-color-active;
-        // border-left: 1px solid @menu-color-border;
-        // border-bottom-color: @menu-color-active; 
+        border-color: @menu-color-border !important;
+
+        @media (min-width: @breakpoint-tablet-horizontal) {
+            border-left: 1px solid @menu-color-border;
+        }
+
+        & > .text::before {
+            background-color: @menu-color-active;
+        }
     }
 
     /*
-    * FIXME: SubMenu
+    * !Burger trigger
     */
-    // .mainSubMenu {
-    //     position: absolute;
-    //     top: calc(100% + 6px);
-    //     left: 0;
-    //     .item {
-    //         font-size: 13px;
-    //         font-weight: 600;
-    //         line-height: 2rem;
-    //         text-transform: uppercase;
-    //         letter-spacing: 0;
-    //         border-top: 1px solid #e9e9e9;
-    //     }
-    // }
+    .menu-trigger {
+        width: 24px;
+        height: 20px;
+        position: relative;
+        margin: 0 0 0 auto;
+        transform: rotate(0deg);
+        transition: .5s ease-in-out;
+        cursor: pointer;
+
+        span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: @menu-color-burger;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+        span:nth-child(1) {
+            top: 0px;
+            transform-origin: left center;
+        }
+        span:nth-child(2) {
+            top: 6px;
+            transform-origin: left center;
+        }
+        span:nth-child(3) {
+            top: 12px;
+            transform-origin: left center;
+        }
+
+        &--open {
+            span:nth-child(1) {
+                transform: rotate(45deg);
+                top: -3px;
+                left: 4px;;
+            }
+            span:nth-child(2) {
+                width: 0%;
+                opacity: 0;
+            }
+            span:nth-child(3) {
+                transform: rotate(-45deg);
+                top: 14px;
+                left: 4px;
+            }
+        }
+    }
 }
-// FIXME: doesn't work 
-// .ui.secondary.mainMenu.menu .mainMenuItem{
-//     position: relative;
 
-//     &::before{
-//         content: 'before';
-//         position: absolute;
-//         width: auto;
-//         bottom: 0;
-//         top: auto;
-//         right: 0;
-//         left: 0;
-//         height: 6px;
-//         background-color: red;
-//         z-index: 12;
-//     }
-// }
-
-
-// /*******************************
-//          Theme Overrides
-// *******************************/
-
-// .ui.menu {
-//     display: flex;
-//     margin: 1rem 0;
-//     background: blue;
-//     font-weight: normal;
-//     border: none;
-//     // box-shadow: 0px 1px 8px 0 rgb(34 36 38 / 15%);
-//     border-radius: 0;
-//     min-height: 2.85714286em;
-// }
-  
-//   /*--------------
-//         Hover
-//   ---------------*/
-//   .ui.link.menu .item:hover,
-//   .ui.menu .dropdown.item:hover,
-//   .ui.menu .link.item:hover,
-//   .ui.menu a.item:hover {
-//     cursor: pointer;
-//     background: grey;
-//     color: #ffffff;
-//   }
-  
-  
-  
-  
-//   /*--------------
-//         Hover ONLY for Logo in Main Menu
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu .dropdown.mainMenuDropdown.menuLogo.item:hover {
-//     cursor: pointer;
-//     background: none;
-//     color: grey;
-//   }
-  
-  
-  
-  
-//   /*--------------
-//        Active
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu .active.item {
-//     background: grey;
-//     color: white;
-//     // font-weight: @activeItemFontWeight;
-//     // box-shadow: @activeItemBoxShadow;
-//     border-bottom: 4px solid white;
-//   }
-  
-  
-  
-  
-//   .ui.menu .active.item > i.icon {
-//     opacity: 1;
-//   }
-  
-  
-  
-  
-//   /*--------------
-//     Active Hover
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu .active.item:hover,
-//   .ui.vertical.menu .active.item:hover {
-//     background-color: red;
-//     color: grey;
-//   }
-  
-  
-  
-  
-  
-//   /*--------------
-//     Dropdown Styles ONLY in Main Menu
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu .ui.dropdown.mainMenuDropdown .menu > .item {
-//     color: #FFFFFF !important;
-//     text-transform: capitalize !important;
-//   }
-  
-  
-  
-  
-//   /*--------------
-//     Dropdown Hover Styles ONLY in Main Menu
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu .ui.dropdown.mainMenuDropdown .menu > .item:hover {
-//     background: grey !important;
-//   }
-  
-  
-  
-  
-//   /*--------------
-//     Responsive Styles for Main Menu
-//   ---------------*/
-  
-  
-  
-  
-  
-//   @media only screen and (max-width: 1200px) {
-  
-  
-  
-  
-//    .ui.menu.mainMenu {
-//       height: 50px;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu .active.item {
-//       background: grey;
-//       color: white;
-//       border: none;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu .item {
-//       width: 100%;
-//       padding: 20px !important;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu > .ui.container {
-//       width: 300px !important;
-//       margin-left: 0 !important;
-//       margin-right: 0 !important;
-//       flex-direction: column;
-//       position: absolute;
-//       background-color: #003043;
-//       z-index: 99;
-//       align-items: baseline;
-//       top: 50px;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu .logoMenu {
-//       display: none !important;
-//     }
-  
-  
-  
-  
-//    .ui.menu .ui.dropdown.mainMenuDropdown {
-//       justify-content: flex-end;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu .item.menuItemUser {
-//       display: none;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu .ui.item.dropdown.mainMenuDropdown.menuLogo {
-//       font-family: Oswald, sans-serif;
-//       font-size: 16px !important;
-//       text-transform: uppercase;
-//       flex-direction: row-reverse !important;
-//       align-items: center !important;
-//     }
-  
-  
-  
-  
-//    .ui.menu.mainMenu .dropdown.item .dropDownAdminMobile {
-//       transform: translateX(0%) !important;
-//     }
-  
-  
-  
-  
-//    .ui.menu .dropdown.mainMenuDropdown.menuLogo.item:hover {
-//       cursor: pointer;
-//       background: grey;
-//       color: white;
-//     }
-  
-  
-  
-  
-//   }
-  
-  
-  
-  
-  
-//   .ui.menu.mainMenu > .mainMenuLogo {
-//     margin: 10px 10px;
-//     border-radius: 50%;
-//     width: 30px;
-//     height: 30px;
-//     @media only screen and (min-width: 993px) {
-//       display: none;
-//     }
-//   }
-  
-  
-  
-  
-  
-//   @media only screen and (max-width: 767px) {
-//     .ui.stackable.menu.mainMenu {
-//       flex-direction: row;
-//     }
-//   }
-  
-  
-  
-  
-//   @media only screen and (max-width: 767px) {
-//     .ui.container {
-//       width: auto !important;
-//       margin-left: 0 !important;
-//       margin-right: 0 !important;
-//     }
-//   }
-  
-  
-  
-  
-//   .ui.menu .ui.dropdown.mainMenuDropdown.menuLogo .text {
-//     @media only screen and (min-width: 993px) {
-//       display: none;
-//     }
-//   }
-  
-  
-  
-  
-//   .ui.menu.mainMenu .logoMenuMobile {
-//     @media only screen and (min-width: 993px) {
-//       display: none;
-//     }
-//   }
-  
-  
-  
-  
-//   .ui.menu.mainMenu .burgerMenu {
-//     @media only screen and (min-width: 993px) {
-//       display: none;
-//     }
-//   }
-  
-  
-  
-  
-//   .ui.menu.mainMenu .activeMobileItem {
-//     @media only screen and (min-width: 993px) {
-//       display: none;
-//     }
-//   }
-  
-  
-  
-  
-//   .ui.menu.mainMenu .close {
-//     @media only screen and (max-width: 1200px) {
-//       transform: translate(-100%);
-//     }
-//   }
-  
-  
-  
-  
-//   /*--------------
-//     Burger Menu with animation
-//   ---------------*/
-  
-  
-  
-  
-//   @media only screen and (max-width: 1200px) {
-  
-  
-  
-  
-//    .bt-menu-trigger {
-//       font-size: 15px;
-//       position: relative;
-//       display: inline-block;
-//       width: 30px;
-//       height: 30px;
-//       cursor: pointer;
-//       margin-left: 10px;
-//       margin-top: 8px;
-//     }
-  
-  
-  
-  
-//    .bt-menu-trigger span {
-//       position: absolute;
-//       top: 50%;
-//       left: 0;
-//       display: block;
-//       width: 100%;
-//       height: 3px;
-//       margin-top: -0.1em;
-//       background-color: #fff;
-//       -webkit-touch-callout: none;
-//       -webkit-user-select: none;
-//       -khtml-user-select: none;
-//       -moz-user-select: none;
-//       -ms-user-select: none;
-//       user-select: none;
-//       -webkit-transition: background-color 0.3s;
-//       transition: background-color 0.3s;
-//     }
-  
-  
-  
-  
-  
-//     .bt-menu-trigger span:after,
-//     .bt-menu-trigger span:before {
-//       position: absolute;
-//       left: 0;
-//       width: 100%;
-//       height: 100%;
-//       background: #fff;
-//       content: '';
-//       -webkit-transition: -webkit-transform 0.3s;
-//       transition: transform 0.3s;
-//     }
-  
-  
-  
-  
-//    .bt-menu-trigger span:before {
-//       -webkit-transform: translateY(-0.5em);
-//       transform: translateY(-0.5em);
-//     }
-  
-  
-  
-  
-//    .bt-menu-trigger span:after {
-//       -webkit-transform: translateY(0.5em);
-//       transform: translateY(0.5em);
-//     }
-  
-  
-  
-  
-//    .bt-menu-trigger.bt-menu-open span:before {
-//       -webkit-transform: translateY(-0.36em) translateX(0.65em) rotate(45deg) scaleX(0.6);
-//       transform: translateY(-0.35em) translateX(-0.65em) rotate(-45deg) scaleX(0.6);
-//     }
-  
-  
-  
-  
-//    .bt-menu-trigger.bt-menu-open span:after {
-//       -webkit-transform: translateY(0.36em) translateX(0.65em) rotate(-45deg) scaleX(0.6);
-//       transform: translateY(0.35em) translateX(-0.65em) rotate(45deg) scaleX(0.6);
-//     }
-//   }
-  
-  
-  
-  
-//   /*--------------
-//     Menu with fixed position for dashboard page
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu {
-//     margin: 0;
-//   }
-  
-  
-  
-  
-//   .ui.menu.mainMenu {
-//     position: fixed;
-//     width: 100%;
-//     top: 0;
-//     z-index: 10;
-//   }
-  
-  
-  
-  
-//   /*--------------
-//      Menu of paginationBar
-//   ---------------*/
-  
-  
-  
-  
-//   .ui.menu.pagination.paginationBar{
-//     background-color: white;
-//     border-radius: 0.28rem;
-//     border: 1px solid rgba(34, 36, 38, 0.15);
-//   }
-  
-  
-  
-  
-//   .ui.menu.pagination.paginationBar {
-  
-  
-  
-  
-//    .item {
-//       color: black;
-//     }
-  
-  
-  
-  
-//    .item:hover {
-//       background-color: rgba(0, 0, 0, 0.05);
-//     }
-  
-  
-  
-  
-//    .active.item {
-//       border-bottom: unset;
-//       background-color: rgba(0, 0, 0, 0.1)
-//     }
-//   }
-
-
-// // .ui.secondary.mainMenu.menu .item:hover,
-// // .ui.secondary.mainMenu.menu .dropdown.item:hover,
-// // .ui.secondary.mainMenu.menu .mainMenuDropdown.item:hover {
-// //     color: @menu-color;
-// //     border-color: @menu-color-active;
-// // }
-
-// // .ui.secondary.mainMenu.menu .mainMenuDropdown.item:hover > .menu{
-// //     display: block;
-// //     visibility: visible;   
-// // }
+.ui.secondary.menu .dropdown.item:hover, .ui.secondary.menu .link.item:hover, .ui.secondary.menu a.item:hover {
+    color: currentColor;
+}

@@ -17,14 +17,6 @@ export interface IDropdownItem {
   subMenu: ISubMenuItem[];
 }
 
-export interface IDropdownItemAlignRight {
-  name: string,
-  label: string,
-  admin: boolean,
-  alignRight: true,
-  subMenu: ISubMenuItem[];
-}
-
 interface ISubMenuItem {
   name: string,
   label: string,
@@ -32,4 +24,4 @@ interface ISubMenuItem {
   to: string,
 }
 
-export type INavbarItem = IMenuItem | IDropdownItem | IDropdownItemAlignRight;
+export type INavbarItem = IMenuItem | IDropdownItem;

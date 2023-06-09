@@ -1,70 +1,71 @@
-import React, {ReactNode} from 'react';
-import {Container} from 'semantic-ui-react';
-import Footer from '../components/Footer';
-import NavBar from '../components/Navbar';
-import {useNavigate} from 'react-router-dom';
-import useNavbarItems from '../../application/useNavbarItems';
-import { Header } from 'components';
-import NavbarTop from '../components/NavbarTop';
-
-const styles = {
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-  },
-  header: {
-    width: '100%',
-    position: 'fixed',
-    top: '0',
-    zIndex: 10,
-    background: '#ffffff',
-    boxShadow: '0 3px 2px 0 rgb(50 50 50 / 6%)'
-  },
-  footer: {
-    marginTop: '20px',
-    width: '100%',
-    minHeight: '150px',
-  },
-
-};
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { Container } from "semantic-ui-react";
+import Footer from "../components/Footer";
+import NavBar from "../components/Navbar";
+import { Header } from "components";
+import { useNavigate } from "react-router-dom";
+import useNavbarItems from "../../application/useNavbarItems";
+import NavbarTop from "../components/NavbarTop";
 
 interface IProps {
   children: ReactNode;
 }
 
-const ApplicationContainer = ({children}: IProps) => {
+const ApplicationContainer = ({ children }: IProps) => {
   const navigateTo = useNavigate();
-  const {navbarItems} = useNavbarItems();
-  
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const { navbarItems } = useNavbarItems();
+  const ref = useRef<any>(null);
 
+  useEffect(() => {
+    setHeaderHeight(ref.current.clientHeight);
+  }, [])
+  
+  
   return (
     <>
-      <Header 
-        // FIXME: 
-        style={styles.header}
-        // style={{
-        //   width: '100%',
-        //   position: 'fixed',
-        //   top: '0',
-        //   zIndex: 10,
-        //   background: '#ffffff',
-        //   boxShadow: '0 3px 2px 0 rgb(50 50 50 / 6%)'
-        // }}
+      <Header
+        style={{
+          width: "100%",
+          position: "fixed",
+          top: "0",
+          zIndex: 10,
+          background: "#ffffff",
+        }}
       >
-        <NavbarTop/>
-        <NavBar navbarItems={navbarItems} navigateTo={navigateTo}/>
+        <div
+          ref={ref}
+          style={{
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        ></div>
+        <NavbarTop navigateTo={navigateTo}  />
+        <NavBar navbarItems={navbarItems} headerHeight={headerHeight} navigateTo={navigateTo} />
       </Header>
-      <Container style={styles.wrapper}>
-        <Container style={styles.content}>
-          {children}
-        </Container>
+
+      <Container
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          margin: "40px 0",
+          paddingTop: headerHeight + 'px',
+          minHeight: "100vh",
+        }}
+      >
+        {children}
       </Container>
-      <Footer style={styles.footer} width={1280}/>
+      
+      <Footer
+        style={{
+          marginTop: "20px",
+          width: "100%",
+          minHeight: "150px",
+        }}
+        width={1280}
+      />
     </>
   );
 };

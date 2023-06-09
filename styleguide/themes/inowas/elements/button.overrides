@@ -1,8 +1,6 @@
 /*******************************
          Theme Overrides
 *******************************/
-@menu-color-light: #8494b2;
-@menu-color-active: #002557;
 
 .ui.button.mainMenuButton {
     transition: background-color 300ms;
@@ -18,9 +16,14 @@
     margin: 0;
     white-space: nowrap;
     border-radius: 0;
+    width: 100%;
 
     &:hover,
     &:focus {
         background-color: @menu-color-active;
+    }
+
+    @media (min-width: @breakpoint-tablet-horizontal) {
+        width: auto;
     }
 }
