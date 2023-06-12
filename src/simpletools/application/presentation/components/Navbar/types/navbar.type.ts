@@ -1,8 +1,5 @@
-import {SemanticIcons} from 'components/types/SemanticIcons.type';
-
 export interface IMenuItem {
   name: string,
-  icon: SemanticIcons,
   label: string,
   admin: boolean,
   to: string,
@@ -10,7 +7,6 @@ export interface IMenuItem {
 
 export interface IDropdownItem {
   name: string,
-  icon: SemanticIcons,
   label: string,
   admin: boolean,
   basepath: string,

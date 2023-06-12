@@ -1,85 +1,79 @@
-import { INavbarItem } from "../types/navbar.type";
+import {INavbarItem} from '../presentation/components/Navbar/types/navbar.type';
 
 const navBarItems: INavbarItem[] = [
   {
-    name: "Home",
-    icon: "tag",
-    label: "Home",
+    name: 'Home',
+    label: 'Home',
     admin: false,
-    basepath: "/",
+    basepath: '/',
     subMenu: [
       {
-        name: "About us",
-        label: "About us",
+        name: 'About us',
+        label: 'About us',
         admin: false,
-        to: "/1",
+        to: '/1',
       },
       {
-        name: "Software releases",
-        label: "Software releases",
+        name: 'Software releases',
+        label: 'Software releases',
         admin: false,
-        to: "/2",
+        to: '/2',
       },
       {
-        name: "Publications",
-        label: "Publications",
+        name: 'Publications',
+        label: 'Publications',
         admin: false,
-        to: "/3",
+        to: '/3',
       },
       {
-        name: "Projects",
-        label: "Projects",
+        name: 'Projects',
+        label: 'Projects',
         admin: false,
-        to: "/4",
+        to: '/4',
       },
       {
-        name: "Home",
-        label: "Home",
+        name: 'Home',
+        label: 'Home',
         admin: false,
-        to: "/",
+        to: '/',
       },
       {
-        name: "T02",
-        label: "T02",
+        name: 'T02',
+        label: 'T02',
         admin: false,
-        to: "/T02",
+        to: '/T02',
       },
     ],
   },
   {
-    name: "Tools",
-    icon: "tag",
-    label: "Tools",
+    name: 'Tools',
+    label: 'Tools',
     admin: false,
-    to: "/",
+    to: '/',
   },
   {
-    name: "Modflow",
-    icon: "tag",
-    label: "Modflow",
+    name: 'Modflow',
+    label: 'Modflow',
     admin: false,
-    to: "/",
+    to: '/',
   },
   {
-    name: "Support",
-    icon: "tag",
-    label: "Support",
+    name: 'Support',
+    label: 'Support',
     admin: false,
-    to: "/",
+    to: '/',
   },
   {
-    name: "T02",
-    icon: "tag",
-    label: "T02",
+    name: 'T02',
+    label: 'T02',
     admin: false,
-    to: "/T02",
+    to: '/T02',
   },
   {
-    name: "News",
-    icon: "tag",
-    label: "News",
+    name: 'News',
+    label: 'News',
     admin: false,
-    to: "/news",
+    to: '/news',
   },
 
 ];
@@ -93,4 +87,4 @@ const useNavbarItems = (): IUseNavbarItems => ({
 });
 
 export default useNavbarItems;
-export type { IUseNavbarItems };
+export type {IUseNavbarItems};
