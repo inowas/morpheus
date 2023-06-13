@@ -35,7 +35,9 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
       navigateTo(path);
       setOpenMobileMenu(!openMobileMenu);
     }
-    isMobile && setOpenMobileMenu(false);
+    if (isMobile) {
+      setOpenMobileMenu(false);
+    }
   };
 
   const handleCloseMobileMenu = () => {
@@ -68,25 +70,25 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
             </Link>
             <Menu
               className={styles.menu} secondary={true}
-              position='right'
+              position="right"
             >
               <Menu.Item
-                name='Contact'
-                as='a'
+                name="Contact"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
-                name='Legal Notice'
-                as='a'
+                name="Legal Notice"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
-                name='Accessibility'
-                as='a'
+                name="Accessibility"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
@@ -102,9 +104,9 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
         >
           <div className="mainMenuLogo">
             <Image
-              alt='An example alt'
-              as='a'
-              href='/'
+              alt="An example alt"
+              as="a"
+              href="/"
               size="tiny"
               src={'https://inowas.com/wp-content/uploads/2019/11/Logo_INOWAS_2019-1.png'}
               className="logo"
@@ -159,7 +161,7 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
                       <>
                         <Menu.Item
                           name={item.name}
-                          className='itemDropdown'
+                          className="itemDropdown"
                           active={item.name === activeItem}
                           onClick={(e) => {
                             e.stopPropagation();

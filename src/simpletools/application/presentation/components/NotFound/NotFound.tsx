@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from './NotFoundPage.module.less';
+import styles from './NotFound.module.less';
 
-const NotFoundPage = () => {
+const NotFound = () => {
   return (
     <div className={styles.wrapper}>
       <h1 className={styles.title}>404</h1>
@@ -9,4 +9,4 @@ const NotFoundPage = () => {
     </div>
   );
 };
-export default NotFoundPage;
+export default NotFound;

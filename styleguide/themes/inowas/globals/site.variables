@@ -974,11 +974,19 @@
 @menu-color-border: #e9e9e9;
 @menu-color-hoverBorder: #5a7094;
 @menu-color-burger: #e0e0e0;
-
 @menuTop-color-border: #274275;
 
-
-
+@ref-color-lightWhite: #f2f2f2;
+@ref-color-lightBlue: #8494b2;
+@ref-color-darkBlue: #46658f;
+@ref-color-active: #002557;
+@ref-color-border: #e9e9e9;
+@ref-color-grey: #bbbbbb;
+@ref-color-greyDark: #666666;
+@ref-color-red: #dd2727;
+@ref-color-redDark: #BF1E1E;
+@ref-color-hoverBorder: #5a7094;
+@ref-color-burger: #e0e0e0;
 
 @breakpoint-mobile-xs: 320px;
 @breakpoint-mobile: 375px;

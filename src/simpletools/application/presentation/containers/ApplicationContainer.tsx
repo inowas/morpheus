@@ -1,10 +1,10 @@
 import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {Container} from 'semantic-ui-react';
-import Footer from '../components/Footer';
 import NavBar from '../components/Navbar';
 import {Header} from 'components';
 import {useNavigate} from 'react-router-dom';
 import useNavbarItems from '../../application/useNavbarItems';
+import Footer from '../components/Footer';
 
 interface IProps {
   children: ReactNode;
@@ -46,27 +46,18 @@ const ApplicationContainer = ({children}: IProps) => {
           navigateTo={navigateTo}
         />
       </Header>
-
       <Container
         style={{
           display: 'flex',
           flexDirection: 'column',
           margin: '40px 0',
-          paddingTop: headerHeight + 'px',
+          paddingTop: headerHeight,
           minHeight: '100vh',
         }}
       >
         {children}
       </Container>
-
-      <Footer
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          minHeight: '150px',
-        }}
-        width={1280}
-      />
+      <Footer/>
     </>
   );
 };
