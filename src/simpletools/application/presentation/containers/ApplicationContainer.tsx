@@ -2,7 +2,8 @@ import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {Container} from 'semantic-ui-react';
 import Footer from '../components/Footer';
 import NavBar from '../components/Navbar';
-import {Header} from 'components';
+// import {Header} from 'components';
+import Header from '../components/Header';
 import {useNavigate} from 'react-router-dom';
 import useNavbarItems from '../../application/useNavbarItems';
 
@@ -23,29 +24,34 @@ const ApplicationContainer = ({children}: IProps) => {
 
   return (
     <>
-      <Header
-        style={{
-          width: '100%',
-          position: 'fixed',
-          top: '0',
-          zIndex: 10,
-          background: '#ffffff',
-        }}
-      >
-        <div
-          ref={ref}
-          style={{
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-          }}
-        ></div>
+
+      <Header>
         <NavBar
-          navbarItems={navbarItems} headerHeight={headerHeight}
-          navigateTo={navigateTo}
+          navbarItems={navbarItems} navigateTo={navigateTo}
         />
       </Header>
+      {/*<Header*/}
+      {/*  style={{*/}
+      {/*    width: '100%',*/}
+      {/*    position: 'fixed',*/}
+      {/*    top: '0',*/}
+      {/*    zIndex: 10,*/}
+      {/*    background: '#ffffff',*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <div*/}
+      {/*    ref={ref}*/}
+      {/*    style={{*/}
+      {/*      height: '100%',*/}
+      {/*      position: 'absolute',*/}
+      {/*      top: 0,*/}
+      {/*      left: 0,*/}
+      {/*    }}*/}
+      {/*  ></div>*/}
+      {/*  <NavBar*/}
+      {/*    navbarItems={navbarItems} navigateTo={navigateTo}*/}
+      {/*  />*/}
+      {/*</Header>*/}
 
       <Container
         style={{

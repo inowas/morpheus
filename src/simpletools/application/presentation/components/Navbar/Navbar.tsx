@@ -9,12 +9,11 @@ import {useMediaQuery} from 'react-responsive';
 
 
 interface IProps {
-  headerHeight: number;
   navbarItems: INavbarItem[];
   navigateTo: (path: string) => void;
 }
 
-const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
+const Navbar = ({navbarItems, navigateTo}: IProps) => {
 
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
@@ -27,8 +26,6 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
   const isMobile = useMediaQuery({
     query: '(max-width: 1140px)',
   });
-
-  const navbarHeight = isMobile ? `calc(102vh - ${headerHeight}px)` : 'auto';
 
   const redirectTo = (path: string | undefined) => {
     if (path) {
@@ -43,7 +40,7 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
   };
 
   return (
-    <>
+    <div className="header">
       <div className={styles.wrapper}>
         <Container className={styles.container}>
           <div className={styles.inner}>
@@ -68,25 +65,25 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
             </Link>
             <Menu
               className={styles.menu} secondary={true}
-              position='right'
+              position="right"
             >
               <Menu.Item
-                name='Contact'
-                as='a'
+                name="Contact"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
-                name='Legal Notice'
-                as='a'
+                name="Legal Notice"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
-                name='Accessibility'
-                as='a'
+                name="Accessibility"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
@@ -102,9 +99,9 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
         >
           <div className="mainMenuLogo">
             <Image
-              alt='An example alt'
-              as='a'
-              href='/'
+              alt="An example alt"
+              as="a"
+              href="/"
               size="tiny"
               src={'https://inowas.com/wp-content/uploads/2019/11/Logo_INOWAS_2019-1.png'}
               className="logo"
@@ -124,9 +121,6 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
           {/* FIXME: looks strange (need a hook to detect browser resize) */}
           {(isMobile ? openMobileMenu : true) && <div
             className={'navbar'}
-            style={{
-              height: navbarHeight,
-            }}
           >
             <Container>
               {navbarItems.map((item: INavbarItem) => {
@@ -159,7 +153,7 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
                       <>
                         <Menu.Item
                           name={item.name}
-                          className='itemDropdown'
+                          className="itemDropdown"
                           active={item.name === activeItem}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -206,7 +200,7 @@ const Navbar = ({navbarItems, navigateTo, headerHeight = 0}: IProps) => {
           </div>}
         </Menu>
       </Container>
-    </>
+    </div>
   );
 };
 
