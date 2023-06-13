@@ -39,6 +39,7 @@ const Header = ({children}: IProps) => {
 
   return (
     <header
+      className={styles.header}
       data-height={headerHeight}
       style={{
         paddingTop: headerHeight,
@@ -46,7 +47,7 @@ const Header = ({children}: IProps) => {
     >
       <div
         ref={ref}
-        className={`${styles.headerInner} ${visible ? styles.headerInnerVisible : styles.headerInnerHidden}`}
+        className={styles.headerInner}
       >
         {children}
       </div>

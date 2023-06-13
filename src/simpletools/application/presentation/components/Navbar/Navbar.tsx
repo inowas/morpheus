@@ -32,7 +32,9 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
       navigateTo(path);
       setOpenMobileMenu(!openMobileMenu);
     }
-    isMobile && setOpenMobileMenu(false);
+    if (isMobile) {
+      setOpenMobileMenu(false);
+    }
   };
 
   const handleCloseMobileMenu = () => {
