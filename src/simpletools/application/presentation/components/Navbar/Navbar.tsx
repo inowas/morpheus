@@ -3,8 +3,7 @@ import {Button, Container, Dropdown, Image, Menu} from 'semantic-ui-react';
 import {IDropdownItem, IMenuItem, INavbarItem} from './types/navbar.type';
 import {Link, useLocation} from 'react-router-dom';
 import styles from './Navbar.module.less';
-
-// FIXME: create a HOOK :
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {useMediaQuery} from 'react-responsive';
 
 
@@ -42,7 +41,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
   };
 
   return (
-    <div className="header">
+    <>
       <div className={styles.wrapper}>
         <Container className={styles.container}>
           <div className={styles.inner}>
@@ -94,115 +93,117 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
           </div>
         </Container>
       </div>
-      <Container>
-        <Menu
-          pointing={true} secondary={true}
-          stackable={true} className="mainMenu"
-        >
-          <div className="mainMenuLogo">
-            <Image
-              alt="An example alt"
-              as="a"
-              href="/"
-              size="tiny"
-              src={'https://inowas.com/wp-content/uploads/2019/11/Logo_INOWAS_2019-1.png'}
-              className="logo"
-            />
-            <p className="description">Innovative Groundwater Solutions</p>
-          </div>
-          {isMobile && (
-            <div
-              className={`menu-trigger ${openMobileMenu ? 'menu-trigger--open' : ''}`}
-              onClick={handleCloseMobileMenu}
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          )}
-          {/* FIXME: looks strange (need a hook to detect browser resize) */}
-          {(isMobile ? openMobileMenu : true) && <div
-            className={'navbar'}
+      <div className={styles.wrapperNavigation}>
+        <Container>
+          <Menu
+            pointing={true}
+            secondary={true}
+            className="mainMenu"
           >
-            <Container>
-              {navbarItems.map((item: INavbarItem) => {
-                if (isMenuItem(item)) {
-                  return (
-                    <Menu.Item
-                      key={item.name}
-                      name={item.name}
-                      active={item.name === activeItem}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        redirectTo(item.to);
-                        setActiveItem(item.name);
-                      }}
-                    >
-                      <span className="text">{item.label}</span>
-                    </Menu.Item>
-                  );
-                }
-                if (isDropdownItem(item)) {
-                  return (
-                    <Dropdown
-                      className={item.name === activeItem ? 'active' : ''}
-                      key={item.name}
-                      icon={null}
-                      item={true}
-                      closeOnChange={true}
-                      closeOnBlur={isMobile && false}
-                    >
-                      <>
-                        <Menu.Item
-                          name={item.name}
-                          className="itemDropdown"
-                          active={item.name === activeItem}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            redirectTo(item.basepath);
-                            setActiveItem(item.name);
-                          }}
-                        >
-                          <span className="text">{item.label}</span>
-                        </Menu.Item>
-                        {isMobile && <button aria-label="Togle menu" className="btnDropdown">
-                          <span aria-hidden="true" className="icon"></span>
-                        </button>}
-                        <Dropdown.Menu
-                          className="dropdownMenu"
-                        >
-                          {item.subMenu.map((subItem) => (
-                            <Dropdown.Item
-                              className={subItem.name === activeItem ? 'active' : ''}
-                              key={subItem.name}
-                              icon={null}
-                              text={subItem.label}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                redirectTo(subItem.to);
-                                setActiveItem(subItem.name);
-                              }}
-                            />
-                          ))}
-                        </Dropdown.Menu>
-                      </>
-                    </Dropdown>
-                  );
-                }
-                return null;
-              })}
-              <Button
-                className="mainMenuButton" onClick={() => {
-                  console.log('click');
-                }}
+            <div className={styles.mainMenuLogo}>
+              <Image
+                alt="An example alt"
+                as="a"
+                href="/"
+                size="tiny"
+                src={'https://inowas.com/wp-content/uploads/2019/11/Logo_INOWAS_2019-1.png'}
+                className={styles.logo}
+              />
+              <p className={styles.description}>Innovative Groundwater Solutions</p>
+            </div>
+            {isMobile && (
+              <div
+                className={`${styles.menuTrigger} ${openMobileMenu ? styles.menuTrigger__open : ''}`}
+                onClick={handleCloseMobileMenu}
               >
-                <span>Sign in!</span>
-              </Button>
-            </Container>
-          </div>}
-        </Menu>
-      </Container>
-    </div>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
+            {(isMobile ? openMobileMenu : true) && <div
+              className="navbar"
+            >
+              <Container>
+                {navbarItems.map((item: INavbarItem) => {
+                  if (isMenuItem(item)) {
+                    return (
+                      <Menu.Item
+                        key={item.name}
+                        name={item.name}
+                        active={item.name === activeItem}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          redirectTo(item.to);
+                          setActiveItem(item.name);
+                        }}
+                      >
+                        <span className="text">{item.label}</span>
+                      </Menu.Item>
+                    );
+                  }
+                  if (isDropdownItem(item)) {
+                    return (
+                      <Dropdown
+                        className={item.name === activeItem ? 'active' : ''}
+                        key={item.name}
+                        icon={null}
+                        item={true}
+                        closeOnChange={true}
+                        closeOnBlur={isMobile && false}
+                      >
+                        <>
+                          <Menu.Item
+                            name={item.name}
+                            className="itemDropdown"
+                            active={item.name === activeItem}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              redirectTo(item.basepath);
+                              setActiveItem(item.name);
+                            }}
+                          >
+                            <span className="text">{item.label}</span>
+                          </Menu.Item>
+                          {isMobile && <button aria-label="Togle menu" className="btnDropdown">
+                            <span aria-hidden="true" className="icon"></span>
+                          </button>}
+                          <Dropdown.Menu
+                            className="dropdownMenu"
+                          >
+                            {item.subMenu.map((subItem) => (
+                              <Dropdown.Item
+                                className={subItem.name === activeItem ? 'active' : ''}
+                                key={subItem.name}
+                                icon={null}
+                                text={subItem.label}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  redirectTo(subItem.to);
+                                  setActiveItem(subItem.name);
+                                }}
+                              />
+                            ))}
+                          </Dropdown.Menu>
+                        </>
+                      </Dropdown>
+                    );
+                  }
+                  return null;
+                })}
+                <Button
+                  className="mainMenuButton" onClick={() => {
+                    console.log('click');
+                  }}
+                >
+                  <span>Sign in!</span>
+                </Button>
+              </Container>
+            </div>}
+          </Menu>
+        </Container>
+      </div>
+    </>
   );
 };
 
