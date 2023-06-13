@@ -7,11 +7,7 @@ import logoTUD from '../images/logo-tud.svg';
 import logoCopyright from '../images/logoCopyright.png';
 import BackToTopButton from '../BackToTopButton';
 
-interface IProps {
-  version?: string;
-}
-
-const footer = (props: IProps) => {
+const footer = () => {
 
   return (
     <>
