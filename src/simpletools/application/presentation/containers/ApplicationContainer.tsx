@@ -1,30 +1,10 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {Container} from 'semantic-ui-react';
 import Footer from '../components/Footer';
 import NavBar from '../components/Navbar';
+import {Header} from 'components';
 import {useNavigate} from 'react-router-dom';
 import useNavbarItems from '../../application/useNavbarItems';
-
-const styles = {
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-  },
-  navbar: {
-    margin: '0 auto',
-  },
-  footer: {
-    marginTop: '20px',
-    width: '100%',
-    minHeight: '150px',
-  },
-
-};
 
 interface IProps {
   children: ReactNode;
@@ -32,17 +12,61 @@ interface IProps {
 
 const ApplicationContainer = ({children}: IProps) => {
   const navigateTo = useNavigate();
+  const [headerHeight, setHeaderHeight] = useState(0);
   const {navbarItems} = useNavbarItems();
+  const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
+
+  useEffect(() => {
+    setHeaderHeight(ref.current?.clientHeight || 0);
+  }, []);
+
 
   return (
     <>
-      <Container style={styles.wrapper}>
-        <NavBar navbarItems={navbarItems} navigateTo={navigateTo}/>
-        <Container style={styles.content}>
-          {children}
-        </Container>
+      <Header
+        style={{
+          width: '100%',
+          position: 'fixed',
+          top: '0',
+          zIndex: 10,
+          background: '#ffffff',
+        }}
+      >
+        <div
+          ref={ref}
+          style={{
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        ></div>
+        <NavBar
+          navbarItems={navbarItems} headerHeight={headerHeight}
+          navigateTo={navigateTo}
+        />
+      </Header>
+
+      <Container
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          margin: '40px 0',
+          paddingTop: headerHeight + 'px',
+          minHeight: '100vh',
+        }}
+      >
+        {children}
       </Container>
-      <Footer style={styles.footer} width={1280}/>
+
+      <Footer
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          minHeight: '150px',
+        }}
+        width={1280}
+      />
     </>
   );
 };

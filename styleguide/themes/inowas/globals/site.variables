@@ -6,7 +6,7 @@
        Fonts
 --------------------*/
 
-@fontName: 'Lato';
+@fontName: 'Open Sans';
 @fontSmoothing: antialiased;
 
 @headerFont: @fontName, 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -966,3 +966,26 @@
 @whiteActive: darken(@white, 5);
 @offWhiteActive: darken(@offWhite, 5);
 @darkWhiteActive: darken(@darkWhite, 5);
+
+
+@menu-color: #666666;
+@menu-color-active: #002557;
+@menu-color-light: #8494b2;
+@menu-color-border: #e9e9e9;
+@menu-color-hoverBorder: #5a7094;
+@menu-color-burger: #e0e0e0;
+
+@menuTop-color-border: #274275;
+
+
+
+
+@breakpoint-mobile-xs: 320px;
+@breakpoint-mobile: 375px;
+@breakpoint-mobile-horizontal: 580px;
+@breakpoint-tablet: 768px;
+@breakpoint-tablet-horizontal: 1141px;
+@breakpoint-desktop: 1280px;
+@breakpoint-desktop-small: 1400px;
+@breakpoint-desktop-wide: 1600px;
+@breakpoint-desktop-wide-xl: 1920px;
