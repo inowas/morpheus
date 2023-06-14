@@ -977,9 +977,6 @@
 
 @menuTop-color-border: #274275;
 
-
-
-
 @breakpoint-mobile-xs: 320px;
 @breakpoint-mobile: 375px;
 @breakpoint-mobile-horizontal: 580px;
