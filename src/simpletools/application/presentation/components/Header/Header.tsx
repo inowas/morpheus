@@ -40,7 +40,6 @@ const Header = ({children}: IProps) => {
   return (
     <header
       className={styles.header}
-      data-height={headerHeight}
       style={{
         paddingTop: headerHeight,
       }}
