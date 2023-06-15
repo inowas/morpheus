@@ -34,6 +34,9 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
     if (isMobile) {
       setOpenMobileMenu(false);
     }
+    if (isMobile) {
+      setOpenMobileMenu(false);
+    }
   };
 
   const handleCloseMobileMenu = () => {
@@ -67,8 +70,11 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
             <Menu
               className={styles.menu} secondary={true}
               position="right"
+              position="right"
             >
               <Menu.Item
+                name="Contact"
+                as="a"
                 name="Contact"
                 as="a"
                 className={styles.item}
@@ -78,11 +84,15 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
               <Menu.Item
                 name="Legal Notice"
                 as="a"
+                name="Legal Notice"
+                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
+                name="Accessibility"
+                as="a"
                 name="Accessibility"
                 as="a"
                 className={styles.item}

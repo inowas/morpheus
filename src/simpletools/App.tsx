@@ -1,4 +1,5 @@
 import '../../styleguide/semantic.less';
+import './App.less';
 
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
