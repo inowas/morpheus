@@ -1,5 +1,6 @@
 @import '../../../../../../styleguide/themes/inowas/globals/site.variables';
 
+
 .wrapper {
   justify-content: center;
   display: flex;
@@ -19,12 +20,12 @@
     justify-content: space-between;
     align-items: center;
 
-    
+
     .menu {
       color: @white;
       margin: 0;
-      
-      .item{
+
+      .item {
         border-left: 1px solid @menuTop-color-border;
         border-radius: 0;
         color: @white;
@@ -35,23 +36,116 @@
         padding-right: 1rem;
 
         &:hover,
-        &:focus{
+        &:focus {
           color: @white;
           text-decoration: underline;
         }
       }
+
       .item:last-child {
         border-right: 1px solid @menuTop-color-border;
       }
     }
   }
+
+  .logo {
+    color: @white;
+    max-width: 100px;
+    max-height: 45px;
+    display: inline-block;
+  }
+}
+
+.wrapperNavigation {
+
+  .mainMenuLogo {
+    padding: 1em 0;
+
+    .logo {
+      display: block;
+      width: auto;
+    }
+
+    img {
+      height: 35px;
+      width: auto;
+      max-width: 100%;
+    }
+
+    .description {
+      font-size: 12px;
+      line-height: 14px;
+      margin-bottom: 0;
+    }
+
+  }
+
+  /*
+  * Burger trigger
+  */
+
+  .menuTrigger {
+    width: 24px;
+    height: 20px;
+    position: relative;
+    margin: 0 0 0 auto;
+    transform: rotate(0deg);
+    transition: .5s ease-in-out;
+    cursor: pointer;
+
+    span {
+      display: block;
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      background: @menu-color-burger;
+      opacity: 1;
+      left: 0;
+      transform: rotate(0deg);
+      transition: .25s ease-in-out;
+    }
+
+    span:nth-child(1) {
+      top: 0px;
+      transform-origin: left center;
+    }
+
+    span:nth-child(2) {
+      top: 6px;
+      transform-origin: left center;
+    }
+
+    span:nth-child(3) {
+      top: 12px;
+      transform-origin: left center;
+    }
+
+    &__open {
+      span:nth-child(1) {
+        transform: rotate(45deg);
+        top: -3px;
+        left: 4px;;
+      }
+
+      span:nth-child(2) {
+        width: 0%;
+        opacity: 0;
+      }
+
+      span:nth-child(3) {
+        transform: rotate(-45deg);
+        top: 14px;
+        left: 4px;
+      }
+    }
+  }
+
+  /*
+   * mainMenu and navbar styles located in menu.overrides file
+   * as a part of semantic UI
+   */
+
 }
 
 
-.logo {
-  color: @white;
-  max-width: 100px;
-  max-height: 45px;
-  display: inline-block;
-}
 

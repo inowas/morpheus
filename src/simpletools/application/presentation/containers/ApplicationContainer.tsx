@@ -1,8 +1,9 @@
-import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
-import {Container} from 'semantic-ui-react';
+import React, {ReactNode, RefObject, useRef} from 'react';
 import Footer from '../components/Footer';
 import NavBar from '../components/Navbar';
-import {Header} from 'components';
+// import {Header} from 'components';
+import Header from '../components/Header';
+import ContainerInowas from '../components/ContainerInowas';
 import {useNavigate} from 'react-router-dom';
 import useNavbarItems from '../../application/useNavbarItems';
 
@@ -12,53 +13,19 @@ interface IProps {
 
 const ApplicationContainer = ({children}: IProps) => {
   const navigateTo = useNavigate();
-  const [headerHeight, setHeaderHeight] = useState(0);
   const {navbarItems} = useNavbarItems();
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
 
-  useEffect(() => {
-    setHeaderHeight(ref.current?.clientHeight || 0);
-  }, []);
-
-
   return (
     <>
-      <Header
-        style={{
-          width: '100%',
-          position: 'fixed',
-          top: '0',
-          zIndex: 10,
-          background: '#ffffff',
-        }}
-      >
-        <div
-          ref={ref}
-          style={{
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-          }}
-        ></div>
+      <Header>
         <NavBar
-          navbarItems={navbarItems} headerHeight={headerHeight}
-          navigateTo={navigateTo}
+          navbarItems={navbarItems} navigateTo={navigateTo}
         />
       </Header>
-
-      <Container
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          margin: '40px 0',
-          paddingTop: headerHeight + 'px',
-          minHeight: '100vh',
-        }}
-      >
+      <ContainerInowas>
         {children}
-      </Container>
-
+      </ContainerInowas>
       <Footer
         style={{
           marginTop: '20px',

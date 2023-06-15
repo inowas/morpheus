@@ -27,39 +27,17 @@
     z-index: 0;
   }
 
-  .mainMenuLogo {
-    padding: 1em 0;
-
-    a {
-      display: block;
-      width: auto;
-    }
-
-    img {
-      height: 35px;
-      width: auto;
-      max-width: 100%;
-    }
-
-    .description {
-      font-size: 12px;
-      line-height: 14px;
-      margin-bottom: 0;
-    }
-
-  }
-
   .navbar {
     background-color: @white;
     position: absolute;
-    top: 99%;
     left: 0;
+    top: 100%;
+    height: calc(100vh - 100%);
     width: 100%;
     z-index: -1;
     overflow-y: auto;
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
-    height: calc(100vh - 150px);
 
     &::-webkit-scrollbar {
       display: none; /* Safari and Chrome */
@@ -321,67 +299,10 @@
     }
   }
 
-  /*
-  * !Burger trigger
-  */
 
-  .menu-trigger {
-    width: 24px;
-    height: 20px;
-    position: relative;
-    margin: 0 0 0 auto;
-    transform: rotate(0deg);
-    transition: .5s ease-in-out;
-    cursor: pointer;
-
-    span {
-      display: block;
-      position: absolute;
-      height: 3px;
-      width: 100%;
-      background: @menu-color-burger;
-      opacity: 1;
-      left: 0;
-      transform: rotate(0deg);
-      transition: .25s ease-in-out;
-    }
-
-    span:nth-child(1) {
-      top: 0px;
-      transform-origin: left center;
-    }
-
-    span:nth-child(2) {
-      top: 6px;
-      transform-origin: left center;
-    }
-
-    span:nth-child(3) {
-      top: 12px;
-      transform-origin: left center;
-    }
-
-    &--open {
-      span:nth-child(1) {
-        transform: rotate(45deg);
-        top: -3px;
-        left: 4px;;
-      }
-
-      span:nth-child(2) {
-        width: 0%;
-        opacity: 0;
-      }
-
-      span:nth-child(3) {
-        transform: rotate(-45deg);
-        top: 14px;
-        left: 4px;
-      }
-    }
-  }
 }
 
 .ui.secondary.menu .dropdown.item:hover, .ui.secondary.menu .link.item:hover, .ui.secondary.menu a.item:hover {
   color: currentColor;
 }
+
