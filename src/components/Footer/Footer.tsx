@@ -1,11 +1,11 @@
 import React from 'react';
 import {Container, Input} from 'semantic-ui-react';
 import styles from './Footer.module.less';
-import logoBmbf from '../images/logo-bmbf.svg';
-import logoInowas from '../images/logo-inowas.svg';
-import logoTUD from '../images/logo-tud.svg';
-import logoCopyright from '../images/logoCopyright.png';
-import BackToTopButton from '../BackToTopButton';
+import logoBmbf from './images/logo-bmbf.svg';
+import logoInowas from './images/logo-inowas.svg';
+import logoTUD from './images/logo-tud.svg';
+import logoCopyright from './images/logo-copyright.png';
+import BackToTopButton from '../../simpletools/application/presentation/components/BackToTopButton';
 
 const footer = () => {
 

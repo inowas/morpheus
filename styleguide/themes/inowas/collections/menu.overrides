@@ -2,7 +2,6 @@
          Theme Overrides
 *******************************/
 
-
 .ui.secondary.mainMenu.menu {
   flex-direction: row;
   justify-content: space-between;
@@ -76,25 +75,25 @@
     width: 100%;
     line-height: 6.25rem;
     white-space: nowrap;
-    color: @menu-color;
+    color: @ref-color-greyDark;
     position: relative;
     border-width: 1px 1px 0 1px;
     border-style: solid;
-    border-color: @menu-color-border;
+    border-color: @ref-color-border;
 
     &:hover,
     &:focus {
-      color: @menu-color-active !important;
+      color: @ref-color-active !important;
 
       & > .text::before {
-        background-color: @menu-color-active;
+        background-color: @ref-color-active
       }
     }
 
     @media (min-width: @breakpoint-tablet-horizontal) {
       width: auto;
       border: none;
-      border-left: 1px solid @menu-color-border;
+      border-left: 1px solid @ref-color-border;
     }
   }
 
@@ -152,7 +151,7 @@
     }
 
     .itemDropdown:hover {
-      border-color: @menu-color-border;
+      border-color: @ref-color-border;
     }
 
     // // Dropdown
@@ -164,7 +163,7 @@
       position: static;
       @media (min-width: @breakpoint-tablet-horizontal) {
         position: absolute;
-        border: 1px solid @menu-color-border;
+        border: 1px solid @ref-color-border;
       }
     }
 
@@ -175,20 +174,20 @@
       text-transform: uppercase !important;
       padding: 0 !important;
       background: transparent !important;
-      color: @menu-color !important;
+      color: @ref-color-greyDark !important;
       letter-spacing: 0;
       border-left: none;
       border-right: none;
-      border-top: 1px solid @menu-color-border;
+      border-top: 1px solid @ref-color-border;
 
       &:last-child {
-        border-bottom: 1px solid @menu-color-border;
+        border-bottom: 1px solid @ref-color-border;
       }
 
 
       &:hover,
       &:focus {
-        color: @menu-color-active !important;
+        color: @ref-color-active !important;
 
         & > .text::before {
           background-color: @menu-color-hoverBorder;
@@ -196,10 +195,10 @@
       }
 
       &.active {
-        color: @menu-color-active !important;
+        color: @ref-color-active !important;
 
         & > .text::before {
-          background-color: @menu-color-active;
+          background-color: @ref-color-active
         }
       }
     }
@@ -230,7 +229,7 @@
       padding: 0;
       margin: 0;
       background: transparent;
-      border-left: 1px solid @menu-color-border;
+      border-left: 1px solid @ref-color-border;
 
 
       .icon {
@@ -251,7 +250,7 @@
           display: inline-block;
           position: absolute;
           top: 0;
-          border-bottom: 12px solid @menu-color-burger;
+          border-bottom: 12px solid @ref-color-burger;
         }
 
         &::before {
@@ -287,19 +286,17 @@
   .active.dropdown.item {
     font-weight: 600;
     position: relative;
-    color: @menu-color-active;
-    border-color: @menu-color-border !important;
+    color: @ref-color-active;
+    border-color: @ref-color-border !important;
 
     @media (min-width: @breakpoint-tablet-horizontal) {
-      border-left: 1px solid @menu-color-border;
+      border-left: 1px solid @ref-color-border;
     }
 
     & > .text::before {
-      background-color: @menu-color-active;
+      background-color: @ref-color-active
     }
   }
-
-
 }
 
 .ui.secondary.menu .dropdown.item:hover, .ui.secondary.menu .link.item:hover, .ui.secondary.menu a.item:hover {

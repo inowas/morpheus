@@ -1,6 +1,6 @@
-# Ultron Repository
+# Morpheus Repository
 
-This repository contains the source code for the Ultron application and components.
+This repository contains the source code for the Morpheus application and components.
 
 ## Installation
 
@@ -13,22 +13,16 @@ scp .env.example .env
 make install
 ```
 
-## Start ULTRON development webserver with mocked api
+## Start Morpheus development webserver with mocked api
 
 ```shell
 make start
 ```
 
-## Start ULTRON development webserver without mocked api
+## Start Morpheus development webserver without mocked api
 
-If you want to use the Ultron within Ironman, you need to start the development webserver without mocked api.
+If you want to use the Morpheus within the production system, you need to start the development webserver without mocked api.
 
-```shell
-make start-ironman
-```
-
-In Ironman you have to add the GET-PARAMETER `?ULTRON_DEV=1` to the URL to render from the Ultron Development Server.
-The Ultron Development Server will be available on port `localhost:4000`.
 
 ## Start Storybook webserver on port localhost:6006
 
