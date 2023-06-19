@@ -52,6 +52,8 @@
     max-width: 100px;
     max-height: 45px;
     display: inline-block;
+    width: 100%;
+    margin-top: 3px;
   }
 }
 
@@ -136,6 +138,32 @@
         top: 14px;
         left: 4px;
       }
+    }
+  }
+
+  .signInButton {
+    transition: background-color 300ms ease-in-out;
+    background-color: @menu-color-light;
+    color: #fff;
+    padding: 0 17px;
+    font-size: 1rem;
+    line-height: 6.25rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    margin: 0;
+    white-space: nowrap;
+    border-radius: 0;
+    width: 100%;
+
+    &:hover,
+    &:focus {
+      background-color: @menu-color-active;
+      color: @white;
+    }
+
+    @media (min-width: @breakpoint-tablet-horizontal) {
+      width: auto;
     }
   }
 
