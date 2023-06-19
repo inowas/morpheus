@@ -4,7 +4,7 @@ import {IDropdownItem, IMenuItem, INavbarItem} from './types/navbar.type';
 import {Link, useLocation} from 'react-router-dom';
 import styles from './Navbar.module.less';
 import useIsMobile from 'simpletools/common/hooks/useIsMobile';
-import logoTUDresden from './images/logo-tu-dresden.svg';
+import logoTUDresden from './images/logo-tud.svg';
 
 
 interface IProps {

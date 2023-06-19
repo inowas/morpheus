@@ -1,15 +1,11 @@
 import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import styles from './Header.module.less';
-import {useNavigate} from 'react-router-dom';
-import useNavbarItems from '../../../application/useNavbarItems';
 
 interface IProps {
   children: ReactNode;
 }
 
 const Header = ({children}: IProps) => {
-  const navigateTo = useNavigate();
-  const {navbarItems} = useNavbarItems();
 
   const [headerHeight, setHeaderHeight] = useState(0);
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;

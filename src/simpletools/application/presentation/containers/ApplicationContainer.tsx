@@ -1,10 +1,9 @@
-import React, {ReactNode, RefObject, useRef} from 'react';
-import Footer from '../components/Footer';
-import NavBar from '../components/Navbar';
+import React, {ReactNode} from 'react';
+
 import Header from '../components/Header';
-import ContainerInowas from '../components/ContainerInowas';
 import {useNavigate} from 'react-router-dom';
-import useNavbarItems from '../../application/useNavbarItems';
+import {useNavbarItems} from '../../application';
+import {ContentWrapper, Footer, Navbar} from 'components';
 
 interface IProps {
   children: ReactNode;
@@ -13,18 +12,15 @@ interface IProps {
 const ApplicationContainer = ({children}: IProps) => {
   const navigateTo = useNavigate();
   const {navbarItems} = useNavbarItems();
-  const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
 
   return (
     <>
       <Header>
-        <NavBar
-          navbarItems={navbarItems} navigateTo={navigateTo}
-        />
+        <Navbar navbarItems={navbarItems} navigateTo={navigateTo}/>
       </Header>
-      <ContainerInowas>
+      <ContentWrapper minHeight={'100vh'}>
         {children}
-      </ContainerInowas>
+      </ContentWrapper>
       <Footer/>
     </>
   );

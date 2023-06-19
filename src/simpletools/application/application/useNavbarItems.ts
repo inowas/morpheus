@@ -1,4 +1,4 @@
-import {INavbarItem} from '../presentation/components/Navbar/types/navbar.type';
+import {INavbarItem} from 'components/Navbar/types/navbar.type';
 
 const navBarItems: INavbarItem[] = [
   {
