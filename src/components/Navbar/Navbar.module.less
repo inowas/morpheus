@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  background: @menu-color-active;
+  background: @ref-color-active;
   flex: 1 1 auto;
 
   .flex-column {
@@ -26,7 +26,7 @@
       margin: 0;
 
       .item {
-        border-left: 1px solid @menuTop-color-border;
+        border-left: 1px solid @ref-color-extraBlue;
         border-radius: 0;
         color: @white;
         margin: 0;
@@ -42,7 +42,7 @@
       }
 
       .item:last-child {
-        border-right: 1px solid @menuTop-color-border;
+        border-right: 1px solid @ref-color-extraBlue;
       }
     }
   }
@@ -99,7 +99,7 @@
       position: absolute;
       height: 3px;
       width: 100%;
-      background: @menu-color-burger;
+      background: @ref-color-burger;
       opacity: 1;
       left: 0;
       transform: rotate(0deg);
@@ -143,7 +143,7 @@
 
   .signInButton {
     transition: background-color 300ms ease-in-out;
-    background-color: @menu-color-light;
+    background-color: @ref-color-lightBlue;
     color: #fff;
     padding: 0 17px;
     font-size: 1rem;
@@ -158,7 +158,7 @@
 
     &:hover,
     &:focus {
-      background-color: @menu-color-active;
+      background-color: @ref-color-active;
       color: @white;
     }
 
