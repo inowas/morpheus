@@ -3,8 +3,7 @@ import {Button, Container, Dropdown, Image, Menu} from 'semantic-ui-react';
 import {IDropdownItem, IMenuItem, INavbarItem} from './types/navbar.type';
 import {Link, useLocation} from 'react-router-dom';
 import styles from './Navbar.module.less';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {useMediaQuery} from 'react-responsive';
+import useIsMobile from 'simpletools/common/hooks/useIsMobile';
 
 
 interface IProps {
@@ -22,9 +21,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [activeItem, setActiveItem] = useState<string>(pathname);
 
-  const isMobile = useMediaQuery({
-    query: '(max-width: 1140px)',
-  });
+  const {isMobile} = useIsMobile();
 
   const redirectTo = (path: string | undefined) => {
     if (path) {
@@ -70,13 +67,10 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
             <Menu
               className={styles.menu} secondary={true}
               position="right"
-              position="right"
             >
               <Menu.Item
                 name="Contact"
                 as="a"
-                name="Contact"
-                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
@@ -84,15 +78,11 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
               <Menu.Item
                 name="Legal Notice"
                 as="a"
-                name="Legal Notice"
-                as="a"
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
-                name="Accessibility"
-                as="a"
                 name="Accessibility"
                 as="a"
                 className={styles.item}
