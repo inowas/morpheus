@@ -2,7 +2,7 @@
 @import '../../../styleguide/themes/inowas/elements/container.variables';
 
 
-.SimpleToolGrid {
+div.SimpleToolGrid {
   font-family: Oxygen, "Helvetica Neue", Arial, Helvetica, sans-serif;
   padding: 40px 0 !important;
 
@@ -23,15 +23,18 @@
     z-index: 0;
     background: #eff3f6;
   }
-}
 
+  &.containerGrid > div.row {
+    width: calc(100% + 28px) !important;
+    margin: 0 -14px;
 
-.row {
-  .segment {
-    border-radius: 0;
-    border: 0 solid #eee;
+    .segment {
+      border-radius: 0;
+      border: 0 solid #eee;
+    }
   }
 }
+
 
 @media (max-width: @breakpoint-tablet-horizontal - 2) {
   .row {
@@ -50,7 +53,7 @@
         overflow-x: scroll;
 
         & > div:nth-of-type(1) {
-          width: 722px;
+          min-width: 722px;
         }
       }
     }

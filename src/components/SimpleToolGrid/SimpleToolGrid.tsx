@@ -48,7 +48,7 @@ const SimpleToolGrid = ({rows, children}: IProps) => {
   const renderRows = () => new Array(rows).fill(0).map((_, i) => renderRow(i));
 
   return (
-    <Grid padded={true} className={styles.SimpleToolGrid}>
+    <Grid padded={true} className={`${styles.SimpleToolGrid} ${styles.containerGrid}`}>
       {renderRows()}
     </Grid>
   );
