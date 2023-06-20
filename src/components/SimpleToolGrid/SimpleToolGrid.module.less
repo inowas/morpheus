@@ -1,0 +1,58 @@
+@import '../../../styleguide/themes/inowas/globals/site.variables';
+@import '../../../styleguide/themes/inowas/elements/container.variables';
+
+
+.SimpleToolGrid {
+  font-family: Oxygen, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  padding: 40px 0 !important;
+
+  @media (min-width: @breakpoint-desktop-small) {
+    width: 1280px;
+    transform: translateX(calc(0px - ((1280px - @largeMonitorWidth) / 2)));
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100vw;
+    min-height: calc(100vh + 80px);
+    height: calc(100% + 80px);
+    top: -80px;
+    left: calc(50% - 50vw);
+    z-index: 0;
+    background: #eff3f6;
+  }
+}
+
+
+.row {
+  .segment {
+    border-radius: 0;
+    border: 0 solid #eee;
+  }
+}
+
+@media (max-width: @breakpoint-tablet-horizontal - 2) {
+  .row {
+    overflow: hidden;
+
+    .column {
+      min-height: 200px;
+
+    }
+
+    .column_m {
+      margin-top: 28px !important;
+      min-height: 400px;
+
+      .segment {
+        overflow-x: scroll;
+
+        & > div:nth-of-type(1) {
+          width: 722px;
+        }
+      }
+    }
+  }
+}

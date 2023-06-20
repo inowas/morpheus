@@ -68,9 +68,9 @@ const Parameters = ({parameters, onChange}: IProps) => {
   );
 
   return (
-    <Grid verticalAlign='middle'>
+    <Grid verticalAlign="middle">
       <Grid.Row style={styles.row}>
-        <Grid.Column textAlign='right' style={styles.column}>
+        <Grid.Column textAlign="right" style={styles.column}>
           <Button onClick={handleReset} style={styles.defaultButton}>Default</Button>
         </Grid.Column>
       </Grid.Row>

@@ -10,7 +10,7 @@ import BackToTopButton from '../../simpletools/application/presentation/componen
 const footer = () => {
 
   return (
-    <>
+    <footer className={styles.footer}>
       <div className={styles.footerTop}>
         <Container>
           <div className={styles.footerTop_row}>
@@ -44,7 +44,7 @@ const footer = () => {
           </div>
         </Container>
       </div>
-      <div className={styles.footer}>
+      <div className={styles.footerBottom}>
         <Container>
           <div className={styles.footerWrapper}>
             <div className={styles.footerLogo}>
@@ -120,7 +120,7 @@ const footer = () => {
         </Container>
         <BackToTopButton/>
       </div>
-    </>
+    </footer>
   );
 };
 

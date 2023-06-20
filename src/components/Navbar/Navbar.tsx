@@ -44,7 +44,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
   return (
     <>
       <div className={styles.wrapper}>
-        <Container className={styles.container}>
+        <Container className={styles.containerTop}>
           <div className={styles.inner}>
             <Link to="/" className={styles.logo}>
               <img

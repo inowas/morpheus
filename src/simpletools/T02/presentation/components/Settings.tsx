@@ -23,18 +23,18 @@ const Settings = (props: IProps) => {
             <Form.Group style={{marginBottom: 0}}>
               <Form.Field>
                 <Radio
-                  label='x-axis'
-                  value='x'
-                  name='variable'
+                  label="x-axis"
+                  value="x"
+                  name="variable"
                   checked={'x' === props.settings.variable}
                   onChange={handleChange}
                 />
               </Form.Field>
               <Form.Field>
                 <Radio
-                  label='y-axis'
-                  value='y'
-                  name='variable'
+                  label="y-axis"
+                  value="y"
+                  name="variable"
                   checked={'y' === props.settings.variable}
                   onChange={handleChange}
                 />

@@ -3,6 +3,7 @@ import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Grid, Segment} from 'semantic-ui-react';
 import {IT02} from '../../types/T02.type';
+import styles from './styles.module.less';
 
 interface ICalculateDiagramData {
   variable: string;
@@ -114,7 +115,7 @@ const Chart = ({settings, parameters, mounding}: IProps) => {
     <XAxis type="number" dataKey="y">
       <Label
         fill={'#4C4C4C'}
-        value='y [m]'
+        value="y [m]"
         offset={0}
         position="bottom"
       />
@@ -130,7 +131,7 @@ const Chart = ({settings, parameters, mounding}: IProps) => {
       >
         <Label
           fill={'#4C4C4C'}
-          value='x [m]'
+          value="x [m]"
           offset={0}
           position="bottom"
           style={{fontSize: '13px'}}
@@ -160,7 +161,7 @@ const Chart = ({settings, parameters, mounding}: IProps) => {
                 <Label
                   angle={270}
                   fill={'#4C4C4C'}
-                  position='left'
+                  position="left"
                   style={{fontSize: '13px'}}
                   value={'h-hᵢ [m]'}
                 />
@@ -181,7 +182,7 @@ const Chart = ({settings, parameters, mounding}: IProps) => {
               />
             </LineChart>
           </ResponsiveContainer>
-          <Segment raised={true} className={'diagramLabel topRight'}>
+          <Segment raised={true} className={styles.diagramLabel}>
             <p>h<sub>max</sub>&nbsp;=&nbsp;<strong>{hMax.toFixed(2)}</strong>&nbsp;m</p>
           </Segment>
         </Grid.Column>
