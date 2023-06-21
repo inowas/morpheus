@@ -45,12 +45,20 @@ div.SimpleToolGrid {
 
     }
 
+    .column_s {
+      .segment img {
+        max-height: 350px;
+        object-fit: contain;
+      }
+    }
+
+
     .column_m {
       margin-top: 28px !important;
       min-height: 400px;
 
       .segment {
-        overflow-x: scroll;
+        overflow-x: auto;
 
         & > div:nth-of-type(1) {
           min-width: 722px;
