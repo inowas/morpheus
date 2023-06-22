@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useEffect} from 'react';
 import 'rc-slider/assets/index.css';
+import './styles.less.css';
 import Slider from 'rc-slider';
 import {Grid} from 'semantic-ui-react';
 import {ISliderParameter} from './IInputType';

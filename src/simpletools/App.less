@@ -5,6 +5,12 @@ body {
   color: #4c4c4c;
 }
 
+.fixedWidth {
+  min-width: 800px;
+  overflow-x: hidden;
+  background-color: #eff3f6;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -17,44 +23,6 @@ body {
   border: 0;
 }
 
-// FIXME
-.rc-slider {
-
-  .rc-slider-handle {
-    background: #fff linear-gradient(transparent, rgba(0, 0, 0, .05));
-    opacity: 1;
-    border: none;
-    box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15), inset 0 0 0 1px rgba(34, 36, 38, 0.15);
-
-    &:active,
-    &:focus,
-    &-dragging {
-      border-color: #57c5f7;
-      box-shadow: 0 0 5px #57c5f7 !important;
-      cursor: grabbing;
-    }
-  }
-
-  .rc-slider-rail {
-    background-color: rgba(201, 182, 156, 0.5) !important;
-  }
-
-  .rc-slider-track {
-    background-color: #1481b8 !important;
-    border-radius: 5px;
-  }
-}
-
-
 .ui.container {
   position: relative;
 }
-
-
-//@media only screen and (min-width: 1200px) {
-//  .ui.container {
-//    width: 1280px;
-//    margin-left: auto !important;
-//    margin-right: auto !important;
-//  }
-//}
