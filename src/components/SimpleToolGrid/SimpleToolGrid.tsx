@@ -1,7 +1,8 @@
 import {Grid, Segment} from 'semantic-ui-react';
 import styles from './SimpleToolGrid.module.less';
 import useIsMobile from 'simpletools/common/hooks/useIsMobile';
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useLocation} from 'react-router-dom';
 
 interface IProps {
   rows: number;
@@ -9,6 +10,18 @@ interface IProps {
 }
 
 const SimpleToolGrid = ({rows, children}: IProps) => {
+
+  const location = useLocation();
+  const body = document.body;
+
+  // FIXME what is the best way to implement this logic?
+  useEffect(() => {
+    if ('/T02' === location.pathname) {
+      body.classList.add('fixedWidth');
+    } else {
+      body.classList.remove('fixedWidth');
+    }
+  }, [location.pathname]);
 
   const {isMobile} = useIsMobile();
   const renderRow = (numberOfRow: number) => (
@@ -21,12 +34,12 @@ const SimpleToolGrid = ({rows, children}: IProps) => {
         className={`${styles.column} ${styles.column_s}`}
       >
         {children[numberOfRow * 2] &&
-                     <Segment
-                       color={'grey'} padded={true}
-                       className={styles.segment}
-                     >
-                       {children[numberOfRow * 2]}
-                     </Segment>
+          <Segment
+            color={'grey'} padded={true}
+            className={styles.segment}
+          >
+            {children[numberOfRow * 2]}
+          </Segment>
         }
       </Grid.Column>
       <Grid.Column
