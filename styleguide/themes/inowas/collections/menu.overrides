@@ -37,7 +37,7 @@
     overflow-y: auto;
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
-    
+
 
     &::-webkit-scrollbar {
       display: none; /* Safari and Chrome */
@@ -144,6 +144,9 @@
       @media (min-width: @breakpoint-tablet-horizontal) {
         display: block;
         visibility: visible;
+        min-width: 150px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
       }
     }
 

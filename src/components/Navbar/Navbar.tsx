@@ -32,9 +32,6 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
     if (isMobile) {
       setOpenMobileMenu(false);
     }
-    if (isMobile) {
-      setOpenMobileMenu(false);
-    }
   };
 
   const handleCloseMobileMenu = () => {
@@ -115,7 +112,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
               className="navbar"
             >
               <Container>
-                {navbarItems.map((item: INavbarItem) => {
+                {navbarItems.map((item: INavbarItem, index: number) => {
                   if (isMenuItem(item)) {
                     return (
                       <Menu.Item
@@ -133,6 +130,10 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                     );
                   }
                   if (isDropdownItem(item)) {
+                    const isLastTwo: boolean = index >= navbarItems.length - 2;
+                    const style = isLastTwo
+                      ? {right: 0, left: 'auto'}
+                      : {};
                     return (
                       <Dropdown
                         className={item.name === activeItem ? 'active' : ''}
@@ -160,6 +161,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                           </button>}
                           <Dropdown.Menu
                             className="dropdownMenu"
+                            style={style}
                           >
                             {item.subMenu.map((subItem) => (
                               <Dropdown.Item

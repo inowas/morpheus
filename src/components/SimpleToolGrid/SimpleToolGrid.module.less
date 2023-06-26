@@ -33,38 +33,39 @@ div.SimpleToolGrid {
       border: 0 solid #eee;
     }
   }
-}
 
 
-@media (max-width: @breakpoint-tablet-horizontal - 2) {
-  .row {
-    overflow: hidden;
+  @media (max-width: @breakpoint-tablet-horizontal - 2) {
 
-    .column {
-      min-height: 200px;
-
+    &_inner {
+      overflow-x: scroll;
+      width: 100vw;
+      margin: 0 -1rem;
     }
 
-    .column_s {
-      .segment img {
-        max-height: 350px;
-        object-fit: contain;
+    .row {
+      min-width: 722px;
+      overflow: hidden;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+
+      .column {
+        min-height: 200px;
+      }
+
+      .column_s {
+        .segment img {
+          max-height: 350px;
+          object-fit: contain;
+        }
+      }
+
+      .column_m {
+        margin-top: 28px !important;
       }
     }
-
-
-    .column_m {
-      margin-top: 28px !important;
-      min-height: 400px;
-
-      // FIXME (mobile style for parameters if we decide to add scroll inside the Chart component and Parameters Slider component)
-      //.segment {
-      //  overflow-x: auto;
-      //
-      //  & > div:nth-of-type(1) {
-      //    min-width: 722px;
-      //  }
-      //}
-    }
   }
+
 }
+
+
