@@ -17,7 +17,9 @@ const SimpleToolGrid = ({rows, children}: IProps) => {
       className={styles.row}
     >
       <Grid.Column
-        width={!isMobile ? 6 : 16}
+        // width={!isMobile ? 6 : 16}
+        computer={6}
+        tablet={16}
         className={`${styles.column} ${styles.column_s}`}
       >
         {children[numberOfRow * 2] &&
@@ -30,7 +32,9 @@ const SimpleToolGrid = ({rows, children}: IProps) => {
         }
       </Grid.Column>
       <Grid.Column
-        width={!isMobile ? 10 : 16}
+        // width={!isMobile ? 10 : 16}
+        computer={10}
+        tablet={16}
         className={`${styles.column} ${styles.column_m}`}
       >
         {children[numberOfRow * 2 + 1] &&

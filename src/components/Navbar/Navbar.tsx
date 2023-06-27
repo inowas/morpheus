@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {Button, Container, Dropdown, Image, Menu} from 'semantic-ui-react';
+import {Container, Dropdown, Image, Menu} from 'semantic-ui-react';
 import {IDropdownItem, IMenuItem, INavbarItem} from './types/navbar.type';
 import {Link, useLocation} from 'react-router-dom';
 import styles from './Navbar.module.less';
 import useIsMobile from 'simpletools/common/hooks/useIsMobile';
 import logoTUDresden from './images/logo-tud.svg';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
 
 interface IProps {
@@ -76,6 +77,15 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
               />
+              <Menu.Item
+                primary={true}
+                name="Sign in!"
+                as="a"
+                className={`${styles.item} ${styles.itemLogIn}`}
+                // active={activeItem === 'logout'}
+                // onClick={this.handleItemClick}
+              />
+              <LanguageSelector/>
             </Menu>
           </div>
         </Container>
@@ -183,14 +193,6 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                   }
                   return null;
                 })}
-                <Button
-                  className={styles.signInButton}
-                  onClick={() => {
-                    console.log('click');
-                  }}
-                >
-                  <span>Sign in!</span>
-                </Button>
               </Container>
             </div>}
           </Menu>

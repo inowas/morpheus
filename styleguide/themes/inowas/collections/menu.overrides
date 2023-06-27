@@ -75,7 +75,7 @@
     margin: 0;
     width: 100%;
     line-height: 6.25rem;
-    white-space: nowrap;
+    white-space: break-spaces;
     color: @ref-color-greyDark;
     position: relative;
     border-width: 1px 1px 0 1px;
@@ -88,6 +88,13 @@
 
       & > .text::before {
         background-color: @ref-color-active
+      }
+    }
+
+    &:last-child {
+      border-bottom: 1px solid @ref-color-border;
+      @media (min-width: @breakpoint-tablet-horizontal) {
+        border-right: 1px solid @ref-color-border;
       }
     }
 
@@ -165,7 +172,9 @@
       margin-top: 0 !important;
       box-shadow: none;
       position: static;
+      width: 100%;
       @media (min-width: @breakpoint-tablet-horizontal) {
+        width: auto;
         position: absolute;
         border: 1px solid @ref-color-border;
       }
