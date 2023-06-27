@@ -82,7 +82,10 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                 as="a"
                 className={`${styles.item} ${styles.itemLogIn}`}
                 // active={activeItem === 'logout'}
-                // onClick={this.handleItemClick}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateTo('/auth');
+                }}
               />
               <LanguageSelector/>
             </Menu>
