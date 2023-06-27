@@ -78,7 +78,6 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                 // onClick={this.handleItemClick}
               />
               <Menu.Item
-                primary={true}
                 name="Sign in!"
                 as="a"
                 className={`${styles.item} ${styles.itemLogIn}`}
