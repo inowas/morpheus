@@ -102,6 +102,7 @@
       width: auto;
       border: none;
       border-left: 1px solid @ref-color-border;
+      white-space: nowrap;
     }
   }
 
