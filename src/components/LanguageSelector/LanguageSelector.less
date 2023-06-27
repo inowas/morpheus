@@ -38,9 +38,11 @@
         border-radius: 0;
         border-bottom: 6px solid;
         border-bottom-color: transparent;
+        transition: border-bottom-color 300ms !important;
       }
 
       .active.item {
+        background: transparent !important;
         color: @ref-color-active !important;
         border-bottom-color: @ref-color-active;
       }
