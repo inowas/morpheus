@@ -3,7 +3,7 @@ import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Grid, Segment} from 'semantic-ui-react';
 import {IT02} from '../../types/T02.type';
-import styles from './styles.module.less';
+
 
 interface ICalculateDiagramData {
   variable: string;
@@ -182,7 +182,7 @@ const Chart = ({settings, parameters, mounding}: IProps) => {
               />
             </LineChart>
           </ResponsiveContainer>
-          <Segment raised={true} className={styles.diagramLabel}>
+          <Segment raised={true} className="diagramLabel">
             <p>h<sub>max</sub>&nbsp;=&nbsp;<strong>{hMax.toFixed(2)}</strong>&nbsp;m</p>
           </Segment>
         </Grid.Column>
