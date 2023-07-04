@@ -11,6 +11,16 @@ div.SimpleToolGrid {
     transform: translateX(calc(0px - ((1280px - @largeMonitorWidth) / 2)));
   }
 
+  @media (max-width: @breakpoint-tablet - 1 ) {
+    width: 100vw;
+  }
+
+  @media (max-width: @computerBreakpoint - 1 ) {
+    overflow-x: scroll;
+    margin: 0 -1rem !important;
+    padding: 40px 1rem !important;
+  }
+
   &:before {
     content: '';
     position: absolute;
@@ -28,26 +38,9 @@ div.SimpleToolGrid {
     width: calc(100% + 28px) !important;
     margin: 0 -14px;
 
-    .segment {
-      border-radius: 0;
-      border: 0 solid #eee;
-    }
-  }
-
-
-  @media (max-width: @breakpoint-tablet-horizontal - 1 ) {
-
-    &_inner {
-      overflow-x: scroll;
-      width: 100vw;
-      margin: 0 -1rem;
-    }
-
-    .row {
+    @media (max-width: @computerBreakpoint - 1 ) {
       min-width: 722px;
       overflow: hidden;
-      padding-top: 1rem;
-      padding-bottom: 1rem;
 
       .column {
         min-height: 200px;
@@ -64,8 +57,12 @@ div.SimpleToolGrid {
         margin-top: 28px !important;
       }
     }
-  }
 
+    .segment {
+      border-radius: 0;
+      border: 0 solid #eee;
+    }
+  }
 }
 
 

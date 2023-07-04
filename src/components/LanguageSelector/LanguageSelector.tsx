@@ -1,42 +1,30 @@
-import React, {useState} from 'react';
+import React, {SyntheticEvent} from 'react';
 import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import './LanguageSelector.less';
+import {ILanguage, ILanguageOption} from './types/languageSelector.type';
+import {getFlagByLanguageCode} from './flags';
 
-const languages: Language[] = [
-  {code: 'en', label: 'English', flag: 'https://tu-dresden.de/++theme++tud.theme.webcms2/img/flags/flag-en.svg'},
-  {code: 'de', label: 'German', flag: 'https://tu-dresden.de/++theme++tud.theme.webcms2/img/flags/flag-de.svg'},
-];
-
-interface Language {
-  code: string;
-  label: string;
-  flag: string;
+interface IProps {
+  language: ILanguage['code'];
+  languageList: ILanguage[];
+  onChangeLanguage: (language: ILanguage['code']) => void;
 }
 
-type LanguageOption = {
-  key: string;
-  value: string;
-  text: JSX.Element;
-};
+const LanguageSelector = ({language, languageList, onChangeLanguage}: IProps) => {
 
-const LanguageSelector: React.FC = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const handleChangeLanguage = (e: SyntheticEvent<HTMLElement>, {value}: DropdownProps) => onChangeLanguage(value as ILanguage['code']);
 
-  const handleChangeLanguage = (_: React.SyntheticEvent<HTMLElement>, {value}: DropdownProps) => {
-    setSelectedLanguage(value as string);
-    //FIXME Add logic to handle language change
-  };
-
-  const languageOptions: LanguageOption[] = languages.map((language) => ({
-    key: language.code,
-    value: language.code,
+  const languageOptions: ILanguageOption[] = languageList.map((item) => ({
+    key: item.code,
+    value: item.code,
     text: (
-      <span>
+      <span className="languageFlag-wrapper">
         <img
-          src={language.flag} alt={language.label}
+          src={getFlagByLanguageCode(item.code)}
+          alt={item.label}
           className="languageFlag"
         />
-        <span className="languageLabel">{language.label}</span>
+        <span className="languageLabel">{item.label}</span>
       </span>
     ),
   }));
@@ -46,7 +34,7 @@ const LanguageSelector: React.FC = () => {
       className="languageSelector"
       selection={true}
       icon={false}
-      value={selectedLanguage}
+      value={language}
       options={languageOptions}
       onChange={handleChangeLanguage}
     />
