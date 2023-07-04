@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import useCalculations from 'simpletools/common/hooks/useCalculations';
+import {useCalculateMounding} from '../../application';
 
 import SimpleToolGrid from 'components/SimpleToolGrid';
 
@@ -118,7 +118,9 @@ type IParameter = IT02['parameters'][0];
 const T02 = () => {
 
   const [data, setData] = useState<IT02>(defaults);
-  const {mounding} = useCalculations();
+
+  const mounding = useCalculateMounding();
+
 
   const handleChangeParameters = (parameters: IParameter[]) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));

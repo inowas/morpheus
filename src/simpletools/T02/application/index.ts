@@ -1,4 +1,4 @@
 import useTranslate from './useTranslate';
-import useCalculations from './useCalculations';
+import useCalculateMounding from './useCalculateMounding';
 
-export {useTranslate, useCalculations};
+export {useTranslate, useCalculateMounding};
