@@ -1,6 +1,5 @@
 import {Grid, Segment} from 'semantic-ui-react';
 import styles from './SimpleToolGrid.module.less';
-import useIsMobile from 'simpletools/common/hooks/useIsMobile';
 import React from 'react';
 
 interface IProps {
@@ -9,8 +8,6 @@ interface IProps {
 }
 
 const SimpleToolGrid = ({rows, children}: IProps) => {
-
-  const {isMobile} = useIsMobile();
   const renderRow = (numberOfRow: number) => (
     <Grid.Row
       key={numberOfRow} stretched={true}
@@ -50,14 +47,11 @@ const SimpleToolGrid = ({rows, children}: IProps) => {
   const renderRows = () => new Array(rows).fill(0).map((_, i) => renderRow(i));
 
   return (
-    <Grid padded={true} className={`${styles.SimpleToolGrid} ${styles.containerGrid}`}>
-      {isMobile ? (
-        <div className={styles.SimpleToolGrid_inner}>
-          {renderRows()}
-        </div>
-      ) : (
-        <>{renderRows()}</>
-      )}
+    <Grid
+      padded={true}
+      className={`${styles.SimpleToolGrid} ${styles.containerGrid} SimpleToolGrid`}
+    >
+      {renderRows()}
     </Grid>
   );
 };
