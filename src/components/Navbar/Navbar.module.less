@@ -1,5 +1,4 @@
-@import 'styleguide/themes/inowas/globals/site.variables';
-
+@import '../../../styleguide/themes/inowas/globals/site.variables';
 
 .wrapper {
   justify-content: center;
@@ -9,7 +8,7 @@
   background: @ref-color-active;
   flex: 1 1 auto;
 
-  .flex-column {
+  .containerTop {
     @media (max-width: @breakpoint-tablet - 1) {
       width: 100% !important;
     }
@@ -26,6 +25,7 @@
       margin: 0;
 
       .item {
+        background: transparent;
         border-left: 1px solid @ref-color-extraBlue;
         border-radius: 0;
         color: @white;
@@ -43,6 +43,12 @@
 
       .item:last-child {
         border-right: 1px solid @ref-color-extraBlue;
+      }
+
+      .item:not(.itemLogIn) {
+        @media (max-width: @breakpoint-tablet - 1) {
+          display: none;
+        }
       }
     }
   }
@@ -80,99 +86,71 @@
     }
 
   }
+}
 
-  /*
-  * Burger trigger
-  */
+/*
+* Burger trigger
+*/
 
-  .menuTrigger {
-    width: 24px;
-    height: 20px;
-    position: relative;
-    margin: 0 0 0 auto;
+.menuTrigger {
+  width: 24px;
+  height: 20px;
+  position: relative;
+  margin: 0 0 0 auto;
+  transform: rotate(0deg);
+  transition: .5s ease-in-out;
+  cursor: pointer;
+
+  span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: @ref-color-burger;
+    opacity: 1;
+    left: 0;
     transform: rotate(0deg);
-    transition: .5s ease-in-out;
-    cursor: pointer;
+    transition: .25s ease-in-out;
+  }
 
-    span {
-      display: block;
-      position: absolute;
-      height: 3px;
-      width: 100%;
-      background: @ref-color-burger;
-      opacity: 1;
-      left: 0;
-      transform: rotate(0deg);
-      transition: .25s ease-in-out;
-    }
+  span:nth-child(1) {
+    top: 0px;
+    transform-origin: left center;
+  }
 
+  span:nth-child(2) {
+    top: 6px;
+    transform-origin: left center;
+  }
+
+  span:nth-child(3) {
+    top: 12px;
+    transform-origin: left center;
+  }
+
+  &__open {
     span:nth-child(1) {
-      top: 0px;
-      transform-origin: left center;
+      transform: rotate(45deg);
+      top: -3px;
+      left: 4px;;
     }
 
     span:nth-child(2) {
-      top: 6px;
-      transform-origin: left center;
+      width: 0%;
+      opacity: 0;
     }
 
     span:nth-child(3) {
-      top: 12px;
-      transform-origin: left center;
-    }
-
-    &__open {
-      span:nth-child(1) {
-        transform: rotate(45deg);
-        top: -3px;
-        left: 4px;;
-      }
-
-      span:nth-child(2) {
-        width: 0%;
-        opacity: 0;
-      }
-
-      span:nth-child(3) {
-        transform: rotate(-45deg);
-        top: 14px;
-        left: 4px;
-      }
+      transform: rotate(-45deg);
+      top: 14px;
+      left: 4px;
     }
   }
-
-  .signInButton {
-    transition: background-color 300ms ease-in-out;
-    background-color: @ref-color-lightBlue;
-    color: #fff;
-    padding: 0 17px;
-    font-size: 1rem;
-    line-height: 6.25rem;
-    font-weight: 400;
-    letter-spacing: 0;
-    text-transform: uppercase;
-    margin: 0;
-    white-space: nowrap;
-    border-radius: 0;
-    width: 100%;
-
-    &:hover,
-    &:focus {
-      background-color: @ref-color-active;
-      color: @white;
-    }
-
-    @media (min-width: @breakpoint-tablet-horizontal) {
-      width: auto;
-    }
-  }
-
-  /*
-   * mainMenu and navbar styles located in menu.overrides file
-   * as a part of semantic UI
-   */
-
 }
 
+/*
+ * mainMenu and navbar styles located in menu.overrides file
+ * as a part of semantic UI
+ */
 
 

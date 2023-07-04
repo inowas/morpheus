@@ -2,20 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
 import {IT02} from '../../types/T02.type';
-
-const styles = {
-  row: {
-    paddingBottom: '0',
-  },
-  column: {
-    height: '55px',
-    paddingRight: '1.8rem',
-    verticalAlign: 'top',
-  },
-  defaultButton: {
-    width: '100px',
-  },
-};
+import styles from './styles.module.less';
 
 type  IParameter = IT02['parameters'][0];
 
@@ -68,10 +55,10 @@ const Parameters = ({parameters, onChange}: IProps) => {
   );
 
   return (
-    <Grid verticalAlign='middle'>
-      <Grid.Row style={styles.row}>
-        <Grid.Column textAlign='right' style={styles.column}>
-          <Button onClick={handleReset} style={styles.defaultButton}>Default</Button>
+    <Grid verticalAlign="middle" className={styles.parametersGrid}>
+      <Grid.Row className={styles.row}>
+        <Grid.Column textAlign="right" className={styles.column}>
+          <Button onClick={handleReset} className={styles.defaultButton}>Default</Button>
         </Grid.Column>
       </Grid.Row>
       {renderParameters(params)}

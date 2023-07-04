@@ -1,27 +1,10 @@
 import React, {ChangeEvent, useEffect} from 'react';
 import 'rc-slider/assets/index.css';
+import './styles.less';
 import Slider from 'rc-slider';
 import {Grid} from 'semantic-ui-react';
 import {ISliderParameter} from './IInputType';
-
-const styles = {
-  L: {
-    width: '53px',
-  },
-  R: {
-    width: '65px',
-  },
-  valueInput: {
-    width: '100px',
-  },
-  row: {
-    paddingBottom: '0',
-    paddingTop: '0',
-  },
-  sliderRow: {
-    margin: '-25px 0 0 0',
-  },
-};
+import styles from './Slider.module.less';
 
 interface IProps {
   parameter: ISliderParameter;
@@ -58,36 +41,44 @@ const ParameterSlider = ({parameter, onChange}: IProps) => {
   };
 
   return (
-    <Grid.Row columns={3} style={styles.row}>
-      <Grid.Column width={5} textAlign='right'>
+    <Grid.Row columns={3} className={styles.row}>
+      <Grid.Column
+        width={5} textAlign="right"
+        className={styles.col}
+      >
         <div dangerouslySetInnerHTML={{__html: param.name}} style={{minHeight: '55px'}}/>
       </Grid.Column>
-      <Grid.Column width={8}>
+      <Grid.Column
+        width={8} className={styles.col}
+      >
         <Grid columns={2}>
-          <Grid.Column width={4} floated='left'>
+          <Grid.Column width={8} floated="left">
             <input
-              name='min'
-              type='number'
-              className='extraMini'
-              style={{...styles.L}}
+              name="min"
+              type="number"
+              className={`${styles.extraMini} ${styles.left}`}
               value={param.min}
               onBlur={handleChange}
               onChange={handleLocalChange}
             />
           </Grid.Column>
-          <Grid.Column width={4} floated='right'>
+          <Grid.Column
+            width={8} floated="right"
+            textAlign="right"
+          >
             <input
-              name='max'
-              type='number'
-              className='extraMini'
-              style={{...styles.R}}
+              name="max"
+              type="number"
+              className={`${styles.extraMini} ${styles.right}`}
               value={param.max}
               onBlur={handleChange}
               onChange={handleLocalChange}
             />
           </Grid.Column>
         </Grid>
-        <Grid style={styles.sliderRow}>
+        <Grid
+          className={styles.sliderRow}
+        >
           <Grid.Row>
             <Slider
               min={param.min}
@@ -100,12 +91,14 @@ const ParameterSlider = ({parameter, onChange}: IProps) => {
           </Grid.Row>
         </Grid>
       </Grid.Column>
-      <Grid.Column width={3} style={{verticalAlign: 'top', height: '55px'}}>
+      <Grid.Column
+        width={3} className={styles.col}
+        style={{verticalAlign: 'top', height: '100%'}}
+      >
         <input
-          name='value'
-          type='number'
-          className='extraMini'
-          style={{...styles.valueInput}}
+          name="value"
+          type="number"
+          className={`${styles.extraMini} , ${styles.valueInput}`}
           value={param.value} onChange={handleLocalChange}
           onBlur={handleChange}
         />
