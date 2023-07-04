@@ -2,3 +2,8 @@
          Theme Overrides
 *******************************/
 
+.ui.padded.grid.SimpleToolGrid:not(.vertically):not(.horizontally) {
+  @media (max-width: @computerBreakpoint - 1 ) {
+    margin: 0 -1rem !important;
+  }
+}

@@ -29,14 +29,15 @@
   .navbar {
     background-color: @white;
     position: absolute;
-    left: 0;
+    left: calc(50% - 50vw);
     top: 100%;
-    height: calc(100vh - 100%);
-    width: 100%;
+    height: calc(100vh - (100% + 40px));
+    width: 100vw;
     z-index: -1;
     overflow-y: auto;
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
+
 
     &::-webkit-scrollbar {
       display: none; /* Safari and Chrome */
@@ -74,7 +75,7 @@
     margin: 0;
     width: 100%;
     line-height: 6.25rem;
-    white-space: nowrap;
+    white-space: break-spaces;
     color: @ref-color-greyDark;
     position: relative;
     border-width: 1px 1px 0 1px;
@@ -90,10 +91,18 @@
       }
     }
 
+    &:last-child {
+      border-bottom: 1px solid @ref-color-border;
+      @media (min-width: @breakpoint-tablet-horizontal) {
+        border-right: 1px solid @ref-color-border;
+      }
+    }
+
     @media (min-width: @breakpoint-tablet-horizontal) {
       width: auto;
       border: none;
       border-left: 1px solid @ref-color-border;
+      white-space: nowrap;
     }
   }
 
@@ -143,6 +152,9 @@
       @media (min-width: @breakpoint-tablet-horizontal) {
         display: block;
         visibility: visible;
+        min-width: 150px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
       }
     }
 
@@ -161,7 +173,9 @@
       margin-top: 0 !important;
       box-shadow: none;
       position: static;
+      width: 100%;
       @media (min-width: @breakpoint-tablet-horizontal) {
+        width: auto;
         position: absolute;
         border: 1px solid @ref-color-border;
       }

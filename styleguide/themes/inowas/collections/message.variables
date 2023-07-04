@@ -141,8 +141,7 @@
   @shadowShadow
 ;
 @infoBoxShadow:
-  0px 0px 0px @borderWidth @infoBorderColor inset,
-  @shadowShadow
+  inset 0 0 0 1px #a9d5de, 0 0 0 0 transparent;
 ;
 @warningBoxShadow:
   0px 0px 0px @borderWidth @warningBorderColor inset,

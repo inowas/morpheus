@@ -3,8 +3,8 @@ import {Background, Chart, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
 import useCalculations from 'simpletools/common/hooks/useCalculations';
-
 import SimpleToolGrid from 'components/SimpleToolGrid';
+
 
 const defaults: IT02 = {
   settings: {

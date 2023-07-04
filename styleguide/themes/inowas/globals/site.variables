@@ -226,12 +226,12 @@
 @olive: #B5CC18;
 @green: #21BA45;
 @teal: #00B5AD;
-@blue: #2185D0;
+@blue: #1eb1ed;
 @violet: #6435C9;
 @purple: #A333C8;
 @pink: #E03997;
 @brown: #A5673F;
-@grey: #767676;
+@grey: #4c4c4c;
 @black: #1B1C1D;
 
 /*---  Light Colors  ---*/
@@ -329,7 +329,7 @@
 @subtleGradient: linear-gradient(transparent, @transparentBlack);
 
 /* Differentiating Layers */
-@subtleShadow: 0px 1px 2px 0 @borderColor;
+@subtleShadow: 0px 0px 3px 0 @borderColor;
 @floatingShadow: 0px 2px 4px 0px rgba(34, 36, 38, 0.12),
 0px 2px 10px 0px rgba(34, 36, 38, 0.15);
 
@@ -465,7 +465,8 @@
 
 @circularRadius: 500rem;
 
-@borderColor: rgba(34, 36, 38, 0.15);
+//@borderColor: rgba(34, 36, 38, 0.15);
+@borderColor: rgba(0, 0, 0, 0.3);
 @strongBorderColor: rgba(34, 36, 38, 0.22);
 @internalBorderColor: rgba(34, 36, 38, 0.1);
 @selectedBorderColor: rgba(34, 36, 38, 0.35);
@@ -988,7 +989,7 @@
 @breakpoint-mobile: 375px;
 @breakpoint-mobile-horizontal: 580px;
 @breakpoint-tablet: 768px;
-@breakpoint-tablet-horizontal: 1141px;
+@breakpoint-tablet-horizontal: 1200px;
 @breakpoint-desktop: 1280px;
 @breakpoint-desktop-small: 1400px;
 @breakpoint-desktop-wide: 1600px;

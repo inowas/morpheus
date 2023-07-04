@@ -1,36 +1,38 @@
 import React, {useState} from 'react';
-import {Button, Container, Dropdown, Image, Menu} from 'semantic-ui-react';
+import {Container, Dropdown, Image, Menu} from 'semantic-ui-react';
 import {IDropdownItem, IMenuItem, INavbarItem} from './types/navbar.type';
 import {Link, useLocation} from 'react-router-dom';
 import styles from './Navbar.module.less';
 import useIsMobile from 'simpletools/common/hooks/useIsMobile';
 import logoTUDresden from './images/logo-tud.svg';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
+type ILanguageCode = 'de-DE' | 'en-GB';
 
 interface IProps {
   navbarItems: INavbarItem[];
   navigateTo: (path: string) => void;
+  language: ILanguageCode;
+  languageList: {
+    code: ILanguageCode;
+    label: string;
+  }[]
+  onChangeLanguage: (language: ILanguageCode) => void;
 }
 
-const Navbar = ({navbarItems, navigateTo}: IProps) => {
-
+const Navbar = ({navbarItems, navigateTo, language, languageList, onChangeLanguage}: IProps) => {
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
-
   const location = useLocation();
   const pathname = 1 < location.pathname.length ? location.pathname.slice(1) : 'Home';
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [activeItem, setActiveItem] = useState<string>(pathname);
-
   const {isMobile} = useIsMobile();
 
   const redirectTo = (path: string | undefined) => {
     if (path) {
       navigateTo(path);
       setOpenMobileMenu(!openMobileMenu);
-    }
-    if (isMobile) {
-      setOpenMobileMenu(false);
     }
     if (isMobile) {
       setOpenMobileMenu(false);
@@ -44,7 +46,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
   return (
     <>
       <div className={styles.wrapper}>
-        <Container className={styles.container}>
+        <Container className={styles.containerTop}>
           <div className={styles.inner}>
             <Link to="/" className={styles.logo}>
               <img
@@ -78,6 +80,21 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                 className={styles.item}
                 // active={activeItem === 'logout'}
                 // onClick={this.handleItemClick}
+              />
+              <Menu.Item
+                name="Sign in!"
+                as="a"
+                className={`${styles.item} ${styles.itemLogIn}`}
+                // active={activeItem === 'logout'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateTo('/auth');
+                }}
+              />
+              <LanguageSelector
+                language={language}
+                languageList={languageList}
+                onChangeLanguage={onChangeLanguage}
               />
             </Menu>
           </div>
@@ -115,7 +132,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
               className="navbar"
             >
               <Container>
-                {navbarItems.map((item: INavbarItem) => {
+                {navbarItems.map((item: INavbarItem, index: number) => {
                   if (isMenuItem(item)) {
                     return (
                       <Menu.Item
@@ -133,6 +150,10 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                     );
                   }
                   if (isDropdownItem(item)) {
+                    const isLastTwo: boolean = index >= navbarItems.length - 2;
+                    const style = isLastTwo
+                      ? {right: 0, left: 'auto'}
+                      : {};
                     return (
                       <Dropdown
                         className={item.name === activeItem ? 'active' : ''}
@@ -160,6 +181,7 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                           </button>}
                           <Dropdown.Menu
                             className="dropdownMenu"
+                            style={style}
                           >
                             {item.subMenu.map((subItem) => (
                               <Dropdown.Item
@@ -181,14 +203,6 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                   }
                   return null;
                 })}
-                <Button
-                  className={styles.signInButton}
-                  onClick={() => {
-                    console.log('click');
-                  }}
-                >
-                  <span>Sign in!</span>
-                </Button>
               </Container>
             </div>}
           </Menu>

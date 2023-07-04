@@ -18,7 +18,7 @@ const useIsMobile = (): IUseIsMobile => {
   }, []);
 
   return {
-    isMobile: 1140 >= width,
+    isMobile: 1199 >= width,
   };
 };
 
