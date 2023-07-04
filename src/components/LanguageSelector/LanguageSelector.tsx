@@ -18,7 +18,7 @@ const LanguageSelector = ({language, languageList, onChangeLanguage}: IProps) =>
     key: item.code,
     value: item.code,
     text: (
-      <span>
+      <span className="languageFlag-wrapper">
         <img
           src={getFlagByLanguageCode(item.code)}
           alt={item.label}
