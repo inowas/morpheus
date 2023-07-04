@@ -7,20 +7,20 @@ import useIsMobile from 'simpletools/common/hooks/useIsMobile';
 import logoTUDresden from './images/logo-tud.svg';
 import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
-const ILanguages: {
-  code: 'de' | 'en';
-  label: string;
-}[] = [
-  {code: 'en', label: 'English'},
-  {code: 'de', label: 'German'},
-];
+type ILanguageCode = 'de-DE' | 'en-GB';
 
 interface IProps {
   navbarItems: INavbarItem[];
   navigateTo: (path: string) => void;
+  language: ILanguageCode;
+  languageList: {
+    code: ILanguageCode;
+    label: string;
+  }[]
+  onChangeLanguage: (language: ILanguageCode) => void;
 }
 
-const Navbar = ({navbarItems, navigateTo}: IProps) => {
+const Navbar = ({navbarItems, navigateTo, language, languageList, onChangeLanguage}: IProps) => {
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
   const location = useLocation();
@@ -91,7 +91,11 @@ const Navbar = ({navbarItems, navigateTo}: IProps) => {
                   navigateTo('/auth');
                 }}
               />
-              <LanguageSelector languages={ILanguages}/>
+              <LanguageSelector
+                language={language}
+                languageList={languageList}
+                onChangeLanguage={onChangeLanguage}
+              />
             </Menu>
           </div>
         </Container>
