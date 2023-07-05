@@ -14,6 +14,13 @@ const styles = {
     left: 20,
     bottom: 0,
   },
+  diagramLabel: {
+    position: 'absolute',
+    backgroundColor: '#eff3f6',
+    opacity: 0.9,
+    top: 24,
+    right: 40,
+  },
 };
 
 interface IProps {
@@ -132,19 +139,27 @@ const Chart = ({settings, parameters}: IProps) => {
             </LineChart>
           </ResponsiveContainer>
 
-          <Segment raised={true} className="diagramLabel">
+          <Segment
+            raised={true} style={styles.diagramLabel}
+          >
             <p>C&nbsp;=&nbsp;<strong>{(C * C0).toFixed(2)}</strong>&nbsp;mg/L</p>
             <p>{variable}<sub>0</sub>&nbsp;=&nbsp;<strong>{val0}</strong>&nbsp;{unit}</p>
             <p>{variable}<sub>50</sub>&nbsp;=&nbsp;<strong>{val50}</strong>&nbsp;{unit}</p>
             <p>{variable}<sub>max</sub>&nbsp;=&nbsp;<strong>{valmax}</strong>&nbsp;{unit}</p>
           </Segment>
 
-          <div className="downloadButtons">
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 28,
+          }}
+          >
             <Button
               compact={true} basic={true}
               icon={true}
               size={'small'}
               onClick={() => exportChartImage(currentChart)}
+              style={{boxShadow: 'unset'}}
             >
               <Icon name="download"/> JPG
             </Button>
@@ -153,6 +168,7 @@ const Chart = ({settings, parameters}: IProps) => {
               icon={true}
               size={'small'}
               onClick={() => exportChartData(currentChart)}
+              style={{boxShadow: 'unset'}}
             >
               <Icon name="download"/> CSV
             </Button>

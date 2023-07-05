@@ -3,6 +3,16 @@ import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
 import {IT02} from '../../types/T02.type';
 
+const styles = {
+  defaultButton: {
+    position: 'absolute',
+    backgroundColor: '#eff3f6',
+    opacity: 0.9,
+    top: 24,
+    right: 40,
+  },
+};
+
 type  IParameter = IT02['parameters'][0];
 
 interface IProps {
@@ -53,10 +63,10 @@ const Parameters = ({parameters, onChange}: IProps) => {
   );
 
   return (
-    <Grid verticalAlign="middle" className="parametersGrid">
-      <Grid.Row className="parametersRow">
-        <Grid.Column textAlign="right" className="parametersColumn">
-          <Button onClick={handleReset} className="parametersDefaultButton">Default</Button>
+    <Grid verticalAlign="middle">
+      <Grid.Row>
+        <Grid.Column textAlign="right">
+          <Button onClick={handleReset} style={{width: 100, margin: 0}}>Default</Button>
         </Grid.Column>
       </Grid.Row>
       {renderParameters(params)}
