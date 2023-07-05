@@ -1,19 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
-import {IT02} from '../../types/T02.type';
+import {IT08} from '../../types/T08.type';
 
-const styles = {
-  defaultButton: {
-    position: 'absolute',
-    backgroundColor: '#eff3f6',
-    opacity: 0.9,
-    top: 24,
-    right: 40,
-  },
-};
-
-type  IParameter = IT02['parameters'][0];
+type IParameter = IT08['data']['parameters'][0];
 
 interface IProps {
   parameters: IParameter[];
