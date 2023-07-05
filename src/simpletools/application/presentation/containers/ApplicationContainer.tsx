@@ -3,7 +3,9 @@ import React, {ReactNode, useState} from 'react';
 import Header from '../components/Header';
 import {useNavigate} from 'react-router-dom';
 import {useNavbarItems} from '../../application';
-import {ContentWrapper, Footer, Navbar} from 'components';
+import {ContentWrapper, Footer} from 'components';
+import Navbar from '../../../../components/Navbar';
+
 
 interface IProps {
   children: ReactNode;

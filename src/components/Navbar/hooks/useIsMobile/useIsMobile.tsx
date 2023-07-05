@@ -4,7 +4,7 @@ interface IUseIsMobile {
   isMobile: boolean;
 }
 
-const useIsMobile = (): IUseIsMobile => {
+const useIsMobile = (mobileWidth: number): IUseIsMobile => {
   const [width, setWidth] = useState<number>(window.innerWidth);
   const handleWindowSizeChange = () => {
     setWidth(window.innerWidth);
@@ -18,7 +18,7 @@ const useIsMobile = (): IUseIsMobile => {
   }, []);
 
   return {
-    isMobile: 1199 >= width,
+    isMobile: mobileWidth >= width,
   };
 };
 

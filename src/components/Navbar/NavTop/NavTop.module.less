@@ -1,0 +1,56 @@
+@import '../../../../styleguide/themes/inowas/globals/site.variables';
+
+.containerTop {
+  @media (max-width: @breakpoint-tablet - 1) {
+    width: 100% !important;
+  }
+
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+
+    .menu {
+      color: @white;
+      margin: 0;
+
+      .item {
+        background: transparent;
+        border-left: 1px solid @ref-color-extraBlue;
+        border-radius: 0;
+        color: @white;
+        margin: 0;
+        font-weight: 300;
+        line-height: 3.25rem;
+        padding: 0 1rem;
+
+        &:hover,
+        &:focus {
+          color: @white;
+          text-decoration: underline;
+        }
+      }
+
+      .item:last-child {
+        border-right: 1px solid @ref-color-extraBlue;
+      }
+
+      .item:not(.itemLogIn) {
+        @media (max-width: @breakpoint-tablet - 1) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .logo {
+    color: @white;
+    max-width: 100px;
+    max-height: 45px;
+    display: inline-block;
+    width: 100%;
+    margin-top: 3px;
+  }
+}
+
