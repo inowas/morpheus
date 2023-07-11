@@ -1,9 +1,2 @@
 .DS_Store
 .idea/
-/coverage/
-/vendor/
-/logs/*
-!/logs/README.md
-/node_modules/
-/dist/
-/.env
