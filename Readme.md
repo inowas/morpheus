@@ -1,122 +1,24 @@
-# Morpheus Repository
+# Morpheus Full Stack Application
 
-This repository contains the source code for the Morpheus application and components.
+This repository contains the source code for the frontend and backend of the Morpheus application.
 
-## Installation
+## Development
 
-Clone the repository and install the dependencies.
-Make sure you have [Node.js](https://nodejs.org/en/) installed.
-Copy the `.env.example` file to `.env` and fill in the required values.
+### Prerequisites
 
-```shell
-scp .env.example .env
-make install
-```
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/)
+- [Make](https://www.gnu.org/software/make/)
+- [Node.js](https://nodejs.org/en/)
+- [NVM](https://github.com/nvm-sh/nvm)
+- [Python 3](https://www.python.org/)
 
-## Start Morpheus development webserver with mocked api
+### Frontend
 
-```shell
-make start
-```
+The frontend is a [React](https://reactjs.org/) application written in [TypeScript](https://www.typescriptlang.org/) and can be found in the `frontend` directory.
+More information about the frontend can be found in the [frontend README](./frontend/README.md).
 
-## Start Morpheus development webserver without mocked api
+### Backend
 
-If you want to use the Morpheus within the production system, you need to start the development webserver without mocked api.
-
-
-## Start Storybook webserver on port localhost:6006
-
-```shell
-make start-storybook
-```
-
-## Build application and components
-
-```shell
-make build
-```
-
-## Build preview application and components with mocked api
-
-```shell
-make build-preview-ci
-```
-
-## Build storybook
-
-```shell
-make build-storybook-ci
-```
-
-## Run tests
-
-### Run and watch tests
-
-```shell
-make test
-```
-
-### Run and generate coverage
-
-```shell
-make test-coverage
-```
-
-### Run tests in CI
-
-```shell
-make test-ci
-```
-
-## Check code style
-
-```shell
-make cs-check
-```
-
-## Fix code style
-
-```shell
-make cs-fix
-```
-
-## Dependency tracking
-
-Following our rules for dependency tracking, we use [DepCruiser](https://github.com/sverweij/dependency-cruiser).
-For information on how to use DepCruiser, see the [DepCruiser documentation](https://github.com/sverweij/dependency-cruiser).
-
-To check the dependency graph for the app against out ruleset, run:
-
-```shell
-make dependency-checks
-```
-
-or
-
-```shell
-npm run depcruise:app
-```
-
-To have a more verbose output, run:
-
-```shell
-make dependency-checks-verbose
-```
-
-or
-
-```shell
-npm run depcruise:app:explain
-```
-
-To visualize the dependency graph for the app, run:
-
-```shell
-npm run depcruise:app:graph
-```
-
-To create or update a baseline file for the dependency graph for the app, run:
-
-```shell
-npm run depcruise:app:baseline
-```
+The backend is a application written in [Python 3](https://www.python.org/) and can be found in the `backend` directory.
+More information about the backend can be found in the [backend README](./backend/README.md).
