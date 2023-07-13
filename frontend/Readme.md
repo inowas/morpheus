@@ -1,4 +1,4 @@
-# Morpheus Repository
+# Morpheus Frontend
 
 This repository contains the source code for the Morpheus application and components.
 
