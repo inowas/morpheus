@@ -12,7 +12,7 @@ const MenuItem: React.FC<ListItemProps> = ({items}) => {
   // console.log(items);
   // const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
-  const [dropdown, setDropdown] = useState(false);
+  const [dropdown, setDropdown] = useState(true);
   // const [dropdown, setDropdown] = useState(false);
   // let ref = useRef();
   // useEffect(() => {
@@ -46,6 +46,7 @@ const MenuItem: React.FC<ListItemProps> = ({items}) => {
   //   dropdown && setDropdown(false);
   // };
 
+
   return (
 
     <li className={styles.menuItem} key={items.name}>
@@ -58,12 +59,12 @@ const MenuItem: React.FC<ListItemProps> = ({items}) => {
             aria-haspopup="menu"
             onClick={() => setDropdown(!dropdown)}
           >
-            {items.name}
+            {items.label}
           </button>
           <Dropdown dropdown={dropdown} submenus={items.subMenu}/>
         </>
       ) : (
-        <a href={items.to}>{items.name}</a>
+        <a href={items.to}>{items.label}</a>
       )}
       {/*    { if (isMenuItem(item)) {*/}
       {/*          return (*/}

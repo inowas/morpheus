@@ -12,6 +12,20 @@ const navBarItems: INavbarItem[] = [
         label: 'About us',
         admin: false,
         to: '/1',
+        subMenu: [
+          {
+            name: 'T02',
+            label: 'T02: Groundwater mounding (Hantush)',
+            admin: false,
+            to: '/T02',
+          },
+          {
+            name: 'T02',
+            label: 'T02: Groundwater mounding (Hantush)',
+            admin: false,
+            to: '/T02',
+          },
+        ],
       },
       {
         name: 'Software releases',

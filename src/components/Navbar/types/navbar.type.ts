@@ -18,6 +18,7 @@ interface ISubMenuItem {
   label: string,
   admin: boolean,
   to: string,
+  subMenu?: ISubMenuItem[];
 }
 
 export type INavbarItem = IMenuItem | IDropdownItem;
