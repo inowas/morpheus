@@ -5,7 +5,7 @@ const navBarItems: INavbarItem[] = [
     name: 'Home',
     label: 'Home',
     admin: false,
-    basepath: '/1',
+    basepath: '/Home',
     subMenu: [
       {
         name: 'About us',
