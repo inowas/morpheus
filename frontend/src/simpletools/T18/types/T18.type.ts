@@ -1,6 +1,6 @@
 type IInputType = 'SLIDER' | 'NUMBER' | 'RADIO_SELECT' | 'SELECT_NAME';
 
-export interface IT08 {
+export interface IT18 {
   id: string;
   name: string;
   description: string;
@@ -21,11 +21,11 @@ export interface IT08 {
       inputType: IInputType;
       label: string;
       parseValue: (value: string) => number;
+      validMin?: (x: number) => boolean;
+      validMax?: (x: number) => boolean;
     }[];
     settings: {
-      retardation: boolean;
-      case: number;
-      infiltration: number;
+      AF: number;
     };
   };
 }
