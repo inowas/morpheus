@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Background, Chart, Info, Parameters, Settings} from '../components';
+import {Background, EChart, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
 import {useCalculateMounding} from '../../application';
@@ -137,7 +137,7 @@ const T02 = () => {
   return (
     <SimpleToolGrid rows={2}>
       <Background image={image} title={'T02. GROUNDWATER MOUNDING (HANTUSH)'}/>
-      <Chart
+      <EChart
         settings={data.settings}
         parameters={data.parameters}
         mounding={mounding}

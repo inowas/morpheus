@@ -1,23 +1,27 @@
 @import '../../styleguide/themes/inowas/globals/site.variables';
 
 body {
-  color: #4c4c4c;
+    color: #4c4c4c;
 }
 
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .ui.container {
-  position: relative;
+    position: relative;
+}
+
+.recharts-responsive-container svg:not(:root) {
+    overflow: visible;
 }
 
 
