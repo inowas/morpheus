@@ -36,7 +36,7 @@ const ApplicationContainer = ({children}: IProps) => {
           onChangeLanguage={setLanguage}
         />
       </Header>
-      <ContentWrapper minHeight={'100vh'}>
+      <ContentWrapper minHeight={'auto'}>
         {children}
       </ContentWrapper>
       <Footer/>
