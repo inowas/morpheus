@@ -7,20 +7,22 @@ interface ItemProps {
   submenus: IMenuItem[];
   dropdown: boolean;
   depthLevel: number;
+  handleCloseMobileMenu: () => void;
 }
 
-const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel}) => {
+const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, handleCloseMobileMenu}) => {
   depthLevel = depthLevel + 1;
 
   return (
     <ul
       className={`${styles.dropdown} ${dropdown ? styles.show : ''}`}
     >
-      {submenus.map((submenu: IMenuItem, index: number) => (
+      {submenus.map((submenuitem: IMenuItem, idx: number) => (
         <MenuItem
-          items={submenu}
-          key={index}
+          items={submenuitem}
+          key={idx}
           depthLevel={depthLevel}
+          handleCloseMobileMenu={handleCloseMobileMenu}
         />
       ))}
     </ul>
