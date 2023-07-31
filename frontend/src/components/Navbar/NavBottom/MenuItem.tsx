@@ -1,21 +1,21 @@
 import {IDropdownItem, IMenuItem} from '../types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {NavLink} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {Menu} from 'semantic-ui-react';
 import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
 import Dropdown from './Dropdown';
-import {useNavBottomContext} from './NavBottom';
 
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;
-  depthLevel: number
+  depthLevel?: number;
+  handleCloseMobileMenu: () => void;
 }
 
-const MenuItem: React.FC<ListItemProps> = ({items, depthLevel}) => {
+const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, handleCloseMobileMenu}) => {
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
 
-  const {handleCloseMobileMenu} = useNavBottomContext();
   const [dropdown, setDropdown] = useState(false);
   const {isMobile} = useIsMobile(1199);
   const ref = useRef<HTMLLIElement | null>(null);
@@ -35,10 +35,19 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel}) => {
     };
   }, [dropdown, isMobile]);
 
+  const location = useLocation();
+  const currentPathname = location.pathname;
+
   const onSetDropdown = useCallback((value: boolean) => {
     setDropdown(value);
   }, [setDropdown]);
+  const navigateTo = useNavigate();
 
+  const isActive = (path: string): boolean => {
+    return path === currentPathname;
+
+    return false;
+  };
 
   const onMouseEnter = () => {
     if (!isMobile) {
@@ -76,22 +85,27 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel}) => {
       onClick={closeDropdown}
     >
       {isMenuItem(items) && (
-        <NavLink
-          to={items.to}
-          className={(navData) => navData.isActive ? styles.active : ''}
-          onClick={() => closeMobile()}
-        >{items.label}</NavLink>
+        <Menu.Item
+          className={isActive(items.to) ? styles.active : ''}
+          onClick={() => {
+            closeMobile();
+            navigateTo(items.to);
+          }}
+        >{items.label}</Menu.Item>
       )}
 
       {isDropdownItem(items) && (
         <>
-          <NavLink
+          <Menu.Item
             to={items.basepath}
             aria-expanded={dropdown ? 'true' : 'false'}
             aria-haspopup="menu"
-            className={(navData) => navData.isActive ? styles.active : ''}
-            onClick={() => closeMobile()}
-          >{items.label}</NavLink>
+            className={isActive(items.basepath) ? styles.active : ''}
+            onClick={() => {
+              closeMobile();
+              navigateTo(items.basepath);
+            }}
+          >{items.label}</Menu.Item>
           {isMobile && <button
             type="button"
             aria-label="Togle menu"
@@ -104,6 +118,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel}) => {
             dropdown={dropdown}
             submenus={items.subMenu}
             depthLevel={depthLevel}
+            handleCloseMobileMenu={handleCloseMobileMenu}
           />
         </>
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Container, Menu} from 'semantic-ui-react';
-import {Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import logoTUDresden from '../images/logo-tud.svg';
 import styles from './NavTop.module.less';
 import LanguageSelector from '../LanguageSelector/LanguageSelector';
@@ -22,13 +22,20 @@ const NavTop = ({language, languageList, onChangeLanguage}: IProps) => {
   return (
     <Container className={styles.containerTop}>
       <div className={styles.inner}>
-        <Link to="/" className={styles.logo}>
+        <Menu.Item
+          as="a"
+          className={styles.logo}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateTo('/');
+          }}
+        >
           <img
             className={styles.logo}
             src={logoTUDresden}
             alt={'logo'}
           />
-        </Link>
+        </Menu.Item>
         <Menu
           className={styles.menu}
           secondary={true}
@@ -38,28 +45,33 @@ const NavTop = ({language, languageList, onChangeLanguage}: IProps) => {
             name="Contact"
             as="a"
             className={styles.item}
-            // active={activeItem === 'logout'}
-            // onClick={this.handleItemClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('/contact/');
+            }}
           />
           <Menu.Item
             name="Legal Notice"
             as="a"
             className={styles.item}
-            // active={activeItem === 'logout'}
-            // onClick={this.handleItemClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('/imprint/');
+            }}
           />
           <Menu.Item
             name="Accessibility"
             as="a"
             className={styles.item}
-            // active={activeItem === 'logout'}
-            // onClick={this.handleItemClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('/declaration-on-accessibility/');
+            }}
           />
           <Menu.Item
             name="Sign in!"
             as="a"
             className={`${styles.item} ${styles.itemLogIn}`}
-            // active={activeItem === 'logout'}
             onClick={(e) => {
               e.stopPropagation();
               navigateTo('/auth');
