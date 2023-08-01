@@ -48,7 +48,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems}) => {
               return <MenuItem
                 items={item}
                 key={idx}
-                handleCloseMobileMenu={handleCloseMobileMenu}
+                onCloseMobileMenu={handleCloseMobileMenu}
               />;
             })}
           </ul>

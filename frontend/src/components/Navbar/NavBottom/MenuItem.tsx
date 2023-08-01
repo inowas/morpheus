@@ -9,10 +9,10 @@ import Dropdown from './Dropdown';
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;
   depthLevel?: number;
-  handleCloseMobileMenu: () => void;
+  onCloseMobileMenu: () => void;
 }
 
-const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, handleCloseMobileMenu}) => {
+const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobileMenu}) => {
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
 
@@ -70,7 +70,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, handleCloseMo
   const closeMobile = () => {
     if (isMobile) {
       if (dropdown) onSetDropdown(false);
-      handleCloseMobileMenu();
+      onCloseMobileMenu();
     }
   };
 
@@ -118,7 +118,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, handleCloseMo
             dropdown={dropdown}
             submenus={items.subMenu}
             depthLevel={depthLevel}
-            handleCloseMobileMenu={handleCloseMobileMenu}
+            onCloseMobileMenu={onCloseMobileMenu}
           />
         </>
       )}
