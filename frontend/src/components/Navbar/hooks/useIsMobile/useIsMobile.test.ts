@@ -8,7 +8,7 @@ describe('test useIsMobile', () => {
   });
 
   it('should return current window dimensions', () => {
-    const {result} = renderHook(() => useIsMobile());
+    const {result} = renderHook(() => useIsMobile(1000));
     expect(typeof result.current).toBe('object');
     expect(typeof result.current.isMobile).toBe('boolean');
   });
@@ -20,19 +20,19 @@ describe('test useIsMobile', () => {
 
   it('should return isMobile:true if window width is less or equal than 1140px', () => {
     act(() => {
-      triggerResize(1140);
+      triggerResize(1100);
     });
 
-    const {result} = renderHook(() => useIsMobile());
+    const {result} = renderHook(() => useIsMobile(1140));
     expect(result.current.isMobile).toBe(true);
   });
 
-  it('should return isMobile:false if window width is greater or equal than 769px', () => {
+  it('should return isMobile:false if window width is greater or equal than 1140', () => {
     act(() => {
-      triggerResize(1140);
+      triggerResize(1150);
     });
 
-    const {result} = renderHook(() => useIsMobile());
-    expect(result.current.isMobile).toBe(true);
+    const {result} = renderHook(() => useIsMobile(1140));
+    expect(result.current.isMobile).toBe(false);
   });
 });
