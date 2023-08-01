@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {ComponentMeta, ComponentStory} from '@storybook/react';
-import Page from '../PageContainer/Page';
+import Page from '../../PageContainer/Page';
 import LanguageSelector from './LanguageSelector';
 import {ILanguage} from './types/languageSelector.type';
 
@@ -26,7 +26,7 @@ export const Primary: ComponentStory<typeof LanguageSelector> = () => {
         height: 'calc(100vh - 90px)',
         padding: 20,
       }}
-      as='h1'
+      as="h1"
       header={'Language Selector Page Example'}
     >
       <div style={{float: 'right'}}>
