@@ -5,13 +5,6 @@ import {IT13A} from '../../types/T13.type';
 import image from '../images/T13A.png';
 
 const defaults: IT13A = {
-  // FIXME npm i uuidv4 (id: uuidv4())
-  id: '123',
-  name: 'New simple tool',
-  description: 'Simple tool description',
-  permissions: 'rwx',
-  public: false,
-  tool: 'T13A',
   parameters: [{
     inputType: 'SLIDER',
     label: '',
@@ -121,17 +114,6 @@ const T13AContainer = () => {
 
   return (
     <>
-      // FIXME add ToolMetaData ?
-      {/*<ToolMetaData*/}
-      {/*  isDirty={isDirty}*/}
-      {/*  onSave={handleSave}*/}
-      {/*  saveButton={true}*/}
-      {/*  readOnly={true}*/}
-      {/*  tool={tool}*/}
-      {/*  onReset={handleReset}*/}
-      {/*  toolNames={toolNames}*/}
-      {/*  navigateTo={navigateTo}*/}
-      {/*/>*/}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={'T13A. Travel time // Aquifer system with a no-flow boundary and fixed head boundary condition'}/>
         <ChartT13A

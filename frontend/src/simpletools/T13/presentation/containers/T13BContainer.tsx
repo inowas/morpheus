@@ -5,13 +5,6 @@ import {IT13B, SETTINGS_SELECTED_NOTHING} from '../../types/T13.type';
 import image from '../images/T13B.png';
 
 const defaults: IT13B = {
-  // FIXME npm i uuidv4 (id: uuidv4())
-  id: '123',
-  name: 'New simple tool',
-  description: 'Simple tool description',
-  permissions: 'rwx',
-  public: false,
-  tool: 'T13B',
   settings: {
     selected: SETTINGS_SELECTED_NOTHING,
   },
@@ -146,17 +139,6 @@ const T13BContainer = () => {
 
   return (
     <>
-      // FIXME add ToolMetaData ?
-      {/*<ToolMetaData*/}
-      {/*  isDirty={isDirty}*/}
-      {/*  onSave={handleSave}*/}
-      {/*  saveButton={true}*/}
-      {/*  readOnly={true}*/}
-      {/*  tool={tool}*/}
-      {/*  onReset={handleReset}*/}
-      {/*  toolNames={toolNames}*/}
-      {/*  navigateTo={navigateTo}*/}
-      {/*/>*/}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={'T13B. Aquifer system with a flow divide within of the system'}/>
         <ChartT13B

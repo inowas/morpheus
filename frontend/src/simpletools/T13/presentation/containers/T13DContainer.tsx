@@ -1,143 +1,105 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useState} from 'react';
+import SimpleToolGrid from 'components/SimpleToolGrid';
+import {IT13A, IT13D} from '../../types/T13.type';
+import {BackgroundT13D, Parameters} from '../components';
 
-import {withRouter} from 'react-router-dom';
-
-import {AppContainer} from '../../shared';
-import {BackgroundT13D as Background, Parameters} from '../components';
-import {SliderParameter, ToolGrid, ToolMetaData} from '../../shared/simpleTools';
-import {navigation} from './T13';
-
-import SimpleToolsCommand from '../../shared/simpleTools/commands/SimpleToolsCommand';
-
-
-import {defaultsWithSession} from '../defaults/T13D';
-
-import {buildPayloadToolInstance, deepMerge} from '../../shared/simpleTools/helpers';
-import {fetchTool, sendCommand} from '../../../services/api';
-import {includes} from 'lodash';
-import withSession from '../../../services/router/withSession';
-
-
-class T13DContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tool: defaultsWithSession(props.session),
-      isDirty: true,
-      isLoading: false,
-      error: false,
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.match.params.id) {
-      this.setState({isLoading: true});
-      fetchTool(
-        this.state.tool.tool,
-        this.props.match.params.id,
-        tool => this.setState({
-          tool: deepMerge(this.state.tool, tool),
-          isDirty: false,
-          isLoading: false,
-        }),
-        error => this.setState({error, isLoading: false}),
-      );
-    }
-  }
-
-  save = (tool) => {
-    const {id} = this.props.match.params;
-
-    const t = {
-      ...this.state.tool, name: tool.name, description: tool.description, public: tool.public,
-    };
-
-    if (id) {
-      sendCommand(
-        SimpleToolsCommand.updateToolInstance(buildPayloadToolInstance(t)),
-        () => this.setState({isDirty: false}),
-        () => this.setState({error: true}),
-      );
-      return;
-    }
-
-    sendCommand(
-      SimpleToolsCommand.createToolInstance(buildPayloadToolInstance(tool)),
-      () => this.props.history.push(`${this.props.location.pathname}/${t.id}`),
-      () => this.setState({error: true}),
-    );
-  };
-
-  handleChangeParameters = (parameters) => {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        tool: {
-          ...prevState.tool,
-          data: {
-            ...prevState.tool.data,
-            parameters: parameters.map(p => p.toObject),
-          },
-        },
-        isDirty: true,
-      };
-    });
-  };
-
-  handleReset = () => {
-    this.setState(prevState => {
-      return {
-        tool: {...prevState.tool, data: defaultsWithSession(this.props.session).data},
-        isLoading: false,
-        isDirty: true,
-      };
-    });
-  };
-
-  update = (tool) => this.setState({tool});
-
-  render() {
-    const {isLoading} = this.state;
-    if (isLoading) {
-      return (
-        <AppContainer navbarItems={navigation} loader={true}>Loading</AppContainer>
-      );
-    }
-
-    const {isDirty, tool} = this.state;
-    const {data, permissions} = tool;
-    const {parameters} = data;
-    const readOnly = !includes(permissions, 'w');
-
-    return (
-      <AppContainer navbarItems={navigation}>
-        <ToolMetaData
-          tool={tool}
-          readOnly={readOnly}
-          onSave={this.save}
-          saveButton={true}
-          onReset={this.handleReset}
-          isDirty={isDirty}
-        />
-        <ToolGrid rows={1}>
-          <Background parameters={parameters}/>
-          <Parameters
-            parameters={parameters.map(p => SliderParameter.fromObject(p))}
-            handleChange={this.handleChangeParameters}
-            handleReset={this.handleReset}
-          />
-        </ToolGrid>
-      </AppContainer>
-    );
-  }
-}
-
-T13DContainer.propTypes = {
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired,
+const defaults: IT13D = {
+  parameters: [{
+    inputType: 'SLIDER',
+    label: '',
+    parseValue: parseFloat,
+    type: 'int',
+    order: 0,
+    id: 'W',
+    name: 'Average infiltration rate<br/>W [m/d]',
+    min: 0.001,
+    max: 0.01,
+    value: 0.00112,
+    stepSize: 0.0001,
+    decimals: 5,
+    disable: false,
+  }, {
+    inputType: 'SLIDER',
+    label: '',
+    parseValue: parseFloat,
+    type: 'int',
+    order: 1,
+    id: 'K',
+    name: 'Hydraulic conductivity<br/>K [m/d]',
+    min: 0.1,
+    max: 1000,
+    value: 30.2,
+    stepSize: 0.1,
+    decimals: 1,
+    disable: false,
+  }, {
+    inputType: 'SLIDER',
+    label: '',
+    parseValue: parseFloat,
+    type: 'int',
+    order: 2,
+    id: 'L',
+    name: 'Aquifer length<br/>L [m]',
+    min: 0,
+    max: 1000,
+    value: 1000,
+    stepSize: 10,
+    decimals: 0,
+    disable: false,
+  }, {
+    inputType: 'SLIDER',
+    label: '',
+    parseValue: parseFloat,
+    type: 'int',
+    order: 3,
+    id: 'hL',
+    name: 'Downstream head<br/>h<sub>L</sub> [m]',
+    min: 0,
+    max: 10,
+    value: 2,
+    stepSize: 0.1,
+    decimals: 1,
+    disable: false,
+  }, {
+    inputType: 'SLIDER',
+    label: '',
+    parseValue: parseFloat,
+    type: 'int',
+    order: 4,
+    id: 'h0',
+    name: 'Upstream head<br/>h<sub>e</sub> [m]',
+    min: 0,
+    max: 10,
+    value: 5,
+    stepSize: 0.1,
+    decimals: 1,
+    disable: false,
+  }],
 };
 
-export default withSession(withRouter(T13DContainer));
+const T13DContainer = () => {
+
+  const [data, setData] = useState<IT13D>(defaults);
+  const handleChangeParameters = (parameters: IT13A['parameters']) => {
+    setData((prevState) => ({
+      ...prevState,
+      parameters: [...parameters],
+    }));
+  };
+  const handleReset = () => {
+    setData(defaults);
+  };
+
+  return (
+    <SimpleToolGrid rows={2}>
+      <BackgroundT13D parameters={data.parameters}/>
+      <Parameters
+        parameters={data.parameters}
+        onChange={handleChangeParameters}
+        onReset={handleReset}
+      />
+    </SimpleToolGrid>
+  );
+};
+
+export default T13DContainer;

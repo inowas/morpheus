@@ -1,4 +1,4 @@
-import {ICalculateDiagramDataT13, ICalculateDiagramDataT13B} from '../types/T13.type';
+import {ICalculateDiagramDataT13, ICalculateDiagramDataT13B, ICalculateDiagramDataT13E} from '../types/T13.type';
 
 export function calculateTravelTimeT13A(x: number, w: number, K: number, ne: number, L: number, hL: number, xMin: number) {
   const small = 1e-12;
@@ -36,6 +36,10 @@ export function calculateTravelTimeT13C(x: number, w: number, K: number, ne: num
   const root5 = Math.sqrt((alpha / (x * x)) - 1);
   const ln = Math.log((Math.sqrt(alpha) / xi + root4) / (Math.sqrt(alpha) / x + root5));
   return ne * root1 * (x * root2 - xi * root3 + ln);
+}
+
+export function calculateTravelTimeT13E(xi: number, h0: number, hL: number, x: number, ne: number, Qw: number) {
+  return (0.95 * h0 + 0.05 * hL) * Math.PI * (xi ** 2 - x ** 2) * ne / Qw;
 }
 
 export function calculateDiagramDataT13A({w, K, ne, L, hL, xMin, xMax, dX}: ICalculateDiagramDataT13) {
@@ -82,6 +86,17 @@ export function calculateDiagramDataT13C({w, K, ne, L, hL, xMin, xMax, dX}: ICal
     data.push({
       x,
       t: calculateTravelTimeT13C(x, w, K, ne, L, hL, xMin),
+    });
+  }
+  return data;
+}
+
+export function calculateDiagramDataT13E({Qw, ne, hL, h0, x, xi}: ICalculateDiagramDataT13E) {
+  const data = [];
+  for (let i = x; i <= xi; i += 10) {
+    data.push({
+      x: i,
+      t: calculateTravelTimeT13E(i, h0, hL, x, ne, Qw),
     });
   }
   return data;

@@ -148,7 +148,7 @@ const ChartT13A = ({parameters}: IProps) => {
                 isAnimationActive={false}
                 type="basis"
                 dataKey={'t'}
-                stroke="#4C4C4C"
+                stroke="#1EB1ED"
                 strokeWidth="5"
                 dot={false}
                 fillOpacity={1}

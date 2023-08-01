@@ -26,13 +26,16 @@ export interface ICalculateDiagramDataT13B {
   dX: number;
 }
 
+export interface ICalculateDiagramDataT13E {
+  Qw: number;
+  ne: number;
+  hL: number;
+  h0: number;
+  x: number;
+  xi: number;
+}
+
 export interface IT13A {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string;
-  public: boolean;
-  tool: string;
   parameters: {
     order: number;
     id: string;
@@ -50,12 +53,6 @@ export interface IT13A {
 }
 
 export interface IT13B {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string;
-  public: boolean;
-  tool: string;
   parameters: {
     order: number;
     id: string;
@@ -77,12 +74,6 @@ export interface IT13B {
 }
 
 export interface IT13C {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string;
-  public: boolean;
-  tool: string;
   parameters: {
     order: number;
     id: string;
@@ -92,6 +83,42 @@ export interface IT13C {
     value: number;
     stepSize: number;
     decimals: number;
+    inputType: IInputType;
+    label: string;
+    parseValue: (value: string) => number;
+    type: string,
+  }[];
+}
+
+export interface IT13D {
+  parameters: {
+    order: number;
+    id: string;
+    name: string;
+    min: number;
+    max: number;
+    value: number;
+    stepSize: number;
+    decimals: number;
+    disable?: boolean;
+    inputType: IInputType;
+    label: string;
+    parseValue: (value: string) => number;
+    type: string,
+  }[];
+}
+
+export interface IT13E {
+  parameters: {
+    order: number;
+    id: string;
+    name: string;
+    min: number;
+    max: number;
+    value: number;
+    stepSize: number;
+    decimals: number;
+    disable?: boolean;
     inputType: IInputType;
     label: string;
     parseValue: (value: string) => number;

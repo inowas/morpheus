@@ -5,13 +5,6 @@ import {IT13C} from '../../types/T13.type';
 import image from '../images/T13C.png';
 
 const defaults: IT13C = {
-  // FIXME npm i uuidv4 (id: uuidv4())
-  id: '123',
-  name: 'New simple tool',
-  description: 'Simple tool description',
-  permissions: 'rwx',
-  public: false,
-  tool: 'T13C',
   parameters: [{
     inputType: 'SLIDER',
     label: '',
@@ -118,7 +111,7 @@ const defaults: IT13C = {
     decimals: 0,
   }],
 };
-const T13BContainer = () => {
+const T13CContainer = () => {
 
   const [data, setData] = useState<IT13C>(defaults);
   const handleChangeParameters = (parameters: IT13C['parameters']) => {
@@ -131,17 +124,6 @@ const T13BContainer = () => {
 
   return (
     <>
-      // FIXME add ToolMetaData ?
-      {/*<ToolMetaData*/}
-      {/*  isDirty={isDirty}*/}
-      {/*  onSave={handleSave}*/}
-      {/*  saveButton={true}*/}
-      {/*  readOnly={true}*/}
-      {/*  tool={tool}*/}
-      {/*  onReset={handleReset}*/}
-      {/*  toolNames={toolNames}*/}
-      {/*  navigateTo={navigateTo}*/}
-      {/*/>*/}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={'T13C. Aquifer system with a flow divide outside of the system'}/>
         <ChartT13C
@@ -158,4 +140,4 @@ const T13BContainer = () => {
   );
 };
 
-export default T13BContainer;
+export default T13CContainer;

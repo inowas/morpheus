@@ -160,7 +160,7 @@ const ChartT13B = ({parameters, settings}: IProps) => {
               <CartesianGrid strokeDasharray="3 3"/>
               <Line
                 isAnimationActive={false} type="basis"
-                dataKey={'t'} stroke="#4C4C4C"
+                dataKey={'t'} stroke="#1EB1ED"
                 strokeWidth="5" dot={false}
                 fillOpacity={1}
               />
