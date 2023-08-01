@@ -7,10 +7,10 @@ interface ItemProps {
   submenus: IMenuItem[];
   dropdown: boolean;
   depthLevel: number;
-  handleCloseMobileMenu: () => void;
+  onCloseMobileMenu: () => void;
 }
 
-const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, handleCloseMobileMenu}) => {
+const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseMobileMenu}) => {
   depthLevel = depthLevel + 1;
 
   return (
@@ -22,7 +22,7 @@ const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, handleCl
           items={submenuitem}
           key={idx}
           depthLevel={depthLevel}
-          handleCloseMobileMenu={handleCloseMobileMenu}
+          onCloseMobileMenu={onCloseMobileMenu}
         />
       ))}
     </ul>
