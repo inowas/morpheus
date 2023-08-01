@@ -1,9 +1,9 @@
 import React, {ReactNode, useState} from 'react';
 
 import Header from '../components/Header';
-import {useNavigate} from 'react-router-dom';
 import {useNavbarItems} from '../../application';
 import {ContentWrapper, Footer, Navbar} from 'components';
+import {useNavigate} from '../../../common/hooks';
 
 interface IProps {
   children: ReactNode;
@@ -12,16 +12,15 @@ interface IProps {
 type ILanguageCode = 'de-DE' | 'en-GB';
 
 const ApplicationContainer = ({children}: IProps) => {
-  const navigateTo = useNavigate();
   const {navbarItems} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>('de-DE');
+  const navigateTo = useNavigate();
 
   return (
     <>
       <Header>
         <Navbar
           navbarItems={navbarItems}
-          navigateTo={navigateTo}
           languageList={[
             {
               code: 'de-DE',
@@ -34,6 +33,7 @@ const ApplicationContainer = ({children}: IProps) => {
           ]}
           language={language}
           onChangeLanguage={setLanguage}
+          navigateTo={navigateTo}
         />
       </Header>
       <ContentWrapper minHeight={'100vh'}>

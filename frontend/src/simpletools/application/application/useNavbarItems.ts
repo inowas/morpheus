@@ -5,31 +5,31 @@ const navBarItems: INavbarItem[] = [
     name: 'Home',
     label: 'Home',
     admin: false,
-    basepath: '/1',
+    basepath: '/',
     subMenu: [
       {
         name: 'About us',
         label: 'About us',
         admin: false,
-        to: '/1',
+        to: '/About us',
       },
       {
         name: 'Software releases',
         label: 'Software releases',
         admin: false,
-        to: '/2',
+        to: '/Software releases',
       },
       {
         name: 'Publications',
         label: 'Publications',
         admin: false,
-        to: '/3',
+        to: '/Publications',
       },
       {
         name: 'Projects',
         label: 'Projects',
         admin: false,
-        to: '/4',
+        to: '/Projects',
       },
     ],
   },
@@ -37,7 +37,7 @@ const navBarItems: INavbarItem[] = [
     name: 'Tools',
     label: 'Tools',
     admin: false,
-    basepath: '/',
+    basepath: '/Tools',
     subMenu: [
       {
         name: 'T02',
@@ -117,13 +117,13 @@ const navBarItems: INavbarItem[] = [
     name: 'Modflow',
     label: 'Modflow',
     admin: false,
-    to: '/',
+    to: '/Modflow',
   },
   {
     name: 'Support',
     label: 'Support',
     admin: false,
-    to: '/',
+    to: '/Support',
   },
   {
     name: 'News',
