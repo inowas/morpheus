@@ -3,6 +3,7 @@ import React, {ReactNode, useState} from 'react';
 import Header from '../components/Header';
 import {useNavbarItems} from '../../application';
 import {ContentWrapper, Footer, Navbar} from 'components';
+import {useNavigate} from '../../../common/hooks';
 
 interface IProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ type ILanguageCode = 'de-DE' | 'en-GB';
 const ApplicationContainer = ({children}: IProps) => {
   const {navbarItems} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>('de-DE');
+  const navigateTo = useNavigate();
 
   return (
     <>
@@ -31,6 +33,7 @@ const ApplicationContainer = ({children}: IProps) => {
           ]}
           language={language}
           onChangeLanguage={setLanguage}
+          navigateTo={navigateTo}
         />
       </Header>
       <ContentWrapper minHeight={'100vh'}>
