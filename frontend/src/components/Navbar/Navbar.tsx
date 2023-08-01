@@ -5,18 +5,20 @@ import NavTop from './NavTop/NavTop';
 import NavBottom from './NavBottom/NavBottom';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
+type ILanguageList = Array<{
+  code: ILanguageCode;
+  label: string;
+}>;
 
 interface IProps {
   navbarItems: INavbarItem[];
   language: ILanguageCode;
-  languageList: {
-    code: ILanguageCode;
-    label: string;
-  }[]
+  languageList: ILanguageList;
   onChangeLanguage: (language: ILanguageCode) => void;
+  navigateTo: (path: string) => void;
 }
 
-const Navbar = ({navbarItems, language, languageList, onChangeLanguage}: IProps) => {
+const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo}: IProps) => {
 
   return (
     <>
@@ -25,6 +27,7 @@ const Navbar = ({navbarItems, language, languageList, onChangeLanguage}: IProps)
           language={language}
           languageList={languageList}
           onChangeLanguage={onChangeLanguage}
+          navigateTo={navigateTo}
         />
       </div>
       <NavBottom navbarItems={navbarItems}/>
