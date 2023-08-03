@@ -2,6 +2,7 @@ import React from 'react';
 import {Route, Routes} from 'react-router-dom';
 import T02Container from 'simpletools/T02/presentation/containers/T02Container';
 import T08Container from 'simpletools/T08/presentation/containers/T08Container';
+import T18Container from 'simpletools/T18/presentation/containers/T18Container';
 import DashboardContainer from './application/presentation/containers/DashboardContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
@@ -19,6 +20,7 @@ const Router = () => {
       <Route path="/" element={wrapRouteComponent(<DashboardContainer/>)}/>
       <Route path="/T02" element={wrapRouteComponent(<T02Container/>)}/>
       <Route path="/T08" element={wrapRouteComponent(<T08Container/>)}/>
+      <Route path="/T18" element={wrapRouteComponent(<T18Container/>)}/>
       <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
     </Routes>
