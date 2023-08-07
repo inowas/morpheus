@@ -7,6 +7,7 @@ import image13B from '../images/T13B.png';
 import image13C from '../images/T13C.png';
 import image13D from '../images/T13D.png';
 import image13E from '../images/T13E.png';
+import BreadcrumbComponent from '../../../../components/BreadcrumbComponent/BreadcrumbComponent';
 
 interface Item {
   tool: string;
@@ -52,7 +53,8 @@ const T13 = () => {
 
   const navigateTo = useNavigate();
   const redirectTo = (path: string): void => {
-    navigateTo(`/tools/${path}`);
+    navigateTo(`/tools/${path}`, {state: {text: 'T13', path: '/T13', title: 'T13: Some title'}});
+
   };
 
   const [isHovered, setIsHovered] = useState('');
@@ -99,6 +101,7 @@ const T13 = () => {
 
   return (
     <div>
+      <BreadcrumbComponent items={[{text: 'T13', path: '/T13', title: 'T13: Some title'}]}/>
       <Header
         as={'h3'}
         style={{paddingTop: '40px'}}
