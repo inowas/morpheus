@@ -2,6 +2,7 @@ import React from 'react';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import T02Container from 'simpletools/T02/presentation/containers/T02Container';
 import T08Container from 'simpletools/T08/presentation/containers/T08Container';
+import T18Container from 'simpletools/T18/presentation/containers/T18Container';
 import {T09AContainer, T09BContainer, T09CContainer, T09Container, T09DContainer, T09EContainer, T09FContainer} from 'simpletools/T09/presentation/containers';
 import DashboardContainer from './application/presentation/containers/DashboardContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';

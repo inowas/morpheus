@@ -1,6 +1,5 @@
 type IInputType = 'SLIDER' | 'NUMBER' | 'RADIO_SELECT' | 'SELECT_NAME';
 
-
 export interface IT08 {
   id: string;
   name: string;
