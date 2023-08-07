@@ -35,94 +35,44 @@ export interface ICalculateDiagramDataT13E {
   xi: number;
 }
 
+export interface IParameter {
+  decimals: number;
+  id: string;
+  inputType: IInputType;
+  label: string;
+  min: number;
+  max: number;
+  name: string;
+  order: number;
+  stepSize: number;
+  type: string,
+  validMax?: (value: number) => boolean;
+  validMin?: (value: number) => boolean;
+  value: number;
+  parseValue: (value: string) => number;
+}
+
 export interface IT13A {
-  parameters: {
-    order: number;
-    id: string;
-    name: string;
-    min: number;
-    max: number;
-    value: number;
-    stepSize: number;
-    decimals: number;
-    inputType: IInputType;
-    label: string;
-    parseValue: (value: string) => number;
-    type: string,
-  }[];
+  parameters: IParameter[];
 }
 
 export interface IT13B {
-  parameters: {
-    order: number;
-    id: string;
-    name: string;
-    min: number;
-    max: number;
-    value: number;
-    stepSize: number;
-    decimals: number;
-    disable?: boolean;
-    inputType: IInputType;
-    label: string;
-    parseValue: (value: string) => number;
-    type: string,
-  }[];
+  parameters: IParameter[];
   settings: {
     selected: number;
   };
 }
 
 export interface IT13C {
-  parameters: {
-    order: number;
-    id: string;
-    name: string;
-    min: number;
-    max: number;
-    value: number;
-    stepSize: number;
-    decimals: number;
-    inputType: IInputType;
-    label: string;
-    parseValue: (value: string) => number;
-    type: string,
-  }[];
+  parameters: IParameter[];
 }
 
 export interface IT13D {
-  parameters: {
-    order: number;
-    id: string;
-    name: string;
-    min: number;
-    max: number;
-    value: number;
-    stepSize: number;
-    decimals: number;
-    disable?: boolean;
-    inputType: IInputType;
-    label: string;
-    parseValue: (value: string) => number;
-    type: string,
-  }[];
+  parameters: IParameter[];
 }
 
 export interface IT13E {
-  parameters: {
-    order: number;
-    id: string;
-    name: string;
-    min: number;
-    max: number;
-    value: number;
-    stepSize: number;
-    decimals: number;
-    disable?: boolean;
-    inputType: IInputType;
-    label: string;
-    parseValue: (value: string) => number;
-    type: string,
-  }[];
+  parameters: IParameter[];
 }
+
 
