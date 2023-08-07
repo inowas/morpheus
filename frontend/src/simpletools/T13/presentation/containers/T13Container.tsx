@@ -70,7 +70,7 @@ const T13 = () => {
         as={Segment}
         color={'blue'}
         style={{cursor: 'pointer', marginBottom: '1em'}} padded={true}
-        dimmed={isHovered === i.tool ? true : false}
+        dimmed={isHovered === i.tool}
         onMouseEnter={() => handleMouseEnter(i.tool)}
         onMouseLeave={() => handleMouseLeave()}
       >
@@ -84,7 +84,7 @@ const T13 = () => {
         >{i.tool}</Header>
         <p><strong>{i.name}</strong>&nbsp;{i.description}</p>
         <Dimmer
-          inverted={true} active={isHovered === i.tool ? true : false}
+          inverted={true} active={isHovered === i.tool}
         >
           <Button
             icon={true} primary={true}
