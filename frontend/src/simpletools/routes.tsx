@@ -30,13 +30,13 @@ const Router = () => {
       <Route path="/tools/T09D" element={wrapRouteComponent(<T09DContainer/>)}/>
       <Route path="/tools/T09E" element={wrapRouteComponent(<T09EContainer/>)}/>
       <Route path="/tools/T09F" element={wrapRouteComponent(<T09FContainer/>)}/>
-      <Route path="/T13" element={wrapRouteComponent(<T13Container/>)}/>
-      <Route path="/T13A" element={wrapRouteComponent(<T13AContainer/>)}/>
-      <Route path="/T13B" element={wrapRouteComponent(<T13BContainer/>)}/>
-      <Route path="/T13C" element={wrapRouteComponent(<T13CContainer/>)}/>
-      <Route path="/T13D" element={wrapRouteComponent(<T13DContainer/>)}/>
-      <Route path="/T13E" element={wrapRouteComponent(<T13EContainer/>)}/>
-      <Route path="/T18" element={wrapRouteComponent(<T18Container/>)}/>
+      <Route path="/tools/T13" element={wrapRouteComponent(<T13Container/>)}/>
+      <Route path="/tools/T13A" element={wrapRouteComponent(<T13AContainer/>)}/>
+      <Route path="/tools/T13B" element={wrapRouteComponent(<T13BContainer/>)}/>
+      <Route path="/tools/T13C" element={wrapRouteComponent(<T13CContainer/>)}/>
+      <Route path="/tools/T13D" element={wrapRouteComponent(<T13DContainer/>)}/>
+      <Route path="/tools/T13E" element={wrapRouteComponent(<T13EContainer/>)}/>
+      <Route path="/tools/T18" element={wrapRouteComponent(<T18Container/>)}/>
       <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
     </Routes>

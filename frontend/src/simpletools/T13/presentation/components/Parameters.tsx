@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
-import {IT13A} from '../../types/T13.type';
-
-type IParameter = IT13A['parameters'][0];
+import {IParameter} from '../../types/T13.type';
 
 interface IProps {
   parameters: IParameter[];
