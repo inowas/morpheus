@@ -31,6 +31,17 @@ const InfoT09E = ({parameters, settings}: IProps) => {
 
     data = calculateDiagramData(xt, z0, xtSlr, z0 + dz, isValid);
 
+    if (2 > data.length) {
+      return <Message icon={true} info={true}>
+        <Icon name="info circle" color="blue"/>
+        <Message.Content>
+          <p>
+            Invalid input parameters. Please check the input parameters.
+          </p>
+        </Message.Content>
+      </Message>;
+    }
+
     return (
       <Message icon={true} info={true}>
         <Icon name="info circle" color="blue"/>

@@ -65,13 +65,14 @@ const renderLabels = (maxIter: boolean, valid: boolean, dxt: number): React.Reac
 const ChartT09E = ({parameters, settings}: IProps) => {
 
   const {k, z0, l, w, dz, hi, i, df, ds} = getParameterValues(parameters);
-  const {method} = settings;
+  const method = settings.method || 'constHead';
 
   let data: any[];
   let dxt: number;
   let maxIter: boolean = false;
   let isValid: boolean = true;
   const alpha = dRho(df, ds);
+
 
   if ('constHead' === method) {
     const xtQ0Head1 = calcXtQ0Head(k, z0, 0, l, w, hi, alpha);
@@ -82,7 +83,7 @@ const ChartT09E = ({parameters, settings}: IProps) => {
     const xtQ0Head2 = calcXtQ0Head(k, z0, dz, l, w, hi - dz, alpha);
     const xtSlr = xtQ0Head2[0]; // slr: after sea level rise
 
-    if (false === maxIter) {
+    if (!maxIter) {
       maxIter = xtQ0Head2[2];
     }
 
@@ -92,15 +93,10 @@ const ChartT09E = ({parameters, settings}: IProps) => {
 
     dxt = xtSlr - xt;
     data = calculateDiagramData(xt, z0, xtSlr, dz, isValid);
-    console.log(data, 'constHead');
-  }
-
-  if ('constFlux' === method) {
+  } else {
     const [xt, xtSlr] = calcXtQ0Flux(k, z0, dz, l, w, i, alpha);
     dxt = xtSlr - xt;
     data = calculateDiagramData(xt, z0, xtSlr, dz, isValid);
-    console.log(data, 'constFlux');
-
   }
 
   return (
@@ -155,28 +151,30 @@ const ChartT09E = ({parameters, settings}: IProps) => {
                 dot={false}
                 strokeDasharray="15 15"
               />
-              <ReferenceLine
-                y={data[1].z0}
-                stroke="black"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-                label={{position: 'left', value: 'z₀'}}
-
-              />
-              <ReferenceLine
-                x={data[1].xt}
-                stroke="black"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-                label={{position: 'top', value: 'xt'}}
-              />
-              <ReferenceLine
-                x={data[2].xt}
-                stroke="black"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-                label={{position: 'top', value: 'xt\''}}
-              />
+              {1 < data.length &&
+                <ReferenceLine
+                  y={data[1].z0}
+                  stroke="black"
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                  label={{position: 'left', value: 'z₀'}}
+                />}
+              {1 < data.length &&
+                <ReferenceLine
+                  x={data[1].xt}
+                  stroke="black"
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                  label={{position: 'top', value: 'xt'}}
+                />}
+              {2 < data.length &&
+                <ReferenceLine
+                  x={data[2].xt}
+                  stroke="black"
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                  label={{position: 'top', value: 'xt\''}}
+                />}
             </LineChart>
           </ResponsiveContainer>
           <Segment raised={true} style={styles.diagramLabel}>
