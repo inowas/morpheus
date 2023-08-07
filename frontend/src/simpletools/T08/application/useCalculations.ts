@@ -98,6 +98,7 @@ export function calculateDiagramData(settings: IT08['data']['settings'], vx: num
       //tStart = 1;
       dt = 1;
     }
+
     for (let t = 0; t <= tMax; t += dt) {
       if (t < tauMax) {
         data.push({

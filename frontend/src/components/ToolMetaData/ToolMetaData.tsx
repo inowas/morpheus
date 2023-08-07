@@ -69,7 +69,7 @@ const ToolMetaData = ({isDirty, onSave, saveButton, onReset, tool, toolNames, na
 
 
   return (
-    <div>
+    <div style={{position: 'relative', zIndex: 1, paddingTop: 40}}>
       <Grid padded={true}>
         <Grid.Column style={{paddingTop: 0, paddingBottom: 0}}>
           {renderBreadcrumbs()}
