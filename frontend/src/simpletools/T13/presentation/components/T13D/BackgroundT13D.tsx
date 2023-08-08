@@ -48,7 +48,7 @@ const BackgroundT13D = ({parameters}: IProps) => {
         <strong
           style={{color: '#1EB1ED', cursor: 'pointer', paddingLeft: '0.5em'}}
           onClick={() => {
-            navigateTo('/' + tool(+xwd).href);
+            navigateTo('/tools/' + tool(+xwd).href);
           }}
         >
           {tool(+xwd).name}

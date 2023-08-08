@@ -1,0 +1,56 @@
+import React from 'react';
+import {Icon, Message} from 'semantic-ui-react';
+import {getParameterValues} from '../../../../common/helpers';
+import {calcLambda, calcMu, calculateQCrit, calcXt} from '../../../application/useCalculationsT09D';
+import {IT09D} from '../../../types/T09.type';
+
+interface IProps {
+  parameters: IT09D['parameters'];
+  settings: IT09D['settings'];
+}
+
+const InfoT09D = ({parameters, settings}: IProps) => {
+  const {k, b, q, Q, xw, rhof, rhos} = getParameterValues(parameters);
+  const {AqType} = settings;
+
+  const lambda = calcLambda(k, b, q, xw, rhof, rhos, AqType);
+  const mu = calcMu(lambda);
+  const qCrit = calculateQCrit(q, mu, xw);
+  const xT = calcXt(k, b, q, Q, xw, rhof, rhos);
+
+  if (Q >= qCrit) {
+    return (
+      <Message icon={true} warning={true}>
+        <Icon name="exclamation triangle" color="orange"/>
+        <Message.Content>
+          <p>
+            With the chosen pumping rate of <strong>{Q.toFixed(0)} m³/d</strong>, seawater will intrude
+            about <strong>{xT.toFixed(1)} m</strong> inland, which is
+            higher than the distance from the well to the coast line.<br/>
+            Seawater will most likely intrude the well.<br/>
+            The critical well discharge is <strong>{qCrit.toFixed(0)} m³/d</strong>.<br/>
+            The pumping rate needs to be kept below that threshold so that seawater will not intrude the
+            well.
+          </p>
+        </Message.Content>
+      </Message>
+    );
+  }
+
+  return (
+    <Message icon={true} info={true}>
+      <Icon name="info circle" color="blue"/>
+      <Message.Content>
+        <p>
+          With the chosen pumping rate of <strong>{Q.toFixed(0)} m³/d</strong>, seawater will intrude
+          about <strong>{xT.toFixed(1)} m</strong> inland, which is lower than
+          the distance from the well to the coast line and hence no seawater will intrude the well.<br/>
+          The critical well discharge is <strong>{qCrit.toFixed(0)} m³/d</strong>.<br/>
+          The pumping rate needs to be kept below that threshold so that seawater will not intrude the well.
+        </p>
+      </Message.Content>
+    </Message>
+  );
+};
+
+export default InfoT09D;

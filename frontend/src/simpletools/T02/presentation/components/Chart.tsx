@@ -176,10 +176,10 @@ const Chart = ({settings, parameters, mounding}: IProps) => {
               </YAxis>
               <CartesianGrid strokeDasharray="3 3"/>
               <Line
-                isAnimationActive={false}
+                isAnimationActive={true}
+                stroke="#1EB1ED"
                 type="basis"
                 dataKey={'hhi'}
-                stroke="#1EB1ED"
                 strokeWidth="5" dot={false}
               />
               <ReferenceLine
