@@ -17,6 +17,5 @@ root.render(
     >
       <App/>
     </I18nextProvider>
-  </Suspense>
-  ,
+  </Suspense>,
 );
