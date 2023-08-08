@@ -3,7 +3,6 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13A, InfoT13A, Parameters} from '../components/';
 import {IT13A} from '../../types/T13.type';
 import image from '../images/T13A.png';
-import BreadcrumbComponent from '../../../../components/BreadcrumbComponent/BreadcrumbComponent';
 
 const defaults: IT13A = {
   parameters: [{
@@ -115,7 +114,6 @@ const T13AContainer = () => {
 
   return (
     <>
-      <BreadcrumbComponent items={[{text: 'T13A', path: '/T13A', title: 'T13A. Travel time // Aquifer system with a no-flow boundary and fixed head boundary condition'}]}/>
       <SimpleToolGrid rows={2}>
         <Background image={image} title={'T13A. Travel time // Aquifer system with a no-flow boundary and fixed head boundary condition'}/>
         <ChartT13A

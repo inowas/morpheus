@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import SimpleToolGrid from 'components/SimpleToolGrid';
-import {IT13A, IT13D} from '../../types/T13.type';
+import {IT13D} from '../../types/T13.type';
 import {BackgroundT13D, Parameters} from '../components';
 
 const defaults: IT13D = {
@@ -17,7 +17,6 @@ const defaults: IT13D = {
     value: 0.00112,
     stepSize: 0.0001,
     decimals: 5,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -31,7 +30,6 @@ const defaults: IT13D = {
     value: 30.2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -45,7 +43,6 @@ const defaults: IT13D = {
     value: 1000,
     stepSize: 10,
     decimals: 0,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -59,7 +56,6 @@ const defaults: IT13D = {
     value: 2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -73,14 +69,13 @@ const defaults: IT13D = {
     value: 5,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }],
 };
 
 const T13DContainer = () => {
 
   const [data, setData] = useState<IT13D>(defaults);
-  const handleChangeParameters = (parameters: IT13A['parameters']) => {
+  const handleChangeParameters = (parameters: IT13D['parameters']) => {
     setData((prevState) => ({
       ...prevState,
       parameters: [...parameters],

@@ -59,7 +59,7 @@ const T09 = () => {
 
   const navigateTo = useNavigate();
   const redirectTo = (path: string): void => {
-    navigateTo(`/tools/${path}`);
+    navigateTo(`/tools/T09/${path}`);
   };
 
   const [isHovered, setIsHovered] = useState('');
