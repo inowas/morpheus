@@ -1,0 +1,117 @@
+stages:
+  - test
+  - build
+  - deploy
+
+image:
+  ubuntu:22.04
+
+test:
+  image: node:20
+  stage: test
+
+  script:
+    - cd frontend
+    - make install-ci
+    - make test-ci
+
+build:dev:
+  image: node:20
+  stage: build
+
+  script:
+    - cd frontend
+    - make install-ci
+    - make build
+
+  artifacts:
+    paths:
+      - frontend/build/
+
+  only:
+    - dev
+
+deploy:dev:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - build:dev
+
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_DEVELOPMENT")
+    - apt-get install rsync -y
+  script:
+    - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "mkdir -p $DEVELOPMENT_PATH.tmp/"
+    - rsync -rav -e ssh ./build/ $SSH_CREDENTIALS_DEVELOPMENT_SERVER:/$DEVELOPMENT_PATH.tmp/
+    - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "mv $DEVELOPMENT_PATH $DEVELOPMENT_PATH.old"
+    - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "mv $DEVELOPMENT_PATH.tmp $DEVELOPMENT_PATH"
+    - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "rm -rf $DEVELOPMENT_PATH.old"
+  environment:
+    name: development
+    url: https://dev.morpheus.inowas.com
+  only:
+    - dev
+
+build:prod:
+  image: node:20
+  stage: build
+  script:
+    - cd frontend
+    - make install-ci
+    - make build
+  artifacts:
+    paths:
+      - build/
+  only:
+    - tags
+
+deploy:prod:staging:
+  stage: deploy
+  dependencies:
+    - build:prod
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_STAGING")
+    - apt-get install rsync -y
+  script:
+    - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "mkdir -p $STAGING_PATH.tmp/"
+    - rsync -rav -e ssh ./build/ $SSH_CREDENTIALS_STAGING_SERVER:/$STAGING_PATH.tmp/
+    - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "mv $STAGING_PATH $STAGING_PATH.old"
+    - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "mv $STAGING_PATH.tmp $STAGING_PATH"
+    - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "rm -rf $STAGING_PATH.old"
+  environment:
+    name: staging
+    url: https://staging.morpheus.inowas.com
+  only:
+    - tags
+
+deploy:prod:production:
+  stage: deploy
+  dependencies:
+    - build:prod
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_PRODUCTION")
+    - apt-get install rsync -y
+  script:
+    - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "mkdir -p $PRODUCTION_PATH.tmp/"
+    - rsync -rav -e ssh ./build/ $SSH_CREDENTIALS_PRODUCTION_SERVER:/$PRODUCTION_PATH.tmp/
+    - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "mv $PRODUCTION_PATH $PRODUCTION_PATH.old"
+    - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "mv $PRODUCTION_PATH.tmp $PRODUCTION_PATH"
+    - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "rm -rf $PRODUCTION_PATH.old"
+  environment:
+    name: production
+    url: https://morpheus.inowas.com
+  when: manual
+  only:
+    - tags
