@@ -1,7 +1,7 @@
 import {renderHook} from '@testing-library/react-hooks';
 import useTranslate from '../useTranslate';
 
-jest.mock('app/common/hooks', () => ({
+jest.mock('simpletools/common/hooks', () => ({
   useTranslation: () => ({
     translate: (key: string) => key.toUpperCase(),
     language: 'en',
