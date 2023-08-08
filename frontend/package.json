@@ -4,6 +4,7 @@
     "@sentry/react": "^7.61.1",
     "@sentry/tracing": "^7.61.1",
     "axios": "^1.4.0",
+    "browserslist": "^4.21.10",
     "date-fns": "^2.29.3",
     "history": "^5.3.0",
     "i18next": "^22.4.11",
