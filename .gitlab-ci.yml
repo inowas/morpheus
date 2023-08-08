@@ -29,7 +29,7 @@ build:dev:
       - frontend/build/
 
   only:
-    - dev
+    - main
 
 deploy:dev:
   image: ubuntu:22.04
@@ -54,7 +54,7 @@ deploy:dev:
     name: development
     url: https://dev.morpheus.inowas.com
   only:
-    - dev
+    - main
 
 build:prod:
   image: node:20
