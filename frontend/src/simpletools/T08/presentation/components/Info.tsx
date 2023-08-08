@@ -5,7 +5,7 @@ import {SETTINGS_CASE_FIXED_TIME, SETTINGS_INFILTRATION_ONE_TIME} from '../conta
 import {getParameterValues} from '../../../common/helpers';
 import {IT08} from '../../types/T08.type';
 
-const renderContent = (settings: IT08['data']['settings'], t: number, c: number, x: number) => {
+const renderContent = (settings: IT08['settings'], t: number, c: number, x: number) => {
   if (settings.case === SETTINGS_CASE_FIXED_TIME) {
     return (
       <p>
@@ -27,8 +27,8 @@ const renderContent = (settings: IT08['data']['settings'], t: number, c: number,
 };
 
 interface IProps {
-  settings: IT08['data']['settings'];
-  parameters: IT08['data']['parameters'];
+  settings: IT08['settings'];
+  parameters: IT08['parameters'];
 }
 
 const Info = ({parameters, settings}: IProps) => {

@@ -5,8 +5,8 @@ import {SETTINGS_CASE_FIXED_TIME, SETTINGS_CASE_VARIABLE_TIME, SETTINGS_INFILTRA
 import {IT08} from '../../types/T08.type';
 
 interface IProps {
-  settings: IT08['data']['settings'];
-  onChange: (data: IT08['data']['settings']) => void;
+  settings: IT08['settings'];
+  onChange: (data: IT08['settings']) => void;
 }
 
 const Settings = ({settings, onChange}: IProps) => {
