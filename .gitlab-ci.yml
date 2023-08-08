@@ -26,7 +26,7 @@ build:dev:
 
   artifacts:
     paths:
-      - frontend/build/
+      - frontend/dist/
 
   only:
     - main
@@ -46,7 +46,7 @@ deploy:dev:
     - apt-get install rsync -y
   script:
     - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "mkdir -p $DEVELOPMENT_PATH.tmp/"
-    - rsync -rav -e ssh ./build/ $SSH_CREDENTIALS_DEVELOPMENT_SERVER:/$DEVELOPMENT_PATH.tmp/
+    - rsync -rav -e ssh ./frontend/dist/ $SSH_CREDENTIALS_DEVELOPMENT_SERVER:/$DEVELOPMENT_PATH.tmp/
     - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "mv $DEVELOPMENT_PATH $DEVELOPMENT_PATH.old"
     - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "mv $DEVELOPMENT_PATH.tmp $DEVELOPMENT_PATH"
     - ssh -p22 $SSH_CREDENTIALS_DEVELOPMENT_SERVER "rm -rf $DEVELOPMENT_PATH.old"
@@ -65,7 +65,7 @@ build:prod:
     - make build
   artifacts:
     paths:
-      - build/
+      - frontend/dist/
   only:
     - tags
 
@@ -82,7 +82,7 @@ deploy:prod:staging:
     - apt-get install rsync -y
   script:
     - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "mkdir -p $STAGING_PATH.tmp/"
-    - rsync -rav -e ssh ./build/ $SSH_CREDENTIALS_STAGING_SERVER:/$STAGING_PATH.tmp/
+    - rsync -rav -e ssh ./frontend/dist/ $SSH_CREDENTIALS_STAGING_SERVER:/$STAGING_PATH.tmp/
     - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "mv $STAGING_PATH $STAGING_PATH.old"
     - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "mv $STAGING_PATH.tmp $STAGING_PATH"
     - ssh -p22 $SSH_CREDENTIALS_STAGING_SERVER "rm -rf $STAGING_PATH.old"
@@ -105,7 +105,7 @@ deploy:prod:production:
     - apt-get install rsync -y
   script:
     - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "mkdir -p $PRODUCTION_PATH.tmp/"
-    - rsync -rav -e ssh ./build/ $SSH_CREDENTIALS_PRODUCTION_SERVER:/$PRODUCTION_PATH.tmp/
+    - rsync -rav -e ssh ./frontend/dist/ $SSH_CREDENTIALS_PRODUCTION_SERVER:/$PRODUCTION_PATH.tmp/
     - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "mv $PRODUCTION_PATH $PRODUCTION_PATH.old"
     - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "mv $PRODUCTION_PATH.tmp $PRODUCTION_PATH"
     - ssh -p22 $SSH_CREDENTIALS_PRODUCTION_SERVER "rm -rf $PRODUCTION_PATH.old"
