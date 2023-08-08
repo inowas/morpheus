@@ -3,66 +3,76 @@
 
 
 div.SimpleToolGrid {
-  font-family: Oxygen, "Helvetica Neue", Arial, Helvetica, sans-serif;
-  padding: 40px 0 !important;
+    font-family: Oxygen, "Helvetica Neue", Arial, Helvetica, sans-serif;
+    padding: 40px 0 !important;
 
-  @media (min-width: @breakpoint-desktop-small) {
-    width: 1280px;
-    transform: translateX(calc(0px - ((1280px - @largeMonitorWidth) / 2)));
-  }
+    @media (min-width: @breakpoint-desktop-small) {
+        width: 1280px;
+        transform: translateX(calc(0px - ((1280px - @largeMonitorWidth) / 2)));
+    }
 
-  @media (max-width: @breakpoint-tablet - 1 ) {
-    width: 100vw;
-  }
-
-  @media (max-width: @computerBreakpoint - 1 ) {
-    overflow-x: scroll;
-    margin: 0 -1rem !important;
-    padding: 40px 1rem !important;
-  }
-
-  &:before {
-    content: '';
-    position: absolute;
-    display: block;
-    width: 100vw;
-    min-height: calc(100vh + 80px);
-    height: calc(100% + 80px);
-    top: -80px;
-    left: calc(50% - 50vw);
-    z-index: 0;
-    background: #eff3f6;
-  }
-
-  &.containerGrid > div.row {
-    width: calc(100% + 28px) !important;
-    margin: 0 -14px;
+    @media (max-width: @breakpoint-tablet - 1 ) {
+        width: 100vw;
+    }
 
     @media (max-width: @computerBreakpoint - 1 ) {
-      min-width: 722px;
-      overflow: hidden;
+        overflow-x: scroll;
+        margin: 0 -1rem !important;
+        padding: 40px 1rem !important;
+    }
 
-      .column {
-        min-height: 200px;
-      }
+    &:before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100vw;
+        min-height: calc(100vh + 80px);
+        height: calc(100% + 80px);
+        top: -80px;
+        left: calc(50% - 50vw);
+        z-index: 0;
+        background: #eff3f6;
+    }
 
-      .column_s {
-        .segment img {
-          max-height: 350px;
-          object-fit: contain;
+    &.containerGrid > div.row {
+        width: calc(100% + 28px) !important;
+        margin: 0 -14px;
+
+        @media (max-width: @computerBreakpoint - 1 ) {
+            min-width: 722px;
+            overflow: hidden;
+
+            .column {
+                min-height: 200px;
+            }
+
+            .column_s {
+                .segment img {
+                    max-height: 350px;
+                    object-fit: contain;
+                }
+            }
+
+            .column_m {
+                margin-top: 28px !important;
+            }
         }
-      }
 
-      .column_m {
-        margin-top: 28px !important;
-      }
-    }
+        .segment {
+            border-radius: 0;
+            border: 0 solid #eee;
 
-    .segment {
-      border-radius: 0;
-      border: 0 solid #eee;
+            //@media (min-width: @computerBreakpoint) {
+            //    padding-right: 45px;
+            //}
+
+            @media (min-width: @breakpoint-desktop-small) {
+                button {
+                    margin-right: 20px !important;
+                }
+            }
+        }
     }
-  }
 }
 
 
