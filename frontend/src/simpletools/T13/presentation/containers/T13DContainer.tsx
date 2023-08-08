@@ -17,7 +17,6 @@ const defaults: IT13D = {
     value: 0.00112,
     stepSize: 0.0001,
     decimals: 5,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -31,7 +30,6 @@ const defaults: IT13D = {
     value: 30.2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -45,7 +43,6 @@ const defaults: IT13D = {
     value: 1000,
     stepSize: 10,
     decimals: 0,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -59,7 +56,6 @@ const defaults: IT13D = {
     value: 2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -73,7 +69,6 @@ const defaults: IT13D = {
     value: 5,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }],
 };
 
