@@ -38,6 +38,7 @@ const Header = ({children}: IProps) => {
       className={styles.header}
       style={{
         paddingTop: headerHeight,
+        zIndex: 10,
       }}
     >
       <div

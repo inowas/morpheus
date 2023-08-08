@@ -1,7 +1,7 @@
 import React from 'react';
 import ArticleGrid from '../components/ArticleGrid';
-import PageTitle from '../components/PageTitle';
 import articles from '../components/ArticleGrid/article.json';
+import PageTitle from '../components/PageTitle';
 
 const DashboardContainer = () => {
   return (

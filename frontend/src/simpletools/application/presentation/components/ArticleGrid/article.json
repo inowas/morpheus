@@ -1,58 +1,65 @@
 [
   {
     "id": 1,
-    "title": "T15: Quantitative microbial risk assessment",
-    "image": "https://inowas.com/wp-content/uploads/2021/11/3_probability-density-function-treatment-steps-e1635761071880-300x150.png",
-    "description": "The tool helps to quantify the pathogen occurrence in source water and their removal by various treatment steps at MAR facilities by using a probabilistic approach. The interactive web-based QMRa The tool helps to quantify the pathogen occurrence in source water and their removal by various treatment steps at MAR facilities by using a probabilistic approach. The interactive web-based",
-    "link": "https://example.com/article1"
-  },
-  {
-    "id": 2,
-    "title": "T20: Real-time modelling",
-    "image": "https://inowas.com/wp-content/uploads/2021/09/Screenshot-2021-10-15-at-16.54.44-300x150.png",
-    "description": "The real-time modelling tool allows a user to extend an existing numerical groundwater flow model with new sensor data. New stress periods are automatically added to the basis model using The real-time modelling tool allows a user to extend an existing numerical groundwater flow model with new sensor data. New stress periods are automatically added to the basis model",
-    "link": "https://example.com/article2"
-  },
-  {
-    "id": 3,
-    "title": "T19. Groundwater residence time",
-    "image": "https://inowas.com/wp-content/uploads/2021/03/Screenshot-2021-03-08-at-16.12.44-300x150.png",
-    "description": "Short description for article 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit Subsurface travel time from the area of recharge to the point of abstraction during MAR is a critical parameter to ensure sufficient attenuation for hygienic parameters and other undesired.",
-    "link": "https://example.com/article3"
+    "title": "T02. Groundwater Mounding Calculator",
+    "image": "T02",
+    "description": "The Groundwater Mounding Calculator is solving the Hantush analytical equation (Hantush, 1967) for groundwater mounding beneath an infiltration basin.",
+    "link": "T02"
   },
   {
     "id": 4,
-    "title": "Exploring the Wonders of Nature",
-    "image": "https://via.placeholder.com/300x150",
-    "description": "Embark on a journey to discover the breathtaking beauty of nature and its diverse ecosystems.",
-    "link": "https://example.com/article1"
+    "title": "T04. Database for GIS-based Suitability Mapping",
+    "image": "T04",
+    "description": "Query tool for the visualisation and assessment of different components of GIS-based multi-criteria decision analysis used in the selection of suitable sites for MAR implementation.",
+    "link": "T04"
   },
   {
     "id": 5,
-    "title": "The Art of Culinary Delights",
-    "image": "https://via.placeholder.com/300x150",
-    "description": "Delve into the world of culinary arts and savor the flavors of mouthwatering dishes from around the globe.",
-    "link": "https://example.com/article2"
+    "title": "T06. MAR Method Selection",
+    "image": "T06",
+    "description": "The data-driven tool provides support in the selection of suitable MAR methods based on the analysis of several hundreds of MAR case studies worldwide",
+    "link": "T06"
   },
   {
     "id": 6,
-    "title": "The Power of Meditation",
-    "image": "https://example.com/image",
-    "description": "Uncover the transformative benefits of meditation and learn practical techniques to find inner peace and mindfulness.",
-    "link": "https://example.com/article3"
+    "title": "T08. One-Dimensional Transport Equation",
+    "image": "T08",
+    "description": "This tool solves the 1D advection-dispersion equation using the Ogata-Banks solution as function of transport properties, source concentration, time of interest and distance from the source.",
+    "link": "T08"
   },
   {
     "id": 7,
-    "title": "Unlocking the Secrets of the Universe",
-    "image": "https://via.placeholder.com/300x150",
-    "description": "Embark on an astronomical adventure as we explore the mysteries of the universe and our place within it.",
-    "link": "https://example.com/article4"
+    "title": "T09. Simple Saltwater Intrusion Equations",
+    "image": "T09",
+    "description": "The tool contains analytical equations that can be used to analyse or predict the location of the interface between sea water and fresh water in a groundwater system.",
+    "link": "T09"
   },
   {
     "id": 8,
-    "title": "The Art of Photography",
-    "image": "https://via.placeholder.com/300x150",
-    "description": "Capture the world through the lens and learn the art of photography to immortalize precious moments.",
-    "link": "https://example.com/article5"
+    "title": "T11. MAR Model Selection",
+    "image": "T11",
+    "description": "The tool helps in the selection of a suitable model for the evaluation of MAR specific issues.",
+    "link": "T11"
+  },
+  {
+    "id": 10,
+    "title": "T13. Travel Time Through Unconfined Aquifer",
+    "image": "T13",
+    "description": "This tool estimates the travel time in an unconfined aquifer under various boundary conditions. Four different options of boundary conditions that bound the aquifer are included.",
+    "link": "T13"
+  },
+  {
+    "id": 9,
+    "title": "T14. Pumping-Induced River Drawdown",
+    "image": "T14",
+    "description": "Pumping from wells besides streams lowers the groundwater level and reduces surface water flow within the stream. This tool helps to estimate the stream depletion rate induced by well pumping.",
+    "link": "T14"
+  },
+  {
+    "id": 11,
+    "title": "T18. SAT Basin Design",
+    "image": "T18",
+    "description": "The tool makes us of empirical equations to design a typical SAT-system including hydraulic loading rates and land requirements under consideration of soil hydraulic characteristics and water quality.",
+    "link": "T18"
   }
 ]

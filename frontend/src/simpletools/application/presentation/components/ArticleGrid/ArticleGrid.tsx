@@ -1,6 +1,6 @@
 import React from 'react';
 import {Grid} from 'semantic-ui-react';
-import ArticleItem from '../ArticleItem/ArticleItem';
+import ArticleItem from './ArticleItem';
 import styles from './ArticleGrid.module.less';
 
 interface Article {
@@ -17,7 +17,6 @@ interface ArticleGridProps {
 
 const ArticleGrid: React.FC<ArticleGridProps> = ({articles}) => {
 
-
   return (
     <div className={styles.articleGrid}>
       <Grid
@@ -25,6 +24,7 @@ const ArticleGrid: React.FC<ArticleGridProps> = ({articles}) => {
         columns={3}
       >
         {articles.map((article) => (
+          article.link &&
           <Grid.Column
             key={article.id}
           >

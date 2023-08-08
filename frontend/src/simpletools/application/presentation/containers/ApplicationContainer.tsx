@@ -1,8 +1,7 @@
 import React, {ReactNode, useState} from 'react';
-
-import Header from '../components/Header';
+import {ContentWrapper} from 'components';
+import {Footer, Header, Navbar} from '../components/';
 import {useNavbarItems} from '../../application';
-import {ContentWrapper, Footer, Navbar} from 'components';
 import {useNavigate} from '../../../common/hooks';
 
 interface IProps {

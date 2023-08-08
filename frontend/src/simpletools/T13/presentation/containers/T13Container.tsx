@@ -1,6 +1,7 @@
 import {Button, Dimmer, Grid, Header, Icon, Image, Segment} from 'semantic-ui-react';
 import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from '../../../common/hooks';
+import styles from './T13.module.less';
 
 import image13A from '../images/T13A.png';
 import image13B from '../images/T13B.png';
@@ -98,10 +99,10 @@ const T13 = () => {
   ));
 
   return (
-    <div>
+    <div className={styles.SimpleToolGrid}>
       <Header
         as={'h3'}
-        style={{paddingTop: '40px'}}
+        style={{paddingTop: '40px', position: 'relative', zIndex: 2}}
       >
         Please select the set of boundary conditions that apply to your problem:
       </Header>

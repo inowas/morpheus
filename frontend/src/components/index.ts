@@ -4,7 +4,6 @@ import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import ContentWrapper from './ContentWrapper';
 import DatePicker from './DatePicker';
 import DropDownDnd from './DropDownDnd/DropDownDnd';
-import Footer from './Footer';
 import Label from './Label/Label';
 import Notification from './Notification/Notification';
 import Page from './PageContainer/Page';
@@ -12,7 +11,7 @@ import Modal from './Modal/Modal';
 import Divider from './Divider/Divider';
 import Icon, {IIconProps} from './Icon/Icon';
 import Loader from './Loader/Loader';
-import Navbar, {INavbarItem} from './Navbar';
+// import Navbar, {INavbarItem} from './Navbar';
 import Header from './Header/Header';
 import Segment from './Segment';
 import Grid from './Grid';
@@ -43,7 +42,6 @@ export {
   DatePicker,
   Divider,
   DropDownDnd,
-  Footer,
   Form,
   Grid,
   Header,
@@ -51,7 +49,7 @@ export {
   Label,
   Loader,
   Modal,
-  Navbar,
+  // Navbar,
   Notification,
   Page,
   Pagination,
@@ -77,7 +75,7 @@ export type {
   IConfirmProps,
   IDropdownItemProps,
   IIconProps,
-  INavbarItem,
+  // INavbarItem,
   IPaginationProps,
   DropdownProps,
   IInputProps,

@@ -8,6 +8,7 @@ import image9C from '../images/T09C.png';
 import image9D from '../images/T09D.png';
 import image9E from '../images/T09E.png';
 import image9F from '../images/T09F.png';
+import styles from '../../../T13/presentation/containers/T13.module.less';
 
 interface Item {
   tool: string;
@@ -105,10 +106,10 @@ const T09 = () => {
   ));
 
   return (
-    <div>
+    <div className={styles.SimpleToolGrid}>
       <Header
         as={'h3'}
-        style={{paddingTop: '40px'}}
+        style={{paddingTop: '40px', position: 'relative', zIndex: 2}}
       >
         Please select the set of boundary conditions that apply to your problem:
       </Header>
