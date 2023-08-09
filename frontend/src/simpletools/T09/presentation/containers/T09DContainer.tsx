@@ -3,6 +3,9 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09D, InfoT09D, Parameters, SettingsT09D} from '../components/';
 import {IT09D} from '../../types/T09.type';
 import image from '../images/T09D.png';
+import {useNavigate} from '../../../common/hooks';
+import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../application';
 
 
 const defaults: IT09D = {
@@ -112,9 +115,14 @@ const defaults: IT09D = {
   }],
 };
 
+const tool = 'T09D';
+
 const T09DContainer = () => {
 
   const [data, setData] = useState<IT09D>(defaults);
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT09D['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -129,12 +137,22 @@ const T09DContainer = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T09_title'), link: '/tools/T09'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
         <Background
           image={image}
-          title={'T09D. Saltwater intrusion // Critical well discharge'}
+          title={title}
         />
         <ChartT09D
           parameters={data.parameters}

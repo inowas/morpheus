@@ -2,9 +2,9 @@ import {useTranslation} from 'simpletools/common/hooks';
 import {i18n as II18n} from 'i18next';
 
 interface IUseTranslate {
-  translate: (key: string) => string;
-  i18n: II18n;
-  language: string;
+    translate: (key: string) => string;
+    i18n: II18n;
+    language: string;
 }
 
 const useTranslate = (): IUseTranslate => {

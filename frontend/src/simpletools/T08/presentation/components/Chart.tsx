@@ -24,8 +24,8 @@ const styles = {
 };
 
 interface IProps {
-  settings: IT08['data']['settings'];
-  parameters: IT08['data']['parameters'];
+  settings: IT08['settings'];
+  parameters: IT08['parameters'];
 }
 
 const Chart = ({settings, parameters}: IProps) => {

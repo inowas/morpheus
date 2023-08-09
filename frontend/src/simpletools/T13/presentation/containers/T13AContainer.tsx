@@ -3,6 +3,9 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13A, InfoT13A, Parameters} from '../components/';
 import {IT13A} from '../../types/T13.type';
 import image from '../images/T13A.png';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../application';
 
 const defaults: IT13A = {
   parameters: [{
@@ -99,9 +102,14 @@ const defaults: IT13A = {
   }],
 };
 
+const tool = 'T13A';
+
 const T13AContainer = () => {
 
   const [data, setData] = useState<IT13A>(defaults);
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT13A['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -112,10 +120,20 @@ const T13AContainer = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T13_title'), link: '/tools/T13'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T13A. Travel time // Aquifer system with a no-flow boundary and fixed head boundary condition'}/>
+        <Background image={image} title={title}/>
         <ChartT13A
           parameters={data.parameters}
         />

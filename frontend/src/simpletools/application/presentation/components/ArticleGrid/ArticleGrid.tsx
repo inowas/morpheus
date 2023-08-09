@@ -3,7 +3,7 @@ import {Grid} from 'semantic-ui-react';
 import ArticleItem from '../ArticleItem/ArticleItem';
 import styles from './ArticleGrid.module.less';
 
-interface Article {
+export interface IArticle {
   id: number;
   title: string;
   image: string;
@@ -11,13 +11,11 @@ interface Article {
   link: string;
 }
 
-interface ArticleGridProps {
-  articles: Article[];
+interface IProps {
+  articles: IArticle[];
 }
 
-const ArticleGrid: React.FC<ArticleGridProps> = ({articles}) => {
-
-
+const ArticleGrid = ({articles}: IProps) => {
   return (
     <div className={styles.articleGrid}>
       <Grid

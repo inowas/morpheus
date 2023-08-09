@@ -20,6 +20,9 @@ help:
 install:
 	npm install --legacy-peer-deps
 
+install-ci:
+	npm ci --legacy-peer-deps
+
 ## Start the application in application development mode
 start:
 	npm run start
