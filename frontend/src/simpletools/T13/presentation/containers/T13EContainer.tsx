@@ -3,6 +3,8 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13E, InfoT13E, Parameters} from '../components/';
 import {IT13E} from '../../types/T13.type';
 import image from '../images/T13E.png';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
 
 const defaults: IT13E = {
   parameters: [{
@@ -89,6 +91,8 @@ const defaults: IT13E = {
 const T13EContainer = () => {
 
   const [data, setData] = useState<IT13E>(defaults);
+  const navigateTo = useNavigate();
+
   const handleChangeParameters = (parameters: IT13E['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -99,10 +103,20 @@ const T13EContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T13E. Aquifer system with one pumping well at constant rate, no groundwater recharge';
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'TRAVEL TIME', link: '/tools/T13'},
+          {label: title, link: '/tools/T13A'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T13E. Aquifer system with one pumping well at constant rate, no groundwater recharge'}/>
+        <Background image={image} title={title}/>
         <ChartT13E parameters={data.parameters}/>
         <InfoT13E parameters={data.parameters}/>
         <Parameters

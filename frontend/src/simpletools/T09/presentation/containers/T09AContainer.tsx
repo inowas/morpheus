@@ -3,6 +3,8 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09A, InfoT09A, Parameters} from '../components/';
 import {IT09A} from '../../types/T09.type';
 import image from '../images/T09A.png';
+import {useNavigate} from '../../../common/hooks';
+import {Breadcrumb} from '../../../../components';
 
 const defaults: IT09A = {
   parameters: [{
@@ -54,6 +56,7 @@ const defaults: IT09A = {
 const T09AContainer = () => {
 
   const [data, setData] = useState<IT09A>(defaults);
+  const navigateTo = useNavigate();
   const handleChangeParameters = (parameters: IT09A['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -64,10 +67,20 @@ const T09AContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T09A. DEPTH OF FRESHWATER - SALTWATER INTERFACE (GHYBEN-HERZBERG RELATION)';
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'SALTWATER INTRUSION', link: '/tools/T09'},
+          {label: title, link: '/tools/T09A'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T09A. SALTWATER INTRUSION // DEPTH OF FRESHWATER - SALTWATER INTERFACE (GHYBEN-HERZBERG RELATION)'}/>
+        <Background image={image} title={title}/>
         <ChartT09A
           parameters={data.parameters}
         />

@@ -8,6 +8,7 @@ import image9C from '../images/T09C.png';
 import image9D from '../images/T09D.png';
 import image9E from '../images/T09E.png';
 import image9F from '../images/T09F.png';
+import {Breadcrumb} from '../../../../components';
 
 interface Item {
   tool: string;
@@ -77,7 +78,7 @@ const T09 = () => {
         as={Segment}
         color={'blue'}
         style={{cursor: 'pointer', marginBottom: '1em'}} padded={true}
-        dimmed={isHovered === i.tool ? true : false}
+        dimmed={isHovered === i.tool}
         onMouseEnter={() => handleMouseEnter(i.tool)}
         onMouseLeave={() => handleMouseLeave()}
       >
@@ -91,7 +92,8 @@ const T09 = () => {
         >{i.tool}</Header>
         <p><strong>{i.name}</strong>&nbsp;{i.description}</p>
         <Dimmer
-          inverted={true} active={isHovered === i.tool ? true : false}
+          inverted={true}
+          active={isHovered === i.tool}
         >
           <Button
             icon={true} primary={true}
@@ -105,7 +107,14 @@ const T09 = () => {
   ));
 
   return (
-    <div>
+    <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'SALTWATER INTRUSION'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <Header
         as={'h3'}
         style={{paddingTop: '40px'}}
@@ -120,7 +129,7 @@ const T09 = () => {
       >
         {columns}
       </Grid>
-    </div>
+    </>
   );
 };
 

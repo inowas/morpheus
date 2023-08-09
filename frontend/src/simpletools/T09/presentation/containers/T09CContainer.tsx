@@ -3,6 +3,8 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09C, InfoT09C, Parameters} from '../components/';
 import {IT09C} from '../../types/T09.type';
 import image from '../images/T09C.png';
+import {useNavigate} from '../../../common/hooks';
+import {Breadcrumb} from '../../../../components';
 
 const defaults: IT09C = {
   parameters: [{
@@ -100,6 +102,7 @@ const defaults: IT09C = {
 const T09CContainer = () => {
 
   const [data, setData] = useState<IT09C>(defaults);
+  const navigateTo = useNavigate();
   const handleChangeParameters = (parameters: IT09C['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -110,12 +113,22 @@ const T09CContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T09C. Upconing';
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'SALTWATER INTRUSION', link: '/tools/T09'},
+          {label: title, link: '/tools/T09C'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
         <Background
           image={image}
-          title={'T09C. Saltwater intrusion // Upconing'}
+          title={title}
         />
         <ChartT09C
           parameters={data.parameters}

@@ -3,6 +3,8 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13C, InfoT13C, Parameters} from '../components/';
 import {IT13C} from '../../types/T13.type';
 import image from '../images/T13C.png';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
 
 const defaults: IT13C = {
   parameters: [{
@@ -114,6 +116,8 @@ const defaults: IT13C = {
 const T13CContainer = () => {
 
   const [data, setData] = useState<IT13C>(defaults);
+  const navigateTo = useNavigate();
+
   const handleChangeParameters = (parameters: IT13C['parameters']) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
   };
@@ -122,10 +126,20 @@ const T13CContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T13C. Aquifer system with a flow divide outside of the system';
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'TRAVEL TIME', link: '/tools/T13'},
+          {label: title, link: '/tools/T13C'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T13C. Aquifer system with a flow divide outside of the system'}/>
+        <Background image={image} title={title}/>
         <ChartT13C
           parameters={data.parameters}
         />

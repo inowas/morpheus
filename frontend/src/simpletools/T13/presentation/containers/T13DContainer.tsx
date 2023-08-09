@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import {IT13D} from '../../types/T13.type';
 import {BackgroundT13D, Parameters} from '../components';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
 
 const defaults: IT13D = {
   parameters: [{
@@ -75,6 +77,8 @@ const defaults: IT13D = {
 const T13DContainer = () => {
 
   const [data, setData] = useState<IT13D>(defaults);
+  const navigateTo = useNavigate();
+
   const handleChangeParameters = (parameters: IT13D['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -85,15 +89,27 @@ const T13DContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T13D. Steady-state groundwater flow in a confined aquifer with a constant head boundary';
+
   return (
-    <SimpleToolGrid rows={2}>
-      <BackgroundT13D parameters={data.parameters}/>
-      <Parameters
-        parameters={data.parameters}
-        onChange={handleChangeParameters}
-        onReset={handleReset}
+    <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'TRAVEL TIME', link: '/tools/T13'},
+          {label: title, link: '/tools/T13A'},
+        ]}
+        navigateTo={navigateTo}
       />
-    </SimpleToolGrid>
+      <SimpleToolGrid rows={2}>
+        <BackgroundT13D parameters={data.parameters}/>
+        <Parameters
+          parameters={data.parameters}
+          onChange={handleChangeParameters}
+          onReset={handleReset}
+        />
+      </SimpleToolGrid>
+    </>
   );
 };
 

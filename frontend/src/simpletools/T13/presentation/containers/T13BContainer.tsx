@@ -3,6 +3,8 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13B, InfoT13B, Parameters, SettingsT13B} from '../components/';
 import {IT13B, SETTINGS_SELECTED_NOTHING} from '../../types/T13.type';
 import image from '../images/T13B.png';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
 
 const defaults: IT13B = {
   settings: {
@@ -21,7 +23,6 @@ const defaults: IT13B = {
     value: 0.00112,
     stepSize: 0.0001,
     decimals: 5,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -35,7 +36,6 @@ const defaults: IT13B = {
     value: 30.2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -49,7 +49,6 @@ const defaults: IT13B = {
     value: 1000,
     stepSize: 10,
     decimals: 0,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -63,7 +62,6 @@ const defaults: IT13B = {
     value: 2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -77,7 +75,6 @@ const defaults: IT13B = {
     value: 5,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -91,7 +88,6 @@ const defaults: IT13B = {
     value: 0.35,
     stepSize: 0.01,
     decimals: 2,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -105,7 +101,6 @@ const defaults: IT13B = {
     value: 50,
     stepSize: 10,
     decimals: 0,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -119,13 +114,14 @@ const defaults: IT13B = {
     value: 200,
     stepSize: 1,
     decimals: 0,
-    disable: false,
   }],
 };
 
 const T13BContainer = () => {
 
   const [data, setData] = useState<IT13B>(defaults);
+  const navigateTo = useNavigate();
+
   const handleChangeParameters = (parameters: IT13B['parameters']) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
   };
@@ -137,10 +133,20 @@ const T13BContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T13B. Aquifer system with a flow divide within of the system';
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'TRAVEL TIME', link: '/tools/T13'},
+          {label: title, link: '/tools/T13B'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T13B. Aquifer system with a flow divide within of the system'}/>
+        <Background image={image} title={title}/>
         <ChartT13B
           parameters={data.parameters} settings={data.settings}
         />

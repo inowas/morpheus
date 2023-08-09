@@ -3,6 +3,8 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09E, InfoT09E, Parameters, SettingsT09E} from '../components/';
 import {IT09E} from '../../types/T09.type';
 import image from '../images/T09E.png';
+import {useNavigate} from '../../../common/hooks';
+import {Breadcrumb} from '../../../../components';
 
 const defaults: IT09E = {
   settings: {
@@ -131,6 +133,7 @@ const defaults: IT09E = {
 const T09EContainer = () => {
 
   const [data, setData] = useState<IT09E>(defaults);
+  const navigateTo = useNavigate();
   const handleChangeParameters = (parameters: IT09E['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -145,12 +148,22 @@ const T09EContainer = () => {
     setData(defaults);
   };
 
+  const title = 'T09E. Sea level rise (vertical cliff)';
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: 'TOOLS', link: '/tools'},
+          {label: 'SALTWATER INTRUSION', link: '/tools/T09'},
+          {label: title, link: '/tools/T09E'},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
         <Background
           image={image}
-          title={'T09E. Saltwater intrusion // Sea level rise (vertical cliff)'}
+          title={title}
         />
         {/*//FIXME ERROR - TypeError: Cannot read properties of undefined (reading 'z0') (constHead params)*/}
         <ChartT09E
