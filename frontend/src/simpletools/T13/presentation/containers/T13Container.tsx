@@ -8,58 +8,49 @@ import image13C from '../images/T13C.png';
 import image13D from '../images/T13D.png';
 import image13E from '../images/T13E.png';
 import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../application';
 
 interface Item {
   tool: string;
-  name: string;
-  description: string;
   image: string;
 }
 
 const items: Item[] = [
   {
     tool: 'T13A',
-    name: 'Aquifer system with one no-modflow boundary and one fixed head boundary condition and constant groundwater recharge',
-    description: '',
     image: image13A,
   },
   {
     tool: 'T13B',
-    name: 'Aquifer system with two fixed head boundary conditions, a modflow divide within the system and constant groundwater recharge',
-    description: '',
     image: image13B,
   },
   {
     tool: 'T13C',
-    name: 'Aquifer system with two fixed head boundary conditions, a modflow divide outside of the system and constant groundwater recharge',
-    description: '',
     image: image13C,
   },
   {
     tool: 'T13D',
-    name: 'Aquifer system with two fixed head boundary conditions, constant groundwater recharge but user is not sure whether the modflow divide lies within the system',
-    description: '',
     image: image13D,
   },
   {
     tool: 'T13E',
-    name: 'Aquifer system with one pumping well at constant rate, no groundwater recharge',
-    description: '',
     image: image13E,
   },
 ];
 
+const tool = 'T13';
+
 const T13 = () => {
-
   const navigateTo = useNavigate();
-  const redirectTo = (path: string): void => {
-    navigateTo(`/tools/T13/${path}`);
+  const {translate} = useTranslate();
 
+  const redirectTo = (path: string): void => {
+    navigateTo(`/tools/${tool}/${path}`);
   };
 
   const [isHovered, setIsHovered] = useState('');
-  const handleMouseEnter = (tool: string) => {
-    setIsHovered(tool);
+  const handleMouseEnter = (t: string) => {
+    setIsHovered(t);
   };
 
   const handleMouseLeave = () => {
@@ -84,7 +75,10 @@ const T13 = () => {
           as={'h2'} color={'blue'}
           style={{marginTop: 0}}
         >{i.tool}</Header>
-        <p><strong>{i.name}</strong>&nbsp;{i.description}</p>
+        <p>
+          <strong>{translate(`${i.tool}_title`)}</strong><br/>
+          {translate(`${i.tool}_description`)}
+        </p>
         <Dimmer
           inverted={true} active={isHovered === i.tool}
         >
@@ -99,12 +93,14 @@ const T13 = () => {
     </Grid.Column>
   ));
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'TRAVEL TIME', link: '/tools/T13'},
+          {label: translate('tools'), link: '/tools'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />

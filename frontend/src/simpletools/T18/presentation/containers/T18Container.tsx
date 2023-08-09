@@ -5,6 +5,7 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T18.png';
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../../T02/application';
 
 export const SETTINGS_INFILTRATION_TYPE_BASIN = 0.07;
 export const SETTINGS_INFILTRATION_TYPE_CYLINDER = 0.02;
@@ -116,9 +117,12 @@ const defaults: IT18 = {
   }],
 };
 
+const tool = 'T18';
+
 const T18 = () => {
   const [data, setData] = useState<IT18>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
 
   const handleChangeSettings = (settings: IT18['settings']) => {
     setData((prevState) => ({...prevState, settings: {...settings}}));
@@ -133,13 +137,13 @@ const T18 = () => {
     setData(defaults);
   };
 
-  const title = 'T08: 1D transport equation (Ogata-Banks)';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'Tools', link: '/tools'},
+          {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}

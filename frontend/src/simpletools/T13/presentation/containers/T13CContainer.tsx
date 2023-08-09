@@ -5,6 +5,7 @@ import {IT13C} from '../../types/T13.type';
 import image from '../images/T13C.png';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../application';
 
 const defaults: IT13C = {
   parameters: [{
@@ -113,10 +114,14 @@ const defaults: IT13C = {
     decimals: 0,
   }],
 };
+
+const tool = 'T13C';
+
 const T13CContainer = () => {
 
   const [data, setData] = useState<IT13C>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
 
   const handleChangeParameters = (parameters: IT13C['parameters']) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
@@ -126,15 +131,15 @@ const T13CContainer = () => {
     setData(defaults);
   };
 
-  const title = 'T13C. Aquifer system with a flow divide outside of the system';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'TRAVEL TIME', link: '/tools/T13'},
-          {label: title, link: '/tools/T13C'},
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T13_title'), link: '/tools/T13'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />

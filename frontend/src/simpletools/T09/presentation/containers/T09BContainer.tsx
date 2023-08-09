@@ -5,6 +5,7 @@ import {IT09B} from '../../types/T09.type';
 import image from '../images/T09B.png';
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../application';
 
 const defaults: IT09B = {
   parameters: [{
@@ -69,10 +70,14 @@ const defaults: IT09B = {
   }],
 };
 
+const tool = 'T09B';
+
 const T09AContainer = () => {
 
   const [data, setData] = useState<IT09B>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT09B['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -83,15 +88,15 @@ const T09AContainer = () => {
     setData(defaults);
   };
 
-  const title = 'T09B. Shape of freshwater-saltwater interface (Glover equation)';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'SALTWATER INTRUSION', link: '/tools/T09'},
-          {label: title, link: '/tools/T09B'},
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T09_title'), link: '/tools/T09'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />

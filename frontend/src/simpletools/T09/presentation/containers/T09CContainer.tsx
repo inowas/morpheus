@@ -5,6 +5,7 @@ import {IT09C} from '../../types/T09.type';
 import image from '../images/T09C.png';
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../application';
 
 const defaults: IT09C = {
   parameters: [{
@@ -99,10 +100,14 @@ const defaults: IT09C = {
   }],
 };
 
+const tool = 'T09C';
+
 const T09CContainer = () => {
 
   const [data, setData] = useState<IT09C>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT09C['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -113,15 +118,15 @@ const T09CContainer = () => {
     setData(defaults);
   };
 
-  const title = 'T09C. Upconing';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'SALTWATER INTRUSION', link: '/tools/T09'},
-          {label: title, link: '/tools/T09C'},
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T09_title'), link: '/tools/T09'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />

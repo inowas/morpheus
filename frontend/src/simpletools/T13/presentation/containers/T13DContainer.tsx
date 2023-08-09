@@ -4,6 +4,7 @@ import {IT13D} from '../../types/T13.type';
 import {BackgroundT13D, Parameters} from '../components';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../application';
 
 const defaults: IT13D = {
   parameters: [{
@@ -74,10 +75,13 @@ const defaults: IT13D = {
   }],
 };
 
+const tool = 'T13D';
+
 const T13DContainer = () => {
 
   const [data, setData] = useState<IT13D>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
 
   const handleChangeParameters = (parameters: IT13D['parameters']) => {
     setData((prevState) => ({
@@ -89,15 +93,15 @@ const T13DContainer = () => {
     setData(defaults);
   };
 
-  const title = 'T13D. Steady-state groundwater flow in a confined aquifer with a constant head boundary';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'TRAVEL TIME', link: '/tools/T13'},
-          {label: title, link: '/tools/T13A'},
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T13_title'), link: '/tools/T13'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />

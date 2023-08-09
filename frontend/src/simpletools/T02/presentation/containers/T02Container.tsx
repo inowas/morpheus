@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding} from '../../application';
+import {useCalculateMounding, useTranslate} from '../../application';
 
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
@@ -117,11 +117,14 @@ const defaults: IT02 = {
 
 type IParameter = IT02['parameters'][0];
 
+const tool = 'T02';
+
 const T02 = () => {
 
   const [data, setData] = useState<IT02>(defaults);
   const mounding = useCalculateMounding();
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
 
   const handleChangeParameters = (parameters: IParameter[]) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
@@ -135,14 +138,13 @@ const T02 = () => {
     setData(defaults);
   };
 
-  // would be translated in the future
-  const title = 'T02. GROUNDWATER MOUNDING (HANTUSH)';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'Tools', link: '/tools'},
+          {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}

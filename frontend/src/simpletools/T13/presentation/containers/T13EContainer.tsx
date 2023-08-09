@@ -5,6 +5,7 @@ import {IT13E} from '../../types/T13.type';
 import image from '../images/T13E.png';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../application';
 
 const defaults: IT13E = {
   parameters: [{
@@ -88,10 +89,13 @@ const defaults: IT13E = {
   }],
 };
 
+const tool = 'T13E';
+
 const T13EContainer = () => {
 
   const [data, setData] = useState<IT13E>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
 
   const handleChangeParameters = (parameters: IT13E['parameters']) => {
     setData((prevState) => ({
@@ -103,15 +107,15 @@ const T13EContainer = () => {
     setData(defaults);
   };
 
-  const title = 'T13E. Aquifer system with one pumping well at constant rate, no groundwater recharge';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'TRAVEL TIME', link: '/tools/T13'},
-          {label: title, link: '/tools/T13A'},
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T13_title'), link: '/tools/T13'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />

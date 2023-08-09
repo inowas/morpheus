@@ -5,6 +5,7 @@ import {IT09D} from '../../types/T09.type';
 import image from '../images/T09D.png';
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../application';
 
 
 const defaults: IT09D = {
@@ -114,10 +115,14 @@ const defaults: IT09D = {
   }],
 };
 
+const tool = 'T09D';
+
 const T09DContainer = () => {
 
   const [data, setData] = useState<IT09D>(defaults);
   const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT09D['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -132,15 +137,15 @@ const T09DContainer = () => {
     setData(defaults);
   };
 
-  const title = 'T09D. Critical well discharge';
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          {label: 'TOOLS', link: '/tools'},
-          {label: 'SALTWATER INTRUSION', link: '/tools/T09'},
-          {label: title, link: '/tools/T09D'},
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T09_title'), link: '/tools/T09'},
+          {label: title},
         ]}
         navigateTo={navigateTo}
       />
