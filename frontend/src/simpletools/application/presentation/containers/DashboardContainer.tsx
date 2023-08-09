@@ -2,13 +2,15 @@ import React from 'react';
 import ArticleGrid from '../components/ArticleGrid';
 import PageTitle from '../components/PageTitle';
 import articles from '../components/ArticleGrid/article.json';
+import {useTranslate} from '../../application';
 
 const DashboardContainer = () => {
+  const {translate} = useTranslate();
   return (
     <>
       <PageTitle
-        title="Tools"
-        description="We provide a collection of simple, practical and reliable web-based tools for groundwater flow simulation."
+        title={translate('tools')}
+        description={translate('tools_description')}
       />
       <ArticleGrid articles={articles}/>
     </>
