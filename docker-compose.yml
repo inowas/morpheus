@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  nginx:
+    restart: "always"
+    build:
+      context: ./
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - "8080:80"
+
+volumes:
+  logs:
+    driver: local

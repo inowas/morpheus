@@ -81,7 +81,7 @@ export function calculateKd(kOw: number, cOrg: number) {
   return Koc * cOrg;
 }
 
-export function calculateDiagramData(settings: IT08['data']['settings'], vx: number, DL: number, R: number, C0: number, xMax: number, tMax: number, tau: number) {
+export function calculateDiagramData(settings: IT08['settings'], vx: number, DL: number, R: number, C0: number, xMax: number, tMax: number, tau: number) {
   let tauMax = 10e+8;
   if (settings.infiltration === SETTINGS_INFILTRATION_ONE_TIME) {
     tauMax = tau;
