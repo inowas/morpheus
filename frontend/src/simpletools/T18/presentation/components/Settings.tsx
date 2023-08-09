@@ -4,8 +4,8 @@ import {SETTINGS_INFILTRATION_TYPE_BASIN, SETTINGS_INFILTRATION_TYPE_CYLINDER} f
 import {IT18} from '../../types/T18.type';
 
 interface IProps {
-  settings: IT18['data']['settings'];
-  onChange: (data: IT18['data']['settings']) => void;
+  settings: IT18['settings'];
+  onChange: (data: IT18['settings']) => void;
 }
 
 const Settings = ({settings, onChange}: IProps) => {

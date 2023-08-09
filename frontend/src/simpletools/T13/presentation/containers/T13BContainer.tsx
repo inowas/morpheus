@@ -21,7 +21,6 @@ const defaults: IT13B = {
     value: 0.00112,
     stepSize: 0.0001,
     decimals: 5,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -35,7 +34,6 @@ const defaults: IT13B = {
     value: 30.2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -49,7 +47,6 @@ const defaults: IT13B = {
     value: 1000,
     stepSize: 10,
     decimals: 0,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -63,7 +60,6 @@ const defaults: IT13B = {
     value: 2,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -77,7 +73,6 @@ const defaults: IT13B = {
     value: 5,
     stepSize: 0.1,
     decimals: 1,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -91,7 +86,6 @@ const defaults: IT13B = {
     value: 0.35,
     stepSize: 0.01,
     decimals: 2,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -105,7 +99,6 @@ const defaults: IT13B = {
     value: 50,
     stepSize: 10,
     decimals: 0,
-    disable: false,
   }, {
     inputType: 'SLIDER',
     label: '',
@@ -119,7 +112,6 @@ const defaults: IT13B = {
     value: 200,
     stepSize: 1,
     decimals: 0,
-    disable: false,
   }],
 };
 

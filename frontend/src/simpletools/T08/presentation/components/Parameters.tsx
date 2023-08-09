@@ -3,7 +3,7 @@ import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
 import {IT08} from '../../types/T08.type';
 
-type IParameter = IT08['data']['parameters'][0];
+type IParameter = IT08['parameters'][0];
 
 interface IProps {
   parameters: IParameter[];

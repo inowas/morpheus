@@ -1,9 +1,8 @@
 import React from 'react';
 import NotFound from '../components/NotFound';
 
-const NotFoundContainer = () => {
-  return (
-    <NotFound/>
-  );
-};
+const NotFoundContainer = () => (
+  <NotFound/>
+);
+
 export default NotFoundContainer;
