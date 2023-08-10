@@ -15,8 +15,11 @@ const getI18n = (config: IConfig) => {
     .use(initReactI18next)
     .init({
       debug: true,
+      lng: 'en-GB',
+      supportedLngs: ['en-GB', 'de-DE'],
       ns: ns,
-      fallbackLng: 'en',
+      fallbackLng: 'en-GB',
+      load: 'currentOnly',
     });
   return i18n;
 };

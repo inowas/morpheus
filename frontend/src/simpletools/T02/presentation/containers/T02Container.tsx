@@ -2,9 +2,11 @@ import React, {useState} from 'react';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding} from '../../application';
+import {useCalculateMounding, useTranslate} from '../../application';
 
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import {useNavigate} from '../../../common/hooks';
+import {Breadcrumb} from '../../../../components';
+import SimpleToolGrid from '../../../../components/SimpleToolGrid';
 
 const defaults: IT02 = {
   settings: {
@@ -115,12 +117,14 @@ const defaults: IT02 = {
 
 type IParameter = IT02['parameters'][0];
 
+const tool = 'T02';
+
 const T02 = () => {
 
   const [data, setData] = useState<IT02>(defaults);
-
   const mounding = useCalculateMounding();
-
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
 
   const handleChangeParameters = (parameters: IParameter[]) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
@@ -134,24 +138,35 @@ const T02 = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
-    <SimpleToolGrid rows={2}>
-      <Background image={image} title={'T02. GROUNDWATER MOUNDING (HANTUSH)'}/>
-      <Chart
-        settings={data.settings}
-        parameters={data.parameters}
-        mounding={mounding}
+    <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
       />
-      <div>
-        <Settings settings={data.settings} onChange={handleChangeSettings}/>
-        <Info parameters={data.parameters} mounding={mounding}/>
-      </div>
-      <Parameters
-        parameters={data.parameters}
-        onChange={handleChangeParameters}
-        onReset={handleReset}
-      />
-    </SimpleToolGrid>
+      <SimpleToolGrid rows={2}>
+        <Background image={image} title={title}/>
+        <Chart
+          settings={data.settings}
+          parameters={data.parameters}
+          mounding={mounding}
+        />
+        <div>
+          <Settings settings={data.settings} onChange={handleChangeSettings}/>
+          <Info parameters={data.parameters} mounding={mounding}/>
+        </div>
+        <Parameters
+          parameters={data.parameters}
+          onChange={handleChangeParameters}
+          onReset={handleReset}
+        />
+      </SimpleToolGrid>
+    </>
   );
 };
 

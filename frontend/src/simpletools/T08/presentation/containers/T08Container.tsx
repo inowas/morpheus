@@ -3,6 +3,9 @@ import {IT08} from '../../types/T08.type';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T08.png';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../../T02/application';
 
 export const SETTINGS_CASE_FIXED_TIME: number = 1;
 export const SETTINGS_CASE_VARIABLE_TIME: number = 2;
@@ -174,8 +177,13 @@ const defaults: IT08 = {
   },
 };
 
+const tool = 'T08';
+
 const T08 = () => {
   const [data, setData] = useState<IT08>(defaults);
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeSettings = (settings: IT08['settings']) => {
     setData((prevState) => ({...prevState, settings: {...settings}}));
   };
@@ -188,23 +196,34 @@ const T08 = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
-    <SimpleToolGrid rows={2}>
-      <Background image={image} title={'T08: 1D transport equation (Ogata-Banks)'}/>
-      <Chart
-        settings={data.settings}
-        parameters={data.parameters}
+    <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
       />
-      <div>
-        <Settings settings={data.settings} onChange={handleChangeSettings}/>
-        <Info parameters={data.parameters} settings={data.settings}/>
-      </div>
-      <Parameters
-        parameters={data.parameters}
-        onChange={handleChangeParameters}
-        onReset={handleReset}
-      />
-    </SimpleToolGrid>
+      <SimpleToolGrid rows={2}>
+        <Background image={image} title={title}/>
+        <Chart
+          settings={data.settings}
+          parameters={data.parameters}
+        />
+        <div>
+          <Settings settings={data.settings} onChange={handleChangeSettings}/>
+          <Info parameters={data.parameters} settings={data.settings}/>
+        </div>
+        <Parameters
+          parameters={data.parameters}
+          onChange={handleChangeParameters}
+          onReset={handleReset}
+        />
+      </SimpleToolGrid>
+    </>
   );
 };
 

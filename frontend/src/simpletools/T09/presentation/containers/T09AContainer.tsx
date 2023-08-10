@@ -3,6 +3,9 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09A, InfoT09A, Parameters} from '../components/';
 import {IT09A} from '../../types/T09.type';
 import image from '../images/T09A.png';
+import {useNavigate} from '../../../common/hooks';
+import {Breadcrumb} from '../../../../components';
+import {useTranslate} from '../../application';
 
 const defaults: IT09A = {
   parameters: [{
@@ -51,9 +54,14 @@ const defaults: IT09A = {
   }],
 };
 
+const tool = 'T09A';
+
 const T09AContainer = () => {
 
   const [data, setData] = useState<IT09A>(defaults);
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT09A['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -64,10 +72,20 @@ const T09AContainer = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T09_title'), link: '/tools/T09'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T09A. SALTWATER INTRUSION // DEPTH OF FRESHWATER - SALTWATER INTERFACE (GHYBEN-HERZBERG RELATION)'}/>
+        <Background image={image} title={title}/>
         <ChartT09A
           parameters={data.parameters}
         />

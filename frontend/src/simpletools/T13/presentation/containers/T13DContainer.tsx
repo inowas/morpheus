@@ -1,7 +1,10 @@
 import React, {useState} from 'react';
 import SimpleToolGrid from 'components/SimpleToolGrid';
-import {IT13A, IT13D} from '../../types/T13.type';
+import {IT13D} from '../../types/T13.type';
 import {BackgroundT13D, Parameters} from '../components';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../application';
 
 const defaults: IT13D = {
   parameters: [{
@@ -72,10 +75,15 @@ const defaults: IT13D = {
   }],
 };
 
+const tool = 'T13D';
+
 const T13DContainer = () => {
 
   const [data, setData] = useState<IT13D>(defaults);
-  const handleChangeParameters = (parameters: IT13A['parameters']) => {
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
+  const handleChangeParameters = (parameters: IT13D['parameters']) => {
     setData((prevState) => ({
       ...prevState,
       parameters: [...parameters],
@@ -85,15 +93,27 @@ const T13DContainer = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
-    <SimpleToolGrid rows={2}>
-      <BackgroundT13D parameters={data.parameters}/>
-      <Parameters
-        parameters={data.parameters}
-        onChange={handleChangeParameters}
-        onReset={handleReset}
+    <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T13_title'), link: '/tools/T13'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
       />
-    </SimpleToolGrid>
+      <SimpleToolGrid rows={2}>
+        <BackgroundT13D parameters={data.parameters}/>
+        <Parameters
+          parameters={data.parameters}
+          onChange={handleChangeParameters}
+          onReset={handleReset}
+        />
+      </SimpleToolGrid>
+    </>
   );
 };
 

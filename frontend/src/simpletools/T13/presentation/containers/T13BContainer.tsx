@@ -3,6 +3,9 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13B, InfoT13B, Parameters, SettingsT13B} from '../components/';
 import {IT13B, SETTINGS_SELECTED_NOTHING} from '../../types/T13.type';
 import image from '../images/T13B.png';
+import {Breadcrumb} from '../../../../components';
+import {useNavigate} from '../../../common/hooks';
+import {useTranslate} from '../../application';
 
 const defaults: IT13B = {
   settings: {
@@ -115,9 +118,14 @@ const defaults: IT13B = {
   }],
 };
 
+const tool = 'T13B';
+
 const T13BContainer = () => {
 
   const [data, setData] = useState<IT13B>(defaults);
+  const navigateTo = useNavigate();
+  const {translate} = useTranslate();
+
   const handleChangeParameters = (parameters: IT13B['parameters']) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
   };
@@ -129,10 +137,20 @@ const T13BContainer = () => {
     setData(defaults);
   };
 
+  const title = `${tool}: ${translate(`${tool}_title`)}`;
+
   return (
     <>
+      <Breadcrumb
+        items={[
+          {label: translate('tools'), link: '/tools'},
+          {label: translate('T13_title'), link: '/tools/T13'},
+          {label: title},
+        ]}
+        navigateTo={navigateTo}
+      />
       <SimpleToolGrid rows={2}>
-        <Background image={image} title={'T13B. Aquifer system with a flow divide within of the system'}/>
+        <Background image={image} title={title}/>
         <ChartT13B
           parameters={data.parameters} settings={data.settings}
         />

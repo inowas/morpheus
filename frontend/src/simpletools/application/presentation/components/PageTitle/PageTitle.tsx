@@ -2,16 +2,16 @@ import React from 'react';
 import styles from './PageTitle.module.less';
 import {Header} from 'semantic-ui-react';
 
-interface TitleDescriptionProps {
+interface IProps {
   title: string;
-  description: string;
+  description?: string;
 }
 
-const PageTitle: React.FC<TitleDescriptionProps> = ({title, description}) => {
+const PageTitle: React.FC<IProps> = ({title, description}) => {
   return (
     <div className={styles.pageTitle}>
       <Header className={styles.title} as="h1">{title}</Header>
-      <p className={styles.description}>{description}</p>
+      {description && <p className={styles.description}>{description}</p>}
     </div>
   );
 };
