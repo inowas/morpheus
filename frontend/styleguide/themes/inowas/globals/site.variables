@@ -975,6 +975,7 @@
 @ref-color-border: #e9e9e9;
 @ref-color-burger: #e0e0e0;
 @ref-color-grey: #bbbbbb;
+@ref-color-blue: #eff3f6;
 @ref-color-lightBlue: #8494b2;
 @ref-color-darkBlue: #46658f;
 @ref-color-extraBlue: #274275;

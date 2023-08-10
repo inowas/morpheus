@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Button} from 'components';
+import {Button, Image} from 'components';
 import styles from './ArticleItem.module.less';
 
 export interface IArticle {
@@ -42,22 +42,19 @@ const ArticleItem: React.FC<IProps> = ({article, navigateToTool, navigateToDocum
         <p className={styles.articleDescription}>
           {renderDescription(article.description)}
         </p>
-        <div>
+        <div className={styles.buttonWrapper}>
           <Button
-            className={styles.articleLink}
-            floated={'right'}
-            onClick={navigateToDocumentation}
-          >
-            {translate('read_more')}
-          </Button>
-          <Button
-            floated={'left'}
-            positive={true}
+            className={styles.button}
             onClick={navigateToTool}
           >
             {translate('start_tool')}
           </Button>
-
+          <Button
+            className={styles.buttonLink}
+            onClick={navigateToDocumentation}
+          >
+            {translate('read_more')}
+          </Button>
         </div>
       </div>
     </div>

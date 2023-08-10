@@ -10,6 +10,7 @@ import image9E from '../images/T09E.png';
 import image9F from '../images/T09F.png';
 import {Breadcrumb} from '../../../../components';
 import {useTranslate} from '../../../T13/application';
+import styles from '../../../T13/presentation/containers/T13.module.less';
 
 interface Item {
   tool: string;
@@ -101,7 +102,7 @@ const T09 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div className={styles.toolWrapper}>
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -111,7 +112,7 @@ const T09 = () => {
       />
       <Header
         as={'h3'}
-        style={{paddingTop: '40px'}}
+        style={{paddingTop: '40px', position: 'relative', zIndex: 2}}
       >
         Please select the set of boundary conditions that apply to your problem:
       </Header>
@@ -123,7 +124,7 @@ const T09 = () => {
       >
         {columns}
       </Grid>
-    </>
+    </div>
   );
 };
 

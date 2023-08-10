@@ -5,7 +5,7 @@ import logoBmbf from './images/logo-bmbf.svg';
 import logoInowas from './images/logo-inowas.svg';
 import logoTUD from './images/logo-tud.svg';
 import logoCopyright from './images/logo-copyright.png';
-import BackToTopButton from '../../simpletools/application/presentation/components/BackToTopButton';
+import BackToTopButton from '../BackToTopButton';
 
 const footer = () => {
 

@@ -1,7 +1,7 @@
 import {Button, Dimmer, Grid, Header, Icon, Image, Segment} from 'semantic-ui-react';
 import React, {useState} from 'react';
 import {useNavigate} from 'simpletools/common/hooks';
-
+import styles from './T13.module.less';
 import image13A from '../images/T13A.png';
 import image13B from '../images/T13B.png';
 import image13C from '../images/T13C.png';
@@ -96,7 +96,7 @@ const T13 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div className={styles.toolWrapper}>
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -106,7 +106,7 @@ const T13 = () => {
       />
       <Header
         as={'h3'}
-        style={{paddingTop: '40px'}}
+        style={{paddingTop: '40px', position: 'relative', zIndex: 2}}
       >
         Please select the set of boundary conditions that apply to your problem:
       </Header>
@@ -116,7 +116,7 @@ const T13 = () => {
       >
         {columns}
       </Grid>
-    </>
+    </div>
   );
 };
 
