@@ -5,11 +5,6 @@ import {exportChartData, exportChartImage, getParameterValues} from '../../../..
 import React from 'react';
 import {IT14A} from '../../../types/T14.type';
 
-interface DataObject {
-  x: number;
-  t: number;
-}
-
 interface IProps {
   parameters: IT14A['parameters'];
 }

@@ -25,10 +25,12 @@ export interface IT14B {
   parameters: IParameter[];
 }
 
-// export interface IT14B {
-//   parameters: IParameter[];
-//   settings: {
-//     selected: number;
-//   };
-// }
+export interface IT14C {
+  parameters: IParameter[];
+}
+
+export interface IT14D {
+  parameters: IParameter[];
+}
+
 

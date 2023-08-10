@@ -1,12 +1,12 @@
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis} from 'recharts';
-import {calcDQ, calculateDiagramData} from '../../../application/useCalculationsT14B';
+import {calcDQ, calculateDiagramData} from '../../../application/useCalculationsT14C';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
 import React from 'react';
-import {IT14B} from '../../../types/T14.type';
+import {IT14C} from '../../../types/T14.type';
 
 interface IProps {
-  parameters: IT14B['parameters'];
+  parameters: IT14C['parameters'];
 }
 
 const styles = {
@@ -62,14 +62,13 @@ const renderLabels = (dQ: number) => {
       </div>
     </div>
   );
-
 };
 
-const ChartT14B = ({parameters}: IProps) => {
-  const {Qw, t, S, T, d, K, Kdash, bdash} = getParameterValues(parameters);
-  const L = K * bdash / Kdash;
-  const data = calculateDiagramData(Qw, S, T, d, 0, t, L, 1);
-  const dQ = calcDQ(d, S, T, t, L, Qw);
+const ChartT14C = ({parameters}: IProps) => {
+  const {Qw, t, S, T, d, W, Kdash, bdash} = getParameterValues(parameters);
+  const lambda = Kdash * W / bdash;
+  const data = calculateDiagramData(Qw, S, T, d, 0, t, lambda, 1);
+  const dQ = calcDQ(d, S, T, t, lambda, Qw);
 
   return (
     <div>
@@ -128,4 +127,4 @@ const ChartT14B = ({parameters}: IProps) => {
   );
 };
 
-export default ChartT14B;
+export default ChartT14C;
