@@ -44,16 +44,16 @@ const ArticleItem: React.FC<IProps> = ({article, navigateToTool, navigateToDocum
         </p>
         <div className={styles.buttonWrapper}>
           <Button
-            className={styles.buttonLink}
-            onClick={navigateToDocumentation}
-          >
-            {translate('read_more')}
-          </Button>
-          <Button
             className={styles.button}
             onClick={navigateToTool}
           >
             {translate('start_tool')}
+          </Button>
+          <Button
+            className={styles.buttonLink}
+            onClick={navigateToDocumentation}
+          >
+            {translate('read_more')}
           </Button>
         </div>
       </div>
