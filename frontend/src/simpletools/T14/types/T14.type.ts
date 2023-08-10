@@ -21,6 +21,10 @@ export interface IT14A {
   parameters: IParameter[];
 }
 
+export interface IT14B {
+  parameters: IParameter[];
+}
+
 // export interface IT14B {
 //   parameters: IParameter[];
 //   settings: {

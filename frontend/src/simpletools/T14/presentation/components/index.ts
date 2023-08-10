@@ -1,8 +1,8 @@
 import Background from './Background';
 import ChartT14A from './T14A/ChartT14A';
 import InfoT14A from './T14A/InfoT14A';
-// import ChartT13B from './T13B/ChartT13B';
-// import InfoT13B from './T13B/InfoT13B';
+import ChartT14B from './T14B/ChartT14B';
+import InfoT14B from './T14B/InfoT14B';
 // import SettingsT13B from './T13B/SettingsT13B';
 // import ChartT13C from './T13C/ChartT13C';
 // import InfoT13C from './T13C/InfoT13C';
@@ -15,8 +15,8 @@ export {
   Background,
   ChartT14A,
   InfoT14A,
-  // ChartT13B,
-  // InfoT13B,
+  ChartT14B,
+  InfoT14B,
   // SettingsT13B,
   // ChartT13C,
   // InfoT13C,

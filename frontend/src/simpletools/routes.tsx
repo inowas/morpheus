@@ -3,7 +3,7 @@ import {Navigate, Route, Routes} from 'react-router-dom';
 import T02Container from 'simpletools/T02/presentation/containers/T02Container';
 import T08Container from 'simpletools/T08/presentation/containers/T08Container';
 import {T13AContainer, T13BContainer, T13CContainer, T13Container, T13DContainer, T13EContainer} from 'simpletools/T13/presentation/containers/';
-import {T14AContainer, T14Container} from 'simpletools/T14/presentation/containers';
+import {T14AContainer, T14BContainer, T14Container} from 'simpletools/T14/presentation/containers';
 import T18Container from 'simpletools/T18/presentation/containers/T18Container';
 import {T09AContainer, T09BContainer, T09CContainer, T09Container, T09DContainer, T09EContainer, T09FContainer} from 'simpletools/T09/presentation/containers';
 import DashboardContainer from './application/presentation/containers/DashboardContainer';
@@ -40,6 +40,7 @@ const Router = () => {
       <Route path="/tools/T13/T13E" element={wrapRouteComponent(<T13EContainer/>)}/>
       <Route path="/tools/T14" element={wrapRouteComponent(<T14Container/>)}/>
       <Route path="/tools/T14/T14A" element={wrapRouteComponent(<T14AContainer/>)}/>
+      <Route path="/tools/T14/T14B" element={wrapRouteComponent(<T14BContainer/>)}/>
       <Route path="/tools/T18" element={wrapRouteComponent(<T18Container/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
