@@ -8,7 +8,7 @@ interface IUseTranslate {
 }
 
 const useTranslate = (): IUseTranslate => {
-  const {translate, i18n, language} = useTranslation('SimpleTools');
+  const {translate, i18n, language} = useTranslation();
   return {translate, i18n, language};
 };
 

@@ -1,39 +1,33 @@
 import React from 'react';
-import {Grid} from 'semantic-ui-react';
-import ArticleItem from './ArticleItem';
+import {Grid} from 'components';
 import styles from './ArticleGrid.module.less';
+import ArticleItem, {IArticle} from '../ArticleItem/ArticleItem';
 
-interface Article {
-  id: number;
-  title: string;
-  image: string;
-  description: string;
-  link: string;
+interface IProps {
+  articles: IArticle[];
+  navigateTo: (path: string) => void;
+  translate: (key: string) => string;
 }
 
-interface ArticleGridProps {
-  articles: Article[];
-}
-
-const ArticleGrid: React.FC<ArticleGridProps> = ({articles}) => {
-
-  return (
-    <div className={styles.articleGrid}>
-      <Grid
-        stackable={true}
-        columns={3}
-      >
-        {articles.map((article) => (
-          article.link &&
-          <Grid.Column
-            key={article.id}
-          >
-            <ArticleItem article={article}/>
-          </Grid.Column>
-        ))}
-      </Grid>
-    </div>
-  );
+const openInNewTab = (url: string) => {
+  window.open(url, '_blank', 'noreferrer');
 };
+
+const ArticleGrid: React.FC<IProps> = ({articles, navigateTo, translate}) => (
+  <div className={styles.articleGrid}>
+    <Grid.Grid stackable={true} columns={3}>
+      {articles.map((article) => (
+        <Grid.Column key={article.id}>
+          <ArticleItem
+            article={article}
+            navigateToTool={() => navigateTo(article.toolLink)}
+            navigateToDocumentation={() => openInNewTab(article.documentationLink)}
+            translate={translate}
+          />
+        </Grid.Column>
+      ))}
+    </Grid.Grid>
+  </div>
+);
 
 export default ArticleGrid;

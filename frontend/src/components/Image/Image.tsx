@@ -30,6 +30,7 @@ export type IImageProps = {
   wrapped?: boolean
   src: any;
   style?: React.CSSProperties;
+  [key: string]: any
 };
 
 const Image: React.FC<IImageProps> = (props) => (

@@ -6,7 +6,7 @@ import {Footer, Header, Navbar} from '../components/';
 import {useNavigate} from '../../../common/hooks';
 
 interface IProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 type ILanguageCode = 'de-DE' | 'en-GB';
@@ -18,9 +18,10 @@ const ApplicationContainer = ({children}: IProps) => {
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
 
-
   useEffect(() => {
-    i18n.changeLanguage(language);
+    if (language !== i18n.language) {
+      i18n.changeLanguage(language);
+    }
   }, [language, i18n]);
 
   return (
@@ -29,10 +30,6 @@ const ApplicationContainer = ({children}: IProps) => {
         <Navbar
           navbarItems={navbarItems}
           languageList={[
-            {
-              code: 'de-DE',
-              label: translate('german'),
-            },
             {
               code: 'en-GB',
               label: translate('english'),
