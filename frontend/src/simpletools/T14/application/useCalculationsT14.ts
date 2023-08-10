@@ -27,3 +27,20 @@ export const erfc = (x: number): number => {
   return 1 - erf(x);
 };
 
+export const binomial = (n: number, k: number): number | false => {
+  if ('number' !== typeof n || 'number' !== typeof k) {
+    return false;
+  }
+
+  let coefficient = 1;
+  for (let x = n - k + 1; x <= n; x++) {
+    coefficient *= x;
+  }
+
+  for (let x = 1; x <= k; x++) {
+    coefficient /= x;
+  }
+
+  return coefficient;
+};
+

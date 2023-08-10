@@ -4,11 +4,9 @@ import InfoT14A from './T14A/InfoT14A';
 import ChartT14B from './T14B/ChartT14B';
 import InfoT14B from './T14B/InfoT14B';
 import ChartT14C from './T14C/ChartT14C';
-// import ChartT13C from './T13C/ChartT13C';
-// import InfoT13C from './T13C/InfoT13C';
-// import BackgroundT13D from './T13D/BackgroundT13D';
-// import ChartT13E from './T13E/ChartT13E';
-// import InfoT13E from './T13E/InfoT13E';
+import InfoT14C from './T14C/InfoT14C';
+import ChartT14D from './T14D/ChartT14D';
+import InfoT14D from './T14D/InfoT14D';
 import Parameters from './Parameters';
 
 export {
@@ -18,6 +16,8 @@ export {
   ChartT14B,
   InfoT14B,
   ChartT14C,
-
+  InfoT14C,
+  ChartT14D,
+  InfoT14D,
   Parameters,
 };

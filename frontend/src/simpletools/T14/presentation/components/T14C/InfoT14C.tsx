@@ -1,17 +1,17 @@
 import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
-import {calcDQ} from '../../../application/useCalculationsT14B';
+import {calcDQ} from '../../../application/useCalculationsT14C';
 import {getParameterValues} from '../../../../common/helpers';
-import {IT14B} from '../../../types/T14.type';
+import {IT14C} from '../../../types/T14.type';
 
 interface IProps {
-  parameters: IT14B['parameters'];
+  parameters: IT14C['parameters'];
 }
 
 const InfoT14C = ({parameters}: IProps) => {
-  const {d, S, T, t, K, Kdash, bdash, Qw} = getParameterValues(parameters);
-  const L = K * bdash / Kdash;
-  const dQ = calcDQ(d, S, T, t, L, Qw);
+  const {Qw, t, S, T, d, W, Kdash, bdash} = getParameterValues(parameters);
+  const lambda = Kdash * W / bdash;
+  const dQ = calcDQ(d, S, T, t, lambda, Qw);
   return (
     <Message icon={true} info={true}>
       <Icon name="info circle" color="blue"/>
