@@ -106,7 +106,7 @@ const T09 = () => {
   ));
 
   return (
-    <div className={styles.SimpleToolGrid}>
+    <div className={styles.toolWrapper}>
       <Header
         as={'h3'}
         style={{paddingTop: '40px', position: 'relative', zIndex: 2}}

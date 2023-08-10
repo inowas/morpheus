@@ -11,7 +11,6 @@ import Modal from './Modal/Modal';
 import Divider from './Divider/Divider';
 import Icon, {IIconProps} from './Icon/Icon';
 import Loader from './Loader/Loader';
-// import Navbar, {INavbarItem} from './Navbar';
 import Header from './Header/Header';
 import Segment from './Segment';
 import Grid from './Grid';
@@ -49,7 +48,6 @@ export {
   Label,
   Loader,
   Modal,
-  // Navbar,
   Notification,
   Page,
   Pagination,
@@ -75,7 +73,6 @@ export type {
   IConfirmProps,
   IDropdownItemProps,
   IIconProps,
-  // INavbarItem,
   IPaginationProps,
   DropdownProps,
   IInputProps,
