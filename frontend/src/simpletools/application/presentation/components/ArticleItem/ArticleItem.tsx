@@ -1,27 +1,31 @@
 import React from 'react';
-import {Button, Image} from 'semantic-ui-react';
+import {Image, Button} from 'components';
 import styles from './ArticleItem.module.less';
 
-interface Article {
+export interface IArticle {
   id: number;
   title: string;
   image: string;
   description: string;
-  link: string;
+  toolLink: string;
+  documentationLink: string;
 }
 
-interface ArticleItemProps {
-  article: Article;
+interface IProps {
+  article: IArticle;
+  navigateToTool: () => void;
+  navigateToDocumentation: () => void;
+  translate: (key: string) => string;
 }
 
-const ArticleItem: React.FC<ArticleItemProps> = ({article}) => {
+const ArticleItem: React.FC<IProps> = ({article, navigateToTool, navigateToDocumentation, translate}) => {
 
-  const truncateDescription = (description: string) => {
+  const renderDescription = (description: string) => {
     if (120 >= description.length) {
       return description;
-    } else {
-      return description.substring(0, 196) + '...';
     }
+
+    return description.substring(0, 196) + '...';
   };
 
   return (
@@ -30,19 +34,31 @@ const ArticleItem: React.FC<ArticleItemProps> = ({article}) => {
         className={styles.articleImage}
         src={article.image} fluid={true}
         width="300" height="150"
-        href={article.link}
       />
       <div className={styles.articleInner}>
         <h2 className={styles.articleTitle}>
-          <a href={article.link}>{article.title}</a>
+          {article.title}
         </h2>
-        <p className={styles.articleDescription}>{truncateDescription(article.description)}</p>
-        <Button
-          className={styles.articleLink}
-          as="a" href={article.link}
-        >
-          Read more
-        </Button>
+        <p className={styles.articleDescription}>
+          {renderDescription(article.description)}
+        </p>
+        <div>
+          <Button
+            className={styles.articleLink}
+            floated={'right'}
+            onClick={navigateToDocumentation}
+          >
+            {translate('read_more')}
+          </Button>
+          <Button
+            floated={'left'}
+            positive={true}
+            onClick={navigateToTool}
+          >
+            {translate('start_tool')}
+          </Button>
+
+        </div>
       </div>
     </div>
   );

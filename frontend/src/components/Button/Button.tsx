@@ -6,6 +6,7 @@ import {IconProps} from 'semantic-ui-react/dist/commonjs/elements/Icon';
 export type IButtonProps = {
   active?: boolean;
   animated?: boolean;
+  as?: any;
   attached?: boolean | 'left' | 'right' | 'top' | 'bottom';
   basic?: boolean;
   children?: React.ReactNode;
@@ -36,7 +37,7 @@ export type IButtonProps = {
   id?: string;
 };
 
-const Button: React.FC<IButtonProps> = ({className, ...props}) => (
+const Button: React.FC<IButtonProps> = ({...props}) => (
   <SemanticButton {...props}/>
 );
 

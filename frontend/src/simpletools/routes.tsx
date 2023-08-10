@@ -9,6 +9,7 @@ import DashboardContainer from './application/presentation/containers/DashboardC
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
 import SignIn from './application/presentation/containers/AuthContainer';
+import AboutUsContainer from './application/presentation/containers/AboutUsContainer';
 
 const Router = () => {
   const wrapRouteComponent = (component: React.ReactElement) => (
@@ -37,8 +38,9 @@ const Router = () => {
       <Route path="/tools/T13/T13D" element={wrapRouteComponent(<T13DContainer/>)}/>
       <Route path="/tools/T13/T13E" element={wrapRouteComponent(<T13EContainer/>)}/>
       <Route path="/tools/T18" element={wrapRouteComponent(<T18Container/>)}/>
-      <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
+      <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
+      <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
     </Routes>
   );
 };
