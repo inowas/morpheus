@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding} from '../../application';
-
+import {useCalculateMounding, useTranslate} from '../../application';
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
 import SimpleToolGrid from '../../../../components/SimpleToolGrid';
