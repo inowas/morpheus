@@ -96,7 +96,7 @@ const T13 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div className={styles.toolWrapper}>
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -116,7 +116,7 @@ const T13 = () => {
       >
         {columns}
       </Grid>
-    </>
+    </div>
   );
 };
 

@@ -8,7 +8,6 @@ import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
 import DropDownDnd from './DropDownDnd/DropDownDnd';
 import Dropdown from './Dropdown';
-import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
 import Header from './Header/Header';
@@ -22,7 +21,6 @@ import Loader from './Loader/Loader';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
-import Navbar, {INavbarItem} from './Navbar';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -47,7 +45,6 @@ export {
   DropDownDnd,
   Dropdown,
   Dropzone,
-  Footer,
   Form,
   Grid,
   Header,
@@ -61,7 +58,6 @@ export {
   LoaderAnimation,
   Message,
   Modal,
-  Navbar,
   Notification,
   Notifications,
   Page,
@@ -79,7 +75,6 @@ export type {
   IConfirmProps,
   IDropdownItemProps,
   IIconProps,
-  INavbarItem,
   IPaginationProps,
   DropdownProps,
   IInputProps,
