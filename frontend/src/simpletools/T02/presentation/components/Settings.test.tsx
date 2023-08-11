@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react';
+import {render, screen, within} from '@testing-library/react';
 import Settings from './Settings';
 import {act} from '@testing-library/react-hooks';
 
@@ -18,19 +18,26 @@ describe('Settings Tests', () => {
     expect(screen.getByTestId('x-axis-radio')).toBeInTheDocument();
     expect(screen.getByTestId('y-axis-radio')).toBeInTheDocument();
 
-    // eslint-disable-next-line testing-library/no-node-access
-    const radioX = screen.getByTestId('x-axis-radio').firstElementChild as HTMLInputElement;
+    const radioX = within(screen.getByTestId('x-axis-radio')).getByRole('radio') as HTMLInputElement;
     expect(radioX.checked).toBe(true);
 
-    // eslint-disable-next-line testing-library/no-node-access
-    const radioY = screen.getByTestId('y-axis-radio').firstElementChild as HTMLInputElement;
+    const radioY = within(screen.getByTestId('y-axis-radio')).getByRole('radio') as HTMLInputElement;
     expect(radioY.checked).toBe(false);
 
+    mockOnChange.mockClear();
     act(() => {
       radioY.click();
     });
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenCalledWith({variable: 'y'});
+
+    mockOnChange.mockClear();
+    act(() => {
+      radioY.click();
+    });
+
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+
   });
 });
