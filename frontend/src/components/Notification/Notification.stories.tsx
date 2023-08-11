@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import Notification from './Notification';
 
 export default {
@@ -10,8 +10,8 @@ export default {
   */
   title: 'Notification',
   component: Notification,
-} as ComponentMeta<typeof Notification>;
+} as Meta<typeof Notification>;
 
-export const Warning: ComponentStory<typeof Notification> = () => <Notification warning={true}>Warning notification text</Notification>;
-export const Error: ComponentStory<typeof Notification> = () => <Notification error={true}>Error notification text</Notification>;
-export const Success: ComponentStory<typeof Notification> = () => <Notification success={true}>Success notification text</Notification>;
+export const Warning: StoryFn<typeof Notification> = () => <Notification warning={true}>Warning notification text</Notification>;
+export const Error: StoryFn<typeof Notification> = () => <Notification error={true}>Error notification text</Notification>;
+export const Success: StoryFn<typeof Notification> = () => <Notification success={true}>Success notification text</Notification>;

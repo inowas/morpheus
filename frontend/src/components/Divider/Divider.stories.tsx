@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import Divider from './Divider';
 import {Container, Grid, Segment} from 'semantic-ui-react';
 
@@ -11,9 +11,9 @@ export default {
   */
   title: 'Divider',
   component: Divider,
-} as ComponentMeta<typeof Divider>;
+} as Meta<typeof Divider>;
 
-export const Vertical: ComponentStory<typeof Divider> = () => (
+export const Vertical: StoryFn<typeof Divider> = () => (
   <Container>
     <Segment>
       <Grid columns={2} >
@@ -60,7 +60,7 @@ export const Vertical: ComponentStory<typeof Divider> = () => (
 
 );
 
-export const Horizontal: ComponentStory<typeof Divider> = () => (
+export const Horizontal: StoryFn<typeof Divider> = () => (
   <Container>
     <Segment>
       <Divider/>

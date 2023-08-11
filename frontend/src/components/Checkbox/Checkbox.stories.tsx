@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import {Checkbox, Grid, Page} from '../index';
 
 export default {
@@ -10,9 +10,9 @@ export default {
   */
   title: 'Checkbox',
   component: Checkbox,
-} as ComponentMeta<typeof Checkbox>;
+} as Meta<typeof Checkbox>;
 
-export const Horizontal: ComponentStory<typeof Checkbox> = () => (
+export const Horizontal: StoryFn<typeof Checkbox> = () => (
   <Page>
     <Grid.Grid columns={3}>
       <Grid.Column>

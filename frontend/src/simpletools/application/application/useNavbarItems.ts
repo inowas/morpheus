@@ -1,5 +1,5 @@
-import {INavbarItem} from 'components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
+import {INavbarItem} from '../presentation/components';
 
 const getNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
   {

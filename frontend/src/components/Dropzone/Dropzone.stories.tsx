@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import {Segment} from 'semantic-ui-react';
 import {Dropzone} from '../index';
 import React, {useState} from 'react';
@@ -12,10 +12,10 @@ export default {
   title: 'Dropzone',
   component: Dropzone,
 
-} as ComponentMeta<typeof Dropzone>;
+} as Meta<typeof Dropzone>;
 
 
-export const Default: ComponentStory<typeof Dropzone> = () => {
+export const Default: StoryFn<typeof Dropzone> = () => {
   const systemSettingsLogoSpecs = {
     max_file_size: 500,
     allowed_mime_types: ['image/jpeg',

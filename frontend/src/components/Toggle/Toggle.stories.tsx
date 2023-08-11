@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Toggle from './Toggle';
 import {Page} from '../index';
 
@@ -11,9 +11,9 @@ export default {
   */
   title: 'Toggle',
   component: Toggle,
-} as ComponentMeta<typeof Toggle>;
+} as Meta<typeof Toggle>;
 
-export const ToggleExample: ComponentStory<typeof Toggle> = () => {
+export const ToggleExample: StoryFn<typeof Toggle> = () => {
   const [value, setValue] = useState(false);
 
   return (<Page>
