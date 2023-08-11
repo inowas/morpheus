@@ -7,7 +7,7 @@ import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
 import SimpleToolGrid from '../../../../components/SimpleToolGrid';
 
-const defaults: IT02 = {
+export const defaults: IT02 = {
   settings: {
     variable: 'x',
   },
