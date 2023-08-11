@@ -7,7 +7,7 @@ import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
 import {useTranslate} from '../../application';
 
-const defaults: IT14D = {
+export const defaults: IT14D = {
   parameters: [{
     inputType: 'SLIDER',
     label: '',

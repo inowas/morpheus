@@ -11,3 +11,4 @@ describe('Background Tests', () => {
     expect(screen.getByTestId('background-container')).toBeInTheDocument();
   });
 });
+

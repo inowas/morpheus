@@ -12,14 +12,16 @@ const InfoT14A = ({parameters}: IProps) => {
   const {Qw, d, S, T, t} = getParameterValues(parameters);
   const DQ = calcDQ(Qw, d, S, T, t);
   return (
-    <Message icon={true} info={true}>
-      <Icon name="info circle" color="blue"/>
-      <Message.Content>
-        <p>
-          The calculated river drawdown is <strong>{DQ.toFixed(1)} m³/d</strong>.
-        </p>
-      </Message.Content>
-    </Message>
+    <div data-testid="info-container">
+      <Message icon={true} info={true}>
+        <Icon name="info circle" color="blue"/>
+        <Message.Content>
+          <p>
+            The calculated river drawdown is <strong>{DQ.toFixed(1)} m³/d</strong>.
+          </p>
+        </Message.Content>
+      </Message>
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
-import Info from './InfoT14A';
-import {defaults} from '../../containers/T14AContainer';
+import Info from './InfoT14B';
+import {defaults} from '../../containers/T14BContainer';
 
 describe('Info Tests', () => {
   test('It renders the component', async () => {
