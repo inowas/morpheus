@@ -12,7 +12,6 @@ interface IMounding {
   calculateHMax: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
 }
 
-
 export const getParameterValues = (arr: IT02['parameters']) => {
   let returnValue: { [key: string]: any } = {};
 
@@ -23,21 +22,24 @@ export const getParameterValues = (arr: IT02['parameters']) => {
   return returnValue;
 };
 
-const Info = (props: IProps) => {
-  const {L, W, w, hi, Sy, K, t} = getParameterValues(props.parameters);
-  const hhi = props.mounding.calculateHi(0, 0, w, L, W, hi, Sy, K, t);
+const Info: React.FC<IProps> = ({mounding, parameters}) => {
+
+  const {L, W, w, hi, Sy, K, t} = getParameterValues(parameters);
+  const hhi = mounding.calculateHi(0, 0, w, L, W, hi, Sy, K, t);
   const hMax = (hhi + hi);
 
   return (
-    <Message icon={true} info={true}>
-      <Icon name='info circle' color='blue'/>
-      <Message.Content>
-        <p>
-          The resulting groundwater mound is&nbsp;<strong>{hhi.toFixed(2)}&nbsp;m </strong>
-          and the groundwater level will rise up to&nbsp;<strong>{hMax.toFixed(2)}&nbsp;m</strong>.
-        </p>
-      </Message.Content>
-    </Message>
+    <div data-testid="info-container">
+      <Message icon={true} info={true}>
+        <Icon name='info circle' color='blue'/>
+        <Message.Content>
+          <p>
+            The resulting groundwater mound is&nbsp;<strong>{hhi.toFixed(2)}&nbsp;m </strong>
+            and the groundwater level will rise up to&nbsp;<strong>{hMax.toFixed(2)}&nbsp;m</strong>.
+          </p>
+        </Message.Content>
+      </Message>
+    </div>
   );
 };
 
