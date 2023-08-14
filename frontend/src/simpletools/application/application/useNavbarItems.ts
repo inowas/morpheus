@@ -1,4 +1,4 @@
-import {INavbarItem} from 'components/Navbar/types/navbar.type';
+import {INavbarItem} from 'simpletools/application/presentation/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
 
 const getNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
