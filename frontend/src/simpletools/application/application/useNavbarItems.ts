@@ -1,5 +1,5 @@
+import {INavbarItem} from 'simpletools/application/presentation/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
-import {INavbarItem} from '../presentation/components';
 
 const getNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
   {
@@ -39,7 +39,7 @@ const getNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
     label: translate('tools'),
     admin: false,
     basepath: '/tools',
-    subMenu: ['T02', 'T08', 'T09', 'T13', 'T18'].map((tool) => ({
+    subMenu: ['T02', 'T08', 'T09', 'T13', 'T14', 'T18'].map((tool) => ({
       name: tool,
       label: `${tool}: ${translate(`${tool}_title`)}`,
       admin: false,
