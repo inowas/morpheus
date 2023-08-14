@@ -8,6 +8,9 @@ export default async (): Promise<Config.InitialOptions> => ({
   setupFilesAfterEnv: [
     '<rootDir>/jest.setup.ts',
   ],
+  setupFiles: [
+    '<rootDir>/src/setupTests.ts',
+  ],
   transformIgnorePatterns: [
     '<rootDir>/node_modules/?!(react-movable|yet-another-react-lightbox)',
     'jest-runner'
