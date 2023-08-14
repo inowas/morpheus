@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Header from './Header';
 
 export default {
@@ -10,14 +10,14 @@ export default {
   */
   title: 'Header',
   component: Header,
-} as ComponentMeta<typeof Header>;
+} as Meta<typeof Header>;
 
 
-export const HeaderExample: ComponentStory<typeof Header> = () => (
+export const HeaderExample: StoryFn<typeof Header> = () => (
   <Header content={'ITEXIA HEADER'} as='h2'/>
 );
 
-export const HeaderExampleH1: ComponentStory<typeof Header> = () => (
+export const HeaderExampleH1: StoryFn<typeof Header> = () => (
   <Header
     content={'ITEXIA HEADER'} as='h1'
     color='red'

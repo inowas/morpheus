@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Image from './Image';
 
 export default {
@@ -10,10 +10,10 @@ export default {
   */
   title: 'Image',
   component: Image,
-} as ComponentMeta<typeof Image>;
+} as Meta<typeof Image>;
 
 
-export const ImageExample: ComponentStory<typeof Image> = () => (
+export const ImageExample: StoryFn<typeof Image> = () => (
   <Image
     content={'ITEXIA Image'} src={'image'}
     rounded={true}

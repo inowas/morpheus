@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import DropDownDnd from './DropDownDnd';
 import {Segment} from 'semantic-ui-react';
 
@@ -12,7 +12,7 @@ export default {
   title: 'DropDownDnd',
   component: DropDownDnd,
 
-} as ComponentMeta<typeof DropDownDnd>;
+} as Meta<typeof DropDownDnd>;
 
 interface IDragAndDropField {
   key: string;
@@ -20,7 +20,7 @@ interface IDragAndDropField {
   visible: boolean;
 }
 
-export const Default: ComponentStory<typeof DropDownDnd> = () => {
+export const Default: StoryFn<typeof DropDownDnd> = () => {
 
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
   const [selectedFields, setSelectedFields] = useState<IDragAndDropField[]>([

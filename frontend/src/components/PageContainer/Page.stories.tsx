@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Page from './Page';
 
 export default {
@@ -10,9 +10,9 @@ export default {
   */
   title: 'Page',
   component: Page,
-} as ComponentMeta<typeof Page>;
+} as Meta<typeof Page>;
 
-export const Primary: ComponentStory<typeof Page> = () => <Page
+export const Primary: StoryFn<typeof Page> = () => <Page
   fluid={true}
   segmentStyle={{
     height: 'calc(100vh - 90px)',

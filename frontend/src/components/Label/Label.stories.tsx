@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import Label from './Label';
 import {Container, Segment} from 'semantic-ui-react';
 
@@ -11,9 +11,9 @@ export default {
   */
   title: 'Label',
   component: Label,
-} as ComponentMeta<typeof Label>;
+} as Meta<typeof Label>;
 
-export const Content: ComponentStory<typeof Label> = () => (
+export const Content: StoryFn<typeof Label> = () => (
   <Container>
     <Segment>
       <Label content={'This is only content.'}/>
