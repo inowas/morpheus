@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {Container, Segment} from 'semantic-ui-react';
 import {Button, Modal} from 'components';
 
@@ -11,9 +11,9 @@ export default {
   */
   title: 'Modal/Modal',
   component: Modal.Modal,
-} as ComponentMeta<typeof Modal.Modal>;
+} as Meta<typeof Modal.Modal>;
 
-export const Default: ComponentStory<typeof Modal.Modal> = () => (
+export const Default: StoryFn<typeof Modal.Modal> = () => (
   <Container>
     <Segment>
       <Modal.Modal content={'This is only content.'} open={true}>

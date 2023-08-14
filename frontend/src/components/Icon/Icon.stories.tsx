@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import Icon from './Icon';
 import {Page} from '../index';
 
@@ -11,22 +11,22 @@ export default {
   */
   title: 'Icon',
   component: Icon,
-} as ComponentMeta<typeof Icon>;
+} as Meta<typeof Icon>;
 
 
-export const IconName: ComponentStory<typeof Icon> = () => (
+export const IconName: StoryFn<typeof Icon> = () => (
   <Page>
     <Icon name='trash'/>
   </Page>
 );
 
-export const Circular: ComponentStory<typeof Icon> = () => (
+export const Circular: StoryFn<typeof Icon> = () => (
   <Page>
     <Icon name='trash' circular={true}/>
   </Page>
 );
 
-export const Disabled: ComponentStory<typeof Icon> = () => (
+export const Disabled: StoryFn<typeof Icon> = () => (
   <Page>
     <Icon
       name='trash' circular={true}
@@ -35,7 +35,7 @@ export const Disabled: ComponentStory<typeof Icon> = () => (
   </Page>
 );
 
-export const Size: ComponentStory<typeof Icon> = () => (
+export const Size: StoryFn<typeof Icon> = () => (
   <Page>
     <Icon
       name='trash' circular={true}
@@ -44,7 +44,7 @@ export const Size: ComponentStory<typeof Icon> = () => (
   </Page>
 );
 
-export const Loading: ComponentStory<typeof Icon> = () => (
+export const Loading: StoryFn<typeof Icon> = () => (
   <Page>
     <Icon
       name='arrow alternate circle down' circular={true}

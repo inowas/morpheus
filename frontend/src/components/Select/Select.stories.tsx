@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Select from './Select';
 
 export default {
@@ -10,7 +10,7 @@ export default {
   */
   title: 'Select',
   component: Select,
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 const selectOptions = [{
   key: '9kkuykbwersd',
@@ -28,6 +28,6 @@ const selectOptions = [{
   text: 'Option3',
 }];
 
-export const SelectExample: ComponentStory<typeof Select> = () => (
+export const SelectExample: StoryFn<typeof Select> = () => (
   <Select options={selectOptions} placeholder={'Select option'}/>
 );

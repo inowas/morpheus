@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Segment from './Segment';
 
 export default {
@@ -10,9 +10,9 @@ export default {
   */
   title: 'Segment',
   component: Segment,
-} as ComponentMeta<typeof Segment>;
+} as Meta<typeof Segment>;
 
 
-export const SegmentExample: ComponentStory<typeof Segment> = () => (
+export const SegmentExample: StoryFn<typeof Segment> = () => (
   <Segment placeholder={true} content={'ITEXIA SEGMENT'}/>
 );

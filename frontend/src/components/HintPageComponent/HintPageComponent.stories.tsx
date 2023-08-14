@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import HintPageComponent from './HintPageComponent';
 import {iconIntegration} from './icon_integrations.svg';
 
@@ -11,10 +11,10 @@ export default {
   */
   title: 'HintPageComponent',
   component: HintPageComponent,
-} as ComponentMeta<typeof HintPageComponent>;
+} as Meta<typeof HintPageComponent>;
 
 
-export const Component: ComponentStory<typeof HintPageComponent> = () => (
+export const Component: StoryFn<typeof HintPageComponent> = () => (
   <HintPageComponent
     image={iconIntegration}
     header={'Integrations'}

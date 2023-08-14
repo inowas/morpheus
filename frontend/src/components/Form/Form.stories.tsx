@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import {Form, Page} from 'components';
 import React from 'react';
 
@@ -10,7 +10,7 @@ export default {
   */
   title: 'Form',
   component: Form.Form,
-} as ComponentMeta<typeof Form.Form>;
+} as Meta<typeof Form.Form>;
 
 const dropdownOptions = [{
   key: '9kkuykbwersd',
@@ -28,26 +28,26 @@ const dropdownOptions = [{
   text: 'Option3',
 }];
 
-export const Input: ComponentStory<typeof Form.Form> = () => (
+export const Input: StoryFn<typeof Form.Form> = () => (
   <Page header={'Input Component'}>
     <Form.Input label={'input label'} value={''}/>
   </Page>
 );
 
-export const Dropdown: ComponentStory<typeof Form.Form> = () => (
+export const Dropdown: StoryFn<typeof Form.Form> = () => (
   <Page header={'Dropdown Component'}>
     <Form.Dropdown options={dropdownOptions} placeholder={'dropdown component'}/>
   </Page>
 );
 
-export const Radio: ComponentStory<typeof Form.Form> = () => (
+export const Radio: StoryFn<typeof Form.Form> = () => (
   <Page header={'Radio Component'}>
     <Form.Radio label={'radio button'}/>
     <Form.Radio label={'radio toggle'} toggle={true}/>
   </Page>
 );
 
-export const Group: ComponentStory<typeof Form.Form> = () => (
+export const Group: StoryFn<typeof Form.Form> = () => (
   <Page header={'Group Component'}>
     <Form.Form>
       <Form.Group>Content</Form.Group>
