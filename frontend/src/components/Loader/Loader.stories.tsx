@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import Loader from './Loader';
 
 export default {
@@ -10,14 +10,14 @@ export default {
   */
   title: 'Loader',
   component: Loader,
-} as ComponentMeta<typeof Loader>;
+} as Meta<typeof Loader>;
 
 
-export const LoaderActive: ComponentStory<typeof Loader> = () => (
+export const LoaderActive: StoryFn<typeof Loader> = () => (
   <Loader active={true}/>
 );
 
-export const LoaderInverter: ComponentStory<typeof Loader> = () => (
+export const LoaderInverter: StoryFn<typeof Loader> = () => (
   <Loader active={true} inverted={true}/>
 );
 

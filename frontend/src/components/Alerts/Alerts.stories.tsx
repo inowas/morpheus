@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import Alerts from './index';
 import {IAlert} from './Alert.type';
 import Page from '../PageContainer/Page';
@@ -12,12 +12,12 @@ export default {
   */
   title: 'Alerts',
   component: Alerts,
-} as ComponentMeta<typeof Alerts>;
+} as Meta<typeof Alerts>;
 
 
-export const Primary: ComponentStory<typeof Alerts> = () => {
+export const Primary: StoryFn<typeof Alerts> = () => {
 
-  const [alerts, setAlerts] = React.useState<IAlert[]>(
+  const [alerts, setAlerts] = useState<IAlert[]>(
     [
       {
         uuid: 'ddf692c7-91fb-43e0-9b49-d3e18b588731',

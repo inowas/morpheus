@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Popup from './Popup';
 import {Container, Segment} from 'semantic-ui-react';
 
@@ -11,9 +11,9 @@ export default {
   */
   title: 'Popup',
   component: Popup,
-} as ComponentMeta<typeof Popup>;
+} as Meta<typeof Popup>;
 
-export const Content: ComponentStory<typeof Popup> = () => (
+export const Content: StoryFn<typeof Popup> = () => (
   <Container>
     <Segment>
       <Popup content={'This is only content.'} open={true}/>

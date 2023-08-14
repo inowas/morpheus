@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Pagination from './Pagination';
 
 export default {
@@ -10,10 +10,10 @@ export default {
   */
   title: 'Pagination',
   component: Pagination,
-} as ComponentMeta<typeof Pagination>;
+} as Meta<typeof Pagination>;
 
 
-export const PaginationExample: ComponentStory<typeof Pagination> = () => (
+export const PaginationExample: StoryFn<typeof Pagination> = () => (
   <Pagination
     className='paginationBar'
     defaultActivePage={1}

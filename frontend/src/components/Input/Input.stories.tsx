@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import Input from './Input';
 
 export default {
@@ -10,10 +10,10 @@ export default {
   */
   title: 'Input',
   component: Input,
-} as ComponentMeta<typeof Input>;
+} as Meta<typeof Input>;
 
 
-export const InputPassword: ComponentStory<typeof Input> = () => (
+export const InputPassword: StoryFn<typeof Input> = () => (
   <Input
     label={'password'}
     type="password"
@@ -21,7 +21,7 @@ export const InputPassword: ComponentStory<typeof Input> = () => (
   />
 );
 
-export const InputCheckbox: ComponentStory<typeof Input> = () => (
+export const InputCheckbox: StoryFn<typeof Input> = () => (
   <Input
     checked={true}
     type="checkbox"
