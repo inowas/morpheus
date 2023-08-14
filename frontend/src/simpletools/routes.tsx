@@ -1,6 +1,7 @@
 import React from 'react';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import T02Container from 'simpletools/T02/presentation/containers/T02Container';
+import T04Container from 'simpletools/T04/presentation/containers/T04Container';
 import T08Container from 'simpletools/T08/presentation/containers/T08Container';
 import {T09AContainer, T09BContainer, T09CContainer, T09Container, T09DContainer, T09EContainer, T09FContainer} from 'simpletools/T09/presentation/containers';
 import T11Container from 'simpletools/T11/presentation/containers/T11Container';
@@ -25,6 +26,7 @@ const Router = () => {
       <Route path="/" element={<Navigate to="/tools"/>}/>
       <Route path="/tools" element={wrapRouteComponent(<DashboardContainer/>)}/>
       <Route path="/tools/T02" element={wrapRouteComponent(<T02Container/>)}/>
+      <Route path="/tools/T04" element={wrapRouteComponent(<T04Container/>)}/>
       <Route path="/tools/T08" element={wrapRouteComponent(<T08Container/>)}/>
       <Route path="/tools/T09" element={wrapRouteComponent(<T09Container/>)}/>
       <Route path="/tools/T09/T09A" element={wrapRouteComponent(<T09AContainer/>)}/>
