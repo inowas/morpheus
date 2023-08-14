@@ -112,7 +112,7 @@ const T09 = () => {
       />
       <Header
         as={'h3'}
-        style={{paddingTop: '40px', position: 'relative', zIndex: 2}}
+        style={{position: 'relative', zIndex: 2}}
       >
         Please select the set of boundary conditions that apply to your problem:
       </Header>
