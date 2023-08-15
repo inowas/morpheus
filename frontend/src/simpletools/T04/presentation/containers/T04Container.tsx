@@ -3,6 +3,7 @@ import Papa from 'papaparse';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
 import {useTranslate} from '../../../T04/application';
+import '../styles/styles.css';
 import {Container, Grid} from 'semantic-ui-react';
 import PivotTableUI from 'react-pivottable/PivotTableUI';
 
@@ -55,7 +56,9 @@ const T04 = () => {
   };
 
   return (
-    <>
+    <div
+      className="toolWrapper"
+    >
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -63,9 +66,9 @@ const T04 = () => {
         ]}
         navigateTo={navigateTo}
       />
-      <div style={{width: '1250px', margin: '0 auto'}}>
+      <div className="mainWrapper">
         <Grid padded={true}>
-          <Grid.Row>
+          <Grid.Row style={{padding: 0}}>
             <Container fluid={true} className="tablewrap">
               {data && <PivotTableUI
                 data={data}
@@ -76,7 +79,7 @@ const T04 = () => {
           </Grid.Row>
         </Grid>
       </div>
-    </>
+    </div>
   );
 };
 
