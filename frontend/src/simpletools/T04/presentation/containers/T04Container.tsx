@@ -5,15 +5,13 @@ import {useNavigate} from '../../../common/hooks';
 import {useTranslate} from '../../../T04/application';
 import '../styles/styles.css';
 import {Container, Grid} from 'semantic-ui-react';
-import PivotTableUI from 'react-pivottable/PivotTableUI';
-
-import '../styles/pivottable.css';
+import PivotTableUI, {PivotTableUIProps} from 'react-pivottable/PivotTableUI';
 
 const tool = 'T04';
 
 const T04 = () => {
   const [data, setData] = useState<[] | null>(null);
-  const [pivotTableState, setPivotTableState] = useState<any>(null);
+  const [pivotTableState, setPivotTableState] = useState<PivotTableUIProps | null>(null);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
   const title = `${tool}: ${translate(`${tool}_title`)}`;
@@ -51,14 +49,8 @@ const T04 = () => {
     fetchData();
   }, []);
 
-  const onChange = (sChange: any) => {
-    setPivotTableState(sChange);
-  };
-
   return (
-    <div
-      className="toolWrapper"
-    >
+    <div className="toolWrapper">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -72,7 +64,7 @@ const T04 = () => {
             <Container fluid={true} className="tablewrap">
               {data && <PivotTableUI
                 data={data}
-                onChange={onChange}
+                onChange={(state: PivotTableUIProps) => setPivotTableState(state)}
                 {...pivotTableState}
               />}
             </Container>
