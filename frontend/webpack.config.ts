@@ -3,7 +3,7 @@ import path from 'path'
 import * as webpack from 'webpack';
 // @ts-ignore
 import * as webpackDevServer from 'webpack-dev-server';
-import * as fs from "fs";
+import * as fs from 'fs';
 // @ts-ignore
 import HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -40,10 +40,10 @@ module.exports = (env: any, argv: any) => {
               options: {
                 importLoaders: 1,
                 modules: {
-                  mode: "local",
+                  mode: 'local',
                   auto: true,
                   exportGlobals: true,
-                  localIdentName: "[local]--[hash:base64:5]",
+                  localIdentName: '[local]--[hash:base64:5]',
                 },
               },
             },
@@ -60,6 +60,10 @@ module.exports = (env: any, argv: any) => {
               },
             },
           ],
+        },
+        {
+          test: /\.csv$/,
+          use: ['csv-loader'],
         },
         {
           test: /\.(png|jpe?g|gif|svg)$/,
@@ -109,8 +113,8 @@ module.exports = (env: any, argv: any) => {
       }),
       new CopyPlugin({
         patterns: [{
-          from: "public",
-          to: "./",
+          from: 'public',
+          to: './',
           globOptions: {
             ignore: [
               '**/index.html',
@@ -121,7 +125,7 @@ module.exports = (env: any, argv: any) => {
       new Dotenv(),
     ],
     resolve: {
-      extensions: ['.tsx', '.ts', '.js', '.css'],
+      extensions: ['.tsx', '.ts', '.js', '.css', '.json'],
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       alias: {
         '../../theme.config$': path.join(__dirname, 'styleguide/theme.config'),
