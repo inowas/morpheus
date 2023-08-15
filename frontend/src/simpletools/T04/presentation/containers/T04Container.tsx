@@ -1,49 +1,57 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import Papa from 'papaparse';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
 import {useTranslate} from '../../../T04/application';
-import '../styles/pivottable.css';
 import {Container, Grid} from 'semantic-ui-react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import PivotTableUI from 'react-pivottable/PivotTableUI';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import csvFile from '../data/database-2018-01-05.csv';
+
+import '../styles/pivottable.css';
 
 const tool = 'T04';
 
 const T04 = () => {
-  const [data] = useState<object>(csvFile);
-  const [s, setS] = useState<any>(null);
+  const [data, setData] = useState<[] | null>(null);
+  const [pivotTableState, setPivotTableState] = useState<any>(null);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       Papa.parse(csvFile, {
-  //         download: true,
-  //         delimiter: ',',
-  //         dynamicTyping: true,
-  //         header: true,
-  //         skipEmptyLines: true,
-  //         complete: (parsedObject) => {
-  //           setData(parsedObject.data);
-  //         },
-  //       });
-  //     } catch (error) {
-  //       console.error('Error fetching or parsing CSV:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-  // console.log('csvFile ', csvFile);
-  // console.log(JSON.stringify(csvFile));
+  const fetchCsv = async () => {
+    const response = await fetch('/data/T04/database-2018-01-05.csv');
+    if (!response.ok || null === response.body) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const result = await reader.read();
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(result.value);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const csvData = await fetchCsv();
+        Papa.parse(csvData, {
+          delimiter: ',',
+          dynamicTyping: true,
+          header: true,
+          skipEmptyLines: true,
+          complete: (parsedObject) => {
+            setData(parsedObject.data as []);
+          },
+        });
+      } catch (error) {
+        console.error('Error fetching or parsing CSV:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const onChange = (sChange: any) => {
-    setS(sChange);
+    setPivotTableState(sChange);
   };
 
   return (
@@ -60,8 +68,9 @@ const T04 = () => {
           <Grid.Row>
             <Container fluid={true} className="tablewrap">
               {data && <PivotTableUI
-                data={data} onChange={onChange}
-                {...s}
+                data={data}
+                onChange={onChange}
+                {...pivotTableState}
               />}
             </Container>
           </Grid.Row>
