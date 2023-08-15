@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
 import {useTranslate} from '../../../T04/application';
-import '../styles/pivottable.css';
+import '../styles/styles.css';
 import {Container, Grid} from 'semantic-ui-react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -20,34 +20,14 @@ const T04 = () => {
   const {translate} = useTranslate();
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       Papa.parse(csvFile, {
-  //         download: true,
-  //         delimiter: ',',
-  //         dynamicTyping: true,
-  //         header: true,
-  //         skipEmptyLines: true,
-  //         complete: (parsedObject) => {
-  //           setData(parsedObject.data);
-  //         },
-  //       });
-  //     } catch (error) {
-  //       console.error('Error fetching or parsing CSV:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-  // console.log('csvFile ', csvFile);
-  // console.log(JSON.stringify(csvFile));
-
   const onChange = (sChange: any) => {
     setS(sChange);
   };
 
   return (
-    <>
+    <div
+      className="toolWrapper"
+    >
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -55,9 +35,9 @@ const T04 = () => {
         ]}
         navigateTo={navigateTo}
       />
-      <div style={{width: '1250px', margin: '0 auto'}}>
+      <div className="mainWrapper">
         <Grid padded={true}>
-          <Grid.Row>
+          <Grid.Row style={{padding: 0}}>
             <Container fluid={true} className="tablewrap">
               {data && <PivotTableUI
                 data={data} onChange={onChange}
@@ -67,7 +47,7 @@ const T04 = () => {
           </Grid.Row>
         </Grid>
       </div>
-    </>
+    </div>
   );
 };
 
