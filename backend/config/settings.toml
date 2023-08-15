@@ -1,0 +1,12 @@
+[default]
+
+[development]
+POSTGRES_DB="inowas"
+POSTGRES_USER="dev"
+POSTGRES_HOST="127.0.0.1"
+POSTGRES_PORT=5432
+
+[production]
+
+[testing]
+

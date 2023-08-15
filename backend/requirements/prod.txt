@@ -1,0 +1,6 @@
+Authlib
+Dynaconf
+Flask
+SQLAlchemy
+psycopg2
+alembic

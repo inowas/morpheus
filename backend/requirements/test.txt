@@ -1,2 +1,6 @@
 -r prod.txt
+dep-check
+pyright
 pytest
+flake8
+pep8-naming
