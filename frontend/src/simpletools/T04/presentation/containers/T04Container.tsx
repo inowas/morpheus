@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react';
-// @ts-ignore
 import Papa from 'papaparse';
 import {Breadcrumb} from '../../../../components';
 import {useNavigate} from '../../../common/hooks';
 import {useTranslate} from '../../../T04/application';
 import '../styles/styles.css';
 import {Container, Grid} from 'semantic-ui-react';
-// @ts-ignore
 import PivotTableUI, {PivotTableUIProps} from 'react-pivottable/PivotTableUI';
 
 const tool = 'T04';
