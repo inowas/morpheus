@@ -117,6 +117,7 @@
     "mini-css-extract-plugin": "^2.7.3",
     "miragejs": "^0.1.47",
     "npm": "^9.6.1",
+    "papaparse": "5.4.1",
     "puppeteer": "^9.1.1",
     "react-test-renderer": "^18.2.0",
     "redux-mock-store": "^1.5.4",
