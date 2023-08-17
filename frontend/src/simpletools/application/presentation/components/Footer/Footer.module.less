@@ -1,4 +1,4 @@
-@import 'styleguide/themes/inowas/globals/site.variables';
+@import '../../../../../../styleguide/themes/inowas/globals/site.variables';
 
 .footer {
   position: relative;
@@ -175,6 +175,21 @@
 
   img {
     padding: 0 0 0 1rem;
+  }
+}
+
+.softwareVersion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+
+  @media (min-width: @breakpoint-tablet-horizontal) {
+    position: absolute;
+    min-height: 36px;
+    padding: 0;
+    bottom: 0;
+    left: 0;
   }
 }
 

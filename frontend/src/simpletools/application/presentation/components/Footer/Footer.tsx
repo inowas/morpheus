@@ -117,6 +117,9 @@ const footer = () => {
               <img src={logoCopyright} alt="Copyright"/>
             </a>
           </div>
+          <div className={styles.softwareVersion}>
+            <span>Release: v1.11.1-2-g7d9031e</span>
+          </div>
         </Container>
         <BackToTopButton/>
       </div>
