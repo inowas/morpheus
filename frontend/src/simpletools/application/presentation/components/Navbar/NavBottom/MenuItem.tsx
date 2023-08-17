@@ -1,6 +1,7 @@
 import {IDropdownItem, IMenuItem} from '../types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
+import {useNavigate} from '../../../../../common/hooks';
 import {Menu} from 'semantic-ui-react';
 import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
