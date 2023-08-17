@@ -107,8 +107,8 @@ module.exports = (env: any, argv: any) => {
         chunks: ['simpletools']
       }),
       new webpack.EnvironmentPlugin({
-        GIT_VERSION: git('describe --tags --always --dirty=+'),
-        GIT_AUTHOR_DATE: git('log -1 --format=%aI'),
+        GIT_RELEASE: git('describe --tags --always --dirty=+'),
+        GIT_RELEASE_DATE: git('log -1 --format=%aI'),
         MOCKSERVER: env.mockserver || false,
       }),
       new CopyPlugin({

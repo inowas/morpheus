@@ -4,6 +4,7 @@ import {useNavbarItems, useTranslate} from '../../application';
 import {ContentWrapper} from 'components';
 import {Footer, Header, Navbar} from '../components/';
 import {useNavigate} from '../../../common/hooks';
+import useReleaseVersion from '../../application/useReleaseVersion';
 
 interface IProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ const ApplicationContainer = ({children}: IProps) => {
   const {navbarItems} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
+  const {release} = useReleaseVersion();
 
   useEffect(() => {
     if (language !== i18n.language) {
@@ -43,7 +45,7 @@ const ApplicationContainer = ({children}: IProps) => {
       <ContentWrapper minHeight={'auto'}>
         {children}
       </ContentWrapper>
-      <Footer/>
+      <Footer release={release}/>
     </>
   );
 };
