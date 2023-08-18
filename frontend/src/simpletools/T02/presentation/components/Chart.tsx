@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid} from 'semantic-ui-react';
 import {IT02} from '../../types/T02.type';
 import HantushPlot3D from './HantushPlot3D';
+import ChartModal from '../../../application/presentation/components/ChartModal';
 
 interface ICalculateChartXMax {
   variable: string;
@@ -89,10 +90,29 @@ const Chart = ({parameters, mounding}: IProps) => {
   const zData12Q = zData1Q.map((row) => [...[...row].reverse(), ...row]);
   const zData = [...zData12Q.reverse(), ...zData12Q.reverse()];
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleModalToggle = (): void => {
+    setShowModal(!showModal);
+    console.log(showModal);
+
+  };
 
   return (
     <div>
       <Grid>
+        <button style={{position: 'absolute', zIndex: '2'}} onClick={handleModalToggle}>Open Modal</button>
+        <ChartModal open={showModal} onClose={handleModalToggle}>
+          <HantushPlot3D
+            data={{
+              x: xData,
+              y: yData,
+              z: zData,
+            }}
+            basinLength={L}
+            basinWidth={W}
+          />
+        </ChartModal>
         <Grid.Column>
           <HantushPlot3D
             data={{
