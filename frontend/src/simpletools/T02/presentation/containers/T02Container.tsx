@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
-import {Background, Chart, Info, Parameters, Settings} from '../components';
+import {Background, ChartWrapper, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding, useTranslate} from '../../application';
-import {useNavigate} from '../../../common/hooks';
+import {useCalculateMounding, useTranslate, useNavigate} from '../../application';
 import {Breadcrumb} from '../../../../components';
 import SimpleToolGrid from '../../../../components/SimpleToolGrid';
 
@@ -140,7 +139,7 @@ const T02 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div data-testid="t02-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -150,7 +149,7 @@ const T02 = () => {
       />
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
-        <Chart
+        <ChartWrapper
           settings={data.settings}
           parameters={data.parameters}
           mounding={mounding}
@@ -165,7 +164,7 @@ const T02 = () => {
           onReset={handleReset}
         />
       </SimpleToolGrid>
-    </>
+    </div>
   );
 };
 
