@@ -6,6 +6,7 @@ source $(dirname "$0")/../util.inc.sh
 outputHeadline "running tests"
 
 cd $backendRoot
+export FLASK_ENV=testing
 pytest
 exitCode=$?
 if [ $exitCode -ne 0 ]; then

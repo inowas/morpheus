@@ -3,7 +3,7 @@ from flask import Blueprint, Flask
 from morpheus.authentication.presentation.api.login import login_request_handler
 
 
-def register(app: Flask):
+def bootstrap(app: Flask):
     blueprints = Blueprint('authentication', __name__)
 
     @blueprints.route('/login', methods=['POST'])

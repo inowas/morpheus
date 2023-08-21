@@ -32,3 +32,6 @@ start-dev-server:
 ## runs architecture layer boundary checks, static code analysis and tests
 qa-check:
 	environments/dev/scripts/qa_check.sh
+
+run-tests:
+	environments/dev/scripts/qa_check/run_tests.sh

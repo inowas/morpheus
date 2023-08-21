@@ -4,6 +4,7 @@ from typing import NewType
 
 UserId = NewType('UserId', uuid.UUID)
 
+
 @dataclasses.dataclass
 class User:
     id: UserId

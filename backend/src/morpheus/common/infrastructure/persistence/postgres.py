@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from morpheus.settings import settings
 
 
 class BaseModel(DeclarativeBase):
@@ -7,14 +8,16 @@ class BaseModel(DeclarativeBase):
 
 
 class PostgresRepository:
-    def __init__(self, configuration):
-        connection_string = "postgresql+psycopg2://{}:{}@{}:{}/{}".format(
-            configuration.POSTGRES_USER,
-            configuration.POSTGRES_PASSWORD,
-            configuration.POSTGRES_HOST,
-            configuration.POSTGRES_PORT,
-            configuration.POSTGRES_DB,
-        )
+    def __init__(self, engine):
+        self.session = sessionmaker(engine)
 
-        self.session = sessionmaker(create_engine(connection_string))
 
+engine = create_engine(
+    "postgresql+psycopg2://{}:{}@{}:{}/{}".format(
+        settings.POSTGRES_USER,
+        settings.POSTGRES_PASSWORD,
+        settings.POSTGRES_HOST,
+        settings.POSTGRES_PORT,
+        settings.POSTGRES_DB,
+    )
+)

@@ -4,4 +4,5 @@
 source "$(dirname "$0")/util.inc.sh"
 
 cd $backendRoot/src
-FLASK_ENV=development flask run --debug
+export FLASK_ENV=development
+flask run --debug
