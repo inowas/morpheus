@@ -1,40 +1,61 @@
 @import '../../styleguide/themes/inowas/globals/site.variables';
 
 body {
-    color: #4c4c4c;
+  color: #4c4c4c;
 }
 
 #root {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 100%;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  overflow: hidden;
 }
 
 footer {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .ui.container {
-    position: relative;
+  position: relative;
 
-    .recharts-wrapper svg {
-        overflow: visible;
+  .recharts-wrapper svg {
+    overflow: visible;
+  }
+}
+
+// Plotly Charts
+.js-plotly-plot {
+
+  &.plotlyContainer {
+    display: flex !important;
+    width: 100%;
+    flex-grow: 5;
+  }
+
+  &.plotlyContainerModal {
+    width: 90%;
+    height: 90%;
+  }
+
+  .modebar-container {
+
+    .modebar {
+      top: -20px !important;
     }
-
+  }
 }
 
 

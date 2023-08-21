@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {Grid} from 'semantic-ui-react';
+import {Grid, Icon} from 'semantic-ui-react';
 import {IT02} from '../../types/T02.type';
 import HantushPlot3D from './HantushPlot3D';
 import ChartModal from '../../../application/presentation/components/ChartModal';
+import styles from '../containers/T02Container.module.less';
 
 interface ICalculateChartXMax {
   variable: string;
@@ -94,38 +95,45 @@ const Chart = ({parameters, mounding}: IProps) => {
 
   const handleModalToggle = (): void => {
     setShowModal(!showModal);
-    console.log(showModal);
-
   };
 
   return (
-    <div>
-      <Grid>
-        <button style={{position: 'absolute', zIndex: '2'}} onClick={handleModalToggle}>Open Modal</button>
-        <ChartModal open={showModal} onClose={handleModalToggle}>
-          <HantushPlot3D
-            data={{
-              x: xData,
-              y: yData,
-              z: zData,
-            }}
-            basinLength={L}
-            basinWidth={W}
-          />
-        </ChartModal>
-        <Grid.Column>
-          <HantushPlot3D
-            data={{
-              x: xData,
-              y: yData,
-              z: zData,
-            }}
-            basinLength={L}
-            basinWidth={W}
-          />
-        </Grid.Column>
-      </Grid>
-    </div>
+    <Grid>
+      <Icon
+        name="expand arrows alternate"
+        onClick={handleModalToggle}
+        className={styles.icon}
+        style={{position: 'absolute', zIndex: '2', cursor: 'pointer'}}
+      />
+      <ChartModal open={showModal} onClose={handleModalToggle}>
+        <HantushPlot3D
+          data={{
+            x: xData,
+            y: yData,
+            z: zData,
+          }}
+          basinLength={L}
+          basinWidth={W}
+        />
+      </ChartModal>
+      <Grid.Column style={{
+        width: '100%',
+        display: 'flex',
+        flexGrow: '2',
+      }}
+      >
+        <HantushPlot3D
+          data={{
+            x: xData,
+            y: yData,
+            z: zData,
+          }}
+          basinLength={L}
+          basinWidth={W}
+          chartHeight={300}
+        />
+      </Grid.Column>
+    </Grid>
   );
 };
 
