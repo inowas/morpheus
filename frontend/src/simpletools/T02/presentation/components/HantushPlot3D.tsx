@@ -7,6 +7,7 @@ interface IProps {
   title?: string;
   basinWidth: number;
   basinLength: number;
+  chartHeight?: number;
 }
 
 interface ISurfacePlotData {
@@ -28,7 +29,7 @@ const colorScale: ColorScale = [
   [1.0, 'rgb(165,0,38)'],
 ];
 
-const HantushPlot3D: React.FC<IProps> = ({data, title, basinLength, basinWidth}) => {
+const HantushPlot3D: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHeight}) => {
   const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
   const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
   const deltaZ = maxZ - minZ;
@@ -72,8 +73,8 @@ const HantushPlot3D: React.FC<IProps> = ({data, title, basinLength, basinWidth})
       layout={{
         plot_bgcolor: 'rgb(224,243,248)',
         title: title,
-        autosize: false,
-        height: 300,
+        autosize: true,
+        height: chartHeight !== undefined ? chartHeight : undefined,
         margin: {l: 0, r: 0, b: 0, t: 0},
         scene: {
           camera: {
@@ -110,6 +111,7 @@ const HantushPlot3D: React.FC<IProps> = ({data, title, basinLength, basinWidth})
           },
         },
       }}
+      className={chartHeight !== undefined ? 'plotlyContainer' : 'plotlyContainerModal'}
     />
   );
 };
