@@ -1,12 +1,12 @@
 import Background from './Background';
-import Chart from './Chart';
+import ChartWrapper from './ChartWrapper';
 import Info from './Info';
 import Parameters from './Parameters';
 import Settings from './Settings';
 
 export {
   Background,
-  Chart,
+  ChartWrapper,
   Info,
   Parameters,
   Settings,
