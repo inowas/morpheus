@@ -1,8 +1,9 @@
 import click
 from flask import Flask, Blueprint
 
+from morpheus.common.infrastructure.persistence.database import db
 from morpheus.user.application.create_user import CreateUserCommandHandler
-from morpheus.user.infrastructure.persistence.user import repository as user_repository
+from morpheus.user.infrastructure.persistence.user import UserRepository
 from morpheus.user.presentation.cli.user import CreateUserCliCommand
 
 
@@ -20,7 +21,7 @@ def bootstrap(app: Flask):
         email: str,
         password: str,
     ):
-        cli_command = CreateUserCliCommand(CreateUserCommandHandler(user_repository))
+        cli_command = CreateUserCliCommand(CreateUserCommandHandler(UserRepository(db.engine)))
         cli_command.run(email, password)
 
     app.register_blueprint(blueprints, url_prefix='/user', cli_group='user')

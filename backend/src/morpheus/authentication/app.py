@@ -1,13 +1,13 @@
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, request
 
-from morpheus.authentication.presentation.api.login import login_request_handler
+from morpheus.authentication.infrastructure.oauth2.server import authorization
 
 
 def bootstrap(app: Flask):
-    blueprints = Blueprint('authentication', __name__)
+    blueprint = Blueprint('authentication', __name__)
 
-    @blueprints.route('/login', methods=['POST'])
-    def login():
-        return login_request_handler()
+    @blueprint.route('/oauth/token', methods=['POST'])
+    def issue_token():
+        return authorization.create_token_response()
 
-    app.register_blueprint(blueprints, url_prefix='/auth', cli_group='auth')
+    app.register_blueprint(blueprint, url_prefix='/auth', cli_group='auth')

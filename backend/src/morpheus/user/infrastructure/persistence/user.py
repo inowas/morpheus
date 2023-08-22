@@ -1,24 +1,9 @@
 import uuid
-from abc import ABC, abstractmethod
 from sqlalchemy import select, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from morpheus.common.infrastructure.persistence.postgres import PostgresRepository, BaseModel, engine
+from morpheus.common.infrastructure.persistence.database import db, BaseRepository, BaseModel
 from morpheus.user.types.user import User, UserId
-
-
-class UserRepository(ABC):
-    @abstractmethod
-    def user_with_email_exists(self, email: str) -> bool:
-        pass
-
-    @abstractmethod
-    def fetch_by_id(self, user_id: UserId) -> User:
-        pass
-
-    @abstractmethod
-    def insert(self, user: User):
-        pass
 
 
 class UserModel(BaseModel):
@@ -36,7 +21,7 @@ class UserModel(BaseModel):
         return cls(id=user.id, email=user.email, password_hash=user.password_hash)
 
 
-class PostgresUserRepository(UserRepository, PostgresRepository):
+class UserRepository(BaseRepository):
 
     def user_with_email_exists(self, email: str) -> bool:
         with self.session() as session:
@@ -59,6 +44,3 @@ class PostgresUserRepository(UserRepository, PostgresRepository):
         with self.session() as session:
             session.add(UserModel.from_user_type(user))
             session.commit()
-
-
-repository = PostgresUserRepository(engine)

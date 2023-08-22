@@ -23,6 +23,9 @@
 First start the database:
 * `make start-dev-database`
 
+Run migrations:
+* `make migrate-up`
+
 There are two ways to start the development server:
 1. Start it in your terminal with `make start-dev-server`
 2. Create a run/debug configuration with PyCharm (this enables debugging with breakpoints in your PyCharm)
@@ -31,5 +34,6 @@ There are two ways to start the development server:
    * FLASK_ENV: "development"
    * FLASK_DEBUG enabled
    * Environment:
+     * Environment variables: `AUTHLIB_INSECURE_TRANSPORT=1`
      * Python interpreter: should be named something like "inowas-morpheus-backend-x.xx.x" where x.xx.x is the python version
      * Working directory: backend/src (in the repository)

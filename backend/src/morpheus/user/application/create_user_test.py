@@ -5,7 +5,7 @@ from morpheus.user.application.create_user import CreateUserCommandHandler, Crea
 
 @pytest.fixture
 def user_repository():
-    with patch('morpheus.user.infrastructure.persistence.user.UserRepository') as mock_repository_class:
+    with patch('morpheus.user.infrastructure.oauth2.user.UserRepository') as mock_repository_class:
         repository = mock_repository_class.return_value
         repository.user_with_email_exists.return_value = False
         yield repository

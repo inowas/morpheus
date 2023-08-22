@@ -33,5 +33,15 @@ start-dev-server:
 qa-check:
 	environments/dev/scripts/qa_check.sh
 
+## runs tests
 run-tests:
 	environments/dev/scripts/qa_check/run_tests.sh
+
+## migrates database to latest version
+migrate-up:
+	environments/dev/scripts/migrate_up.sh
+
+## create new migration (pass name of migration as name="name of migration")
+create_migration:
+	environments/dev/scripts/create_migration.sh "$(name)"
+
