@@ -1,7 +1,6 @@
 from flask import Flask
 
 from morpheus.app import bootstrap
-from morpheus.authentication.infrastructure.oauth2.server import config_oauth
 from morpheus.common.infrastructure.persistence.database import db
 from morpheus.settings import settings
 
@@ -16,6 +15,5 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://{}:{}@{}:{}/{}".f
         settings.POSTGRES_DB,
     )
 db.init_app(app)
-config_oauth(app)
 
 bootstrap(app)

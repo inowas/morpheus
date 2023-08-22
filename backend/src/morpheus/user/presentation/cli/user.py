@@ -1,5 +1,5 @@
 from morpheus.common.infrastructure.cli.io import write_success, write_error
-from morpheus.user.application.create_user import CreateUserCommandHandler, CreateUserFailed
+from morpheus.user.application.create_user import CreateUserCommandHandler, CreateUserFailed, CreateUserCommand
 
 
 class CreateUserCliCommand:
@@ -20,7 +20,7 @@ class CreateUserCliCommand:
                 return 'Unknown reason'
 
         try:
-            self._command_handler.handle(email, password)
+            self._command_handler.handle(CreateUserCommand(email=email, password=password))
             write_success(f"Successfully created user {email}")
         except CreateUserFailed as exception:
             write_error(f"Could not create user {email}. Reason: {get_reason_for_failure(exception)}")

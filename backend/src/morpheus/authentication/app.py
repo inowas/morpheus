@@ -1,9 +1,10 @@
-from flask import Blueprint, Flask, request
-
-from morpheus.authentication.infrastructure.oauth2.server import authorization
+from flask import Blueprint, Flask
+from morpheus.authentication.infrastructure.oauth2.server import authorization, config_oauth
 
 
 def bootstrap(app: Flask):
+    config_oauth(app)
+
     blueprint = Blueprint('authentication', __name__)
 
     @blueprint.route('/oauth/token', methods=['POST'])

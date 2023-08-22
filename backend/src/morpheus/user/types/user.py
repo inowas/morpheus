@@ -5,7 +5,7 @@ from typing import NewType
 UserId = NewType('UserId', uuid.UUID)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class User:
     id: UserId
     email: str

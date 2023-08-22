@@ -56,9 +56,15 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
 
 def create_tables(app: Flask):
     with app.app_context():
-        db.metadata.create_all(db.engine, tables=[OAuth2User.__table__, OAuth2Client.__table__, OAuth2AuthorizationCode.__table__])
+        db.metadata.create_all(
+            db.engine,
+            tables=[OAuth2User.__table__, OAuth2Client.__table__, OAuth2AuthorizationCode.__table__]
+        )
 
 
 def drop_tables(app: Flask):
     with app.app_context():
-        db.metadata.drop_all(db.engine, tables=[OAuth2User.__table__, OAuth2Client.__table__, OAuth2AuthorizationCode.__table__])
+        db.metadata.drop_all(
+            db.engine,
+            tables=[OAuth2User.__table__, OAuth2Client.__table__, OAuth2AuthorizationCode.__table__]
+        )
