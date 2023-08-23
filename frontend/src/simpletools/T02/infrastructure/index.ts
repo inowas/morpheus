@@ -1,4 +1,4 @@
 import calculateMounding, {ICalculateMounding} from './calculateMounding';
 
-export default calculateMounding;
+export {calculateMounding};
 export type {ICalculateMounding};

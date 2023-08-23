@@ -1,4 +1,4 @@
-import calculateMounding from '../infrastructure';
+import {calculateMounding} from '../infrastructure';
 
 interface IUseCalculateMounding {
   calculateHi: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
