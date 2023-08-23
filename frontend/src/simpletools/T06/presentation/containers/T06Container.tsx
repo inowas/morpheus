@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Breadcrumb} from '../../../../components';
-import {useNavigate} from '../../../common/hooks';
-import {useTranslate} from '../../../T06/application';
+import {useTranslate, useNavigate} from '../../../T06/application';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import groupBy from 'lodash.groupby';
 import intersection from 'lodash.intersection';
@@ -307,22 +306,17 @@ const T06 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
 
-  const replaceAll = (target: string, search: string, replacement: string) => {
-    return target.split(search).join(replacement);
-  };
+  const replaceAll = (target: string, search: string, replacement: string) => target.split(search).join(replacement);
 
-  const changeCondition = (changedCondition: { name: string, selected: boolean }) => {
+  const handleChangeCondition = (name: string, checked: boolean) => {
     const newState = data.condition.map((c) => {
-      if (c.name === changedCondition.name) {
-        c.selected = !changedCondition.selected;
+      if (c.name === name) {
+        c.selected = !checked;
       }
       return c;
     });
-    setData((prevState) => ({...prevState, condition: [...newState]}));
-  };
 
-  const handleChange = (name: string, checked: boolean) => {
-    changeCondition({name: name, selected: checked});
+    setData((prevState) => ({...prevState, condition: [...newState]}));
   };
 
   const renderConditions = (conditions: IT06['condition']) => {
@@ -333,10 +327,11 @@ const T06 = () => {
       if (groupedConditions.hasOwnProperty(category)) {
         const conditionsList = groupedConditions[category].map((c) => (
           <Form.Field
+            data-testid={`${category}_${c.name}`}
             key={replaceAll(c.name, ' ', '_')}
             control={Checkbox}
             label={<label>{c.name}</label>}
-            onChange={() => handleChange(c.name, c.selected)}
+            onChange={() => handleChangeCondition(c.name, c.selected)}
             checked={c.selected}
             name={c.name}
           />
@@ -391,7 +386,10 @@ const T06 = () => {
         return null;
       }
       return (
-        <Item key={method.slug}>
+        <Item
+          key={method.slug}
+          data-testid={method.slug}
+        >
           <Item.Image src={method.image} size="medium"/>
           <Item.Content>
             <Item.Header as="h4">
