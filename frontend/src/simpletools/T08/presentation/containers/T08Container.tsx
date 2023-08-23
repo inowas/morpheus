@@ -12,7 +12,7 @@ export const SETTINGS_CASE_VARIABLE_TIME: number = 2;
 export const SETTINGS_INFILTRATION_ONE_TIME: number = 1;
 export const SETTINGS_INFILTRATION_CONTINUOUS: number = 2;
 
-const defaults: IT08 = {
+export const defaults: IT08 = {
   parameters: [{
     inputType: 'SLIDER',
     label: '',

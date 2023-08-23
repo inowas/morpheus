@@ -5,6 +5,11 @@ import {SETTINGS_CASE_FIXED_TIME, SETTINGS_INFILTRATION_ONE_TIME} from '../conta
 import {getParameterValues} from '../../../common/helpers';
 import {IT08} from '../../types/T08.type';
 
+interface IProps {
+  settings: IT08['settings'];
+  parameters: IT08['parameters'];
+}
+
 const renderContent = (settings: IT08['settings'], t: number, c: number, x: number) => {
   if (settings.case === SETTINGS_CASE_FIXED_TIME) {
     return (
@@ -26,10 +31,6 @@ const renderContent = (settings: IT08['settings'], t: number, c: number, x: numb
   );
 };
 
-interface IProps {
-  settings: IT08['settings'];
-  parameters: IT08['parameters'];
-}
 
 const Info = ({parameters, settings}: IProps) => {
   const {x, t, C0, tau, K, ne, I, alphaL, Kd} = getParameterValues(parameters);
@@ -40,13 +41,14 @@ const Info = ({parameters, settings}: IProps) => {
   const c = C0 * C;
 
   return (
-    <Message icon={true} info={true}>
-      <Icon name="info circle" color="blue"/>
-      <Message.Content>
-        {renderContent(settings, t, c, x)}
-      </Message.Content>
-    </Message>
-
+    <div data-testid="info-container">
+      <Message icon={true} info={true}>
+        <Icon name="info circle" color="blue"/>
+        <Message.Content>
+          {renderContent(settings, t, c, x)}
+        </Message.Content>
+      </Message>
+    </div>
   );
 };
 
