@@ -9,50 +9,14 @@ from authlib.integrations.sqla_oauth2 import (
     create_bearer_token_validator,
 )
 from authlib.oauth2.rfc6749 import grants
-from authlib.oauth2.rfc7636 import CodeChallenge
 
 from morpheus.common.infrastructure.persistence.database import db
-from .models import OAuth2User, OAuth2Client, OAuth2AuthorizationCode, OAuth2Token
-
-
-class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
-    TOKEN_ENDPOINT_AUTH_METHODS = [
-        'client_secret_basic',
-        'client_secret_post',
-        'none',
-    ]
-
-    def save_authorization_code(self, code, request):
-        code_challenge = request.data.get('code_challenge')
-        code_challenge_method = request.data.get('code_challenge_method')
-        auth_code = OAuth2AuthorizationCode(
-            code=code,
-            client_id=request.client.client_id,
-            redirect_uri=request.redirect_uri,
-            scope=request.scope,
-            user_id=request.user.id,
-            code_challenge=code_challenge,
-            code_challenge_method=code_challenge_method,
-        )
-        db.session.add(auth_code)
-        db.session.commit()
-        return auth_code
-
-    def query_authorization_code(self, code, client):
-        auth_code = OAuth2AuthorizationCode.query.filter_by(
-            code=code, client_id=client.client_id).first()
-        if auth_code and not auth_code.is_expired():
-            return auth_code
-
-    def delete_authorization_code(self, authorization_code):
-        db.session.delete(authorization_code)
-        db.session.commit()
-
-    def authenticate_user(self, authorization_code):
-        return OAuth2User.query.get(authorization_code.user_id)
+from .models import OAuth2User, OAuth2Client, OAuth2Token
 
 
 class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
+    TOKEN_ENDPOINT_AUTH_METHODS = ['none']
+
     def authenticate_user(self, username, password):
         user = OAuth2User.query.filter_by(username=username).first()
         if user is not None and user.check_password(password):
@@ -76,7 +40,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 
 query_client = create_query_client_func(db.session, OAuth2Client)
 save_token = create_save_token_func(db.session, OAuth2Token)
-authorization = AuthorizationServer(
+oauth2_server = AuthorizationServer(
     query_client=query_client,
     save_token=save_token,
 )
@@ -84,18 +48,16 @@ require_oauth = ResourceProtector()
 
 
 def config_oauth(app):
-    authorization.init_app(app)
+    app.config['OAUTH2_REFRESH_TOKEN_GENERATOR'] = True
+    oauth2_server.init_app(app)
 
     # supported grants
-    authorization.register_grant(grants.ImplicitGrant)
-    authorization.register_grant(grants.ClientCredentialsGrant)
-    authorization.register_grant(AuthorizationCodeGrant, [CodeChallenge(required=True)])
-    authorization.register_grant(PasswordGrant)
-    authorization.register_grant(RefreshTokenGrant)
+    oauth2_server.register_grant(PasswordGrant)
+    oauth2_server.register_grant(RefreshTokenGrant)
 
     # support revocation
     revocation_cls = create_revocation_endpoint(db.session, OAuth2Token)
-    authorization.register_endpoint(revocation_cls)
+    oauth2_server.register_endpoint(revocation_cls)
 
     # protect resource
     bearer_cls = create_bearer_token_validator(db.session, OAuth2Token)

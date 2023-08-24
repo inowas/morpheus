@@ -1,6 +1,5 @@
 from datetime import time
-from authlib.integrations.sqla_oauth2 import OAuth2ClientMixin, OAuth2AuthorizationCodeMixin, OAuth2TokenMixin
-from flask import Flask
+from authlib.integrations.sqla_oauth2 import OAuth2ClientMixin, OAuth2TokenMixin
 
 from morpheus.common.infrastructure.persistence.database import db
 
@@ -30,15 +29,6 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
     user = db.relationship('OAuth2User')
 
 
-class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
-    __tablename__ = 'oauth2_code'
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(
-        db.Integer, db.ForeignKey('oauth2_user.id', ondelete='CASCADE'))
-    user = db.relationship('OAuth2User')
-
-
 class OAuth2Token(db.Model, OAuth2TokenMixin):
     __tablename__ = 'oauth2_token'
 
@@ -52,19 +42,3 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
             return False
         expires_at = self.issued_at + self.expires_in * 2
         return expires_at >= time.time()
-
-
-def create_tables(app: Flask):
-    with app.app_context():
-        db.metadata.create_all(
-            db.engine,
-            tables=[OAuth2User.__table__, OAuth2Client.__table__, OAuth2AuthorizationCode.__table__]
-        )
-
-
-def drop_tables(app: Flask):
-    with app.app_context():
-        db.metadata.drop_all(
-            db.engine,
-            tables=[OAuth2User.__table__, OAuth2Client.__table__, OAuth2AuthorizationCode.__table__]
-        )

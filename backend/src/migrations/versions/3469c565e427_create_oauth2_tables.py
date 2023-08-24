@@ -6,7 +6,8 @@ Create Date: 2023-08-21 15:43:52.572542
 
 """
 from typing import Sequence, Union
-from morpheus.authentication.infrastructure.oauth2.models import create_tables, drop_tables
+from morpheus.authentication.infrastructure.oauth2.models import OAuth2User, OAuth2Client, OAuth2Token
+from morpheus.common.infrastructure.persistence.database import db
 from wsgi import app
 
 # revision identifiers, used by Alembic.
@@ -17,8 +18,24 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    create_tables(app)
+    with app.app_context():
+        db.metadata.create_all(
+            db.engine,
+            tables=[
+                OAuth2User.__table__,
+                OAuth2Client.__table__,
+                OAuth2Token.__table__,
+            ]
+        )
 
 
 def downgrade() -> None:
-    drop_tables(app)
+    with app.app_context():
+        db.metadata.drop_all(
+            db.engine,
+            tables=[
+                OAuth2User.__table__,
+                OAuth2Client.__table__,
+                OAuth2Token.__table__,
+            ]
+        )

@@ -5,3 +5,4 @@ Flask-SQLAlchemy
 SQLAlchemy
 psycopg2
 alembic
+gunicorn
