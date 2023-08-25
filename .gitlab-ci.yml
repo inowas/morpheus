@@ -47,7 +47,7 @@ publish:dev:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
     - cd frontend
-    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_ --tag $CI_REGISTRY_IMAGE_FRONTEND:latest .
+    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:latest .
     - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE_FRONTEND:latest
   artifacts:
