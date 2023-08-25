@@ -54,6 +54,8 @@ publish-frontend:dev:
     - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:dev .
     - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE_FRONTEND:dev
+  only:
+      - main
 
 deploy-frontend:dev:
   image: ubuntu:22.04
