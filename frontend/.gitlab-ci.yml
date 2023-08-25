@@ -3,39 +3,41 @@ stages:
   - build
   - deploy
 
+image:
+  ubuntu:jammy
+
 test:
-  stage: test
   image: node:20
+  stage: test
+
   script:
     - npm install --legacy-peer-deps
     - npm run test:coverage
     - npm run depcruise:app
+
   artifacts:
     paths:
       - coverage/lcov.info
     expire_in: 7 days
 
 build:frontend:
-  stage: build
   image: node:20
-  needs:
+  stage: build
+  dependencies:
     - test
+
   script:
     - npm install --legacy-peer-deps
     - npm run build
+
   artifacts:
     paths:
       - dist
     expire_in: 7 days
-  only:
-    - task/2267-dockerfile-frontend-application
 
 deploy:frontend:
   stage: deploy
   image: docker:20.10.16-dind
-  needs:
-    - test
-    - build:frontend
   dependencies:
     - build:frontend
   variables:
@@ -53,5 +55,3 @@ deploy:frontend:
     paths:
       - dist
     expire_in: 7 days
-  only:
-    - task/2267-dockerfile-frontend-application
