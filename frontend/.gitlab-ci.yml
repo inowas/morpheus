@@ -1,14 +1,57 @@
 stages:
   - test
+  - build
+  - deploy
+
+image:
+  ubuntu:jammy
 
 test:
   image: node:20
   stage: test
+
   script:
     - npm install --legacy-peer-deps
     - npm run test:coverage
     - npm run depcruise:app
+
   artifacts:
     paths:
       - coverage/lcov.info
+    expire_in: 7 days
+
+build:frontend:
+  image: node:20
+  stage: build
+  dependencies:
+    - test
+
+  script:
+    - npm install --legacy-peer-deps
+    - npm run build
+
+  artifacts:
+    paths:
+      - dist
+    expire_in: 7 days
+
+deploy:frontend:
+  stage: deploy
+  image: docker:20.10.16-dind
+  dependencies:
+    - build:frontend
+  variables:
+    # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE:$CI_ --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  artifacts:
+    paths:
+      - dist
     expire_in: 7 days
