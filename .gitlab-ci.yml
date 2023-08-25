@@ -15,7 +15,7 @@ variables:
   DOCKER_HOST: tcp://docker:2376
   DOCKER_TLS_CERTDIR: "/certs"
 
-test:
+test-frontend:
   image: node:20
   stage: test
 
@@ -24,7 +24,7 @@ test:
     - make install-ci
     - make test-ci
 
-build:dev:
+build-frontend:dev:
   image: node:20
   stage: build
 
@@ -36,30 +36,30 @@ build:dev:
   artifacts:
     paths:
       - frontend/dist/
+    expire_in: 1 days
 
-publish:dev:
+  only:
+    - main
+
+publish-frontend:dev:
   stage: publish
   dependencies:
-    - build:dev
+    - build-frontend:dev
 
   before_script:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
     - cd frontend
-    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:latest .
+    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:dev .
     - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE_FRONTEND:latest
-  artifacts:
-    paths:
-      - frontend/dist/
-    expire_in: 7 days
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND:dev
 
-deploy:dev:
+deploy-frontend:dev:
   image: ubuntu:22.04
   stage: deploy
   dependencies:
-    - build:dev
+    - build-frontend:dev
 
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -80,7 +80,7 @@ deploy:dev:
   only:
     - main
 
-build:prod:
+build-frontend:prod:
   image: node:20
   stage: build
   script:
@@ -90,13 +90,31 @@ build:prod:
   artifacts:
     paths:
       - frontend/dist/
+    expire_in: 7 days
   only:
     - tags
 
-deploy:prod:staging:
+publish-frontend:prod:
+  stage: publish
+  dependencies:
+    - build-frontend:prod
+
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - cd frontend
+    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_TAG --tag $CI_REGISTRY_IMAGE_FRONTEND:latest .
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_TAG
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND:latest
+  only:
+    - tags
+
+deploy-frontend:prod:staging:
   stage: deploy
   dependencies:
-    - build:prod
+    - build-frontend:prod
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
@@ -116,10 +134,10 @@ deploy:prod:staging:
   only:
     - tags
 
-deploy:prod:production:
+deploy-frontend:prod:production:
   stage: deploy
   dependencies:
-    - build:prod
+    - build-frontend:prod
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
