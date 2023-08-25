@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - publish
   - deploy
 
 image:
@@ -28,8 +29,28 @@ build:dev:
     paths:
       - frontend/dist/
 
-  only:
-    - main
+publish:dev:
+  image: docker:20.10.16-dind
+  stage: publish
+  dependencies:
+    - build:dev
+  variables:
+    # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - cd frontend
+    - docker build --tag $CI_REGISTRY_IMAGE:$CI_ --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  artifacts:
+      paths:
+          - frontend/dist/
+      expire_in: 7 days
+
 
 deploy:dev:
   image: ubuntu:22.04
