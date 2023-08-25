@@ -27,6 +27,8 @@ build:frontend:
     paths:
       - dist
     expire_in: 7 days
+  only:
+    - task/2267-dockerfile-frontend-application
 
 deploy:frontend:
   stage: deploy
@@ -51,3 +53,5 @@ deploy:frontend:
     paths:
       - dist
     expire_in: 7 days
+  only:
+    - task/2267-dockerfile-frontend-application
