@@ -4,8 +4,8 @@ stages:
   - deploy
 
 test:
-  image: node:20
   stage: test
+  image: node:20
   script:
     - npm install --legacy-peer-deps
     - npm run test:coverage
@@ -16,8 +16,8 @@ test:
     expire_in: 7 days
 
 build:frontend:
-  image: node:20
   stage: build
+  image: node:20
   script:
     - npm install --legacy-peer-deps
     - npm run build
@@ -27,8 +27,8 @@ build:frontend:
     expire_in: 7 days
 
 deploy:frontend:
-  image: docker:20.10.16-dind
   stage: deploy
+  image: docker:20.10.16-dind
   dependencies:
     - build:frontend
   variables:
