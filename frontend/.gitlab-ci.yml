@@ -1,7 +1,6 @@
 stages:
   - test
   - build
-  - push
   - deploy
 
 test:
@@ -27,9 +26,9 @@ build:frontend:
       - dist
     expire_in: 7 days
 
-push:frontend:
+deploy:frontend:
   image: docker:20.10.16-dind
-  stage: push
+  stage: deploy
   dependencies:
     - build:frontend
   variables:
