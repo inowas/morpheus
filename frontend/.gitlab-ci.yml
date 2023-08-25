@@ -18,6 +18,8 @@ test:
 build:frontend:
   stage: build
   image: node:20
+  needs:
+    - test
   script:
     - npm install --legacy-peer-deps
     - npm run build
@@ -29,6 +31,9 @@ build:frontend:
 deploy:frontend:
   stage: deploy
   image: docker:20.10.16-dind
+  needs:
+    - test
+    - build:frontend
   dependencies:
     - build:frontend
   variables:
