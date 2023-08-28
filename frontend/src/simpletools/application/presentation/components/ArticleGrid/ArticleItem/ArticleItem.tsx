@@ -21,15 +21,19 @@ interface IProps {
 const ArticleItem: React.FC<IProps> = ({article, navigateToTool, navigateToDocumentation, translate}) => {
 
   const renderDescription = (description: string) => {
-    if (120 >= description.length) {
+    const maxLength = 120;
+    if (maxLength >= description.length) {
       return description;
     }
 
-    return description.substring(0, 196) + '...';
+    return description.substring(0, maxLength) + '...';
   };
 
   return (
-    <div className={styles.articleItem}>
+    <div
+      className={styles.articleItem}
+      data-testid={'article-item'}
+    >
       <Image
         className={styles.articleImage}
         src={article.image} fluid={true}
@@ -39,19 +43,24 @@ const ArticleItem: React.FC<IProps> = ({article, navigateToTool, navigateToDocum
         <h2 className={styles.articleTitle}>
           {article.title}
         </h2>
-        <p className={styles.articleDescription}>
+        <p
+          className={styles.articleDescription}
+          data-testid={'article-description'}
+        >
           {renderDescription(article.description)}
         </p>
         <div className={styles.buttonWrapper}>
           <Button
             className={styles.button}
             onClick={navigateToTool}
+            aria-label="Open Tool"
           >
             {translate('start_tool')}
           </Button>
           <Button
             className={styles.buttonLink}
             onClick={navigateToDocumentation}
+            aria-label="Open Documentation"
           >
             {translate('read_more')}
           </Button>

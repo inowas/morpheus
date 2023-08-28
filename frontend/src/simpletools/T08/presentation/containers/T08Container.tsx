@@ -4,8 +4,8 @@ import {Background, Chart, Info, Parameters, Settings} from '../components';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T08.png';
 import {Breadcrumb} from '../../../../components';
-import {useNavigate} from '../../../common/hooks';
-import {useTranslate} from '../../../T02/application';
+import {useCalculateMounding, useNavigate, useTranslate} from '../../application';
+
 
 export const SETTINGS_CASE_FIXED_TIME: number = 1;
 export const SETTINGS_CASE_VARIABLE_TIME: number = 2;
@@ -181,6 +181,7 @@ const tool = 'T08';
 
 const T08 = () => {
   const [data, setData] = useState<IT08>(defaults);
+  const mounding = useCalculateMounding();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
 
@@ -199,7 +200,7 @@ const T08 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div data-testid="t08-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -212,10 +213,18 @@ const T08 = () => {
         <Chart
           settings={data.settings}
           parameters={data.parameters}
+          mounding={mounding}
         />
         <div>
-          <Settings settings={data.settings} onChange={handleChangeSettings}/>
-          <Info parameters={data.parameters} settings={data.settings}/>
+          <Settings
+            settings={data.settings}
+            onChange={handleChangeSettings}
+          />
+          <Info
+            parameters={data.parameters}
+            settings={data.settings}
+            mounding={mounding}
+          />
         </div>
         <Parameters
           parameters={data.parameters}
@@ -223,7 +232,7 @@ const T08 = () => {
           onReset={handleReset}
         />
       </SimpleToolGrid>
-    </>
+    </div>
   );
 };
 

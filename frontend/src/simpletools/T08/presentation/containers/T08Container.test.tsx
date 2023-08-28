@@ -3,11 +3,15 @@ import {render, screen} from '@testing-library/react';
 import T08Container from './T08Container';
 
 jest.mock('../../application', () => ({
-  // useCalculateMounding: () => ({
-  //   calculateHi: jest.fn().mockReturnValue(0.01),
-  //   calculateHMax: jest.fn().mockReturnValue(0.01),
-  // }),
-  //TODO => ERROR: useNavigate() may be used only in the context of a <Router> component.
+  useCalculateMounding: () => ({
+    calcC: jest.fn().mockReturnValue(1),
+    calcCTau: jest.fn().mockReturnValue(1),
+    calculateVx: jest.fn().mockReturnValue(1),
+    calculateDL: jest.fn().mockReturnValue(1),
+    calculateR: jest.fn().mockReturnValue(1),
+    calculateKd: jest.fn().mockReturnValue(1),
+    calculateDiagramData: jest.fn().mockReturnValue(1),
+  }),
   useNavigate: () => () => {
     return;
   },
@@ -26,7 +30,6 @@ describe('Settings Tests', () => {
     render(
       <T08Container/>,
     );
-    //TODO add data-testid="t02-container" to container
     expect(screen.getByTestId('t08-container')).toBeInTheDocument();
   });
 });

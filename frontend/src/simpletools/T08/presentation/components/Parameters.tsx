@@ -53,7 +53,10 @@ const Parameters = ({parameters, onChange}: IProps) => {
   );
 
   return (
-    <Grid verticalAlign="middle">
+    <Grid
+      verticalAlign="middle"
+      data-testid={'parameters-container'}
+    >
       <Grid.Row>
         <Grid.Column textAlign="right">
           <Button onClick={handleReset} style={{width: 100, margin: 0}}>Default</Button>
