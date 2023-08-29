@@ -1,1 +1,7 @@
 .python-version
+
+# ignore settings and secrets
+.secrets.toml
+.settings.local.toml
+
+log
