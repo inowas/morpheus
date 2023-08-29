@@ -1,0 +1,161 @@
+openapi: 3.0.0
+info:
+  title: INOWAS API
+  version: 2.0.0
+
+servers:
+  - url: /api/v2
+    description: INOWAS API
+
+paths:
+  /auth/token/refresh:
+    post:
+      summary: Token Request
+      description: Exchange the authorization code for an access token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                grant_type:
+                  type: string
+                refresh_token:
+                  type: string
+              required:
+                - client_id
+                - grant_type
+                - refresh_token
+      responses:
+        '200':
+          description: Successful token response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+                  refresh_token:
+                    type: string
+
+  /auth/signup:
+    post:
+      summary: User Registration
+      description: Register a new user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  nullable: false
+                password:
+                  type: string
+                  nullable: false
+      responses:
+        '201':
+          description: Successfully registered.
+        '202':
+          description: User already exists.
+        '422':
+          description: Invalid input.
+
+  /auth/login:
+    post:
+      summary: User Login
+      description: Login a user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  nullable: false
+                password:
+                  type: string
+                  nullable: false
+                client_id:
+                  type: string
+      responses:
+        '200':
+          description: Successfully logged in.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+                  refresh_token:
+                    type: string
+        '401':
+          description: Invalid credentials.
+
+  /user/me:
+    get:
+      summary: User Info
+      description: Get the user info.
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful user info response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+    post:
+      summary: Update User Info
+      description: Update the user info.
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  nullable: false
+                name:
+                  type: string
+                  nullable: false
+                password:
+                  type: string
+                  nullable: false
+              required:
+      responses:
+        '204':
+          description: User Info Successfully updated.
+        '422':
+          description: Invalid input.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
