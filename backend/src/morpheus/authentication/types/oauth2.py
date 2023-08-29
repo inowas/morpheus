@@ -2,6 +2,7 @@ import dataclasses
 import uuid
 from typing import NewType
 
+UserId = NewType('UserId', uuid.UUID)
 ClientId = NewType('ClientId', uuid.UUID)
 
 
@@ -10,6 +11,12 @@ class PublicClient:
     id: ClientId
     name: str
 
-    @classmethod
-    def new(cls, name: str):
-        return cls(id=ClientId(uuid.uuid4()), name=name)
+
+@dataclasses.dataclass(frozen=True)
+class User:
+    id: UserId
+    email: str
+    password_hash: str
+
+    def get_user_id(self):
+        return str(self.id)

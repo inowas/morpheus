@@ -1,6 +1,8 @@
+import time
+
 from authlib.integrations.flask_oauth2 import (
     AuthorizationServer,
-    ResourceProtector,
+    ResourceProtector, current_token,
 )
 from authlib.integrations.sqla_oauth2 import (
     create_query_client_func,
@@ -11,29 +13,39 @@ from authlib.integrations.sqla_oauth2 import (
 from authlib.oauth2.rfc6749 import grants
 
 from morpheus.common.infrastructure.persistence.database import db
-from .models import OAuth2User, OAuth2Client, OAuth2Token
+from .models import OAuth2Client, OAuth2Token
+from ..password import verify_password
+from ...incoming import fetch_user_by_email, fetch_user_by_id
+from ...types.oauth2 import UserId
 
 
 class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = ['none']
 
     def authenticate_user(self, username, password):
-        user = OAuth2User.query.filter_by(username=username).first()
-        if user is not None and user.check_password(password):
+        user = fetch_user_by_email(username)
+        if user is not None and verify_password(user.password_hash, password):
             return user
 
 
 class RefreshTokenGrant(grants.RefreshTokenGrant):
+    TOKEN_ENDPOINT_AUTH_METHODS = ['none']
+    INCLUDE_NEW_REFRESH_TOKEN = True
+
     def authenticate_refresh_token(self, refresh_token):
         token = OAuth2Token.query.filter_by(refresh_token=refresh_token).first()
         if token and token.is_refresh_token_active():
             return token
 
     def authenticate_user(self, credential):
-        return OAuth2User.query.get(credential.user_id)
+        user = fetch_user_by_id(UserId(credential.user_id))
+        if user is not None:
+            return user
 
     def revoke_old_credential(self, credential):
-        credential.revoked = True
+        now = time.time()
+        credential.access_token_revoked_at = now
+        credential.refresh_token_revoked_at = now
         db.session.add(credential)
         db.session.commit()
 
@@ -57,8 +69,16 @@ def config_oauth(app):
 
     # support revocation
     revocation_cls = create_revocation_endpoint(db.session, OAuth2Token)
+    revocation_cls.CLIENT_AUTH_METHODS = ['none']
     oauth2_server.register_endpoint(revocation_cls)
 
     # protect resource
     bearer_cls = create_bearer_token_validator(db.session, OAuth2Token)
     require_oauth.register_token_validator(bearer_cls())
+
+
+def authenticated_oauth_user_id() -> UserId | None:
+    if not hasattr(current_token, 'user_id'):
+        return None
+
+    return UserId(getattr(current_token, 'user_id'))

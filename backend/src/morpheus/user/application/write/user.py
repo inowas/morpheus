@@ -6,8 +6,6 @@ from morpheus.user.types.user import User
 
 
 class CreateUserFailed(Exception):
-    EMAIL_EMPTY = "EMAIL_EMPTY"
-    PASSWORD_EMPTY = "PASSWORD_EMPTY"
     PASSWORD_STRENGTH_INSUFFICIENT = "PASSWORD_STRENGTH_INSUFFICIENT"
     EMAIL_EXISTS = "EMAIL_EXISTS"
 
@@ -24,18 +22,18 @@ class CreateUserCommand:
     email: str
     password: str
 
+    def __post_init__(self):
+        if len(self.email) <= 0:
+            raise ValueError('User email must not be empty')
+        if len(self.password) <= 0:
+            raise ValueError('User password_hash must not be empty')
+
 
 class CreateUserCommandHandler:
     def __init__(self, repository: UserRepository) -> None:
         self._repository = repository
 
     def handle(self, command: CreateUserCommand):
-        if not isinstance(command.email, str) or len(command.email) < 1:
-            raise CreateUserFailed(CreateUserFailed.EMAIL_EMPTY)
-
-        if not isinstance(command.password, str) or len(command.password) < 1:
-            raise CreateUserFailed(CreateUserFailed.PASSWORD_EMPTY)
-
         if self._repository.user_with_email_exists(command.email):
             raise CreateUserFailed(CreateUserFailed.EMAIL_EXISTS)
 

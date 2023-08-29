@@ -1,6 +1,6 @@
 from unittest.mock import patch
 import pytest
-from morpheus.user.application.create_user import CreateUserCommandHandler, CreateUserFailed, CreateUserCommand
+from morpheus.user.application.write.user import CreateUserCommandHandler, CreateUserFailed, CreateUserCommand
 
 
 @pytest.fixture
@@ -13,22 +13,6 @@ def user_repository():
 
 password_with_insufficient_strength = '123'
 password_with_sufficient_strength = 'sjhdfg87342hiufewiug8ozq34edsfwaghuiz43qt'
-
-
-def test_try_creating_user_with_empty_email(user_repository):
-    with pytest.raises(CreateUserFailed) as exception_info:
-        handler = CreateUserCommandHandler(user_repository)
-        handler.handle(CreateUserCommand(email='', password=password_with_sufficient_strength))
-
-    assert exception_info.value.get_error_code() == CreateUserFailed.EMAIL_EMPTY
-
-
-def test_try_creating_user_with_empty_password(user_repository):
-    with pytest.raises(CreateUserFailed) as exception_info:
-        command = CreateUserCommandHandler(user_repository)
-        command.handle(CreateUserCommand(email='test@inowas.com', password=''))
-
-    assert exception_info.value.get_error_code() == CreateUserFailed.PASSWORD_EMPTY
 
 
 def test_try_creating_user_with_existing_email(user_repository):

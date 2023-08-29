@@ -6,7 +6,10 @@ Create Date: 2023-08-21 15:43:52.572542
 
 """
 from typing import Sequence, Union
-from morpheus.authentication.infrastructure.oauth2.models import OAuth2User, OAuth2Client, OAuth2Token
+
+from alembic import op
+
+from morpheus.authentication.infrastructure.oauth2.models import OAuth2Client, OAuth2Token
 from morpheus.common.infrastructure.persistence.database import db
 from wsgi import app
 
@@ -22,7 +25,6 @@ def upgrade() -> None:
         db.metadata.create_all(
             db.engine,
             tables=[
-                OAuth2User.__table__,
                 OAuth2Client.__table__,
                 OAuth2Token.__table__,
             ]
@@ -30,12 +32,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    with app.app_context():
-        db.metadata.drop_all(
-            db.engine,
-            tables=[
-                OAuth2User.__table__,
-                OAuth2Client.__table__,
-                OAuth2Token.__table__,
-            ]
-        )
+    op.drop_table(OAuth2Token.__tablename____)
+    op.drop_table(OAuth2Client.__tablename____)

@@ -9,7 +9,7 @@ from morpheus.user.types.user import User, UserId
 class UserModel(BaseModel):
     __tablename__ = 'user'
 
-    id: Mapped[str] = mapped_column(String, primary_key=True)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
     email: Mapped[str] = mapped_column(String(255))
     password_hash: Mapped[str] = mapped_column(String(255))
 
@@ -34,6 +34,15 @@ class UserRepository(BaseRepository):
     def fetch_by_id(self, user_id: UserId) -> User | None:
         with self.session() as session:
             statement = select(UserModel).filter_by(id=user_id)
+            user = session.scalars(statement).one_or_none()
+            if user is None:
+                return None
+
+            return user.to_user_type()
+
+    def fetch_by_email(self, email: str) -> User | None:
+        with self.session() as session:
+            statement = select(UserModel).filter_by(email=email)
             user = session.scalars(statement).one_or_none()
             if user is None:
                 return None

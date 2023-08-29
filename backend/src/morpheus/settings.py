@@ -24,6 +24,9 @@ class Settings:
     def __getitem__(self, key):
         return getattr(self, key)
 
+    def is_production(self):
+        return self.ENV == 'production'
+
 
 settings = Settings.from_dynaconf(
     Dynaconf(
