@@ -18,6 +18,21 @@
 * change to backend directory: `cd backend`
 * setup python environment and install dependencies: `make install-dev`
 
+For Apple Silicon users:
+* `make install-dev` will fail because of a missing `psycopg2` wheel for ARM64.
+* You can install it manually with `pip install psycopg2-binary` and then run `make install-dev` again or
+* you can install postgresql@14 with homebrew and then install psycopg2-binary with pip:
+
+```
+❯ brew install postgresql@14
+# If you open a new terminal tab you will see that pg_config is available
+❯ export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+❯ export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib -L${HOME}/.pyenv/versions/3.11.4/lib" # use your current python version
+❯ python -V
+Python 3.11.4 # make sure it matches the same above configuration
+❯ pip install psycopg2-binary==2.8.5
+````
+
 ## Run dev server
 
 First start the database:
