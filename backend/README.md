@@ -37,3 +37,32 @@ There are two ways to start the development server:
      * Environment variables: `AUTHLIB_INSECURE_TRANSPORT=1`
      * Python interpreter: should be named something like "inowas-morpheus-backend-x.xx.x" where x.xx.x is the python version
      * Working directory: backend/src (in the repository)
+
+
+### Create client for OAuth2
+
+In directory `backend/src`run
+```
+FLASK_ENV=development flask auth create-public-oauth2-client
+```
+
+You can now use this client for Authentication.
+
+### Create users
+
+In directory `backend/src`run
+```
+FLASK_ENV=development flask user create test1@inowas.localhost 1234567890abcdef
+```
+
+This would create a user `test1@inowas.localhost` with password `1234567890abcdef` which you can use to login.
+
+## Write database migrations
+
+The command
+```
+make create_migration name="create table foo"
+```
+creates a new migration file under `backend/src/migrations/versions`.
+
+After that you must again run `make migrate-up`.
