@@ -18,5 +18,30 @@ help:
 
 ## Install dev environment
 install-dev:
-	scripts/setup-pyenv.sh
-	scripts/install-dev.sh
+	environments/dev/scripts/setup_pyenv.sh
+	environments/dev/scripts/install.sh
+
+## Start the development database
+start-dev-database:
+	environments/dev/scripts/start_database.sh
+
+## Start the development server
+start-dev-server:
+	environments/dev/scripts/start_server.sh
+
+## runs architecture layer boundary checks, static code analysis and tests
+qa-check:
+	environments/dev/scripts/qa_check.sh
+
+## runs tests
+run-tests:
+	environments/dev/scripts/qa_check/run_tests.sh
+
+## migrates database to latest version
+migrate-up:
+	environments/dev/scripts/migrate_up.sh
+
+## create new migration (pass name of migration as name="name of migration")
+create_migration:
+	environments/dev/scripts/create_migration.sh "$(name)"
+

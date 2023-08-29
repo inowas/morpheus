@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+backendRoot=$( cd "$(dirname "$BASH_SOURCE")/../../.." ; pwd -P )
+devScriptsRoot="$backendRoot/environments/dev/scripts"
+
+function outputHeadline {
+    echo ""
+    echo "---"
+    echo "$1"
+    echo "---"
+    echo ""
+}
+
 function outputError {
     echo ""
     echo -e "\033[0;31m✗ $1\033[0m" 1>&2
