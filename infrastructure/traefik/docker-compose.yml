@@ -1,0 +1,63 @@
+version: "3.8"
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--log.level=${TRAEFIK_LOG_LEVEL:-INFO}"
+      - "--log.filePath=/var/logs/traefik/traefik.log"
+      - "--accesslog=${TRAEFIK_ACCESS_LOG:-true}"
+      - "--api.dashboard={TRAEFIK_API_DASHBOARD:-false}"
+      - "--api.insecure=${TRAEFIK_API_INSECURE:-false}"
+      - "--ping=true"
+      - "--ping.entrypoint=ping"
+      - "--entryPoints.ping.address=:8082"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedByDefault=false"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.caserver=${TRAEFIK_ACME_CASERVER}"
+      - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/etc/traefik/acme/acme.json"
+      - "--certificatesresolvers.myresolver.acme.eab.kid=${TRAEFIK_ACME_EAB_KID}"
+      - "--certificatesresolvers.myresolver.acme.eab.hmacencoded=${TRAEFIK_ACME_EAB_HMAC_ENCODED}"
+      - "--global.checkNewVersion=true"
+      - "--global.sendAnonymousUsage=false"
+    healthcheck:
+      test: [ "CMD", "wget", "http://localhost:8082/ping","--spider" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./acme:/etc/traefik/acme
+      - ./logs:/var/logs/traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard-http.entrypoints=web"
+      - "traefik.http.routers.dashboard-http.rule=Host(`${TRAEFIK_DASHBOARD_HOST}`)"
+      - "traefik.http.routers.dashboard-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DASHBOARD_HOST}`)"
+      - "traefik.http.routers.dashboard.middlewares=traefik-auth"
+      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.tls.certresolver=myresolver"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+    restart: unless-stopped
+
+volumes:
+  traefik-certificates:
+
+networks:
+  default:
+    name: traefik-web-gateway
+    external: true
