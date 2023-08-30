@@ -5,13 +5,12 @@ import {getParameterValues} from '../../../common/helpers';
 import {IT08} from '../../types/T08.type';
 
 
-interface IMounding {
+interface ICalculation {
   calcC: (t: number, x: number, vx: number, R: number, DL: number) => number;
   calcCTau: (t: number, x: number, vx: number, R: number, DL: number, tau: number) => number;
   calculateVx: (K: number, ne: number, I: number) => number;
   calculateDL: (alphaL: number, vx: number) => number;
   calculateR: (ne: number, Kd: number) => number;
-  calculateKd: (kOw: number, cOrg: number) => number;
   calculateDiagramData: (
     settings: IT08['settings'],
     vx: number,
@@ -27,7 +26,7 @@ interface IMounding {
 interface IProps {
   settings: IT08['settings'];
   parameters: IT08['parameters'];
-  mounding: IMounding;
+  calculation: ICalculation;
 }
 
 const renderContent = (settings: IT08['settings'], t: number, c: number, x: number) => {
@@ -52,12 +51,12 @@ const renderContent = (settings: IT08['settings'], t: number, c: number, x: numb
 };
 
 
-const Info = ({parameters, settings, mounding}: IProps) => {
+const Info = ({parameters, settings, calculation}: IProps) => {
   const {x, t, C0, tau, K, ne, I, alphaL, Kd} = getParameterValues(parameters);
-  const vx = mounding.calculateVx(K, ne, I);
-  const DL = mounding.calculateDL(alphaL, vx);
-  const R = mounding.calculateR(ne, Kd);
-  const C = (settings.infiltration === SETTINGS_INFILTRATION_ONE_TIME && t > tau) ? mounding.calcCTau(t, x, vx, R, DL, tau) : mounding.calcC(t, x, vx, R, DL);
+  const vx = calculation.calculateVx(K, ne, I);
+  const DL = calculation.calculateDL(alphaL, vx);
+  const R = calculation.calculateR(ne, Kd);
+  const C = (settings.infiltration === SETTINGS_INFILTRATION_ONE_TIME && t > tau) ? calculation.calcCTau(t, x, vx, R, DL, tau) : calculation.calcC(t, x, vx, R, DL);
   const c = C0 * C;
 
   return (

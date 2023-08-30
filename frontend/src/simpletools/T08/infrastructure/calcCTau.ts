@@ -7,3 +7,4 @@ const calcCTau = (t: number, x: number, vx: number, R: number, DL: number, tau: 
   return 0.5 * (term1 + Math.exp(vx * x / DL) * term2);
 };
 export default calcCTau;
+

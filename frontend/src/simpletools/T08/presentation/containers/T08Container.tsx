@@ -4,7 +4,7 @@ import {Background, Chart, Info, Parameters, Settings} from '../components';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T08.png';
 import {Breadcrumb} from '../../../../components';
-import {useCalculateMounding, useNavigate, useTranslate} from '../../application';
+import {useCalculate, useNavigate, useTranslate} from '../../application';
 
 
 export const SETTINGS_CASE_FIXED_TIME: number = 1;
@@ -181,7 +181,7 @@ const tool = 'T08';
 
 const T08 = () => {
   const [data, setData] = useState<IT08>(defaults);
-  const mounding = useCalculateMounding();
+  const calculation = useCalculate();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
 
@@ -191,7 +191,6 @@ const T08 = () => {
 
   const handleChangeParameters = (parameters: IT08['parameters']) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
-
   };
   const handleReset = () => {
     setData(defaults);
@@ -213,7 +212,7 @@ const T08 = () => {
         <Chart
           settings={data.settings}
           parameters={data.parameters}
-          mounding={mounding}
+          calculation={calculation}
         />
         <div>
           <Settings
@@ -223,7 +222,7 @@ const T08 = () => {
           <Info
             parameters={data.parameters}
             settings={data.settings}
-            mounding={mounding}
+            calculation={calculation}
           />
         </div>
         <Parameters

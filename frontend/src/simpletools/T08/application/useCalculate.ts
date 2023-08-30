@@ -2,13 +2,12 @@ import {SETTINGS_CASE_FIXED_TIME, SETTINGS_CASE_VARIABLE_TIME, SETTINGS_INFILTRA
 import {IT08} from '../types/T08.type';
 import {calcC, calcCTau, calcT, calcX} from '../infrastructure';
 
-interface IUseCalculateMounding {
+interface IUseCalculate {
   calcC: (t: number, x: number, vx: number, R: number, DL: number) => number;
   calcCTau: (t: number, x: number, vx: number, R: number, DL: number, tau: number) => number;
   calculateVx: (K: number, ne: number, I: number) => number;
   calculateDL: (alphaL: number, vx: number) => number;
   calculateR: (ne: number, Kd: number) => number;
-  calculateKd: (kOw: number, cOrg: number) => number;
   calculateDiagramData: (
     settings: IT08['settings'],
     vx: number,
@@ -18,10 +17,10 @@ interface IUseCalculateMounding {
     xMax: number,
     tMax: number,
     tau: number
-  ) => any[]; // Update this to match the actual return type
+  ) => any[];
 }
 
-const useCalculateMounding = (): IUseCalculateMounding => ({
+const useCalculate = (): IUseCalculate => ({
   calcC: calcC,
   calcCTau: calcCTau,
   calculateVx: (K: number, ne: number, I: number): number => {
@@ -33,10 +32,6 @@ const useCalculateMounding = (): IUseCalculateMounding => ({
   calculateR: (ne: number, Kd: number) => {
     const rHob = (1 - ne) * 2.65;
     return 1 + Kd * rHob / ne;
-  },
-  calculateKd: (kOw: number, cOrg: number) => {
-    const Koc = Math.exp(Math.log(kOw) - 0.21);
-    return Koc * cOrg;
   },
   calculateDiagramData: (settings: IT08['settings'], vx: number, DL: number, R: number, C0: number, xMax: number, tMax: number, tau: number) => {
     let tauMax = 10e+8;
@@ -70,7 +65,6 @@ const useCalculateMounding = (): IUseCalculateMounding => ({
         }
       }
     }
-
     if (settings.case === SETTINGS_CASE_FIXED_TIME) {
       const t = tMax;
       xMax = calcX(tMax, vx, R, DL);
@@ -99,4 +93,4 @@ const useCalculateMounding = (): IUseCalculateMounding => ({
   },
 });
 
-export default useCalculateMounding;
+export default useCalculate;

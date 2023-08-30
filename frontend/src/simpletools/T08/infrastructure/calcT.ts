@@ -7,7 +7,6 @@ const calcT = (xMax: number, vx: number, R: number, DL: number): number => {
     c = calcC(t, xMax, vx, R, DL);
     t = t + 20;
   }
-
   return t;
 };
 export default calcT;

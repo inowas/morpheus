@@ -1,4 +1,4 @@
-import erf from '../erf';
+import {erf} from '../index';
 
 describe('test erf', () => {
   it('calculates correctly', () => {

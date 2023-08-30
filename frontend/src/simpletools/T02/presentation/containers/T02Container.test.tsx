@@ -11,7 +11,10 @@ jest.mock('../../application', () => ({
     return;
   },
   useTranslate: () => ({
-    i18n: {changeLanguage: () => {}},
+    i18n: {
+      changeLanguage: () => {
+      },
+    },
     translate: (key: string) => key,
     language: 'en',
   }),
@@ -20,10 +23,10 @@ jest.mock('../../application', () => ({
 // mock the react-plotly.js library, which fails to run server side
 jest.mock('react-plotly.js', () => ({
   __esModule: true,
-  default: jest.fn(() => <div />),
+  default: jest.fn(() => <div/>),
 }));
 
-describe('Settings Tests', () => {
+describe('Container Tests', () => {
   test('It renders the component', async () => {
     render(
       <T02Container/>,
