@@ -8,9 +8,13 @@ interface IProps {
 
 const background = (props: IProps) => {
   return (
-    <Container textAlign={'center'}>
+    <Container
+      textAlign={'center'}
+      data-testid={'background-container'}
+    >
       <Image
-        src={props.image} fluid={true}
+        src={props.image}
+        fluid={true}
         alt={props.title}
       />
     </Container>

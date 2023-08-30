@@ -1,3 +1,5 @@
 import useTranslate from './useTranslate';
+import useCalculate from './useCalculate';
+import {useNavigate} from 'simpletools/common/hooks';
 
-export {useTranslate};
+export {useCalculate, useTranslate, useNavigate};

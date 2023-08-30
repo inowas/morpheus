@@ -14,10 +14,16 @@ const openInNewTab = (url: string) => {
 };
 
 const ArticleGrid: React.FC<IProps> = ({articles, navigateTo, translate}) => (
-  <div className={styles.articleGrid}>
+  <div
+    className={styles.articleGrid}
+    data-testid={'article-grid'}
+  >
     <Grid.Grid stackable={true} columns={3}>
       {articles.map((article) => (
-        <Grid.Column key={article.id}>
+        <Grid.Column
+          key={article.id}
+          data-testid={`article-item-${article.id}`}
+        >
           <ArticleItem
             article={article}
             navigateToTool={() => navigateTo(article.toolLink)}
