@@ -51,11 +51,7 @@ services:
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.tls.certresolver=myresolver"
       - "traefik.http.routers.dashboard.service=api@internal"
-
-    restart: unless-stopped
-
-volumes:
-  traefik-certificates:
+    restart: always
 
 networks:
   default:

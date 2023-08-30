@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  frontend:
+    image: inowas/morpheus-frontend:${FRONTEND_VERSION}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-http.entrypoints=web"
+      - "traefik.http.routers.frontend-http.rule=Host(`${FRONTEND_HOST}`)"
+      - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOST}`)"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik-web-gateway"
+    restart: always
+
+networks:
+  default:
+    name: traefik-web-gateway
+    external: true
