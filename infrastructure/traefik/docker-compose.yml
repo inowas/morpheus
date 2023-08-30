@@ -6,7 +6,7 @@ services:
       - "--log.level=${TRAEFIK_LOG_LEVEL:-INFO}"
       - "--log.filePath=/var/logs/traefik/traefik.log"
       - "--accesslog=${TRAEFIK_ACCESS_LOG:-true}"
-      - "--api.dashboard={TRAEFIK_API_DASHBOARD:-false}"
+      - "--api.dashboard=${TRAEFIK_API_DASHBOARD:-false}"
       - "--api.insecure=${TRAEFIK_API_INSECURE:-false}"
       - "--ping=true"
       - "--ping.entrypoint=ping"
