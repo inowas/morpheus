@@ -10,19 +10,22 @@ interface IProps {
 }
 
 const Settings = ({settings, onChange}: IProps) => {
-
   const handleChange = (e: any, {name, value}: any) => {
     onChange({...settings, [name]: value});
   };
 
   return (
-    <Grid padded={true}>
+    <Grid
+      padded={true}
+      data-testid={'settings-container'}
+    >
       <Grid.Row centered={true}>
         <Form>
           <Header as="h4">Select variable</Header>
           <Segment>
             <Form.Field>
               <Radio
+                data-testid={'x-axis-radio'}
                 label="Variable time (T), Fixed length (x)"
                 value={SETTINGS_CASE_VARIABLE_TIME}
                 name="case"
@@ -32,6 +35,7 @@ const Settings = ({settings, onChange}: IProps) => {
             </Form.Field>
             <Form.Field>
               <Radio
+                data-testid={'y-axis-radio'}
                 label="Fixed time (T), Variable length (x)"
                 value={SETTINGS_CASE_FIXED_TIME}
                 name="case"
@@ -44,6 +48,7 @@ const Settings = ({settings, onChange}: IProps) => {
           <Segment>
             <Form.Field>
               <Radio
+                data-testid="continuous-radio"
                 label="Continuous infiltration"
                 value={SETTINGS_INFILTRATION_CONTINUOUS}
                 name="infiltration"
@@ -53,6 +58,7 @@ const Settings = ({settings, onChange}: IProps) => {
             </Form.Field>
             <Form.Field>
               <Radio
+                data-testid="one-time-radio"
                 label="One-time infiltration"
                 value={SETTINGS_INFILTRATION_ONE_TIME}
                 name="infiltration"

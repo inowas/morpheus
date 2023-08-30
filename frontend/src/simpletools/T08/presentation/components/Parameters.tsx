@@ -11,7 +11,7 @@ interface IProps {
   onReset: () => void;
 }
 
-const sortParameters = (parameters: IParameter[]) => {
+export const sortParameters = (parameters: IParameter[]) => {
   return parameters.sort((a, b) => {
     if (a.order > b.order) {
       return 1;
@@ -20,7 +20,7 @@ const sortParameters = (parameters: IParameter[]) => {
   });
 };
 
-const Parameters = ({parameters, onChange}: IProps) => {
+const Parameters = ({parameters, onChange, onReset}: IProps) => {
 
   const [params, setParams] = useState<IParameter[]>(sortParameters(parameters));
 
@@ -37,11 +37,6 @@ const Parameters = ({parameters, onChange}: IProps) => {
     });
     onChange([...newParams]);
   };
-
-  const handleReset = () => {
-    setParams(sortParameters(parameters));
-  };
-
   const renderParameters = (p: IParameter[]) => (
     p.map(parameter => (
       <ParameterSlider
@@ -53,10 +48,13 @@ const Parameters = ({parameters, onChange}: IProps) => {
   );
 
   return (
-    <Grid verticalAlign="middle">
+    <Grid
+      verticalAlign="middle"
+      data-testid={'parameters-container'}
+    >
       <Grid.Row>
         <Grid.Column textAlign="right">
-          <Button onClick={handleReset} style={{width: 100, margin: 0}}>Default</Button>
+          <Button onClick={onReset} style={{width: 100, margin: 0}}>Default</Button>
         </Grid.Column>
       </Grid.Row>
       {renderParameters(params)}
