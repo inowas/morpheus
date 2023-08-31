@@ -3,14 +3,14 @@ services:
   frontend:
     build:
       context: ${PWD}
-      dockerfile: docker/frontend/Dockerfile
+      dockerfile: frontend/docker/Dockerfile
     restart: always
     ports:
       - "8080:8080"
   backend:
     build:
       context: ${PWD}
-      dockerfile: docker/backend/Dockerfile.development
+      dockerfile: backend/docker/Dockerfile.development
     depends_on:
       - mongo
       - postgres
