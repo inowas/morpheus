@@ -1,0 +1,14 @@
+FROM python:3
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+RUN mkdir /app
+RUN mkdir /app/src
+WORKDIR /app/src
+RUN pip install --upgrade pip
+COPY backend/requirements /app/requirements
+RUN pip install -r /app/requirements/dev.txt
+EXPOSE 8000
+
+ENV FLASK_ENV development

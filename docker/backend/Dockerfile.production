@@ -1,0 +1,17 @@
+FROM python:3
+
+ENV PYTHONUNBUFFERED 1
+ENV BACKEND_ENTRYPOINT_QUIET_LOGS=""
+
+RUN mkdir /opt/code
+ADD backend /opt/code
+
+COPY --chown=101:101 docker/backend/docker-entrypoint.d/??-*.sh /docker-entrypoint.d/
+COPY --chown=101:101 docker/backend/docker-entrypoint.sh /docker-entrypoint.sh
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+RUN ["chmod", "+x", "-R", "/docker-entrypoint.d"]
+
+RUN pip install -r /opt/code/requirements/prod.txt
+WORKDIR /opt/code/src
+ENTRYPOINT ["/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
+EXPOSE 8000

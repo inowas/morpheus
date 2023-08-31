@@ -1,0 +1,62 @@
+version: "3.8"
+services:
+  frontend:
+    build:
+      context: ${PWD}
+      dockerfile: docker/frontend/Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+  backend:
+    build:
+      context: ${PWD}
+      dockerfile: docker/backend/Dockerfile.development
+    depends_on:
+      - mongo
+      - postgres
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+      FLASK_APP: wsgi.py
+      DYNACONF_SECRET_KEY: ${SECRET_KEY}
+      DYNACONF_POSTGRES_USER: ${POSTGRES_USER}
+      DYNACONF_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DYNACONF_POSTGRES_DB: ${POSTGRES_DB}
+      DYNACONF_POSTGRES_HOST: ${POSTGRES_HOST}
+      DYNACONF_POSTGRES_PORT: ${POSTGRES_PORT}
+      DYNACONF_MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      DYNACONF_MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      DYNACONF_MONGO_HOST: ${MONGO_HOST}
+    volumes:
+      - ${PWD}/backend:/app
+    command: flask run --host=0.0.0.0 --port=5000
+    restart: always
+    ports:
+      - "5000:5000"
+  postgres:
+    image: postgres:13.12
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+  mongo:
+    image: mongo:5.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  postgres_data:
+    driver: local
+  mongo_data:
+    driver: local
