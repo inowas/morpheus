@@ -1,8 +1,10 @@
+alembic
 Authlib
 Dynaconf
 Flask
 Flask-SQLAlchemy
-SQLAlchemy
-psycopg2
-alembic
 gunicorn
+pandas
+psycopg2
+pymongo
+SQLAlchemy
