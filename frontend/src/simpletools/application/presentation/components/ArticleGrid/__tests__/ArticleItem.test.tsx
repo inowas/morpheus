@@ -1,37 +1,6 @@
 import React from 'react';
 import {act, render, screen} from '@testing-library/react';
 import ArticleItem from '../ArticleItem/';
-import {BrowserRouter} from 'react-router-dom';
-
-function renderComponent() {
-  const article = {
-    id: 1,
-    title: 'title',
-    image: 'image',
-    description: 'description',
-    toolLink: 'toolLink',
-    documentationLink: 'documentationLink',
-  };
-  const navigateToToolMock = jest.fn();
-  const navigateToDocumentationMock = jest.fn();
-
-  render(
-    <BrowserRouter>
-      <ArticleItem
-        article={article}
-        navigateToTool={navigateToToolMock}
-        navigateToDocumentation={navigateToDocumentationMock}
-        translate={() => 'translated value'}
-      />
-    </BrowserRouter>,
-  );
-
-  return {
-    article,
-    navigateToToolMock,
-    navigateToDocumentationMock,
-  };
-}
 
 const article = {
   id: 1,

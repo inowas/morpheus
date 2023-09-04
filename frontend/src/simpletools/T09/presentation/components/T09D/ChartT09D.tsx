@@ -1,12 +1,39 @@
 import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
-import {calcLambda, calcMu, calculateDiagramData, calculateQCrit} from '../../../application/useCalculationsT09D';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
 import {IT09D} from '../../../types/T09.type';
 
+interface IUseCalculate {
+  dRo: (rhof: number, rhos: number) => number;
+  calcXt: (
+    k: number,
+    b: number,
+    q: number,
+    Qw: number,
+    xw: number,
+    rhof: number,
+    rhos: number,
+    AqType?: string
+  ) => number;
+  calculateZCrit: (d: number) => number;
+  calculateQCrit: (q: number, mu: number, xw: number) => number;
+  calcLambda: (
+    k: number,
+    b: number,
+    q: number,
+    xw: number,
+    rhof: number,
+    rhos: number,
+    AqType: string
+  ) => number;
+  calcMu: (Lambda: number) => number;
+  calculateDiagramData: (q: number, mu: number, xw: number) => { xw: number; Qcrit: number }[];
+}
+
 interface IProps {
   parameters: IT09D['parameters'];
+  calculation: IUseCalculate;
 }
 
 const styles = {
@@ -65,12 +92,12 @@ const renderLabels = (rhof: number, rhos: number, lambda: number, qCrit: number)
     </Segment>
   );
 };
-const ChartT09D = ({parameters}: IProps) => {
+const ChartT09D = ({parameters, calculation}: IProps) => {
   const {k, b, q, xw, rhof, rhos, AqType} = getParameterValues(parameters);
-  const lambda = calcLambda(k, b, q, xw, rhof, rhos, AqType);
-  const mu = calcMu(lambda);
-  const qCrit = calculateQCrit(q, mu, xw);
-  const data = calculateDiagramData(q, mu, xw);
+  const lambda = calculation.calcLambda(k, b, q, xw, rhof, rhos, AqType);
+  const mu = calculation.calcMu(lambda);
+  const qCrit = calculation.calculateQCrit(q, mu, xw);
+  const data = calculation.calculateDiagramData(q, mu, xw);
 
   return (
     <div>

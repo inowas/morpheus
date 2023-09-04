@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Papa from 'papaparse';
-import {Breadcrumb} from '../../../../components';
-import {useNavigate} from '../../../common/hooks';
-import {useTranslate} from '../../../T04/application';
+import {useNavigate, useTranslate} from '../../application';
 import '../styles/styles.css';
+import {Breadcrumb} from '../../../../components';
 import {Container, Grid} from 'semantic-ui-react';
 import PivotTableUI, {PivotTableUIProps} from 'react-pivottable/PivotTableUI';
 
@@ -50,7 +49,7 @@ const T04 = () => {
   }, []);
 
   return (
-    <div className="toolWrapper">
+    <div className="toolWrapper" data-testid="t04-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},

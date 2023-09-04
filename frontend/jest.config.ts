@@ -9,7 +9,7 @@ export default async (): Promise<Config.InitialOptions> => ({
     '<rootDir>/jest.setup.ts',
   ],
   setupFiles: [
-    '<rootDir>/src/setupTests.ts',
+    '<rootDir>/src/setupTests.tsx',
   ],
   transformIgnorePatterns: [
     '<rootDir>/node_modules/?!(react-movable|yet-another-react-lightbox)',
@@ -34,11 +34,11 @@ export default async (): Promise<Config.InitialOptions> => ({
     '/src/config.ts',
     '/src/ironman-integration/',
   ],
-  moduleDirectories: ["node_modules", path.join(__dirname, "src")],
+  moduleDirectories: ['node_modules', path.join(__dirname, 'src')],
   moduleNameMapper: {
-    "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-    "\\.(css|less)$": "<rootDir>/__mocks__/fileMock.js",
-    "react-i18next": "<rootDir>/__mocks__/reacti18nextMock.js",
+    '\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
+    '\\.(css|less)$': '<rootDir>/__mocks__/fileMock.js',
+    'react-i18next': '<rootDir>/__mocks__/reacti18nextMock.js',
     'yet-another-react-lightbox/plugins': '<rootDir>/node_modules/yet-another-react-lightbox/dist/plugins',
   }
 });

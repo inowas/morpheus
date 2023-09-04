@@ -2,11 +2,20 @@ import React from 'react';
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {IT09A} from '../../../types/T09.type';
-import {calculateDiagramData, calculateZ} from '../../../application/useCalculationsT09A';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
+
+interface IUseCalculate {
+  calculateZ: (h: number, df: number, ds: number) => number;
+  calculateDiagramData: (h: number, df: number, ds: number) => [{
+    name: string;
+    h: number;
+    z: number;
+  }];
+}
 
 interface IProps {
   parameters: IT09A['parameters'];
+  calculation: IUseCalculate;
 }
 
 const styles = {
@@ -34,10 +43,11 @@ const styles = {
 
 let currentChart: any;
 
-const ChartT09A = ({parameters}: IProps) => {
+const ChartT09A = ({parameters, calculation}: IProps) => {
+
   const {h, df, ds} = getParameterValues(parameters);
-  const data = calculateDiagramData(h, df, ds);
-  const z = calculateZ(h, df, ds);
+  const data = calculation.calculateDiagramData(h, df, ds);
+  const z = calculation.calculateZ(h, df, ds);
   return (
     <div>
       <Grid>

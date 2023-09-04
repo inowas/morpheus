@@ -1,18 +1,39 @@
 import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
 import {getParameterValues} from '../../../../common/helpers';
-import {calculateQ, calculateZ, calculateZCrit} from '../../../application/useCalculationsT09С';
 import {IT09C} from '../../../types/T09.type';
+
+interface DataSet {
+  x: number;
+  h: number;
+}
+
+interface IUseCalculate {
+  calculateQ: (k: number, d: number, df: number, ds: number) => number;
+  calculateZCrit: (d: number) => number;
+  calculateZ: (q: number, k: number, d: number, df: number, ds: number) => number;
+  calculateDiagramData: (
+    q: number,
+    k: number,
+    d: number,
+    df: number,
+    ds: number,
+    start: number,
+    stop: number,
+    step: number
+  ) => DataSet[];
+}
 
 interface IProps {
   parameters: IT09C['parameters'];
+  calculation: IUseCalculate;
 }
 
-const InfoT09C = ({parameters}: IProps) => {
+const InfoT09C = ({parameters, calculation}: IProps) => {
   const {q, k, d, df, ds} = getParameterValues(parameters);
-  const z = calculateZ(q, k, d, df, ds);
-  const qmax = calculateQ(k, d, df, ds);
-  const zCrit = calculateZCrit(d);
+  const z = calculation.calculateZ(q, k, d, df, ds);
+  const qmax = calculation.calculateQ(k, d, df, ds);
+  const zCrit = calculation.calculateZCrit(d);
 
   if (Number(z) > Number(zCrit)) {
     return (

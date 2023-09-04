@@ -2,11 +2,34 @@ import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {IT09B} from '../../../types/T09.type';
-import {calculateDiagramData, calculateL, calculateXT, calculateZ} from '../../../application/useCalculationsT09B';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
+
+interface DataSet {
+  x: number;
+  z?: number;
+  b: number;
+}
+
+interface IUseCalculate {
+  range: (start: number, stop: number, step: number) => number[];
+  calculateZofX: (x: number, i: number, b: number, df: number, ds: number) => number;
+  calculateZ: (i: number, b: number, df: number, ds: number) => number;
+  calculateL: (i: number, b: number, df: number, ds: number) => number;
+  calculateXT: (i: number, b: number, rho_f: number, rho_s: number) => number;
+  calculateDiagramData: (
+    i: number,
+    b: number,
+    df: number,
+    ds: number,
+    start: number,
+    stop: number,
+    step: number
+  ) => DataSet[];
+}
 
 interface IProps {
   parameters: IT09B['parameters'];
+  calculation: IUseCalculate;
 }
 
 const styles = {
@@ -34,16 +57,15 @@ const styles = {
 
 let currentChart: any;
 
-
-const ChartT09B = ({parameters}: IProps) => {
+const ChartT09B = ({parameters, calculation}: IProps) => {
   const {b, i, df, ds} = getParameterValues(parameters);
 
   const yDomain = [-b, 0];
-  const z = calculateZ(i, b, df, ds);
-  const L = calculateL(i, b, df, ds);
-  const xT = calculateXT(i, b, df, ds);
+  const z = calculation.calculateZ(i, b, df, ds);
+  const L = calculation.calculateL(i, b, df, ds);
+  const xT = calculation.calculateXT(i, b, df, ds);
   const xDomain = [(Math.round(xT / 50) + 1) * 50, 0];
-  const data = calculateDiagramData(i, b, df, ds, 0, (Math.round(xT / 50) + 1) * 50, 1);
+  const data = calculation.calculateDiagramData(i, b, df, ds, 0, (Math.round(xT / 50) + 1) * 50, 1);
 
   return (
     <div>
@@ -95,7 +117,6 @@ const ChartT09B = ({parameters}: IProps) => {
               />
             </LineChart>
           </ResponsiveContainer>
-
           <Segment raised={true} style={styles.diagramLabel}>
             <p>z<sub>0</sub>&nbsp;=&nbsp;<strong>{z.toFixed(1)}</strong>&nbsp;m</p>
             <p>L&nbsp;=&nbsp;<strong>{L.toFixed(1)}</strong>&nbsp;m</p>
