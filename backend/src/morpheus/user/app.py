@@ -1,5 +1,7 @@
 import click
 from flask import Flask, Blueprint
+
+from morpheus.user.application.read.query_bus import user_query_bus
 from morpheus.user.application.write.command_bus import user_command_bus
 from morpheus.user.incoming import require_authentication
 from morpheus.user.presentation.api.user import ReadUserProfileRequestHandler
@@ -12,7 +14,7 @@ def bootstrap(app: Flask):
     @blueprint.route('/me', methods=['GET'])
     @require_authentication()
     def me():
-        request_handler = ReadUserProfileRequestHandler()
+        request_handler = ReadUserProfileRequestHandler(query_bus=user_query_bus)
         return request_handler.handle()
 
     @blueprint.cli.command('create')
