@@ -2,6 +2,7 @@ import time
 from authlib.integrations.sqla_oauth2 import OAuth2ClientMixin, OAuth2TokenMixin
 from morpheus.common.infrastructure.persistence.database import db
 
+
 class OAuth2User(db.Model):
     __tablename__ = 'user'
 
