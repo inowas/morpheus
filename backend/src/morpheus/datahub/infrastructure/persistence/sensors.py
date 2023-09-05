@@ -1,21 +1,13 @@
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client
-
-DB_NAME = 'sensor_data'
-
-
-def get_database():
-    return get_database_client(DB_NAME)
+from morpheus.datahub.infrastructure.persistence.mongodb import database
 
 
 def collection_exists(sensor_name: str):
-    db = get_database()
-    return sensor_name in db.list_collection_names()
+    return sensor_name in database.list_collection_names()
 
 
 def create_sensor_collection(sensor_name: str) -> None:
-    db = get_database()
-    if sensor_name not in db.list_collection_names():
-        db.create_collection(
+    if sensor_name not in database.list_collection_names():
+        database.create_collection(
             sensor_name,
             timeseries={
                 "timeField": "timestamp",
@@ -25,16 +17,14 @@ def create_sensor_collection(sensor_name: str) -> None:
 
 
 def get_sensor_collection(sensor_name: str):
-    db = get_database()
-    if sensor_name not in db.list_collection_names():
+    if sensor_name not in database.list_collection_names():
         raise ValueError(f'Collection {sensor_name} does not exist')
-    return db[sensor_name]
+    return database[sensor_name]
 
 
 def get_or_create_sensor_collection(sensor_name: str):
-    db = get_database()
-    if sensor_name not in db.list_collection_names():
-        db.create_collection(
+    if sensor_name not in database.list_collection_names():
+        database.create_collection(
             sensor_name,
             timeseries={
                 "timeField": "timestamp",
@@ -42,13 +32,12 @@ def get_or_create_sensor_collection(sensor_name: str):
                 "granularity": "minutes"
             })
 
-    return db[sensor_name]
+    return database[sensor_name]
 
 
 def delete_sensor_collection(sensor_name: str):
-    db = get_database()
-    if sensor_name in db.list_collection_names():
-        db.drop_collection(sensor_name)
+    if sensor_name in database.list_collection_names():
+        database.drop_collection(sensor_name)
 
 
 def insert_many(sensor_name: str, data: list[dict]):
@@ -67,8 +56,7 @@ def find(sensor_name: str, query: dict):
 
 
 def find_all_collections():
-    db = get_database()
-    return db.list_collection_names()
+    return database.list_collection_names()
 
 
 def find_latest_record(sensor_name: str):

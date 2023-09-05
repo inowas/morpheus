@@ -1,4 +1,4 @@
-from morpheus.common.infrastructure.persistence.database import db
+from morpheus.common.infrastructure.persistence.postgresql import db
 from morpheus.user.application.read.query import Query, QueryResult
 from morpheus.user.application.read.user import ReadUserQuery, ReadUserQueryHandler, \
     ReadAuthenticatedUserProfileQuery, ReadAuthenticatedUserProfileQueryHandler

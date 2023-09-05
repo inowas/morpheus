@@ -1,4 +1,4 @@
-from morpheus.common.infrastructure.persistence.database import db
+from morpheus.common.infrastructure.persistence.postgresql import db
 from morpheus.user.application.write.user import CreateUserCommand, CreateUserCommandHandler
 from morpheus.user.infrastructure.persistence.user import UserRepository
 
