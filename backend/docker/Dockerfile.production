@@ -1,17 +1,15 @@
-FROM python:3
+FROM python:3 as build
+
+ADD backend /app
+WORKDIR /app
+RUN pip install --upgrade pip
+RUN pip install -r /app/requirements/prod.txt
+
+FROM build as production
 
 ENV PYTHONUNBUFFERED 1
-ENV BACKEND_ENTRYPOINT_QUIET_LOGS=""
+ENV FLASK_ENV production
 
-RUN mkdir /opt/code
-ADD backend /opt/code
-
-COPY --chown=101:101 docker/backend/docker-entrypoint.d/??-*.sh /docker-entrypoint.d/
-COPY --chown=101:101 docker/backend/docker-entrypoint.sh /docker-entrypoint.sh
-RUN ["chmod", "+x", "/docker-entrypoint.sh"]
-RUN ["chmod", "+x", "-R", "/docker-entrypoint.d"]
-
-RUN pip install -r /opt/code/requirements/prod.txt
-WORKDIR /opt/code/src
-ENTRYPOINT ["/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
+WORKDIR /app/src
+ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
 EXPOSE 8000

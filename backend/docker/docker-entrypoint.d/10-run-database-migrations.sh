@@ -4,12 +4,12 @@
 set -e
 
 entrypoint_log() {
-    if [ -z "${BACKEND_ENTRYPOINT_QUIET_LOGS:-}" ]; then
-        echo "$@"
-    fi
+    echo "$@"
 }
 
 ME=$(basename "$0")
 entrypoint_log "$ME: info: Starting $ME"
+
+/app/environments/dev/scripts/migrate_up.sh
 
 exit 0

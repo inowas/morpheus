@@ -22,7 +22,7 @@ build-development:
 
 ## Start development environment
 start-development:
-	docker compose -f infrastructure/development/docker-compose.yml up -d
+	docker compose -f infrastructure/development/docker-compose.yml up -d --build
 
 ## Stop development environment
 stop-development:

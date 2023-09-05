@@ -1,14 +1,20 @@
-FROM python:3
+FROM python:3 as build
+
+ADD backend /app
+WORKDIR /app
+RUN pip install --upgrade pip
+RUN pip install -r /app/requirements/dev.txt
+
+
+FROM build as development
 
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-
-RUN mkdir /app
-RUN mkdir /app/src
-WORKDIR /app/src
-RUN pip install --upgrade pip
-COPY backend/requirements /app/requirements
-RUN pip install -r /app/requirements/dev.txt
-EXPOSE 8000
-
 ENV FLASK_ENV development
+ENV FLASK_DEBUG 1
+ENV FLASK_APP wsgi:app
+ENV AUTHLIB_INSECURE_TRANSPORT 1
+
+WORKDIR /app/src
+ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "flask", "run", "--host=0.0.0.0", "--port=5000"]
+
+EXPOSE 8000

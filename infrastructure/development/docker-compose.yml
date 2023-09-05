@@ -1,23 +1,21 @@
 version: "3.8"
 services:
-  frontend:
-    build:
-      context: ${PWD}
-      dockerfile: frontend/docker/Dockerfile
-    restart: always
-    ports:
-      - "8080:8080"
+#  frontend:
+#    build:
+#      context: ${PWD}
+#      dockerfile: frontend/docker/Dockerfile
+#    restart: always
+#    ports:
+#      - "8080:8080"
   backend:
     build:
       context: ${PWD}
       dockerfile: backend/docker/Dockerfile.development
+      target: development
     depends_on:
       - mongo
       - postgres
     environment:
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
-      FLASK_APP: wsgi.py
       DYNACONF_SECRET_KEY: ${SECRET_KEY}
       DYNACONF_POSTGRES_USER: ${POSTGRES_USER}
       DYNACONF_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -29,7 +27,6 @@ services:
       DYNACONF_MONGO_HOST: ${MONGO_HOST}
     volumes:
       - ${PWD}/backend:/app
-    command: flask run --host=0.0.0.0 --port=5000
     restart: always
     ports:
       - "5000:5000"
