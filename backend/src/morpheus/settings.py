@@ -36,6 +36,7 @@ class Settings:
 
 settings = Settings.from_dynaconf(
     Dynaconf(
+        load_dotenv=True,
         environments=True,
         settings_files=['settings.toml', '.secrets.toml'],
         env=os.environ.get('FLASK_ENV', 'production'),

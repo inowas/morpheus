@@ -40,6 +40,10 @@ qa-check:
 run-tests:
 	environments/dev/scripts/qa_check/run_tests.sh
 
+## fix code style
+fix-code-style:
+	environments/dev/scripts/qa_check/fix_code_style.sh
+
 ## migrates database to latest version
 migrate-up:
 	environments/dev/scripts/migrate_up.sh
