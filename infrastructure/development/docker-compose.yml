@@ -30,6 +30,8 @@ services:
     restart: always
     ports:
       - "5000:5000"
+    user: flaskuser
+    read_only: true
   postgres:
     image: postgres:13.12
     environment:

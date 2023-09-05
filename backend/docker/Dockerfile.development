@@ -1,4 +1,4 @@
-FROM python:3 as build
+FROM python:3.11-bookworm as build
 
 ADD backend /app
 WORKDIR /app
@@ -14,6 +14,9 @@ ENV FLASK_DEBUG 1
 ENV FLASK_APP wsgi:app
 ENV AUTHLIB_INSECURE_TRANSPORT 1
 
+RUN adduser --system flaskuser
+
+USER flaskuser
 WORKDIR /app/src
 ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "flask", "run", "--host=0.0.0.0", "--port=5000"]
 
