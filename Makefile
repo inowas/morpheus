@@ -22,8 +22,12 @@ build-development:
 
 ## Start development environment
 start-development:
-	docker compose -f infrastructure/development/docker-compose.yml up -d --build
+	docker compose -f infrastructure/development/docker-compose.yml up -d --build --force-recreate
 
 ## Stop development environment
 stop-development:
 	docker compose -f infrastructure/development/docker-compose.yml down
+
+## Stop development environment
+reset-development:
+	docker compose -f infrastructure/development/docker-compose.yml down -v
