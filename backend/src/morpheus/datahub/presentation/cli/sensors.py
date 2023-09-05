@@ -1,5 +1,6 @@
 from morpheus.common.infrastructure.cli.io import write_success, write_error
 from morpheus.datahub.application.write.sensors import has_sensor, add_sensor, insert_records
+import numpy as np
 import os
 import pandas as pd
 import re
@@ -26,7 +27,7 @@ class ReadUITSensorDataFromCSVFilesCliCommand:
                 df = pd.read_csv(filename, sep=";", encoding="ISO-8859-1")
                 df.columns.values[0] = "{timestamp}"
                 df.rename(columns=self.parse_header, inplace=True)
-                df.mask(df.isna(), None, inplace=True)
+                df.replace({np.nan: None}, inplace=True)
                 df['timestamp'] = pd.to_datetime(df['timestamp'], dayfirst=True)
                 sensor_name = f"sensor_{project}_{sensor}"
                 if not has_sensor(sensor_name):
