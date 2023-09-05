@@ -3,7 +3,7 @@
 from flask import Flask
 
 from morpheus.app import bootstrap
-from morpheus.common.infrastructure.persistence.database import db
+from morpheus.common.infrastructure.persistence.postgresql import db
 from morpheus.settings import settings
 
 # configure logging

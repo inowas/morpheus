@@ -1,5 +1,5 @@
-from morpheus.user.application.read.query_bus import QueryBus
-from morpheus.user.application.read.user import ReadAuthenticatedUserProfileQuery
+from morpheus.user.application.read.reader import QueryBus
+from morpheus.user.application.read.read_profile import ReadAuthenticatedUserProfileQuery
 
 
 class ReadUserProfileRequestHandler:

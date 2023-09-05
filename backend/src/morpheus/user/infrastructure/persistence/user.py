@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy import select, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from morpheus.common.infrastructure.persistence.database import BaseRepository, BaseModel
+from morpheus.common.infrastructure.persistence.postgresql import BaseRepository, BaseModel
 from morpheus.user.types.user import User, UserId
 
 

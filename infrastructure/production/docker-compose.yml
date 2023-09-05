@@ -45,7 +45,7 @@ services:
       - "traefik.http.services.frontend.loadbalancer.server.port=8000"
       - "traefik.docker.network=traefik-web-gateway"
     restart: always
-    user: flaskuser
+    user: flask
     read_only: true
   postgres:
     image: postgres:13.12

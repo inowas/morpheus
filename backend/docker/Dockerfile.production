@@ -10,9 +10,9 @@ FROM build as production
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV production
 
-RUN adduser --system flaskuser
+RUN adduser --system flask
 
-USER flaskuser
+USER flask
 WORKDIR /app/src
 ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
 EXPOSE 8000
