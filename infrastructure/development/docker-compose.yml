@@ -11,6 +11,9 @@ services:
     build:
       context: ${PWD}
       dockerfile: backend/docker/Dockerfile.development
+      args:
+        - FLASK_USER_ID=${FLASK_USER_ID}
+        - FLASK_GROUP_ID=${FLASK_GROUP_ID}
       target: development
     depends_on:
       - mongo
@@ -30,8 +33,9 @@ services:
     restart: always
     ports:
       - "5000:5000"
-    user: flaskuser
+    user: flask
     read_only: true
+    command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
   postgres:
     image: postgres:13.12
     environment:

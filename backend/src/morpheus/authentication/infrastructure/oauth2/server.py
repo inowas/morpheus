@@ -12,7 +12,7 @@ from authlib.integrations.sqla_oauth2 import (
 )
 from authlib.oauth2.rfc6749 import grants
 
-from morpheus.common.infrastructure.persistence.database import db
+from morpheus.common.infrastructure.persistence.postgresql import db
 from morpheus.authentication.infrastructure.oauth2.models import OAuth2Client, OAuth2Token, OAuth2User
 from morpheus.authentication.infrastructure.password import verify_password
 from morpheus.authentication.types.oauth2 import UserId
