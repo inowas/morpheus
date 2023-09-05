@@ -16,38 +16,18 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-## Create containers, install dependencies, create database, run migrations and seeds
-init:
-	docker compose -f docker-compose.yml build --no-cache
-	docker compose -f docker-compose.yml up -d
-	docker compose exec api composer install --no-dev
-	docker compose exec api ./bin/console.php orm:schema-tool:create
-	docker compose exec api chown -R www-data:www-data var/db
+## Build development environment
+build-development:
+	docker compose -f infrastructure/development/docker-compose.yml build
 
-## Create containers, install dependencies, create database, run migrations and seeds
-rebuild:
-	docker compose -f docker-compose.yml down
-	docker compose -f docker-compose.yml build --no-cache
-	docker compose -f docker-compose.yml up -d
-	docker compose exec api composer install
+## Start development environment
+start-development:
+	docker compose -f infrastructure/development/docker-compose.yml up -d --build --force-recreate
 
-## Update project
-update:
-	git pull
-	docker compose -f docker-compose.yml down
-	docker compose -f docker-compose.yml build --no-cache
-	docker compose -f docker-compose.yml up -d --force-recreate
-	docker compose exec api ./bin/console.php orm:schema-tool:update --force
-	docker compose exec api composer install --no-dev
+## Stop development environment
+stop-development:
+	docker compose -f infrastructure/development/docker-compose.yml down
 
-## Start containers in background (alias docker compose up -d)
-start:
-	docker compose -f docker-compose.yml up -d --force-recreate
-
-## Start containers in background (alias docker compose up -d)
-start-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate
-
-## Start containers in background (alias docker compose up -d)
-stop:
-	docker compose -f docker-compose.yml down
+## Stop development environment
+reset-development:
+	docker compose -f infrastructure/development/docker-compose.yml down -v
