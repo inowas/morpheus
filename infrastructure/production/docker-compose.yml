@@ -4,12 +4,12 @@ services:
     image: inowas/morpheus-frontend:${FRONTEND_VERSION}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend-http.entrypoint.d=web"
+      - "traefik.http.routers.frontend-http.entrypoints=web"
       - "traefik.http.routers.frontend-http.rule=Host(`${FRONTEND_HOST}`)"
       - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-      - "traefik.http.routers.frontend.entrypoint.d=websecure"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOST}`)"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
@@ -33,12 +33,12 @@ services:
       DYNACONF_MONGO_HOST: ${MONGO_HOST}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend-http.entrypoint.d=web"
+      - "traefik.http.routers.frontend-http.entrypoints=web"
       - "traefik.http.routers.frontend-http.rule=Host(`${BACKEND_HOST}`)"
       - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-      - "traefik.http.routers.frontend.entrypoint.d=websecure"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.rule=Host(`${BACKEND_HOST}`)"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"

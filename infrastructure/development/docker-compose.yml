@@ -1,5 +1,34 @@
 version: "3.8"
 services:
+  traefik:
+    image:
+      traefik:2.10
+    command:
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.file.directory=/etc/traefik"
+      - "--providers.file.watch=true"
+      - "--global.checkNewVersion=true"
+      - "--global.sendAnonymousUsage=false"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # for traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik:/etc/traefik
+      - ./tls_certificates:/etc/tls_certificates
+    environment:
+      - TLS_KEY_FILE=${TLS_KEY_FILE}
+      - TLS_CERT_FILE=${TLS_CERT_FILE}
+    networks:
+      - local
 #  frontend:
 #    build:
 #      context: ${PWD}
@@ -31,11 +60,20 @@ services:
     volumes:
       - ${PWD}/backend:/app
     restart: always
-    ports:
-      - "5000:5000"
     user: flask
     read_only: true
-    command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+    command: ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+    networks:
+      - local
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
   postgres:
     image: postgres:13.12
     environment:
@@ -47,6 +85,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    networks:
+      - local
   mongo:
     image: mongo:5.0
     environment:
@@ -57,9 +97,42 @@ services:
     volumes:
       - mongo_data:/data/db
     restart: always
-
+    networks:
+      - local
+  mailcatcher:
+    image: sj26/mailcatcher:latest
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-mailcatcher.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-mailcatcher.rule=Host(`mailcatcher.${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-mailcatcher.tls=false"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-mailcatcher.loadbalancer.server.port=1080"
+    networks:
+      - local
+  keycloak:
+    image: keycloak/keycloak:22.0
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    command:
+      start-dev --proxy edge --hostname-url https://identity.${DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`identity.${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`identity.${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
+    networks:
+      - local
 volumes:
   postgres_data:
     driver: local
   mongo_data:
     driver: local
+networks:
+  local:
+    name: ${COMPOSE_PROJECT_NAME}-inowas-local

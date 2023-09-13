@@ -16,6 +16,10 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
+## Install development environment
+install-development:
+	infrastructure/development/scripts/install.sh
+
 ## Build development environment
 build-development:
 	docker compose -f infrastructure/development/docker-compose.yml build
