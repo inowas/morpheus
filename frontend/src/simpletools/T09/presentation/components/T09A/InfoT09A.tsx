@@ -3,16 +3,24 @@ import {Icon, Message} from 'semantic-ui-react';
 import {getParameterValues} from '../../../../common/helpers';
 import {IT09A} from '../../../types/T09.type';
 
-interface IProps {
-  parameters: IT09A['parameters'];
+interface IUseCalculate {
+  calculateZ: (h: number, df: number, ds: number) => number;
+  calculateDiagramData: (h: number, df: number, ds: number) => [{
+    name: string;
+    h: number;
+    z: number;
+  }];
 }
 
-const InfoT09A = ({parameters}: IProps) => {
-  const calculateZ = (h: number, df: number, ds: number) => {
-    return (df * h) / (ds - df);
-  };
+interface IProps {
+  parameters: IT09A['parameters'];
+  calculation: IUseCalculate;
+}
+
+const InfoT09A = ({parameters, calculation}: IProps) => {
+
   const {h, df, ds} = getParameterValues(parameters);
-  const z = calculateZ(h, df, ds);
+  const z = calculation.calculateZ(h, df, ds);
 
   return (
     <Message icon={true} info={true}>

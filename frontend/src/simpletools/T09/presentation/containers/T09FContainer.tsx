@@ -3,9 +3,9 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09F, InfoT09F, Parameters} from '../components/';
 import {IT09F} from '../../types/T09.type';
 import image from '../images/T09F.png';
-import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate} from '../../application';
+import {useCalculationsT09F, useNavigate, useTranslate} from '../../application';
+
 
 const defaults: IT09F = {
   parameters: [{
@@ -131,11 +131,10 @@ const defaults: IT09F = {
 const tool = 'T09F';
 
 const T09FContainer = () => {
-
   const [data, setData] = useState<IT09F>(defaults);
+  const calculation = useCalculationsT09F();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
-
   const handleChangeParameters = (parameters: IT09F['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -149,7 +148,7 @@ const T09FContainer = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div data-testid="t09f-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -165,15 +164,19 @@ const T09FContainer = () => {
         />
         <ChartT09F
           parameters={data.parameters}
+          calculation={calculation}
         />
-        <InfoT09F parameters={data.parameters}/>
+        <InfoT09F
+          parameters={data.parameters}
+          calculation={calculation}
+        />
         <Parameters
           parameters={data.parameters}
           onChange={handleChangeParameters}
           onReset={handleReset}
         />
       </SimpleToolGrid>
-    </>
+    </div>
   );
 };
 

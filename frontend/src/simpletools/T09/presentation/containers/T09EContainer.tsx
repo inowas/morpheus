@@ -3,9 +3,9 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT09E, InfoT09E, Parameters, SettingsT09E} from '../components/';
 import {IT09E} from '../../types/T09.type';
 import image from '../images/T09E.png';
-import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate} from '../../application';
+import {useCalculationsT09E, useNavigate, useTranslate} from '../../application';
+
 
 const defaults: IT09E = {
   settings: {
@@ -134,11 +134,10 @@ const defaults: IT09E = {
 const tool = 'T09E';
 
 const T09EContainer = () => {
-
   const [data, setData] = useState<IT09E>(defaults);
+  const calculation = useCalculationsT09E();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
-
   const handleChangeParameters = (parameters: IT09E['parameters']) => {
     setData((prevState) => ({
       ...prevState,
@@ -156,7 +155,7 @@ const T09EContainer = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div data-testid="t09e-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -170,17 +169,21 @@ const T09EContainer = () => {
           image={image}
           title={title}
         />
-        {/*//FIXME ERROR - TypeError: Cannot read properties of undefined (reading 'z0') (constHead params)*/}
         <ChartT09E
           parameters={data.parameters}
           settings={data.settings}
+          calculation={calculation}
         />
         <div>
           <SettingsT09E
             settings={data.settings}
             onChange={handleChangeSettings}
           />
-          <InfoT09E parameters={data.parameters} settings={data.settings}/>
+          <InfoT09E
+            parameters={data.parameters}
+            settings={data.settings}
+            calculation={calculation}
+          />
         </div>
         <Parameters
           parameters={data.parameters}
@@ -188,7 +191,7 @@ const T09EContainer = () => {
           onReset={handleReset}
         />
       </SimpleToolGrid>
-    </>
+    </div>
   );
 };
 
