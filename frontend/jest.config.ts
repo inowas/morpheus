@@ -12,7 +12,7 @@ export default async (): Promise<Config.InitialOptions> => ({
     '<rootDir>/src/setupTests.ts',
   ],
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/?!(react-movable|yet-another-react-lightbox)',
+    '<rootDir>/node_modules/?!(react-movable)',
     'jest-runner'
   ],
   collectCoverage: true,
@@ -38,7 +38,6 @@ export default async (): Promise<Config.InitialOptions> => ({
   moduleNameMapper: {
     "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
     "\\.(css|less)$": "<rootDir>/__mocks__/fileMock.js",
-    "react-i18next": "<rootDir>/__mocks__/reacti18nextMock.js",
-    'yet-another-react-lightbox/plugins': '<rootDir>/node_modules/yet-another-react-lightbox/dist/plugins',
+    "react-i18next": "<rootDir>/__mocks__/reacti18nextMock.js"
   }
 });

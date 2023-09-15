@@ -176,7 +176,9 @@ module.exports = (env: any, argv: any) => {
         }),
       ],
       minimize: true,
-      splitChunks: false,
+      splitChunks: {
+        chunks: 'all',
+      },
     }
   }
   return config;
