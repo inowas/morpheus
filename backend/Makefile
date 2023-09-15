@@ -25,6 +25,9 @@ install-dev:
 start-dev-database:
 	environments/dev/scripts/start_database.sh
 
+prune-dev-database:
+	environments/dev/scripts/prune_database.sh
+
 ## Start the development server
 start-dev-server:
 	environments/dev/scripts/start_server.sh

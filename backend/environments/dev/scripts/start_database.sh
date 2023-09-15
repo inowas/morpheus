@@ -9,4 +9,8 @@ export POSTGRES_DB=$(dynaconf -i "morpheus.settings.settings" get POSTGRES_DB)
 export POSTGRES_USER=$(dynaconf -i "morpheus.settings.settings" get POSTGRES_USER)
 export POSTGRES_PASSWORD=$(dynaconf -i "morpheus.settings.settings" get POSTGRES_PASSWORD)
 export POSTGRES_PORT=$(dynaconf -i "morpheus.settings.settings" get POSTGRES_PORT)
-docker compose -f "$backendRoot/environments/dev/docker_compose.yml" up
+export MONGO_INITDB_ROOT_USERNAME=$(dynaconf -i "morpheus.settings.settings" get MONGO_INITDB_ROOT_USERNAME)
+export MONGO_INITDB_ROOT_PASSWORD=$(dynaconf -i "morpheus.settings.settings" get MONGO_INITDB_ROOT_PASSWORD)
+export MONGO_PORT=$(dynaconf -i "morpheus.settings.settings" get MONGO_PORT)
+
+docker compose -f "$backendRoot/environments/dev/docker_compose.yml" up --force-recreate
