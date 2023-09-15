@@ -163,6 +163,7 @@ module.exports = (env: any, argv: any) => {
   }
   if (argv.mode === 'production') {
     config.mode = 'production';
+    config.devtool = 'source-map';
     config.optimization = {
       minimizer: [
         new TerserPlugin({

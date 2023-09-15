@@ -39,6 +39,7 @@
     "redux-devtools-extension": "^2.13.9",
     "semantic-ui-less": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
+    "source-map-explorer": "^2.5.3",
     "ts-results": "^3.3.0",
     "uuid": "^9.0.1"
   },
@@ -135,6 +136,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'dist/*.js'",
     "start": "webpack serve --hot --mode development --env mockserver --open",
     "start-ironman": "webpack serve --hot --mode development",
     "start-ironman-https": "webpack serve --hot --mode development --https",
