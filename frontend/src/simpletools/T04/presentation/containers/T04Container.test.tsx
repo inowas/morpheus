@@ -7,19 +7,22 @@ jest.mock('../../application', () => ({
   useTranslate: () => ({
     translate: (key: string) => key,
   }),
+  useCSVData: () => ({
+    data: [],
+  }),
 }));
 
-jest.mock('./T04Container', () => {
+jest.mock('react-pivottable/PivotTableUI', () => {
   return {
     __esModule: true,
-    default: jest.fn(() => <div data-testid="t04-container">Mocked T04Container</div>),
+    default: jest.fn(() => <div data-testid="react-pivottable">Mocked Pivot Table</div>),
   };
 });
 
 describe('T04Container Tests', () => {
   test('It renders the component', async () => {
     render(<T04Container/>);
-
     expect(screen.getByTestId('t04-container')).toBeInTheDocument();
+    expect(screen.getByTestId('react-pivottable')).toBeInTheDocument();
   });
 });
