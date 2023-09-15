@@ -1,7 +1,7 @@
 import time
 from morpheus.authentication.infrastructure.oauth2.models import OAuth2Client
 from morpheus.authentication.types.oauth2 import PublicClient
-from morpheus.common.infrastructure.persistence.database import BaseRepository
+from morpheus.common.infrastructure.persistence.postgresql import BaseRepository
 
 
 class ClientRepository(BaseRepository):

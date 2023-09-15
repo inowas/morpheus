@@ -25,6 +25,9 @@ install-dev:
 start-dev-database:
 	environments/dev/scripts/start_database.sh
 
+prune-dev-database:
+	environments/dev/scripts/prune_database.sh
+
 ## Start the development server
 start-dev-server:
 	environments/dev/scripts/start_server.sh
@@ -36,6 +39,10 @@ qa-check:
 ## runs tests
 run-tests:
 	environments/dev/scripts/qa_check/run_tests.sh
+
+## fix code style
+fix-code-style:
+	environments/dev/scripts/qa_check/fix_code_style.sh
 
 ## migrates database to latest version
 migrate-up:

@@ -120,3 +120,11 @@ To create or update a baseline file for the dependency graph for the app, run:
 ```shell
 npm run depcruise:app:baseline
 ```
+
+## Analyze bundle size
+
+After building the application, you can analyze the bundle size by running:
+
+```shell
+make analyze
+```

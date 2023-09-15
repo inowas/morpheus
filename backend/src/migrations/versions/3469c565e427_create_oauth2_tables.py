@@ -10,7 +10,7 @@ from typing import Sequence, Union
 from alembic import op
 
 from morpheus.authentication.infrastructure.oauth2.models import OAuth2Client, OAuth2Token
-from morpheus.common.infrastructure.persistence.database import db
+from morpheus.common.infrastructure.persistence.postgresql import db
 from wsgi import app
 
 # revision identifiers, used by Alembic.

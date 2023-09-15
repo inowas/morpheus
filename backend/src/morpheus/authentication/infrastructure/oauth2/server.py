@@ -12,18 +12,17 @@ from authlib.integrations.sqla_oauth2 import (
 )
 from authlib.oauth2.rfc6749 import grants
 
-from morpheus.common.infrastructure.persistence.database import db
-from .models import OAuth2Client, OAuth2Token
-from ..password import verify_password
-from ...incoming import fetch_user_by_email, fetch_user_by_id
-from ...types.oauth2 import UserId
+from morpheus.common.infrastructure.persistence.postgresql import db
+from morpheus.authentication.infrastructure.oauth2.models import OAuth2Client, OAuth2Token, OAuth2User
+from morpheus.authentication.infrastructure.password import verify_password
+from morpheus.authentication.types.oauth2 import UserId
 
 
 class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = ['none']
 
     def authenticate_user(self, username, password):
-        user = fetch_user_by_email(username)
+        user = OAuth2User.query.filter_by(email=username).first()
         if user is not None and verify_password(user.password_hash, password):
             return user
 
@@ -38,7 +37,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
             return token
 
     def authenticate_user(self, credential):
-        user = fetch_user_by_id(UserId(credential.user_id))
+        user = OAuth2User.query.filter_by(id=credential.user_id).first()
         if user is not None:
             return user
 

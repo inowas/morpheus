@@ -1,6 +1,6 @@
 from morpheus.authentication.application.write.oauth2 import CreatePublicClientCommand, CreatePublicClientCommandHandler
 from morpheus.authentication.infrastructure.persistence.oauth2 import ClientRepository
-from morpheus.common.infrastructure.persistence.database import db
+from morpheus.common.infrastructure.persistence.postgresql import db
 
 
 class UnknownCommandError(Exception):

@@ -1,0 +1,18 @@
+FROM python:3.11-bookworm as build
+
+ADD backend /app
+WORKDIR /app
+RUN pip install --upgrade pip
+RUN pip install -r /app/requirements/prod.txt
+
+FROM build as production
+
+ENV PYTHONUNBUFFERED 1
+ENV FLASK_ENV production
+
+RUN adduser --system flask
+
+USER flask
+WORKDIR /app/src
+ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
+EXPOSE 8000

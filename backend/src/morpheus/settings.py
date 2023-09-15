@@ -16,6 +16,12 @@ class Settings:
         self.POSTGRES_HOST: str = values.POSTGRES_HOST
         self.POSTGRES_PORT: str = values.POSTGRES_PORT
         self.POSTGRES_PASSWORD: str = values.POSTGRES_PASSWORD
+        self.MONGO_INITDB_ROOT_USERNAME: str = values.MONGO_INITDB_ROOT_USERNAME
+        self.MONGO_INITDB_ROOT_PASSWORD: str = values.MONGO_INITDB_ROOT_PASSWORD
+        self.MONGO_HOST: str = values.MONGO_HOST
+        self.MONGO_PORT: str = values.MONGO_PORT
+        self.MONGO_USER: str = values.MONGO_USER
+        self.MONGO_PASSWORD: str = values.MONGO_PASSWORD
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):
@@ -30,6 +36,7 @@ class Settings:
 
 settings = Settings.from_dynaconf(
     Dynaconf(
+        load_dotenv=True,
         environments=True,
         settings_files=['settings.toml', '.secrets.toml'],
         env=os.environ.get('FLASK_ENV', 'production'),
@@ -40,6 +47,13 @@ settings = Settings.from_dynaconf(
             Validator('POSTGRES_HOST', must_exist=True),
             Validator('POSTGRES_PORT', must_exist=True),
             Validator('POSTGRES_PASSWORD', must_exist=True),
+            Validator('MONGO_INITDB_ROOT_USERNAME', must_exist=True),
+            Validator('MONGO_INITDB_ROOT_PASSWORD', must_exist=True),
+            Validator('MONGO_HOST', must_exist=True),
+            Validator('MONGO_PORT', must_exist=True),
+            Validator('MONGO_USER', must_exist=True),
+            Validator('MONGO_PASSWORD', must_exist=True),
+
         ]
     )
 )
