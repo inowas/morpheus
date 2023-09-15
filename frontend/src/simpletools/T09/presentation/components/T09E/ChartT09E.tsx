@@ -1,13 +1,20 @@
 import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
-import {calculateDiagramData, calcXtQ0Flux, calcXtQ0Head, dRho} from '../../../application/useCalculationsT09E';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
 import {IT09E} from '../../../types/T09.type';
+
+interface IUseCalculate {
+  dRho: (rHof: number, rHos: number) => number;
+  calcXtQ0Flux: (k: number, z0: number, dz: number, l: number, w: number, i: number, alpha: number,) => [number, number];
+  calcXtQ0Head: (K: number, z0: number, dz: number, L: number, W: number, hi: number, alpha: number,) => [number, number, boolean, boolean];
+  calculateDiagramData: (xt: number, z0: number, xtSlr: number, dz: number, isValid: boolean) => { xt: number; z0?: number; z0_new: number }[];
+}
 
 interface IProps {
   parameters: IT09E['parameters'];
   settings: IT09E['settings'];
+  calculation: IUseCalculate;
 }
 
 const styles = {
@@ -62,7 +69,7 @@ const renderLabels = (maxIter: boolean, valid: boolean, dxt: number): React.Reac
   return null;
 };
 
-const ChartT09E = ({parameters, settings}: IProps) => {
+const ChartT09E = ({parameters, settings, calculation}: IProps) => {
 
   const {k, z0, l, w, dz, hi, i, df, ds} = getParameterValues(parameters);
   const method = settings.method || 'constHead';
@@ -71,16 +78,16 @@ const ChartT09E = ({parameters, settings}: IProps) => {
   let dxt: number;
   let maxIter: boolean = false;
   let isValid: boolean = true;
-  const alpha = dRho(df, ds);
+  const alpha = calculation.dRho(df, ds);
 
 
   if ('constHead' === method) {
-    const xtQ0Head1 = calcXtQ0Head(k, z0, 0, l, w, hi, alpha);
+    const xtQ0Head1 = calculation.calcXtQ0Head(k, z0, 0, l, w, hi, alpha);
     const xt = xtQ0Head1[0];
     maxIter = xtQ0Head1[2];
     isValid = xtQ0Head1[3];
 
-    const xtQ0Head2 = calcXtQ0Head(k, z0, dz, l, w, hi - dz, alpha);
+    const xtQ0Head2 = calculation.calcXtQ0Head(k, z0, dz, l, w, hi - dz, alpha);
     const xtSlr = xtQ0Head2[0]; // slr: after sea level rise
 
     if (!maxIter) {
@@ -92,11 +99,11 @@ const ChartT09E = ({parameters, settings}: IProps) => {
     }
 
     dxt = xtSlr - xt;
-    data = calculateDiagramData(xt, z0, xtSlr, dz, isValid);
+    data = calculation.calculateDiagramData(xt, z0, xtSlr, dz, isValid);
   } else {
-    const [xt, xtSlr] = calcXtQ0Flux(k, z0, dz, l, w, i, alpha);
+    const [xt, xtSlr] = calculation.calcXtQ0Flux(k, z0, dz, l, w, i, alpha);
     dxt = xtSlr - xt;
-    data = calculateDiagramData(xt, z0, xtSlr, dz, isValid);
+    data = calculation.calculateDiagramData(xt, z0, xtSlr, dz, isValid);
   }
 
   return (

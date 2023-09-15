@@ -19,5 +19,3 @@ describe('calcT', () => {
     });
   });
 });
-
-export default calcT;

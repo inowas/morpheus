@@ -1,35 +1,42 @@
 import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
 import {getParameterValues} from '../../../../common/helpers';
-import {calculateDiagramData, calcXtQ0Flux, calcXtQ0Head, dRho} from '../../../application/useCalculationsT09E';
 import {IT09E} from '../../../types/T09.type';
+
+interface IUseCalculate {
+  dRho: (rHof: number, rHos: number) => number;
+  calcXtQ0Flux: (k: number, z0: number, dz: number, l: number, w: number, i: number, alpha: number,) => [number, number];
+  calcXtQ0Head: (K: number, z0: number, dz: number, L: number, W: number, hi: number, alpha: number,) => [number, number, boolean, boolean];
+  calculateDiagramData: (xt: number, z0: number, xtSlr: number, dz: number, isValid: boolean) => { xt: number; z0?: number; z0_new: number }[];
+}
 
 interface IProps {
   parameters: IT09E['parameters'];
   settings: IT09E['settings'];
+  calculation: IUseCalculate;
 }
 
-const InfoT09E = ({parameters, settings}: IProps) => {
+const InfoT09E = ({parameters, settings, calculation}: IProps) => {
   const {k, z0, l, w, dz, hi, i, df, ds} = getParameterValues(parameters);
   const {method} = settings;
 
   let data;
   let isValid = true;
-  const alpha = dRho(df, ds);
+  const alpha = calculation.dRho(df, ds);
 
   if ('constHead' === method) {
-    const xtQ0Head1 = calcXtQ0Head(k, z0, 0, l, w, hi, alpha);
+    const xtQ0Head1 = calculation.calcXtQ0Head(k, z0, 0, l, w, hi, alpha);
     const xt = xtQ0Head1[0];
     isValid = xtQ0Head1[3];
 
-    const xtQ0Head2 = calcXtQ0Head(k, z0, dz, l, w, hi - dz, alpha);
+    const xtQ0Head2 = calculation.calcXtQ0Head(k, z0, dz, l, w, hi - dz, alpha);
     const xtSlr = xtQ0Head2[0]; // slr: after sea level rise
 
     if (isValid) {
       isValid = xtQ0Head2[3];
     }
 
-    data = calculateDiagramData(xt, z0, xtSlr, z0 + dz, isValid);
+    data = calculation.calculateDiagramData(xt, z0, xtSlr, z0 + dz, isValid);
 
     if (2 > data.length) {
       return <Message icon={true} info={true}>
@@ -59,8 +66,8 @@ const InfoT09E = ({parameters, settings}: IProps) => {
   }
 
   if ('constFlux' === method) {
-    const [xt, xtSlr] = calcXtQ0Flux(k, z0, dz, l, w, i, alpha);
-    data = calculateDiagramData(xt, z0, xtSlr, z0 + dz, isValid);
+    const [xt, xtSlr] = calculation.calcXtQ0Flux(k, z0, dz, l, w, i, alpha);
+    data = calculation.calculateDiagramData(xt, z0, xtSlr, z0 + dz, isValid);
 
     return (
       <Message icon={true} info={true}>

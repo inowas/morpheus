@@ -1,21 +1,30 @@
 import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
 import {getParameterValues} from '../../../../common/helpers';
-import {calcDeltaXt, calcH, calcI, calcNewXt, calcXt} from '../../../application/useCalculationsT09F';
 import {IT09F} from '../../../types/T09.type';
+
+interface IUseCalculate {
+  dRho: (rHof: number, rHos: number) => number;
+  calcXt: (params: { k: number; z0: number; l: number; w: number; df: number; ds: number }) => number;
+  calcDeltaXt: (params: { dz: number; k: number; z0: number; l: number; w: number; theta: number; df: number; ds: number }) => number;
+  calcNewXt: (params: { dz: number; k: number; z0: number; l: number; w: number; theta: number; df: number; ds: number }) => number;
+  calcH: (params: { k: number; l: number; w: number; x: number; df: number; ds: number }) => number;
+  calcI: (params: { dz: number; k: number; l: number; w: number; theta: number; x: number; df: number; ds: number }) => number;
+}
 
 interface IProps {
   parameters: IT09F['parameters'];
+  calculation: IUseCalculate;
 }
 
-const InfoT09F = ({parameters}: IProps) => {
+const InfoT09F = ({parameters, calculation}: IProps) => {
   const {dz, k, z0, l, w, theta, x, df, ds} = getParameterValues(parameters);
 
-  const newXt = calcNewXt({dz, k, z0, l, w, theta, df, ds});
-  const xt = calcXt({k, z0, l, w, df, ds});
-  const dxt = calcDeltaXt({dz, k, z0, l, w, theta, df, ds});
-  const h = calcH({k, l, w, x, df, ds});
-  const I = calcI({dz, k, l, w, theta, x, df, ds});
+  const newXt = calculation.calcNewXt({dz, k, z0, l, w, theta, df, ds});
+  const xt = calculation.calcXt({k, z0, l, w, df, ds});
+  const dxt = calculation.calcDeltaXt({dz, k, z0, l, w, theta, df, ds});
+  const h = calculation.calcH({k, l, w, x, df, ds});
+  const I = calculation.calcI({dz, k, l, w, theta, x, df, ds});
   return (
     <Message icon={true} info={true}>
       <Icon name="info circle" color="blue"/>

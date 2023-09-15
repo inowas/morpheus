@@ -2,11 +2,20 @@ import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {IT09F} from '../../../types/T09.type';
-import {calcDeltaXt, calcNewXt, calcXt} from '../../../application/useCalculationsT09F';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
+
+interface IUseCalculate {
+  dRho: (rHof: number, rHos: number) => number;
+  calcXt: (params: { k: number; z0: number; l: number; w: number; df: number; ds: number }) => number;
+  calcDeltaXt: (params: { dz: number; k: number; z0: number; l: number; w: number; theta: number; df: number; ds: number }) => number;
+  calcNewXt: (params: { dz: number; k: number; z0: number; l: number; w: number; theta: number; df: number; ds: number }) => number;
+  calcH: (params: { k: number; l: number; w: number; x: number; df: number; ds: number }) => number;
+  calcI: (params: { dz: number; k: number; l: number; w: number; theta: number; x: number; df: number; ds: number }) => number;
+}
 
 interface IProps {
   parameters: IT09F['parameters'];
+  calculation: IUseCalculate;
 }
 
 const styles = {
@@ -28,17 +37,17 @@ const styles = {
     backgroundColor: '#eff3f6',
     opacity: 0.9,
     top: 24,
-    left: 110,
+    left: 24,
   },
 };
 
 let currentChart: any;
 
-const ChartT09F = ({parameters}: IProps) => {
+const ChartT09F = ({parameters, calculation}: IProps) => {
   const {dz, k, z0, l, w, theta, x, df, ds} = getParameterValues(parameters);
-  const newXt = calcNewXt({dz, k, z0, l, w, theta, df, ds});
-  const xt = calcXt({k, z0, l, w, df, ds});
-  const dxt = calcDeltaXt({dz, k, z0, l, w, theta, df, ds});
+  const newXt = calculation.calcNewXt({dz, k, z0, l, w, theta, df, ds});
+  const xt = calculation.calcXt({k, z0, l, w, df, ds});
+  const dxt = calculation.calcDeltaXt({dz, k, z0, l, w, theta, df, ds});
 
   const data = [{
     xt: newXt,
