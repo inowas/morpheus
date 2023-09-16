@@ -21,11 +21,15 @@ function git(command: string) {
   return child_process.execSync(`git ${command}`, {encoding: 'utf8'}).trim();
 }
 
+//https://github.com/webpack/webpack/blob/main/examples/multi-compiler/webpack.config.js
+//https://stackoverflow.com/a/38132106
+
 
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
     entry: {
       simpletools: './src/simpletools/index.tsx',
+      modflow: './src/modflow/index.tsx',
     },
     module: {
       rules: [
@@ -105,6 +109,12 @@ module.exports = (env: any, argv: any) => {
         template: './public/index.html',
         filename: 'index.html',
         chunks: ['simpletools']
+      }),
+      new HtmlWebpackPlugin({
+        title: 'modflow',
+        template: './public/modflow/index.html',
+        filename: 'modflow/index.html',
+        chunks: ['modflow']
       }),
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
