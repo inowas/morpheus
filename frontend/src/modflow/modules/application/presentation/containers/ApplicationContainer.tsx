@@ -1,21 +1,19 @@
 import React from 'react';
 
 import Navbar from '../components/Navbar';
-import {useLocation, useNavigate} from 'react-router-dom';
 
 interface IProps {
   children: React.ReactNode;
+  showSection: string;
+  onShowSectionChange: (section: string) => void;
 }
 
-const ApplicationContainer: React.FC<IProps> = ({children}) => {
-
-  const {pathname} = useLocation();
-  const navigate = useNavigate();
+const ApplicationContainer: React.FC<IProps> = ({children, showSection, onShowSectionChange}) => {
 
   return (
     <>
       <header className="App-header">
-        <Navbar location={pathname} navigateTo={navigate}/>
+        <Navbar location={showSection} navigateTo={onShowSectionChange}/>
       </header>
       <main>
         <div className="wrapper">
