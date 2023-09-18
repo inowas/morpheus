@@ -28,7 +28,7 @@ function git(command: string) {
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
     entry: {
-      simpletools: './src/simpletools/index.tsx',
+      modflow: './src/modflow/index.tsx',
     },
     module: {
       rules: [
@@ -59,7 +59,7 @@ module.exports = (env: any, argv: any) => {
                 additionalData: (content: string) => {
                   const variables = fs.readFileSync('src/components/variables.less');
                   return variables + content;
-                },
+                }
               },
             },
           ],
@@ -104,9 +104,9 @@ module.exports = (env: any, argv: any) => {
         filename: '[name].[fullhash:8].css',
       }),
       new HtmlWebpackPlugin({
-        title: 'simpletools',
-        template: './public/simpletools/index.html',
-        filename: 'index.html'
+        title: 'modflow',
+        template: './public/modflow/index.html',
+        filename: 'index.html',
       }),
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
@@ -115,14 +115,14 @@ module.exports = (env: any, argv: any) => {
       }),
       new CopyPlugin({
         patterns: [{
-          from: 'public/simpletools',
+          from: 'public/modflow',
           to: './',
           globOptions: {
             ignore: [
               '**/index.html',
             ]
           }
-        }],
+        }]
       }),
       new Dotenv(),
     ],
@@ -140,10 +140,10 @@ module.exports = (env: any, argv: any) => {
       },
     },
     output: {
-      path: path.resolve(__dirname, 'dist/simpletools'),
+      path: path.resolve(__dirname, 'dist/modflow'),
       publicPath: '/',
       filename: '[name].[fullhash:8].js',
-      chunkFilename: '[name].[fullhash:8].js',
+      chunkFilename: '[id].[fullhash:8].js'
     }
   }
 
@@ -157,7 +157,7 @@ module.exports = (env: any, argv: any) => {
         'Access-Control-Allow-Origin': '*',
       },
       static: {
-        directory: path.resolve(__dirname, 'public/simpletools'),
+        directory: path.resolve(__dirname, 'public/modflow'),
         watch: true
       },
       compress: true,
