@@ -27,7 +27,7 @@ function git(command: string) {
 
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
-    entry: './src/simpletools/index.tsx',
+    entry: './src/modflow/index.tsx',
     module: {
       rules: [
         {
@@ -102,9 +102,9 @@ module.exports = (env: any, argv: any) => {
         filename: '[name].css',
       }),
       new HtmlWebpackPlugin({
-        title: 'simpletools',
-        template: './public/simpletools/index.html',
-        filename: 'index.html'
+        title: 'modflow',
+        template: './public/modflow/index.html',
+        filename: 'index.html',
       }),
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
@@ -113,7 +113,7 @@ module.exports = (env: any, argv: any) => {
       }),
       new CopyPlugin({
         patterns: [{
-          from: 'public/simpletools',
+          from: 'public/modflow',
           to: './',
           globOptions: {
             ignore: [
@@ -138,9 +138,8 @@ module.exports = (env: any, argv: any) => {
       },
     },
     output: {
-      path: path.resolve(__dirname, 'dist/simpletools'),
+      path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
-      filename: 'simpletools.[fullhash].js',
     }
   }
 
@@ -154,7 +153,7 @@ module.exports = (env: any, argv: any) => {
         'Access-Control-Allow-Origin': '*',
       },
       static: {
-        directory: path.resolve(__dirname, 'public/simpletools'),
+        directory: path.resolve(__dirname, 'public'),
         watch: true
       },
       compress: true,

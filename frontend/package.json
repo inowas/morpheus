@@ -140,11 +140,10 @@
   "scripts": {
     "analyze": "source-map-explorer 'dist/*.js'",
     "start": "webpack serve --hot --mode development --env mockserver --open",
-    "start-ironman": "webpack serve --hot --mode development",
-    "start-ironman-https": "webpack serve --hot --mode development --https",
+    "start-modflow": "webpack serve --config webpack.config.modflow.ts --hot --mode development --env mockserver --open",
     "start-storybook": "storybook dev -p 6006",
     "build": "webpack --mode production --stats-children",
-    "build-preview": "webpack --mode development --stats-children --env mockserver",
+    "build-modflow": "webpack --confog webpack.config.modflow.ts --mode production --stats-children",
     "build-storybook": "storybook build",
     "test": "jest --testPathIgnorePatterns=.*e2e.test.ts --watch",
     "test:ci": "jest --testPathIgnorePatterns=.*e2e.test.ts",
