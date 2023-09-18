@@ -1,6 +1,6 @@
 {
-  "short_name": "Ultron",
-  "name": "Ultron Components",
+  "short_name": "Modflow Viewer",
+  "name": "Modflow Viewer",
   "icons": [
     {
       "src": "favicon.ico",

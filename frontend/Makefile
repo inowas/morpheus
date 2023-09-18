@@ -27,6 +27,10 @@ install-ci:
 start:
 	npm run start
 
+## Start the application in application development mode
+start-modflow:
+	npm run start-modflow
+
 ## Start storybook
 start-storybook:
 	npm run start-storybook
@@ -34,6 +38,10 @@ start-storybook:
 ## Build the Application for production
 build:
 	npm run build
+
+## Start the application in application development mode
+build-modflow:
+	npm run build-modflow
 
 ## build the whole application with mock-server for preview
 build-preview-ci:

@@ -37,6 +37,7 @@
     "react-hooks/exhaustive-deps": "warn",
     "react/prop-types": "off",
     "react/require-default-props": "off",
+    "testing-library/render-result-naming-convention": "off",
     "@typescript-eslint/indent": "off",
     "@typescript-eslint/default-param-last": "off",
     "@typescript-eslint/object-curly-spacing": "off",
