@@ -40,12 +40,10 @@ const VtkExample = () => {
       renderer.resetCamera();
       renderWindow.render();
 
-      renderer.getActiveCamera().setViewAngle(30);
-
       renderer.getActiveCamera().onModified((instance) => {
 
-        console.log('camera modified');
-        console.log(instance);
+        //console.log('camera modified');
+        //console.log(instance);
 
         /*        const majorAxis = (vec3, idxA, idxB) => {
           const axis = [0, 0, 0];
@@ -96,8 +94,6 @@ const VtkExample = () => {
       }
     };
   }, [vtkContainerRef]);
-
-  window.test = context.current?.fullScreenRenderer;
 
   useEffect(() => {
     if (context.current) {

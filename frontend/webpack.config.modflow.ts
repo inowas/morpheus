@@ -27,7 +27,9 @@ function git(command: string) {
 
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
-    entry: './src/modflow/index.tsx',
+    entry: {
+      modflow: './src/modflow/index.tsx',
+    },
     module: {
       rules: [
         {
@@ -57,7 +59,7 @@ module.exports = (env: any, argv: any) => {
                 additionalData: (content: string) => {
                   const variables = fs.readFileSync('src/components/variables.less');
                   return variables + content;
-                },
+                }
               },
             },
           ],
@@ -99,7 +101,7 @@ module.exports = (env: any, argv: any) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: '[name].css',
+        filename: '[name].[fullhash:8].css',
       }),
       new HtmlWebpackPlugin({
         title: 'modflow',
@@ -120,7 +122,7 @@ module.exports = (env: any, argv: any) => {
               '**/index.html',
             ]
           }
-        }],
+        }]
       }),
       new Dotenv(),
     ],
@@ -138,8 +140,10 @@ module.exports = (env: any, argv: any) => {
       },
     },
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'dist/modflow'),
       publicPath: '/',
+      filename: '[name].[fullhash:8].js',
+      chunkFilename: '[id].[fullhash:8].js'
     }
   }
 
@@ -153,7 +157,7 @@ module.exports = (env: any, argv: any) => {
         'Access-Control-Allow-Origin': '*',
       },
       static: {
-        directory: path.resolve(__dirname, 'public'),
+        directory: path.resolve(__dirname, 'public/modflow'),
         watch: true
       },
       compress: true,

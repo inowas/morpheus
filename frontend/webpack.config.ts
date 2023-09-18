@@ -27,7 +27,9 @@ function git(command: string) {
 
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
-    entry: './src/simpletools/index.tsx',
+    entry: {
+      simpletools: './src/simpletools/index.tsx',
+    },
     module: {
       rules: [
         {
@@ -99,7 +101,7 @@ module.exports = (env: any, argv: any) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: '[name].css',
+        filename: '[name].[fullhash:8].css',
       }),
       new HtmlWebpackPlugin({
         title: 'simpletools',
@@ -140,7 +142,8 @@ module.exports = (env: any, argv: any) => {
     output: {
       path: path.resolve(__dirname, 'dist/simpletools'),
       publicPath: '/',
-      filename: 'simpletools.[fullhash].js',
+      filename: '[name].[fullhash:8].js',
+      chunkFilename: '[name].[fullhash:8].js',
     }
   }
 
