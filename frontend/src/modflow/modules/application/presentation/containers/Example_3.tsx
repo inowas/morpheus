@@ -21,101 +21,97 @@ const VtkExample3 = () => {
   const [spaceBetweenLayers, setSpaceBetweenLayers] = useState<number>(-1);
 
   useEffect(() => {
-    if (!context.current) {
-      const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
-        container: vtkContainerRef.current,
-      });
+    const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
+      container: vtkContainerRef.current,
+    });
 
-      // Create and configure texture for layer 1
-      const elevationReader1 = vtkElevationReader.newInstance({
-        xSpacing: 0.01568,
-        ySpacing: 0.01568,
-        zScaling: 0.1,
-      });
+    // Create and configure texture for layer 1
+    const elevationReader1 = vtkElevationReader.newInstance({
+      xSpacing: 0.01568,
+      ySpacing: 0.01568,
+      zScaling: 0.1,
+    });
 
-      // Create and configure elevation reader, texture, and actor for layer 2
-      const elevationReader2 = vtkElevationReader.newInstance({
-        xSpacing: 0.01568,
-        ySpacing: 0.01568,
-        zScaling: 0.1,
-      });
+    // Create and configure elevation reader, texture, and actor for layer 2
+    const elevationReader2 = vtkElevationReader.newInstance({
+      xSpacing: 0.01568,
+      ySpacing: 0.01568,
+      zScaling: 0.1,
+    });
 
-      const mapper1 = vtkMapper.newInstance();
-      mapper1.setInputConnection(elevationReader1.getOutputPort());
+    const mapper1 = vtkMapper.newInstance();
+    mapper1.setInputConnection(elevationReader1.getOutputPort());
 
-      const actor1 = vtkActor.newInstance();
-      actor1.setMapper(mapper1);
+    const actor1 = vtkActor.newInstance();
+    actor1.setMapper(mapper1);
 
-      const mapper2 = vtkMapper.newInstance();
-      mapper2.setInputConnection(elevationReader2.getOutputPort());
+    const mapper2 = vtkMapper.newInstance();
+    mapper2.setInputConnection(elevationReader2.getOutputPort());
 
-      const actor2 = vtkActor.newInstance();
-      actor2.setMapper(mapper2);
+    const actor2 = vtkActor.newInstance();
+    actor2.setMapper(mapper2);
 
-      // renderer
-      const renderer = fullScreenRenderer.getRenderer();
-      const renderWindow = fullScreenRenderer.getRenderWindow();
+    // renderer
+    const renderer = fullScreenRenderer.getRenderer();
+    const renderWindow = fullScreenRenderer.getRenderWindow();
 
 
-      const img1 = new Image();
-      img1.onload = function textureLoaded1() {
-        const texture1 = vtkTexture.newInstance();
-        texture1.setInterpolate(true);
-        texture1.setImage(img1);
-        actor1.addTexture(texture1);
-        renderWindow.render();
-      };
-      img1.src = demImage1;
-
-      elevationReader1.parseAsText(demData1.map((row: []) => row.join(',')).join('\n'));
-      renderer.resetCamera();
+    const img1 = new Image();
+    img1.onload = function textureLoaded1() {
+      const texture1 = vtkTexture.newInstance();
+      texture1.setInterpolate(true);
+      texture1.setImage(img1);
+      actor1.addTexture(texture1);
       renderWindow.render();
+    };
+    img1.src = demImage1;
 
-      const img2 = new Image();
-      img2.onload = function textureLoaded2() {
-        const texture2 = vtkTexture.newInstance();
-        texture2.setInterpolate(true);
-        texture2.setImage(img2);
-        actor2.addTexture(texture2);
-        // Adjust the position of Layer 2 in the z-axis using spaceBetweenLayers
-        actor2.setPosition(0, 0, spaceBetweenLayers);
-        renderWindow.render();
-      };
+    elevationReader1.parseAsText(demData1.map((row: []) => row.join(',')).join('\n'));
+    renderer.resetCamera();
+    renderWindow.render();
 
-      img2.src = demImage2;
-      elevationReader2.parseAsText(demData2.map((row: []) => row.join(',')).join('\n'));
-      renderer.resetCamera();
+    const img2 = new Image();
+    img2.onload = function textureLoaded2() {
+      const texture2 = vtkTexture.newInstance();
+      texture2.setInterpolate(true);
+      texture2.setImage(img2);
+      actor2.addTexture(texture2);
+      // Adjust the position of Layer 2 in the z-axis using spaceBetweenLayers
+      actor2.setPosition(0, 0, spaceBetweenLayers);
       renderWindow.render();
+    };
 
-      // Add actors for both layers to the renderer
-      renderer.addActor(actor1);
-      renderer.addActor(actor2);
+    img2.src = demImage2;
+    elevationReader2.parseAsText(demData2.map((row: []) => row.join(',')).join('\n'));
+    renderer.resetCamera();
+    renderWindow.render();
 
-      // Reset the camera and render the scene
-      renderer.resetCamera();
-      renderWindow.render();
+    // Add actors for both layers to the renderer
+    renderer.addActor(actor1);
+    renderer.addActor(actor2);
+
+    // Reset the camera and render the scene
+    renderer.resetCamera();
+    renderWindow.render();
 
 
-      context.current = {
-        fullScreenRenderer,
-        actor1,
-        actor2,
-        mapper1,
-        mapper2,
-        img1,
-        img2,
-        elevationReader1,
-        elevationReader2,
-      };
-    }
+    context.current = {
+      fullScreenRenderer,
+      actor1,
+      actor2,
+      mapper1,
+      mapper2,
+      img1,
+      img2,
+      elevationReader1,
+      elevationReader2,
+    };
 
     return () => {
-      if (context.current) {
-        context.current = null;
-      }
+      context.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // No dependencies, only runs once
+  }, []);
 
   // useEffect for handling visibility changes
   useEffect(() => {
