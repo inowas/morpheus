@@ -10,6 +10,7 @@ services:
       - "--api.insecure=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.postgres.address=:5432"
       - "--providers.docker=true"
       - "--providers.docker.exposedByDefault=false"
       - "--providers.file.directory=/etc/traefik"
@@ -20,6 +21,7 @@ services:
       - "80:80"
       - "443:443"
       - "8080:8080" # for traefik dashboard
+      - "5432:5432" # for postgres
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik:/etc/traefik
@@ -28,7 +30,9 @@ services:
       - TLS_KEY_FILE=${TLS_KEY_FILE}
       - TLS_CERT_FILE=${TLS_CERT_FILE}
     networks:
-      - local
+      - auth
+      - backend
+      - mail
 #  frontend:
 #    build:
 #      context: ${PWD}
@@ -45,15 +49,9 @@ services:
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
       target: development
     depends_on:
-      - mongo
-      - postgres
+      - mongo-backend
     environment:
       DYNACONF_SECRET_KEY: ${SECRET_KEY}
-      DYNACONF_POSTGRES_USER: ${POSTGRES_USER}
-      DYNACONF_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DYNACONF_POSTGRES_DB: ${POSTGRES_DB}
-      DYNACONF_POSTGRES_HOST: ${POSTGRES_HOST}
-      DYNACONF_POSTGRES_PORT: ${POSTGRES_PORT}
       DYNACONF_MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       DYNACONF_MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       DYNACONF_MONGO_HOST: ${MONGO_HOST}
@@ -64,7 +62,7 @@ services:
     read_only: true
     command: ["flask", "run", "--host=0.0.0.0", "--port=8000"]
     networks:
-      - local
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
@@ -74,31 +72,16 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
-  postgres:
-    image: postgres:13.12
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: always
-    networks:
-      - local
-  mongo:
+  mongo-backend:
     image: mongo:5.0
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-    ports:
-      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     restart: always
     networks:
-      - local
+      - backend
   mailcatcher:
     image: sj26/mailcatcher:latest
     restart: always
@@ -109,14 +92,36 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-mailcatcher.tls=false"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-mailcatcher.loadbalancer.server.port=1080"
     networks:
-      - local
+      - mail
   keycloak:
-    image: keycloak/keycloak:22.0
+    build:
+      context: ${PWD}
+      dockerfile: identity_management/Dockerfile
+      target: development
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
+      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${POSTGRES_KEYCLOAK_DB}
+      KC_PROXY: edge
+      KC_HOSTNAME_URL: https://identity.${DOMAIN}
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
     command:
-      start-dev --proxy edge --hostname-url https://identity.${DOMAIN}
+      start --optimized --import-realm
+    networks:
+      - auth
+      - mail
+    depends_on:
+      postgres_keycloak:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import # for development only
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
@@ -126,13 +131,42 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`identity.${DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
+  postgres_keycloak:
+    image: postgres:13.12
+    environment:
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
+    volumes:
+      - postgres_keycloak_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
     networks:
-      - local
+      - auth
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.entrypoints=postgres"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=5432"
 volumes:
-  postgres_data:
+  keycloak_data:
+    driver: local
+  postgres_keycloak_data:
     driver: local
   mongo_data:
     driver: local
 networks:
-  local:
-    name: ${COMPOSE_PROJECT_NAME}-inowas-local
+  auth:
+    name: ${COMPOSE_PROJECT_NAME}-auth
+  backend:
+    name: ${COMPOSE_PROJECT_NAME}-backend
+  mail:
+    name: ${COMPOSE_PROJECT_NAME}-mail
