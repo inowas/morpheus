@@ -1,23 +1,54 @@
 import React, {useEffect, useRef} from 'react';
-
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import demImage from '../images/dem.jpg';
+import demData from '../data/dem.csv';
+import vtkRenderWindow from '@kitware/vtk.js/Rendering/Core/RenderWindow';
+import vtkRenderer from '@kitware/vtk.js/Rendering/Core/Renderer';
+import vtkOpenGLRenderWindow from '@kitware/vtk.js/Rendering/OpenGL/RenderWindow';
+import vtkRenderWindowInteractor from '@kitware/vtk.js/Rendering/Core/RenderWindowInteractor';
+import vtkInteractorStyleTrackballCamera from '@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
-import demImage from '../images/dem.jpg';
-import demData from '../data/dem.csv';
+
+
+const renderWindowSetup = (container: HTMLDivElement) => {
+  // Standard rendering code setup
+  const renderWindow = vtkRenderWindow.newInstance();
+  const renderer = vtkRenderer.newInstance({});
+  renderer.setBackground([0.0, 0.0, 0.0, 0.0]);
+
+  renderWindow.addRenderer(renderer);
+
+  // Use OpenGL as the backend to view the all this
+  const openglRenderWindow = vtkOpenGLRenderWindow.newInstance();
+  renderWindow.addView(openglRenderWindow);
+
+  openglRenderWindow.setContainer(container);
+
+  // Capture size of the container and set it to the renderWindow
+  // const {width, height} = container.getBoundingClientRect();
+  // openglRenderWindow.setSize(width, height);
+
+  // Setup an interactor to handle mouse events
+  const interactor = vtkRenderWindowInteractor.newInstance();
+  interactor.setInteractorStyle(vtkInteractorStyleTrackballCamera.newInstance());
+  interactor.setView(openglRenderWindow);
+  interactor.initialize();
+  interactor.bindEvents(container);
+
+  return {renderer, renderWindow, interactor};
+};
 
 const VtkExample2 = () => {
-  const vtkContainerRef = useRef<any>(null);
+  const vtkContainerRef = useRef<HTMLDivElement | null>(null);
   const context = useRef<any>(null);
 
   useEffect(() => {
     if (!context.current) {
-      const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
-        container: vtkContainerRef.current,
-        background: [0, 0, 0],
-      });
+      const {renderer, renderWindow, interactor} = renderWindowSetup(
+        vtkContainerRef.current as HTMLDivElement,
+      );
 
       const elevationReader = vtkElevationReader.newInstance({
         xSpacing: 0.01568,
@@ -30,9 +61,6 @@ const VtkExample2 = () => {
 
       const actor = vtkActor.newInstance();
       actor.setMapper(mapper);
-
-      const renderer = fullScreenRenderer.getRenderer();
-      const renderWindow = fullScreenRenderer.getRenderWindow();
 
       // Download and apply Texture
       const img = new Image();
@@ -54,7 +82,9 @@ const VtkExample2 = () => {
       renderWindow.render();
 
       context.current = {
-        fullScreenRenderer,
+        renderer,
+        renderWindow,
+        interactor,
         actor,
         mapper,
         img,
@@ -69,15 +99,30 @@ const VtkExample2 = () => {
     };
   }, []);
 
-  return <>
-    <header
-      className="App-header"
-      style={{position: 'absolute', textAlign: 'center', zIndex: 1000, color: 'red', width: '100%'}}
-    >
-      <h2>3D model with elevation data</h2>
-    </header>
-    <div ref={vtkContainerRef} style={{width: '100%', height: '100vh'}}/>
-  </>;
+  return (
+    <>
+      <header
+        className="App-header"
+        style={{
+          position: 'absolute',
+          textAlign: 'center',
+          zIndex: 1000,
+          color: 'red',
+          width: '100%',
+        }}
+      >
+        <h2>3D model with elevation data</h2>
+      </header>
+      <div
+        ref={vtkContainerRef} style={{
+          position: 'relative',
+          background: 'orange',
+          width: 500,
+          height: 500,
+        }}
+      />
+    </>
+  );
 };
 
 export default VtkExample2;

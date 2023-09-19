@@ -147,7 +147,12 @@ const VtkExample3 = () => {
 
       <div
         ref={vtkContainerRef}
-        style={{width: '100%', height: '100vh'}}
+        style={{
+          position: 'relative',
+          background: 'orange',
+          width: 500,
+          height: 500,
+        }}
       />
     </>
   );
