@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--log.level=INFO"
+      - "--log.filePath=/var/logs/traefik/traefik.log"
+      - "--accesslog=true"
+      - "--api.dashboard=false"
+      - "--api.insecure=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.caserver=${TRAEFIK_ACME_CASERVER}"
+      - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/etc/traefik/acme/acme.json"
+      - "--certificatesresolvers.myresolver.acme.eab.kid=${TRAEFIK_ACME_EAB_KID}"
+      - "--certificatesresolvers.myresolver.acme.eab.hmacencoded=${TRAEFIK_ACME_EAB_HMAC_ENCODED}"
+      - "--global.checkNewVersion=true"
+      - "--global.sendAnonymousUsage=false"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./acme:/etc/traefik/acme
+      - ./logs:/var/logs/traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    name: ${TRAEFIK_NETWORK}
+    external: true

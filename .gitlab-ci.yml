@@ -20,7 +20,7 @@ test-frontend:
   stage: test
 
   script:
-    - cd frontend
+    - cd src/frontend
     - make install-ci
     - make test-ci
 
@@ -29,13 +29,13 @@ build-frontend:dev:
   stage: build
 
   script:
-    - cd frontend
+    - cd src/frontend
     - make install-ci
     - make build
 
   artifacts:
     paths:
-      - frontend/dist/
+      - src/frontend/dist/
     expire_in: 1 days
 
   only:
@@ -82,12 +82,12 @@ build-frontend:prod:
   image: node:20
   stage: build
   script:
-    - cd frontend
+    - cd src/frontend
     - make install-ci
     - make build
   artifacts:
     paths:
-      - frontend/dist/
+      - src/frontend/dist/
     expire_in: 1 days
   only:
     - tags

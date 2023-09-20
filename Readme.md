@@ -21,4 +21,4 @@ More information about the frontend can be found in the [frontend README](./fron
 ### Backend
 
 The backend is a application written in [Python 3](https://www.python.org/) and can be found in the `backend` directory.
-More information about the backend can be found in the [backend README](./backend/README.md).
+More information about the backend can be found in the [backend README](src/backend/README.md).

@@ -8,6 +8,8 @@ services:
       - "--accesslog=true"
       - "--api.dashboard=true"
       - "--api.insecure=true"
+      - "--api.debug=true"
+      - "--ping=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.postgres.address=:5432"
@@ -20,8 +22,13 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080" # for traefik dashboard
+      - "8080:8080" # for traefik api, dashboard and healthcheck
       - "5432:5432" # for postgres
+    healthcheck:
+      test: [ "CMD", "traefik", "healthcheck" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik:/etc/traefik
@@ -43,20 +50,21 @@ services:
   backend:
     build:
       context: ${PWD}
-      dockerfile: backend/docker/Dockerfile.development
+      dockerfile: src/backend/docker/Dockerfile.development
       args:
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
       target: development
     depends_on:
-      - mongo-backend
+      mongo-backend:
+        condition: service_healthy
     environment:
       DYNACONF_SECRET_KEY: ${SECRET_KEY}
       DYNACONF_MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       DYNACONF_MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       DYNACONF_MONGO_HOST: ${MONGO_HOST}
     volumes:
-      - ${PWD}/backend:/app
+      - ${PWD}/src/backend:/app
     restart: always
     user: flask
     read_only: true
@@ -79,6 +87,11 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
     networks:
       - backend
@@ -96,7 +109,7 @@ services:
   keycloak:
     build:
       context: ${PWD}
-      dockerfile: identity_management/Dockerfile
+      dockerfile: src/keycloak/Dockerfile
       target: development
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}

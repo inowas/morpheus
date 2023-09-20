@@ -1,0 +1,72 @@
+version: "3.8"
+services:
+  keycloak:
+    image: inowas/keycloak:${KEYCLOAK_VERSION}
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
+      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${POSTGRES_KEYCLOAK_DB}
+      KC_PROXY: edge
+      KC_HOSTNAME_URL: ${HOSTNAME_URL}
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
+    command:
+      start --optimized
+    networks:
+      - auth
+      - traefik
+    depends_on:
+      postgres_keycloak:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${HOSTNAME_URL}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${HOSTNAME_URL}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
+  postgres_keycloak:
+    image: postgres:13.12
+    environment:
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
+    volumes:
+      - postgres_keycloak_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - auth
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.entrypoints=postgres"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=5432"
+volumes:
+  keycloak_data:
+    driver: local
+  postgres_keycloak_data:
+    driver: local
+networks:
+  auth:
+      name: ${COMPOSE_PROJECT_NAME}-auth
+  traefik:
+    name: ${TRAEFIK_NETWORK}
+    external: true
