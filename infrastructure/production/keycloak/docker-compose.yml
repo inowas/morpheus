@@ -29,11 +29,18 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
+      # comment out the following line to disable letsencrypt
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls.certresolver=letsencrypt"
+      # uncomment the following lines to enable TU-Dresden CA
+      # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls.certresolver=myresolver"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
+      - "traefik.docker.network=${TRAEFIK_NETWORK}"
   postgres_keycloak:
     image: postgres:13.12
     environment:
@@ -43,7 +50,7 @@ services:
     volumes:
       - postgres_keycloak_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_KEYCLOAK_USER}" ]
       interval: 5s
       timeout: 5s
       retries: 5
