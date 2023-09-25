@@ -10,7 +10,7 @@ services:
       KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
       KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${POSTGRES_KEYCLOAK_DB}
       KC_PROXY: edge
-      KC_HOSTNAME_URL: ${HOSTNAME_URL}
+      KC_HOSTNAME_URL: ${KEYCLOAK_HOSTNAME}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
     command:
       start --optimized
@@ -28,10 +28,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${HOSTNAME_URL}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${HOSTNAME_URL}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
   postgres_keycloak:
@@ -54,11 +54,6 @@ services:
     tmpfs:
       - /tmp
       - /var/run/postgresql
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.entrypoints=postgres"
-      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.rule=HostSNI(`*`)"
-      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=5432"
 volumes:
   keycloak_data:
     driver: local
