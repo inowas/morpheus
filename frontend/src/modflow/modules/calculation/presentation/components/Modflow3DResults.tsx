@@ -112,6 +112,17 @@ const Modflow3DResults: React.FC<IProps> = (
   useEffect(() => {
     const renderer = vtkFullScreenRenderWindow.newInstance({container: vtkContainerRef.current});
     const topElevationActor = setTopElevation(topElevation.imgUrl, topElevation.dataUrl, renderer);
+    const camera = renderer.getRenderer().getActiveCamera();
+    const defaultFocalPoint: [number, number, number] = [1, 0, 0];
+    const defaultPosition: [number, number, number] = [-1, 2, 1];
+    const defaultViewUp: [number, number, number] = [0, 0, 1];
+    camera.setFocalPoint(...defaultFocalPoint);
+    camera.setPosition(...defaultPosition);
+    camera.setViewUp(...defaultViewUp);
+
+    renderer.getInteractor().onAnimation(() => {
+      camera.setViewUp(...defaultViewUp);
+    });
 
     heads.forEach((head) => {
       setHead(head.dataUrl, head.imgUrl, renderer);
