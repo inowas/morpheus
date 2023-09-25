@@ -2,6 +2,7 @@
   "name": "inowas-morpheus-dss",
   "dependencies": {
     "@kitware/vtk.js": "^28.11.0",
+    "@reduxjs/toolkit": "^1.9.5",
     "@sentry/react": "^7.61.1",
     "@sentry/tracing": "^7.61.1",
     "axios": "^1.5.0",

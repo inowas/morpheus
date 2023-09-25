@@ -33,7 +33,11 @@ interface IAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-const useHttp = (apiBaseUrl: string, token: IOAuthToken, onRefreshToken: (token: IOAuthToken) => Promise<IOAuthToken>, onUnauthorized: () => void): IUseHttp => {
+const useHttp = (apiBaseUrl: string, auth?: {
+  token: IOAuthToken,
+  onRefreshToken: (token: IOAuthToken) => Promise<IOAuthToken>,
+  onUnauthorized: () => void,
+}): IUseHttp => {
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({});
@@ -45,9 +49,16 @@ const useHttp = (apiBaseUrl: string, token: IOAuthToken, onRefreshToken: (token:
       config.baseURL = apiBaseUrl;
       config.headers = new AxiosHeaders({
         'Accept': 'application/json',
-        'Authorization': `Bearer ${token.access_token}`,
         'Content-Type': 'application/json',
       });
+
+      if (!config.data) {
+        config.data = {};
+      }
+
+      if (auth) {
+        config.headers.Authorization = `Bearer ${auth.token.access_token}`;
+      }
 
       if (config.url && config.url.startsWith(config.baseURL)) {
         config.url = config.url.replace(config.baseURL, '');
@@ -55,27 +66,30 @@ const useHttp = (apiBaseUrl: string, token: IOAuthToken, onRefreshToken: (token:
 
       return config;
     });
-    instance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        if (401 === error.response.status && !originalRequest._retry) {
-          const newToken = await onRefreshToken(token);
-          originalRequest.headers.Authorization = 'Bearer ' + newToken.access_token;
-          originalRequest._retry = true;
-          return instance(originalRequest);
-        }
 
-        if (401 === error.response.status && originalRequest._retry) {
-          return onUnauthorized();
-        }
+    if (auth) {
+      instance.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+          const originalRequest = error.config;
+          if (401 === error.response.status && !originalRequest._retry) {
+            const newToken = await auth?.onRefreshToken(auth?.token);
+            originalRequest.headers.Authorization = 'Bearer ' + newToken.access_token;
+            originalRequest._retry = true;
+            return instance(originalRequest);
+          }
 
-        return Promise.reject(error);
-      });
+          if (401 === error.response.status && originalRequest._retry) {
+            return auth.onUnauthorized();
+          }
+
+          return Promise.reject(error);
+        });
+    }
 
     return instance;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiBaseUrl, token]);
+  }, [apiBaseUrl, auth?.token]);
 
   const httpGet = async <T>(url: string): Promise<Result<T, IHttpError>> => {
     try {
@@ -84,6 +98,7 @@ const useHttp = (apiBaseUrl: string, token: IOAuthToken, onRefreshToken: (token:
         url: url,
         withCredentials: false,
         validateStatus: (status) => 200 === status,
+        data: {},
       });
       return Ok(response.data as T);
     } catch (error) {
