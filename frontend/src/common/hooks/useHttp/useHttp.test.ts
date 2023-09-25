@@ -14,8 +14,12 @@ describe('Test the useHttp-Hook', () => {
     refresh_token: 'refresh-123',
     user_id: 1,
   };
-  const mockOnUpdateToken = jest.fn();
-  const mockOnUnauthorized = jest.fn();
+
+  const mockAuth = {
+    token,
+    onRefreshToken: jest.fn(),
+    onUnauthorized: jest.fn(),
+  };
 
   beforeEach(() => {
     mockAxios.reset();
@@ -23,7 +27,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpGet success', async () => {
     mockAxios.onGet(`${apiBaseUrl}/test-123`).replyOnce(200, {test: '123'});
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpGet('/test-123');
     expect(response.ok).toEqual(true);
     expect(response.val).toEqual({test: '123'});
@@ -31,7 +35,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpGet error', async () => {
     mockAxios.onGet(`${apiBaseUrl}/test-123`).replyOnce(400, {test: '123'});
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpGet('/test-123');
     expect(response.err).toEqual(true);
     const error = response.val as IHttpError;
@@ -40,7 +44,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpPut success', async () => {
     mockAxios.onPut(`${apiBaseUrl}/test-123`, {}).replyOnce(204);
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpPut('/test-123', {});
     expect(response.ok).toEqual(true);
     expect(response.val).toEqual(undefined);
@@ -48,7 +52,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpPut error', async () => {
     mockAxios.onPut(`${apiBaseUrl}/test-123`).replyOnce(400, {test: '123'});
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpPut('/test-123', {});
     expect(response.err).toEqual(true);
     const error = response.val as IHttpError;
@@ -57,7 +61,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpPost success', async () => {
     mockAxios.onPost(`${apiBaseUrl}/test-123`, {}).replyOnce(201, {test: '123'}, {location: '/test-123/new'});
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpPost('/test-123', {});
     expect(response.ok).toEqual(true);
     expect(response.val).toEqual({location: '/test-123/new'});
@@ -65,7 +69,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpPost error', async () => {
     mockAxios.onPost(`${apiBaseUrl}/test-123`).replyOnce(400, {test: '123'});
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpPost('/test-123', {});
     expect(response.err).toEqual(true);
     const error = response.val as IHttpError;
@@ -74,7 +78,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpDelete success', async () => {
     mockAxios.onDelete(`${apiBaseUrl}/test-123`, {}).replyOnce(204);
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpDelete('/test-123');
     expect(response.ok).toEqual(true);
     expect(response.val).toEqual(undefined);
@@ -82,7 +86,7 @@ describe('Test the useHttp-Hook', () => {
 
   test('Test httpDelete error', async () => {
     mockAxios.onDelete(`${apiBaseUrl}/test-123`).replyOnce(400, {test: '123'});
-    const {result} = renderHook(() => useHttp(apiBaseUrl, token, mockOnUpdateToken, mockOnUnauthorized));
+    const {result} = renderHook(() => useHttp(apiBaseUrl, mockAuth));
     const response = await result.current.httpDelete('/test-123');
     expect(response.err).toEqual(true);
     const error = response.val as IHttpError;
