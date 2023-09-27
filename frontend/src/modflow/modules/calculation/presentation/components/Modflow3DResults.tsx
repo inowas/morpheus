@@ -4,22 +4,16 @@ import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
+import {IData, IVisibility} from '../../types';
 
 interface IProps {
-  topElevation: {
-    imgUrl: string;
-    dataUrl: string;
-  },
-  heads: {
-    imgUrl?: string;
-    dataUrl: string;
-  }[],
-  topElevationVisible: boolean;
-  topElevationOpacity: number;
+  data: IData[],
+  visibility: IVisibility[],
+  zScaling: number;
 }
 
 const setTexture = (actor: vtkActor, imgUrl: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const img = new Image();
     img.onload = function textureLoaded() {
       const texture = vtkTexture.newInstance();
@@ -33,85 +27,120 @@ const setTexture = (actor: vtkActor, imgUrl: string) => {
   });
 };
 
+const fillNullValuesWithNearest = (data: Array<number | null>[]) => {
+  for (let rowIdx = 0; rowIdx < data.length; rowIdx++) {
+    for (let colIdx = 0; colIdx < data[rowIdx].length - 1; colIdx++) {
+      if (null === data[rowIdx][colIdx] && null !== data[rowIdx][colIdx + 1]) {
+        data[rowIdx][colIdx] = data[rowIdx][colIdx + 1];
+      }
+
+      if (null !== data[rowIdx][colIdx] && null === data[rowIdx][colIdx + 1]) {
+        data[rowIdx][colIdx + 1] = data[rowIdx][colIdx];
+      }
+    }
+  }
+
+  for (let colIdx = 0; colIdx < data[0].length; colIdx++) {
+    for (let rowIdx = 0; rowIdx < data.length - 1; rowIdx++) {
+      if (null === data[rowIdx][colIdx] && null !== data[rowIdx + 1][colIdx]) {
+        data[rowIdx][colIdx] = data[rowIdx + 1][colIdx];
+      }
+
+      if (null !== data[rowIdx][colIdx] && null === data[rowIdx + 1][colIdx]) {
+        data[rowIdx + 1][colIdx] = data[rowIdx][colIdx];
+      }
+    }
+  }
+
+  let sum = 0;
+  let count = 0;
+  data.flat().forEach((value: number | null) => {
+    if (null !== value) {
+      sum += value;
+      count++;
+    }
+  });
+
+  const mean = Math.round(sum / count * 100) / 100;
+
+  return data.map((row: Array<number | null>) => row.map((value: number | null) => {
+    if (null === value) {
+      return mean;
+    }
+
+    return value;
+  }));
+};
+
 const setData = (reader: vtkElevationReader, dataUrl: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     fetch(dataUrl).then(async (response) => {
-      const data = await response.json();
+      let data = await response.json();
+      data = fillNullValuesWithNearest(data);
       reader.parseAsText(data.map((row: []) => row.join(',')).join('\n'));
+      reader.update();
       resolve(reader);
     });
   });
 };
 
-const setTopElevation = (imgUrl: string, dataUrl: string, renderer: vtkFullScreenRenderWindow) => {
-  const topElevationReader = vtkElevationReader.newInstance({
+const addDataLayer = (imgUrl: string, dataUrl: string, renderer: vtkFullScreenRenderWindow, zScaling: number) => {
+  const reader = vtkElevationReader.newInstance({
     xSpacing: 1,
     ySpacing: 1,
-    zScaling: 2,
+    zScaling: zScaling,
   });
-  const topElevationMapper = vtkMapper.newInstance();
-  topElevationMapper.setInputConnection(topElevationReader.getOutputPort());
-  const topElevationActor = vtkActor.newInstance();
-  topElevationActor.setMapper(topElevationMapper);
-  renderer.getRenderer().addActor(topElevationActor);
+  const mapper = vtkMapper.newInstance();
+  mapper.setInputConnection(reader.getOutputPort());
+  const actor = vtkActor.newInstance();
+  actor.setMapper(mapper);
+  renderer.getRenderer().addActor(actor);
 
   // Download and apply Texture
-  setTexture(topElevationActor, imgUrl).then(() => {
+  setTexture(actor, imgUrl).then(() => {
     renderer.getRenderer().resetCamera();
     renderer.getRenderWindow().render();
   });
 
   // Download and set data
-  setData(topElevationReader, dataUrl).then(() => {
+  setData(reader, dataUrl).then(() => {
     renderer.getRenderer().resetCamera();
     renderer.getRenderWindow().render();
   });
 
-  return topElevationActor;
+  return {actor, reader};
 };
 
-const setHead = (dataUrl: string, imgUrl: string | undefined, renderer: vtkFullScreenRenderWindow) => {
-  const headReader = vtkElevationReader.newInstance({
-    xSpacing: 1,
-    ySpacing: 1,
-    zScaling: 2,
-  });
-  const headMapper = vtkMapper.newInstance();
-  headMapper.setInputConnection(headReader.getOutputPort());
-  const headActor = vtkActor.newInstance();
-  headActor.setMapper(headMapper);
-  renderer.getRenderer().addActor(headActor);
-
-
-  // Download and apply Texture
-  if (imgUrl) {
-    setTexture(headActor, imgUrl).then(() => {
-      renderer.getRenderer().resetCamera();
-      renderer.getRenderWindow().render();
-    });
-  }
-
-  // Download and set data
-  setData(headReader, dataUrl).then(() => {
-    renderer.getRenderer().resetCamera();
-    renderer.getRenderWindow().render();
-  });
-};
-
-const Modflow3DResults: React.FC<IProps> = (
-  {
-    topElevation,
-    heads,
-    topElevationVisible,
-    topElevationOpacity,
-  }) => {
+const Modflow3DResults: React.FC<IProps> = ({
+  data,
+  visibility,
+  zScaling,
+}) => {
 
   const vtkContainerRef = useRef<any>(null);
-  const context = useRef<{ renderer: vtkFullScreenRenderWindow, topElevationActor: vtkActor } | null>(null);
+  const context = useRef<{
+    renderer: vtkFullScreenRenderWindow,
+    actors: {
+      [id: string]: vtkActor
+    },
+    readers: {
+      [id: string]: vtkElevationReader
+    }
+  } | null>(null);
 
   useEffect(() => {
     const renderer = vtkFullScreenRenderWindow.newInstance({container: vtkContainerRef.current});
-    const topElevationActor = setTopElevation(topElevation.imgUrl, topElevation.dataUrl, renderer);
+    const actors: { [id: string]: vtkActor } = {};
+    const readers: { [id: string]: vtkElevationReader } = {};
+
+    data.forEach((dataLayer) => {
+      const {actor, reader} = addDataLayer(dataLayer.imgUrl, dataLayer.dataUrl, renderer, zScaling);
+      actor.setVisibility(visibility.find((v) => v.id === dataLayer.id)?.isVisible || false);
+      actor.getProperty().setOpacity(visibility.find((v) => v.id === dataLayer.id)?.opacity || 1);
+      actors[dataLayer.id as string] = actor;
+      readers[dataLayer.id] = reader;
+    });
+
     const camera = renderer.getRenderer().getActiveCamera();
     const defaultFocalPoint: [number, number, number] = [1, 0, 0];
     const defaultPosition: [number, number, number] = [-1, 2, 1];
@@ -124,11 +153,7 @@ const Modflow3DResults: React.FC<IProps> = (
       camera.setViewUp(...defaultViewUp);
     });
 
-    heads.forEach((head) => {
-      setHead(head.dataUrl, head.imgUrl, renderer);
-    });
-
-    context.current = {renderer, topElevationActor};
+    context.current = {renderer, actors, readers};
 
     return () => {
       if (context.current) {
@@ -142,11 +167,29 @@ const Modflow3DResults: React.FC<IProps> = (
     if (!context.current) {
       return;
     }
-    const {renderer, topElevationActor} = context.current;
-    topElevationActor.setVisibility(topElevationVisible);
-    topElevationActor.getProperty().setOpacity(topElevationOpacity);
+    const {renderer, actors} = context.current;
+    visibility.forEach((v) => {
+      if (actors[v.id]) {
+        actors[v.id].setVisibility(v.isVisible);
+        actors[v.id].getProperty().setOpacity(v.opacity);
+      }
+    });
+
     renderer.getRenderWindow().render();
-  }, [topElevationVisible, topElevationOpacity]);
+  }, [visibility]);
+
+  useEffect(() => {
+    if (!context.current) {
+      return;
+    }
+    const {renderer, readers} = context.current;
+    Object.values(readers).forEach((reader) => {
+      reader.setZScaling(zScaling);
+      reader.update();
+    });
+    renderer.getRenderer().resetCamera();
+    renderer.getRenderWindow().render();
+  }, [zScaling]);
 
   return (
     <div ref={vtkContainerRef} style={{width: '100%', height: '100vh'}}/>

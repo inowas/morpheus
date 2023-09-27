@@ -38,7 +38,8 @@ interface IUseCalculation {
   loading: boolean;
   updateCalculationId: (calculationId: string) => Promise<void>;
   getTopElevationUrls: () => { dataUrl: string, imgUrl: string } | null;
-  getResultUrls: (layer: number, type: 'budget' | 'head', timestepIdx: number) => { dataUrl: string, imgUrl: string } | null;
+  getResultUrls: (layer: number, type: 'drawdown' | 'head', timestepIdx: number) => { dataUrl: string, imgUrl: string } | null;
+  getColorScaleUrl: (type: 'drawdown' | 'head', timestepIdx: number) => string | null;
 }
 
 const {modflowApiUrl} = getConfig();
@@ -59,7 +60,7 @@ const useCalculation = (id?: string): IUseCalculation => {
     });
   };
 
-  const getResultUrls = (layer: number = 1, type: 'budget' | 'head' = 'head', timestepIdx: number = 0) => {
+  const getResultUrls = (layer: number = 1, type: 'drawdown' | 'head' = 'head', timestepIdx: number = 0) => {
     if (!calculation) {
       return null;
     }
@@ -67,6 +68,14 @@ const useCalculation = (id?: string): IUseCalculation => {
       dataUrl: `${modflowApiUrl}/${calculation.calculation_id}/results/types/${type}/layers/${layer}/idx/${timestepIdx}?output=json`,
       imgUrl: `${modflowApiUrl}/${calculation.calculation_id}/results/types/${type}/layers/${layer}/idx/${timestepIdx}?output=image`,
     });
+  };
+
+  const getColorScaleUrl = (type: 'drawdown' | 'head' = 'head', timestepIdx: number = 0) => {
+    if (!calculation) {
+      return null;
+    }
+
+    return `${modflowApiUrl}/${calculation.calculation_id}/results/types/${type}/idx/${timestepIdx}?output=colorbar`;
   };
 
   const updateCalculationId = async (idToUpdate: string): Promise<void> => {
@@ -103,6 +112,7 @@ const useCalculation = (id?: string): IUseCalculation => {
     updateCalculationId,
     getTopElevationUrls,
     getResultUrls,
+    getColorScaleUrl,
   };
 };
 
