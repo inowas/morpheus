@@ -32,6 +32,7 @@ const VtkExample4 = () => {
   const [opacityValue1, setOpacityValue1] = useState(1); // Opacity for the first layer
   const [opacityValue2, setOpacityValue2] = useState(0.5); // Opacity for the second layer
   const [layer2Color, setLayer2Color] = useState('#f90101'); // Color for the second layer
+  const [axisLabels, setAxisLabels] = useState(['X', 'Y', 'Z']); // Color for the second layer
 
 
   const computeUpdatedBounds = (actor1Bounds: number[], actor2Bounds: number[], zTranslation: number) => {
@@ -129,18 +130,9 @@ const VtkExample4 = () => {
     // ----------------------------------------------------------------------------
     // Create an XYZ coordinate system actor
     // ----------------------------------------------------------------------------
-    // Calculate data bounds that encompass both actors
-    const combinedBounds = computeUpdatedBounds(
-      actor1.getBounds(),
-      actor2.getBounds(),
-      spaceBetweenLayers,
-    );
-    // Create an XYZ coordinate system actor
     const cubeAxes = vtkCubeAxesActor.newInstance();
     // Set custom labels for the axes
-    cubeAxes.setAxisLabelsFrom(['X', 'Y', 'Z']);
-
-    cubeAxes.setDataBounds(combinedBounds);
+    cubeAxes.setAxisLabelsFrom(axisLabels);
     cubeAxes.setCamera(renderer.getActiveCamera());
     renderer.addActor(cubeAxes);
 
@@ -174,17 +166,26 @@ const VtkExample4 = () => {
   // useEffect for handling spaceBetweenLayers changes + Update cubeAxes position
   useEffect(() => {
     if (context.current) {
-      // Update cubeAxes position
+      // Update cubeAxes position and data bounds
       const updatedCombinedBounds = computeUpdatedBounds(
         context.current.actor1.getBounds(),
         context.current.actor2.getBounds(),
         spaceBetweenLayers,
       );
 
-      // const renderer = context.current.fullScreenRenderer.getRenderer();
-      context.current.cubeAxes.setDataBounds(updatedCombinedBounds);
+      // Remove the existing cube axes actor
+      context.current.fullScreenRenderer.getRenderer().removeActor(context.current.cubeAxes);
+      // Create a new cube axes actor with updated properties
+      const newCubeAxes = vtkCubeAxesActor.newInstance();
+      newCubeAxes.setAxisLabelsFrom(axisLabels);
+      newCubeAxes.setDataBounds(updatedCombinedBounds);
+      newCubeAxes.setCamera(context.current.fullScreenRenderer.getRenderer().getActiveCamera());
 
-      // Adjust the position of Layer 2 in the z-axis using spaceBetweenLayers
+      // Store the new cube axes actor in the context
+      context.current.cubeAxes = newCubeAxes;
+      // Add the new cube axes actor to the renderer
+      context.current.fullScreenRenderer.getRenderer().addActor(newCubeAxes);
+
       context.current.actor2.setPosition(0, 0, spaceBetweenLayers);
       context.current.fullScreenRenderer.getRenderWindow().render();
     }
