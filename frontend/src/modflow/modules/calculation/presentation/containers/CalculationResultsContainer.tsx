@@ -3,19 +3,25 @@ import {useCalculation} from '../../application';
 import {useParams} from 'react-router-dom';
 import {Modflow3DResults} from '../components';
 import ControlsModflow3DResults from '../components/ControlsModflow3DResults';
-import {IData, IVisibility} from '../../types';
+// @ts-ignore
+import vtkCubeAxesActor from '@kitware/vtk.js/Rendering/Core/CubeAxesActor';
 
+import {IData, IVisibility} from '../../types';
 
 const CalculationResultsContainer = () => {
 
   const {calculationId: calculationIdParam} = useParams();
   const {calculation, loading, error, updateCalculationId, getTopElevationUrls, getResultUrls, getColorScaleUrl} = useCalculation(calculationIdParam);
   const [selectedTimeStep, setSelectedTimeStep] = useState<number>(0);
-  const [zScaling, setZScaling] = useState<number>(2);
+  const [zScaling, setZScaling] = useState<number>(0.1);
 
   const [data, setData] = useState<IData[]>([]);
   const [visibility, setVisibility] = useState<IVisibility[]>([]);
+  const [visibilityCoordinate, setVisibilityCoordinate] = useState<boolean>(true);
 
+  const toggleVisibilityCoordinate = () => {
+    setVisibilityCoordinate(!visibilityCoordinate);
+  };
 
   useEffect(() => {
     if (!calculation) {
@@ -43,6 +49,7 @@ const CalculationResultsContainer = () => {
     });
 
     setData(newData);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTimeStep, calculation?.calculation_id]);
 
@@ -118,6 +125,8 @@ const CalculationResultsContainer = () => {
         colorScaleUrl={getColorScaleUrl('head', selectedTimeStep)!}
         visibilities={visibility}
         onVisibilityChange={setVisibility}
+        visibilityCoordinate={visibilityCoordinate}
+        onVisibilityCoordinate={toggleVisibilityCoordinate}
         timeSteps={calculation.times.head.total_times || []}
         selectedTimeStep={selectedTimeStep}
         onSelectedTimeStepChange={setSelectedTimeStep}

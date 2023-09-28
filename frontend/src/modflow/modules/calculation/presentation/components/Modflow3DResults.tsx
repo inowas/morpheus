@@ -4,6 +4,8 @@ import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
+// @ts-ignore
+// import vtkCubeAxesActor from '@kitware/vtk.js/Rendering/Core/CubeAxesActor';
 import {IData, IVisibility} from '../../types';
 
 interface IProps {
@@ -128,6 +130,11 @@ const Modflow3DResults: React.FC<IProps> = ({
     }
   } | null>(null);
 
+  console.log(data, ' data');
+  console.log(visibility, ' visibility');
+
+  // const cubeAxes = vtkCubeAxesActor.newInstance();
+
   useEffect(() => {
     const renderer = vtkFullScreenRenderWindow.newInstance({container: vtkContainerRef.current});
     const actors: { [id: string]: vtkActor } = {};
@@ -141,6 +148,7 @@ const Modflow3DResults: React.FC<IProps> = ({
       readers[dataLayer.id] = reader;
     });
 
+
     const camera = renderer.getRenderer().getActiveCamera();
     const defaultFocalPoint: [number, number, number] = [1, 0, 0];
     const defaultPosition: [number, number, number] = [-1, 2, 1];
@@ -153,7 +161,15 @@ const Modflow3DResults: React.FC<IProps> = ({
       camera.setViewUp(...defaultViewUp);
     });
 
-    context.current = {renderer, actors, readers};
+    // Set custom labels for the axes
+    // cubeAxes.setAxisLabelsFrom(['X', 'Y', 'Z']);
+    // cubeAxes.setCamera(renderer.getRenderer().getActiveCamera());
+    // console.log(actors, 'actors');
+    // console.log(readers, ' readers');
+    // actors.cubeAxes = cubeAxes;
+    // renderer.getRenderer().addActor(cubeAxes);
+    // console.log(actors, 'actors');
+    // console.log(readers, ' readers');
 
     return () => {
       if (context.current) {

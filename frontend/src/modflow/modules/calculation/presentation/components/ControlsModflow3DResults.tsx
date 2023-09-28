@@ -1,10 +1,13 @@
 import React from 'react';
 import {IVisibility} from '../../types';
+import styles from './ControlsModflow3DResults.module.less';
 
 interface IProps {
   colorScaleUrl: string;
   visibilities: IVisibility[];
   onVisibilityChange: (headResults: IVisibility[]) => void;
+  visibilityCoordinate: boolean;
+  onVisibilityCoordinate: () => void;
   timeSteps: number[];
   selectedTimeStep: number;
   onSelectedTimeStepChange: (timeStep: number) => void;
@@ -17,6 +20,8 @@ const Controls: React.FC<IProps> = (
   {
     visibilities,
     onVisibilityChange,
+    visibilityCoordinate,
+    onVisibilityCoordinate,
     timeSteps,
     selectedTimeStep,
     onSelectedTimeStepChange,
@@ -24,120 +29,91 @@ const Controls: React.FC<IProps> = (
     onZScalingChange,
     colorBarUrl,
   }) => {
-
+  
   return (
     <>
-      <h2
-        style={{
-          position: 'absolute',
-          textAlign: 'center',
-          zIndex: 1000,
-          color: 'red',
-          width: '100%',
-        }}
-      >
+      <h2 className={styles.header}>
         3D model with elevation data
       </h2>
-      <div
-        style={{
-          position: 'absolute',
-          top: '30px',
-          left: '30px',
-          background: 'white',
-          padding: '12px',
-          borderRadius: '4px',
-        }}
-      >
-        <form>
-          <section style={{padding: 10, borderBottom: '2px dotted #ccc'}}>
-            <label htmlFor="z-scaling">Z Scaling {zScaling}</label>
+      <div className={styles.mainWrapperLeft}>
+        <form className={styles.innerWrapper}>
+          <label
+            htmlFor="z-scaling"
+          >Z Scaling {zScaling}</label>
+          <input
+            className={styles.inputRange}
+            id="z-scaling"
+            type="range"
+            min={0.1}
+            max={100}
+            step={0.01}
+            value={zScaling}
+            onChange={(e) => onZScalingChange(parseFloat(e.target.value))}
+          />
+
+        </form>
+        <form className={styles.innerWrapper}>
+          <div style={{padding: 10}}>
             <input
-              style={{display: 'block'}}
-              id="z-scaling"
-              type="range"
-              min={0.1}
-              max={100}
-              step={0.01}
-              value={zScaling}
-              onChange={(e) => onZScalingChange(parseFloat(e.target.value))}
+              id="coordinats"
+              type="checkbox"
+              checked={visibilityCoordinate}
+              onChange={() => {
+                onVisibilityCoordinate();
+              }}
             />
-          </section>
+            <label htmlFor="coordinats">Coordinats</label>
+          </div>
+        </form>
+        <form className={styles.innerWrapper}>
           {visibilities.map((visibility, vIdx) => (
-            <div key={vIdx}>
-              <section style={{padding: 10}}>
-                <input
-                  id={`visibility-${vIdx}`}
-                  type="checkbox"
-                  checked={visibility.isVisible}
-                  onChange={() => {
-                    const newHeadResults = [...visibilities];
-                    newHeadResults[vIdx].isVisible = !newHeadResults[vIdx].isVisible;
-                    onVisibilityChange(newHeadResults);
-                  }}
-                />
-                <label
-                  htmlFor={`visibility-${vIdx}`}
-                  style={{paddingLeft: 15, fontSize: '1.2em'}}
-                >{visibility.name}</label>
-                <input
-                  style={{display: 'block', marginTop: 10}}
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={visibility.opacity}
-                  onChange={(e) => {
-                    const newHeadResults = [...visibilities];
-                    newHeadResults[vIdx].opacity = parseFloat(e.target.value);
-                    onVisibilityChange(newHeadResults);
-                  }}
-                />
-              </section>
+            <div key={vIdx} style={{padding: 10}}>
+              <input
+                id={`visibility-${vIdx}`}
+                type="checkbox"
+                checked={visibility.isVisible}
+                onChange={() => {
+                  const newHeadResults = [...visibilities];
+                  newHeadResults[vIdx].isVisible = !newHeadResults[vIdx].isVisible;
+                  onVisibilityChange(newHeadResults);
+                }}
+              />
+              <label
+                htmlFor={`visibility-${vIdx}`}
+              >{visibility.name}</label>
+              <input
+                className={styles.inputRange}
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={visibility.opacity}
+                onChange={(e) => {
+                  const newHeadResults = [...visibilities];
+                  newHeadResults[vIdx].opacity = parseFloat(e.target.value);
+                  onVisibilityChange(newHeadResults);
+                }}
+              />
             </div>
           ))}
         </form>
       </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          top: '30px',
-          right: '30px',
-        }}
-      >
-        <form
-          style={{
-            background: 'white',
-            padding: '12px',
-            borderRadius: '4px',
-            marginBottom: 10,
-          }}
-        >
-          <section style={{margin: 10}}>
-            <label htmlFor="time-step">Time Step</label>
-            <select
-              style={{display: 'block'}}
-              id="time-step"
-              value={timeSteps[selectedTimeStep]}
-              onChange={(e) => onSelectedTimeStepChange(parseInt(e.target.value, 10))}
-            >
-              {timeSteps.map((timeStep, index) => (
-                <option key={index} value={index}>{timeStep}</option>
-              ))}
-            </select>
-          </section>
+      <div className={styles.mainWrapperRight}>
+        <form className={styles.innerWrapper}>
+          <label htmlFor="time-step">Time Step</label>
+          <select
+            style={{display: 'block'}}
+            id="time-step"
+            value={timeSteps[selectedTimeStep]}
+            onChange={(e) => onSelectedTimeStepChange(parseInt(e.target.value, 10))}
+          >
+            {timeSteps.map((timeStep, index) => (
+              <option key={index} value={index}>{timeStep}</option>
+            ))}
+          </select>
         </form>
-        <div
-          style={{
-            background: 'white',
-            padding: '12px',
-            borderRadius: '4px',
-            opacity: 0.8,
-          }}
-        >
-          < img
-            src={colorBarUrl}
-          />
+        <div className={styles.innerWrapper} style={{opacity: 0.8}}>
+          < img src={colorBarUrl}/>
         </div>
       </div>
     </>
