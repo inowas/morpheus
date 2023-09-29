@@ -182,6 +182,28 @@ const Modflow3DResults: React.FC<IProps> = ({
     if (!context.current) {
       return;
     }
+
+    const {renderer, actors, readers} = context.current;
+
+    data.forEach((dataLayer) => {
+      const actor = actors[dataLayer.id];
+      actor.removeAllTextures();
+      setTexture(actor, dataLayer.imgUrl).then(() => {
+        renderer.getRenderer().resetCamera();
+        renderer.getRenderWindow().render();
+      });
+      const reader = readers[dataLayer.id];
+      setData(reader, dataLayer.dataUrl).then(() => {
+        renderer.getRenderer().resetCamera();
+        renderer.getRenderWindow().render();
+      });
+    });
+  }, [data]);
+
+  useEffect(() => {
+    if (!context.current) {
+      return;
+    }
     const {renderer, readers} = context.current;
     Object.values(readers).forEach((reader) => {
       reader.setZScaling(zScaling);
