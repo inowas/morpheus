@@ -5,12 +5,13 @@ import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
 // @ts-ignore
-// import vtkCubeAxesActor from '@kitware/vtk.js/Rendering/Core/CubeAxesActor';
+import vtkCubeAxesActor from '@kitware/vtk.js/Rendering/Core/CubeAxesActor';
 import {IData, IVisibility} from '../../types';
 
 interface IProps {
   data: IData[],
   visibility: IVisibility[],
+  visibilityCoordinate: boolean,
   zScaling: number;
 }
 
@@ -113,9 +114,27 @@ const addDataLayer = (imgUrl: string, dataUrl: string, renderer: vtkFullScreenRe
   return {actor, reader};
 };
 
+const computeUpdatedBounds = (actorBoundsArray: number[][]) => {
+  let updatedBounds = actorBoundsArray[0];
+  for (let i = 1; i < actorBoundsArray.length; i++) {
+    const actorBounds = actorBoundsArray[i];
+    updatedBounds = [
+      Math.min(updatedBounds[0], actorBounds[0]), // X min
+      Math.max(updatedBounds[1], actorBounds[1]), // X max
+      Math.min(updatedBounds[2], actorBounds[2]), // Y min
+      Math.max(updatedBounds[3], actorBounds[3]), // Y max
+      Math.min(updatedBounds[4], actorBounds[4]), // Z min
+      Math.max(updatedBounds[5], actorBounds[5]), // Z max
+    ];
+  }
+
+  return updatedBounds;
+};
+
 const Modflow3DResults: React.FC<IProps> = ({
   data,
   visibility,
+  visibilityCoordinate,
   zScaling,
 }) => {
 
@@ -130,11 +149,6 @@ const Modflow3DResults: React.FC<IProps> = ({
     }
   } | null>(null);
 
-  console.log(data, ' data');
-  console.log(visibility, ' visibility');
-
-  // const cubeAxes = vtkCubeAxesActor.newInstance();
-
   useEffect(() => {
     const renderer = vtkFullScreenRenderWindow.newInstance({container: vtkContainerRef.current});
     const actors: { [id: string]: vtkActor } = {};
@@ -148,7 +162,6 @@ const Modflow3DResults: React.FC<IProps> = ({
       readers[dataLayer.id] = reader;
     });
 
-
     const camera = renderer.getRenderer().getActiveCamera();
     const defaultFocalPoint: [number, number, number] = [1, 0, 0];
     const defaultPosition: [number, number, number] = [-1, 2, 1];
@@ -161,15 +174,22 @@ const Modflow3DResults: React.FC<IProps> = ({
       camera.setViewUp(...defaultViewUp);
     });
 
-    // Set custom labels for the axes
-    // cubeAxes.setAxisLabelsFrom(['X', 'Y', 'Z']);
-    // cubeAxes.setCamera(renderer.getRenderer().getActiveCamera());
-    // console.log(actors, 'actors');
-    // console.log(readers, ' readers');
-    // actors.cubeAxes = cubeAxes;
-    // renderer.getRenderer().addActor(cubeAxes);
-    // console.log(actors, 'actors');
-    // console.log(readers, ' readers');
+    const cubeAxes = vtkCubeAxesActor.newInstance();
+    cubeAxes.setAxisLabelsFrom(['X', 'Y', 'Z']);
+    setTimeout(() => {
+      const actorBoundsArray = Object.entries(actors)
+        .filter(([key, value]) => 'cubeAxes' !== key)
+        .map(([key, value]) => value.getBounds());
+      cubeAxes.setDataBounds(computeUpdatedBounds(actorBoundsArray));
+      renderer.getRenderer().addActor(cubeAxes);
+      renderer.getRenderWindow().render();
+      console.log(actorBoundsArray, ' actorBoundsArray');
+      console.log(new Date().toISOString().slice(11, -5));
+    }, 5000);
+    cubeAxes.setCamera(renderer.getRenderer().getActiveCamera());
+    actors['cubeAxes' as string] = cubeAxes;
+
+    context.current = {renderer, actors, readers};
 
     return () => {
       if (context.current) {
@@ -178,6 +198,27 @@ const Modflow3DResults: React.FC<IProps> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // useEffect(() => {
+  //   if (!context.current) {
+  //     return;
+  //   }
+  //   setTimeout(() => {
+  //     context.current.renderer.getRenderer().removeActor(context.current.actors.cubeAxes);
+  //     const newCubeAxes = vtkCubeAxesActor.newInstance();
+  //     newCubeAxes.setAxisLabelsFrom(['X', 'Y', 'Z']);
+  //     const actorBoundsArray = Object.entries(context.current.actors)
+  //       .filter(([key, value]) => 'cubeAxes' !== key)
+  //       .map(([key, value]) => value.getBounds());
+  //     newCubeAxes.setDataBounds(computeUpdatedBounds(actorBoundsArray));
+  //     newCubeAxes.setCamera(context.current.renderer.getRenderer().getActiveCamera());
+  //     context.current.actors['cubeAxes' as string] = newCubeAxes;
+  //     context.current.renderer.getRenderer().addActor(newCubeAxes);
+  //     context.current.renderer.getRenderWindow().render();
+  //     console.log(actorBoundsArray, ' actorBoundsArray  in useEffect');
+  //     console.log(new Date().toISOString().slice(11, -5));
+  //   }, 5000);
+  // }, [visibilityCoordinate, zScaling]);
 
   useEffect(() => {
     if (!context.current) {
@@ -213,3 +254,5 @@ const Modflow3DResults: React.FC<IProps> = ({
 };
 
 export {Modflow3DResults};
+
+

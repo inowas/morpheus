@@ -137,6 +137,7 @@ const CalculationResultsContainer = () => {
       <Modflow3DResults
         data={data}
         visibility={visibility}
+        visibilityCoordinate={visibilityCoordinate}
         zScaling={zScaling}
       />
     </div>
