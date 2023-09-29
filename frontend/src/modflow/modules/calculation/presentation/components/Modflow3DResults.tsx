@@ -176,22 +176,32 @@ const Modflow3DResults: React.FC<IProps> = ({
 
     const cubeAxes = vtkCubeAxesActor.newInstance();
     cubeAxes.setAxisLabelsFrom(['X', 'Y', 'Z']);
-    setTimeout(() => {
+    
+    const timeoutBounds = setTimeout(() => {
       const actorBoundsArray = Object.entries(actors)
         .filter(([key, value]) => 'cubeAxes' !== key)
         .map(([key, value]) => value.getBounds());
       cubeAxes.setDataBounds(computeUpdatedBounds(actorBoundsArray));
       renderer.getRenderer().addActor(cubeAxes);
       renderer.getRenderWindow().render();
-      console.log(actorBoundsArray, ' actorBoundsArray');
-      console.log(new Date().toISOString().slice(11, -5));
+      console.log(actorBoundsArray);
+      console.log(new Date().toISOString().slice(11, -5), ' actorBoundsArray');
     }, 5000);
     cubeAxes.setCamera(renderer.getRenderer().getActiveCamera());
     actors['cubeAxes' as string] = cubeAxes;
 
     context.current = {renderer, actors, readers};
 
+    const timeoutTest = setTimeout(() => {
+      console.log(context.current.actors.topElevation.getBounds());
+      console.log(context.current.actors['head-layer-0'].getBounds());
+      console.log(context.current.actors['head-layer-1'].getBounds());
+      console.log(new Date().toISOString().slice(11, -5), ' setTimeout 10000');
+    }, 10000);
+
     return () => {
+      clearTimeout(timeoutBounds);
+      clearTimeout(timeoutTest);
       if (context.current) {
         context.current = null;
       }
