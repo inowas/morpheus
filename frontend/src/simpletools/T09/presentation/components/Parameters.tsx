@@ -36,7 +36,7 @@ const Parameters = ({parameters, onChange, onReset}: IProps) => {
     });
     onChange([...newParams]);
   };
-
+  
   const renderParameters = (p: IParameter[]) => (
     p.map(parameter => (
       <ParameterSlider
