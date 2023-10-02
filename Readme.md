@@ -37,3 +37,12 @@ More information about the frontend can be found in the [frontend README](./fron
 
 The backend is a application written in [Python 3](https://www.python.org/) and can be found in the `src/backend` directory.
 More information about the backend can be found in the [backend README](src/backend/README.md).
+
+### Mailcatcher
+
+A mailcatcher can be found at http://mailcatcher.inowas.localhost. All mail can be viewed there.
+
+### Keycloak
+
+A keycloak server runs at https://identity.inowas.localhost. It has a preconfigured realm "inowas" with the client
+"morpheus-frontend" and a user "dev@inowas.localhost" with the password "dev".
