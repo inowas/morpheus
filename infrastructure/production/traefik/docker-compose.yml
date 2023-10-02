@@ -6,6 +6,7 @@ services:
       - "--log.level=INFO"
       - "--log.filePath=/var/logs/traefik/traefik.log"
       - "--accesslog=true"
+      - "--api=false"
       - "--api.dashboard=false"
       - "--api.insecure=false"
       - "--entryPoints.web.address=:80"
@@ -35,7 +36,7 @@ services:
     restart: always
     networks:
       - traefik
-
+    read_only: true
 networks:
   traefik:
     name: ${TRAEFIK_NETWORK}

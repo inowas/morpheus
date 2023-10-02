@@ -6,6 +6,7 @@ services:
     command:
       - "--log.level=DEBUG"
       - "--accesslog=true"
+      - "--api=true"
       - "--api.dashboard=true"
       - "--api.insecure=true"
       - "--api.debug=true"
@@ -25,7 +26,7 @@ services:
       - "8080:8080" # for traefik api, dashboard and healthcheck
       - "5432:5432" # for postgres
     healthcheck:
-      test: [ "CMD", "traefik", "healthcheck" ]
+      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -40,7 +41,8 @@ services:
       - auth
       - backend
       - mail
-#  frontend:
+    read_only: true
+  #  frontend:
 #    build:
 #      context: ${PWD}
 #      dockerfile: frontend/docker/Dockerfile
