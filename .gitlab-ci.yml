@@ -14,6 +14,9 @@ variables:
   # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
   DOCKER_HOST: tcp://docker:2376
   DOCKER_TLS_CERTDIR: "/certs"
+  MORPHEUS_FRONTEND_IMAGE: inowas/morpheus-frontend
+  MORPHEUS_BACKEND_IMAGE: inowas/morpheus-backend
+  MFVIZ_IMAGE: inowas/mfviz
 
 test-frontend:
   image: node:20
@@ -24,44 +27,41 @@ test-frontend:
     - make install-ci
     - make test-ci
 
-build-frontend:dev:
+build-morpheus-frontend:dev:
   image: node:20
   stage: build
-
+  dependencies:
+    - test-frontend
   script:
     - cd frontend
     - make install-ci
-    - make build
-    - make build-modflow
-
+    - make build-morpheus
   artifacts:
     paths:
-      - frontend/dist/
+      - frontend/dist/morpheus
     expire_in: 1 days
-
   only:
     - main
 
-publish-frontend:dev:
+publish-morpheus-frontend:dev:
   stage: publish
   dependencies:
-    - build-frontend:dev
-
+    - build-morpheus-frontend:dev
   before_script:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:dev --file frontend/docker/Dockerfile .
-    - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE_FRONTEND:dev
+    - docker build --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_FRONTEND_IMAGE:dev --file frontend/docker/Dockerfile.morpheus .
+    - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA
+    - docker push $MORPHEUS_FRONTEND_IMAGE:dev
   only:
     - main
 
-deploy-frontend:dev:
+deploy-morpheus:dev:
   image: ubuntu:22.04
   stage: deploy
   dependencies:
-    - publish-frontend:dev
+    - publish-morpheus-frontend:dev
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
@@ -70,7 +70,7 @@ deploy-frontend:dev:
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $DEVELOPMENT_PATH && docker compose down"
-    - scp -P22 ./infrastructure/development/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$DEVELOPMENT_PATH/docker-compose.yml
+    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$DEVELOPMENT_PATH/docker-compose.yml
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $DEVELOPMENT_PATH && docker compose pull"
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $DEVELOPMENT_PATH && docker compose up -d --force-recreate"
   environment:
@@ -79,42 +79,43 @@ deploy-frontend:dev:
   only:
     - main
 
-build-frontend:prod:
+build-morpheus-frontend:prod:
   image: node:20
   stage: build
+  dependencies:
+    - test-frontend
   script:
     - cd frontend
     - make install-ci
-    - make build
-    - make build-modflow
+    - make build-morpheus
   artifacts:
     paths:
-      - frontend/dist/
+      - frontend/dist/morpheus
     expire_in: 1 days
   only:
     - tags
 
-publish-frontend:prod:
+publish-morpheus-frontend:prod:
   stage: publish
   dependencies:
-    - build-frontend:prod
+    - build-morpheus-frontend:prod
 
   before_script:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - docker build --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_TAG --tag $CI_REGISTRY_IMAGE_FRONTEND:latest --file frontend/docker/Dockerfile .
-    - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE_FRONTEND:$CI_COMMIT_TAG
-    - docker push $CI_REGISTRY_IMAGE_FRONTEND:latest
+    - docker build --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_FRONTEND_IMAGE:latest --file frontend/docker/Dockerfile.morpheus .
+    - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA
+    - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_TAG
+    - docker push $MORPHEUS_FRONTEND_IMAGE:latest
   only:
     - tags
 
-deploy-frontend:prod:production:
+deploy-morpheus:prod:
   image: ubuntu:22.04
   stage: deploy
   dependencies:
-    - build-frontend:prod
+    - publish-morpheus-frontend:prod
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
@@ -123,7 +124,7 @@ deploy-frontend:prod:production:
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $PRODUCTION_PATH && docker-compose down"
-    - scp -P22 ./infrastructure/production/docker-compose.yml $URL_PRODUCTION_SERVER:/$PRODUCTION_PATH/docker-compose.yml
+    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml $URL_PRODUCTION_SERVER:/$PRODUCTION_PATH/docker-compose.yml
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $PRODUCTION_PATH && docker compose pull"
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $PRODUCTION_PATH && docker compose up -d --force-recreate"
   environment:

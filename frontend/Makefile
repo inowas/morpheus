@@ -23,25 +23,29 @@ install:
 install-ci:
 	npm ci --legacy-peer-deps
 
-## Start the application in application development mode
+## Start the morpheus application in application development mode
 start:
-	npm run start
+	npm run start-morpheus
 
-## Start the application in application development mode
-start-modflow:
-	npm run start-modflow
+## Start the morpheus application in application development mode
+start-morpheus:
+	npm run start-morpheus
+
+## Start the modflow visualizer in development mode
+start-mfviz:
+	npm run start-mfviz
 
 ## Start storybook
 start-storybook:
 	npm run start-storybook
 
-## Build the Application for production
-build:
-	npm run build
+## Build the morpheus application for production
+build-morpheus:
+	npm run build-morpheus
 
-## Start the application in application development mode
-build-modflow:
-	npm run build-modflow
+## Build the mfviz application for production
+build-mfviz:
+	npm run build-mfviz
 
 ## build the whole application with mock-server for preview
 build-preview-ci:
