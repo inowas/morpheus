@@ -1,6 +1,6 @@
 import {Button, Dimmer, Grid, Header, Icon, Image, Segment} from 'semantic-ui-react';
 import React, {useState} from 'react';
-import {useNavigate} from '../../../common/hooks';
+import {useNavigate} from 'simpletools/common/hooks';
 import styles from './T13.module.less';
 import image13A from '../images/T13A.png';
 import image13B from '../images/T13B.png';

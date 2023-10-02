@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import SimpleToolGrid from '../../../../components/SimpleToolGrid';
-import {Background, ChartT13B, InfoT13B, Parameters, SettingsT13B} from '../components';
+import SimpleToolGrid from 'components/SimpleToolGrid';
+import {Background, ChartT13B, InfoT13B, Parameters, SettingsT13B} from '../components/';
 import {IT13B, SETTINGS_SELECTED_NOTHING} from '../../types/T13.type';
 import image from '../images/T13B.png';
 import {Breadcrumb} from '../../../../components';

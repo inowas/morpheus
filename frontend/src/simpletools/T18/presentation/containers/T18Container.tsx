@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {IT18} from '../../types/T18.type';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
-import SimpleToolGrid from '../../../../components/SimpleToolGrid';
+import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T18.png';
 import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';

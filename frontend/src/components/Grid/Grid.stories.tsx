@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {Grid, Page} from '../index';
+import {Grid, Page} from 'components';
 
 export default {
   /* 👇 The title prop is optional.

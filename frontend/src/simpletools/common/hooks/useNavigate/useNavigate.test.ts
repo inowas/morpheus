@@ -1,5 +1,5 @@
 import {renderHook} from '@testing-library/react-hooks';
-import useNavigate from './index';
+import useNavigate from '../useNavigate';
 
 const mockNavigate = jest.fn();
 

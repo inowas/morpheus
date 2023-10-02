@@ -1,6 +1,6 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
-import ChartModal from './index';
+import ChartModal from '../ChartModal';
 import userEvent from '@testing-library/user-event';
 
 describe('ChartModal component', () => {

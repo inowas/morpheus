@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {ComponentMeta, ComponentStory} from '@storybook/react';
-import Page from '../../../../../../components/PageContainer/Page';
+import Page from 'components/PageContainer/Page';
 import LanguageSelector from './LanguageSelector';
 import {ILanguage} from './types/languageSelector.type';
 

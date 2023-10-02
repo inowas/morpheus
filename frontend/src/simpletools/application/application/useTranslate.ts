@@ -1,4 +1,4 @@
-import {useTranslation} from '../../common/hooks';
+import {useTranslation} from 'simpletools/common/hooks';
 import {i18n as II18n} from 'i18next';
 
 interface IUseTranslate {

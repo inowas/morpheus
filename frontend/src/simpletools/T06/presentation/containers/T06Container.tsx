@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate, useNavigate} from '../../application';
-import SimpleToolGrid from '../../../../components/SimpleToolGrid';
+import {useTranslate, useNavigate} from '../../../T06/application';
+import SimpleToolGrid from 'components/SimpleToolGrid';
 import groupBy from 'lodash.groupby';
 import intersection from 'lodash.intersection';
 import union from 'lodash.union';

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Image} from '../../../../../../components';
+import {Button, Image} from 'components';
 import styles from './ArticleItem.module.less';
 
 export interface IArticle {

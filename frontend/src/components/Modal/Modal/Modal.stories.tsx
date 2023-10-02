@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {StoryFn, Meta} from '@storybook/react';
 import {Container, Segment} from 'semantic-ui-react';
-import {Button, Modal} from '../../index';
+import {Button, Modal} from 'components';
 
 export default {
   /* 👇 The title prop is optional.

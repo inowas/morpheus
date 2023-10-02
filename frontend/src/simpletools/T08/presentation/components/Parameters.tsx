@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
-import {ParameterSlider} from '../../../../components/Slider';
+import {ParameterSlider} from 'components/Slider';
 import {IT08} from '../../types/T08.type';
 
 type IParameter = IT08['parameters'][0];

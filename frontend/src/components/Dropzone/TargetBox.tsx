@@ -1,6 +1,6 @@
 import type {FC} from 'react';
 import React, {ChangeEvent} from 'react';
-import {Icon, Loader, Notification} from '../index';
+import {Icon, Loader, Notification} from 'components';
 import type {DropTargetMonitor} from 'react-dnd';
 import {useDrop} from 'react-dnd';
 import {NativeTypes} from 'react-dnd-html5-backend';

@@ -2,7 +2,7 @@ import Iframe from 'react-iframe';
 import React from 'react';
 import styles from './T11.module.less';
 import {Breadcrumb} from '../../../../components';
-import {useNavigate} from '../../../common/hooks';
+import {useNavigate} from 'simpletools/common/hooks';
 import {useTranslate} from '../../application';
 
 const tool = 'T11';

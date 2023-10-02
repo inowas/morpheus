@@ -1,4 +1,4 @@
 import useTranslate from './useTranslate';
-import useNavigate from '../../common/hooks/useNavigate';
+import useNavigate from 'simpletools/common/hooks/useNavigate';
 
 export {useTranslate, useNavigate};
