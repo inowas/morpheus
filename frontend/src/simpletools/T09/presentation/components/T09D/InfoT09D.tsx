@@ -1,22 +1,49 @@
 import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
 import {getParameterValues} from '../../../../common/helpers';
-import {calcLambda, calcMu, calculateQCrit, calcXt} from '../../../application/useCalculationsT09D';
 import {IT09D} from '../../../types/T09.type';
+
+interface IUseCalculate {
+  dRo: (rhof: number, rhos: number) => number;
+  calcXt: (
+    k: number,
+    b: number,
+    q: number,
+    Qw: number,
+    xw: number,
+    rhof: number,
+    rhos: number,
+    AqType?: string
+  ) => number;
+  calculateZCrit: (d: number) => number;
+  calculateQCrit: (q: number, mu: number, xw: number) => number;
+  calcLambda: (
+    k: number,
+    b: number,
+    q: number,
+    xw: number,
+    rhof: number,
+    rhos: number,
+    AqType: string
+  ) => number;
+  calcMu: (Lambda: number) => number;
+  calculateDiagramData: (q: number, mu: number, xw: number) => { xw: number; Qcrit: number }[];
+}
 
 interface IProps {
   parameters: IT09D['parameters'];
   settings: IT09D['settings'];
+  calculation: IUseCalculate;
 }
 
-const InfoT09D = ({parameters, settings}: IProps) => {
+const InfoT09D = ({parameters, settings, calculation}: IProps) => {
   const {k, b, q, Q, xw, rhof, rhos} = getParameterValues(parameters);
   const {AqType} = settings;
 
-  const lambda = calcLambda(k, b, q, xw, rhof, rhos, AqType);
-  const mu = calcMu(lambda);
-  const qCrit = calculateQCrit(q, mu, xw);
-  const xT = calcXt(k, b, q, Q, xw, rhof, rhos);
+  const lambda = calculation.calcLambda(k, b, q, xw, rhof, rhos, AqType);
+  const mu = calculation.calcMu(lambda);
+  const qCrit = calculation.calculateQCrit(q, mu, xw);
+  const xT = calculation.calcXt(k, b, q, Q, xw, rhof, rhos);
 
   if (Q >= qCrit) {
     return (

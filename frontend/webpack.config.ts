@@ -21,6 +21,9 @@ function git(command: string) {
   return child_process.execSync(`git ${command}`, {encoding: 'utf8'}).trim();
 }
 
+//https://github.com/webpack/webpack/blob/main/examples/multi-compiler/webpack.config.js
+//https://stackoverflow.com/a/38132106
+
 
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
@@ -98,13 +101,12 @@ module.exports = (env: any, argv: any) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: '[name].css',
+        filename: '[name].[fullhash:8].css',
       }),
       new HtmlWebpackPlugin({
         title: 'simpletools',
-        template: './public/index.html',
-        filename: 'index.html',
-        chunks: ['simpletools']
+        template: './public/simpletools/index.html',
+        filename: 'index.html'
       }),
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
@@ -113,7 +115,7 @@ module.exports = (env: any, argv: any) => {
       }),
       new CopyPlugin({
         patterns: [{
-          from: 'public',
+          from: 'public/simpletools',
           to: './',
           globOptions: {
             ignore: [
@@ -138,8 +140,10 @@ module.exports = (env: any, argv: any) => {
       },
     },
     output: {
-      path: path.resolve(__dirname, 'dist'),
-      publicPath: '/'
+      path: path.resolve(__dirname, 'dist/simpletools'),
+      publicPath: '/',
+      filename: '[name].[fullhash:8].js',
+      chunkFilename: '[name].[fullhash:8].js',
     }
   }
 
@@ -153,7 +157,7 @@ module.exports = (env: any, argv: any) => {
         'Access-Control-Allow-Origin': '*',
       },
       static: {
-        directory: path.resolve(__dirname, 'public'),
+        directory: path.resolve(__dirname, 'public/simpletools'),
         watch: true
       },
       compress: true,
@@ -163,20 +167,23 @@ module.exports = (env: any, argv: any) => {
   }
   if (argv.mode === 'production') {
     config.mode = 'production';
+    config.devtool = 'source-map';
     config.optimization = {
       minimizer: [
         new TerserPlugin({
           test: [
-            /(simpletools)\.less$/i,
+            /\.less$/i,
             /\.(js)$/,
           ],
         }),
         new CssMinimizerPlugin({
-          test: /(simpletools)\.css$/i,
+          test: /\.css$/i,
         }),
       ],
       minimize: true,
-      splitChunks: false,
+      splitChunks: {
+        chunks: 'all',
+      },
     }
   }
   return config;

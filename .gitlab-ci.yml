@@ -32,6 +32,7 @@ build-frontend:dev:
     - cd src/frontend
     - make install-ci
     - make build
+    - make build-modflow
 
   artifacts:
     paths:
@@ -85,6 +86,7 @@ build-frontend:prod:
     - cd src/frontend
     - make install-ci
     - make build
+    - make build-modflow
   artifacts:
     paths:
       - src/frontend/dist/

@@ -3,9 +3,8 @@ import SimpleToolGrid from '../../../../components/SimpleToolGrid';
 import {Background, ChartT09A, InfoT09A, Parameters} from '../components';
 import {IT09A} from '../../types/T09.type';
 import image from '../images/T09A.png';
-import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate} from '../../application';
+import {useCalculationsT09A, useNavigate, useTranslate} from '../../application';
 
 const defaults: IT09A = {
   parameters: [{
@@ -57,8 +56,8 @@ const defaults: IT09A = {
 const tool = 'T09A';
 
 const T09AContainer = () => {
-
   const [data, setData] = useState<IT09A>(defaults);
+  const calculation = useCalculationsT09A();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
 
@@ -75,7 +74,7 @@ const T09AContainer = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div data-testid="t09a-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -88,15 +87,19 @@ const T09AContainer = () => {
         <Background image={image} title={title}/>
         <ChartT09A
           parameters={data.parameters}
+          calculation={calculation}
         />
-        <InfoT09A parameters={data.parameters}/>
+        <InfoT09A
+          parameters={data.parameters}
+          calculation={calculation}
+        />
         <Parameters
           parameters={data.parameters}
           onChange={handleChangeParameters}
           onReset={handleReset}
         />
       </SimpleToolGrid>
-    </>
+    </div>
   );
 };
 

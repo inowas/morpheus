@@ -3,9 +3,8 @@ import SimpleToolGrid from '../../../../components/SimpleToolGrid';
 import {Background, ChartT09D, InfoT09D, Parameters, SettingsT09D} from '../components';
 import {IT09D} from '../../types/T09.type';
 import image from '../images/T09D.png';
-import {useNavigate} from '../../../common/hooks';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate} from '../../application';
+import {useCalculationsT09D, useNavigate, useTranslate} from '../../application';
 
 
 const defaults: IT09D = {
@@ -118,18 +117,16 @@ const defaults: IT09D = {
 const tool = 'T09D';
 
 const T09DContainer = () => {
-
   const [data, setData] = useState<IT09D>(defaults);
+  const calculation = useCalculationsT09D();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
-
   const handleChangeParameters = (parameters: IT09D['parameters']) => {
     setData((prevState) => ({
       ...prevState,
       parameters: [...parameters],
     }));
   };
-
   const handleChangeSettings = (settings: IT09D['settings']) => {
     setData((prevState) => ({...prevState, settings: {...settings}}));
   };
@@ -140,7 +137,7 @@ const T09DContainer = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <>
+    <div data-testid="t09d-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
@@ -156,13 +153,18 @@ const T09DContainer = () => {
         />
         <ChartT09D
           parameters={data.parameters}
+          calculation={calculation}
         />
         <div>
           <SettingsT09D
             settings={data.settings}
             onChange={handleChangeSettings}
           />
-          <InfoT09D parameters={data.parameters} settings={data.settings}/>
+          <InfoT09D
+            parameters={data.parameters}
+            settings={data.settings}
+            calculation={calculation}
+          />
         </div>
         <Parameters
           parameters={data.parameters}
@@ -170,7 +172,7 @@ const T09DContainer = () => {
           onReset={handleReset}
         />
       </SimpleToolGrid>
-    </>
+    </div>
   );
 };
 

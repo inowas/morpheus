@@ -2,11 +2,32 @@ import React from 'react';
 import {CartesianGrid, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis} from 'recharts';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {IT09C} from '../../../types/T09.type';
-import {calculateDiagramData, calculateQ, calculateZ, calculateZCrit} from '../../../application/useCalculationsT09С';
 import {exportChartData, exportChartImage, getParameterValues} from '../../../../common/helpers';
+
+interface DataSet {
+  x: number;
+  h: number;
+}
+
+interface IUseCalculate {
+  calculateQ: (k: number, d: number, df: number, ds: number) => number;
+  calculateZCrit: (d: number) => number;
+  calculateZ: (q: number, k: number, d: number, df: number, ds: number) => number;
+  calculateDiagramData: (
+    q: number,
+    k: number,
+    d: number,
+    df: number,
+    ds: number,
+    start: number,
+    stop: number,
+    step: number
+  ) => DataSet[];
+}
 
 interface IProps {
   parameters: IT09C['parameters'];
+  calculation: IUseCalculate;
 }
 
 const styles = {
@@ -59,13 +80,13 @@ const renderLabels = (df: number, ds: number, z: number, qmax: number): JSX.Elem
   );
 };
 
-const ChartT09C = ({parameters}: IProps) => {
+const ChartT09C = ({parameters, calculation}: IProps) => {
   const {q, k, d, df, ds} = getParameterValues(parameters);
-  const data = calculateDiagramData(q, k, d, df, ds, 0, 1000, 1);
-  const yDomain = [0, 2 * calculateZCrit(d)];
-  const z = calculateZ(q, k, d, df, ds);
-  const qmax = calculateQ(k, d, df, ds);
-  const zCrit = calculateZCrit(d);
+  const data = calculation.calculateDiagramData(q, k, d, df, ds, 0, 1000, 1);
+  const yDomain = [0, 2 * calculation.calculateZCrit(d)];
+  const z = calculation.calculateZ(q, k, d, df, ds);
+  const qmax = calculation.calculateQ(k, d, df, ds);
+  const zCrit = calculation.calculateZCrit(d);
   return (
     <div>
       <Grid>

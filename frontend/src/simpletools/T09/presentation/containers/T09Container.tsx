@@ -1,7 +1,5 @@
 import {Button, Dimmer, Grid, Header, Icon, Image, Segment} from 'semantic-ui-react';
 import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-
 import image9A from '../images/T09A.png';
 import image9B from '../images/T09B.png';
 import image9C from '../images/T09C.png';
@@ -9,15 +7,15 @@ import image9D from '../images/T09D.png';
 import image9E from '../images/T09E.png';
 import image9F from '../images/T09F.png';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate} from '../../../T13/application';
-import styles from '../../../T13/presentation/containers/T13.module.less';
+import {useNavigate, useTranslate} from '../../application';
+import styles from './T09.module.less';
 
 interface Item {
   tool: string;
   image: string;
 }
 
-const items: Item[] = [
+export const items: Item[] = [
   {
     tool: 'T09A',
     image: image9A,
@@ -47,25 +45,24 @@ const items: Item[] = [
 const tool = 'T09';
 
 const T09 = () => {
-
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
-
   const redirectTo = (path: string): void => {
     navigateTo(`/tools/${tool}/${path}`);
   };
-
   const [isHovered, setIsHovered] = useState('');
   const handleMouseEnter = (t: string) => {
     setIsHovered(t);
   };
-
   const handleMouseLeave = () => {
     setIsHovered('');
   };
 
   const columns = items.map(i => (
-    <Grid.Column key={i.tool} onClick={() => redirectTo(i.tool)}>
+    <Grid.Column
+      key={i.tool} onClick={() => redirectTo(i.tool)}
+      data-testid={`${i.tool}-gridcell`}
+    >
       <Dimmer.Dimmable
         as={Segment}
         color={'blue'}
@@ -84,17 +81,19 @@ const T09 = () => {
         >{i.tool}</Header>
         <strong>{translate(`${i.tool}_title`)}</strong><br/>
         {translate(`${i.tool}_description`)}
-        <Dimmer
-          inverted={true}
-          active={isHovered === i.tool}
-        >
-          <Button
-            icon={true} primary={true}
-            size="large" labelPosition="left"
+        {isHovered && (
+          <Dimmer
+            inverted={true}
+            active={isHovered === i.tool}
           >
-            <Icon name="pin"/>
-            Select {i.tool}</Button>
-        </Dimmer>
+            <Button
+              icon={true} primary={true}
+              size="large" labelPosition="left"
+            >
+              <Icon name="pin"/>
+              Select {i.tool}</Button>
+          </Dimmer>
+        )}
       </Dimmer.Dimmable>
     </Grid.Column>
   ));
@@ -102,7 +101,7 @@ const T09 = () => {
   const title = `${tool}: ${translate(`${tool}_title`)}`;
 
   return (
-    <div className={styles.toolWrapper}>
+    <div className={styles.toolWrapper} data-testid="t09-container">
       <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
