@@ -31,7 +31,7 @@ You can then create a fresh development environment by running the install comma
 ### Frontend
 
 The frontend is a [React](https://reactjs.org/) application written in [TypeScript](https://www.typescriptlang.org/) and can be found in the `src/frontend` directory.
-More information about the frontend can be found in the [frontend README](./frontend/README.md).
+More information about the frontend can be found in the [frontend README](src/frontend/README.md).
 
 ### Backend
 
