@@ -24,7 +24,7 @@ services:
 
   # Our custom django application. It includes Geonode.
   django:
-    << : *default-common-django
+    <<: *default-common-django
     build:
       context: ./
       dockerfile: Dockerfile
@@ -37,19 +37,19 @@ services:
       retries: 10
     environment:
       - IS_CELERY=False
-    entrypoint: ["/usr/src/datahub/entrypoint.sh"]
+    entrypoint: [ "/usr/src/datahub/entrypoint.sh" ]
     command: "uwsgi --ini /usr/src/datahub/uwsgi.ini"
 
   # Celery worker that executes celery tasks created by Django.
   celery:
-    << : *default-common-django
+    <<: *default-common-django
     image: ${COMPOSE_PROJECT_NAME}_django:4.1.x
     container_name: celery4${COMPOSE_PROJECT_NAME}
     depends_on:
       - django
     environment:
       - IS_CELERY=True
-    entrypoint: ["/usr/src/datahub/entrypoint.sh"]
+    entrypoint: [ "/usr/src/datahub/entrypoint.sh" ]
     command: "celery-cmd"
 
   # Nginx is serving django static and media files and proxies to django and geonode
@@ -64,27 +64,25 @@ services:
       - HTTP_PORT=${HTTP_PORT}
       - LETSENCRYPT_MODE=${LETSENCRYPT_MODE}
       - RESOLVER=127.0.0.11
-    ports:
-      - "${HTTP_PORT}:80"
-      - "${HTTPS_PORT}:443"
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.nginx.rule=Host(`${HTTP_HOST}`)"
+        - "traefik.http.routers.nginx.entrypoints=web"
+        - "traefik.http.routers.nginx.middlewares=redirect-to-https"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.nginx-secure.rule=Host(`${HTTP_HOST}`)"
+        - "traefik.http.routers.nginx-secure.entrypoints=websecure"
+        - "traefik.http.routers.nginx-secure.tls=true"
+        - "traefik.http.routers.nginx-secure.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.nginx-secure.service=nginx"
+        - "traefik.http.services.nginx.loadbalancer.server.port=80"
+        - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+      - default
     volumes:
       - nginx-confd:/etc/nginx
-      - nginx-certificates:/geonode-certificates
       - statics:/mnt/volumes/statics
-    restart: on-failure
-
-  # Gets and installs letsencrypt certificates
-  letsencrypt:
-    image: geonode/letsencrypt:4.1.x
-    build: ./docker/letsencrypt/
-    container_name: letsencrypt4${COMPOSE_PROJECT_NAME}
-    environment:
-      - HTTPS_HOST=${HTTPS_HOST}
-      - HTTP_HOST=${HTTP_HOST}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - LETSENCRYPT_MODE=${LETSENCRYPT_MODE}
-    volumes:
-      - nginx-certificates:/geonode-certificates
     restart: on-failure
 
   # Geoserver backend
@@ -98,10 +96,20 @@ services:
       interval: 60s
       timeout: 10s
       retries: 10
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.geoserver.rule=Host(`${HTTP_HOST}`) && PathPrefix(`/geoserver`)"
+      - "traefik.http.routers.geoserver.entrypoints=websecure"
+      - "traefik.http.routers.geoserver.tls=true"
+      - "traefik.http.routers.geoserver.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.geoserver.service=geoserver"
+      - "traefik.http.services.geoserver.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+      - default
     env_file:
       - .env
-    ports:
-      - "8080:8080"
     volumes:
       - statics:/mnt/volumes/statics
       - geoserver-data-dir:/geoserver_data/data
@@ -151,23 +159,6 @@ services:
       - rabbitmq:/var/lib/rabbitmq
     restart: on-failure
 
-  jenkins:
-    image: jenkins/jenkins:2.164-jdk11
-    container_name: jenkins4${COMPOSE_PROJECT_NAME}
-    user: jenkins
-    ports:
-      - '${JENKINS_HTTP_PORT}:${JENKINS_HTTP_PORT}'
-      - '${JENKINS_HTTPS_PORT}:${JENKINS_HTTPS_PORT}'
-      - '50000:50000'
-    # network_mode: "host"
-    volumes:
-      - jenkins_data:/var/jenkins_home
-      - backup-restore:/backup_restore
-      - data:/data
-    environment:
-      - 'JENKINS_OPTS=--httpPort=${JENKINS_HTTP_PORT} --httpsPort=${JENKINS_HTTPS_PORT} --prefix=/jenkins'
-    restart: on-failure
-
 volumes:
   jenkins_data:
     driver: local
@@ -175,8 +166,6 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}-statics
   nginx-confd:
     name: ${COMPOSE_PROJECT_NAME}-nginxconfd
-  nginx-certificates:
-    name: ${COMPOSE_PROJECT_NAME}-nginxcerts
   geoserver-data-dir:
     name: ${COMPOSE_PROJECT_NAME}-gsdatadir
   dbdata:
@@ -191,3 +180,8 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}-tmp
   rabbitmq:
     name: ${COMPOSE_PROJECT_NAME}-rabbitmq
+
+networks:
+  traefik:
+    name: ${TRAEFIK_NETWORK}
+    external: true
