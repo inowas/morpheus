@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-infrastructureRoot=$( cd "$(dirname "$BASH_SOURCE")/.." ; pwd -P )
+projectRoot=$( cd "$(dirname "$BASH_SOURCE")/../../.." ; pwd -P )
+infrastructureRoot=$projectRoot/infrastructure/development
 if [[ "$(uname)" = "Darwin" ]] ; then isMacOs=true; else isMacOs=false; fi
 
 function outputHeadline {
