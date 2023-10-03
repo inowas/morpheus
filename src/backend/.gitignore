@@ -1,0 +1,10 @@
+.pytest_cache
+
+.python-version
+
+# ignore settings and secrets
+.secrets.toml
+.settings.local.toml
+
+log
+sensor_data

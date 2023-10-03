@@ -17,6 +17,9 @@ services:
       - "traefik.docker.network=traefik-web-gateway"
     restart: always
     read_only: true
+    tmpfs:
+      - /var/run
+      - /var/cache/nginx
 #  backend:
 #    image: inowas/morpheus-backend:${BACKEND_VERSION}
 #    depends_on:

@@ -16,18 +16,18 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-## Build development environment
-build-development:
-	docker compose -f infrastructure/development/docker-compose.yml build
+## Install development environment
+install-development:
+	infrastructure/development/scripts/install.sh
 
 ## Start development environment
 start-development:
-	docker compose -f infrastructure/development/docker-compose.yml up -d --build --force-recreate
+	infrastructure/development/scripts/start.sh
 
 ## Stop development environment
 stop-development:
-	docker compose -f infrastructure/development/docker-compose.yml down
+	infrastructure/development/scripts/stop.sh
 
 ## Stop development environment
 reset-development:
-	docker compose -f infrastructure/development/docker-compose.yml down -v
+	infrastructure/development/scripts/reset-environment.sh

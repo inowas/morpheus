@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: /etc/tls_certificates/{{ env "TLS_CERT_FILE" }}
+      keyFile: /etc/tls_certificates/{{ env "TLS_KEY_FILE" }}

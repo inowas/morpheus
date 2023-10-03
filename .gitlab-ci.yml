@@ -23,7 +23,7 @@ test-frontend:
   stage: test
 
   script:
-    - cd frontend
+    - cd src/frontend
     - make install-ci
     - make test-ci
 
@@ -33,12 +33,12 @@ build-morpheus-frontend:dev:
   dependencies:
     - test-frontend
   script:
-    - cd frontend
+    - cd src/frontend
     - make install-ci
     - make build-morpheus
   artifacts:
     paths:
-      - frontend/dist/morpheus
+      - src/frontend/dist/morpheus
     expire_in: 1 days
   only:
     - main
@@ -51,7 +51,7 @@ publish-morpheus-frontend:dev:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - docker build --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_FRONTEND_IMAGE:dev --file frontend/docker/Dockerfile.morpheus .
+    - docker build --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_FRONTEND_IMAGE:dev --file src/frontend/docker/Dockerfile.morpheus .
     - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_FRONTEND_IMAGE:dev
   only:
@@ -85,12 +85,12 @@ build-morpheus-frontend:prod:
   dependencies:
     - test-frontend
   script:
-    - cd frontend
+    - cd src/frontend
     - make install-ci
     - make build-morpheus
   artifacts:
     paths:
-      - frontend/dist/morpheus
+      - src/frontend/dist/morpheus
     expire_in: 1 days
   only:
     - tags
@@ -104,7 +104,7 @@ publish-morpheus-frontend:prod:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - docker build --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_FRONTEND_IMAGE:latest --file frontend/docker/Dockerfile.morpheus .
+    - docker build --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_FRONTEND_IMAGE:latest --file src/frontend/docker/Dockerfile.morpheus .
     - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_TAG
     - docker push $MORPHEUS_FRONTEND_IMAGE:latest
