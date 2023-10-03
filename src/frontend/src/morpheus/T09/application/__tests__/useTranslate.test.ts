@@ -1,11 +1,7 @@
 import {renderHook} from '@testing-library/react-hooks';
 import useTranslate from '../useTranslate';
 
-<<<<<<<< HEAD:src/frontend/src/morpheus/T09/application/__tests__/useTranslate.test.ts
 jest.mock('common/hooks', () => ({
-========
-jest.mock('morpheus/common/hooks', () => ({
->>>>>>>> origin/main:src/frontend/src/morpheus/T11/application/__tests__/useTranslate.test.ts
   useTranslation: () => ({
     translate: (key: string) => key.toUpperCase(),
     language: 'en',
