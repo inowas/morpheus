@@ -1,4 +1,9 @@
+<<<<<<<< HEAD:src/frontend/src/morpheus/T02/application/useTranslate.ts
 import {useTranslation, IUseTranslation} from 'common/hooks';
+========
+import {useTranslation} from 'morpheus/common/hooks';
+import {i18n as II18n} from 'i18next';
+>>>>>>>> origin/main:src/frontend/src/morpheus/T06/application/useTranslate.ts
 
 interface IUseTranslate {
   translate: (key: string) => string;
