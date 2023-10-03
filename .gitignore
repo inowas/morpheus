@@ -2,5 +2,4 @@
 .idea/
 **/node_modules/
 .env
-!infrastructure/development/.env
-.env.local
+infrastructure/development/tls_certificates/

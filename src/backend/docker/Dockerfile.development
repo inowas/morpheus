@@ -1,0 +1,27 @@
+FROM python:3.11-bookworm as build
+
+ADD src/backend /app
+WORKDIR /app
+RUN pip install --upgrade pip
+RUN pip install -r /app/requirements/dev.txt
+
+
+FROM build as development
+
+ARG FLASK_USER_ID
+ARG FLASK_GROUP_ID
+
+ENV PYTHONUNBUFFERED 1
+ENV FLASK_ENV development
+ENV FLASK_DEBUG 1
+ENV FLASK_APP wsgi:app
+ENV AUTHLIB_INSECURE_TRANSPORT 1
+
+RUN addgroup --system --gid ${FLASK_GROUP_ID} flask
+RUN adduser --uid ${FLASK_USER_ID} --gid ${FLASK_GROUP_ID} --system flask
+
+USER flask
+WORKDIR /app/src
+ENTRYPOINT ["/app/docker/docker-entrypoint.sh"]
+
+EXPOSE 8000
