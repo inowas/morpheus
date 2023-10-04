@@ -1,4 +1,11 @@
 TRAEFIK_NETWORK=traefik
+
+# Certificate resolver
+# possible values:
+# - letsencrypt: use Let's Encrypt to generate certificates
+# - tud-resolver: use the resolver provided by TU-Dresden
+TRAEFIK_CERT_RESOLVER=letsencrypt
+
 COMPOSE_PROJECT_NAME=datahub-development
 DOCKERHOST=
 DOCKER_HOST_IP=
