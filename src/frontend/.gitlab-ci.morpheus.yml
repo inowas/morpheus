@@ -19,6 +19,7 @@ build-morpheus-frontend:dev:
     expire_in: 1 days
   only:
     - main
+    - tags
 
 publish-morpheus-frontend:dev:
   stage: publish
@@ -33,6 +34,7 @@ publish-morpheus-frontend:dev:
     - docker push $MORPHEUS_FRONTEND_IMAGE:dev
   only:
     - main
+    - tags
 
 deploy-morpheus:dev:
   image: ubuntu:22.04
@@ -55,6 +57,7 @@ deploy-morpheus:dev:
     url: https://dev.morpheus.inowas.hydro.tu-dresden.de
   only:
     - main
+    - tags
 
 build-morpheus-frontend:prod:
   image: node:20
@@ -100,7 +103,7 @@ deploy-morpheus:prod:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
-    - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker-compose down"
+    - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose down"
     - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml $URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH/docker-compose.yml
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose pull"
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose up -d --force-recreate"
