@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
 import {IT02} from '../../types/T02.type';
+import throttle from 'lodash/throttle';
+import debounce from 'lodash/debounce';
 
 type IParameter = IT02['parameters'][0];
 
@@ -35,8 +37,16 @@ const Parameters = ({parameters, onChange, onReset}: IProps) => {
       }
       return p;
     });
-    onChange([...newParams]);
+
+    // Create throttled and debounced versions of the functions
+    const throttledOnChange = throttle(() => onChange([...newParams]), 500);
+    const debouncedOnChange = debounce(() => onChange([...newParams]), 500);
+
+    // Call the throttled or debounced functions here
+    // throttledOnChange();
+    debouncedOnChange();
   };
+
 
   const renderParameters = (p: IParameter[]) => (
     p.map(parameter => (

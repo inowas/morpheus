@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect} from 'react';
+import React, {ChangeEvent} from 'react';
 import 'rc-slider/assets/index.css';
 import './styles.less';
 import Slider from 'rc-slider';
@@ -15,9 +15,9 @@ const ParameterSlider = ({parameter, onChange}: IProps) => {
 
   const [param, setParam] = React.useState(parameter);
 
-  useEffect(() => {
-    setParam(parameter);
-  }, [parameter]);
+  // useEffect(() => {
+  //   setParam(parameter);
+  // }, [parameter]);
 
   const handleChange = () => {
     onChange(param);
@@ -35,7 +35,6 @@ const ParameterSlider = ({parameter, onChange}: IProps) => {
       ...param,
       value: Array.isArray(value) ? value[0] : value,
     };
-
     setParam(newParam);
     onChange(newParam);
   };
