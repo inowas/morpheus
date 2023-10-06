@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
 import {ParameterSlider} from 'components/Slider';
 import {IT02} from '../../types/T02.type';
-import throttle from 'lodash/throttle';
-import debounce from 'lodash/debounce';
 
 type IParameter = IT02['parameters'][0];
 
@@ -11,6 +9,8 @@ interface IProps {
   parameters: IParameter[];
   onChange: (parameters: IParameter[]) => void;
   onReset: () => void;
+  debounce?: number;
+
 }
 
 const sortParameters = (parameters: IParameter[]) => {
@@ -22,13 +22,34 @@ const sortParameters = (parameters: IParameter[]) => {
   });
 };
 
-const Parameters = ({parameters, onChange, onReset}: IProps) => {
+const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
 
   const [params, setParams] = useState<IParameter[]>(sortParameters(parameters));
 
   useEffect(() => {
     setParams(sortParameters(parameters));
   }, [parameters]);
+
+  // const handleChange = debounce((parameter) => {
+  //   const newParams: IParameter[] = params.map(p => {
+  //     if (p.id === parameter.id) {
+  //       return parameter;
+  //     }
+  //     return p;
+  //   });
+  //   onChange([...newParams]);
+  // }, 300);
+
+  // TODO:  remove throttle test
+  // const handleChange = throttle((parameter) => {
+  //   const newParams: IParameter[] = params.map(p => {
+  //     if (p.id === parameter.id) {
+  //       return parameter;
+  //     }
+  //     return p;
+  //   });
+  //   onChange([...newParams]);
+  // }, 500);
 
   const handleChange = (parameter: IParameter) => {
     const newParams: IParameter[] = params.map(p => {
@@ -37,14 +58,7 @@ const Parameters = ({parameters, onChange, onReset}: IProps) => {
       }
       return p;
     });
-
-    // Create throttled and debounced versions of the functions
-    const throttledOnChange = throttle(() => onChange([...newParams]), 500);
-    const debouncedOnChange = debounce(() => onChange([...newParams]), 500);
-
-    // Call the throttled or debounced functions here
-    // throttledOnChange();
-    debouncedOnChange();
+    onChange([...newParams]);
   };
 
 
@@ -54,6 +68,7 @@ const Parameters = ({parameters, onChange, onReset}: IProps) => {
         key={parameter.id}
         onChange={handleChange}
         parameter={parameter}
+        debounce={debounce}
       />
     ))
   );
