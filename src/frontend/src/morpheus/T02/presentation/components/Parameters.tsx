@@ -6,10 +6,10 @@ import {IT02} from '../../types/T02.type';
 type IParameter = IT02['parameters'][0];
 
 interface IProps {
-  parameters: IParameter[];
-  onChange: (parameters: IParameter[]) => void;
-  onReset: () => void;
-  debounce?: number;
+    parameters: IParameter[];
+    onChange: (parameters: IParameter[]) => void;
+    onReset: () => void;
+    debounce?: number;
 
 }
 
@@ -29,27 +29,6 @@ const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
   useEffect(() => {
     setParams(sortParameters(parameters));
   }, [parameters]);
-
-  // const handleChange = debounce((parameter) => {
-  //   const newParams: IParameter[] = params.map(p => {
-  //     if (p.id === parameter.id) {
-  //       return parameter;
-  //     }
-  //     return p;
-  //   });
-  //   onChange([...newParams]);
-  // }, 300);
-
-  // TODO:  remove throttle test
-  // const handleChange = throttle((parameter) => {
-  //   const newParams: IParameter[] = params.map(p => {
-  //     if (p.id === parameter.id) {
-  //       return parameter;
-  //     }
-  //     return p;
-  //   });
-  //   onChange([...newParams]);
-  // }, 500);
 
   const handleChange = (parameter: IParameter) => {
     const newParams: IParameter[] = params.map(p => {

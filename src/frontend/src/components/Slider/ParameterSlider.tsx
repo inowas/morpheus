@@ -7,15 +7,15 @@ import {ISliderParameter} from './IInputType';
 import styles from './Slider.module.less';
 
 interface IProps {
-  parameter: ISliderParameter;
-  onChange: (param: ISliderParameter) => void;
-  debounce?: number
+    parameter: ISliderParameter;
+    onChange: (param: ISliderParameter) => void;
+    debounce?: number
 }
 
 const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
 
   const [param, setParam] = React.useState(parameter);
-  const [timeOutId, setTimeOutId] = React.useState<number | null>(null);
+  const [timeOutId, setTimeOutId] = React.useState<NodeJS.Timeout | null>(null);
 
   const handleChange = () => {
     onChange(param);
@@ -47,7 +47,7 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
       clearTimeout(timeOutId);
     }
 
-    const toId = window.setTimeout(handleChange, debounce);
+    const toId = setTimeout(handleChange, debounce);
     setTimeOutId(toId);
   };
 
