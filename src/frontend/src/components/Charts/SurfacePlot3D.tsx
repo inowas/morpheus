@@ -1,4 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
+
+declare global {
+    interface Window {
+        Plotly: any;
+    }
+}
 
 interface IProps {
     title?: string;
@@ -14,30 +20,30 @@ interface ISurfacePlotData {
 
 type I2DArr = Array<Array<number>>;
 
-
 const SurfacePlot3D: React.FC<IProps> = ({data, title, style}) => {
-  const [PlotlyComponent, setPlotlyComponent] = useState<React.FC<any> | null>(null);
 
   useEffect(() => {
-    import('react-plotly.js').then(Plotly => {
-      // @ts-ignore
-      setPlotlyComponent(() => Plotly.default);
-    }).catch((error) => {
-      console.error('Error loading Plotly:', error);
-    });
-  }, []);
+    const timeOut = setTimeout(() => {
+      const Plotly = window.Plotly;
+      const plotData = data.map((d) => ({...d, type: 'surface'}));
+      const config = {responsive: true};
+      const layout = {title, autosize: true, margin: {l: 0, r: 0, b: 0, t: 0}};
+      Plotly.newPlot('plotlyContainer', plotData, layout, config);
+      return () => {
+        Plotly.purge('plotlyContainer');
+      };
+    }, 300);
 
-  if (!PlotlyComponent) {
-    return <div>Loading...</div>;
-  }
+    return () => clearTimeout(timeOut);
+
+  }, [data, title]);
+
 
   return (
-    <PlotlyComponent
-      data={data.map((d) => ({...d, type: 'surface'}))}
-      config={{responsive: true}}
+    <div
+      id="plotlyContainer"
       style={style || {width: '100%', height: '100%'}}
-      layout={{title, autosize: true, margin: {l: 0, r: 0, b: 0, t: 0}}}
-    />);
+    ></div>);
 };
 
 export default SurfacePlot3D;

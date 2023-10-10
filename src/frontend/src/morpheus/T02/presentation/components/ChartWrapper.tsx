@@ -119,8 +119,18 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
   );
 
   const [showModal, setShowModal] = useState(false);
+  const handleToggleModal = () => {
+    setShowModal(!showModal);
+  };
 
-  const handleToggleModal = () => setShowModal(!showModal);
+  // const closeModal = () => {
+  //   const Plotly = window.Plotly;
+  //   // Plotly.purge('plotlyContainer_chart1');
+  //   Plotly.purge('plotlyContainer_chart2');
+  //   setTimeout(() => {
+  //       setShowModal(false);
+  //   }, 1000);
+  // };
 
   return (
     <>
@@ -149,6 +159,8 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
             basinLength={L}
             basinWidth={W}
             chartHeight={300}
+            id="chart1"
+
           />
         </Grid.Column>
       </Grid>
@@ -162,6 +174,7 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
             }}
             basinLength={L}
             basinWidth={W}
+            id="chart2"
           />
         </ChartModal>
       )}
