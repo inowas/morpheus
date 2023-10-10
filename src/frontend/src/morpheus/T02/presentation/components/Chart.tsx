@@ -1,5 +1,4 @@
-import React from 'react';
-import Plot from 'react-plotly.js';
+import React, {useEffect, useState} from 'react';
 import {ColorScale} from 'plotly.js';
 
 interface IProps {
@@ -36,8 +35,23 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
   const surfaceElevation = maxZ + deltaZ;
   const basinElevation = surfaceElevation - 0.25 * deltaZ;
 
+  const [PlotlyComponent, setPlotlyComponent] = useState<React.FC<any> | null>(null);
+
+  useEffect(() => {
+    import('react-plotly.js').then(Plotly => {
+      // @ts-ignore
+      setPlotlyComponent(() => Plotly.default);
+    }).catch((error) => {
+      console.error('Error loading Plotly:', error);
+    });
+  }, []);
+
+  if (!PlotlyComponent) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <Plot
+    <PlotlyComponent
       data={[
         {
           name: 'Head',

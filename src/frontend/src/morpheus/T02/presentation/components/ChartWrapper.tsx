@@ -70,7 +70,6 @@ const calculateChartXMax = ({variable, w, L, W, hi, Sy, K, t}: ICalculateChartXM
   return 0;
 };
 
-
 const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => {
   const xMin = 0;
   const xMax = calculateChartXMax({variable: 'x', w, L, W, hi, Sy, K, t}, mounding);
@@ -102,7 +101,6 @@ const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => 
 
   return {xData, yData, zData};
 };
-
 
 const ChartWrapper = ({parameters, mounding}: IProps) => {
 
