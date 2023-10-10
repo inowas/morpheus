@@ -41,4 +41,3 @@ const SurfacePlot3D: React.FC<IProps> = ({data, title, style}) => {
 };
 
 export default SurfacePlot3D;
-
