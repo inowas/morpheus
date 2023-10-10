@@ -1,8 +1,18 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-db = SQLAlchemy()
+from morpheus.settings import settings
+
+
+def get_database_engine():
+    connection_string = "postgresql+psycopg2://{}:{}@{}:{}/{}".format(
+        settings.POSTGRES_USER,
+        settings.POSTGRES_PASSWORD,
+        settings.POSTGRES_HOST,
+        settings.POSTGRES_PORT,
+        settings.POSTGRES_DB,
+    )
+    return create_engine(connection_string)
 
 
 class BaseModel(DeclarativeBase):

@@ -18,6 +18,7 @@ else
     && if [[ "$isMacOs" = "true" ]] ; then groupId=1000; else groupId=$(id -g); fi \
     && sed -i.bak -e "s!__replace_with__flask_user_id!$userId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__flask_group_id!$groupId!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__project_root!$projectRoot!g" -- "$envFile.tmp" \
     && mv "$envFile.tmp" "$envFile" \
     && rm "$envFile.tmp.bak"
     exitWithErrorIfLastCommandFailed "Error preparing .env file $envFile"
@@ -30,6 +31,7 @@ outputHeadline "Installing local tls certificates"
 
 source "$infrastructureRoot/.env" \
 && mkdir -p "$infrastructureRoot/tls_certificates" \
+&& export CAROOT="$infrastructureRoot/tls_certificates" \
 && mkcert -install \
 && mkcert \
   -key-file "$infrastructureRoot/tls_certificates/${TLS_KEY_FILE}" \

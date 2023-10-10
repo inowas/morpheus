@@ -1,9 +1,9 @@
 import click
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 
+from morpheus.authentication.auth import check_token
 from morpheus.datahub.presentation.api.sensors import ReadSensorListWithLatestValuesRequestHandler
 from morpheus.datahub.presentation.cli.sensors import ReadUITSensorDataFromCSVFilesCliCommand
-from morpheus.user.incoming import require_authentication
 
 
 def bootstrap(app: Flask):
@@ -11,8 +11,11 @@ def bootstrap(app: Flask):
 
     @sensors_blueprint.route('/latest', methods=['GET'])
     def read_sensors():
-        request_handler = ReadSensorListWithLatestValuesRequestHandler()
-        return request_handler.handle()
+        bearer = request.headers.get('Authorization')
+        token = bearer.split(' ')[1]
+        return check_token(token)
+        # request_handler = ReadSensorListWithLatestValuesRequestHandler()
+        # return request_handler.handle()
 
     @sensors_blueprint.cli.command('read_uit_sensor_data_from_csv_files')
     @click.argument('src_path', type=str)

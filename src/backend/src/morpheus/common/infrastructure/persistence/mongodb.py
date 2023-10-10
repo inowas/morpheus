@@ -2,10 +2,10 @@ from pymongo import MongoClient
 
 from morpheus.settings import settings
 
-host = settings['MONGO_HOST']
-port = settings['MONGO_PORT']
-user = settings['MONGO_USER']
-password = settings['MONGO_PASSWORD']
+host = settings.MONGO_HOST
+port = settings.MONGO_PORT
+user = settings.MONGO_USER
+password = settings.MONGO_PASSWORD
 
 
 def get_database_client(db_name: str):

@@ -2,16 +2,12 @@ from flask import Flask, json
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 
-from morpheus.authentication.app import bootstrap as bootstrap_authentication_package
 from morpheus.settings import settings
-from morpheus.user.app import bootstrap as bootstrap_user_package
 from morpheus.datahub.app import bootstrap as bootstrap_datahub_module
 
 
 def bootstrap(app: Flask):
-    bootstrap_authentication_package(app)
     bootstrap_datahub_module(app)
-    bootstrap_user_package(app)
 
     @app.errorhandler(HTTPException)
     def handle_http_exceptions(exception):

@@ -2,9 +2,9 @@ alembic
 Authlib
 Dynaconf
 Flask
-Flask-SQLAlchemy
 gunicorn
 pandas
 psycopg2
 pymongo
 SQLAlchemy
+python-keycloak

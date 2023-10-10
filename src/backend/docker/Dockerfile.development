@@ -8,8 +8,29 @@ RUN pip install -r /app/requirements/dev.txt
 
 FROM build as development
 
+# install mkcert and the CA certificate for local development
+
+ARG MKCERT_ROOT_CA_CERTIFICATE
+ARG CAROOT
+
+RUN curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64" \
+    && chmod +x mkcert-v*-linux-amd64 \
+    && cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+
+COPY ${MKCERT_ROOT_CA_CERTIFICATE} ${CAROOT}/
+RUN mkcert -install
+# make python requests library use the system trust store
+RUN pip install pip_system_certs
+
+# prepare user flask
+
 ARG FLASK_USER_ID
 ARG FLASK_GROUP_ID
+
+RUN addgroup --system --gid ${FLASK_GROUP_ID} flask
+RUN adduser --uid ${FLASK_USER_ID} --gid ${FLASK_GROUP_ID} --system flask
+
+# prepare environment for flask app
 
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV development
@@ -17,8 +38,6 @@ ENV FLASK_DEBUG 1
 ENV FLASK_APP wsgi:app
 ENV AUTHLIB_INSECURE_TRANSPORT 1
 
-RUN addgroup --system --gid ${FLASK_GROUP_ID} flask
-RUN adduser --uid ${FLASK_USER_ID} --gid ${FLASK_GROUP_ID} --system flask
 
 USER flask
 WORKDIR /app/src

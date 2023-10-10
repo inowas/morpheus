@@ -16,21 +16,6 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-## Install dev environment
-install-dev:
-	environments/dev/scripts/setup_pyenv.sh
-	environments/dev/scripts/install.sh
-
-## Start the development database
-start-dev-database:
-	environments/dev/scripts/start_database.sh
-
-prune-dev-database:
-	environments/dev/scripts/prune_database.sh
-
-## Start the development server
-start-dev-server:
-	environments/dev/scripts/start_server.sh
 
 ## runs architecture layer boundary checks, static code analysis and tests
 qa-check:
