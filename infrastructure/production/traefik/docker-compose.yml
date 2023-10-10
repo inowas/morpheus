@@ -11,21 +11,22 @@ services:
       - "--api.insecure=false"
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedByDefault=false"
-      # comment out the following line to disable letsencrypt
-      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
-      # uncomment the following lines to enable TU-Dresden CA
-      # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      # - "--certificatesresolvers.myresolver.acme.caserver=${TRAEFIK_ACME_CASERVER}"
-      # - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_ACME_EMAIL}"
-      # - "--certificatesresolvers.myresolver.acme.storage=/etc/traefik/acme/acme.json"
-      # - "--certificatesresolvers.myresolver.acme.eab.kid=${TRAEFIK_ACME_EAB_KID}"
-      # - "--certificatesresolvers.myresolver.acme.eab.hmacencoded=${TRAEFIK_ACME_EAB_HMAC_ENCODED}"
       - "--global.checkNewVersion=true"
       - "--global.sendAnonymousUsage=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      # Let's Encrypt
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.caserver=${TRAEFIK_ACME_LETSENCRYPT_CASERVER}"
+      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme_letsencrypt.json"
+      # TU-Dresden CA
+      - "--certificatesresolvers.tud-resolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.tud-resolver.acme.caserver=${TRAEFIK_ACME_TUD_CASERVER}"
+      - "--certificatesresolvers.tud-resolver.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.tud-resolver.acme.eab.kid=${TRAEFIK_ACME_TUD_EAB_KID}"
+      - "--certificatesresolvers.tud-resolver.acme.eab.hmacencoded=${TRAEFIK_ACME_TUD_EAB_HMAC_ENCODED}"
+      - "--certificatesresolvers.tud-resolver.acme.storage=/etc/traefik/acme/acme_tud.json"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./acme:/etc/traefik/acme

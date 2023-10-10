@@ -4,24 +4,27 @@ services:
     image: inowas/mfviz:${VERSION}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend-http.entrypoints=web"
-      - "traefik.http.routers.frontend-http.rule=Host(`${HOST}`)"
-      - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend-http.rule=Host(`${HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.rule=Host(`${HOST}`)"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
-      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
-      - "traefik.docker.network=traefik-web-gateway"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend.rule=Host(`${HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-frontend.service=${COMPOSE_PROJECT_NAME}-frontend"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-frontend.loadbalancer.server.port=8080"
+      - "traefik.docker.network=${TRAEFIK_NETWORK}"
+    networks:
+      - traefik
     restart: always
     read_only: true
     tmpfs:
-      - /var/run
-      - /var/cache/nginx
+      - /var/run:mode=777,size=100m
+      - /var/cache/nginx:mode=777,size=100m
 
 networks:
-  default:
-    name: traefik-web-gateway
+  traefik:
+    name: ${TRAEFIK_NETWORK}
     external: true

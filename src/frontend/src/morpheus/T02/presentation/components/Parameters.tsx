@@ -6,9 +6,11 @@ import {IT02} from '../../types/T02.type';
 type IParameter = IT02['parameters'][0];
 
 interface IProps {
-  parameters: IParameter[];
-  onChange: (parameters: IParameter[]) => void;
-  onReset: () => void;
+    parameters: IParameter[];
+    onChange: (parameters: IParameter[]) => void;
+    onReset: () => void;
+    debounce?: number;
+
 }
 
 const sortParameters = (parameters: IParameter[]) => {
@@ -20,7 +22,7 @@ const sortParameters = (parameters: IParameter[]) => {
   });
 };
 
-const Parameters = ({parameters, onChange, onReset}: IProps) => {
+const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
 
   const [params, setParams] = useState<IParameter[]>(sortParameters(parameters));
 
@@ -38,12 +40,14 @@ const Parameters = ({parameters, onChange, onReset}: IProps) => {
     onChange([...newParams]);
   };
 
+
   const renderParameters = (p: IParameter[]) => (
     p.map(parameter => (
       <ParameterSlider
         key={parameter.id}
         onChange={handleChange}
         parameter={parameter}
+        debounce={debounce}
       />
     ))
   );

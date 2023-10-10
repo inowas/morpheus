@@ -3,17 +3,17 @@ import Plot from 'react-plotly.js';
 import {ColorScale} from 'plotly.js';
 
 interface IProps {
-  data: ISurfacePlotData;
-  title?: string;
-  basinWidth: number;
-  basinLength: number;
-  chartHeight?: number;
+    data: ISurfacePlotData;
+    title?: string;
+    basinWidth: number;
+    basinLength: number;
+    chartHeight?: number;
 }
 
 interface ISurfacePlotData {
-  x: number[];
-  y: number[];
-  z: number[][];
+    x: number[];
+    y: number[];
+    z: number[][];
 }
 
 const colorScale: ColorScale = [

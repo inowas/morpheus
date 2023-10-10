@@ -1,0 +1,112 @@
+variables:
+  MFVIZ_IMAGE: inowas/mfviz
+  MFVIZ_DEVELOPMENT_PATH: /srv/docker/mfviz.development
+  MFVIZ_PRODUCTION_PATH: /srv/docker/mfviz.production
+
+build-mfviz-frontend:dev:
+  image: node:20
+  stage: build
+  dependencies:
+    - test-frontend
+  script:
+    - cd src/frontend
+    - make install-ci
+    - make build-mfviz
+  artifacts:
+    paths:
+      - src/frontend/dist/mfviz
+    expire_in: 1 days
+  only:
+    - main
+    - tags
+
+publish-mfviz-frontend:dev:
+  stage: publish
+  dependencies:
+    - build-mfviz-frontend:dev
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - docker build --tag $MFVIZ_IMAGE:$CI_COMMIT_SHA --tag $MFVIZ_IMAGE:dev --file src/frontend/docker/Dockerfile.mfviz .
+    - docker push $MFVIZ_IMAGE:$CI_COMMIT_SHA
+    - docker push $MFVIZ_IMAGE:dev
+  only:
+    - main
+    - tags
+
+deploy-mfviz:dev:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - publish-mfviz-frontend:dev
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  script:
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MFVIZ_DEVELOPMENT_PATH && docker compose down"
+    - scp -P22 ./infrastructure/production/mfviz/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$MFVIZ_DEVELOPMENT_PATH/docker-compose.yml
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MFVIZ_DEVELOPMENT_PATH && docker compose pull"
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MFVIZ_DEVELOPMENT_PATH && docker compose up -d --force-recreate"
+  environment:
+    name: development
+    url: https://dev.mfviz.inowas.hydro.tu-dresden.de
+  only:
+    - main
+    - tags
+
+build-mfviz-frontend:prod:
+  image: node:20
+  stage: build
+  dependencies:
+    - test-frontend
+  script:
+    - cd src/frontend
+    - make install-ci
+    - make build-mfviz
+  artifacts:
+    paths:
+      - src/frontend/dist/mfviz
+    expire_in: 1 days
+  only:
+    - tags
+
+publish-mfviz-frontend:prod:
+  stage: publish
+  dependencies:
+    - build-mfviz-frontend:prod
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - docker build --tag $MFVIZ_IMAGE:$CI_COMMIT_SHA --tag $MFVIZ_IMAGE:$CI_COMMIT_TAG --tag $MFVIZ_IMAGE:latest --file src/frontend/docker/Dockerfile.mfviz .
+    - docker push $MFVIZ_IMAGE:$CI_COMMIT_SHA
+    - docker push $MFVIZ_IMAGE:$CI_COMMIT_TAG
+    - docker push $MFVIZ_IMAGE:latest
+  only:
+    - tags
+
+deploy-mfviz:prod:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - publish-mfviz-frontend:prod
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  script:
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MFVIZ_PRODUCTION_PATH && docker compose down"
+    - scp -P22 ./infrastructure/production/mfviz/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$MFVIZ_PRODUCTION_PATH/docker-compose.yml
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MFVIZ_PRODUCTION_PATH && docker compose pull"
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MFVIZ_PRODUCTION_PATH && docker compose up -d --force-recreate"
+  environment:
+    name: development
+    url: https://mfviz.inowas.hydro.tu-dresden.de
+  only:
+    - tags

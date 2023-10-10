@@ -23,6 +23,10 @@ install:
 install-ci:
 	npm ci --legacy-peer-deps
 
+## Analyze the built morpheus application with source-map-explorer
+analyze-morpheus:
+	npm run analyze-morpheus
+
 ## Start the morpheus application in application development mode
 start:
 	npm run start-morpheus

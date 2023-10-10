@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Background, ChartWrapper, Info, Parameters, Settings} from '../components';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding, useTranslate, useNavigate} from '../../application';
+import {useCalculateMounding, useNavigate, useTranslate} from '../../application';
 import {Breadcrumb} from '../../../../components';
 import SimpleToolGrid from '../../../../components/SimpleToolGrid';
 
@@ -159,6 +159,7 @@ const T02 = () => {
           <Info parameters={data.parameters} mounding={mounding}/>
         </div>
         <Parameters
+          debounce={500}
           parameters={data.parameters}
           onChange={handleChangeParameters}
           onReset={handleReset}

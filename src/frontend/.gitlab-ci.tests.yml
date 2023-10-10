@@ -1,0 +1,8 @@
+test-frontend:
+  image: node:20
+  stage: test
+
+  script:
+    - cd src/frontend
+    - make install-ci
+    - make test-ci

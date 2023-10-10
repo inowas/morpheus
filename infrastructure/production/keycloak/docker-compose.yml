@@ -35,10 +35,7 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
-      # comment out the following line to disable letsencrypt
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls.certresolver=letsencrypt"
-      # uncomment the following lines to enable TU-Dresden CA
-      # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls.certresolver=myresolver"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
       - "traefik.docker.network=${TRAEFIK_NETWORK}"
   postgres_keycloak:
