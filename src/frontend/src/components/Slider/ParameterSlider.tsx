@@ -21,14 +21,7 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
     onChange(param);
   };
 
-  const handleLocalChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const {value, name} = event.target;
-    setParam({
-      ...param, [name]: value,
-    });
-  };
-
-  const handleSliderParams = (value: number | number[]) => {
+  const handleParams = (value: number | number[]) => {
     const newParam = {
       ...param,
       value: Array.isArray(value) ? value[0] : value,
@@ -36,9 +29,18 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
     return newParam;
   };
 
+  const handleLocalChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const {value, name} = event.target;
+    const newValue = 0 > +value ? '0' : value;
+    setParam({
+      ...param, [name]: newValue,
+    });
+  };
+
   const handleSlider = (value: number | number[]) => {
-    const newParam = handleSliderParams(value);
+    const newParam = handleParams(value);
     setParam(newParam);
+
     if (!debounce) {
       onChange(newParam);
     }
@@ -111,6 +113,8 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
         <input
           name="value"
           type="number"
+          min={param.min}
+          max={param.max}
           className={`${styles.extraMini} , ${styles.valueInput}`}
           value={param.value} onChange={handleLocalChange}
           onBlur={handleChange}

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Dimmer, Grid, Icon, Loader} from 'semantic-ui-react';
+import {Grid, Icon} from 'semantic-ui-react';
 import {IT02} from '../../types/T02.type';
 import Chart from './Chart';
 import ChartModal from '../../../application/presentation/components/ChartModal';
@@ -104,7 +104,6 @@ const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => 
 
 const ChartWrapper = ({parameters, mounding}: IProps) => {
 
-  const [loading, setLoading] = React.useState<boolean>(false);
   const {L, W, w, hi, Sy, K, t} = getParameterValues(parameters);
 
   const {xData, yData, zData} = React.useMemo(() => calculate({
@@ -119,15 +118,14 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
   );
 
   const [showModal, setShowModal] = useState(false);
+
   const handleToggleModal = () => {
     setShowModal(!showModal);
   };
 
+
   return (
     <>
-      {loading && <Dimmer active={true} inverted={true}>
-        <Loader/>
-      </Dimmer>}
       <Grid style={{
         height: '100%',
       }}
