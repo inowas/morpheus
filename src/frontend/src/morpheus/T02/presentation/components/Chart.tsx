@@ -1,28 +1,22 @@
 import React, {useEffect} from 'react';
-import {ColorScale} from 'plotly.js';
-
-declare global {
-    interface Window {
-        Plotly: any;
-    }
-}
+import cloneDeep from 'lodash.clonedeep';
 
 interface IProps {
-    data: ISurfacePlotData;
-    title?: string;
-    basinWidth: number;
-    basinLength: number;
-    chartHeight?: number;
-    id: string;
+  data: ISurfacePlotData;
+  title?: string;
+  basinWidth: number;
+  basinLength: number;
+  chartHeight?: number;
+  id: string;
 }
 
 interface ISurfacePlotData {
-    x: number[];
-    y: number[];
-    z: number[][];
+  x: number[];
+  y: number[];
+  z: number[][];
 }
 
-const colorScale: ColorScale = [
+const colorScale: string | string[] | Array<[number, string]> = [
   [0.0, 'rgb(49,54,149)'],
   [0.11, 'rgb(69,117,180)'],
   [0.22, 'rgb(116,173,209)'],
@@ -39,100 +33,100 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
   const containerId = `plotlyContainer_${id}`;
 
   useEffect(() => {
-    const timeOut = setTimeout(() => {
-      const Plotly = window.Plotly;
-      const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
-      const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
-      const deltaZ = maxZ - minZ;
-      const surfaceElevation = maxZ + deltaZ;
-      const basinElevation = surfaceElevation - 0.25 * deltaZ;
-      const plotData = [
-        {
-          name: 'Head',
-          x: data.x,
-          y: data.y,
-          z: data.z,
-          type: 'surface',
-          colorscale: colorScale,
-          showscale: true,
-          orientation: 'v',
-        },
-        {
-          name: 'Basin',
-          x: [-basinLength / 2 - 1, -basinLength / 2, basinLength / 2, basinLength / 2 + 1],
-          y: [-basinWidth / 2 - 1, -basinWidth / 2, basinWidth / 2, basinWidth / 2 + 1],
-          z: [
-            [surfaceElevation, surfaceElevation, surfaceElevation, surfaceElevation],
-            [surfaceElevation, basinElevation, basinElevation, surfaceElevation],
-            [surfaceElevation, basinElevation, basinElevation, surfaceElevation],
-            [surfaceElevation, surfaceElevation, surfaceElevation, surfaceElevation],
-          ],
-          type: 'surface',
-          colorscale: [
-            [0.0, 'rgb(49,54,149)'],
-            [1.0, 'rgb(0,0,0)'],
-          ],
-          showscale: false,
-          opacity: 0.2,
-          orientation: 'v',
-        },
-      ];
-      const config = {responsive: true};
-      const layout = {
-        plot_bgcolor: 'rgb(224,243,248)',
-        title: title,
-        autosize: true,
-        height: chartHeight !== undefined ? chartHeight : undefined,
-        margin: {l: 0, r: 0, b: 0, t: 0},
-        scene: {
-          camera: {
-            up: {
-              x: 1,
-              y: 0,
-              z: 1,
-            },
-            center: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            eye: {
-              x: 0,
-              y: 0,
-              z: 1,
-            },
-          },
-          aspectmode: 'manual',
-          aspectratio: {
-            y: 1,
-            x: (Math.max(...data.x) - Math.min(...data.x)) / (Math.max(...data.y) - Math.min(...data.y)),
-            z: 0.2,
-          },
-          xaxis: {
-            visible: true,
-          },
-          yaxis: {
-            visible: true,
-          },
-          zaxis: {
-            visible: false,
-          },
-        },
-      };
-      Plotly.newPlot(containerId, plotData, layout, config);
-      return () => {
-        Plotly.purge(containerId);
-      };
-    }, 300);
+    if (!window.Plotly) {
+      throw Error('Plotly not found.');
+    }
 
-    return () => clearTimeout(timeOut);
+    const Plotly = cloneDeep(window.Plotly);
+    const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
+    const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
+    const deltaZ = maxZ - minZ;
+    const surfaceElevation = maxZ + deltaZ;
+    const basinElevation = surfaceElevation - 0.25 * deltaZ;
+    const plotData = [
+      {
+        name: 'Head',
+        x: data.x,
+        y: data.y,
+        z: data.z,
+        type: 'surface',
+        colorscale: colorScale,
+        showscale: true,
+        orientation: 'v',
+      },
+      {
+        name: 'Basin',
+        x: [-basinLength / 2 - 1, -basinLength / 2, basinLength / 2, basinLength / 2 + 1],
+        y: [-basinWidth / 2 - 1, -basinWidth / 2, basinWidth / 2, basinWidth / 2 + 1],
+        z: [
+          [surfaceElevation, surfaceElevation, surfaceElevation, surfaceElevation],
+          [surfaceElevation, basinElevation, basinElevation, surfaceElevation],
+          [surfaceElevation, basinElevation, basinElevation, surfaceElevation],
+          [surfaceElevation, surfaceElevation, surfaceElevation, surfaceElevation],
+        ],
+        type: 'surface',
+        colorscale: [
+          [0.0, 'rgb(49,54,149)'],
+          [1.0, 'rgb(0,0,0)'],
+        ],
+        showscale: false,
+        opacity: 0.2,
+        orientation: 'v',
+      },
+    ];
+    const config = {responsive: true};
+    const layout = {
+      plot_bgcolor: 'rgb(224,243,248)',
+      title: title,
+      autosize: true,
+      height: chartHeight !== undefined ? chartHeight : undefined,
+      margin: {l: 0, r: 0, b: 0, t: 0},
+      scene: {
+        camera: {
+          up: {
+            x: 1,
+            y: 0,
+            z: 1,
+          },
+          center: {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          eye: {
+            x: 0,
+            y: 0,
+            z: 1,
+          },
+        },
+        aspectmode: 'manual',
+        aspectratio: {
+          y: 1,
+          x: (Math.max(...data.x) - Math.min(...data.x)) / (Math.max(...data.y) - Math.min(...data.y)),
+          z: 0.2,
+        },
+        xaxis: {
+          visible: true,
+        },
+        yaxis: {
+          visible: true,
+        },
+        zaxis: {
+          visible: false,
+        },
+      },
+    };
+
+    Plotly.newPlot(containerId, plotData, layout, config);
 
   }, [data, title, basinLength, basinWidth, chartHeight, containerId]);
+
 
   return <div
     id={containerId}
     className={chartHeight !== undefined ? 'plotlyContainer' : 'plotlyContainerModal'}
   ></div>;
+
 };
 
 export default Chart;

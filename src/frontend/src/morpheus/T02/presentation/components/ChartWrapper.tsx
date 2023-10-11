@@ -6,35 +6,35 @@ import ChartModal from '../../../application/presentation/components/ChartModal'
 import styles from '../containers/T02Container.module.less';
 
 interface ICalculateChartXMax {
-    variable: string;
-    w: number;
-    L: number;
-    W: number;
-    hi: number;
-    Sy: number;
-    K: number;
-    t: number;
+  variable: string;
+  w: number;
+  L: number;
+  W: number;
+  hi: number;
+  Sy: number;
+  K: number;
+  t: number;
 }
 
 interface ICalculate {
-    w: number;
-    L: number;
-    W: number;
-    hi: number;
-    Sy: number;
-    K: number;
-    t: number;
+  w: number;
+  L: number;
+  W: number;
+  hi: number;
+  Sy: number;
+  K: number;
+  t: number;
 }
 
 interface IMounding {
-    calculateHi: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
-    calculateHMax: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
+  calculateHi: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
+  calculateHMax: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
 }
 
 interface IProps {
-    settings: IT02['settings'];
-    parameters: IT02['parameters'];
-    mounding: IMounding;
+  settings: IT02['settings'];
+  parameters: IT02['parameters'];
+  mounding: IMounding;
 }
 
 const getParameterValues = (arr: IT02['parameters']) => {
@@ -123,21 +123,15 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
     setShowModal(!showModal);
   };
 
-  // const closeModal = () => {
-  //   const Plotly = window.Plotly;
-  //   // Plotly.purge('plotlyContainer_chart1');
-  //   Plotly.purge('plotlyContainer_chart2');
-  //   setTimeout(() => {
-  //       setShowModal(false);
-  //   }, 1000);
-  // };
-
   return (
     <>
       {loading && <Dimmer active={true} inverted={true}>
         <Loader/>
       </Dimmer>}
-      <Grid>
+      <Grid style={{
+        height: '100%',
+      }}
+      >
         <Icon
           name="expand arrows alternate"
           onClick={handleToggleModal}
