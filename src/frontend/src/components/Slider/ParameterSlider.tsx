@@ -7,9 +7,9 @@ import {ISliderParameter} from './IInputType';
 import styles from './Slider.module.less';
 
 interface IProps {
-    parameter: ISliderParameter;
-    onChange: (param: ISliderParameter) => void;
-    debounce?: number
+  parameter: ISliderParameter;
+  onChange: (param: ISliderParameter) => void;
+  debounce?: number
 }
 
 const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
@@ -37,17 +37,17 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
   };
 
   const handleSlider = (value: number | number[]) => {
-    setParam(handleSliderParams(value));
-
+    const newParam = handleSliderParams(value);
+    setParam(newParam);
     if (!debounce) {
-      onChange(param);
+      onChange(newParam);
     }
-
     if (timeOutId) {
       clearTimeout(timeOutId);
     }
-
-    const toId = setTimeout(handleChange, debounce);
+    const toId = setTimeout(() => {
+      onChange(newParam);
+    }, debounce);
     setTimeOutId(toId);
   };
 
@@ -69,6 +69,7 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
               type="number"
               className={`${styles.extraMini} ${styles.left}`}
               value={param.min}
+              disabled={true}
               onBlur={handleChange}
               onChange={handleLocalChange}
             />
@@ -82,6 +83,7 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
               type="number"
               className={`${styles.extraMini} ${styles.right}`}
               value={param.max}
+              disabled={true}
               onBlur={handleChange}
               onChange={handleLocalChange}
             />
