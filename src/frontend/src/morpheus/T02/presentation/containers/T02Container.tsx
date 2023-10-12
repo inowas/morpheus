@@ -118,7 +118,6 @@ type IParameter = IT02['parameters'][0];
 const tool = 'T02';
 
 const T02 = () => {
-  const [loading, setLoading] = React.useState<boolean>(false);
   const [data, setData] = useState<IT02>(defaults);
   const mounding = useCalculateMounding();
   const navigateTo = useNavigate();
@@ -134,10 +133,6 @@ const T02 = () => {
 
   const handleReset = () => {
     setData(defaults);
-  };
-
-  const handleLoading = () => {
-    setLoading(!loading);
   };
 
   const title = `${tool}: ${translate(`${tool}_title`)}`;

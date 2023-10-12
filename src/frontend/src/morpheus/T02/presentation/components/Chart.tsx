@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
 
 interface IProps {
@@ -16,6 +16,14 @@ interface ISurfacePlotData {
   z: number[][];
 }
 
+const initialPlotlyRefValue = {
+  newPlot: (containerId: HTMLElement | string,
+    plotData: any[],
+    layout: any,
+    config: any) => {
+  },
+};
+
 const colorScale: string | string[] | Array<[number, string]> = [
   [0.0, 'rgb(49,54,149)'],
   [0.11, 'rgb(69,117,180)'],
@@ -31,18 +39,19 @@ const colorScale: string | string[] | Array<[number, string]> = [
 
 const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHeight, id}) => {
   const containerId = `plotlyContainer_${id}`;
+  const plotlyRef = useRef(initialPlotlyRefValue);
 
   useEffect(() => {
     if (!window.Plotly) {
       throw Error('Plotly not found.');
     }
-
-    const Plotly = cloneDeep(window.Plotly);
+    plotlyRef.current = cloneDeep(window.Plotly);
     const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
     const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
     const deltaZ = maxZ - minZ;
     const surfaceElevation = maxZ + deltaZ;
     const basinElevation = surfaceElevation - 0.25 * deltaZ;
+    // Update the plot data stored in the ref
     const plotData = [
       {
         name: 'Head',
@@ -116,9 +125,7 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
         },
       },
     };
-
-    Plotly.newPlot(containerId, plotData, layout, config);
-
+    plotlyRef.current.newPlot(containerId, plotData, layout, config);
   }, [data, title, basinLength, basinWidth, chartHeight, containerId]);
 
 
