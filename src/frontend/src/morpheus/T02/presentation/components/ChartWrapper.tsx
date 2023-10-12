@@ -1,40 +1,40 @@
 import React, {useState} from 'react';
-import {Dimmer, Grid, Icon, Loader} from 'semantic-ui-react';
+import {Grid, Icon} from 'semantic-ui-react';
 import {IT02} from '../../types/T02.type';
 import Chart from './Chart';
 import ChartModal from '../../../application/presentation/components/ChartModal';
 import styles from '../containers/T02Container.module.less';
 
 interface ICalculateChartXMax {
-    variable: string;
-    w: number;
-    L: number;
-    W: number;
-    hi: number;
-    Sy: number;
-    K: number;
-    t: number;
+  variable: string;
+  w: number;
+  L: number;
+  W: number;
+  hi: number;
+  Sy: number;
+  K: number;
+  t: number;
 }
 
 interface ICalculate {
-    w: number;
-    L: number;
-    W: number;
-    hi: number;
-    Sy: number;
-    K: number;
-    t: number;
+  w: number;
+  L: number;
+  W: number;
+  hi: number;
+  Sy: number;
+  K: number;
+  t: number;
 }
 
 interface IMounding {
-    calculateHi: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
-    calculateHMax: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
+  calculateHi: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
+  calculateHMax: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
 }
 
 interface IProps {
-    settings: IT02['settings'];
-    parameters: IT02['parameters'];
-    mounding: IMounding;
+  settings: IT02['settings'];
+  parameters: IT02['parameters'];
+  mounding: IMounding;
 }
 
 const getParameterValues = (arr: IT02['parameters']) => {
@@ -70,7 +70,6 @@ const calculateChartXMax = ({variable, w, L, W, hi, Sy, K, t}: ICalculateChartXM
   return 0;
 };
 
-
 const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => {
   const xMin = 0;
   const xMax = calculateChartXMax({variable: 'x', w, L, W, hi, Sy, K, t}, mounding);
@@ -103,10 +102,8 @@ const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => 
   return {xData, yData, zData};
 };
 
-
 const ChartWrapper = ({parameters, mounding}: IProps) => {
 
-  const [loading, setLoading] = React.useState<boolean>(false);
   const {L, W, w, hi, Sy, K, t} = getParameterValues(parameters);
 
   const {xData, yData, zData} = React.useMemo(() => calculate({
@@ -122,14 +119,17 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const handleToggleModal = () => setShowModal(!showModal);
+  const handleToggleModal = () => {
+    setShowModal(!showModal);
+  };
+
 
   return (
     <>
-      {loading && <Dimmer active={true} inverted={true}>
-        <Loader/>
-      </Dimmer>}
-      <Grid>
+      <Grid style={{
+        height: '100%',
+      }}
+      >
         <Icon
           name="expand arrows alternate"
           onClick={handleToggleModal}
@@ -151,6 +151,8 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
             basinLength={L}
             basinWidth={W}
             chartHeight={300}
+            id="chart1"
+
           />
         </Grid.Column>
       </Grid>
@@ -164,6 +166,7 @@ const ChartWrapper = ({parameters, mounding}: IProps) => {
             }}
             basinLength={L}
             basinWidth={W}
+            id="chart2"
           />
         </ChartModal>
       )}

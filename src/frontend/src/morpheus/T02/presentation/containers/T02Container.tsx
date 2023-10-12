@@ -118,7 +118,6 @@ type IParameter = IT02['parameters'][0];
 const tool = 'T02';
 
 const T02 = () => {
-
   const [data, setData] = useState<IT02>(defaults);
   const mounding = useCalculateMounding();
   const navigateTo = useNavigate();

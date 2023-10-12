@@ -6,11 +6,10 @@ import {IT02} from '../../types/T02.type';
 type IParameter = IT02['parameters'][0];
 
 interface IProps {
-    parameters: IParameter[];
-    onChange: (parameters: IParameter[]) => void;
-    onReset: () => void;
-    debounce?: number;
-
+  parameters: IParameter[];
+  onChange: (parameters: IParameter[]) => void;
+  onReset: () => void;
+  debounce?: number;
 }
 
 const sortParameters = (parameters: IParameter[]) => {

@@ -2,6 +2,10 @@ import React from 'react';
 import {render, screen} from '@testing-library/react';
 import T02Container from './T02Container';
 
+// Mock window.Plotly
+window.Plotly = {
+  newPlot: jest.fn(),
+};
 jest.mock('../../application', () => ({
   useCalculateMounding: () => ({
     calculateHi: jest.fn().mockReturnValue(0.01),
@@ -18,12 +22,6 @@ jest.mock('../../application', () => ({
     translate: (key: string) => key,
     language: 'en',
   }),
-}));
-
-// mock the react-plotly.js library, which fails to run server side
-jest.mock('react-plotly.js', () => ({
-  __esModule: true,
-  default: jest.fn(() => <div/>),
 }));
 
 describe('Container Tests', () => {
