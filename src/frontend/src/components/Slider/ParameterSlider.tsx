@@ -9,16 +9,17 @@ import styles from './Slider.module.less';
 interface IProps {
   parameter: ISliderParameter;
   onChange: (param: ISliderParameter) => void;
-  debounce?: number
+  debounce?: number;
+  onLoad: (value: boolean) => void;
 }
 
-const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
-
+const ParameterSlider = ({parameter, onChange, debounce, onLoad}: IProps) => {
   const [param, setParam] = React.useState(parameter);
   const [timeOutId, setTimeOutId] = React.useState<NodeJS.Timeout | null>(null);
 
   const handleChange = () => {
     onChange(param);
+    onLoad(true);
   };
 
   const handleParams = (value: number | number[]) => {
@@ -38,9 +39,10 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
   };
 
   const handleSlider = (value: number | number[]) => {
+
     const newParam = handleParams(value);
     setParam(newParam);
-
+    onLoad(true);
     if (!debounce) {
       onChange(newParam);
     }
@@ -48,6 +50,7 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
       clearTimeout(timeOutId);
     }
     const toId = setTimeout(() => {
+      // onLoad(true);
       onChange(newParam);
     }, debounce);
     setTimeOutId(toId);

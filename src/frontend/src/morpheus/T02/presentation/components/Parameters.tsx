@@ -10,6 +10,7 @@ interface IProps {
   onChange: (parameters: IParameter[]) => void;
   onReset: () => void;
   debounce?: number;
+  onLoad: (value: boolean) => void;
 }
 
 const sortParameters = (parameters: IParameter[]) => {
@@ -21,7 +22,7 @@ const sortParameters = (parameters: IParameter[]) => {
   });
 };
 
-const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
+const Parameters = ({parameters, onChange, onLoad, onReset, debounce}: IProps) => {
 
   const [params, setParams] = useState<IParameter[]>(sortParameters(parameters));
 
@@ -47,6 +48,7 @@ const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
         onChange={handleChange}
         parameter={parameter}
         debounce={debounce}
+        onLoad={onLoad}
       />
     ))
   );
