@@ -3,9 +3,9 @@ import {Background, ChartWrapper, Info, Parameters} from '../components';
 import {Dimmer, Loader} from 'semantic-ui-react';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {chartCalculator, useCalculateMounding, useNavigate, useTranslate} from '../../application';
-import {Breadcrumb} from '../../../../components';
-import SimpleToolGrid from '../../../../components/SimpleToolGrid';
+import {useCalculateChartData, useCalculateMounding, useNavigate, useTranslate} from '../../application';
+import {Breadcrumb} from 'components';
+import SimpleToolGrid from 'components/SimpleToolGrid';
 
 export const defaults: IT02 = {
   parameters: [{
@@ -112,57 +112,48 @@ export const defaults: IT02 = {
 };
 
 type IParameter = IT02['parameters'][0];
-
 const tool = 'T02';
-
 
 const T02 = () => {
   const [data, setData] = useState<IT02>(defaults);
   const [loading, setLoading] = useState(false);
+  const {calculateChartData} = useCalculateChartData();
   const mounding = useCalculateMounding();
   const [chartData, setChartData] = useState<any>(null);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
 
-
-  // setChartData(chartCalculator({parameters: data.parameters, mounding}))
-
-  // const {L, W, xData, yData, zData} = chartData;
-  // console.log(data.parameters);
-  // const test = useChartCalculator({parameters: data.parameters, mounding});
-  // console.log(test2);
-
   useEffect(() => {
-    setChartData(chartCalculator({parameters: data.parameters, mounding}));
-    console.log(chartData);
+    setLoading(true);
+    calculateChartData({parameters: data.parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeParameters = (parameters: IParameter[]) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
-    // setLoading(true);
-    console.log(loading);
-    setChartData(chartCalculator({parameters: data.parameters, mounding}));
-    setLoading(false);
+    setLoading(true);
+    calculateChartData({parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
   };
-
-  // const handleToggleChartModal = () => {
-  //   setShowChartModal(!showChartModal);
-  // };
-  // console.log(loading);
-  // const chartData = React.useMemo(() => chartCalculator({parameters: data.parameters, mounding}), [data.parameters, mounding]);
 
   const handleReset = () => {
     setData(defaults);
-  };
-
-  const handleLoading = (value: boolean) => {
-    console.log('handleLoading = ', value);
-    setLoading(value);
+    setLoading(true);
+    calculateChartData({parameters: defaults.parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
   };
 
   const title = `${tool}: ${translate(`${tool}_title`)}`;
-
-  if (!chartData) return null;
 
   return (
     <div data-testid="t02-container">
@@ -176,12 +167,14 @@ const T02 = () => {
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <div>
-          {loading && (<Dimmer active={true} inverted={true}>
-            <Loader inverted={true}>Loading</Loader>
-          </Dimmer>)}
-          <ChartWrapper
-            data={chartData}
-          />
+          {(loading || !chartData) ?
+            <Dimmer active={true} inverted={true}>
+              <Loader inverted={true}>Loading</Loader>
+            </Dimmer> :
+            <ChartWrapper
+              data={chartData}
+            />
+          }
         </div>
         <div>
           <Info parameters={data.parameters} mounding={mounding}/>
@@ -191,7 +184,7 @@ const T02 = () => {
           parameters={data.parameters}
           onChange={handleChangeParameters}
           onReset={handleReset}
-          onLoad={handleLoading}
+          onMoveSlider={() => setLoading(true)}
         />
       </SimpleToolGrid>
     </div>

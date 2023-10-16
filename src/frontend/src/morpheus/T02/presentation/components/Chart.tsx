@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
 
 interface IProps {
@@ -54,10 +54,8 @@ const colorScale: string | string[] | Array<[number, string]> = [
 const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHeight, id}) => {
   const containerId = `plotlyContainer_${id}`;
   const plotlyRef = useRef(initialPlotlyRefValue);
-  const [plotlyData, setPlotlyData] = useState<IPlotlyData[]>([]);
 
   useEffect(() => {
-    console.log('get new data in Charts');
     if (!window.Plotly) {
       throw Error('Plotly not found.');
     }
@@ -100,7 +98,6 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
       },
     ];
     // @ts-ignore
-    setPlotlyData(plotData);
     const config = {responsive: true};
     const layout = {
       plot_bgcolor: 'rgb(224,243,248)',

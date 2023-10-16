@@ -9,26 +9,14 @@ import styles from './Slider.module.less';
 interface IProps {
   parameter: ISliderParameter;
   onChange: (param: ISliderParameter) => void;
-  debounce?: number;
-  onLoad: (value: boolean) => void;
 }
 
-const ParameterSlider = ({parameter, onChange, debounce, onLoad}: IProps) => {
+const ParameterSlider = ({parameter, onChange}: IProps) => {
   const [param, setParam] = React.useState(parameter);
-  const [timeOutId, setTimeOutId] = React.useState<NodeJS.Timeout | null>(null);
 
-  const handleChange = () => {
-    onChange(param);
-    onLoad(true);
-  };
+  const handleBlur = () => onChange(param);
 
-  const handleParams = (value: number | number[]) => {
-    const newParam = {
-      ...param,
-      value: Array.isArray(value) ? value[0] : value,
-    };
-    return newParam;
-  };
+  const handleParams = (value: number | number[]) => ({...param, value: Array.isArray(value) ? value[0] : value});
 
   const handleLocalChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {value, name} = event.target;
@@ -39,21 +27,9 @@ const ParameterSlider = ({parameter, onChange, debounce, onLoad}: IProps) => {
   };
 
   const handleSlider = (value: number | number[]) => {
-
     const newParam = handleParams(value);
     setParam(newParam);
-    onLoad(true);
-    if (!debounce) {
-      onChange(newParam);
-    }
-    if (timeOutId) {
-      clearTimeout(timeOutId);
-    }
-    const toId = setTimeout(() => {
-      // onLoad(true);
-      onChange(newParam);
-    }, debounce);
-    setTimeOutId(toId);
+    onChange(newParam);
   };
 
   return (
@@ -75,7 +51,7 @@ const ParameterSlider = ({parameter, onChange, debounce, onLoad}: IProps) => {
               className={`${styles.extraMini} ${styles.left}`}
               value={param.min}
               disabled={true}
-              onBlur={handleChange}
+              onBlur={handleBlur}
               onChange={handleLocalChange}
             />
           </Grid.Column>
@@ -89,7 +65,7 @@ const ParameterSlider = ({parameter, onChange, debounce, onLoad}: IProps) => {
               className={`${styles.extraMini} ${styles.right}`}
               value={param.max}
               disabled={true}
-              onBlur={handleChange}
+              onBlur={handleBlur}
               onChange={handleLocalChange}
             />
           </Grid.Column>
@@ -120,7 +96,7 @@ const ParameterSlider = ({parameter, onChange, debounce, onLoad}: IProps) => {
           max={param.max}
           className={`${styles.extraMini} , ${styles.valueInput}`}
           value={param.value} onChange={handleLocalChange}
-          onBlur={handleChange}
+          onBlur={handleBlur}
         />
       </Grid.Column>
     </Grid.Row>

@@ -1,4 +1,5 @@
 import {IT02} from '../types/T02.type';
+import useCalculateMounding from './useCalculateMounding';
 
 interface ICalculateChartXMax {
   variable: string;
@@ -26,9 +27,8 @@ interface IMounding {
   calculateHMax: (x: number, y: number, w: number, L: number, W: number, hi: number, Sy: number, K: number, t: number) => number;
 }
 
-interface IUseChartCalculator {
+interface ICaluculateChartdata {
   parameters: IT02['parameters'];
-  mounding: IMounding;
 }
 
 const getParameterValues = (arr: IT02['parameters']) => {
@@ -41,7 +41,7 @@ const getParameterValues = (arr: IT02['parameters']) => {
   return returnValue;
 };
 
-const calculateChartXMax = ({variable, w, L, W, hi, Sy, K, t}: ICalculateChartXMax, mounding: IMounding) => {
+const calculateChartMax = ({variable, w, L, W, hi, Sy, K, t}: ICalculateChartXMax, mounding: IMounding) => {
   if ('x' === variable) {
     for (let x = 0; 10000 > x; x += 10) {
 
@@ -66,9 +66,9 @@ const calculateChartXMax = ({variable, w, L, W, hi, Sy, K, t}: ICalculateChartXM
 
 const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => {
   const xMin = 0;
-  const xMax = calculateChartXMax({variable: 'x', w, L, W, hi, Sy, K, t}, mounding);
+  const xMax = calculateChartMax({variable: 'x', w, L, W, hi, Sy, K, t}, mounding);
   const yMin = 0;
-  const yMax = calculateChartXMax({variable: 'y', w, L, W, hi, Sy, K, t}, mounding);
+  const yMax = calculateChartMax({variable: 'y', w, L, W, hi, Sy, K, t}, mounding);
 
   const xValues: number[] = [];
   for (let x = xMin; x < xMax; x += 10) {
@@ -96,11 +96,16 @@ const calculate = ({L, W, w, hi, Sy, K, t}: ICalculate, mounding: IMounding) => 
   return {xData, yData, zData};
 };
 
-const chartCalculator = ({parameters, mounding}: IUseChartCalculator) => {
-  console.log('chartCalculator');
-  const {L, W, w, hi, Sy, K, t} = getParameterValues(parameters);
-  const {xData, yData, zData} = calculate({L, W, w, hi, Sy, K, t}, mounding);
-  return {L, W, xData, yData, zData};
+const useCalculateChartData = () => {
+  const mounding = useCalculateMounding();
+  const calculateChartData = async ({parameters}: ICaluculateChartdata) => new Promise((resolve) => {
+    const {L, W, w, hi, Sy, K, t} = getParameterValues(parameters);
+    const {xData, yData, zData} = calculate({L, W, w, hi, Sy, K, t}, mounding);
+    resolve({L, W, xData, yData, zData});
+  });
+
+  return {calculateChartData};
 };
 
-export default chartCalculator;
+
+export default useCalculateChartData;
