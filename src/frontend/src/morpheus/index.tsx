@@ -5,22 +5,6 @@ import App from './App';
 import {I18nextProvider} from 'react-i18next';
 import {getI18n} from './i18n';
 
-interface IPlotly {
-  newPlot: (
-    containerId: HTMLElement | string,
-    plotData: any[],
-    layout: any,
-    config: any,
-  ) => void;
-}
-
-
-declare global {
-  interface Window {
-    Plotly?: IPlotly
-  }
-}
-
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(

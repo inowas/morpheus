@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
+import PlotlyWrapper from 'morpheus/common/plotly/PlotlyWrapper';
 
 interface IProps {
   data: ISurfacePlotData;
@@ -41,11 +42,10 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
   const containerId = `plotlyContainer_${id}`;
   const plotlyRef = useRef(initialPlotlyRefValue);
 
+
   useEffect(() => {
-    if (!window.Plotly) {
-      throw Error('Plotly not found.');
-    }
-    plotlyRef.current = cloneDeep(window.Plotly);
+    const Plotly = PlotlyWrapper();
+    plotlyRef.current = cloneDeep(Plotly);
     const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
     const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
     const deltaZ = maxZ - minZ;
