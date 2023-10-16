@@ -1,6 +1,5 @@
 .pytest_cache
-
-.python-version
+.venv
 
 # ignore settings and secrets
 .secrets.toml

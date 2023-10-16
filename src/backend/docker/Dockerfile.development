@@ -2,6 +2,8 @@ FROM python:3.11-bookworm as build
 
 ADD src/backend /app
 WORKDIR /app
+RUN python -m venv /app/.venv
+
 RUN pip install --upgrade pip
 RUN pip install -r /app/requirements/dev.txt
 
@@ -36,7 +38,6 @@ ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV development
 ENV FLASK_DEBUG 1
 ENV FLASK_APP wsgi:app
-ENV AUTHLIB_INSECURE_TRANSPORT 1
 
 
 USER flask

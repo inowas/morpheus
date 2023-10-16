@@ -14,6 +14,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.postgres.address=:5432"
+      - "--entrypoints.mongodb.address=:27017"
       - "--providers.docker=true"
       - "--providers.docker.exposedByDefault=false"
       - "--providers.file.directory=/etc/traefik"
@@ -23,8 +24,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080" # for traefik api, dashboard and healthcheck
-      - "5432:5432" # for postgres
+      - "8080:8080" # for traefik api, dashboard and healthcheck (development only)
+      - "5432:5432" # for postgres (development only)
+      - "27017:27017" # for mongodb (development only)
     healthcheck:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
@@ -60,7 +62,7 @@ services:
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
       target: development
     depends_on:
-      mongo_backend:
+      mongodb_backend:
         condition: service_healthy
       postgres_backend:
         condition: service_healthy
@@ -87,15 +89,19 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
-  mongo_backend:
-    image: mongo:5.0
+  mongodb_backend:
+    image: mongo:7.0
     environment:
+      MONGO_INITDB_DATABASE: ${BACKEND_MONGO_SENSOR_DATABASE}
       MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
+    env_file:
+      - .env
     volumes:
-      - mongo_backend_data:/data/db
+      - mongodb_backend_data:/data/db
+      - ./mongodb_backend/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
     healthcheck:
-      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      test: [ "CMD", "mongosh", "--eval", "db.runCommand('ping').ok", "--quiet" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -106,6 +112,11 @@ services:
     user: mongodb
     tmpfs:
       - /tmp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-mongodb_backend.entrypoints=mongodb"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-mongodb_backend.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-mongodb_backend.loadbalancer.server.port=27017"
   postgres_backend:
     image: postgres:13.12
     environment:
@@ -130,7 +141,7 @@ services:
       - "traefik.enable=true"
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_backend.entrypoints=postgres"
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_backend.rule=HostSNI(`*`)"
-      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=5432"
+      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-postgres_backend.loadbalancer.server.port=5432"
   mailcatcher:
     image: sj26/mailcatcher:latest
     restart: always
@@ -200,11 +211,6 @@ services:
     tmpfs:
       - /tmp
       - /var/run/postgresql
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.entrypoints=postgres"
-      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_keycloak.rule=HostSNI(`*`)"
-      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=5432"
 volumes:
   keycloak_data:
     driver: local
@@ -212,7 +218,7 @@ volumes:
     driver: local
   postgres_backend_data:
     driver: local
-  mongo_backend_data:
+  mongodb_backend_data:
     driver: local
 networks:
   auth:

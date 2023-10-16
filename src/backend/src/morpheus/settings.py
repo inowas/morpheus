@@ -22,6 +22,7 @@ class Settings:
         self.MONGO_PORT: str = values.MONGO_PORT
         self.MONGO_USER: str = values.MONGO_USER
         self.MONGO_PASSWORD: str = values.MONGO_PASSWORD
+        self.MONGO_SENSOR_DATABASE: str = values.MONGO_SENSOR_DATABASE
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):
@@ -53,6 +54,7 @@ settings = Settings.from_dynaconf(
             Validator('MONGO_PORT', must_exist=True),
             Validator('MONGO_USER', must_exist=True),
             Validator('MONGO_PASSWORD', must_exist=True),
+            Validator('MONGO_SENSOR_DATABASE', must_exist=True),
         ]
     )
 )
