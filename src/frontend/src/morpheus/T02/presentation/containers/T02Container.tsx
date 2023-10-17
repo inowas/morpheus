@@ -166,7 +166,7 @@ const T02 = () => {
       />
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
-        <div>
+        <div style={{minHeight: 300}}>
           {(loading || !chartData) ?
             <Dimmer active={true} inverted={true}>
               <Loader inverted={true}>Loading</Loader>

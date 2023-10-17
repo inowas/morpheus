@@ -143,12 +143,6 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
     plotlyRef.current.newPlot(containerId, plotData, layout, config);
   }, [data, title, basinLength, basinWidth, chartHeight, containerId]);
 
-  //
-  // useEffect(() => {
-  //   onLoad(false);
-  //   console.log('plotlyData updated in Charts');
-  // }, [plotlyData]);
-
   return <div
     id={containerId}
     className={chartHeight !== undefined ? 'plotlyContainer' : 'plotlyContainerModal'}
