@@ -1,6 +1,15 @@
 import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import {usePlotly} from 'morpheus/common/hooks';
+
+
+interface IPlotly {
+  newPlot: (
+    containerId: HTMLElement | string,
+    plotData: any[],
+    layout: any,
+    config: any,
+  ) => void;
+}
 
 interface IProps {
   data: ISurfacePlotData;
@@ -15,18 +24,6 @@ interface ISurfacePlotData {
   x: number[];
   y: number[];
   z: number[][];
-}
-
-interface IPlotlyData {
-  name: string;
-  x: number[];
-  y: number[];
-  z: number[][];
-  type: string;
-  colorscale: string | string[] | Array<[number, string]>;
-  showscale: boolean;
-  opacity?: number;
-  orientation: string;
 }
 
 const initialPlotlyRefValue = {
@@ -52,16 +49,12 @@ const colorScale: string | string[] | Array<[number, string]> = [
 
 const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHeight, id}) => {
   const containerId = `plotlyContainer_${id}`;
-  const plotlyRef = useRef(initialPlotlyRefValue);
-  const Plotly = usePlotly();
+  const plotlyRef = useRef<IPlotly | undefined>(initialPlotlyRefValue);
+  // const Plotly = usePlotly();
 
-  useEffect(() => {
-    if (!Plotly) {
-      throw Error('Plotly not found.');
-    }
-    plotlyRef.current = cloneDeep(Plotly);
-    const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
-    const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
+  const createPlot = (plData: ISurfacePlotData, plTitle: string | undefined, plBasinLength: number, plBasinWidth: number, plChartHeight: number | undefined, plContainerId: string) => {
+    const maxZ = Math.max(...plData.z.map((row) => Math.max(...row)));
+    const minZ = Math.min(...plData.z.map((row) => Math.min(...row)));
     const deltaZ = maxZ - minZ;
     const surfaceElevation = maxZ + deltaZ;
     const basinElevation = surfaceElevation - 0.25 * deltaZ;
@@ -69,9 +62,9 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
     const plotData = [
       {
         name: 'Head',
-        x: data.x,
-        y: data.y,
-        z: data.z,
+        x: plData.x,
+        y: plData.y,
+        z: plData.z,
         type: 'surface',
         colorscale: colorScale,
         showscale: true,
@@ -79,8 +72,8 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
       },
       {
         name: 'Basin',
-        x: [-basinLength / 2 - 1, -basinLength / 2, basinLength / 2, basinLength / 2 + 1],
-        y: [-basinWidth / 2 - 1, -basinWidth / 2, basinWidth / 2, basinWidth / 2 + 1],
+        x: [-plBasinLength / 2 - 1, -plBasinLength / 2, plBasinLength / 2, plBasinLength / 2 + 1],
+        y: [-plBasinWidth / 2 - 1, -plBasinWidth / 2, plBasinWidth / 2, plBasinWidth / 2 + 1],
         z: [
           [surfaceElevation, surfaceElevation, surfaceElevation, surfaceElevation],
           [surfaceElevation, basinElevation, basinElevation, surfaceElevation],
@@ -101,9 +94,9 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
     const config = {responsive: true};
     const layout = {
       plot_bgcolor: 'rgb(224,243,248)',
-      title: title,
+      title: plTitle,
       autosize: true,
-      height: chartHeight !== undefined ? chartHeight : undefined,
+      height: plChartHeight !== undefined ? plChartHeight : undefined,
       margin: {l: 0, r: 0, b: 0, t: 0},
       scene: {
         camera: {
@@ -126,7 +119,7 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
         aspectmode: 'manual',
         aspectratio: {
           y: 1,
-          x: (Math.max(...data.x) - Math.min(...data.x)) / (Math.max(...data.y) - Math.min(...data.y)),
+          x: (Math.max(...plData.x) - Math.min(...plData.x)) / (Math.max(...plData.y) - Math.min(...plData.y)),
           z: 0.2,
         },
         xaxis: {
@@ -140,8 +133,30 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
         },
       },
     };
-    plotlyRef.current.newPlot(containerId, plotData, layout, config);
+    if (plotlyRef.current) {
+      plotlyRef.current.newPlot(plContainerId, plotData, layout, config);
+    }
+  };
+
+  useEffect(() => {
+    // Dynamically add the Plotly script if it's not already available
+    if ('undefined' === typeof window.Plotly) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.plot.ly/plotly-latest.min.js';
+      script.async = true;
+      script.onload = () => {
+        // Once the script is loaded, proceed with the Plotly chart setup
+        plotlyRef.current = cloneDeep(window.Plotly);
+        createPlot(data, title, basinLength, basinWidth, chartHeight, containerId);
+      };
+      document.head.appendChild(script);
+    } else {
+      // If Plotly is already available, proceed with the chart setup
+      plotlyRef.current = cloneDeep(window.Plotly);
+      createPlot(data, title, basinLength, basinWidth, chartHeight, containerId);
+    }
   }, [data, title, basinLength, basinWidth, chartHeight, containerId]);
+
 
   return <div
     id={containerId}
