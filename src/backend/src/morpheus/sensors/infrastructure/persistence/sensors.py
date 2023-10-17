@@ -1,4 +1,4 @@
-from morpheus.datahub.infrastructure.persistence.mongodb import database
+from morpheus.sensors.infrastructure.persistence.mongodb import database
 
 
 def collection_exists(sensor_name: str):

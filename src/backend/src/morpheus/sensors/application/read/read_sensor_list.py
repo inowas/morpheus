@@ -1,7 +1,7 @@
 import dataclasses
 
-from morpheus.datahub.infrastructure.persistence.sensors import find_all_collections, find_latest_record
-from morpheus.datahub.types.sensor_list import SensorListWithLatestValues
+from morpheus.sensors.infrastructure.persistence.sensors import find_all_collections, find_latest_record
+from morpheus.sensors.types.sensor_list import SensorListWithLatestValues
 
 
 class ReadSensorListWithLatestValuesQueryHandler:

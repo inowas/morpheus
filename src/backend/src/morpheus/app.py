@@ -3,7 +3,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 
 from morpheus.settings import settings
-from morpheus.datahub.app import bootstrap as bootstrap_datahub_module
+from morpheus.sensors.app import bootstrap as bootstrap_datahub_module
 
 
 def bootstrap(app: Flask):

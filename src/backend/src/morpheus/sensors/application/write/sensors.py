@@ -1,4 +1,4 @@
-import morpheus.datahub.infrastructure.persistence.sensors as sensor_db
+import morpheus.sensors.infrastructure.persistence.sensors as sensor_db
 
 
 def add_sensor(sensor_name: str) -> None:

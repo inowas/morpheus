@@ -13,6 +13,8 @@ class Settings:
         self.SECRET_KEY: str = values.SECRET_KEY
         self.KEYCLOAK_CLIENT_ID = values.KEYCLOAK_CLIENT_ID
         self.KEYCLOAK_CLIENT_SECRET = values.KEYCLOAK_CLIENT_SECRET
+        self.KEYCLOAK_REALM: str = values.KEYCLOAK_REALM
+        self.KEYCLOAK_SERVER_URL: str = values.KEYCLOAK_SERVER_URL
         self.POSTGRES_DB: str = values.POSTGRES_DB
         self.POSTGRES_USER: str = values.POSTGRES_USER
         self.POSTGRES_HOST: str = values.POSTGRES_HOST
@@ -45,6 +47,8 @@ settings = Settings.from_dynaconf(
             Validator('SECRET_KEY', must_exist=True),
             Validator('KEYCLOAK_CLIENT_ID', must_exist=True),
             Validator('KEYCLOAK_CLIENT_SECRET', must_exist=True),
+            Validator('KEYCLOAK_REALM', must_exist=True),
+            Validator('KEYCLOAK_SERVER_URL', must_exist=True),
             Validator('POSTGRES_DB', must_exist=True),
             Validator('POSTGRES_USER', must_exist=True),
             Validator('POSTGRES_HOST', must_exist=True),
