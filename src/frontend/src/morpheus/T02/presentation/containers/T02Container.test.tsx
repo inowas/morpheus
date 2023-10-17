@@ -11,6 +11,12 @@ jest.mock('../../application', () => ({
     calculateHi: jest.fn().mockReturnValue(0.01),
     calculateHMax: jest.fn().mockReturnValue(0.01),
   }),
+  useCalculateChartData: () => ({
+    calculateChartData: jest.fn().mockResolvedValue({
+      data: [],
+      layout: {},
+    }),
+  }),
   useNavigate: () => () => {
     return;
   },
