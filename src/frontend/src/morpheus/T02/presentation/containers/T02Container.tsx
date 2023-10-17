@@ -1,15 +1,13 @@
-import React, {useState} from 'react';
-import {Background, ChartWrapper, Info, Parameters, Settings} from '../components';
+import React, {useEffect, useState} from 'react';
+import {Background, ChartWrapper, Info, Parameters} from '../components';
+import {Dimmer, Loader} from 'semantic-ui-react';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding, useNavigate, useTranslate} from '../../application';
-import {Breadcrumb} from '../../../../components';
-import SimpleToolGrid from '../../../../components/SimpleToolGrid';
+import {useCalculateChartData, useCalculateMounding, useNavigate, useTranslate} from '../../application';
+import {Breadcrumb} from 'components';
+import SimpleToolGrid from 'components/SimpleToolGrid';
 
 export const defaults: IT02 = {
-  settings: {
-    variable: 'x',
-  },
   parameters: [{
     decimals: 3,
     id: 'w',
@@ -114,25 +112,45 @@ export const defaults: IT02 = {
 };
 
 type IParameter = IT02['parameters'][0];
-
 const tool = 'T02';
 
 const T02 = () => {
   const [data, setData] = useState<IT02>(defaults);
+  const [loading, setLoading] = useState(false);
+  const {calculateChartData} = useCalculateChartData();
   const mounding = useCalculateMounding();
+  const [chartData, setChartData] = useState<any>(null);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
 
+  useEffect(() => {
+    setLoading(true);
+    calculateChartData({parameters: data.parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleChangeParameters = (parameters: IParameter[]) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
-  };
-
-  const handleChangeSettings = (settings: IT02['settings']) => {
-    setData((prevState) => ({...prevState, settings: {...settings}}));
+    setLoading(true);
+    calculateChartData({parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
   };
 
   const handleReset = () => {
     setData(defaults);
+    setLoading(true);
+    calculateChartData({parameters: defaults.parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
   };
 
   const title = `${tool}: ${translate(`${tool}_title`)}`;
@@ -148,13 +166,17 @@ const T02 = () => {
       />
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
-        <ChartWrapper
-          settings={data.settings}
-          parameters={data.parameters}
-          mounding={mounding}
-        />
+        <div style={{minHeight: 300}}>
+          {(loading || !chartData) ?
+            <Dimmer active={true} inverted={true}>
+              <Loader inverted={true}>Loading</Loader>
+            </Dimmer> :
+            <ChartWrapper
+              data={chartData}
+            />
+          }
+        </div>
         <div>
-          <Settings settings={data.settings} onChange={handleChangeSettings}/>
           <Info parameters={data.parameters} mounding={mounding}/>
         </div>
         <Parameters
@@ -162,6 +184,7 @@ const T02 = () => {
           parameters={data.parameters}
           onChange={handleChangeParameters}
           onReset={handleReset}
+          onMoveSlider={() => setLoading(true)}
         />
       </SimpleToolGrid>
     </div>
