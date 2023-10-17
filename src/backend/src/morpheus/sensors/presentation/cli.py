@@ -1,5 +1,5 @@
 from morpheus.common.infrastructure.cli.io import write_success, write_error
-from morpheus.datahub.application.write.sensors import has_sensor, add_sensor, insert_records
+from morpheus.sensors.application.write.sensors import has_sensor, add_sensor, insert_records
 import numpy as np
 import os
 import pandas as pd
