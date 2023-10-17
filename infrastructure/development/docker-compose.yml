@@ -159,14 +159,14 @@ services:
       dockerfile: src/keycloak/Dockerfile
       target: development
     environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_DB: postgres
-      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
       KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${KEYCLOAK_POSTGRES_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_HOSTNAME_URL: https://${IDENTITY_HOST}
       KC_PROXY: edge
-      KC_HOSTNAME_URL: https://identity.${DOMAIN}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
     command:
       start --optimized --import-realm
@@ -185,7 +185,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`identity.${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${IDENTITY_HOST}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`identity.${DOMAIN}`)"
