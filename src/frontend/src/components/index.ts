@@ -1,5 +1,6 @@
 import Breadcrumb from './Breadcrumb';
 import Button from './Button/Button';
+import ChartModal from './ChartModal';
 import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import Container from './Container/Container';
@@ -36,6 +37,7 @@ import {IDropdownItemProps} from './Dropdown/Dropdown';
 export {
   Breadcrumb,
   Button,
+  ChartModal,
   Checkbox,
   Confirm,
   Container,

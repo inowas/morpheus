@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
+import {usePlotly} from 'morpheus/common/hooks';
 
 interface IProps {
   data: ISurfacePlotData;
@@ -14,6 +15,18 @@ interface ISurfacePlotData {
   x: number[];
   y: number[];
   z: number[][];
+}
+
+interface IPlotlyData {
+  name: string;
+  x: number[];
+  y: number[];
+  z: number[][];
+  type: string;
+  colorscale: string | string[] | Array<[number, string]>;
+  showscale: boolean;
+  opacity?: number;
+  orientation: string;
 }
 
 const initialPlotlyRefValue = {
@@ -40,12 +53,13 @@ const colorScale: string | string[] | Array<[number, string]> = [
 const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHeight, id}) => {
   const containerId = `plotlyContainer_${id}`;
   const plotlyRef = useRef(initialPlotlyRefValue);
+  const Plotly = usePlotly();
 
   useEffect(() => {
-    if (!window.Plotly) {
+    if (!Plotly) {
       throw Error('Plotly not found.');
     }
-    plotlyRef.current = cloneDeep(window.Plotly);
+    plotlyRef.current = cloneDeep(Plotly);
     const maxZ = Math.max(...data.z.map((row) => Math.max(...row)));
     const minZ = Math.min(...data.z.map((row) => Math.min(...row)));
     const deltaZ = maxZ - minZ;
@@ -83,6 +97,7 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
         orientation: 'v',
       },
     ];
+    // @ts-ignore
     const config = {responsive: true};
     const layout = {
       plot_bgcolor: 'rgb(224,243,248)',
@@ -127,7 +142,6 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
     };
     plotlyRef.current.newPlot(containerId, plotData, layout, config);
   }, [data, title, basinLength, basinWidth, chartHeight, containerId]);
-
 
   return <div
     id={containerId}

@@ -10,6 +10,7 @@ interface IProps {
   onChange: (parameters: IParameter[]) => void;
   onReset: () => void;
   debounce?: number;
+  onMoveSlider: () => void;
 }
 
 const sortParameters = (parameters: IParameter[]) => {
@@ -21,9 +22,10 @@ const sortParameters = (parameters: IParameter[]) => {
   });
 };
 
-const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
+const Parameters = ({parameters, onChange, onMoveSlider, onReset, debounce}: IProps) => {
 
   const [params, setParams] = useState<IParameter[]>(sortParameters(parameters));
+  const [timeOutId, setTimeOutId] = React.useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setParams(sortParameters(parameters));
@@ -36,9 +38,21 @@ const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
       }
       return p;
     });
-    onChange([...newParams]);
-  };
 
+    onMoveSlider();
+    if (!debounce) {
+      onChange([...newParams]);
+    }
+
+    const newTimeOutId = setTimeout(() => {
+      onChange([...newParams]);
+    }, debounce);
+
+    if (timeOutId) {
+      clearTimeout(timeOutId);
+    }
+    setTimeOutId(newTimeOutId);
+  };
 
   const renderParameters = (p: IParameter[]) => (
     p.map(parameter => (
@@ -46,7 +60,6 @@ const Parameters = ({parameters, onChange, onReset, debounce}: IProps) => {
         key={parameter.id}
         onChange={handleChange}
         parameter={parameter}
-        debounce={debounce}
       />
     ))
   );
