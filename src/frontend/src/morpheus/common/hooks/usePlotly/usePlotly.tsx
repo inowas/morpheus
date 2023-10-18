@@ -15,7 +15,7 @@ const usePlotly = (): IPlotly | null => {
   useEffect(() => {
     if ('undefined' === typeof window.Plotly) {
       const script = document.createElement('script');
-      script.src = 'https://cdn.plot.ly/plotly-latest.min.js';
+      script.src = '/js/plotly-v1.58.5.min.js';
       script.async = true;
       script.onload = () => {
         // Once the script is loaded, set the Plotly object in state
