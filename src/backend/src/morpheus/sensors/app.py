@@ -21,8 +21,4 @@ def bootstrap(app: Flask):
     def read_uit_sensor_data_from_csv_files():
         read_uit_sensor_data_from_csv_files_cli_command()
 
-    @sensors_blueprint.cli.command('test')
-    def test():
-        print('test')
-
     app.register_blueprint(sensors_blueprint, url_prefix='/sensors', cli_group='sensors')
