@@ -21,6 +21,14 @@ const usePlotly = (): IPlotly | null => {
         // Once the script is loaded, set the Plotly object in state
         setPlotly(window.Plotly as IPlotly);
       };
+      script.onerror = () => {
+        throw Error('Plotly not found. ' +
+          'Add ' +
+          '<script src="/js/plotly"></script> or' +
+          '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script> ' +
+          'to your index.html',
+        );
+      };
       document.head.appendChild(script);
     } else {
       // If Plotly is already available, set it in state
