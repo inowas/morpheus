@@ -2,6 +2,7 @@
 
 backendRoot=$( cd "$(dirname "$BASH_SOURCE")/../../.." ; pwd -P )
 devScriptsRoot="$backendRoot/environments/dev/scripts"
+projectRoot="$backendRoot/../.."
 
 function outputHeadline {
     echo ""

@@ -25,6 +25,11 @@ class Settings:
         self.MONGO_USER: str = values.MONGO_USER
         self.MONGO_PASSWORD: str = values.MONGO_PASSWORD
         self.MONGO_SENSOR_DATABASE: str = values.MONGO_SENSOR_DATABASE
+        self.MORPHEUS_SENSORS_UIT_FTP_HOST: str = values.MORPHEUS_SENSORS_UIT_FTP_HOST
+        self.MORPHEUS_SENSORS_UIT_FTP_USER: str = values.MORPHEUS_SENSORS_UIT_FTP_USER
+        self.MORPHEUS_SENSORS_UIT_FTP_PASSWORD: str = values.MORPHEUS_SENSORS_UIT_FTP_PASSWORD
+        self.MORPHEUS_SENSORS_UIT_FTP_PATH: str = values.MORPHEUS_SENSORS_UIT_FTP_PATH
+        self.MORPHEUS_SENSORS_LOCAL_DATA: str = values.MORPHEUS_SENSORS_LOCAL_DATA
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):
@@ -59,6 +64,11 @@ settings = Settings.from_dynaconf(
             Validator('MONGO_USER', must_exist=True),
             Validator('MONGO_PASSWORD', must_exist=True),
             Validator('MONGO_SENSOR_DATABASE', must_exist=True),
+            Validator('MORPHEUS_SENSORS_UIT_FTP_HOST', must_exist=True),
+            Validator('MORPHEUS_SENSORS_UIT_FTP_USER', must_exist=True),
+            Validator('MORPHEUS_SENSORS_UIT_FTP_PASSWORD', must_exist=True),
+            Validator('MORPHEUS_SENSORS_UIT_FTP_PATH', default='/'),
+            Validator('MORPHEUS_SENSORS_LOCAL_DATA', default='/mnt/sensors/')
         ]
     )
 )

@@ -32,13 +32,15 @@ ARG FLASK_GROUP_ID
 RUN addgroup --system --gid ${FLASK_GROUP_ID} flask
 RUN adduser --uid ${FLASK_USER_ID} --gid ${FLASK_GROUP_ID} --system flask
 
-# prepare environment for flask app
+# prepare mount point for user flask
+RUN mkdir -p /mnt/sensors
+RUN chown -R flask:flask /mnt
 
+# prepare environment for flask app
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV development
 ENV FLASK_DEBUG 1
 ENV FLASK_APP wsgi:app
-
 
 USER flask
 WORKDIR /app/src

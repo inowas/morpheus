@@ -17,6 +17,11 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 
+# Takes the first target as command
+command := $(firstword $(MAKECMDGOALS))
+# Skips the first word
+arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+
 ## runs architecture layer boundary checks, static code analysis and tests
 qa-check:
 	environments/dev/scripts/qa_check.sh
@@ -32,6 +37,10 @@ fix-code-style:
 ## migrates database to latest version
 migrate-up:
 	environments/dev/scripts/migrate_up.sh
+
+## Runs flask cli command (pass command as command="command")
+run-flask-cli-command:
+	environments/dev/scripts/run_flask_cli_command.sh "$(arguments)"
 
 ## create new migration (pass name of migration as name="name of migration")
 create_migration:

@@ -1,11 +1,13 @@
-from morpheus.sensors.infrastructure.persistence.mongodb import database
+from morpheus.sensors.infrastructure.persistence.mongodb import get_database
 
 
 def collection_exists(sensor_name: str):
+    database = get_database()
     return sensor_name in database.list_collection_names()
 
 
 def create_sensor_collection(sensor_name: str) -> None:
+    database = get_database()
     if sensor_name not in database.list_collection_names():
         database.create_collection(
             sensor_name,
@@ -17,12 +19,14 @@ def create_sensor_collection(sensor_name: str) -> None:
 
 
 def get_sensor_collection(sensor_name: str):
+    database = get_database()
     if sensor_name not in database.list_collection_names():
         raise ValueError(f'Collection {sensor_name} does not exist')
     return database[sensor_name]
 
 
 def get_or_create_sensor_collection(sensor_name: str):
+    database = get_database()
     if sensor_name not in database.list_collection_names():
         database.create_collection(
             sensor_name,
@@ -36,6 +40,7 @@ def get_or_create_sensor_collection(sensor_name: str):
 
 
 def delete_sensor_collection(sensor_name: str):
+    database = get_database()
     if sensor_name in database.list_collection_names():
         database.drop_collection(sensor_name)
 
@@ -56,6 +61,7 @@ def find(sensor_name: str, query: dict):
 
 
 def find_all_collections():
+    database = get_database()
     return database.list_collection_names()
 
 

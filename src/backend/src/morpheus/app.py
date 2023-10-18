@@ -3,11 +3,11 @@ from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 
 from morpheus.settings import settings
-from morpheus.sensors.app import bootstrap as bootstrap_datahub_module
+from morpheus.sensors.app import bootstrap as bootstrap_sensors_module
 
 
 def bootstrap(app: Flask):
-    bootstrap_datahub_module(app)
+    bootstrap_sensors_module(app)
 
     @app.errorhandler(HTTPException)
     def handle_http_exceptions(exception):

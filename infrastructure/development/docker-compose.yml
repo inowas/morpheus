@@ -21,6 +21,7 @@ services:
       - "--providers.file.watch=true"
       - "--global.checkNewVersion=true"
       - "--global.sendAnonymousUsage=false"
+      - "--log.filePath=/var/log/traefik/traefik.log"
     ports:
       - "80:80"
       - "443:443"
@@ -43,14 +44,13 @@ services:
       - auth
       - backend
       - mail
-    read_only: true
   #  frontend:
-#    build:
-#      context: ${PWD}
-#      dockerfile: frontend/docker/Dockerfile
-#    restart: always
-#    ports:
-#      - "8080:8080"
+  #    build:
+  #      context: ${PWD}
+  #      dockerfile: frontend/docker/Dockerfile
+  #    restart: always
+  #    ports:
+  #      - "8080:8080"
   backend:
     build:
       context: ${MORPHEUS_PROJECT_ROOT}
@@ -67,15 +67,16 @@ services:
       postgres_backend:
         condition: service_healthy
     env_file:
-        - .env
+      - .env
     environment:
       - CAROOT=/etc/ca_root # for development only
     volumes:
       - ${MORPHEUS_PROJECT_ROOT}/src/backend:/app
+      - ./data/morpheus/sensors:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
     restart: always
     user: flask
     read_only: true
-    command: ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+    command: [ "flask", "run", "--host=0.0.0.0", "--port=8000" ]
     networks:
       - backend
     extra_hosts:
@@ -92,7 +93,6 @@ services:
   mongodb_backend:
     image: mongo:7.0
     environment:
-      MONGO_INITDB_DATABASE: ${BACKEND_MONGO_SENSOR_DATABASE}
       MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
     env_file:
@@ -126,14 +126,14 @@ services:
     volumes:
       - postgres_backend_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${BACKEND_POSTGRES_USER} -d ${BACKEND_POSTGRES_DB}'" ]
       interval: 5s
       timeout: 5s
       retries: 5
     restart: always
+    read_only: true
     networks:
       - backend
-    read_only: true
     tmpfs:
       - /tmp
       - /var/run/postgresql
@@ -199,15 +199,15 @@ services:
       POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
     volumes:
       - postgres_keycloak_data:/var/lib/postgresql/data
+    read_only: true
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${KEYCLOAK_POSTGRES_USER} -d ${KEYCLOAK_POSTGRES_DB}'" ]
       interval: 5s
       timeout: 5s
       retries: 5
     restart: always
     networks:
       - auth
-    read_only: true
     tmpfs:
       - /tmp
       - /var/run/postgresql
@@ -219,6 +219,8 @@ volumes:
   postgres_backend_data:
     driver: local
   mongodb_backend_data:
+    driver: local
+  morpheus_sensor_data:
     driver: local
 networks:
   auth:
