@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
-
+import {usePlotly} from 'morpheus/common/hooks';
 
 interface IPlotly {
   newPlot: (
@@ -50,7 +50,7 @@ const colorScale: string | string[] | Array<[number, string]> = [
 const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHeight, id}) => {
   const containerId = `plotlyContainer_${id}`;
   const plotlyRef = useRef<IPlotly | undefined>(initialPlotlyRefValue);
-  // const Plotly = usePlotly();
+  const Plotly = usePlotly();
 
   const createPlot = (plData: ISurfacePlotData, plTitle: string | undefined, plBasinLength: number, plBasinWidth: number, plChartHeight: number | undefined, plContainerId: string) => {
     const maxZ = Math.max(...plData.z.map((row) => Math.max(...row)));
@@ -139,23 +139,12 @@ const Chart: React.FC<IProps> = ({data, title, basinLength, basinWidth, chartHei
   };
 
   useEffect(() => {
-    // Dynamically add the Plotly script if it's not already available
-    if ('undefined' === typeof window.Plotly) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.plot.ly/plotly-latest.min.js';
-      script.async = true;
-      script.onload = () => {
-        // Once the script is loaded, proceed with the Plotly chart setup
-        plotlyRef.current = cloneDeep(window.Plotly);
-        createPlot(data, title, basinLength, basinWidth, chartHeight, containerId);
-      };
-      document.head.appendChild(script);
-    } else {
-      // If Plotly is already available, proceed with the chart setup
-      plotlyRef.current = cloneDeep(window.Plotly);
+    if (Plotly) {
+      // If Plotly is available, set it in the ref
+      plotlyRef.current = cloneDeep(Plotly);
       createPlot(data, title, basinLength, basinWidth, chartHeight, containerId);
     }
-  }, [data, title, basinLength, basinWidth, chartHeight, containerId]);
+  }, [Plotly, data, title, basinLength, basinWidth, chartHeight, containerId]);
 
 
   return <div
