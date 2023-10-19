@@ -3,7 +3,6 @@ from dynaconf import Dynaconf, Validator
 
 
 class Settings:
-
     def __init__(self, env: str, values):
         valid_environments = ['production', 'development', 'testing']
         if env not in valid_environments:
