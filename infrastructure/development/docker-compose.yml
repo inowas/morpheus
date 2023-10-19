@@ -3,6 +3,8 @@ services:
   traefik:
     image:
       traefik:2.10
+    restart: always
+    container_name: traefik
     command:
       - "--log.level=DEBUG"
       - "--accesslog=true"
@@ -92,6 +94,7 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
   mongodb_backend:
     image: mongo:7.0
+    container_name: ${BACKEND_MONGO_HOST}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
@@ -119,6 +122,7 @@ services:
       - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-mongodb_backend.loadbalancer.server.port=27017"
   postgres_backend:
     image: postgres:13.12
+    container_name: ${BACKEND_POSTGRES_HOST}
     environment:
       POSTGRES_USER: ${BACKEND_POSTGRES_USER}
       POSTGRES_PASSWORD: ${BACKEND_POSTGRES_PASSWORD}

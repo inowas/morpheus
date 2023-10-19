@@ -5,10 +5,10 @@ from ftplib import FTP
 import fnmatch
 
 from morpheus.common.infrastructure.cli.io import write_success, write_error
-from ..application.write.sensors import has_sensor, add_sensor, insert_records
-from ..infrastructure.filereaders.UitCsvFileReader import UitCsvFileReader, EmptyCsvFileException, \
+from morpheus.sensors.application.write.sensors import has_sensor, add_sensor, insert_records, is_already_recorded
+from morpheus.sensors.infrastructure.filereaders.UitCsvFileReader import UitCsvFileReader, EmptyCsvFileException, \
     ParsingHeaderErrorException
-from ...settings import settings
+from morpheus.settings import settings
 
 
 def read_uit_sensor_data_from_csv_files_cli_command():
@@ -62,45 +62,53 @@ def read_uit_sensor_data_from_csv_files_cli_command():
     ftp.quit()
     write_success("Finished downloading files")
 
-    # read files from inbox folder to mongodb
-    for filename in sorted(os.listdir(inbox_path)):
-        write_success(f"Reading file {filename}")
+    # parse files and store file data from inbox folder to mongodb
+    files_to_parse = fnmatch.filter(os.listdir(inbox_path), '*.csv')
+    for filename in sorted(files_to_parse):
         filepath = os.fsdecode(os.path.join(inbox_path, filename))
         try:
             project, sensor, _ = re.findall(r'(.*)_(.*)_(.*)\.csv', filename)[0]
-            write_success(f"Project: {project}")
-            write_success(f"Sensor: {sensor}")
             sensor_name = f"sensor_{project}_{sensor}"
-            write_success(f"Sensor name: {sensor_name}")
             try:
-                filereader = UitCsvFileReader(filepath)
+                filereader = UitCsvFileReader(filepath, time_field='timestamp')
                 rows = filereader.to_dict()
 
                 for row in rows:
-                    row['project'] = project
-                    row['sensor'] = sensor
+                    row['metadata'] = {
+                        'sensor_name': sensor_name,
+                        'project': project,
+                        'sensor': sensor,
+                        'source': 'uit',
+                        'parameters': filereader.parameters(),
+                    }
                     row['filename'] = filename
 
                 if not has_sensor(sensor_name):
                     write_success(f"Adding new sensor {sensor_name}")
+                    add_sensor(sensor_name, time_field='timestamp', meta_field='metadata', granularity='minutes')
                     new_collection_count += 1
-                    add_sensor(sensor_name)
+
+                if is_already_recorded(sensor_name, filename, 'uit'):
+                    write_success(f"File {filename} is already recorded. Skipping...")
+                    file_count += 1
+                    os.rename(filepath, os.path.join(archive_path, filename))
+                    continue
 
                 insert_records(sensor_name, rows)
                 file_count += 1
                 row_count += len(rows)
                 os.rename(filepath, os.path.join(archive_path, filename))
-                write_success(f"Successfully parsed file {filename}")
+                write_success(f"Successfully parsed file {filename}. ({file_count}/{len(files_to_parse)})")
 
             except EmptyCsvFileException:
                 os.rename(filepath, os.path.join(archive_path, filename))
-                write_error(f"File {filename} is empty")
                 file_empty_count += 1
+                write_error(f"File {filename} is empty. ({file_count}/{len(files_to_parse)})")
 
             except ParsingHeaderErrorException:
                 os.rename(filepath, os.path.join(error_path, filename))
-                write_error(f"Could not parse header of file {filename}")
                 file_error_count += 1
+                write_error(f"Could not parse header of file {filename}. ({file_count}/{len(files_to_parse)})")
         except Exception as e:
             raise e
 
