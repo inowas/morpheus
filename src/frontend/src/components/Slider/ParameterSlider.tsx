@@ -20,7 +20,7 @@ const ParameterSlider = ({parameter, onChange}: IProps) => {
 
   const handleLocalChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {value, name} = event.target;
-    const newValue = 0 > +value ? '0' : value;
+    const newValue = Math.max(Math.min(+value, param.max), param.min);
     setParam({
       ...param, [name]: newValue,
     });
