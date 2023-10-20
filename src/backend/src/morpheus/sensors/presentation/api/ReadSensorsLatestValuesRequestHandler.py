@@ -8,6 +8,6 @@ class ReadSensorsLatestValuesRequestHandler():
     def handle(request: Request):
         result = QueryBus().execute(ReadSensorsLatestValuesQuery())
         if not result.is_success:
-            return abort(400, result.data)
+            return abort(400, result.value())
 
-        return result.data.to_dict(), 200
+        return result.value().to_dict(), 200

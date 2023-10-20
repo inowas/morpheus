@@ -1,4 +1,5 @@
 from flask import Request, abort
+from pandas import DataFrame
 
 from ...application.read import ReadSensorDataQuery, QueryBus
 
@@ -6,29 +7,46 @@ from ...application.read import ReadSensorDataQuery, QueryBus
 class ReadSensorDataRequestHandler:
     @staticmethod
     def handle(request: Request, project: str, sensor: str, parameter: str):
-        result = QueryBus().execute(ReadSensorDataQuery(project=project, sensor=sensor, parameter=parameter))
+
+        gte = request.args.get('gte', None) or request.args.get('min', None)
+        if gte is not None:
+            gte = float(gte)
+
+        gt = request.args.get('gte', None)
+        if gt is not None:
+            gt = float(gt)
+
+        lte = request.args.get('lte', None) or request.args.get('max', None)
+        if lte is not None:
+            lte = float(lte)
+
+        lt = request.args.get('lt', None) or request.args.get('max', None)
+        if lt is not None:
+            lt = float(lt)
+
+        excl = request.args.get('excl', None)
+        if excl is not None:
+            excl = float(excl)
+
+        result = QueryBus().execute(ReadSensorDataQuery(
+            project=project,
+            sensor=sensor,
+            parameter=parameter,
+            start_timestamp=request.args.get('start', None) or request.args.get('begin', None),
+            end_timestamp=request.args.get('end', None),
+            gte=gte,
+            gt=gt,
+            lte=lte,
+            lt=lt,
+            excl=excl,
+            time_resolution=request.args.get('timeResolution', '1D'),
+            date_format=request.args.get('dateFormat', 'iso')
+        ))
         if not result.is_success:
-            return abort(400, result.data)
+            abort(result.status_code, result.message)
 
-        return result.data.to_dict(), 200
+        return result.data.to_dict(), result.status_code
 
-    # valid_time_resolution_list = ['RAW', '6H', '12H', '1D', '2D', '1W']
-    # time_resolution = request.args.get('timeResolution', '1D').upper()
-    #
-    # if time_resolution not in valid_time_resolution_list:
-    #     abort(400, 'Invalid timeResolution {0} provided. Valid values are: {1}'.format(
-    #         time_resolution,
-    #         ', '.join(valid_time_resolution_list)
-    #     ))
-    #
-    # valid_date_formats = ['iso', 'epoch']
-    # date_format = request.args.get('dateFormat', 'iso').lower()
-    #
-    # if date_format not in valid_date_formats:
-    #     abort(400, 'Invalid dateFormat {0} provided. Valid values are: {1}'.format(
-    #         date_format,
-    #         ', '.join(valid_date_formats)
-    #     ))
     #
     # query = "select date_time, value from view_data_raw " \
     #         "where sensor_name='{0}' " \

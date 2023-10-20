@@ -1,4 +1,6 @@
 import dataclasses
+import json
+from bson import json_util
 
 
 @dataclasses.dataclass
@@ -13,7 +15,7 @@ class SensorData:
 @dataclasses.dataclass
 class SensorDataItem:
     date_time: str
-    value: float
+    value: float | None
 
     def to_dict(self) -> dict:
         return {

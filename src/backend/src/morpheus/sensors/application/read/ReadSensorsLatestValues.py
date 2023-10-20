@@ -12,7 +12,22 @@ class ReadSensorsLatestValuesQuery:
 @dataclasses.dataclass
 class ReadSensorsLatestValuesQueryResult:
     is_success: bool
-    data: SensorsLatestValues | str
+    data: SensorsLatestValues | None = None
+    message: str | None = None
+    status_code: int | None = None
+
+    @classmethod
+    def success(cls, data: SensorsLatestValues):
+        return cls(is_success=True, data=data, status_code=200)
+
+    @classmethod
+    def failure(cls, message: str, status_code: int = 400):
+        return cls(is_success=False, message=message, status_code=status_code)
+
+    def value(self):
+        if self.is_success:
+            return self.data
+        return self.message
 
 
 class ReadSensorsLatestValuesQueryHandler:
@@ -25,12 +40,8 @@ class ReadSensorsLatestValuesQueryHandler:
             items = {}
             for sensor_name in sensor_names:
                 items[sensor_name] = find_latest_record(sensor_name)
-            return ReadSensorsLatestValuesQueryResult(
-                is_success=True,
-                data=SensorsLatestValues(items=items)
-            )
+
+            return ReadSensorsLatestValuesQueryResult.success(SensorsLatestValues(items=items))
+
         except Exception as e:
-            return ReadSensorsLatestValuesQueryResult(
-                is_success=False,
-                data=str(e)
-            )
+            return ReadSensorsLatestValuesQueryResult.failure(str(e))

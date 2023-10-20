@@ -1,4 +1,5 @@
 from morpheus.sensors.infrastructure.persistence.mongodb import get_database
+from datetime import datetime, timedelta
 
 
 def collection_exists(sensor_name: str):
@@ -79,3 +80,42 @@ def find_latest_record(sensor_name: str):
             "_id": 0
         }},
     ]))[0]
+
+
+def read_timeseries(sensor_name: str, parameter: str, start_timestamp: int | None = 0, end_timestamp: int | None = None):
+    collection = get_sensor_collection(sensor_name)
+
+    start_date = datetime.fromtimestamp(0 if start_timestamp is None else start_timestamp)
+    end_date = datetime.now() if end_timestamp is None else datetime.fromtimestamp(end_timestamp)
+
+    return list(collection.aggregate([
+        {"$match": {
+            "timestamp": {
+                "$gte": start_date,
+                "$lte": end_date
+            }
+        }},
+        {"$sort": {"timestamp": 1}},
+        {"$addFields": {
+            "timestamp": {
+                "$toInt": [
+                    {"$divide": [
+                        {"$toLong": "$timestamp"},
+                        1000
+                    ]},
+                ]
+            },
+            "datetime": {
+                "$dateToString": {
+                    "format": "%Y-%m-%dT%H:%M:%S.000Z",
+                    "date": "$timestamp"
+                }
+            },
+        }},
+        {"$project": {
+            "_id": 0,
+            "datetime": 1,
+            "timestamp": 1,
+            parameter: 1,
+        }},
+    ]))

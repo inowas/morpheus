@@ -13,7 +13,22 @@ class ReadSensorListQuery:
 @dataclasses.dataclass
 class ReadSensorListQueryResult:
     is_success: bool
-    data: SensorList | str
+    data: SensorList | None = None
+    message: str | None = None
+    status_code: int | None = None
+
+    @classmethod
+    def success(cls, data: SensorList):
+        return cls(is_success=True, data=data, status_code=200)
+
+    @classmethod
+    def failure(cls, message: str, status_code: int = 400):
+        return cls(is_success=False, message=message, status_code=status_code)
+
+    def value(self):
+        if self.is_success:
+            return self.data
+        return self.message
 
 
 class ReadSensorListQueryHandler:
@@ -41,13 +56,7 @@ class ReadSensorListQueryHandler:
 
             items.sort(key=lambda x: x.name)
 
-            return ReadSensorListQueryResult(
-                is_success=True,
-                data=SensorList(items=items)
-            )
+            return ReadSensorListQueryResult.success(SensorList(items=items))
 
         except Exception as e:
-            return ReadSensorListQueryResult(
-                is_success=False,
-                data=str(e)
-            )
+            return ReadSensorListQueryResult.failure(str(e))
