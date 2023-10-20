@@ -20,7 +20,7 @@ class Settings:
         self.POSTGRES_PORT: str = values.POSTGRES_PORT
         self.POSTGRES_PASSWORD: str = values.POSTGRES_PASSWORD
         self.MONGO_HOST: str = values.MONGO_HOST
-        self.MONGO_PORT: str = values.MONGO_PORT
+        self.MONGO_PORT: int = int(values.MONGO_PORT)
         self.MONGO_USER: str = values.MONGO_USER
         self.MONGO_PASSWORD: str = values.MONGO_PASSWORD
         self.MONGO_SENSOR_DATABASE: str = values.MONGO_SENSOR_DATABASE

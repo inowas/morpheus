@@ -1,6 +1,4 @@
 import dataclasses
-import json
-from bson import json_util
 
 
 @dataclasses.dataclass

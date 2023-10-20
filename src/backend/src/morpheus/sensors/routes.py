@@ -1,8 +1,7 @@
-from flask import Flask, Blueprint, request
+from flask import Blueprint, request
 
 from .presentation.api import ReadSensorListRequestHandler, ReadSensorsLatestValuesRequestHandler, \
     ReadSensorDataRequestHandler
-from .presentation.cli import read_uit_sensor_data_from_csv_files_cli_command
 
 
 def register_routes(blueprint: Blueprint):
