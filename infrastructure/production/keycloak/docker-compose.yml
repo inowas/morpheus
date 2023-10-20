@@ -6,9 +6,9 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_DB: postgres
-      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
-      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
-      KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${POSTGRES_KEYCLOAK_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${KEYCLOAK_POSTGRES_DB}
       KC_PROXY: edge
       KC_HOSTNAME_URL: ${KEYCLOAK_HOSTNAME}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
@@ -41,13 +41,13 @@ services:
   postgres_keycloak:
     image: postgres:13.12
     environment:
-      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
+      POSTGRES_USER: ${KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
     volumes:
       - postgres_keycloak_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_KEYCLOAK_USER}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${KEYCLOAK_POSTGRES_USER}" ]
       interval: 5s
       timeout: 5s
       retries: 5

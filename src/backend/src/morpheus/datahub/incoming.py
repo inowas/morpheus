@@ -1,4 +1,0 @@
-import morpheus.authentication.outgoing as from_authentication_module
-
-
-require_authentication = from_authentication_module.require_authentication

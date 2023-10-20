@@ -16,21 +16,11 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-## Install dev environment
-install-dev:
-	environments/dev/scripts/setup_pyenv.sh
-	environments/dev/scripts/install.sh
 
-## Start the development database
-start-dev-database:
-	environments/dev/scripts/start_database.sh
-
-prune-dev-database:
-	environments/dev/scripts/prune_database.sh
-
-## Start the development server
-start-dev-server:
-	environments/dev/scripts/start_server.sh
+# Takes the first target as command
+command := $(firstword $(MAKECMDGOALS))
+# Skips the first word
+arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 ## runs architecture layer boundary checks, static code analysis and tests
 qa-check:
@@ -47,6 +37,10 @@ fix-code-style:
 ## migrates database to latest version
 migrate-up:
 	environments/dev/scripts/migrate_up.sh
+
+## Runs flask cli command (pass command as command="command")
+run-flask-cli-command:
+	environments/dev/scripts/run_flask_cli_command.sh "$(arguments)"
 
 ## create new migration (pass name of migration as name="name of migration")
 create_migration:
