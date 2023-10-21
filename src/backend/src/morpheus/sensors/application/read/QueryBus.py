@@ -7,7 +7,7 @@ class QueryBus:
     def __init__(self):
         pass
 
-    def execute(self, query: any):
+    def execute(self, query: any) -> any:
         if isinstance(query, ReadSensorDataQuery):
             return ReadSensorDataQueryHandler.handle(query)
         if isinstance(query, ReadSensorsLatestValuesQuery):
