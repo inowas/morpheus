@@ -29,6 +29,8 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
+      postgres_backend:
+        condition: service_healthy
     env_file:
       - .env
     labels:
@@ -49,6 +51,8 @@ services:
       - traefik
       - backend
     read_only: true
+    tmpfs:
+      - /tmp:mode=777,size=200m
     restart: always
     user: flask
     volumes:
@@ -76,11 +80,33 @@ services:
     user: mongodb
     tmpfs:
       - /tmp
-
+  postgres_backend:
+    image: postgres:13.12
+    container_name: ${BACKEND_POSTGRES_HOST}
+    environment:
+      POSTGRES_USER: ${BACKEND_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${BACKEND_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${BACKEND_POSTGRES_DB}
+    volumes:
+      - postgres_backend_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${BACKEND_POSTGRES_USER} -d ${BACKEND_POSTGRES_DB}'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    read_only: true
+    networks:
+      - backend
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
 volumes:
   mongodb_backend_data:
     driver: local
   morpheus_sensor_data:
+    driver: local
+  postgres_backend_data:
     driver: local
 
 networks:
