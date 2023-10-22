@@ -10,7 +10,7 @@ FROM build as production
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV production
 
-RUN adduser --system flask
+RUN addgroup --system flask && adduser --system --group flask
 
 # prepare mount point for user flask
 RUN mkdir -p /mnt/sensors
