@@ -14,9 +14,63 @@ variables:
   # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
   DOCKER_HOST: tcp://docker:2376
   DOCKER_TLS_CERTDIR: "/certs"
+  MORPHEUS_DEVELOPMENT_PATH: /srv/docker/morpheus.development
+  MORPHEUS_PRODUCTION_PATH: /srv/docker/morpheus.production
 
-# Frontend
 include:
+  # Frontend
   - local: src/frontend/.gitlab-ci.tests.yml
   - local: src/frontend/.gitlab-ci.morpheus.yml
   - local: src/frontend/.gitlab-ci.mfviz.yml
+
+  # Backend
+  - local: src/backend/.gitlab-ci.morpheus.yml
+
+# Infrastructure
+deploy-morpheus:dev:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - publish-morpheus-frontend:dev
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  script:
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose down"
+    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH/docker-compose.yml
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose pull"
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose up -d --force-recreate"
+  environment:
+    name: development
+    url: https://dev.morpheus.inowas.hydro.tu-dresden.de
+  only:
+    - main
+    - tags
+
+deploy-morpheus:prod:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - publish-morpheus-frontend:prod
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  script:
+    - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose down"
+    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml $URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH/docker-compose.yml
+    - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose pull"
+    - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose up -d --force-recreate"
+  environment:
+    name: production
+    url: https://morpheus.inowas.hydro.tu-dresden.de
+  only:
+    - tags
+
+
+
