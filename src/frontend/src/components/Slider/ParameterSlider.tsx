@@ -7,48 +7,29 @@ import {ISliderParameter} from './IInputType';
 import styles from './Slider.module.less';
 
 interface IProps {
-    parameter: ISliderParameter;
-    onChange: (param: ISliderParameter) => void;
-    debounce?: number
+  parameter: ISliderParameter;
+  onChange: (param: ISliderParameter) => void;
 }
 
-const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
-
+const ParameterSlider = ({parameter, onChange}: IProps) => {
   const [param, setParam] = React.useState(parameter);
-  const [timeOutId, setTimeOutId] = React.useState<NodeJS.Timeout | null>(null);
 
-  const handleChange = () => {
-    onChange(param);
-  };
+  const handleBlur = () => onChange(param);
+
+  const handleParams = (value: number | number[]) => ({...param, value: Array.isArray(value) ? value[0] : value});
 
   const handleLocalChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {value, name} = event.target;
+    const newValue = Math.max(Math.min(+value, param.max), param.min);
     setParam({
-      ...param, [name]: value,
+      ...param, [name]: newValue,
     });
   };
 
-  const handleSliderParams = (value: number | number[]) => {
-    const newParam = {
-      ...param,
-      value: Array.isArray(value) ? value[0] : value,
-    };
-    return newParam;
-  };
-
   const handleSlider = (value: number | number[]) => {
-    setParam(handleSliderParams(value));
-
-    if (!debounce) {
-      onChange(param);
-    }
-
-    if (timeOutId) {
-      clearTimeout(timeOutId);
-    }
-
-    const toId = setTimeout(handleChange, debounce);
-    setTimeOutId(toId);
+    const newParam = handleParams(value);
+    setParam(newParam);
+    onChange(newParam);
   };
 
   return (
@@ -69,7 +50,8 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
               type="number"
               className={`${styles.extraMini} ${styles.left}`}
               value={param.min}
-              onBlur={handleChange}
+              disabled={true}
+              onBlur={handleBlur}
               onChange={handleLocalChange}
             />
           </Grid.Column>
@@ -82,7 +64,8 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
               type="number"
               className={`${styles.extraMini} ${styles.right}`}
               value={param.max}
-              onBlur={handleChange}
+              disabled={true}
+              onBlur={handleBlur}
               onChange={handleLocalChange}
             />
           </Grid.Column>
@@ -109,9 +92,11 @@ const ParameterSlider = ({parameter, onChange, debounce}: IProps) => {
         <input
           name="value"
           type="number"
+          min={param.min}
+          max={param.max}
           className={`${styles.extraMini} , ${styles.valueInput}`}
           value={param.value} onChange={handleLocalChange}
-          onBlur={handleChange}
+          onBlur={handleBlur}
         />
       </Grid.Column>
     </Grid.Row>

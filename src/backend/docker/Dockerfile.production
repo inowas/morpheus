@@ -16,6 +16,10 @@ RUN addgroup --system flask && adduser --system --group flask
 RUN mkdir -p /mnt/sensors
 RUN chown -R flask:flask /mnt
 
+# prepare mount point for user flask
+RUN mkdir -p /mnt/sensors
+RUN chown -R flask:flask /mnt
+
 USER flask
 WORKDIR /app/src
 ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]

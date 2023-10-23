@@ -1,9 +1,6 @@
 type IInputType = 'SLIDER' | 'NUMBER' | 'RADIO_SELECT' | 'SELECT_NAME';
 
 export interface IT02 {
-  settings: {
-    variable: string
-  },
   parameters: {
     decimals: number;
     id: string;

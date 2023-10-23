@@ -1,15 +1,13 @@
-import React, {useState} from 'react';
-import {Background, ChartWrapper, Info, Parameters, Settings} from '../components';
+import React, {useEffect, useState} from 'react';
+import {Background, ChartWrapper, Info, Parameters} from '../components';
+import {Dimmer, Loader} from 'semantic-ui-react';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateMounding, useNavigate, useTranslate} from '../../application';
-import {Breadcrumb} from '../../../../components';
-import SimpleToolGrid from '../../../../components/SimpleToolGrid';
+import {useCalculateChartData, useCalculateMounding, useNavigate, useTranslate} from '../../application';
+import {Breadcrumb} from 'components';
+import SimpleToolGrid from 'components/SimpleToolGrid';
 
 export const defaults: IT02 = {
-  settings: {
-    variable: 'x',
-  },
   parameters: [{
     decimals: 3,
     id: 'w',
@@ -30,12 +28,12 @@ export const defaults: IT02 = {
     inputType: 'SLIDER',
     label: '',
     max: 1000,
-    min: 0,
+    min: 10,
     name: 'Basin length<br/>L (m)',
     order: 1,
     stepSize: 1,
     type: 'float',
-    validMin: (x: number) => 0 < x,
+    validMin: (x: number) => 10 <= x,
     value: 40,
     parseValue: parseFloat,
   }, {
@@ -44,12 +42,12 @@ export const defaults: IT02 = {
     inputType: 'SLIDER',
     label: '',
     max: 100,
-    min: 0,
+    min: 10,
     name: 'Basin width<br/>W (m)',
     order: 2,
     stepSize: 1,
     type: 'float',
-    validMin: (x: number) => 0 < x,
+    validMin: (x: number) => 10 <= x,
     value: 20,
     parseValue: parseFloat,
   }, {
@@ -72,12 +70,12 @@ export const defaults: IT02 = {
     inputType: 'SLIDER',
     label: '',
     max: 0.5,
-    min: 0.000,
+    min: 0.01,
     name: 'Specific yield<br/>S<sub>y</sub> (-)',
     order: 4,
     stepSize: 0.001,
     type: 'float',
-    validMin: (x: number) => 0 < x,
+    validMin: (x: number) => 0.01 <= x,
     validMax: (x: number) => 0.5 >= x,
     value: 0.085,
     parseValue: parseFloat,
@@ -92,7 +90,7 @@ export const defaults: IT02 = {
     order: 5,
     stepSize: 0.01,
     type: 'float',
-    validMin: (x: number) => 0 < x,
+    validMin: (x: number) => 0.1 <= x,
     validMax: (x: number) => 100000 >= x,
     value: 1.83,
     parseValue: parseFloat,
@@ -102,38 +100,57 @@ export const defaults: IT02 = {
     inputType: 'SLIDER',
     label: '',
     max: 100,
-    min: 0,
+    min: 1,
     name: 'Infiltration time<br/>t (d)',
     order: 6,
     stepSize: 0.1,
     type: 'float',
-    validMin: (x: number) => 0 < x,
+    validMin: (x: number) => 1 <= x,
     value: 1.5,
     parseValue: parseFloat,
   }],
 };
 
 type IParameter = IT02['parameters'][0];
-
 const tool = 'T02';
 
 const T02 = () => {
-
   const [data, setData] = useState<IT02>(defaults);
+  const [loading, setLoading] = useState(false);
+  const {calculateChartData} = useCalculateChartData();
   const mounding = useCalculateMounding();
+  const [chartData, setChartData] = useState<any>(null);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
 
+  useEffect(() => {
+    setLoading(true);
+    calculateChartData({parameters: data.parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleChangeParameters = (parameters: IParameter[]) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
-  };
-
-  const handleChangeSettings = (settings: IT02['settings']) => {
-    setData((prevState) => ({...prevState, settings: {...settings}}));
+    setLoading(true);
+    calculateChartData({parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
   };
 
   const handleReset = () => {
     setData(defaults);
+    setLoading(true);
+    calculateChartData({parameters: defaults.parameters})
+      .then((result) => {
+        setChartData(result);
+        setLoading(false);
+      });
   };
 
   const title = `${tool}: ${translate(`${tool}_title`)}`;
@@ -149,13 +166,17 @@ const T02 = () => {
       />
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
-        <ChartWrapper
-          settings={data.settings}
-          parameters={data.parameters}
-          mounding={mounding}
-        />
+        <div style={{minHeight: 300}}>
+          {(loading || !chartData) ?
+            <Dimmer active={true} inverted={true}>
+              <Loader inverted={true}>Loading</Loader>
+            </Dimmer> :
+            <ChartWrapper
+              data={chartData}
+            />
+          }
+        </div>
         <div>
-          <Settings settings={data.settings} onChange={handleChangeSettings}/>
           <Info parameters={data.parameters} mounding={mounding}/>
         </div>
         <Parameters
@@ -163,6 +184,7 @@ const T02 = () => {
           parameters={data.parameters}
           onChange={handleChangeParameters}
           onReset={handleReset}
+          onMoveSlider={() => setLoading(true)}
         />
       </SimpleToolGrid>
     </div>
