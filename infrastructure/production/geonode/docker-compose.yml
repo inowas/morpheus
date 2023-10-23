@@ -4,7 +4,7 @@ version: '3.9'
 x-common-django:
   &default-common-django
   image: ${COMPOSE_PROJECT_NAME}_django:4.1.x
-  restart: on-failure
+  restart: always
   env_file:
     - .env
   volumes:
@@ -65,25 +65,25 @@ services:
       - LETSENCRYPT_MODE=${LETSENCRYPT_MODE}
       - RESOLVER=127.0.0.11
     labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.rule=Host(`${HTTP_HOST}`)"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.entrypoints=web"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.middlewares=redirect-to-https"
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.rule=Host(`${HTTP_HOST}`)"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.entrypoints=websecure"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.tls=true"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
-        - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.service=${COMPOSE_PROJECT_NAME}-nginx"
-        - "traefik.http.services.${COMPOSE_PROJECT_NAME}-nginx.loadbalancer.server.port=80"
-        - "traefik.docker.network=traefik"
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.rule=Host(`${HTTP_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.rule=Host(`${HTTP_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx-secure.service=${COMPOSE_PROJECT_NAME}-nginx"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-nginx.loadbalancer.server.port=80"
+      - "traefik.docker.network=traefik"
     networks:
       - traefik
       - default
     volumes:
       - nginx-confd:/etc/nginx
       - statics:/mnt/volumes/statics
-    restart: on-failure
+    restart: always
 
   # Geoserver backend
   geoserver:
@@ -116,7 +116,7 @@ services:
       - backup-restore:/backup_restore
       - data:/data
       - tmp:/tmp
-    restart: on-failure
+    restart: always
     depends_on:
       db:
         condition: service_healthy
@@ -129,7 +129,7 @@ services:
     entrypoint: sleep infinity
     volumes:
       - geoserver-data-dir:/geoserver_data/data
-    restart: on-failure
+    restart: always
     healthcheck:
       test: "ls -A '/geoserver_data/data' | wc -l"
 
@@ -144,7 +144,7 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
       - dbbackups:/pg_backups
-    restart: on-failure
+    restart: always
     healthcheck:
       test: "pg_isready -d postgres -U postgres"
     # uncomment to enable remote connections to postgres
@@ -157,7 +157,7 @@ services:
     container_name: rabbitmq4${COMPOSE_PROJECT_NAME}
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-    restart: on-failure
+    restart: always
 
 volumes:
   statics:
