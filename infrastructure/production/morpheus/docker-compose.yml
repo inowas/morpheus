@@ -24,7 +24,6 @@ services:
       - /var/run:mode=777,size=100m
       - /var/cache/nginx:mode=777,size=100m
   backend:
-    container_name: backend
     image: inowas/morpheus-backend:${BACKEND_VERSION}
     depends_on:
       mongodb_backend:
@@ -59,7 +58,6 @@ services:
       - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
   mongodb_backend:
     image: mongo:7.0
-    container_name: ${BACKEND_MONGO_HOST}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
@@ -82,7 +80,6 @@ services:
       - /tmp
   postgres_backend:
     image: postgres:13.12
-    container_name: ${BACKEND_POSTGRES_HOST}
     environment:
       POSTGRES_USER: ${BACKEND_POSTGRES_USER}
       POSTGRES_PASSWORD: ${BACKEND_POSTGRES_PASSWORD}
