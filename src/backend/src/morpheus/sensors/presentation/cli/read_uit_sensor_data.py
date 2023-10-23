@@ -68,14 +68,14 @@ def read_uit_sensor_data_from_csv_files_cli_command():
         filepath = os.fsdecode(os.path.join(inbox_path, filename))
         try:
             project, sensor, _ = re.findall(r'(.*)_(.*)_(.*)\.csv', filename)[0]
-            sensor_name = f"sensor_{project}_{sensor}"
+            sensor_id = f"sensor_{project}_{sensor}"
             try:
                 filereader = UitCsvFileReader(filepath, time_field='timestamp')
                 rows = filereader.to_dict()
 
                 for row in rows:
                     row['metadata'] = {
-                        'sensor_name': sensor_name,
+                        'sensor_id': sensor_id,
                         'project': project,
                         'sensor': sensor,
                         'source': 'uit',
@@ -83,18 +83,18 @@ def read_uit_sensor_data_from_csv_files_cli_command():
                     }
                     row['filename'] = filename
 
-                if not has_sensor(sensor_name):
-                    write_success(f"Adding new sensor {sensor_name}")
-                    add_sensor(sensor_name, time_field='timestamp', meta_field='metadata', granularity='minutes')
+                if not has_sensor(sensor_id):
+                    write_success(f"Adding new sensor {sensor_id}")
+                    add_sensor(sensor_id, time_field='timestamp', meta_field='metadata', granularity='minutes')
                     new_collection_count += 1
 
-                if is_already_recorded(sensor_name, filename, 'uit'):
+                if is_already_recorded(sensor_id, filename, 'uit'):
                     write_success(f"File {filename} is already recorded. Skipping...")
                     file_count += 1
                     os.rename(filepath, os.path.join(archive_path, filename))
                     continue
 
-                insert_records(sensor_name, rows)
+                insert_records(sensor_id, rows)
                 file_count += 1
                 row_count += len(rows)
                 os.rename(filepath, os.path.join(archive_path, filename))

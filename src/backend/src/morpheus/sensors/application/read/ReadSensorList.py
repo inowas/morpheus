@@ -46,7 +46,7 @@ class ReadSensorListQueryHandler:
                     items.append(SensorListItem(
                         id=sensor_name,
                         location=metadata['location'] if 'location' in metadata else [],
-                        name=sensor_name,
+                        name=metadata['sensor'],
                         parameters=metadata['parameters'],
                         project=metadata['project']
                     ))
