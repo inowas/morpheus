@@ -23,59 +23,95 @@ services:
     tmpfs:
       - /var/run:mode=777,size=100m
       - /var/cache/nginx:mode=777,size=100m
-#  backend:
-#    image: inowas/morpheus-backend:${BACKEND_VERSION}
-#    depends_on:
-#      - mongo
-#      - postgres
-#    environment:
-#      DYNACONF_SECRET_KEY: ${SECRET_KEY}
-#      DYNACONF_POSTGRES_USER: ${POSTGRES_USER}
-#      DYNACONF_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#      DYNACONF_POSTGRES_DB: ${POSTGRES_DB}
-#      DYNACONF_POSTGRES_HOST: ${POSTGRES_HOST}
-#      DYNACONF_POSTGRES_PORT: ${POSTGRES_PORT}
-#      DYNACONF_MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-#      DYNACONF_MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-#      DYNACONF_MONGO_HOST: ${MONGO_HOST}
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.rule=Host(`${BACKEND_HOST}`)"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.middlewares=redirect-to-https"
-#      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-#      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.entrypoints=websecure"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.service=${COMPOSE_PROJECT_NAME}-backend"
-#      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
-#      - "traefik.docker.network=${TRAEFIK_NETWORK}"
-#    networks:
-#      - traefik
-#    restart: always
-#    user: flask
-#    read_only: true
-#  postgres:
-#    image: postgres:13.12
-#    environment:
-#      POSTGRES_USER: ${POSTGRES_USER}
-#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#      POSTGRES_DB: ${POSTGRES_DB}
-#    volumes:
-#      - ./db/postgres:/var/lib/postgresql/data
-#    restart: always
-#  mongo:
-#    image: mongo:5.0
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-#      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-#    volumes:
-#      - ./db/mongo:/data/db
-#    restart: always
+  backend:
+    container_name: backend
+    image: inowas/morpheus-backend:${BACKEND_VERSION}
+    depends_on:
+      mongodb_backend:
+        condition: service_healthy
+      postgres_backend:
+        condition: service_healthy
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.service=${COMPOSE_PROJECT_NAME}-backend"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
+      - "traefik.docker.network=${TRAEFIK_NETWORK}"
+    networks:
+      - traefik
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp:mode=777,size=200m
+    restart: always
+    user: flask
+    volumes:
+      - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+  mongodb_backend:
+    image: mongo:7.0
+    container_name: ${BACKEND_MONGO_HOST}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - mongodb_backend_data:/data/db
+      - ./mongodb_backend/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.runCommand('ping').ok", "--quiet" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend
+    read_only: true
+    user: mongodb
+    tmpfs:
+      - /tmp
+  postgres_backend:
+    image: postgres:13.12
+    container_name: ${BACKEND_POSTGRES_HOST}
+    environment:
+      POSTGRES_USER: ${BACKEND_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${BACKEND_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${BACKEND_POSTGRES_DB}
+    volumes:
+      - postgres_backend_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${BACKEND_POSTGRES_USER} -d ${BACKEND_POSTGRES_DB}'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    read_only: true
+    networks:
+      - backend
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+volumes:
+  mongodb_backend_data:
+    driver: local
+  morpheus_sensor_data:
+    driver: local
+  postgres_backend_data:
+    driver: local
 
 networks:
+  backend:
+    name: ${COMPOSE_PROJECT_NAME}-backend
   traefik:
     name: ${TRAEFIK_NETWORK}
     external: true
