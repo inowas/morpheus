@@ -19,6 +19,6 @@ def register_routes(blueprint: Blueprint):
         return ReadSensorsLatestValuesRequestHandler.handle(request)
 
     @blueprint.route('/project/<project>/sensor/<sensor>/parameter/<parameter>', methods=['GET'], strict_slashes=False)
-    @cross_origin()
+    @cross_origin(origins=['*'], methods=['GET'], allow_headers=['*'])
     def read_sensor_data(project, sensor, parameter):
         return ReadSensorDataRequestHandler.handle(request, project, sensor, parameter)
