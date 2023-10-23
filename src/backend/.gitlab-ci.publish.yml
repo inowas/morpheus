@@ -12,7 +12,7 @@ publish-morpheus-backend:dev:
     - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_BACKEND_IMAGE:dev
   only:
-    - dev
+    - main
     - tags
 
 publish-morpheus-backend:prod:
