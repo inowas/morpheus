@@ -1,9 +1,8 @@
 import dataclasses
-import json
 import pandas as pd
 
 from ...infrastructure.persistence.sensors import collection_exists, read_timeseries
-from ...types.sensor_list import SensorData, SensorDataItem
+from ...types import SensorData, SensorDataItem
 
 
 @dataclasses.dataclass
@@ -109,11 +108,11 @@ class ReadSensorDataQueryHandler:
                 df = df.round(4)
 
             df = df.reset_index(level=0)
-            data = json.loads(df.to_json(date_unit='s', date_format=date_format, orient='records'))
+            data = df.to_dict(orient='records')
             sensor_data = []
             for item in data:
                 sensor_data.append(SensorDataItem(
-                    date_time=item['date_time'],
+                    date_time=item['date_time'].strftime('%Y-%m-%dT%H:%M:%SZ'),
                     value=item['value'] if 'value' in item else None,
                 ))
 

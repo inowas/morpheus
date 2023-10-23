@@ -1,0 +1,18 @@
+{
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.pytest_cache"
+  ],
+  "ignore": [
+    "**/routes.py",
+    "**/QueryBus.py"
+  ],
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "pythonVersion": "3.11",
+  "pythonPlatform": "Linux"
+}

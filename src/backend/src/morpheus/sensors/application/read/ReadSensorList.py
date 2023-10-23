@@ -1,7 +1,7 @@
 import dataclasses
 
 from ...infrastructure.persistence.sensors import find_all_collections, find_latest_record
-from ...types.sensor_list import SensorList, SensorListItem
+from ...types import SensorList, SensorListItem
 
 
 @dataclasses.dataclass
