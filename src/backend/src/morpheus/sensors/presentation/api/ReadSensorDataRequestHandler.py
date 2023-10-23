@@ -1,6 +1,7 @@
 from flask import Request, abort
-from ...application.read import ReadSensorDataQuery, QueryBus
-from ...application.read.ReadSensorData import ReadSensorDataQueryResult
+from ...application.read.ReadSensorData import ReadSensorDataQuery, ReadSensorDataQueryHandler, \
+    InvalidTimeResolutionException, InvalidDateFormatException, SensorNotFoundException, \
+    ReadSensorDataException
 
 
 class ReadSensorDataRequestHandler:
@@ -35,29 +36,31 @@ class ReadSensorDataRequestHandler:
         if end_timestamp is not None:
             end_timestamp = int(end_timestamp)
 
-        result = QueryBus().execute(
-            ReadSensorDataQuery(
-                project=project,
-                sensor=sensor,
-                parameter=parameter,
-                start_timestamp=start_timestamp,
-                end_timestamp=end_timestamp,
-                gte=gte,
-                gt=gt,
-                lte=lte,
-                lt=lt,
-                excl=excl,
-                time_resolution=request.args.get('timeResolution', '1D'),
-                date_format=request.args.get('dateFormat', 'iso')
-            ))  # type: ReadSensorDataQueryResult
+        try:
+            result = ReadSensorDataQueryHandler.handle(
+                ReadSensorDataQuery(
+                    project=project,
+                    sensor=sensor,
+                    parameter=parameter,
+                    start_timestamp=start_timestamp,
+                    end_timestamp=end_timestamp,
+                    gte=gte,
+                    gt=gt,
+                    lte=lte,
+                    lt=lt,
+                    excl=excl,
+                    time_resolution=request.args.get('timeResolution', '1D'),
+                    date_format=request.args.get('dateFormat', 'iso')
+                ))
+            return result.to_dict(), 200
 
-        if not isinstance(result, ReadSensorDataQueryResult):
-            abort(500, 'Invalid query result type')
-
-        if not result.is_success:
-            abort(result.status_code or 400, result.message)
-
-        if result.data is None:
-            return None, result.status_code
-
-        return result.data.to_dict(), result.status_code
+        except InvalidTimeResolutionException as e:
+            abort(400, str(e))
+        except InvalidDateFormatException as e:
+            abort(400, str(e))
+        except SensorNotFoundException as e:
+            abort(404, str(e))
+        except ReadSensorDataException as e:
+            abort(500, str(e))
+        except Exception as e:
+            abort(500, str(e))

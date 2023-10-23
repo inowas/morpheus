@@ -5,7 +5,7 @@ from ...infrastructure.persistence.sensors import collection_exists, read_timese
 from ...types import SensorData, SensorDataItem
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class ReadSensorDataQuery:
     project: str
     sensor: str
@@ -21,28 +21,27 @@ class ReadSensorDataQuery:
     time_resolution: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class ReadSensorDataQueryResult:
-    is_success: bool
-    data: SensorData | None = None
-    status_code: int | None = None
-    message: str | None = None
+    data: SensorData
 
-    @classmethod
-    def success(cls, data: SensorData):
-        return cls(is_success=True, data=data, status_code=200)
+    def to_dict(self) -> list[dict]:
+        return self.data.to_dict()
 
-    @classmethod
-    def failure(cls, message: str, status_code: int = 400):
-        return cls(is_success=False, message=message, status_code=status_code)
 
-    def value(self):
-        if self.is_success:
-            return self.data
-        return self.message
+class InvalidDateFormatException(Exception):
+    pass
 
 
 class InvalidTimeResolutionException(Exception):
+    pass
+
+
+class ReadSensorDataException(Exception):
+    pass
+
+
+class SensorNotFoundException(Exception):
     pass
 
 
@@ -50,19 +49,18 @@ class ReadSensorDataQueryHandler:
     @staticmethod
     def handle(query: ReadSensorDataQuery) -> ReadSensorDataQueryResult:
 
-        valid_time_resolution_list = ['RAW', '6H', '12H', '1D', '2D', '1W']
+        valid_time_resolution_list = ['RAW', '6H', '12H', '1D', '2D', '1W', '1M', '1Y']
         time_resolution = query.time_resolution.upper()
         if time_resolution not in valid_time_resolution_list:
-            return ReadSensorDataQueryResult(
-                is_success=False,
-                message=f'Invalid timeResolution {time_resolution} provided.'
-                        f'Valid values are: {", ".join(valid_time_resolution_list)}'
+            raise InvalidTimeResolutionException(
+                f'Invalid timeResolution {time_resolution} provided.'f'Valid values are: '
+                f'{", ".join(valid_time_resolution_list)}'
             )
 
         valid_date_formats = ['iso', 'epoch']
         date_format = query.date_format.lower()
         if date_format not in valid_date_formats:
-            return ReadSensorDataQueryResult.failure(
+            raise InvalidDateFormatException(
                 f'Invalid dateFormat {date_format} provided.'f'Valid values are: {", ".join(valid_date_formats)}'
             )
 
@@ -76,7 +74,7 @@ class ReadSensorDataQueryHandler:
 
         sensor_name = f'sensor_{query.project}_{query.sensor}'
         if not collection_exists(sensor_name):
-            return ReadSensorDataQueryResult.failure(f'Sensor {sensor_name} does not exist', 404)
+            raise SensorNotFoundException(f'Sensor {sensor_name} does not exist')
 
         try:
             data = read_timeseries(sensor_name=sensor_name, parameter=query.parameter, start_timestamp=start_timestamp,
@@ -100,6 +98,9 @@ class ReadSensorDataQueryHandler:
                     'value': item[query.parameter] if query.parameter in item else None,
                 })
 
+            if len(filtered_data) == 0:
+                return ReadSensorDataQueryResult(SensorData(items=[]))
+
             df = pd.DataFrame.from_records(filtered_data)
             df['date_time'] = pd.to_datetime(df['date_time'])
             df = df.set_index('date_time')
@@ -116,7 +117,7 @@ class ReadSensorDataQueryHandler:
                     value=item['value'] if 'value' in item else None,
                 ))
 
-            return ReadSensorDataQueryResult.success(SensorData(items=sensor_data))
+            return ReadSensorDataQueryResult(SensorData(items=sensor_data))
 
         except Exception as e:
-            return ReadSensorDataQueryResult.failure(str(e))
+            raise ReadSensorDataException(e)
