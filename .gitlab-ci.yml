@@ -24,7 +24,7 @@ include:
   - local: src/frontend/.gitlab-ci.mfviz.yml
 
   # Backend
-  - local: src/backend/.gitlab-ci.morpheus.yml
+  - local: src/backend/.gitlab-ci.publish.yml
 
 # Infrastructure
 deploy-morpheus:dev:
@@ -71,6 +71,3 @@ deploy-morpheus:prod:
     url: https://morpheus.inowas.hydro.tu-dresden.de
   only:
     - tags
-
-
-
