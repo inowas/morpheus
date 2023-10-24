@@ -56,6 +56,29 @@ services:
     user: flask
     volumes:
       - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+  cron:
+    image: inowas/cron:latest
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp:mode=777,size=200m
+    volumes:
+      #- ./cron/jobs/5min:/etc/periodic/5min:ro
+      #- ./cron/jobs/15min:/etc/periodic/15min:ro
+      - ./cron/jobs/hourly:/etc/periodic/hourly:ro
+      #- ./cron/jobs/daily:/etc/periodic/daily:ro
+      #- ./cron/jobs/weekly:/etc/periodic/weekly:ro
+      #- ./cron/jobs/monthly:/etc/periodic/monthly:ro
+      # inject docker socket
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: crond -f -l 8
   mongodb_backend:
     image: mongo:7.0
     environment:
