@@ -9,10 +9,6 @@ class ReadSensorsLatestValuesQuery:
     pass
 
 
-class ReadSensorsLatestValuesException(Exception):
-    pass
-
-
 @dataclasses.dataclass
 class ReadSensorsLatestValuesQueryResult:
     data: SensorsLatestValues
@@ -24,15 +20,11 @@ class ReadSensorsLatestValuesQueryResult:
 class ReadSensorsLatestValuesQueryHandler:
     @staticmethod
     def handle(query: ReadSensorsLatestValuesQuery) -> ReadSensorsLatestValuesQueryResult:
-        try:
-            sensor_names = [collection_name for collection_name in find_all_collections() if
-                            collection_name.startswith('sensor')]
+        sensor_names = [collection_name for collection_name in find_all_collections() if
+                        collection_name.startswith('sensor')]
 
-            items = {}
-            for sensor_name in sensor_names:
-                items[sensor_name] = find_latest_record(sensor_name)
+        items = {}
+        for sensor_name in sensor_names:
+            items[sensor_name] = find_latest_record(sensor_name)
 
-            return ReadSensorsLatestValuesQueryResult(SensorsLatestValues(items=items))
-
-        except Exception as e:
-            raise ReadSensorsLatestValuesException(e)
+        return ReadSensorsLatestValuesQueryResult(SensorsLatestValues(items=items))
