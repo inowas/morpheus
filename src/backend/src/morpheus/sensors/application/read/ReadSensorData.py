@@ -37,10 +37,6 @@ class InvalidTimeResolutionException(Exception):
     pass
 
 
-class ReadSensorDataException(Exception):
-    pass
-
-
 class SensorNotFoundException(Exception):
     pass
 
@@ -76,48 +72,44 @@ class ReadSensorDataQueryHandler:
         if not collection_exists(sensor_name):
             raise SensorNotFoundException(f'Sensor {sensor_name} does not exist')
 
-        try:
-            data = read_timeseries(sensor_name=sensor_name, parameter=query.parameter, start_timestamp=start_timestamp,
-                                   end_timestamp=end_timestamp)
-            filtered_data = []
-            for item in data:
-                if item[query.parameter] is None:
-                    continue
-                if gte is not None and item[query.parameter] < gte:
-                    continue
-                if gt is not None and item[query.parameter] <= gt:
-                    continue
-                if lte is not None and item[query.parameter] > lte:
-                    continue
-                if lt is not None and item[query.parameter] >= lt:
-                    continue
-                if excl is not None and item[query.parameter] == excl:
-                    continue
-                filtered_data.append({
-                    'date_time': item['datetime'],
-                    'value': item[query.parameter] if query.parameter in item else None,
-                })
+        data = read_timeseries(sensor_name=sensor_name, parameter=query.parameter, start_timestamp=start_timestamp,
+                               end_timestamp=end_timestamp)
+        filtered_data = []
+        for item in data:
+            if item[query.parameter] is None:
+                continue
+            if gte is not None and item[query.parameter] < gte:
+                continue
+            if gt is not None and item[query.parameter] <= gt:
+                continue
+            if lte is not None and item[query.parameter] > lte:
+                continue
+            if lt is not None and item[query.parameter] >= lt:
+                continue
+            if excl is not None and item[query.parameter] == excl:
+                continue
+            filtered_data.append({
+                'date_time': item['datetime'],
+                'value': item[query.parameter] if query.parameter in item else None,
+            })
 
-            if len(filtered_data) == 0:
-                return ReadSensorDataQueryResult(SensorData(items=[]))
+        if len(filtered_data) == 0:
+            return ReadSensorDataQueryResult(SensorData(items=[]))
 
-            df = pd.DataFrame.from_records(filtered_data)
-            df['date_time'] = pd.to_datetime(df['date_time'])
-            df = df.set_index('date_time')
-            if time_resolution != 'RAW':
-                df = df.resample(time_resolution).mean().interpolate(method='time')
-                df = df.round(4)
+        df = pd.DataFrame.from_records(filtered_data)
+        df['date_time'] = pd.to_datetime(df['date_time'])
+        df = df.set_index('date_time')
+        if time_resolution != 'RAW':
+            df = df.resample(time_resolution).mean().interpolate(method='time')
+            df = df.round(4)
 
-            df = df.reset_index(level=0)
-            data = df.to_dict(orient='records')
-            sensor_data = []
-            for item in data:
-                sensor_data.append(SensorDataItem(
-                    date_time=item['date_time'].strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    value=item['value'] if 'value' in item else None,
-                ))
+        df = df.reset_index(level=0)
+        data = df.to_dict(orient='records')
+        sensor_data = []
+        for item in data:
+            sensor_data.append(SensorDataItem(
+                date_time=item['date_time'].strftime('%Y-%m-%dT%H:%M:%SZ'),
+                value=item['value'] if 'value' in item else None,
+            ))
 
-            return ReadSensorDataQueryResult(SensorData(items=sensor_data))
-
-        except Exception as e:
-            raise ReadSensorDataException(e)
+        return ReadSensorDataQueryResult(SensorData(items=sensor_data))

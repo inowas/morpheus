@@ -1,7 +1,6 @@
 from flask import Request, abort
 from ...application.read.ReadSensorData import ReadSensorDataQuery, ReadSensorDataQueryHandler, \
-    InvalidTimeResolutionException, InvalidDateFormatException, SensorNotFoundException, \
-    ReadSensorDataException
+    InvalidTimeResolutionException, InvalidDateFormatException, SensorNotFoundException
 
 
 class ReadSensorDataRequestHandler:
@@ -60,7 +59,3 @@ class ReadSensorDataRequestHandler:
             abort(400, str(e))
         except SensorNotFoundException as e:
             abort(404, str(e))
-        except ReadSensorDataException as e:
-            abort(500, str(e))
-        except Exception as e:
-            abort(500, str(e))
