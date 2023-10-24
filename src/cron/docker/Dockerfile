@@ -1,0 +1,11 @@
+FROM alpine:3.18
+MAINTAINER Ralf Junghanns <ralf.junghanns@tu-dresden.de>
+
+# Install required packages
+RUN apk add --update --no-cache bash && \
+    apk add --update --no-cache docker
+
+# show all run-parts
+RUN crontab -l
+
+WORKDIR /
