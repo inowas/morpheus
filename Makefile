@@ -16,18 +16,24 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-## Install development environment
-install-development:
-	infrastructure/development/scripts/install.sh
+# Skips the first word
+arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
-## Start development environment
-start-development:
-	infrastructure/development/scripts/start.sh
+## Install local environment
+install-local:
+	infrastructure/local/scripts/install.sh
 
-## Stop development environment
-stop-development:
-	infrastructure/development/scripts/stop.sh
+## Start local environment
+start-local:
+	infrastructure/local/scripts/start.sh
 
-## Stop development environment
-reset-development:
-	infrastructure/development/scripts/reset-environment.sh
+## Stop local environment
+stop-local:
+	infrastructure/local/scripts/stop.sh
+
+## Reset local environment
+reset-local:
+	infrastructure/local/scripts/reset-environment.sh
+
+run-backend-cli-command-in-local-environment:
+	infrastructure/local/scripts/run-backend-cli-command.sh "$(arguments)"

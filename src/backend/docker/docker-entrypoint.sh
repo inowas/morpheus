@@ -8,37 +8,38 @@ entrypoint_log() {
 
 entrypoint_log "$0: info: Starting $0"
 
-if /usr/bin/find "/app/docker/docker-entrypoint.d/" -mindepth 1 -maxdepth 1 -type f -print -quit 2>/dev/null | read v; then
-    entrypoint_log "$0: /app/docker/docker-entrypoint.d/ is not empty, will attempt to perform configuration"
+entypointPath=/app/docker/docker-entrypoint.d/
 
-    entrypoint_log "$0: Looking for shell scripts in /app/docker/docker-entrypoint.d/"
-    find "/app/docker/docker-entrypoint.d/" -follow -type f -print | sort -V | while read -r f; do
-        case "$f" in
+if find "$entypointPath" -mindepth 1 -maxdepth 1 -type f -print -quit 2>/dev/null | read -r v; then
+    entrypoint_log "$0: $entypointPath is not empty, will attempt to perform configuration"
+    entrypoint_log "$0: Looking for shell scripts in $entypointPath"
+    find "$entypointPath" -follow -type f -print | sort -V | while read -r script; do
+        case "$script" in
             *.envsh)
-                if [ -x "$f" ]; then
-                    entrypoint_log "$0: Sourcing $f";
-                    . "$f"
+                if [ -x "$script" ]; then
+                    entrypoint_log "$0: Sourcing $script";
+                    . "$script"
                 else
                     # warn on shell scripts without exec bit
-                    entrypoint_log "$0: Ignoring $f, not executable";
+                    entrypoint_log "$0: Ignoring $script, not executable";
                 fi
                 ;;
             *.sh)
-                if [ -x "$f" ]; then
-                    entrypoint_log "$0: Launching $f";
-                    "$f"
+                if [ -x "$script" ]; then
+                    entrypoint_log "$0: Launching $script";
+                    "$script"
                 else
                     # warn on shell scripts without exec bit
-                    entrypoint_log "$0: Ignoring $f, not executable";
+                    entrypoint_log "$0: Ignoring $script, not executable";
                 fi
                 ;;
-            *) entrypoint_log "$0: Ignoring $f";;
+            *) entrypoint_log "$0: Ignoring $script";;
         esac
     done
 
     entrypoint_log "$0: Configuration complete; ready for start up"
 else
-    entrypoint_log "$0: No files found in /app/docker/docker-entrypoint.d/, skipping configuration"
+    entrypoint_log "$0: No files found in $entypointPath, skipping configuration"
 fi
 
 exec "$@"

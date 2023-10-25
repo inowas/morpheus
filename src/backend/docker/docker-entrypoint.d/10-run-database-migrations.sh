@@ -10,6 +10,7 @@ entrypoint_log() {
 ME=$(basename "$0")
 entrypoint_log "$ME: info: Starting $ME"
 
-/app/environments/dev/scripts/migrate_up.sh
+cd /app/src
+alembic upgrade head
 
 exit 0

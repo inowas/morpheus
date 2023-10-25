@@ -27,9 +27,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080" # for traefik api, dashboard and healthcheck (development only)
-      - "5432:5432" # for postgres (development only)
-      - "27017:27017" # for mongodb (development only)
+      - "8080:8080" # for traefik api, dashboard and healthcheck local access
+      - "5432:5432" # for postgres local access
+      - "27017:27017" # for mongodb local access
     healthcheck:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
@@ -56,13 +56,13 @@ services:
   backend:
     build:
       context: ${MORPHEUS_PROJECT_ROOT}
-      dockerfile: src/backend/docker/Dockerfile.development
+      dockerfile: src/backend/docker/Dockerfile
       args:
-        - MKCERT_ROOT_CA_CERTIFICATE=infrastructure/development/tls_certificates/rootCA.pem
+        - MKCERT_ROOT_CA_CERTIFICATE=infrastructure/local/tls_certificates/rootCA.pem
         - CAROOT=/etc/ca_root
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
-      target: development
+        - DOCKERFILE_BUILD_BASE_STAGE=local_base
     container_name: ${COMPOSE_PROJECT_NAME}-backend
     depends_on:
       mongodb_backend:
@@ -72,14 +72,15 @@ services:
     env_file:
       - .env
     environment:
-      - CAROOT=/etc/ca_root # for development only
+      - CAROOT=/etc/ca_root # for local mkcert certificates only
     volumes:
       - ${MORPHEUS_PROJECT_ROOT}/src/backend:/app
       - ./data/morpheus/sensors:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+    tmpfs:
+      - /tmp:mode=777,size=200m
     restart: always
     user: flask
     read_only: true
-    command: [ "flask", "run", "--host=0.0.0.0", "--port=8000" ]
     networks:
       - backend
     extra_hosts:
@@ -95,6 +96,8 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
+    profiles:
+      - backend
   cron:
     build:
       context: ${MORPHEUS_PROJECT_ROOT}
@@ -120,8 +123,6 @@ services:
       # inject docker socket
       - /var/run/docker.sock:/var/run/docker.sock
     command: crond -f -l 8
-    tmpfs:
-      - /tmp
     read_only: false
   mongodb_backend:
     image: mongo:7.0
@@ -151,6 +152,9 @@ services:
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-mongodb_backend.entrypoints=mongodb"
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-mongodb_backend.rule=HostSNI(`*`)"
       - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-mongodb_backend.loadbalancer.server.port=27017"
+    profiles:
+      - backend
+      - backend_db_only
   postgres_backend:
     image: postgres:13.12
     container_name: ${BACKEND_POSTGRES_HOST}
@@ -177,6 +181,9 @@ services:
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_backend.entrypoints=postgres"
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_backend.rule=HostSNI(`*`)"
       - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-postgres_backend.loadbalancer.server.port=5432"
+    profiles:
+      - backend
+      - backend_db_only
   mailcatcher:
     image: sj26/mailcatcher:latest
     restart: always
@@ -188,6 +195,8 @@ services:
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-mailcatcher.loadbalancer.server.port=1080"
     networks:
       - mail
+    profiles:
+      - mailcatcher
   keycloak:
     build:
       context: ${MORPHEUS_PROJECT_ROOT}
@@ -216,7 +225,7 @@ services:
       - /tmp
     volumes:
       - keycloak_data:/opt/keycloak/data
-      - ./keycloak:/opt/keycloak/data/import # for development only
+      - ./keycloak:/opt/keycloak/data/import # for local environment only
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
@@ -226,6 +235,8 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${IDENTITY_HOST}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
+    profiles:
+      - keycloak
   postgres_keycloak:
     image: postgres:13.12
     environment:
@@ -246,6 +257,8 @@ services:
     tmpfs:
       - /tmp
       - /var/run/postgresql
+    profiles:
+      - keycloak
 volumes:
   keycloak_data:
     driver: local
