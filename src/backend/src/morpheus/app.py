@@ -3,10 +3,12 @@ from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 
 from morpheus.settings import settings
+from morpheus.modflow import bootstrap_modflow_module
 from morpheus.sensors import bootstrap_sensors_module
 
 
 def bootstrap(app: Flask):
+    bootstrap_modflow_module(app)
     bootstrap_sensors_module(app)
 
     @app.errorhandler(HTTPException)

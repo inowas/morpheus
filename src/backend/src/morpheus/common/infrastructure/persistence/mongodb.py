@@ -1,8 +1,9 @@
 from pymongo import MongoClient
+from pymongo.database import Database
 from morpheus.settings import settings
 
 
-def get_database_client(db_name: str):
+def get_database_client(db_name: str, create_if_not_exist: bool = False) -> Database:
     client = MongoClient(
         host=settings.MONGO_HOST,
         port=settings.MONGO_PORT,
@@ -10,4 +11,7 @@ def get_database_client(db_name: str):
         password=settings.MONGO_PASSWORD,
         authSource=settings.MONGO_SENSOR_DATABASE,
     )
+    if not create_if_not_exist and db_name not in client.list_database_names():
+        raise ValueError(f'Database {db_name} does not exist')
+
     return client[db_name]
