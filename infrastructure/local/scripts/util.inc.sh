@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-backendRoot=$( cd "$(dirname "$BASH_SOURCE")/../../.." ; pwd -P )
-devScriptsRoot="$backendRoot/environments/dev/scripts"
-projectRoot="$backendRoot/../.."
+projectRoot=$( cd "$(dirname "$BASH_SOURCE")/../../.." ; pwd -P )
+infrastructureRoot=$projectRoot/infrastructure/local
+if [[ "$(uname)" = "Darwin" ]] ; then isMacOs=true; else isMacOs=false; fi
 
 function outputHeadline {
     echo ""

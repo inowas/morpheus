@@ -17,32 +17,42 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 
-# Takes the first target as command
-command := $(firstword $(MAKECMDGOALS))
 # Skips the first word
 arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
+# prepare local development environment
+install-dev:
+	scripts/dev/install-dev.sh
+
+## start backend as local flask server with debugging enabled and local docker environment without backend service
+start-dev:
+	scripts/dev/start-dev.sh
+
+## stop local docker environment without backend service
+stop-dev:
+	scripts/dev/stop-dev.sh
+
 ## runs architecture layer boundary checks, static code analysis and tests
 qa-check:
-	environments/dev/scripts/qa_check.sh
+	scripts/dev/qa-check.sh
 
 ## runs tests
 run-tests:
-	environments/dev/scripts/qa_check/run_tests.sh
+	scripts/dev/qa_check/run-tests.sh
 
 ## fix code style
 fix-code-style:
-	environments/dev/scripts/qa_check/fix_code_style.sh
+	scripts/dev/qa_check/fix-code-style.sh
 
 ## migrates database to latest version
 migrate-up:
-	environments/dev/scripts/migrate_up.sh
+	scripts/dev/migrations/migrate-up.sh
 
-## Runs flask cli command (pass command as command="command")
-run-flask-cli-command:
-	environments/dev/scripts/run_flask_cli_command.sh "$(arguments)"
-
-## create new migration (pass name of migration as name="name of migration")
+## create new migration (pass name of migration as argument)
 create_migration:
-	environments/dev/scripts/create_migration.sh "$(name)"
+	scripts/dev/migrations/create-migration.sh "$(arguments)"
 
+
+## Runs flask cli command (pass command as argument)
+run-flask-cli-command:
+	scripts/dev/run-flask-cli-command.sh "$(arguments)"
