@@ -5,28 +5,41 @@
 * we suggest [PyCharm](https://www.jetbrains.com/pycharm/) as IDE
   * make sure to mark folder `backend/src` as "Sources Root"
 
-* [docker compose (V2)](https://docs.docker.com/compose/)
+* an installed local environment (see [main README](../../Readme.md#install-local-environment))
 
 ## Install dev environment
 
-In project root run `make install-development`.
+First you need to install the local environment (see [main README](../../Readme.md#install-local-environment)).
+Then, in the backend folder, run `make install-dev`.
 
-## Run dev server
+## Start the dev environment
 
-In project root run `make start-development`.
+In backend folder run `make start-dev`. This starts the necessary containers from local environment. It also prepares an
+.env file in the backend source folder with adjusted environment variables for the dev environment.
 
-## Debug dev server
+## Stop the dev environment
 
+In backend folder run `make stop-dev`. This stops the containers from local environment and removes the .env file from
+the backend source folder.
 
+## Run/Debug the flask app
 
-## Write database migrations
+You first need to [start the dev environment](#start-the-dev-environment).
 
-In folder `src/backend`:
+### Option 1: Run flask app through PyCharm
 
-The command
-```
-make create_migration name="create table example"
-```
-creates a new migration file under `backend/src/migrations/versions`.
+Create a run/debug configuration in PyCharm (see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html)).
 
-After that you must again run `make migrate-up`.
+Choose the following settings:
+* "Target type": "Module name"
+* "FLASK_ENV": "development"
+* check "FLASK_DEBUG"
+* "Python interpreter": choose your virtuelenv
+* "Working directory": choose the backend source folder (src/backend/src)
+*
+Now run or debug the flask app with this configuration from PyCharm.
+
+### Option 2: Run flask app from command line
+
+If you don't use PyCharm, you can run the flask app from command line. Just run `flask run` in the backend source
+folder (src/backend/src). The app starts in debug mode.

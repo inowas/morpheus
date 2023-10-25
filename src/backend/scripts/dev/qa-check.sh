@@ -3,17 +3,17 @@
 # include file with helper functions
 source $(dirname "$0")/util.inc.sh
 
-$devScriptsRoot/qa_check/check_code_style.sh
+$devScriptsRoot/qa_check/check-code-style.sh
 exitCodeCS=$?
 
-#$devScriptsRoot/qa_check/check_layered_architecture.sh
+#$devScriptsRoot/qa_check/check-layered-architecture.sh
 #exitCodeDepCheck=$?
 exitCodeDepCheck=0
 
-$devScriptsRoot/qa_check/run_static_code_analysis.sh
+$devScriptsRoot/qa_check/run-static-code-analysis.sh
 exitCodeSCA=$?
 
-"$devScriptsRoot"/qa_check/run_tests.sh
+"$devScriptsRoot"/qa_check/run-tests.sh
 exitCodeTests=$?
 
 

@@ -1,9 +1,8 @@
 .pytest_cache
 .venv
-
-# ignore settings and secrets
-.secrets.toml
-.settings.local.toml
+.python-version
 
 log
 sensor_data
+
+!scripts/dev/.env
