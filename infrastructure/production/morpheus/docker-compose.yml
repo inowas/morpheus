@@ -33,6 +33,8 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthcheck" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
@@ -63,13 +65,11 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    env_file:
-      - .env
+    environment:
+      - BACKEND_CONTAINER_NAME=${COMPOSE_PROJECT_NAME}-backend
     networks:
       - backend
     read_only: true
-    tmpfs:
-      - /tmp:mode=777,size=200m
     volumes:
       #- ./cron/jobs/5min:/etc/periodic/5min:ro
       #- ./cron/jobs/15min:/etc/periodic/15min:ro
