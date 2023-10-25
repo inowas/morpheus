@@ -25,6 +25,7 @@ services:
       - /var/cache/nginx:mode=777,size=100m
   backend:
     image: inowas/morpheus-backend:${BACKEND_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-backend
     depends_on:
       mongodb_backend:
         condition: service_healthy
