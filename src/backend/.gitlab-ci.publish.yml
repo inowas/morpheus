@@ -8,7 +8,7 @@ publish-morpheus-backend:dev:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - docker build --target backend --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_IMAGE:dev --file src/backend/docker/Dockerfile .
+    - DOCKER_BUILDKIT=1 docker build --target backend --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_IMAGE:dev --file src/backend/docker/Dockerfile .
     - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_BACKEND_IMAGE:dev
   only:
@@ -21,7 +21,7 @@ publish-morpheus-backend:prod:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - docker build --target backend --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_BACKEND_IMAGE:latest --file src/backend/docker/Dockerfile .
+    - DOCKER_BUILDKIT=1 docker build --target backend --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_BACKEND_IMAGE:latest --file src/backend/docker/Dockerfile .
     - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_TAG
     - docker push $MORPHEUS_BACKEND_IMAGE:latest
