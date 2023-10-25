@@ -58,6 +58,7 @@ services:
     restart: always
     user: flask
     volumes:
+      - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
       - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
   cron:
     image: inowas/cron:latest
@@ -124,6 +125,8 @@ services:
       - /var/run/postgresql
 volumes:
   mongodb_backend_data:
+    driver: local
+  morpheus_modflow_data:
     driver: local
   morpheus_sensor_data:
     driver: local
