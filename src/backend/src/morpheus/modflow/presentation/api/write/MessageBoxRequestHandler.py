@@ -21,12 +21,6 @@ class Message:
             payload=body['payload']
         )
 
-    def message_name(self):
-        return self.message_name
-
-    def payload(self):
-        return self.payload
-
 
 class MessageBoxRequestHandler:
     def handle(self, request: Request):
@@ -38,8 +32,8 @@ class MessageBoxRequestHandler:
         except KeyError as e:
             abort(400, f'Missing required key in request body: {e}')
 
-        if message.message_name() == CreateModflowModelCommand.message_name():
-            self.handle_create_modflow_model_command(CreateModflowModelCommand.from_dict(message.payload()))
+        if message.message_name == CreateModflowModelCommand.message_name:
+            self.handle_create_modflow_model_command(CreateModflowModelCommand.from_dict(message.payload))
 
     @staticmethod
     def handle_create_modflow_model_command(command: CreateModflowModelCommand):

@@ -1,6 +1,6 @@
 -r prod.txt
 dep-check==3.0.1
-pyright==1.1.332
-pytest==7.4.2
+pyright==1.1.333
+pytest==7.4.3
 flake8==6.1.0
 pep8-naming==0.13.3

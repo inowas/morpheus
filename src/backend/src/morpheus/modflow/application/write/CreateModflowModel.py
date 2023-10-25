@@ -59,6 +59,11 @@ class CreateModflowModelCommand:
 class CreateModflowModelCommandResult:
     id: str
 
+    def to_dict(self):
+        return {
+            'id': self.id
+        }
+
 
 class CreateModflowModelCommandHandler:
 
