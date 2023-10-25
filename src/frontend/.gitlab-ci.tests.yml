@@ -1,7 +1,11 @@
 test-frontend:
   image: node:20
   stage: test
-
+  rules:
+    - changes:
+        compare_to: 'refs/heads/main'
+        paths:
+          - src/frontend/**/*
   script:
     - cd src/frontend
     - make install-ci
