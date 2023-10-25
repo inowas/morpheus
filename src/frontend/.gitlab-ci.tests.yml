@@ -10,3 +10,9 @@ test-frontend:
     - cd src/frontend
     - make install-ci
     - make test-ci
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        compare_to: 'refs/heads/main'
+        paths:
+          - src/frontend/**/*
