@@ -21,6 +21,7 @@ RUN addgroup --system flask && adduser --system --group flask
 
 # prepare mount points for user flask
 RUN mkdir -p /mnt/sensors
+RUN mkdir -p /mnt/modflow
 RUN chown -R flask:flask /mnt
 
 
