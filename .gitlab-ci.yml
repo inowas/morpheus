@@ -46,6 +46,7 @@ deploy-morpheus:dev:
   dependencies:
     - publish-morpheus-frontend:dev
   before_script:
+    - apt-get update && apt-get install rsync -y
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
@@ -69,6 +70,7 @@ deploy-morpheus:prod:
   dependencies:
     - publish-morpheus-frontend:prod
   before_script:
+    - apt-get update && apt-get install rsync -y
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
