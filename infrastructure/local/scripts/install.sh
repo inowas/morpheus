@@ -3,6 +3,8 @@
 # include file with helper functions
 source "$(dirname "$0")/util.inc.sh"
 
+localSensorDataMountpoint="$infrastructureRoot/data/morpheus/sensors"
+
 
 outputHeadline "Preparing local .env file"
 
@@ -19,6 +21,7 @@ else
     && sed -i.bak -e "s!__replace_with__flask_user_id!$userId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__flask_group_id!$groupId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__project_root!$projectRoot!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__local_sensor_data_mountpoint!$localSensorDataMountpoint!g" -- "$envFile.tmp" \
     && mv "$envFile.tmp" "$envFile" \
     && rm "$envFile.tmp.bak"
     exitWithErrorIfLastCommandFailed "Error preparing .env file $envFile"
@@ -39,3 +42,10 @@ source "$infrastructureRoot/.env" \
        ${DOMAIN} *.${DOMAIN} *.morpheus.${DOMAIN}
 exitWithErrorIfLastCommandFailed "Error installing tls certificates"
 outputSuccess "Successfully installed tls certificates"
+
+
+outputHeadline "Preparing local mount points"
+
+mkdir -p "$localSensorDataMountpoint"
+exitWithErrorIfLastCommandFailed "Error preparing local mount points"
+outputSuccess "Successfully prepared local mount points"

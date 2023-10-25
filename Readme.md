@@ -14,19 +14,32 @@ This repository contains the source code for the frontend and backend of the Mor
 - [Python 3](https://www.python.org/)
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
-### Install and start the application
+### Install local environment
 
-1. `make install-development
-2. `make start-development`
+To prepare local environment run:
+`make install-local`
 
-### Reset environment
+### Reset local environment
 
 In case you want to reset the environment, you can run the following command. This will delete all docker containers,
 volumes and images and all file ignored by git.
 
-`make reset-development`
+`make reset-local`
 
-You can then create a fresh development environment by running the install command.
+You can then create a fresh local environment by running the `make install-local` again.
+
+### Start and stop local production environment:
+
+To start a local environment that runs backend and frontend in production mode run:
+`make start-local`
+
+To stop the local environment run:
+`make stop-local`
+
+When the local environment is running you can run backend cli commands with
+`make run-backend-cli-command-in-local-environment`.
+
+You can see how to run a development environment with debugging for the backend in the [backend README](src/backend/README.md).
 
 ### Frontend
 
