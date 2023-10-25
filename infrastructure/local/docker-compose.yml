@@ -63,6 +63,7 @@ services:
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
         - DOCKERFILE_BUILD_BASE_STAGE=local_base
+    container_name: ${COMPOSE_PROJECT_NAME}-backend
     depends_on:
       mongodb_backend:
         condition: service_healthy
@@ -84,6 +85,8 @@ services:
       - backend
     extra_hosts:
       - identity.inowas.localhost:host-gateway
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthcheck" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
@@ -93,6 +96,29 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
+    profiles:
+      - backend
+  cron:
+    build:
+      context: ${MORPHEUS_PROJECT_ROOT}
+      dockerfile: src/cron/docker/Dockerfile
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - BACKEND_CONTAINER_NAME=${COMPOSE_PROJECT_NAME}-backend
+    volumes:
+      #- ./cron/jobs/5min:/etc/periodic/5min:ro
+      #- ./cron/jobs/15min:/etc/periodic/15min:ro
+      - ./cron/jobs/hourly:/etc/periodic/5min:ro
+      #- ./cron/jobs/daily:/etc/periodic/daily:ro
+      #- ./cron/jobs/weekly:/etc/periodic/weekly:ro
+      #- ./cron/jobs/monthly:/etc/periodic/monthly:ro
+      # inject docker socket
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: crond -f -l 8
+    read_only: true
     profiles:
       - backend
   mongodb_backend:
