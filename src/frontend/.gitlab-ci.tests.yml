@@ -6,3 +6,8 @@ test-frontend:
     - cd src/frontend
     - make install-ci
     - make test-ci
+  rules:
+    - changes:
+        compare_to: main
+        paths:
+          - src/frontend/**/*
