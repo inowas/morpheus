@@ -38,3 +38,5 @@ def bootstrap(app: Flask):
             response.data = json.dumps({'error': str(exception)})
 
         return response
+
+    app.add_url_rule('/healthcheck', 'healthcheck', lambda: 'OK', methods=['GET'])
