@@ -75,7 +75,8 @@ services:
       - CAROOT=/etc/ca_root # for local mkcert certificates only
     volumes:
       - ${MORPHEUS_PROJECT_ROOT}/src/backend:/app
-      - ./data/morpheus/sensors:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+      - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
+      - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
     tmpfs:
       - /tmp:mode=777,size=200m
     restart: always
@@ -264,6 +265,8 @@ volumes:
   postgres_backend_data:
     driver: local
   mongodb_backend_data:
+    driver: local
+  morpheus_modflow_data:
     driver: local
   morpheus_sensor_data:
     driver: local
