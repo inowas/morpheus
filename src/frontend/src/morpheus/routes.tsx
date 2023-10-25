@@ -1,6 +1,7 @@
 import React from 'react';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import T02Container from 'morpheus/T02/presentation/containers/T02Container';
+import T03Container from 'morpheus/T03/presentation/containers/T03Container';
 import T04Container from 'morpheus/T04/presentation/containers/T04Container';
 import T06Container from 'morpheus/T06/presentation/containers/T06Container';
 import T08Container from 'morpheus/T08/presentation/containers/T08Container';
@@ -27,6 +28,7 @@ const Router = () => {
       <Route path="/" element={<Navigate to="/tools"/>}/>
       <Route path="/tools" element={wrapRouteComponent(<DashboardContainer/>)}/>
       <Route path="/tools/T02" element={wrapRouteComponent(<T02Container/>)}/>
+      <Route path="/tools/T03" element={wrapRouteComponent(<T03Container/>)}/>
       <Route path="/tools/T04" element={wrapRouteComponent(<T04Container/>)}/>
       <Route path="/tools/T06" element={wrapRouteComponent(<T06Container/>)}/>
       <Route path="/tools/T08" element={wrapRouteComponent(<T08Container/>)}/>
