@@ -53,15 +53,14 @@ deploy-morpheus:dev:
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose down"
-    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH/docker-compose.yml
-    - scp -P22 -r ./infrastructure/production/morpheus/cron root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH/cron
-    - scp -P22 -r ./infrastructure/production/morpheus/mongodb_backend root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH/mongodb_backend
-    - rsync -avz --delete --exclude '.*' ./infrastructure/production/morpheus/ root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH/
+    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
+    - scp -P22 -r ./infrastructure/production/morpheus/cron root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
+    - scp -P22 -r ./infrastructure/production/morpheus/mongodb_backend root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose pull"
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose up -d --force-recreate"
   environment:
     name: development
-    url: https://dev.morpheus.inowas.hydro.tu-dresden.de
+    url: https://api.dev.morpheus.inowas.com
   only:
     - main
     - tags
@@ -79,13 +78,13 @@ deploy-morpheus:prod:
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose down"
-    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH/docker-compose.yml
-    - scp -P22 -r ./infrastructure/production/morpheus/cron root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH/cron
-    - scp -P22 -r ./infrastructure/production/morpheus/mongodb_backend root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH/mongodb_backend
+    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
+    - scp -P22 -r ./infrastructure/production/morpheus/cron root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
+    - scp -P22 -r ./infrastructure/production/morpheus/mongodb_backend root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose pull"
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose up -d --force-recreate"
   environment:
     name: production
-    url: https://morpheus.inowas.hydro.tu-dresden.de
+    url: https://api.morpheus.inowas.com
   only:
     - tags
