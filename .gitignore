@@ -3,5 +3,5 @@
 **/node_modules/
 .env
 
-/infrastructure/development/tls_certificates/
-/infrastructure/development/data/
+/infrastructure/local/tls_certificates/
+/infrastructure/local/data/

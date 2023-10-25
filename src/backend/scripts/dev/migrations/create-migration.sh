@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # include file with helper functions
-source "$(dirname "$0")/util.inc.sh"
+source "$(dirname "$0")/../util.inc.sh"
 
 
 cd $backendRoot/src
@@ -13,5 +13,4 @@ if [ -z "$name" -o "$name" == "" ]; then
   exit 1
 fi
 
-export FLASK_ENV=development
 alembic revision -m "$1"
