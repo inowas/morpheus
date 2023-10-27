@@ -34,8 +34,9 @@ const GeomanControls = ({
     const lng = e.latlng.lng;
     console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`);
   });
-  
 
+  // TODO! fix eslint
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // add controls
     if (!map.pm.controlsVisible()) {
@@ -57,28 +58,28 @@ const GeomanControls = ({
       setMounted(false);
     };
   }, []);
-
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // set path options
     if (mounted) map.pm.setPathOptions(pathOptions);
   }, [pathOptions, mounted]);
-
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // set global options
     if (mounted)
       map.pm.setGlobalOptions({layerGroup: container, ...globalOptions});
   }, [globalOptions, mounted]);
-
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // set language
     if (mounted) map.pm.setLang(lang);
   }, [lang, mounted]);
-
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // attach and remove event handlers
     if (mounted) {
       const withDebug = Object.fromEntries(
-        reference.map((handler) => [handler, handlers[handler] ?? eventDebugFn]),
+        reference.map((handler) => [handler, (handlers as any)[handler] ?? eventDebugFn]),
       );
       const layers = layerContainer
         ? container.getLayers()

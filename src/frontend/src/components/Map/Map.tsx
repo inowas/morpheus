@@ -1,5 +1,5 @@
 import React from 'react';
-import {FeatureGroup, LayersControl, MapContainer, Polygon, Popup, TileLayer} from 'react-leaflet';
+import {MapContainer, Polygon, TileLayer} from 'react-leaflet';
 import {LatLngExpression, LatLngTuple} from 'leaflet';
 import Geoman from './Geoman';
 
@@ -32,7 +32,6 @@ const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][]
 const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
-  console.log(geojson);
 
   return (
     <MapContainer
@@ -45,20 +44,12 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
       {editable ? (
         <Geoman geojson={geojson} setGeojson={setGeojson}/>
       ) : (
-        <LayersControl position="bottomright">
-          {polygonCoordinates.map((coordinates, index) => (
-            <LayersControl.Overlay
-              checked={true}
-              key={index}
-              name={`Feature group ${index + 1}`}
-            >
-              <FeatureGroup pathOptions={{color: 'purple'}}>
-                <Popup>Popup in FeatureGroup</Popup>
-                <Polygon positions={coordinates} pathOptions={redOptions}/>
-              </FeatureGroup>
-            </LayersControl.Overlay>
-          ))}
-        </LayersControl>
+        polygonCoordinates.map((coordinates, index) => (
+          <Polygon
+            key={index} positions={coordinates}
+            pathOptions={redOptions}
+          />
+        ))
       )}
     </MapContainer>
   );

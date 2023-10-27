@@ -77,6 +77,7 @@ const Geoman = ({geojson, setGeojson}: Props) => {
           drawText: false,
           drawMarker: false,
           drawCircle: false,
+          cutPolygon: false,
           drawRectangle: !(0 < geojson.features.length),
           drawPolygon: !(0 < geojson.features.length),
           drawCircleMarker: false,
