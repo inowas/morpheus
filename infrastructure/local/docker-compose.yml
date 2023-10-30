@@ -67,8 +67,6 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
-      postgres_backend:
-        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -150,35 +148,6 @@ services:
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-mongodb_backend.entrypoints=mongodb"
       - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-mongodb_backend.rule=HostSNI(`*`)"
       - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-mongodb_backend.loadbalancer.server.port=27017"
-    profiles:
-      - backend
-      - backend_db_only
-  postgres_backend:
-    image: postgres:13.12
-    container_name: ${BACKEND_POSTGRES_HOST}
-    environment:
-      POSTGRES_USER: ${BACKEND_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${BACKEND_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${BACKEND_POSTGRES_DB}
-    volumes:
-      - postgres_backend_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${BACKEND_POSTGRES_USER} -d ${BACKEND_POSTGRES_DB}'" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: always
-    read_only: true
-    networks:
-      - backend
-    tmpfs:
-      - /tmp
-      - /var/run/postgresql
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_backend.entrypoints=postgres"
-      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-postgres_backend.rule=HostSNI(`*`)"
-      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-postgres_backend.loadbalancer.server.port=5432"
     profiles:
       - backend
       - backend_db_only

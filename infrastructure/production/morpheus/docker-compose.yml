@@ -29,8 +29,6 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
-      postgres_backend:
-        condition: service_healthy
     env_file:
       - .env
     healthcheck:
@@ -103,26 +101,6 @@ services:
     user: mongodb
     tmpfs:
       - /tmp
-  postgres_backend:
-    image: postgres:13.12
-    environment:
-      POSTGRES_USER: ${BACKEND_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${BACKEND_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${BACKEND_POSTGRES_DB}
-    volumes:
-      - postgres_backend_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${BACKEND_POSTGRES_USER} -d ${BACKEND_POSTGRES_DB}'" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: always
-    read_only: true
-    networks:
-      - backend
-    tmpfs:
-      - /tmp
-      - /var/run/postgresql
 volumes:
   mongodb_backend_data:
     driver: local

@@ -8,9 +8,6 @@ docker compose -f "$localInfrastructureRoot/docker-compose.yml" \
   --profile keycloak \
   --profile backend_db_only \
   up -d --build --force-recreate
+exitWithErrorIfLastCommandFailed "Error starting local environment"
 
 prepareBackendEnvFile
-
-cd $devScriptsRoot
-./migrations/migrate-up.sh
-
