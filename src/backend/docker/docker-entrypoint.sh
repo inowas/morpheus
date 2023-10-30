@@ -8,7 +8,7 @@ entrypoint_log() {
 
 entrypoint_log "$0: info: Starting $0"
 
-entypointPath=/app/docker/docker-entrypoint.d/
+entypointPath=${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d/
 
 if find "$entypointPath" -mindepth 1 -maxdepth 1 -type f -print -quit 2>/dev/null | read -r v; then
     entrypoint_log "$0: $entypointPath is not empty, will attempt to perform configuration"

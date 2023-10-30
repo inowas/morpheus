@@ -51,6 +51,7 @@ function prepareBackendEnvFile {
     && sed -i.bak -e "/BACKEND_MORPHEUS_SENSORS_LOCAL_DATA/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_POSTGRES_HOST/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_MONGO_HOST/d" -- "$backendEnvFile.tmp" \
+    && sed -i.bak -e "/BACKEND_APP_ROOT_PATH/d" -- "$backendEnvFile.tmp" \
     && mv "$backendEnvFile.tmp" "$backendEnvFile" \
     && rm -f "$backendEnvFile.tmp.bak" \
     && echo "" >> "$backendEnvFile" \
@@ -60,6 +61,7 @@ function prepareBackendEnvFile {
     && echo "BACKEND_MORPHEUS_SENSORS_LOCAL_DATA=$LOCAL_SENSOR_DATA_MOUNTPOINT" >> "$backendEnvFile" \
     && echo "BACKEND_POSTGRES_HOST=localhost" >> "$backendEnvFile" \
     && echo "BACKEND_MONGO_HOST=localhost" >> "$backendEnvFile" \
+    && echo "BACKEND_APP_ROOT_PATH=$backendRoot" >> "$backendEnvFile" \
     && echo "PYTHONUNBUFFERED=1" >> "$backendEnvFile" \
     && echo "FLASK_ENV=development" >> "$backendEnvFile" \
     && echo "FLASK_DEBUG=1" >> "$backendEnvFile" \
