@@ -88,7 +88,6 @@ services:
       - .env
     volumes:
       - mongodb_backend_data:/data/db
-      - ./mongodb_backend/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.runCommand('ping').ok", "--quiet" ]
       interval: 5s

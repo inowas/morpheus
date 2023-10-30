@@ -11,3 +11,8 @@ docker compose -f "$localInfrastructureRoot/docker-compose.yml" \
 exitWithErrorIfLastCommandFailed "Error starting local environment"
 
 prepareBackendEnvFile
+
+set -a # automatically export all variables from .env file
+source $backendEnvFile
+set +a
+$backendRoot/docker/docker-entrypoint.sh
