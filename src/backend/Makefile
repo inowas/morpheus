@@ -44,15 +44,6 @@ run-tests:
 fix-code-style:
 	scripts/dev/qa_check/fix-code-style.sh
 
-## migrates database to latest version
-migrate-up:
-	scripts/dev/migrations/migrate-up.sh
-
-## create new migration (pass name of migration as argument)
-create_migration:
-	scripts/dev/migrations/create-migration.sh "$(arguments)"
-
-
 ## Runs flask cli command (pass command as argument)
 run-flask-cli-command:
 	scripts/dev/run-flask-cli-command.sh "$(arguments)"
