@@ -54,7 +54,7 @@ class CreateModflowModelCommandHandler:
                 user=command.user_id
             ),
             spatial_discretization=SpatialDiscretization(
-                area=Area(geometry=command.geometry),
+                area=Area.from_geometry(command.geometry),
                 grid=command.grid,
                 length_unit=command.length_unit,
                 rotation=command.rotation,

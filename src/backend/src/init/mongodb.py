@@ -10,7 +10,10 @@ root_user = os.environ.get('BACKEND_MONGO_INITDB_ROOT_USERNAME')
 root_password = os.environ.get('BACKEND_MONGO_INITDB_ROOT_PASSWORD')
 db_user = os.environ.get('BACKEND_MONGO_USER')
 db_password = os.environ.get('BACKEND_MONGO_PASSWORD')
-databases = [os.environ.get('BACKEND_MONGO_SENSOR_DATABASE')]
+databases = [
+    os.environ.get('BACKEND_MONGO_SENSOR_DATABASE'),
+    os.environ.get('BACKEND_MONGO_MODFLOW_DATABASE')
+]
 
 client = MongoClient(host=host, port=port, username=root_user, password=root_password)
 

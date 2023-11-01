@@ -1,7 +1,7 @@
 from morpheus.modflow.types.Metadata import Metadata
 from morpheus.modflow.types.ModflowModel import ModflowModel
-from morpheus.settings import settings
 from morpheus.common.infrastructure.persistence.mongodb import Database, get_database_client
+from morpheus.settings import settings
 
 
 class ModflowModelRepository:

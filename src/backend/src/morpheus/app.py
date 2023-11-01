@@ -1,3 +1,5 @@
+import traceback
+
 from flask import Flask, json
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
@@ -37,7 +39,7 @@ def bootstrap(app: Flask):
         response.content_type = 'application/json'
 
         if not settings.is_production():
-            response.data = json.dumps({'error': str(exception)})
+            response.data = json.dumps({'error': traceback.format_exc()})
 
         return response
 

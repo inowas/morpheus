@@ -16,25 +16,14 @@ def as_geojson(obj):
 @dataclasses.dataclass
 class Polygon:
     coordinates: list[list[tuple[float, float]]]
-    type: str = 'polygon'
-
-    def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
-
-    @classmethod
-    def from_geo_interface(cls, obj):
-        return cls(
-            type=obj['type'],
-            coordinates=obj['coordinates']
-        )
+    type: Literal['Polygon'] = 'Polygon'
 
     @classmethod
     def from_dict(cls, obj: dict):
+        if str(obj['type']).lower() != 'Polygon'.lower():
+            raise ValueError('Geometry Type must be a Polygon')
         return cls(
-            type=obj['type'],
+            type='Polygon',
             coordinates=obj['coordinates']
         )
 
@@ -124,39 +113,36 @@ class Area:
     bounding_box: BoundingBox
     affected_cells: AffectedCells | None = None
 
-    def __init__(self, geometry: Polygon, bounding_box: BoundingBox | None = None,
-                 affected_cells: AffectedCells | None = None):
-        self.geometry = geometry
-        self.bounding_box = bounding_box
-        self.affected_cells = affected_cells
-
     @classmethod
     def from_dict(cls, obj: dict):
         try:
-            geometry = pygeoif.shape(obj['geometry'])
+            geometry = Polygon.from_dict(obj['geometry'])
         except KeyError:
             raise ValueError('Geometry must be a Polygon')
-
-        if not isinstance(geometry, pygeoif.Polygon):
-            raise ValueError('geometry must be of type Polygon')
 
         affected_cells: AffectedCells | None = None
         if obj.get('affected_cells'):
             affected_cells = AffectedCells.from_dict(obj['affected_cells'])
 
-        bounding_box = BoundingBox.from_tuple(geometry.bounds)
+        bounding_box = pygeoif.shape(obj['geometry']).bounds
         if obj.get('bounding_box'):
             bounding_box = BoundingBox.from_tuple(obj['bounding_box'])
 
         return cls(
-            geometry=Polygon.from_geo_interface(as_geojson(geometry)),
+            geometry=geometry,
             affected_cells=affected_cells,
             bounding_box=bounding_box
         )
 
+    @classmethod
+    def from_geometry(cls, geometry: Polygon):
+        return cls.from_dict({
+            'geometry': geometry.to_dict()
+        })
+
     def to_dict(self):
         return {
-            'geometry': as_geojson(self.geometry),
+            'geometry': self.geometry.to_dict(),
             'bounding_box': self.bounding_box,
             'affected_cells': self.affected_cells
         }
@@ -276,6 +262,12 @@ class CRS:
 class Polygon:
     type: Literal['polygon']
     coordinates: list[list[tuple[float, float]]]
+
+    def __geo_interface__(self):
+        return {
+            'type': self.type,
+            'coordinates': self.coordinates
+        }
 
     @classmethod
     def from_dict(cls, obj: dict):
