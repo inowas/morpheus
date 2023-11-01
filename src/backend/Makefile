@@ -20,7 +20,7 @@ help:
 # Skips the first word
 arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
-# prepare local development environment
+## prepare local development environment
 install-dev:
 	scripts/dev/install-dev.sh
 
