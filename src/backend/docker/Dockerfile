@@ -3,14 +3,16 @@ ARG DOCKERFILE_BUILD_BASE_STAGE=base
 FROM python:3.11-bookworm as base
 
 # add files to image
-ADD src/backend/src /app/src
-ADD src/backend/requirements/prod.txt /app/requirements/prod.txt
-ADD src/backend/docker/docker-entrypoint.sh /app/docker/docker-entrypoint.sh
-ADD src/backend/docker/docker-entrypoint.d /app/docker/docker-entrypoint.d
+ARG BACKEND_APP_ROOT_PATH
+
+ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
+ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
+ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
+ADD src/backend/docker/docker-entrypoint.d ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d
 
 # install python dependencies
 RUN pip install --upgrade pip
-RUN pip install -r /app/requirements/prod.txt
+RUN pip install -r ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
 
 # prepare python environment
 ENV PYTHONUNBUFFERED 1
@@ -53,8 +55,10 @@ RUN usermod -u ${FLASK_USER_ID} -g ${FLASK_GROUP_ID} flask
 
 FROM ${DOCKERFILE_BUILD_BASE_STAGE} as backend
 
+ARG BACKEND_APP_ROOT_PATH
+
 # start gunicorn as user flask
 USER flask
-WORKDIR /app/src
-ENTRYPOINT ["/app/docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
+WORKDIR ${BACKEND_APP_ROOT_PATH}/src
+ENTRYPOINT ["../docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
 EXPOSE 8000

@@ -7,4 +7,4 @@ docker compose -f "$infrastructureRoot/docker-compose.yml" \
   --profile mailcatcher \
   --profile keycloak \
   --profile backend \
-  up -d --build --force-recreate
+  up -d --build --force-recreate --remove-orphans
