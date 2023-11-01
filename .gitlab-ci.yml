@@ -56,7 +56,6 @@ deploy-morpheus:dev:
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose down"
     - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
     - scp -P22 -r ./infrastructure/production/morpheus/cron root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
-    - scp -P22 -r ./infrastructure/production/morpheus/mongodb_backend root@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose pull"
     - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose up -d --force-recreate"
   environment:
@@ -82,7 +81,6 @@ deploy-morpheus:prod:
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose down"
     - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
     - scp -P22 -r ./infrastructure/production/morpheus/cron root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
-    - scp -P22 -r ./infrastructure/production/morpheus/mongodb_backend root@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose pull"
     - ssh -p22 $URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose up -d --force-recreate"
   environment:
