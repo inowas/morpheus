@@ -1,41 +1,52 @@
-import dataclasses
-
-from flask import Request, abort
+from flask import Request, abort, jsonify
 
 from ....application.write.CreateModflowModel import CreateModflowModelCommand, CreateModflowModelCommandHandler
-
-
-@dataclasses.dataclass
-class Message:
-    uuid: str
-    message_name: str
-    metadata: dict
-    payload: dict
-
-    @classmethod
-    def from_request_body(cls, body: dict):
-        return cls(
-            uuid=body['uuid'],
-            message_name=body['message_name'],
-            metadata=body['metadata'] if 'metadata' in body else {},
-            payload=body['payload']
-        )
+from ....types.Metadata import UserId, Description, Tags, Name
+from ....types.SpatialDiscretization import Polygon, LengthUnit, Rotation, CRS, Grid
+from .messages import CreateModflowModelMessage
 
 
 class MessageBoxRequestHandler:
-    def handle(self, request: Request):
+    @staticmethod
+    def handle(request: Request):
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
         try:
-            message = Message.from_request_body(request.get_json())
+            message_name = request.json.get('message_name')
         except KeyError as e:
             abort(400, f'Missing required key in request body: {e}')
 
-        if message.message_name == CreateModflowModelCommand.message_name:
-            self.handle_create_modflow_model_command(CreateModflowModelCommand.from_dict(message.payload))
+        match message_name:
+            case 'create_modflow_model':
+                message = CreateModflowModelMessage.from_dict(request.json)
+                payload = message.payload
+                user_id = 'user_id'
 
-    @staticmethod
-    def handle_create_modflow_model_command(command: CreateModflowModelCommand):
-        result = CreateModflowModelCommandHandler.handle(command=command)
-        return result.to_dict()
+                command = CreateModflowModelCommand(
+                    name=Name.from_str(payload.get('name')),
+                    description=Description.from_str(payload.get('description')),
+                    tags=Tags.from_list(payload.get('tags')),
+                    geometry=Polygon.from_dict({
+                        'type': payload.get('geometry').get('type'),
+                        'coordinates': payload.get('geometry').get('coordinates')
+                    }),
+                    grid=Grid.from_dict({
+                        'rows': payload.get('grid').get('rows'),
+                        'columns': payload.get('grid').get('columns')
+                    }),
+                    length_unit=LengthUnit.from_str(payload.get('length_unit')),
+                    rotation=Rotation.from_float(payload.get('rotation')),
+                    crs=CRS.from_str(payload.get('crs')),
+                    user_id=UserId.from_str(user_id)
+                )
+
+                result = CreateModflowModelCommandHandler.handle(command=command)
+                response = jsonify()
+                response.status_code = 201
+                response.headers['location'] = 'modflow/' + result.id
+
+                return response
+
+            case _:
+                abort(400, f'Unknown message name: {message_name}')

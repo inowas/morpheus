@@ -1,58 +1,34 @@
 import dataclasses
+import uuid
+from typing import Literal
+
+from ...types.ModflowModel import ModflowModel, ModelId
+from ...types.Metadata import Metadata, Description, Name, Tags, UserId
+from ...types.SpatialDiscretization import Polygon, Grid, Rotation, CRS, SpatialDiscretization, LengthUnit, Area
+from ...types.TimeDiscretization import TimeDiscretization
+from ...types.Boundaries import BoundaryCollection
+from ...types.Layers import LayerCollection
+
+from ...infrastructure.persistence.ModflowModelRepository import ModflowModelRepository
+
+
+@dataclasses.dataclass(frozen=True)
+class ModelArea:
+    type: Literal['polygon']
+    coordinates: list[list[tuple[float, float]]]
 
 
 @dataclasses.dataclass(frozen=True)
 class CreateModflowModelCommand:
-    id: str
-    name: str
-    description: str
-    model_area: dict
-    bounding_box: dict
-    grid: dict
-    cells: dict
-    rotation: float
-    stress_periods: list[dict]
-    length_unit: int
-    time_unit: int
-    # everything accepted by pyproj.CRS.from_user_input(),
-    crs: str
-
-    @staticmethod
-    def message_name():
-        return 'create_modflow_model'
-
-    @classmethod
-    def from_dict(cls, dictionary: dict):
-        return cls(
-            id=dictionary['id'],
-            name=dictionary['name'],
-            description=dictionary['description'],
-            model_area=dictionary['model_area'],
-            bounding_box=dictionary['bounding_box'],
-            grid=dictionary['grid'],
-            cells=dictionary['cells'],
-            rotation=dictionary['rotation'],
-            stress_periods=dictionary['stress_periods'],
-            length_unit=dictionary['length_unit'],
-            time_unit=dictionary['time_unit'],
-            crs=dictionary['crs']
-        )
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'model_area': self.model_area,
-            'bounding_box': self.bounding_box,
-            'grid': self.grid,
-            'cells': self.cells,
-            'rotation': self.rotation,
-            'stress_periods': self.stress_periods,
-            'length_unit': self.length_unit,
-            'time_unit': self.time_unit,
-            'crs': self.crs
-        }
+    name: Name
+    description: Description
+    tags: Tags
+    geometry: Polygon
+    grid: Grid
+    length_unit: LengthUnit
+    rotation: Rotation
+    crs: CRS
+    user_id: UserId
 
 
 @dataclasses.dataclass
@@ -69,4 +45,27 @@ class CreateModflowModelCommandHandler:
 
     @staticmethod
     def handle(command: CreateModflowModelCommand):
-        return CreateModflowModelCommandResult(id=command.id)
+        new_model = ModflowModel(
+            id=ModelId(value=str(uuid.uuid4())),
+            metadata=Metadata(
+                name=command.name,
+                description=command.description,
+                tags=command.tags,
+                user=command.user_id
+            ),
+            spatial_discretization=SpatialDiscretization(
+                area=Area(geometry=command.geometry),
+                grid=command.grid,
+                length_unit=command.length_unit,
+                rotation=command.rotation,
+                crs=command.crs
+            ),
+            time_discretization=TimeDiscretization.from_default(),
+            boundaries=BoundaryCollection.from_default(),
+            layers=LayerCollection.from_default()
+        )
+
+        repository = ModflowModelRepository()
+        repository.save_modflow_model(new_model)
+
+        return CreateModflowModelCommandResult(id=new_model.id.to_str())

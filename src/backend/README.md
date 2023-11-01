@@ -28,15 +28,18 @@ You first need to [start the dev environment](#start-the-dev-environment).
 
 ### Option 1: Run flask app through PyCharm
 
-Create a run/debug configuration in PyCharm (see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html)).
+Create a run/debug configuration in PyCharm (
+see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html)).
 
 Choose the following settings:
+
 * "Target type": "Module name"
 * "FLASK_ENV": "development"
 * check "FLASK_DEBUG"
 * "Python interpreter": choose your virtuelenv
 * "Working directory": choose the backend source folder (src/backend/src)
 *
+
 Now run or debug the flask app with this configuration from PyCharm.
 
 ### Option 2: Run flask app from command line
