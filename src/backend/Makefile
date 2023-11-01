@@ -24,7 +24,7 @@ arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 install-dev:
 	scripts/dev/install-dev.sh
 
-## start backend as local flask server with debugging enabled and local docker environment without backend service
+## start local docker environment without backend service and prepare dev environment
 start-dev:
 	scripts/dev/start-dev.sh
 
@@ -32,11 +32,11 @@ start-dev:
 stop-dev:
 	scripts/dev/stop-dev.sh
 
-## runs architecture layer boundary checks, static code analysis and tests
+## run architecture layer boundary checks, static code analysis and tests
 qa-check:
 	scripts/dev/qa-check.sh
 
-## runs tests
+## run tests
 run-tests:
 	scripts/dev/qa_check/run-tests.sh
 
@@ -44,15 +44,10 @@ run-tests:
 fix-code-style:
 	scripts/dev/qa_check/fix-code-style.sh
 
-## migrates database to latest version
-migrate-up:
-	scripts/dev/migrations/migrate-up.sh
+## runs flask app
+run-flask-app:
+	scripts/dev/run-flask-app.sh
 
-## create new migration (pass name of migration as argument)
-create_migration:
-	scripts/dev/migrations/create-migration.sh "$(arguments)"
-
-
-## Runs flask cli command (pass command as argument)
+## runs flask cli command (pass command as argument)
 run-flask-cli-command:
 	scripts/dev/run-flask-cli-command.sh "$(arguments)"
