@@ -1,4 +1,4 @@
-import type { GeomanHandlers } from '../types'
+import type {GeomanHandlers} from '../types/type'
 
 export const reference = [
   'onMapRemove',

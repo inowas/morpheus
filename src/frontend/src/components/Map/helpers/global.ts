@@ -1,6 +1,6 @@
 import type {Map} from 'leaflet';
 
-import type {HandlersWithDebug, Method} from '../../types/T03.type';
+import type {HandlersWithDebug, Method} from '../types/type';
 
 export function globalEvents(
   map: Map,

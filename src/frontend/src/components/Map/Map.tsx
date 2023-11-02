@@ -15,15 +15,26 @@ interface IProps {
   setGeojson: (geojson: FeatureCollection) => void;
 }
 
-const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][] => {
-  const polygonCoordinates: LatLngExpression[][] = [];
+const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][][] => {
+  const polygonCoordinates: LatLngExpression[][][] = [];
   for (const feature of geoJSON.features) {
     if ('Polygon' === feature.geometry.type) {
       const coordinates: LatLngExpression[] = feature.geometry.coordinates[0].map((coord) => [
         coord[1],
         coord[0],
+        coord[2] || 0, // Add a default value for the third element if it's not present
       ]);
-      polygonCoordinates.push(coordinates);
+      polygonCoordinates.push([coordinates]);
+    } else if ('MultiPolygon' === feature.geometry.type) {
+      const multiPolygonCoordinates: LatLngExpression[][][] = feature.geometry.coordinates.map((polygonCoords) => {
+        const coordinates: LatLngExpression[] = polygonCoords[0].map((coord) => [
+          coord[1],
+          coord[0],
+          coord[2] || 0, // Add a default value for the third element if it's not present
+        ]);
+        return [coordinates];
+      });
+      polygonCoordinates.push(...multiPolygonCoordinates);
     }
   }
   return polygonCoordinates;
@@ -33,9 +44,11 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
 
+  console.log(geojson);
   return (
     <MapContainer
-      center={coords} zoom={13}
+      center={coords}
+      zoom={13}
       style={{height: '100vh', width: '100%'}}
     >
       <TileLayer
@@ -46,7 +59,8 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
       ) : (
         polygonCoordinates.map((coordinates, index) => (
           <Polygon
-            key={index} positions={coordinates}
+            key={index}
+            positions={coordinates[0]}
             pathOptions={redOptions}
           />
         ))

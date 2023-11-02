@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import {useLeafletContext} from '@react-leaflet/core';
 import type {LayerGroup} from 'leaflet';
 import type {GeomanProps} from './types/type';
-import {globalEvents, layerEvents, mapEvents, reference} from './infrastructure';
+import {globalEvents, layerEvents, mapEvents, reference} from './helpers';
 
 const GeomanControls = ({
   options = {},
@@ -22,21 +22,6 @@ const GeomanControls = ({
   const {map, layerContainer} = useLeafletContext();
   const container = (layerContainer as LayerGroup) || map;
 
-  if (!container) {
-    console.warn('[GEOMAN-CONTROLS] No map or container instance found');
-    return null;
-  }
-
-
-  // TODO! remove on click event
-  map.on('click', (e) => {
-    const lat = e.latlng.lat;
-    const lng = e.latlng.lng;
-    console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`);
-  });
-
-  // TODO! fix eslint
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // add controls
     if (!map.pm.controlsVisible()) {
@@ -58,23 +43,23 @@ const GeomanControls = ({
       setMounted(false);
     };
   }, []);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   useEffect(() => {
     // set path options
     if (mounted) map.pm.setPathOptions(pathOptions);
   }, [pathOptions, mounted]);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   useEffect(() => {
     // set global options
     if (mounted)
       map.pm.setGlobalOptions({layerGroup: container, ...globalOptions});
   }, [globalOptions, mounted]);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   useEffect(() => {
     // set language
     if (mounted) map.pm.setLang(lang);
   }, [lang, mounted]);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   useEffect(() => {
     // attach and remove event handlers
     if (mounted) {
@@ -102,6 +87,11 @@ const GeomanControls = ({
       ? Object.entries(handlers).every(([k, fn]) => handlersRef[k] === fn)
       : true,
   ]);
+
+  if (!container) {
+    console.warn('[GEOMAN-CONTROLS] No map or container instance found');
+    return null;
+  }
 
   return null;
 };

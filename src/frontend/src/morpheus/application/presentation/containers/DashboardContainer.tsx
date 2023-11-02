@@ -4,7 +4,7 @@ import PageTitle from '../components/PageTitle';
 import {useTranslate} from '../../application';
 import {useNavigate} from 'common/hooks';
 
-const tools = ['T02', 'T03', 'T04', 'T06', 'T08', 'T09', 'T11', 'T13', 'T14', 'T18'];
+const tools = ['T02', 'T04', 'T06', 'T08', 'T09', 'T11', 'T13', 'T14', 'T18'];
 
 
 const DashboardContainer = () => {

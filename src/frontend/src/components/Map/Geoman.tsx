@@ -25,9 +25,7 @@ const Geoman = ({geojson, setGeojson}: Props) => {
           const {lat, lng} = layer.getLatLng();
           newGeo.features.push({
             type: 'Feature',
-            properties: {
-              radius: layer.getRadius(),
-            },
+            properties: {},
             geometry: {
               type: 'Point',
               coordinates: [lng, lat],
@@ -39,7 +37,12 @@ const Geoman = ({geojson, setGeojson}: Props) => {
           layer instanceof L.Rectangle ||
           layer instanceof L.Polyline
         ) {
-          newGeo.features.push(layer.toGeoJSON());
+          const properties = layer.feature?.properties ?? {}; // Provide a default empty object
+          newGeo.features.push({
+            properties,
+            ...layer.toGeoJSON(),
+
+          });
         }
       });
     }
