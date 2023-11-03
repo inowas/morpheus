@@ -21,7 +21,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../morpheus/authentication/schema/OAuthPasswordGrantRequest.yaml'
+              $ref: './authentication/schema/OAuthPasswordGrantRequest.yaml'
 
       responses:
         200:
@@ -29,7 +29,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../morpheus/authentication/schema/OAuthTokenResponse.yaml'
+                $ref: './authentication/schema/OAuthTokenResponse.yaml'
 
         400:
           description: Invalid grant type, client, username/password or invalid request
@@ -44,7 +44,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../morpheus/authentication/schema/OAuthRevokeTokenRequest.yaml'
+              $ref: './authentication/schema/OAuthRevokeTokenRequest.yaml'
       responses:
         200:
           description: Token was successfully revoked
@@ -83,7 +83,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../morpheus/modflow/schema/CreateModflowModelRequest.yaml'
+              $ref: './modflow/schema/CreateModflowModelRequest.yaml'
       responses:
         201:
           description: Modflow model was successfully created

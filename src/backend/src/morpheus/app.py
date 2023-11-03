@@ -1,6 +1,8 @@
 import traceback
 
+import yaml
 from flask import Flask, json
+from flask_cors import cross_origin
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 
@@ -13,6 +15,12 @@ from morpheus.sensors import bootstrap_sensors_module
 def bootstrap(app: Flask):
     bootstrap_modflow_module(app)
     bootstrap_sensors_module(app)
+
+    @app.route('/schema', methods=['GET'])
+    @cross_origin()
+    def read_schema():
+        with open(settings.OPENAPI_SPEC_FILE) as file:
+            return yaml.load(file, Loader=yaml.FullLoader), 200
 
     @app.errorhandler(SchemaValidationException)
     def handle_schema_validation_exception(exception):
