@@ -2,8 +2,7 @@ import React, {ReactNode, useEffect, useState} from 'react';
 
 import {useNavbarItems, useTranslate} from '../../application';
 import {ContentWrapper} from 'components';
-import {Navbar} from '../components';
-import {Footer, Header} from '../../../../components';
+import {Footer, Header, Navbar} from '../../../../components';
 import {useNavigate} from 'common/hooks';
 import useReleaseVersion from '../../application/useReleaseVersion';
 

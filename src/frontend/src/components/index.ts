@@ -25,6 +25,7 @@ import Loader from './Loader/Loader';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
+import Navbar, {INavbarItem} from './Navbar';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -53,7 +54,6 @@ export {
   Dropzone,
   Form,
   Grid,
-  NotFound,
   Header,
   Footer,
   HintPageComponent,
@@ -66,6 +66,8 @@ export {
   LoaderAnimation,
   Message,
   Modal,
+  Navbar,
+  NotFound,
   Notification,
   Notifications,
   Page,
@@ -87,4 +89,5 @@ export type {
   DropdownProps,
   IInputProps,
   IInputOnChangeData,
+  INavbarItem,
 };
