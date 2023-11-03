@@ -22,6 +22,24 @@ class ModflowModelRepository:
     def list_collection_names(self) -> list[str]:
         return self.db.list_collection_names()
 
+    def get_modflow_models_metadata(self) -> list | None:
+        collection_name = 'modflow_models'
+        if not self.has_collection(collection_name):
+            return None
+        collection = self.get_collection(collection_name)
+        model_dict = collection.find()
+        if model_dict is None:
+            return None
+
+        result = []
+        for model in model_dict:
+            result.append({
+                'id': model['id'],
+                'metadata': model['metadata']
+            })
+
+        return result
+
     def get_modflow_model_metadata(self, model_id: str) -> dict | None:
         collection_name = 'modflow_models'
         if not self.has_collection(collection_name):

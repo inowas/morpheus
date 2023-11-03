@@ -43,5 +43,5 @@ def bootstrap(app: Flask):
 
         return response
 
-    app.json.sort_keys = False
+    app.json.sort_keys = False  # type: ignore
     app.add_url_rule('/healthcheck', 'healthcheck', lambda: 'OK', methods=['GET'])

@@ -3,12 +3,11 @@ Dynaconf==3.2.4
 Flask==3.0.0
 Flask-Cors==4.0.0
 gunicorn==21.2.0
-openapi-pydantic==0.3.2
 pandas==2.1.2
 psycopg2==2.9.9
-pydantic==2.4.2
 pygeoif==1.1.1
-pymongo==4.5.0
+pymongo==4.6.0
 pyproj==3.6.1
-SQLAlchemy==2.0.22
+shapely==2.0.2
+SQLAlchemy==2.0.23
 python-keycloak==3.3.0

@@ -1,0 +1,123 @@
+openapi: 3.1.0
+info:
+  title: INOWAS API
+  version: 2.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: Local Development API
+  - url: https://api.morpheus.inowas.com
+    description: Production API
+
+
+paths:
+  /auth/oauth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Get OAuth2 Token
+      description: 'Fetch a new access and refresh token. Supported grant types are: password and refresh_token.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../morpheus/authentication/schema/OAuthPasswordGrantRequest.yaml'
+
+      responses:
+        200:
+          description: Successful token response
+          content:
+            application/json:
+              schema:
+                $ref: '../morpheus/authentication/schema/OAuthTokenResponse.yaml'
+
+        400:
+          description: Invalid grant type, client, username/password or invalid request
+
+  /auth/oauth/revoke:
+    post:
+      tags:
+        - Authentication
+      summary: Revoke OAuth2 Token
+      description: 'Revoke an access and refresh token.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../morpheus/authentication/schema/OAuthRevokeTokenRequest.yaml'
+      responses:
+        200:
+          description: Token was successfully revoked
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          description: Invalid client or invalid request
+
+  /modflow:
+    get:
+      tags:
+        - Modflow
+      summary: Read list of modflow models
+      description: Read list of modflow models
+      responses:
+        200:
+          description: List of modflow models
+          content:
+            application/json:
+              schema:
+                type: array
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+    post:
+      tags:
+        - Modflow
+      summary: Create a new modflow model
+      description: Create a new modflow model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../morpheus/modflow/schema/CreateModflowModelRequest.yaml'
+      responses:
+        201:
+          description: Modflow model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /sensors:
+    get:
+      tags:
+        - Sensors
+      summary: Read list od sensors
+      description: Read list of sensors
+      responses:
+        200:
+          description: List of sensors
+          content:
+            application/json:
+              schema:
+                type: array
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+

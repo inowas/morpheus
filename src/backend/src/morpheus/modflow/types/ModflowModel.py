@@ -19,7 +19,7 @@ class ModelId:
         return self.value
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class ModflowModel:
     id: ModelId
     metadata: Metadata
@@ -36,9 +36,7 @@ class ModflowModel:
             spatial_discretization=SpatialDiscretization.from_dict(obj['spatial_discretization']),
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
             boundaries=BoundaryCollection.from_list(obj['boundaries']),
-            layers=LayerCollection(
-                layers=obj['layers']
-            )
+            layers=LayerCollection.from_list(obj['layers'])
         )
 
     def to_dict(self):

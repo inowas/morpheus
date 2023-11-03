@@ -1,0 +1,4 @@
+## OAuthClientId:
+type: string
+description: "The oauth2 client_id"
+example: "0d37fdf4-03bd-40f1-832d-46099ecc93bc"

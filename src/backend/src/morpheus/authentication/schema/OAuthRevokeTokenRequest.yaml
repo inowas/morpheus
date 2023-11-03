@@ -1,0 +1,11 @@
+type: object
+properties:
+  client_id:
+    $ref: './OAuthClientId.yaml'
+  token:
+    type: string
+    description: "The access token to revoke"
+    example: "JZeXaGRgCOdIIjeyLmk8BM6oVVr9QZNWR5IaMDxoG1"
+  token_type_hint:
+    enum:
+      - access_token
