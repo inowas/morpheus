@@ -1,10 +1,8 @@
-import os
+import functools
 
-from flask import Request
+import flask
 from openapi_core import Spec, V31RequestValidator
 from openapi_core.contrib.flask import FlaskOpenAPIRequest
-
-openapi_spec_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../../schema/openapi.yaml")
 
 
 class SchemaValidationException(Exception):
@@ -19,13 +17,20 @@ class SchemaValidationException(Exception):
         return str(self.errors)
 
 
-def validate_request(req: Request):
-    try:
-        spec = Spec.from_file_path(openapi_spec_file)
-        openapi_request = FlaskOpenAPIRequest(req)
-        errors = [str(error) for error in list(V31RequestValidator(spec).iter_errors(openapi_request))]
-        if len(errors) > 0:
-            raise SchemaValidationException('Schema Validation Error:', errors)
-        return errors
-    except Exception as e:
-        raise SchemaValidationException('Invalid request', str(e))
+def validate_request(openapi_spec_file):
+    def decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            try:
+                spec = Spec.from_file_path(openapi_spec_file)
+                openapi_request = FlaskOpenAPIRequest(flask.request)
+                errors = [str(error) for error in list(V31RequestValidator(spec).iter_errors(openapi_request))]
+                if len(errors) == 0:
+                    return f(*args, **kwargs)
+
+                raise SchemaValidationException('Schema Validation Error:', errors)
+            except Exception as e:
+                raise SchemaValidationException('Invalid request', str(e))
+
+        return decorated_function
+    return decorator

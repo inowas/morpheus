@@ -1,12 +1,14 @@
 import os
 
-from flask import Blueprint, request, Request
+from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 import yaml
 
 from .presentation.api.read.ReadModflowModelListRequestHandler import RedModflowModelListRequestHandler
 from .presentation.api.write.CreateModflowModelRequestHandler import CreateModflowModelRequestHandler
-from ..common.presentation.schema_validation.SchemaValidation import openapi_spec_file, validate_request
+from ..common.presentation.schema_validation.SchemaValidation import validate_request
+
+openapi_spec_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../schema/openapi.yaml")
 
 
 def register_routes(blueprint: Blueprint):
@@ -20,9 +22,9 @@ def register_routes(blueprint: Blueprint):
 
     @blueprint.route('', methods=['POST'])
     @blueprint.route('/', methods=['POST'])
+    @validate_request(openapi_spec_file)
     @cross_origin()
     def create_modflow_model():
-        validate_request(request)
         return CreateModflowModelRequestHandler().handle(request), 201
 
     @blueprint.route('', methods=['GET'])
