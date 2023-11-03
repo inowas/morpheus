@@ -27,7 +27,12 @@ class ModflowModelRepository:
         if not self.has_collection(collection_name):
             return None
         collection = self.get_collection(collection_name)
-        model_dict = collection.find()
+        model_dict = collection.find(
+            {},
+            {
+                'id': 1,
+                'metadata': 1
+            })
         if model_dict is None:
             return None
 

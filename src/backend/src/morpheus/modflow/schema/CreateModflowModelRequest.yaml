@@ -36,6 +36,9 @@ properties:
               type: number
               minItems: 2
               maxItems: 2
+    required:
+      - type
+      - coordinates
   grid_properties:
     type: object
     description: "The grid properties of the model."
@@ -66,16 +69,15 @@ properties:
         type: string
         enum: [ "meters", "centimeters", "feet", "unknown" ]
         example: "meters"
+    required:
+      - x_coordinates
+      - y_coordinates
+      - rotation
+      - length_unit
 
 required:
   - name
   - description
+  - tags
   - geometry
-  - grid
-  - grid.grid_type
-  - grid.grid_spacing
-  - grid.grid_spacing.type
-  - grid.grid_spacing.x_coordinates
-  - grid.grid_spacing.y_coordinates
-  - grid.grid_angle
-  - grid.length_unit
+  - grid_properties

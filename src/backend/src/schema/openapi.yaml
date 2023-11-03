@@ -114,7 +114,6 @@ paths:
         404:
           description: Not found
 
-
 components:
   securitySchemes:
     bearerAuth:

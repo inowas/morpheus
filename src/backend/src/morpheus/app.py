@@ -4,6 +4,7 @@ from flask import Flask, json
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 
+from morpheus.common.presentation.schema_validation.SchemaValidation import SchemaValidationException
 from morpheus.settings import settings
 from morpheus.modflow import bootstrap_modflow_module
 from morpheus.sensors import bootstrap_sensors_module
@@ -12,6 +13,15 @@ from morpheus.sensors import bootstrap_sensors_module
 def bootstrap(app: Flask):
     bootstrap_modflow_module(app)
     bootstrap_sensors_module(app)
+
+    @app.errorhandler(SchemaValidationException)
+    def handle_schema_validation_exception(exception):
+        # todo: logging, sentry, ...
+        app.logger.exception(exception)
+        response = Response(status=422)
+        response.content_type = 'application/json'
+        response.data = json.dumps({'error': exception.get_errors()})
+        return response
 
     @app.errorhandler(HTTPException)
     def handle_http_exceptions(exception):
@@ -30,6 +40,9 @@ def bootstrap(app: Flask):
     @app.errorhandler(Exception)
     def handle_internal_server_error(exception):
         if isinstance(exception, HTTPException):
+            return exception
+
+        if isinstance(exception, SchemaValidationException):
             return exception
 
         # todo: logging, sentry, ...

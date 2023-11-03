@@ -3,6 +3,7 @@ Dynaconf==3.2.4
 Flask==3.0.0
 Flask-Cors==4.0.0
 gunicorn==21.2.0
+openapi-core==0.18.1
 pandas==2.1.2
 psycopg2==2.9.9
 pygeoif==1.1.1
