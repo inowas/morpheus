@@ -1,3 +1,0 @@
-oneOf:
-  - $ref: './OAuthPasswordGrantRequest.yaml'
-  - $ref: './OAuthRefreshTokenGrantRequest.yaml'

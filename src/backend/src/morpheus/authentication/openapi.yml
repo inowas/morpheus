@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  title: INOWAS API - Authentication Module
+  version: 2.0.0
+components:
+  schemas:
+    OAuthClientId:
+      type: string
+      description: "The oauth2 client_id"
+      example: "0d37fdf4-03bd-40f1-832d-46099ecc93bc"
+    OAuthPasswordGrantRequest:
+      type: object
+      properties:
+        grant_type:
+          enum:
+            - password
+        client_id:
+          $ref: '#/components/schemas/OAuthClientId'
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - grant_type
+        - client_id
+        - username
+        - password
+      example:
+        {
+          grant_type: "password",
+          client_id: "0d37fdf4-03bd-40f1-832d-46099ecc93bc",
+          username: "example@inowas.com",
+          password: "my secret password"
+        }
+    OAuthRefreshTokenGrantRequest:
+      type: object
+      description: "The Request to retrieve a new OAuth-Token from a Refresh-Token."
+      properties:
+        grant_type:
+          enum:
+            - refresh_token
+        client_id:
+          $ref: '#/components/schemas/OAuthClientId'
+        refresh_token:
+          type: string
+          description: "Your refresh token."
+      required:
+        - grant_type
+        - client_id
+        - refresh_token
+      example:
+        {
+          grant_type: "refresh_token",
+          client_id: "0d37fdf4-03bd-40f1-832d-46099ecc93bc",
+          refresh_token: "OWlrhuK4dIQy6957lZoAA4COBpjwaBEuRWD6dTgnmTsdCVQX"
+        }
+    OAuthRevokeTokenRequest:
+      type: object
+      properties:
+        client_id:
+          $ref: '#/components/schemas/OAuthClientId'
+        token:
+          type: string
+          description: "The access token to revoke"
+          example: "JZeXaGRgCOdIIjeyLmk8BM6oVVr9QZNWR5IaMDxoG1"
+        token_type_hint:
+          enum:
+            - access_token
+    OAuthTokenRequest:
+      oneOf:
+        - $ref: '#/components/schemas/OAuthPasswordGrantRequest'
+        - $ref: '#/components/schemas/OAuthRefreshTokenGrantRequest'
+    OAuthTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: 'JZeXaGRgCOdIIjeyLmk8BM6oVVr9QZNWR5IaMDxoG1'
+        token_type:
+          type: string
+          example: 'Bearer'
+        expires_in:
+          type: integer
+          example: 864000
+        refresh_token:
+          type: string
+          example: 'OWlrhuK4dIQy6957lZoAA4COBpjwaBEuRWD6dTgnmTsdCVQX'
+

@@ -9,7 +9,6 @@ servers:
   - url: https://api.morpheus.inowas.com
     description: Production API
 
-
 paths:
   /auth/oauth/token:
     post:
@@ -21,7 +20,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './authentication/schema/OAuthPasswordGrantRequest.yaml'
+              $ref: './authentication/openapi.yml#/components/schemas/OAuthPasswordGrantRequest'
 
       responses:
         200:
@@ -29,7 +28,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './authentication/schema/OAuthTokenResponse.yaml'
+                $ref: './authentication/openapi.yml#/components/schemas/OAuthTokenResponse'
 
         400:
           description: Invalid grant type, client, username/password or invalid request
@@ -44,7 +43,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './authentication/schema/OAuthRevokeTokenRequest.yaml'
+              $ref: './authentication/openapi.yml#/components/schemas/OAuthRevokeTokenRequest'
       responses:
         200:
           description: Token was successfully revoked
@@ -83,7 +82,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './modflow/schema/CreateModflowModelRequest.yaml'
+              $ref: './modflow/openapi.yml#/components/schemas/CreateModflowModelRequest'
       responses:
         201:
           description: Modflow model was successfully created

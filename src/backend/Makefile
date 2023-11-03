@@ -51,3 +51,7 @@ run-flask-app:
 ## runs flask cli command (pass command as argument)
 run-flask-cli-command:
 	scripts/dev/run-flask-cli-command.sh "$(arguments)"
+
+## bundle openapi spec
+build-openapi-spec:
+	scripts/dev/build-openapi-spec.sh

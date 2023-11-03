@@ -6,7 +6,6 @@ from flask_cors import CORS, cross_origin
 from .presentation.api.read.ReadModflowModelListRequestHandler import RedModflowModelListRequestHandler
 from .presentation.api.write.CreateModflowModelRequestHandler import CreateModflowModelRequestHandler
 from ..common.presentation.schema_validation.SchemaValidation import validate_request
-from ..settings import settings
 
 
 def register_routes(blueprint: Blueprint):
@@ -14,8 +13,8 @@ def register_routes(blueprint: Blueprint):
 
     @blueprint.route('', methods=['POST'])
     @blueprint.route('/', methods=['POST'])
-    @validate_request(settings.OPENAPI_SPEC_FILE)
     @cross_origin()
+    @validate_request
     def create_modflow_model():
         return CreateModflowModelRequestHandler().handle(request), 201
 

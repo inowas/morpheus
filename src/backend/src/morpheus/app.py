@@ -1,3 +1,4 @@
+import os
 import traceback
 
 import yaml
@@ -19,7 +20,10 @@ def bootstrap(app: Flask):
     @app.route('/schema', methods=['GET'])
     @cross_origin()
     def read_schema():
-        with open(settings.OPENAPI_SPEC_FILE) as file:
+        if not os.path.exists(settings.OPENAPI_BUNDLED_SPEC_FILE):
+            return json.dumps({'error': 'No schema available, Please run "make build-openapi-spec" first.'}), 404
+
+        with open(settings.OPENAPI_BUNDLED_SPEC_FILE) as file:
             return yaml.load(file, Loader=yaml.FullLoader), 200
 
     @app.errorhandler(SchemaValidationException)

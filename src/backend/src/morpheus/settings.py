@@ -26,7 +26,9 @@ class Settings:
         self.MORPHEUS_SENSORS_UIT_FTP_PASSWORD: str = values.MORPHEUS_SENSORS_UIT_FTP_PASSWORD
         self.MORPHEUS_SENSORS_UIT_FTP_PATH: str = values.MORPHEUS_SENSORS_UIT_FTP_PATH
         self.MORPHEUS_SENSORS_LOCAL_DATA: str = values.MORPHEUS_SENSORS_LOCAL_DATA
-        self.OPENAPI_SPEC_FILE: str = os.path.abspath(os.path.join(os.path.dirname(__file__), 'openapi.yml'))
+        self.OPENAPI_LOCAL_SPEC_FILE: str = os.path.abspath(os.path.join(os.path.dirname(__file__), 'openapi.yml'))
+        self.OPENAPI_BUNDLED_SPEC_FILE: str = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), 'openapi.bundle.yml'))
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):
