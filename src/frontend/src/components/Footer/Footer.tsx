@@ -5,14 +5,14 @@ import logoBmbf from './images/logo-bmbf.svg';
 import logoInowas from './images/logo-inowas.svg';
 import logoTUD from './images/logo-tud.svg';
 import logoCopyright from './images/logo-copyright.png';
-import BackToTopButton from '../BackToTopButton';
+import BackToTopButton from '../BackToTopButton/BackToTopButton';
 
 interface IProps {
   release: string;
 }
 
 const footer = ({release}: IProps) => (
-  <footer className={styles.footer}>
+  <footer className={styles.footer} data-testid={'footer'}>
     <div className={styles.footerTop}>
       <Container>
         <div className={styles.footerTop_row}>
