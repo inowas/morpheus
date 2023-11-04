@@ -1,7 +1,6 @@
 import {IDropdownItem, IMenuItem} from '../types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useLocation} from 'react-router-dom';
-import {useNavigate} from 'common/hooks';
+import {useNavigate, useLocation} from 'common/hooks';
 import {Menu} from 'semantic-ui-react';
 import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
@@ -46,8 +45,6 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
 
   const isActive = (path: string): boolean => {
     return path === currentPathname;
-
-    return false;
   };
 
   const onMouseEnter = () => {
