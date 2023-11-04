@@ -7,19 +7,16 @@ interface IProps {
   children: ReactNode;
 }
 
-const ContentWrapper = ({children, minHeight}: IProps) => {
-
-  return (
-    <Container
-      className={styles.flexColumn}
-      style={{
-        minHeight: minHeight || '100vh',
-        margin: '0',
-      }}
-    >
-      {children}
-    </Container>
-  );
-};
+const ContentWrapper = ({children, minHeight}: IProps) => (
+  <Container
+    className={styles.flexColumn}
+    style={{
+      minHeight: minHeight || '100vh',
+      margin: '0',
+    }}
+  >
+    {children}
+  </Container>
+);
 
 export default ContentWrapper;
