@@ -1,5 +1,12 @@
 ARG DOCKERFILE_BUILD_BASE_STAGE=base
 
+FROM node:20 as build_openapi_spec
+
+ADD src/backend/src /src
+
+RUN npx swagger-cli bundle -o /src/morpheus/openapi.bundle.yml -r -t yaml /src/morpheus/openapi.yml
+
+
 FROM python:3.11-bookworm as base
 
 # add files to image
@@ -9,6 +16,7 @@ ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
 ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
 ADD src/backend/docker/docker-entrypoint.d ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d
+COPY --from:build_openapi_spec /src/morpheus/openapi.bundle.yml ${BACKEND_APP_ROOT_PATH}/src/morpheus/
 
 # install python dependencies
 RUN pip install --upgrade pip
