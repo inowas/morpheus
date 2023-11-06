@@ -1,3 +1,4 @@
+import dataclasses
 import uuid
 from typing import TypedDict
 from flask import Request, abort, jsonify
@@ -8,12 +9,13 @@ from ....types.Metadata import UserId, Description, Tags, Name
 from ....types.SpatialDiscretization import Polygon
 
 
-class PolygonDict(TypedDict):
+class PolygonDict(TypedDict, total=True):
     type: str
     coordinates: list[list[list[float, float]]]
 
 
-class CreateModflowModelRequest(TypedDict, total=True):
+@dataclasses.dataclass
+class CreateModflowModelRequest():
     name: str
     description: str
     tags: list[str]
@@ -29,11 +31,11 @@ class CreateModflowModelRequestHandler:
 
         create_modflow_model_request = CreateModflowModelRequest(**request.json)
 
-        name = Name.from_str(create_modflow_model_request.get('name'))
-        description = Description.from_str(create_modflow_model_request.get('description'))
-        tags = Tags.from_list(create_modflow_model_request.get('tags', []))
-        geometry = Polygon.from_dict(create_modflow_model_request.get('geometry'))
-        grid_properties = create_modflow_model_request.get('grid_properties')
+        name = Name.from_str(create_modflow_model_request.name)
+        description = Description.from_str(create_modflow_model_request.description)
+        tags = Tags.from_list(create_modflow_model_request.tags)
+        geometry = Polygon.from_dict(create_modflow_model_request.geometry)
+        grid_properties = create_modflow_model_request.grid_properties
         user_id = UserId.from_str(str(uuid.uuid4()))
 
         command = CreateModflowModelCommand(

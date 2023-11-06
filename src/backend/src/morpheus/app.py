@@ -6,7 +6,6 @@ from flask import Flask, json
 from flask_cors import cross_origin
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
-
 from morpheus.common.presentation.schema_validation.SchemaValidation import SchemaValidationException
 from morpheus.settings import settings
 from morpheus.modflow import bootstrap_modflow_module

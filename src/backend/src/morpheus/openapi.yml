@@ -10,50 +10,6 @@ servers:
     description: Production API
 
 paths:
-  /auth/oauth/token:
-    post:
-      tags:
-        - Authentication
-      summary: Get OAuth2 Token
-      description: 'Fetch a new access and refresh token. Supported grant types are: password and refresh_token.'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './authentication/openapi.yml#/components/schemas/OAuthPasswordGrantRequest'
-
-      responses:
-        200:
-          description: Successful token response
-          content:
-            application/json:
-              schema:
-                $ref: './authentication/openapi.yml#/components/schemas/OAuthTokenResponse'
-
-        400:
-          description: Invalid grant type, client, username/password or invalid request
-
-  /auth/oauth/revoke:
-    post:
-      tags:
-        - Authentication
-      summary: Revoke OAuth2 Token
-      description: 'Revoke an access and refresh token.'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './authentication/openapi.yml#/components/schemas/OAuthRevokeTokenRequest'
-      responses:
-        200:
-          description: Token was successfully revoked
-          content:
-            application/json:
-              schema:
-                type: object
-        400:
-          description: Invalid client or invalid request
-
   /modflow:
     get:
       tags:
@@ -118,4 +74,8 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
+
+security:
+    -   bearerAuth: [ ]
 
