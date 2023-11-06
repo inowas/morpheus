@@ -73,7 +73,6 @@ services:
     environment:
       - CAROOT=/etc/ca_root # for local mkcert certificates only
     volumes:
-      - ${MORPHEUS_PROJECT_ROOT}/src/backend:${BACKEND_APP_ROOT_PATH}
       - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
       - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
     tmpfs:
