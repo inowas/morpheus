@@ -6,3 +6,7 @@ log
 sensor_data
 
 !scripts/dev/.env
+
+node_modules
+package.json
+package-lock.json
