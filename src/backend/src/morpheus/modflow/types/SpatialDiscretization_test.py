@@ -42,17 +42,17 @@ def test_grid_no_rotation() -> None:
     centers = grid.get_cell_centers()
     assert len(centers) == 5
     assert len(centers[0]) == 10
-    assert grid.get_cell_centers()[4][9] == Point(coordinates=(13.085339951991354, 51.050851637405835))
-    assert grid.get_cell_geometries()[4][9] == Polygon(coordinates=[[(13.080848375570756, 51.04520421011807),
-                                                                     (13.08983152841195, 51.04520421011807),
-                                                                     (13.08983152841195, 51.05649837612888),
-                                                                     (13.080848375570756, 51.05649837612888),
-                                                                     (13.080848375570756, 51.04520421011807)]])
+    assert grid.get_cell_centers()[4][9] == Point(coordinates=(13.08533995199, 51.05085163740))
+    assert grid.get_cell_geometries()[4][9] == Polygon(coordinates=[[(13.08084837557, 51.0452042101),
+                                                                     (13.0898315284, 51.04520421011807),
+                                                                     (13.0898315284, 51.05649837612888),
+                                                                     (13.08084837557, 51.0564983761),
+                                                                     (13.08084837557, 51.0452042101)]])
 
     assert grid.get_grid_geometry() == Polygon(coordinates=[[(13.0, 51.0),
-                                                             (13.08983152841195, 51.0),
-                                                             (13.08983152841195, 51.05649837612888),
-                                                             (13.0, 51.05649837612888),
+                                                             (13.0898315284, 51.0),
+                                                             (13.0898315284, 51.0564983761),
+                                                             (13.0, 51.0564983761),
                                                              (13.0, 51.0)
                                                              ]])
 
@@ -86,9 +86,9 @@ def test_grid_rotation_30deg() -> None:
     assert grid.get_cell_centers()[4][9] == Point(coordinates=(13.033482378596881, 51.070861866169025))
 
     assert json.dumps(grid.get_grid_geometry(), default=lambda __o: __o.__dict__) == \
-        ('{"coordinates": [['
-         '[13.0, 51.0], [13.077796385665534, 51.02825779657566], [13.032880621459558, 51.07716100213936], '
-            '[12.955084235794025, 51.04893302401866], [13.0, 51.0]]], "type": "Polygon"}')
+           ('{"coordinates": [['
+            '[13.0, 51.0], [13.0777963857, 51.0282577966], [13.0328806215, 51.0771610021], '
+            '[12.9550842358, 51.048933024], [13.0, 51.0]]], "type": "Polygon"}')
 
 
 def test_grid_from_area_0_degrees() -> None:
@@ -127,7 +127,8 @@ def test_grid_from_area_45_degrees() -> None:
 
     assert isinstance(grid, Grid) is True
     assert grid.to_dict() == {
-        'x_coordinates': [0.0, 2039.2881858719513,
+        'x_coordinates': [0.0,
+                          2039.2881858719513,
                           4078.5763717439027,
                           6117.864557615853,
                           8157.152743487805,
@@ -146,7 +147,7 @@ def test_grid_from_area_45_degrees() -> None:
         'rotation': 45,
         'origin': {
             'type': 'Point',
-            'coordinates': (13.050000000000002, 50.96852330968296)
+            'coordinates': (13.05, 50.9685233097)
         },
         'length_unit': 'meters'
     }
@@ -162,7 +163,7 @@ def test_calculate_affected_cells() -> None:
     )
 
     geometry = Polygon(coordinates=[
-        [(13.0, 51.0), (13.08983152841195, 51.0), (13.08983152841195, 51.05649837612888), (13.0, 51.05649837612888),
+        [(13.0, 51.0), (13.0898315284, 51.0), (13.0898315284, 51.0564983761), (13.0, 51.0564983761),
          (13.0, 51.0)]
     ])
 

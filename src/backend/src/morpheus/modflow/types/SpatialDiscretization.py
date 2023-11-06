@@ -12,7 +12,7 @@ class Point:
     type: Literal['Point'] = 'Point'
 
     def __init__(self, coordinates: tuple[float, float]):
-        self.coordinates = coordinates
+        self.coordinates = (round(coordinates[0], 10), round(coordinates[1], 10))
         self.type = 'Point'
 
     def __geo_interface__(self):
@@ -42,8 +42,16 @@ class Polygon:
     type: Literal['Polygon'] = 'Polygon'
 
     def __init__(self, coordinates: list[list[tuple[float, float]]]):
-        self.coordinates = coordinates
+        self.coordinates = [
+            [(round(coordinate[0], 10), round(coordinate[1], 10)) for coordinate in rings]
+            for rings in coordinates
+        ]
         self.type = 'Polygon'
+
+    def __eq__(self, other):
+        if not isinstance(other, Polygon):
+            return False
+        return self.coordinates == other.coordinates
 
     def __geo_interface__(self):
         return {
