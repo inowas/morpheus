@@ -1,8 +1,7 @@
 import dataclasses
-import numpy as np
-from shapely import affinity, Polygon as ShapelyPolygon, Point as ShapelyPoint
 from typing import Literal, TypedDict
 
+import numpy as np
 import pyproj
 
 
@@ -263,54 +262,6 @@ class Grid:
     crs = CRS.from_str('EPSG:4326')
 
     @classmethod
-    def from_polygon(cls, area: Polygon, rotation: Rotation, length_unit: LengthUnit,
-                     x_coordinates: list[float], y_coordinates: list[float]):
-        if len(x_coordinates) < 1 or len(y_coordinates) < 1:
-            raise ValueError('percentages must have at least one element')
-        if x_coordinates[0] != 0 or y_coordinates[0] != 0:
-            raise ValueError('percentages must start with 0')
-        if x_coordinates[-1] != 1 or y_coordinates[-1] != 1:
-            raise ValueError('percentages must end with 1')
-        if any([percentage < 0 or percentage > 1 for percentage in x_coordinates + y_coordinates]):
-            raise ValueError('percentages must be between 0 and 1')
-
-        polygon = ShapelyPolygon(area.coordinates[0])
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        from_3867_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-
-        # transform polygon to 3857
-        polygon_3857 = ShapelyPolygon([from_4326_to_3857.transform(x, y) for x, y in polygon.exterior.coords])
-
-        # rotate polygon to 0 degrees
-        polygon_3857_0_degrees = affinity.rotate(polygon_3857, -rotation.to_float(), origin=polygon_3857.centroid)
-
-        # get_bounding_box polygon
-        bounding_box_polygon_3857_0_degrees = ShapelyPolygon(polygon_3857_0_degrees).envelope
-
-        if not isinstance(bounding_box_polygon_3857_0_degrees, ShapelyPolygon):
-            raise ValueError('Grid bounding box is not a polygon')
-
-        min_x, min_y, max_x, max_y = bounding_box_polygon_3857_0_degrees.bounds
-
-        x_coordinates = [percentage * (max_x - min_x) for percentage in x_coordinates]
-        y_coordinates = [percentage * (max_y - min_y) for percentage in y_coordinates]
-        origen_3857_0_degrees = ShapelyPoint((min_x, min_y))
-
-        origen_3857 = affinity.rotate(geom=origen_3857_0_degrees,
-                                      angle=rotation.to_float(),
-                                      origin=polygon_3857.centroid)
-
-        origen_4326 = from_3867_to_4326.transform(origen_3857.x, origen_3857.y)
-
-        return cls(
-            x_coordinates=x_coordinates,
-            y_coordinates=y_coordinates,
-            origin=Point(coordinates=origen_4326),
-            rotation=rotation,
-            length_unit=length_unit
-        )
-
-    @classmethod
     def from_dict(cls, obj: dict):
         return cls(
             x_coordinates=obj['x_coordinates'],
@@ -335,64 +286,6 @@ class Grid:
     def ny(self):
         return len(self.y_coordinates) - 1
 
-    def get_cell_centers(self) -> list[list[Point]]:
-        centers = np.empty((self.ny(), self.nx()), dtype=Point)
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857 = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-        for y in range(self.ny()):
-            for x in range(self.nx()):
-                point_3857 = ShapelyPoint((
-                    origin_3857[0] + (self.x_coordinates[x] + self.x_coordinates[x + 1]) / 2,
-                    origin_3857[1] + (self.y_coordinates[y] + self.y_coordinates[y + 1]) / 2)
-                )
-
-                rotated_point_3857 = affinity.rotate(point_3857, self.rotation.to_float(), origin=origin_3857)
-                point_4326 = from_3857_to_4326.transform(rotated_point_3857.x, rotated_point_3857.y)
-                centers[y][x] = Point(coordinates=point_4326)
-
-        return centers.tolist()
-
-    def get_cell_geometries(self) -> list[list[Polygon]]:
-        geometries = np.empty((self.ny(), self.nx()), dtype=Polygon)
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857 = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-
-        for y in range(self.ny()):
-            for x in range(self.nx()):
-                polygon_3857 = ShapelyPolygon((
-                    (origin_3857[0] + self.x_coordinates[x], origin_3857[1] + self.y_coordinates[y]),
-                    (origin_3857[0] + self.x_coordinates[x + 1], origin_3857[1] + self.y_coordinates[y]),
-                    (origin_3857[0] + self.x_coordinates[x + 1], origin_3857[1] + self.y_coordinates[y + 1]),
-                    (origin_3857[0] + self.x_coordinates[x], origin_3857[1] + self.y_coordinates[y + 1]),
-                    (origin_3857[0] + self.x_coordinates[x], origin_3857[1] + self.y_coordinates[y]),
-                ))
-
-                rotated_polygon_3857 = affinity.rotate(polygon_3857, self.rotation.to_float(), origin=origin_3857)
-                geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in
-                                 list(rotated_polygon_3857.exterior.coords)]
-                geometries[y][x] = Polygon(coordinates=[geometry_4326])
-        return geometries.tolist()
-
-    def get_grid_geometry(self) -> Polygon:
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-        origin_3857 = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
-
-        polygon_3857 = ShapelyPolygon((
-            origin_3857,
-            (origin_3857[0] + self.x_coordinates[-1], origin_3857[1]),
-            (origin_3857[0] + self.x_coordinates[-1], origin_3857[1] + self.y_coordinates[-1]),
-            (origin_3857[0], origin_3857[1] + self.y_coordinates[-1]),
-            origin_3857,
-        ))
-
-        rotated_polygon_3857 = affinity.rotate(polygon_3857, self.rotation.to_float(), origin=origin_3857)
-        geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in
-                         list(rotated_polygon_3857.exterior.coords)]
-        return Polygon(coordinates=[geometry_4326])
-
 
 @dataclasses.dataclass(frozen=True)
 class SpatialDiscretization:
@@ -410,6 +303,21 @@ class SpatialDiscretization:
             crs=CRS.from_str(obj['crs'] if obj.get('crs') else 'EPSG:4326')
         )
 
+    @classmethod
+    def new(cls):
+        return cls(
+            geometry=Polygon(coordinates=[[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]]),
+            affected_cells=AffectedCells(shape=(1, 1, 1), data=[[[True]]]),
+            grid=Grid(
+                x_coordinates=[0, 1],
+                y_coordinates=[0, 1],
+                origin=Point(coordinates=(0, 0)),
+                rotation=Rotation.from_float(0.0),
+                length_unit=LengthUnit.meters()
+            ),
+            crs=CRS.from_str('EPSG:4326')
+        )
+
     def to_dict(self):
         return {
             'geometry': self.geometry.to_dict(),
@@ -418,18 +326,14 @@ class SpatialDiscretization:
             'crs': self.crs.to_str()
         }
 
-    def set_affected_cells(self, affected_cells: AffectedCells):
+    def with_geometry(self, geometry: Polygon):
+        return dataclasses.replace(self, geometry=geometry)
+
+    def with_grid(self, grid: Grid):
+        return dataclasses.replace(self, grid=grid)
+
+    def with_affected_cells(self, affected_cells: AffectedCells):
         return dataclasses.replace(self, affected_cells=affected_cells)
 
-    def calculate_affected_cells(self):
-        nx = self.grid.nx()
-        ny = self.grid.ny()
-        affected_cells = AffectedCells.empty_from_shape(nx=nx, ny=ny)
-        area = ShapelyPolygon(self.geometry.coordinates[0])
-        grid_cell_centers = self.grid.get_cell_centers()
-        for x in range(nx):
-            for y in range(ny):
-                center = ShapelyPoint(grid_cell_centers[y][x].coordinates)
-                affected_cells.set_cell_value(x=x, y=y, value=area.contains(center))
-
-        return dataclasses.replace(self, affected_cells=affected_cells)
+    def with_crs(self, crs: CRS):
+        return dataclasses.replace(self, crs=crs)

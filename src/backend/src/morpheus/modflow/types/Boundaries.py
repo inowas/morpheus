@@ -22,7 +22,7 @@ class BoundaryCollection:
     boundaries: list[Boundary]
 
     @classmethod
-    def from_default(cls):
+    def new(cls):
         return cls(boundaries=[])
 
     @classmethod

@@ -1,14 +1,9 @@
 import dataclasses
-import uuid
 
-from ...types.ModflowModel import ModflowModel, ModelId
+from ...infrastructure.geometry import utils
+from ...types.ModflowModel import ModflowModel
 from ...types.Metadata import Metadata, Description, Name, Tags, UserId
-from ...types.SpatialDiscretization import Polygon, Grid, CRS, SpatialDiscretization, CreateGridDict, LengthUnit, \
-    Rotation
-from ...types.TimeDiscretization import TimeDiscretization
-from ...types.Boundaries import BoundaryCollection
-from ...types.Layers import LayerCollection
-
+from ...types.SpatialDiscretization import Polygon, CRS, SpatialDiscretization, CreateGridDict, LengthUnit, Rotation
 from ...infrastructure.persistence.ModflowModelRepository import ModflowModelRepository
 
 
@@ -36,43 +31,33 @@ class CreateModflowModelCommandHandler:
 
     @staticmethod
     def handle(command: CreateModflowModelCommand):
-        model_id = ModelId(value=str(uuid.uuid4()))
-        metadata = Metadata(
-            name=command.name,
-            description=command.description,
-            tags=command.tags,
-            user=command.user_id
-        )
+        modflow_model = ModflowModel.new()
+        metadata = Metadata(name=command.name, description=command.description, tags=command.tags, )
+        modflow_model = modflow_model.with_updated_metadata(metadata)
 
-        grid = Grid.from_polygon(
-            area=command.geometry,
+        grid = utils.grid_from_polygon(
+            polygon=command.geometry,
             rotation=Rotation.from_float(command.grid_properties['rotation']),
             length_unit=LengthUnit.from_str(command.grid_properties['length_unit']),
             x_coordinates=command.grid_properties['x_coordinates'],
             y_coordinates=command.grid_properties['y_coordinates'],
         )
+
+        affected_cells = utils.calculate_affected_cells(
+            geometry=command.geometry,
+            grid=grid
+        )
+
         spatial_discretization = SpatialDiscretization(
             geometry=command.geometry,
-            affected_cells=None,
+            affected_cells=affected_cells,
             grid=grid,
             crs=CRS.from_str('EPSG:4326')
         )
-        spatial_discretization = spatial_discretization.calculate_affected_cells()
 
-        time_discretization = TimeDiscretization.from_default()
-        boundaries = BoundaryCollection.from_default()
-        layers = LayerCollection.from_default()
-
-        new_model = ModflowModel(
-            id=model_id,
-            metadata=metadata,
-            spatial_discretization=spatial_discretization,
-            time_discretization=time_discretization,
-            boundaries=boundaries,
-            layers=layers
-        )
+        modflow_model = modflow_model.with_updated_spatial_discretization(spatial_discretization)
 
         repository = ModflowModelRepository()
-        repository.save_modflow_model(new_model)
+        repository.save_modflow_model(modflow_model)
 
-        return CreateModflowModelCommandResult(id=new_model.id.to_str())
+        return CreateModflowModelCommandResult(id=modflow_model.id.to_str())

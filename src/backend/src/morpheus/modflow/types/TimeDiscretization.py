@@ -162,7 +162,7 @@ class TimeDiscretization:
     time_unit: TimeUnit
 
     @classmethod
-    def from_default(cls):
+    def new(cls):
         return TimeDiscretization(
             start_datetime=StartDateTime.from_str('2020-01-01T00:00:00+00:00'),
             stress_periods=StressPeriodCollection.from_list([{

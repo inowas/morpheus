@@ -76,7 +76,7 @@ class LayerCollection:
     layers: list[Layer]
 
     @classmethod
-    def from_default(cls):
+    def new(cls):
         return cls(layers=[
             Layer(
                 id=str(uuid.uuid4()),
