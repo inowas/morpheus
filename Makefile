@@ -35,5 +35,9 @@ stop-local:
 reset-local:
 	infrastructure/local/scripts/reset-environment.sh
 
+# Export keycloak dev realm from local environment
+export-keycloak-dev-realm:
+	infrastructure/local/scripts/export-keycloak-dev-realm.sh
+
 run-backend-cli-command-in-local-environment:
 	infrastructure/local/scripts/run-backend-cli-command.sh "$(arguments)"

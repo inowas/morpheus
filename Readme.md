@@ -57,5 +57,9 @@ A mailcatcher can be found at http://mailcatcher.inowas.localhost. All mail can 
 
 ### Keycloak
 
-A keycloak server runs at https://identity.inowas.localhost. It has a preconfigured realm "inowas" with the client
-"morpheus-frontend" and a user "dev@inowas.localhost" with the password "dev".
+A keycloak server runs at https://identity.inowas.localhost. It has a preconfigured dev realm "inowas" with the client
+"morpheus-frontend" and a user "dev@inowas.localhost" with the password "dev". The default dev user for the admin
+console is "admin" with password "dev".
+
+The dev realm can be updated in the local dev environment and then exported with `make export-keycloak-dev-realm` to be
+committed to the repository.
