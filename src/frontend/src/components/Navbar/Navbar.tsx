@@ -15,9 +15,10 @@ interface IProps {
   languageList: ILanguageList;
   onChangeLanguage: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
+  pathname: string;
 }
 
-const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo}: IProps) => {
+const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo, pathname}: IProps) => {
 
   return (
     <div data-testid={'test-navbar'}>
@@ -27,7 +28,11 @@ const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigate
         onChangeLanguage={onChangeLanguage}
         navigateTo={navigateTo}
       />
-      <NavBottom navbarItems={navbarItems}/>
+      <NavBottom
+        navbarItems={navbarItems}
+        pathname={pathname}
+        navigateTo={navigateTo}
+      />
     </div>
   );
 };

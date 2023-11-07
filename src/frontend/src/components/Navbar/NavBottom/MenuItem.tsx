@@ -1,6 +1,5 @@
 import {IDropdownItem, IMenuItem} from '../types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useNavigate, useLocation} from 'common/hooks';
 import {Menu} from 'semantic-ui-react';
 import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
@@ -10,9 +9,11 @@ interface ListItemProps {
   items: IMenuItem | IDropdownItem;
   depthLevel?: number;
   onCloseMobileMenu: () => void;
+  pathname: string;
+  navigateTo: (path: string) => void;
 }
 
-const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobileMenu}) => {
+const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobileMenu, pathname, navigateTo}) => {
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
 
@@ -35,13 +36,12 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
     };
   }, [dropdown, isMobile]);
 
-  const location = useLocation();
-  const currentPathname = location.pathname;
+  const currentPathname = pathname;
 
   const onSetDropdown = useCallback((value: boolean) => {
     setDropdown(value);
   }, [setDropdown]);
-  const navigateTo = useNavigate();
+
 
   const isActive = (path: string): boolean => {
     return path === currentPathname;
@@ -113,6 +113,8 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
             <span aria-hidden="true" className={styles.icon}></span>
           </button>}
           <Dropdown
+            pathname={pathname}
+            navigateTo={navigateTo}
             dropdown={dropdown}
             submenus={items.subMenu}
             depthLevel={depthLevel}

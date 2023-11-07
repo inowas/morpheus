@@ -1,7 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {MemoryRouter} from 'react-router-dom';
 import Navbar from './Navbar';
 import {ILanguage} from './LanguageSelector/types/languageSelector.type';
 
@@ -29,7 +28,7 @@ export default {
   component: Navbar,
 } as Meta<typeof Navbar>;
 
-export const NavbarExample: StoryFn<typeof Navbar> = () => <MemoryRouter>
+export const NavbarExample: StoryFn<typeof Navbar> = () =>
   <Navbar
     navbarItems={navbarItems}
     language="en-GB"
@@ -38,5 +37,6 @@ export const NavbarExample: StoryFn<typeof Navbar> = () => <MemoryRouter>
     }}
     navigateTo={() => {
     }}
+    pathname={'/'}
   />
-</MemoryRouter>;
+;

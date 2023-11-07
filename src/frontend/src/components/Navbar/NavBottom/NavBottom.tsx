@@ -10,9 +10,11 @@ import {Button} from '../../index';
 
 interface IProps {
   navbarItems: INavbarItem[];
+  pathname: string;
+  navigateTo: (path: string) => void;
 }
 
-const NavBottom: React.FC<IProps> = ({navbarItems}) => {
+const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
   const {isMobile} = useIsMobile(1199);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
@@ -49,7 +51,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems}) => {
               <Input
                 action={true}
                 actionPosition="left"
-                className={styles.search}
+                className={`${styles.search}`}
               >
                 <Button primary={true}>Search</Button>
                 <input/>
@@ -62,7 +64,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems}) => {
                 <Input
                   action={true}
                   actionPosition="left"
-                  className={styles.search}
+                  className={`${styles.search}`}
                 >
                   <Button primary={true}>Search</Button>
                   <input/>
@@ -71,6 +73,8 @@ const NavBottom: React.FC<IProps> = ({navbarItems}) => {
               <ul className={styles.menu}>
                 {navbarItems.map((item: INavbarItem, idx: number) => {
                   return <MenuItem
+                    pathname={pathname}
+                    navigateTo={navigateTo}
                     items={item}
                     key={idx}
                     onCloseMobileMenu={handleCloseMobileMenu}
