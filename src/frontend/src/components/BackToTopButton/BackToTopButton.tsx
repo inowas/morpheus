@@ -11,6 +11,7 @@ const BackToTopButton = () => {
 
   return (
     <button
+      data-testid={'test-backToTopButton'}
       className={style.backToTopButton}
       onClick={scrollToTop}
       aria-label="Back to Top"
@@ -18,7 +19,7 @@ const BackToTopButton = () => {
     >
       <i className={style.arrowUp}></i>
       <i className={style.arrowUp}></i>
-      <span className="visually-hidden">Back to Top</span>
+      <span className={style.visuallyHidden}>Back to Top</span>
     </button>
   );
 };

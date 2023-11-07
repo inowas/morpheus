@@ -5,7 +5,7 @@ import NavTop from './NavTop/NavTop';
 import NavBottom from './NavBottom/NavBottom';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
-type ILanguageList = Array<{
+export type ILanguageList = Array<{
   code: ILanguageCode;
   label: string;
 }>;
@@ -22,7 +22,10 @@ const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigate
 
   return (
     <>
-      <div className={styles.wrapper}>
+      <div
+        className={styles.wrapper}
+        data-testid={'test-navbar'}
+      >
         <NavTop
           language={language}
           languageList={languageList}
