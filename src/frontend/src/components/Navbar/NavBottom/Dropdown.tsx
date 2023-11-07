@@ -8,9 +8,11 @@ interface ItemProps {
   dropdown: boolean;
   depthLevel: number;
   onCloseMobileMenu: () => void;
+  pathname: string;
+  navigateTo: (path: string) => void;
 }
 
-const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseMobileMenu}) => {
+const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseMobileMenu, pathname, navigateTo}) => {
   depthLevel = depthLevel + 1;
 
   return (
@@ -19,10 +21,12 @@ const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseM
     >
       {submenus.map((submenuitem: IMenuItem, idx: number) => (
         <MenuItem
-          items={submenuitem}
           key={idx}
+          items={submenuitem}
           depthLevel={depthLevel}
           onCloseMobileMenu={onCloseMobileMenu}
+          pathname={pathname}
+          navigateTo={navigateTo}
         />
       ))}
     </ul>

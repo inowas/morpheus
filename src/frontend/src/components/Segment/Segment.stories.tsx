@@ -14,5 +14,5 @@ export default {
 
 
 export const SegmentExample: StoryFn<typeof Segment> = () => (
-  <Segment placeholder={true} content={'ITEXIA SEGMENT'}/>
+  <Segment placeholder={true} content={'SEGMENT'}/>
 );
