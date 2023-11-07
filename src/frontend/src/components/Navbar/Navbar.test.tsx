@@ -1,7 +1,6 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
 import Navbar from './Navbar';
-import {MemoryRouter} from 'react-router-dom';
 import {ILanguage} from './LanguageSelector/types/languageSelector.type';
 
 
@@ -26,15 +25,14 @@ describe('Navbar Tests', () => {
 
   test('It renders a Navbar', async () => {
     render(
-      <MemoryRouter>
-        <Navbar
-          navbarItems={navbarItems}
-          language="en-GB"
-          languageList={languageList}
-          onChangeLanguage={mockOnChangeLanguage}
-          navigateTo={mockNavigateTo}
-        />
-      </MemoryRouter>,
+      <Navbar
+        navbarItems={navbarItems}
+        language="en-GB"
+        languageList={languageList}
+        onChangeLanguage={mockOnChangeLanguage}
+        pathname={'/'}
+        navigateTo={mockNavigateTo}
+      />,
     );
 
     expect(screen.getByTestId('test-navbar')).toBeInTheDocument();

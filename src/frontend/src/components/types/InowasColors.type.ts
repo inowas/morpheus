@@ -1,4 +1,4 @@
-export type ItexiaCOLORS =
+export type InowasCOLORS =
   | 'red'
   | 'orange'
   | 'yellow'

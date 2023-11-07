@@ -1,3 +1,14 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.button {
+  font-size: 17px;
+  letter-spacing: 0px;
+  line-height: 1;
+  font-weight: 300;
+  border-radius: 2px;
+  padding: 10px 17px;
+
+}
+

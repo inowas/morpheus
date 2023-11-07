@@ -1,6 +1,5 @@
 import React from 'react';
 import {INavbarItem} from './types/navbar.type';
-import styles from './Navbar.module.less';
 import NavTop from './NavTop/NavTop';
 import NavBottom from './NavBottom/NavBottom';
 
@@ -16,25 +15,29 @@ interface IProps {
   languageList: ILanguageList;
   onChangeLanguage: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
+  pathname: string;
+  showSearchWrapper?: boolean;
+  showCreateButton?: boolean;
 }
 
-const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo}: IProps) => {
+const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo, pathname, showSearchWrapper = true, showCreateButton = true}: IProps) => {
 
   return (
-    <>
-      <div
-        className={styles.wrapper}
-        data-testid={'test-navbar'}
-      >
-        <NavTop
-          language={language}
-          languageList={languageList}
-          onChangeLanguage={onChangeLanguage}
-          navigateTo={navigateTo}
-        />
-      </div>
-      <NavBottom navbarItems={navbarItems}/>
-    </>
+    <div data-testid={'test-navbar'} style={{position: 'relative'}}>
+      <NavTop
+        language={language}
+        languageList={languageList}
+        onChangeLanguage={onChangeLanguage}
+        navigateTo={navigateTo}
+      />
+      <NavBottom
+        navbarItems={navbarItems}
+        pathname={pathname}
+        navigateTo={navigateTo}
+        showSearchWrapper={showSearchWrapper}
+        showCreateButton={showCreateButton}
+      />
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import Container from './Container';
+import Wrapper from './Wrapper';
 import Segment from '../Segment/Segment';
 
 export default {
@@ -9,13 +9,13 @@ export default {
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
   * to learn how to generate automatic titles
   */
-  title: 'Container',
-  component: Container,
-} as Meta<typeof Container>;
+  title: 'Wrapper',
+  component: Wrapper,
+} as Meta<typeof Wrapper>;
 
 
-export const ContainerExample: StoryFn<typeof Container> = () => (
-  <Container content={'Container'}>
+export const WrapperExample: StoryFn<typeof Wrapper> = () => (
+  <Wrapper>
     <Segment placeholder={true} content={'SEGMENT'}/>
-  </Container>
+  </Wrapper>
 );

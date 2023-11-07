@@ -1,5 +1,5 @@
 import '../../styleguide/semantic.less';
-import './App.less';
+import './morpheus.less';
 
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';

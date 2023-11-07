@@ -75,7 +75,7 @@ const footer = ({release}: IProps) => (
           </div>
           <div className={styles.footerSearch}>
             <Input
-              className={`${styles.footerSearch_Input} left action`}
+              className={styles.footerSearch_Input}
               action="Search"
               placeholder="Search..."
             />
