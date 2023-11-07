@@ -51,7 +51,7 @@ components:
           properties:
             x_coordinates:
               type: array
-              description: "The grid coordinates absolute x coordinates in percent."
+              description: "The distance along the x axis in percent."
               example: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]
               items:
                 type: number
@@ -59,7 +59,7 @@ components:
                 maximum: 1
             y_coordinates:
               type: array
-              description: "The grid coordinates absolute x coordinates in percent."
+              description: "The distance along the y axis in percent."
               example: [ 0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
               items:
                 type: number

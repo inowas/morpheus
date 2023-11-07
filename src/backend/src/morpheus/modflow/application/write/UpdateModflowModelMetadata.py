@@ -2,7 +2,7 @@ import dataclasses
 
 from ...infrastructure.persistence.ModflowModelRepository import ModflowModelRepository
 from ...types.ModflowModel import ModelId
-from ...types.Metadata import Metadata, Description, Name, Tags, UserId
+from ...types.Metadata import Metadata, Description, Name, Tags
 
 
 @dataclasses.dataclass(frozen=True)
@@ -11,7 +11,6 @@ class UpdateModflowModelMetadataCommand:
     name: Name
     description: Description
     tags: Tags
-    user_id: UserId
 
 
 @dataclasses.dataclass
@@ -31,7 +30,6 @@ class UpdateModflowModelMetadataCommandHandler:
             name=command.name,
             description=command.description,
             tags=command.tags,
-            user=command.user_id
         )
 
         repository.update_modflow_model_metadata(command.id.to_str(), metadata)

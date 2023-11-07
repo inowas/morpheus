@@ -65,7 +65,8 @@ def calculate_grid_cell_centers(grid: Grid) -> list[list[Point]]:
                 origin_3857[1] + (grid.y_coordinates[y] + grid.y_coordinates[y + 1]) / 2)
             )
 
-            rotated_point_3857 = affinity.rotate(point_3857, grid.rotation.to_float(), origin=origin_3857)
+            rotated_point_3857 = affinity.rotate(point_3857, grid.rotation.to_float(),
+                                                 origin=origin_3857)  # type: ignore
             point_4326 = from_3857_to_4326.transform(rotated_point_3857.x, rotated_point_3857.y)
             centers[y][x] = Point(coordinates=point_4326)
 
@@ -88,7 +89,8 @@ def calculate_grid_cell_geometries(grid: Grid) -> list[list[Polygon]]:
                 (origin_3857[0] + grid.x_coordinates[x], origin_3857[1] + grid.y_coordinates[y]),
             ))
 
-            rotated_polygon_3857 = affinity.rotate(polygon_3857, grid.rotation.to_float(), origin=origin_3857)
+            rotated_polygon_3857 = affinity.rotate(polygon_3857, grid.rotation.to_float(),
+                                                   origin=origin_3857)  # type: ignore
             geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in
                              list(rotated_polygon_3857.exterior.coords)]
             geometries[y][x] = Polygon(coordinates=[geometry_4326])
@@ -108,7 +110,7 @@ def calculate_grid_geometry(grid: Grid) -> Polygon:
         origin_3857,
     ))
 
-    rotated_polygon_3857 = affinity.rotate(polygon_3857, grid.rotation.to_float(), origin=origin_3857)
+    rotated_polygon_3857 = affinity.rotate(polygon_3857, grid.rotation.to_float(), origin=origin_3857)  # type: ignore
     geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in
                      list(rotated_polygon_3857.exterior.coords)]
     return Polygon(coordinates=[geometry_4326])

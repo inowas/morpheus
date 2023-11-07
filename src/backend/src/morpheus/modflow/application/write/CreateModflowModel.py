@@ -1,10 +1,11 @@
 import dataclasses
 
 from ...infrastructure.geometry import utils
-from ...types.ModflowModel import ModflowModel
-from ...types.Metadata import Metadata, Description, Name, Tags, UserId
-from ...types.SpatialDiscretization import Polygon, CRS, SpatialDiscretization, CreateGridDict, LengthUnit, Rotation
 from ...infrastructure.persistence.ModflowModelRepository import ModflowModelRepository
+from ...types.User import UserId
+from ...types.Metadata import Metadata, Description, Name, Tags
+from ...types.ModflowModel import ModflowModel
+from ...types.SpatialDiscretization import Polygon, CRS, SpatialDiscretization, CreateGridDict, LengthUnit, Rotation
 
 
 @dataclasses.dataclass(frozen=True)
@@ -31,7 +32,8 @@ class CreateModflowModelCommandHandler:
 
     @staticmethod
     def handle(command: CreateModflowModelCommand):
-        modflow_model = ModflowModel.new()
+        modflow_model = ModflowModel.new(command.user_id)
+
         metadata = Metadata(name=command.name, description=command.description, tags=command.tags, )
         modflow_model = modflow_model.with_updated_metadata(metadata)
 

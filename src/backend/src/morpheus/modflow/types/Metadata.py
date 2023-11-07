@@ -9,8 +9,15 @@ class Name:
     def from_str(cls, value: str):
         return cls(value=value)
 
+    @classmethod
+    def from_value(cls, value: str):
+        return cls.from_str(value=value)
+
     def to_str(self):
         return self.value
+
+    def to_value(self):
+        return self.to_str()
 
 
 @dataclasses.dataclass
@@ -21,8 +28,15 @@ class Description:
     def from_str(cls, value: str):
         return cls(value=value)
 
+    @classmethod
+    def from_value(cls, value: str):
+        return cls.from_str(value=value)
+
     def to_str(self):
         return self.value
+
+    def to_value(self):
+        return self.to_str()
 
 
 @dataclasses.dataclass
@@ -33,20 +47,15 @@ class Tags:
     def from_list(cls, value: list[str]):
         return cls(value=value)
 
+    @classmethod
+    def from_value(cls, value: list[str]):
+        return cls.from_list(value=value)
+
     def to_list(self):
         return self.value
 
-
-@dataclasses.dataclass
-class UserId:
-    value: str
-
-    @classmethod
-    def from_str(cls, value: str):
-        return cls(value=value)
-
-    def to_str(self):
-        return self.value
+    def to_value(self):
+        return self.to_list()
 
 
 @dataclasses.dataclass
@@ -56,24 +65,24 @@ class Metadata:
     tags: Tags
 
     @classmethod
-    def from_dict(cls, obj: dict):
+    def new(cls):
         return cls(
-            name=Name.from_str(obj['name']),
-            description=Description.from_str(obj['description']),
-            tags=Tags.from_list(obj['tags']),
+            name=Name('New Model'),
+            description=Description('New Model description'),
+            tags=Tags([])
         )
 
     @classmethod
-    def new(cls):
+    def from_dict(cls, obj: dict):
         return cls(
-            name=Name.from_str('New Model'),
-            description=Description.from_str('New Model description'),
-            tags=Tags.from_list([]),
+            name=Name.from_value(obj['name']),
+            description=Description.from_value(obj['description']),
+            tags=Tags.from_value(obj['tags']),
         )
 
     def to_dict(self):
         return {
-            'name': self.name.to_str(),
-            'description': self.description.to_str(),
-            'tags': self.tags.to_list(),
+            'name': self.name.to_value(),
+            'description': self.description.to_value(),
+            'tags': self.tags.to_value(),
         }

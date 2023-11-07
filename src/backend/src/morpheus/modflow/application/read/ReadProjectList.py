@@ -19,5 +19,8 @@ class ReadModflowModelListQueryHandler:
     @staticmethod
     def handle(query: ReadModflowModelListQuery) -> ReadModflowModelListQueryResult:
         models = ModflowModelRepository().get_modflow_models_metadata()
+        if models is None:
+            return ReadModflowModelListQueryResult([])
+
         models.sort(key=lambda x: x['metadata']['name'])
         return ReadModflowModelListQueryResult(models)

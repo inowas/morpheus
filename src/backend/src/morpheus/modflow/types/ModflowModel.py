@@ -4,8 +4,10 @@ import uuid
 from .Metadata import Metadata
 from .Boundaries import BoundaryCollection
 from .Layers import LayerCollection
+from .Permissions import Permissions
 from .SpatialDiscretization import SpatialDiscretization
 from .TimeDiscretization import TimeDiscretization
+from .User import UserId
 
 
 @dataclasses.dataclass
@@ -20,13 +22,21 @@ class ModelId:
     def from_str(cls, value: str):
         return cls(value=value)
 
+    @classmethod
+    def from_value(cls, value: str):
+        return cls.from_str(value=value)
+
     def to_str(self):
         return self.value
+
+    def to_value(self):
+        return self.to_str()
 
 
 @dataclasses.dataclass(frozen=True)
 class ModflowModel:
     id: ModelId
+    permissions: Permissions
     metadata: Metadata
     spatial_discretization: SpatialDiscretization
     time_discretization: TimeDiscretization
@@ -36,8 +46,9 @@ class ModflowModel:
     @classmethod
     def from_dict(cls, obj):
         return cls(
-            id=ModelId.from_str(obj['id']),
+            id=ModelId.from_value(obj['id']),
             metadata=Metadata.from_dict(obj['metadata']),
+            permissions=Permissions.from_dict(obj['permissions']),
             spatial_discretization=SpatialDiscretization.from_dict(obj['spatial_discretization']),
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
             boundaries=BoundaryCollection.from_list(obj['boundaries']),
@@ -45,10 +56,11 @@ class ModflowModel:
         )
 
     @classmethod
-    def new(cls):
+    def new(cls, user_id: UserId):
         return cls(
             id=ModelId.new(),
             metadata=Metadata.new(),
+            permissions=Permissions.new(creator_id=user_id),
             spatial_discretization=SpatialDiscretization.new(),
             time_discretization=TimeDiscretization.new(),
             boundaries=BoundaryCollection.new(),
@@ -57,8 +69,9 @@ class ModflowModel:
 
     def to_dict(self):
         return {
-            'id': self.id.to_str(),
+            'id': self.id.to_value(),
             'metadata': self.metadata.to_dict(),
+            'permissions': self.permissions.to_dict(),
             'spatial_discretization': self.spatial_discretization.to_dict(),
             'time_discretization': self.time_discretization.to_dict(),
             'boundaries': self.boundaries.to_list(),
@@ -79,4 +92,3 @@ class ModflowModel:
 
     def with_updated_layers(self, layers: LayerCollection):
         return dataclasses.replace(self, layers=layers)
-

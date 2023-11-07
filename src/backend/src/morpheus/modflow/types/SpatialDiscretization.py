@@ -74,18 +74,6 @@ class Polygon:
 
 
 @dataclasses.dataclass
-class BoundingBox:
-    value: tuple[float, float, float, float]
-
-    @classmethod
-    def from_tuple(cls, value: tuple[float, float, float, float]):
-        return cls(value=value)
-
-    def to_tuple(self):
-        return self.value
-
-
-@dataclasses.dataclass
 class AffectedCells:
     # 3D array of booleans
     shape: tuple[int, int, int]
@@ -191,6 +179,10 @@ class LengthUnit:
             raise ValueError(f'Invalid length unit: {string}')
 
     @classmethod
+    def from_value(cls, value: str):
+        return cls.from_str(value)
+
+    @classmethod
     def meters(cls):
         return cls.from_int(cls.METERS)
 
@@ -209,6 +201,9 @@ class LengthUnit:
         else:
             raise ValueError(f'Invalid length unit: {self.unit}')
 
+    def to_value(self):
+        return self.to_str()
+
 
 @dataclasses.dataclass
 class Rotation(float):
@@ -221,10 +216,17 @@ class Rotation(float):
 
     @classmethod
     def from_float(cls, number: float):
-        return cls(value=number)
+        return cls(number)
+
+    @classmethod
+    def from_value(cls, value: float):
+        return cls.from_float(value)
 
     def to_float(self):
         return self.value
+
+    def to_value(self):
+        return self.to_float()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -237,11 +239,18 @@ class CRS:
         try:
             pyproj.CRS.from_user_input(crs)
             return cls(value=crs)
-        except pyproj.exceptions.CRSError:
+        except Exception:
             raise ValueError('Invalid CRS')
+
+    @classmethod
+    def from_value(cls, crs: str):
+        return cls.from_str(crs)
 
     def to_str(self):
         return self.value
+
+    def to_value(self):
+        return self.to_str()
 
 
 class CreateGridDict(TypedDict):
@@ -267,8 +276,8 @@ class Grid:
             x_coordinates=obj['x_coordinates'],
             y_coordinates=obj['y_coordinates'],
             origin=Point.from_dict(obj['origin']),
-            rotation=Rotation.from_float(obj['rotation']),
-            length_unit=LengthUnit.from_str(obj['length_unit']),
+            rotation=Rotation.from_value(obj['rotation']),
+            length_unit=LengthUnit.from_value(obj['length_unit']),
         )
 
     def to_dict(self):
@@ -276,8 +285,8 @@ class Grid:
             'x_coordinates': self.x_coordinates,
             'y_coordinates': self.y_coordinates,
             'origin': self.origin.to_dict(),
-            'rotation': self.rotation.to_float(),
-            'length_unit': self.length_unit.to_str(),
+            'rotation': self.rotation.to_value(),
+            'length_unit': self.length_unit.to_value(),
         }
 
     def nx(self):
@@ -295,15 +304,6 @@ class SpatialDiscretization:
     crs: CRS = CRS.from_str('EPSG:4326')
 
     @classmethod
-    def from_dict(cls, obj: dict):
-        return cls(
-            geometry=Polygon.from_dict(obj['geometry']),
-            affected_cells=AffectedCells.from_dict(obj['affected_cells'] if obj.get('affected_cells') else None),
-            grid=Grid.from_dict(obj['grid']),
-            crs=CRS.from_str(obj['crs'] if obj.get('crs') else 'EPSG:4326')
-        )
-
-    @classmethod
     def new(cls):
         return cls(
             geometry=Polygon(coordinates=[[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]]),
@@ -318,12 +318,21 @@ class SpatialDiscretization:
             crs=CRS.from_str('EPSG:4326')
         )
 
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(
+            geometry=Polygon.from_dict(obj['geometry']),
+            affected_cells=AffectedCells.from_dict(obj['affected_cells'] if obj.get('affected_cells') else None),
+            grid=Grid.from_dict(obj['grid']),
+            crs=CRS.from_value(obj['crs'] if obj.get('crs') else 'EPSG:4326')
+        )
+
     def to_dict(self):
         return {
             'geometry': self.geometry.to_dict(),
             'affected_cells': self.affected_cells.to_dict() if self.affected_cells else None,
             'grid': self.grid.to_dict(),
-            'crs': self.crs.to_str()
+            'crs': self.crs.to_value()
         }
 
     def with_geometry(self, geometry: Polygon):
