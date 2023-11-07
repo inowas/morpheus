@@ -6,7 +6,7 @@ import styles from './NavBottom.module.less';
 import {Image, Input} from 'semantic-ui-react';
 import MenuItem from './MenuItem';
 import Wrapper from '../../Wrapper/Wrapper';
-import {Button} from '../../index';
+import Button from '../../Button/Button';
 
 interface IProps {
   navbarItems: INavbarItem[];
