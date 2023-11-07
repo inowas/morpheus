@@ -16,6 +16,6 @@ export default {
 
 export const WrapperExample: StoryFn<typeof Wrapper> = () => (
   <Wrapper>
-    <Segment placeholder={true} content={'ITEXIA SEGMENT'}/>
+    <Segment placeholder={true} content={'SEGMENT'}/>
   </Wrapper>
 );

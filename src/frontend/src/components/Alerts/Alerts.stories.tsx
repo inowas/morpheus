@@ -43,7 +43,7 @@ export const Primary: StoryFn<typeof Alerts> = () => {
         padding: 20,
       }}
       as='h1'
-      header={'Itexia Page'}
+      header={'Inowas Page'}
     >
       Page Content
       <Alerts

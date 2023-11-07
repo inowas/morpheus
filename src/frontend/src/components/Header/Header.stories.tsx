@@ -14,11 +14,11 @@ export default {
 
 
 export const HeaderExample: StoryFn<typeof Header> = () => (
-  <Header children={<h2>ITEXIA HEADER</h2>}/>
+  <Header children={<h2>HEADER</h2>}/>
 );
 
 export const HeaderExampleH1: StoryFn<typeof Header> = () => (
   <Header
-    children={<h1>ITEXIA HEADER</h1>}
+    children={<h1>HEADER</h1>}
   />
 );

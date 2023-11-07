@@ -8,7 +8,6 @@ import Container from './Container/Container';
 import ContentWrapper from './ContentWrapper';
 import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
-import DropDownDnd from './DropDownDnd/DropDownDnd';
 import Dropdown from './Dropdown';
 import Form from './Form';
 import Grid from './Grid';
@@ -18,7 +17,6 @@ import Footer from './Footer';
 import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
-import Image from './Image/Image';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -35,7 +33,6 @@ import Progress from './Progress/Progress';
 import Segment from './Segment';
 import Select, {DropdownProps} from './Select/Select';
 import Toggle from './Toggle/Toggle';
-import {Dropzone} from './Dropzone';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 
 export {
@@ -49,9 +46,7 @@ export {
   ContentWrapper,
   DatePicker,
   Divider,
-  DropDownDnd,
   Dropdown,
-  Dropzone,
   Form,
   Grid,
   Header,
@@ -59,7 +54,6 @@ export {
   HintPageComponent,
   Icon,
   IconButton,
-  Image,
   Input,
   Label,
   Loader,
