@@ -8,7 +8,7 @@ import image13C from '../images/T13C.png';
 import image13D from '../images/T13D.png';
 import image13E from '../images/T13E.png';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate} from '../../application';
+import {useShowBreadcrumbs, useTranslate} from '../../application';
 
 interface Item {
   tool: string;
@@ -43,6 +43,7 @@ const tool = 'T13';
 const T13 = () => {
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const redirectTo = (path: string): void => {
     navigateTo(`/tools/${tool}/${path}`);
@@ -97,13 +98,13 @@ const T13 = () => {
 
   return (
     <div className={styles.toolWrapper}>
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <Header
         as={'h3'}
         style={{position: 'relative', zIndex: 2}}
