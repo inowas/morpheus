@@ -73,11 +73,11 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
               <ul className={styles.menu}>
                 {navbarItems.map((item: INavbarItem, idx: number) => {
                   return <MenuItem
+                    key={idx}
+                    items={item}
+                    onCloseMobileMenu={handleCloseMobileMenu}
                     pathname={pathname}
                     navigateTo={navigateTo}
-                    items={item}
-                    key={idx}
-                    onCloseMobileMenu={handleCloseMobileMenu}
                   />;
                 })}
               </ul>

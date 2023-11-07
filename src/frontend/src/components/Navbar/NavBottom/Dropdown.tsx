@@ -21,12 +21,12 @@ const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseM
     >
       {submenus.map((submenuitem: IMenuItem, idx: number) => (
         <MenuItem
-          pathname={pathname}
-          navigateTo={navigateTo}
-          items={submenuitem}
           key={idx}
+          items={submenuitem}
           depthLevel={depthLevel}
           onCloseMobileMenu={onCloseMobileMenu}
+          pathname={pathname}
+          navigateTo={navigateTo}
         />
       ))}
     </ul>
