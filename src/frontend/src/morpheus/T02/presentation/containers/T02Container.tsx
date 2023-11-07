@@ -3,7 +3,7 @@ import {Background, ChartWrapper, Info, Parameters} from '../components';
 import {Dimmer, Loader} from 'semantic-ui-react';
 import image from '../images/T02.png';
 import {IT02} from '../../types/T02.type';
-import {useCalculateChartData, useCalculateMounding, useNavigate, useTranslate} from '../../application';
+import {useCalculateChartData, useCalculateMounding, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 import {Breadcrumb} from 'components';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 
@@ -121,6 +121,7 @@ const T02 = () => {
   const mounding = useCalculateMounding();
   const [chartData, setChartData] = useState<any>(null);
   const navigateTo = useNavigate();
+  const showBreadcrumbs = useShowBreadcrumbs();
   const {translate} = useTranslate();
 
   useEffect(() => {
@@ -157,13 +158,13 @@ const T02 = () => {
 
   return (
     <div data-testid="t02-container">
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <div style={{minHeight: 300}}>

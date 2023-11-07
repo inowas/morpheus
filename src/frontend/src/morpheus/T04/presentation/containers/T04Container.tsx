@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useCSVData, useNavigate, useTranslate} from '../../application';
+import {useCSVData, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 import {Breadcrumb} from '../../../../components';
 import {Container, Grid} from 'semantic-ui-react';
 import PivotTableUI, {PivotTableUIProps} from 'react-pivottable/PivotTableUI';
@@ -11,6 +11,7 @@ const T04 = () => {
   const [pivotTableState, setPivotTableState] = useState<PivotTableUIProps | null>(null);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const {data} = useCSVData('/data/T04/database-2018-01-05.csv');
 
@@ -18,13 +19,13 @@ const T04 = () => {
 
   return (
     <div className="toolWrapper" data-testid="t04-container">
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <div className="tableWrapper">
         <Grid padded={true}>
           <Grid.Row style={{padding: 0}}>

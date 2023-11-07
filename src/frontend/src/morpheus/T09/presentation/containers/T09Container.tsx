@@ -7,7 +7,7 @@ import image9D from '../images/T09D.png';
 import image9E from '../images/T09E.png';
 import image9F from '../images/T09F.png';
 import {Breadcrumb} from '../../../../components';
-import {useNavigate, useTranslate} from '../../application';
+import {useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 import styles from './T09.module.less';
 
 interface Item {
@@ -47,6 +47,7 @@ const tool = 'T09';
 const T09 = () => {
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
   const redirectTo = (path: string): void => {
     navigateTo(`/tools/${tool}/${path}`);
   };
@@ -102,13 +103,13 @@ const T09 = () => {
 
   return (
     <div className={styles.toolWrapper} data-testid="t09-container">
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <Header
         as={'h3'}
         style={{position: 'relative', zIndex: 2}}

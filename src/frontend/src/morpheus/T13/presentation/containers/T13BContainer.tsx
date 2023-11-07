@@ -5,7 +5,7 @@ import {IT13B, SETTINGS_SELECTED_NOTHING} from '../../types/T13.type';
 import image from '../images/T13B.png';
 import {Breadcrumb} from 'components';
 import {useNavigate} from 'common/hooks';
-import {useTranslate} from '../../application';
+import {useShowBreadcrumbs, useTranslate} from '../../application';
 
 const defaults: IT13B = {
   settings: {
@@ -125,6 +125,7 @@ const T13BContainer = () => {
   const [data, setData] = useState<IT13B>(defaults);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const handleChangeParameters = (parameters: IT13B['parameters']) => {
     setData((prevState) => ({...prevState, parameters: [...parameters]}));
@@ -141,14 +142,14 @@ const T13BContainer = () => {
 
   return (
     <>
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: translate('T13_title'), link: '/tools/T13'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <ChartT13B

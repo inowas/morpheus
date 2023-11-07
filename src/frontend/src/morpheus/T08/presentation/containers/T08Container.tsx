@@ -4,7 +4,7 @@ import {Background, Chart, Info, Parameters, Settings} from '../components';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T08.png';
 import {Breadcrumb} from '../../../../components';
-import {useCalculate, useNavigate, useTranslate} from '../../application';
+import {useCalculate, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
 
 export const SETTINGS_CASE_FIXED_TIME: number = 1;
@@ -184,6 +184,7 @@ const T08 = () => {
   const calculation = useCalculate();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const handleChangeSettings = (settings: IT08['settings']) => {
     setData((prevState) => ({...prevState, settings: {...settings}}));
@@ -200,13 +201,13 @@ const T08 = () => {
 
   return (
     <div data-testid="t08-container">
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <Chart
