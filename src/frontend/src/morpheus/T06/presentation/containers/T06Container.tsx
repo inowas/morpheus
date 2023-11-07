@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Breadcrumb} from '../../../../components';
-import {useTranslate, useNavigate} from '../../application';
+import {useTranslate, useNavigate, useShowBreadcrumbs} from '../../application';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import groupBy from 'lodash.groupby';
 import intersection from 'lodash.intersection';
@@ -304,6 +304,7 @@ const T06 = () => {
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
   const title = `${tool}: ${translate(`${tool}_title`)}`;
+  const showBreadcrumbs = useShowBreadcrumbs();
 
 
   const replaceAll = (target: string, search: string, replacement: string) => target.split(search).join(replacement);
@@ -420,13 +421,13 @@ const T06 = () => {
 
   return (
     <div data-testid={'T06-container'}>
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Form>
           {renderConditions(data.condition)}

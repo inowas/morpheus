@@ -1,3 +1,4 @@
 import useTranslate from './useTranslate';
+import {useShowBreadcrumbs} from '../incoming';
 
-export {useTranslate};
+export {useShowBreadcrumbs, useTranslate};

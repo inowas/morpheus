@@ -6,6 +6,7 @@ const mockNavigateTo = jest.fn();
 
 jest.mock('../../../application', () => ({
   useNavigate: () => mockNavigateTo,
+  useShowBreadcrumbs: () => () => true,
   useTranslate: () => ({
     i18n: {
       changeLanguage: () => {
@@ -65,7 +66,7 @@ describe('Container Tests', () => {
     });
   });
 
-  
+
   test('It navigates to the correct path when a tool is selected', async () => {
     render(<T09Container/>);
     items.forEach((item) => {
