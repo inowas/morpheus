@@ -17,6 +17,7 @@ import Footer from './Footer';
 import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
+import Image from './Image/Image';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -55,6 +56,7 @@ export {
   Icon,
   IconButton,
   Input,
+  Image,
   Label,
   Loader,
   LoaderAnimation,
