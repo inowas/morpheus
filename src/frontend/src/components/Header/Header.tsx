@@ -1,30 +1,36 @@
-import React from 'react';
-import {Header as SemanticHeader} from 'semantic-ui-react';
-import {SemanticCOLORS, SemanticFLOATS, SemanticTEXTALIGNMENTS} from 'semantic-ui-react/dist/commonjs/generic';
+import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
+import styles from './Header.module.less';
 
-export type IHeaderProps = {
-  as?: any
-  attached?: boolean | 'top' | 'bottom'
-  block?: boolean
-  children?: React.ReactNode
-  className?: string
-  color?: SemanticCOLORS
-  content?: React.ReactNode
-  disabled?: boolean
-  dividing?: boolean
-  floated?: SemanticFLOATS
-  icon?: any
-  image?: any
-  inverted?: boolean
-  size?: 'tiny' | 'small' | 'medium' | 'large' | 'huge'
-  sub?: boolean
-  subheader?: any
-  textAlign?: SemanticTEXTALIGNMENTS
-  style?: React.CSSProperties;
+interface IProps {
+  children: ReactNode;
+}
+
+const Header = ({children}: IProps) => {
+
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
+
+  useEffect(() => {
+    setHeaderHeight(ref.current?.clientHeight || 0);
+  }, []);
+
+  return (
+    <header
+      data-testid={'header'}
+      className={styles.header}
+      style={{
+        paddingTop: headerHeight,
+        zIndex: 10,
+      }}
+    >
+      <div
+        ref={ref}
+        className={styles.headerInner}
+      >
+        {children}
+      </div>
+    </header>
+  );
 };
-
-const Header: React.FC<IHeaderProps> = (props) => (
-  <SemanticHeader {...props} />
-);
 
 export default Header;

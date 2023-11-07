@@ -17,9 +17,10 @@ interface IProps {
 }
 
 const NavTop = ({language, languageList, onChangeLanguage, navigateTo}: IProps) => (
-  <Container className={styles.containerTop}>
+  <Container className={styles.containerTop} data-testid={'test-navtop'}>
     <div className={styles.inner}>
       <Menu.Item
+        data-testid={'test-logo'}
         as="a"
         className={styles.logo}
         onClick={(e) => {
