@@ -8,7 +8,7 @@ interface WrapperProps {
 
 const Wrapper: React.FC<WrapperProps> = ({children, className}) => {
   return (
-    <div className={`${styles.wrapper} ${className || ''}`}>
+    <div className={`${styles.wrapper} ${className || ''}`} data-testid="wrapper">
       {children}
     </div>
   );

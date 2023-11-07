@@ -16,12 +16,14 @@ interface IProps {
   onChangeLanguage: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
   pathname: string;
+  showSearchWrapper?: boolean;
+  showCreateButton?: boolean;
 }
 
-const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo, pathname}: IProps) => {
+const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo, pathname, showSearchWrapper = true, showCreateButton = true}: IProps) => {
 
   return (
-    <div data-testid={'test-navbar'}>
+    <div data-testid={'test-navbar'} style={{position: 'relative'}}>
       <NavTop
         language={language}
         languageList={languageList}
@@ -32,6 +34,8 @@ const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigate
         navbarItems={navbarItems}
         pathname={pathname}
         navigateTo={navigateTo}
+        showSearchWrapper={showSearchWrapper}
+        showCreateButton={showCreateButton}
       />
     </div>
   );

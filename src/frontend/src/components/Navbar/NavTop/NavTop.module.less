@@ -54,12 +54,19 @@
         }
       }
 
+
       & > .item:first-child {
         border-left: none;
       }
 
       .itemLogin {
         display: flex;
+
+        .item {
+          @media (max-width: 1199px) {
+            padding-right: 0;
+          }
+        }
       }
 
     }

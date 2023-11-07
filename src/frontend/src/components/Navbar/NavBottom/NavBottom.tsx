@@ -12,9 +12,11 @@ interface IProps {
   navbarItems: INavbarItem[];
   pathname: string;
   navigateTo: (path: string) => void;
+  showSearchWrapper: boolean;
+  showCreateButton: boolean;
 }
 
-const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
+const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSearchWrapper, showCreateButton}) => {
   const {isMobile} = useIsMobile(1199);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
@@ -37,7 +39,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
             />
             <p className={styles.description}>Innovative Groundwater Solutions</p>
           </div>
-          {isMobile ? (
+          {isMobile && (
             <div
               className={`${styles.menuTrigger} ${openMobileMenu ? styles.menuTrigger__open : ''}`}
               onClick={handleCloseMobileMenu}
@@ -46,7 +48,8 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
               <span></span>
               <span></span>
             </div>
-          ) : (
+          )}
+          {showSearchWrapper && (
             <div className={styles.searchWrapper}>
               <Input
                 action={true}
@@ -60,16 +63,6 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
           )}
           <nav className={`${styles.nav} ${openMobileMenu ? styles.navOpen : ''}`}>
             <div className={styles.navWrapper}>
-              {isMobile && <div className={styles.searchWrapper}>
-                <Input
-                  action={true}
-                  actionPosition="left"
-                  className={`${styles.search}`}
-                >
-                  <Button primary={true}>Search</Button>
-                  <input/>
-                </Input>
-              </div>}
               <ul className={styles.menu}>
                 {navbarItems.map((item: INavbarItem, idx: number) => {
                   return <MenuItem
@@ -81,7 +74,11 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo}) => {
                   />;
                 })}
               </ul>
-              <Button className={styles.createButton} primary={true}>Create new model</Button>
+              {showCreateButton && (
+                <Button className={styles.createButton} primary={true}>
+                  Create new model
+                </Button>
+              )}
             </div>
           </nav>
         </div>

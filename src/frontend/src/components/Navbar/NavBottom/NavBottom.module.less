@@ -6,6 +6,11 @@
     display: flex;
     justify-content: space-between;
     align-items: stretch;
+    flex-wrap: wrap;
+
+    @media (min-width: @breakpoint-tablet-horizontal) {
+      flex-wrap: nowrap;
+    }
   }
 
   .mainMenuLogo {
@@ -87,7 +92,7 @@
     flex-direction: column;
     list-style: none;
     padding: 0;
-    width: auto;
+    width: calc(100% - 2em);
     margin-left: 1em;
     margin-right: 1em;
     border: 1px solid @ref-color-border;
@@ -321,11 +326,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: clamp(300px, 100%, 500px);
-    padding-top: 40px;
+    width: 100%;
+    padding-bottom: 20px;
+    padding-top: 20px;
 
     @media (min-width: @breakpoint-tablet-horizontal) {
       padding-top: 0;
+      padding-bottom: 0;
+      width: clamp(300px, 100%, 500px);
     }
 
     .search {
