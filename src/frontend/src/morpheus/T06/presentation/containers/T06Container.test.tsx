@@ -5,6 +5,7 @@ import {act} from '@testing-library/react-hooks';
 
 jest.mock('../../application', () => ({
   useNavigate: () => jest.fn(),
+  useShowBreadcrumbs: () => () => true,
   useTranslate: () => ({
     translate: (key: string) => key,
   }),

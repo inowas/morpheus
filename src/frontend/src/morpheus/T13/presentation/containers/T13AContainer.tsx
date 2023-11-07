@@ -5,7 +5,7 @@ import {IT13A} from '../../types/T13.type';
 import image from '../images/T13A.png';
 import {Breadcrumb} from 'components';
 import {useNavigate} from 'common/hooks';
-import {useTranslate} from '../../application';
+import {useShowBreadcrumbs, useTranslate} from '../../application';
 
 const defaults: IT13A = {
   parameters: [{
@@ -109,6 +109,7 @@ const T13AContainer = () => {
   const [data, setData] = useState<IT13A>(defaults);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const handleChangeParameters = (parameters: IT13A['parameters']) => {
     setData((prevState) => ({
@@ -124,14 +125,14 @@ const T13AContainer = () => {
 
   return (
     <>
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: translate('T13_title'), link: '/tools/T13'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <ChartT13A

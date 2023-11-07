@@ -12,6 +12,7 @@ jest.mock('../../../application', () => ({
   useNavigate: () => () => {
     return;
   },
+  useShowBreadcrumbs: () => () => true,
   useTranslate: () => ({
     i18n: {
       changeLanguage: () => {
