@@ -1,6 +1,5 @@
 import React from 'react';
 import {INavbarItem} from './types/navbar.type';
-import styles from './Navbar.module.less';
 import NavTop from './NavTop/NavTop';
 import NavBottom from './NavBottom/NavBottom';
 
@@ -21,20 +20,15 @@ interface IProps {
 const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo}: IProps) => {
 
   return (
-    <>
-      <div
-        className={styles.wrapper}
-        data-testid={'test-navbar'}
-      >
-        <NavTop
-          language={language}
-          languageList={languageList}
-          onChangeLanguage={onChangeLanguage}
-          navigateTo={navigateTo}
-        />
-      </div>
+    <div data-testid={'test-navbar'}>
+      <NavTop
+        language={language}
+        languageList={languageList}
+        onChangeLanguage={onChangeLanguage}
+        navigateTo={navigateTo}
+      />
       <NavBottom navbarItems={navbarItems}/>
-    </>
+    </div>
   );
 };
 

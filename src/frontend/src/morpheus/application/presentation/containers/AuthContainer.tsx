@@ -15,7 +15,7 @@ const SignIn: React.FC = () => {
   return (
     <Grid
       centered={true} verticalAlign="middle"
-      style={{height: '100%', paddingTop: '150px'}}
+      style={{height: '100%', padding: '150px 0'}}
     >
       <Grid.Column style={{maxWidth: 450}}>
         <Header as="h2" textAlign="center">
