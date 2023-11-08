@@ -4,16 +4,17 @@ import logoTUDresden from '../images/logo-tud.svg';
 import styles from './NavTop.module.less';
 import Wrapper from '../../Wrapper/Wrapper';
 import AvatarButton from '../AvatarButton/AvatarButton';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
 interface IProps {
-  language: ILanguageCode;
-  languageList: {
+  language?: ILanguageCode;
+  languageList?: {
     code: ILanguageCode;
     label: string;
   }[]
-  onChangeLanguage: (language: ILanguageCode) => void;
+  onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
 }
 
@@ -96,11 +97,13 @@ const NavTop = ({language, languageList, onChangeLanguage, navigateTo}: IProps) 
                 />
               </div>
             }
-            {/*<LanguageSelector*/}
-            {/*  language={language}*/}
-            {/*  languageList={languageList}*/}
-            {/*  onChangeLanguage={onChangeLanguage}*/}
-            {/*/>*/}
+            {language && languageList && onChangeLanguage && (
+              <LanguageSelector
+                language={language}
+                languageList={languageList}
+                onChangeLanguage={onChangeLanguage}
+              />
+            )}
           </Menu>
         </div>
       </Wrapper>

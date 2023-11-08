@@ -11,9 +11,9 @@ export type ILanguageList = Array<{
 
 interface IProps {
   navbarItems: INavbarItem[];
-  language: ILanguageCode;
-  languageList: ILanguageList;
-  onChangeLanguage: (language: ILanguageCode) => void;
+  language?: ILanguageCode;
+  languageList?: ILanguageList;
+  onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
   pathname: string;
   showSearchWrapper?: boolean;
