@@ -63,10 +63,6 @@ export const NavbarExampleNoSearch: StoryFn<typeof Navbar> = () =>
     <Header>
       <Navbar
         navbarItems={navbarItems2}
-        language="en-GB"
-        languageList={languageList}
-        onChangeLanguage={() => {
-        }}
         navigateTo={() => {
         }}
         pathname={'/'}
@@ -80,10 +76,6 @@ export const NavbarExampleNoCreateButton: StoryFn<typeof Navbar> = () =>
     <Header>
       <Navbar
         navbarItems={navbarItems2}
-        language="en-GB"
-        languageList={languageList}
-        onChangeLanguage={() => {
-        }}
         navigateTo={() => {
         }}
         pathname={'/'}
@@ -94,6 +86,19 @@ export const NavbarExampleNoCreateButton: StoryFn<typeof Navbar> = () =>
 ;
 
 export const NavbarExample: StoryFn<typeof Navbar> = () =>
+  <div style={{margin: '-1rem'}}>
+    <Header>
+      <Navbar
+        navbarItems={navbarItems2}
+        navigateTo={() => {
+        }}
+        pathname={'/'}
+      />
+    </Header>
+  </div>
+;
+
+export const NavbarLanguageSelectorExample: StoryFn<typeof Navbar> = () =>
   <div style={{margin: '-1rem'}}>
     <Header>
       <Navbar
