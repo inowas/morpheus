@@ -7,10 +7,10 @@ from ...types.Metadata import Metadata, Description, Name, Tags
 
 @dataclasses.dataclass(frozen=True)
 class UpdateModflowModelMetadataCommand:
-    id: ModelId
-    name: Name
-    description: Description
-    tags: Tags
+    model_id: ModelId
+    name: Name | None
+    description: Description | None
+    tags: Tags | None
 
 
 @dataclasses.dataclass
@@ -22,16 +22,20 @@ class UpdateModflowModelMetadataCommandHandler:
     @staticmethod
     def handle(command: UpdateModflowModelMetadataCommand):
         repository = ModflowModelRepository()
-        metadata = repository.get_modflow_model_metadata(command.id.to_str())
+        model_id = command.model_id
+        metadata = repository.get_modflow_model_metadata(model_id)
         if metadata is None:
-            raise Exception(f'Could not find model with id {command.id.to_str()}')
+            raise Exception(f'Could not find model with id {model_id.to_str()}')
 
-        metadata = Metadata(
-            name=command.name,
-            description=command.description,
-            tags=command.tags,
-        )
+        if command.name is not None:
+            metadata = metadata.with_updated_name(command.name)
 
-        repository.update_modflow_model_metadata(command.id.to_str(), metadata)
+        if command.description is not None:
+            metadata = metadata.with_updated_description(command.description)
+
+        if command.tags is not None:
+            metadata = metadata.with_updated_tags(command.tags)
+
+        repository.update_modflow_model_metadata(model_id, metadata)
 
         return UpdateModflowModelMetadataCommandResult()

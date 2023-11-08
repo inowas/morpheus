@@ -86,3 +86,14 @@ class Metadata:
             'description': self.description.to_value(),
             'tags': self.tags.to_value(),
         }
+
+    def with_updated_name(self, name: Name):
+        return dataclasses.replace(self, name=name)
+
+    def with_updated_description(self, description: Description):
+        return dataclasses.replace(self, description=description)
+
+    def with_updated_tags(self, tags: Tags):
+        return dataclasses.replace(self, tags=tags)
+
+

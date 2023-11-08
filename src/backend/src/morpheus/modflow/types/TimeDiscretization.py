@@ -21,6 +21,20 @@ class TimeUnit:
         return cls(unit=number)
 
     @classmethod
+    def from_str(cls, value: str):
+        if value not in ['seconds', 'minutes', 'hours', 'days', 'years']:
+            raise ValueError('Invalid time unit string')
+        return cls.from_int(number=cls.__dict__[value.upper()])
+
+    @classmethod
+    def from_value(cls, value: int):
+        return cls.from_int(number=value)
+
+    @classmethod
+    def from_default(cls):
+        return cls.days()
+
+    @classmethod
     def days(cls):
         return cls.from_int(cls.DAYS)
 
@@ -28,8 +42,11 @@ class TimeUnit:
     def hours(cls):
         return cls.from_int(cls.HOURS)
 
-    def to_int(self):
+    def to_int(self) -> int:
         return self.unit
+
+    def to_value(self) -> int:
+        return self.to_int()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -59,8 +76,15 @@ class StressPeriodType:
 
         return cls(value=value)
 
+    @classmethod
+    def from_value(cls, value: str):
+        return cls.from_str(value=value)
+
     def to_str(self):
         return self.value
+
+    def to_value(self):
+        return self.to_str()
 
 
 @dataclasses.dataclass
@@ -71,8 +95,15 @@ class StressPeriodLength:
     def from_int(cls, value: int):
         return cls(value=value)
 
-    def to_int(self):
+    @classmethod
+    def from_value(cls, value: int):
+        return cls.from_int(value=int(value))
+
+    def to_int(self) -> int:
         return self.value
+
+    def to_value(self) -> int:
+        return self.to_int()
 
 
 @dataclasses.dataclass
@@ -83,8 +114,15 @@ class NumberOfTimeSteps:
     def from_int(cls, value: int):
         return cls(value=value)
 
-    def to_int(self):
+    @classmethod
+    def from_value(cls, value: int):
+        return cls.from_int(value=value)
+
+    def to_int(self) -> int:
         return self.value
+
+    def to_value(self) -> int:
+        return self.to_int()
 
 
 @dataclasses.dataclass
@@ -95,8 +133,15 @@ class TimeStepMultiplier:
     def from_float(cls, value: float):
         return cls(value=value)
 
-    def to_float(self):
+    @classmethod
+    def from_value(cls, value: float):
+        return cls.from_float(value=value)
+
+    def to_float(self) -> float:
         return self.value
+
+    def to_value(self) -> float:
+        return self.to_float()
 
 
 @dataclasses.dataclass
@@ -107,8 +152,15 @@ class StressPeriodCollection:
     def from_list(cls, collection: list):
         return cls(stress_periods=[StressPeriod.from_dict(sp) for sp in collection])
 
-    def to_list(self):
+    @classmethod
+    def from_value(cls, value: list):
+        return cls.from_list(collection=value)
+
+    def to_list(self) -> list:
         return [sp.to_dict() for sp in self.stress_periods]
+
+    def to_value(self) -> list:
+        return self.to_list()
 
 
 @dataclasses.dataclass
@@ -121,18 +173,18 @@ class StressPeriod:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            stress_period_type=StressPeriodType.from_str(obj['stress_period_type']),
-            length=StressPeriodLength.from_int(obj['length']),
-            number_of_time_steps=NumberOfTimeSteps.from_int(obj['number_of_time_steps']),
-            time_step_multiplier=TimeStepMultiplier.from_float(obj['time_step_multiplier'])
+            stress_period_type=StressPeriodType.from_value(obj['stress_period_type']),
+            length=StressPeriodLength.from_value(obj['length']),
+            number_of_time_steps=NumberOfTimeSteps.from_value(obj['number_of_time_steps']),
+            time_step_multiplier=TimeStepMultiplier.from_value(obj['time_step_multiplier'])
         )
 
     def to_dict(self):
         return {
-            'stress_period_type': self.stress_period_type.to_str(),
-            'length': self.length.to_int(),
-            'number_of_time_steps': self.number_of_time_steps.to_int(),
-            'time_step_multiplier': self.time_step_multiplier.to_float()
+            'stress_period_type': self.stress_period_type.to_value(),
+            'length': self.length.to_value(),
+            'number_of_time_steps': self.number_of_time_steps.to_value(),
+            'time_step_multiplier': self.time_step_multiplier.to_value()
         }
 
 
@@ -148,11 +200,18 @@ class StartDateTime:
     def from_str(cls, value: str):
         return cls(value=datetime.fromisoformat(value))
 
-    def to_datetime(self):
+    @classmethod
+    def from_value(cls, value: str):
+        return cls.from_str(value=value)
+
+    def to_datetime(self) -> datetime:
         return self.value
 
-    def to_str(self):
+    def to_str(self) -> str:
         return self.value.isoformat()
+
+    def to_value(self) -> str:
+        return self.to_str()
 
 
 @dataclasses.dataclass
@@ -177,14 +236,14 @@ class TimeDiscretization:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            start_datetime=StartDateTime.from_str(obj['start_datetime']),
-            stress_periods=StressPeriodCollection.from_list(obj['stress_periods']),
-            time_unit=TimeUnit.from_int(obj['time_unit'])
+            start_datetime=StartDateTime.from_value(obj['start_datetime']),
+            stress_periods=StressPeriodCollection.from_value(value=obj['stress_periods']),
+            time_unit=TimeUnit.from_value(obj['time_unit'])
         )
 
     def to_dict(self):
         return {
             'start_datetime': self.start_datetime.to_str(),
             'stress_periods': self.stress_periods.to_list(),
-            'time_unit': self.time_unit.to_int()
+            'time_unit': self.time_unit.to_value()
         }

@@ -1,6 +1,7 @@
 from morpheus.modflow.types.Metadata import Metadata
-from morpheus.modflow.types.ModflowModel import ModflowModel
+from morpheus.modflow.types.ModflowModel import ModflowModel, ModelId
 from morpheus.common.infrastructure.persistence.mongodb import Database, get_database_client
+from morpheus.modflow.types.TimeDiscretization import TimeDiscretization
 from morpheus.settings import settings
 
 
@@ -27,12 +28,7 @@ class ModflowModelRepository:
         if not self.has_collection(collection_name):
             return None
         collection = self.get_collection(collection_name)
-        model_dict = collection.find(
-            {},
-            {
-                'id': 1,
-                'metadata': 1
-            })
+        model_dict = collection.find({}, {'id': 1, 'metadata': 1})
         if model_dict is None:
             return None
 
@@ -45,33 +41,55 @@ class ModflowModelRepository:
 
         return result
 
-    def get_modflow_model_metadata(self, model_id: str) -> dict | None:
+    def get_modflow_model_metadata(self, model_id: ModelId) -> Metadata | None:
         collection_name = 'modflow_models'
         if not self.has_collection(collection_name):
             return None
         collection = self.get_collection(collection_name)
-        model_dict = collection.find_one({'id': model_id})
+        model_dict = collection.find_one({'id': model_id.to_str()}, {'metadata': 1})
         if model_dict is None:
             return None
-        return model_dict['metadata']
+        return Metadata.from_dict(model_dict['metadata'])
 
-    def update_modflow_model_metadata(self, model_id: str, metadata: Metadata):
+    def update_modflow_model_metadata(self, model_id: ModelId, metadata: Metadata):
         collection_name = 'modflow_models'
         if not self.has_collection(collection_name):
             self.create_collection(collection_name)
         collection = self.get_collection(collection_name)
-        existing_model = collection.find_one({'id': model_id})
+        existing_model = collection.find_one({'id': model_id.to_str()}, {'metadata': 1})
         if existing_model is None:
             return
 
-        collection.update_one({'id': model_id}, {'$set': {'metadata': metadata.to_dict()}})
+        collection.update_one({'id': model_id.to_str()}, {'$set': {'metadata': metadata.to_dict()}})
 
-    def get_modflow_model(self, model_id: str) -> ModflowModel | None:
+    def get_modflow_model_time_discretization(self, model_id: ModelId) -> TimeDiscretization | None:
         collection_name = 'modflow_models'
         if not self.has_collection(collection_name):
             return None
         collection = self.get_collection(collection_name)
-        model_dict = collection.find_one({'id': model_id})
+        model_dict = collection.find_one({'id': model_id.to_str()}, {'time_discretization': 1})
+        if model_dict is None:
+            return None
+        return TimeDiscretization.from_dict(model_dict['time_discretization'])
+
+    def update_modflow_model_time_discretization(self, model_id: ModelId, time_discretization: TimeDiscretization):
+        collection_name = 'modflow_models'
+        if not self.has_collection(collection_name):
+            self.create_collection(collection_name)
+        collection = self.get_collection(collection_name)
+        existing_model = collection.find_one({'id': model_id.to_str()})
+        if existing_model is None:
+            return
+
+        collection.update_one({'id': model_id.to_str()},
+                              {'$set': {'time_discretization': time_discretization.to_dict()}})
+
+    def get_modflow_model(self, model_id: ModelId) -> ModflowModel | None:
+        collection_name = 'modflow_models'
+        if not self.has_collection(collection_name):
+            return None
+        collection = self.get_collection(collection_name)
+        model_dict = collection.find_one({'id': model_id.to_str()})
         if model_dict is None:
             return None
         return ModflowModel.from_dict(model_dict)

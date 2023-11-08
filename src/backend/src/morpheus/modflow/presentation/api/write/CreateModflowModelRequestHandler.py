@@ -64,6 +64,6 @@ class CreateModflowModelRequestHandler:
         result = CreateModflowModelCommandHandler.handle(command=command)
         response = jsonify()
         response.status_code = 201
-        response.headers['location'] = 'modflow/' + result.id
+        response.headers['location'] = 'modflow/' + result.model_id
 
         return response

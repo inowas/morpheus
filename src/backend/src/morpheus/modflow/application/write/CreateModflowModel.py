@@ -62,4 +62,4 @@ class CreateModflowModelCommandHandler:
         repository = ModflowModelRepository()
         repository.save_modflow_model(modflow_model)
 
-        return CreateModflowModelCommandResult(id=modflow_model.id.to_str())
+        return CreateModflowModelCommandResult(id=modflow_model.model_id.to_str())
