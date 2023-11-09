@@ -1,7 +1,6 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {ContentWrapper} from 'components';
-import {Footer, Header, Navbar} from '../../../../components';
+import {ContentWrapper, Footer, Header, Navbar} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 interface IProps {
@@ -46,22 +45,22 @@ const ApplicationContainer = ({children}: IProps) => {
         <Header>
           <Navbar
             navbarItems={navbarItems}
-            languageList={[
-              {
-                code: 'en-GB',
-                label: translate('english'),
-              },
-            ]}
-            language={language}
-            onChangeLanguage={setLanguage}
+            // languageList={[
+            //   {
+            //     code: 'en-GB',
+            //     label: translate('english'),
+            //   },
+            // ]}
+            // language={language}
+            // onChangeLanguage={setLanguage}
             navigateTo={navigateTo}
             pathname={location.pathname}
-            showSearchWrapper={false}
-            showCreateButton={false}
+            showSearchWrapper={true}
+            showCreateButton={true}
           />
         </Header>
       }
-      <ContentWrapper minHeight={'auto'}>
+      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
         {children}
       </ContentWrapper>
       {showFooter ? <Footer release={release}/> :

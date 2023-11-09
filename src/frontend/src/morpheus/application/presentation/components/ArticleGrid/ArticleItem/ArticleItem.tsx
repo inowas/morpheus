@@ -25,7 +25,6 @@ const ArticleItem: React.FC<IProps> = ({article, navigateToTool, navigateToDocum
     if (maxLength >= description.length) {
       return description;
     }
-
     return description.substring(0, maxLength) + '...';
   };
 

@@ -1,12 +1,9 @@
 import React from 'react';
-import ArticleGrid from '../components/ArticleGrid';
-import PageTitle from '../components/PageTitle';
-import ModelGrid from '../../../../components/ModelGrid/ModelGrid';
-import {useTranslate} from '../../application';
-import {useNavigate} from 'common/hooks';
-import {IModelGridItem} from '../../../../components/ModelGrid/types/ModelGrid.type';
-
-const tools = ['T02', 'T04', 'T06', 'T08', 'T09', 'T11', 'T13', 'T14', 'T18'];
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+import ModelGrid from './ModelGrid';
+import ModelGridItem from './ModelGridItem/ModelGridItem';
+import {IModelGridItem} from './types/ModelGrid.type';
 
 const models: IModelGridItem[] = [
   {
@@ -76,34 +73,44 @@ const models: IModelGridItem[] = [
   },
 ];
 
-
-const DashboardContainer = () => {
-  const {translate} = useTranslate();
-  const navigateTo = useNavigate();
-
-  const articles = tools.map((tool, idx) => ({
-    id: idx,
-    title: `${tool}: ${translate(`${tool}_title`)}`,
-    image: translate(`${tool}_image`),
-    description: translate(`${tool}_description`),
-    toolLink: `/tools/${tool}`,
-    documentationLink: translate(`${tool}_documentation_link`),
-  }));
-
-  return (
-    <>
-      <ModelGrid data={models} navigateTo={navigateTo}/>
-      <PageTitle
-        title={translate('tools')}
-        description={translate('tools_description')}
-      />
-      <ArticleGrid
-        articles={articles}
-        navigateTo={navigateTo}
-        translate={translate}
-      />
-    </>
-  );
+const item: IModelGridItem = {
+  id: 3,
+  model_description: 'Small model at NU campus',
+  model_image: 'https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg',
+  model_title: 'Simulation ofSUDS impact',
+  model_Link: '/tools/04',
+  model_map: '/tools/01',
+  meta_author_avatar: '/author/EmilyBrown.jpeg',
+  meta_author_name: 'Emily Brown',
+  meta_link: 'https://metaLink4',
+  meta_text: new Date().toLocaleDateString(),
+  meta_status: true,
 };
+export default {
+  /* 👇 The title prop is optional.
+  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
+  * to learn how to generate automatic titles
+  */
+  title: 'ModelGrid',
+  component: ModelGrid,
+} as Meta<typeof ModelGrid>;
 
-export default DashboardContainer;
+export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
+  <ModelGrid
+    data={models}
+    navigateTo={() => {
+    }}
+  />
+;
+
+export const ModelGridItemExample: StoryFn<typeof ModelGridItem> = () =>
+  <ModelGridItem
+    data={item}
+    navigateTo={() => {
+    }}
+    onDeleteButtonClick={() => {
+    }}
+    onCopyButtonClick={() => {
+    }}
+  />
+;
