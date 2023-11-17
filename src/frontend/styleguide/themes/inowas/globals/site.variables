@@ -226,7 +226,7 @@
 @olive: #B5CC18;
 @green: #21BA45;
 @teal: #00B5AD;
-@blue: #1eb1ed;
+@blue: #009FE3;
 @violet: #6435C9;
 @purple: #A333C8;
 @pink: #E03997;
@@ -979,7 +979,7 @@
 @ref-color-lightBlue: #8494b2;
 @ref-color-darkBlue: #46658f;
 @ref-color-extraBlue: #274275;
-@ref-color-active: #002557;
+@ref-color-active: #012357;
 @ref-color-greyDark: #666666;
 @ref-color-red: #dd2727;
 @ref-color-redDark: #BF1E1E;

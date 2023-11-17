@@ -6,6 +6,7 @@ import useCalculationsT09D from './useCalculationsT09D';
 import useCalculationsT09E from './useCalculationsT09E';
 import useCalculationsT09F from './useCalculationsT09F';
 import {useNavigate} from 'common/hooks';
+import {useShowBreadcrumbs} from '../incoming';
 
 export {
   useTranslate,
@@ -16,4 +17,5 @@ export {
   useCalculationsT09D,
   useCalculationsT09E,
   useCalculationsT09F,
+  useShowBreadcrumbs,
 };

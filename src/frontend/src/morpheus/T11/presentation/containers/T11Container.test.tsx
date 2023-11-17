@@ -6,6 +6,7 @@ jest.mock('../../application', () => ({
   useNavigate: () => () => {
     return;
   },
+  useShowBreadcrumbs: () => () => true,
   useTranslate: () => ({
     translate: (key: string) => key,
   }),

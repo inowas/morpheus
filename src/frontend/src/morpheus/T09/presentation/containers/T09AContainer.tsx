@@ -4,7 +4,7 @@ import {Background, ChartT09A, InfoT09A, Parameters} from '../components';
 import {IT09A} from '../../types/T09.type';
 import image from '../images/T09A.png';
 import {Breadcrumb} from '../../../../components';
-import {useCalculationsT09A, useNavigate, useTranslate} from '../../application';
+import {useCalculationsT09A, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
 const defaults: IT09A = {
   parameters: [{
@@ -60,6 +60,7 @@ const T09AContainer = () => {
   const calculation = useCalculationsT09A();
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const handleChangeParameters = (parameters: IT09A['parameters']) => {
     setData((prevState) => ({
@@ -75,14 +76,14 @@ const T09AContainer = () => {
 
   return (
     <div data-testid="t09a-container">
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: translate('T09_title'), link: '/tools/T09'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <ChartT09A

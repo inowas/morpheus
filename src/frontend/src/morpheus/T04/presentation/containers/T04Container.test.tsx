@@ -4,6 +4,7 @@ import T04Container from './T04Container';
 
 jest.mock('../../application', () => ({
   useNavigate: () => jest.fn(),
+  useShowBreadcrumbs: () => () => true,
   useTranslate: () => ({
     translate: (key: string) => key,
   }),

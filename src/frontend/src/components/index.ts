@@ -1,5 +1,6 @@
 import Breadcrumb from './Breadcrumb';
 import Button from './Button/Button';
+import BackToTopButton from './BackToTopButton/BackToTopButton';
 import ChartModal from './ChartModal';
 import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
@@ -7,11 +8,12 @@ import Container from './Container/Container';
 import ContentWrapper from './ContentWrapper';
 import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
-import DropDownDnd from './DropDownDnd/DropDownDnd';
 import Dropdown from './Dropdown';
 import Form from './Form';
 import Grid from './Grid';
-import Header from './Header/Header';
+import NotFound from './NotFound';
+import Header from './Header';
+import Footer from './Footer';
 import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
@@ -22,6 +24,7 @@ import Loader from './Loader/Loader';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
+import Navbar, {INavbarItem} from './Navbar';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -31,12 +34,12 @@ import Progress from './Progress/Progress';
 import Segment from './Segment';
 import Select, {DropdownProps} from './Select/Select';
 import Toggle from './Toggle/Toggle';
-import {Dropzone} from './Dropzone';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 
 export {
   Breadcrumb,
   Button,
+  BackToTopButton,
   ChartModal,
   Checkbox,
   Confirm,
@@ -44,22 +47,23 @@ export {
   ContentWrapper,
   DatePicker,
   Divider,
-  DropDownDnd,
   Dropdown,
-  Dropzone,
   Form,
   Grid,
   Header,
+  Footer,
   HintPageComponent,
   Icon,
   IconButton,
-  Image,
   Input,
+  Image,
   Label,
   Loader,
   LoaderAnimation,
   Message,
   Modal,
+  Navbar,
+  NotFound,
   Notification,
   Notifications,
   Page,
@@ -81,4 +85,5 @@ export type {
   DropdownProps,
   IInputProps,
   IInputOnChangeData,
+  INavbarItem,
 };

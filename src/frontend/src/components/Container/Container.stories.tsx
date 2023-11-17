@@ -15,7 +15,7 @@ export default {
 
 
 export const ContainerExample: StoryFn<typeof Container> = () => (
-  <Container content={'ITEXIA Container'}>
-    <Segment placeholder={true} content={'ITEXIA SEGMENT'}/>
+  <Container content={'Container'}>
+    <Segment placeholder={true} content={'SEGMENT'}/>
   </Container>
 );

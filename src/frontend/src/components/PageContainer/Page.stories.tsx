@@ -19,5 +19,5 @@ export const Primary: StoryFn<typeof Page> = () => <Page
     padding: 20,
   }}
   as='h1'
-  header={'Itexia Page'}
+  header={'Page'}
 >Page Content</Page>;

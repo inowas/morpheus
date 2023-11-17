@@ -1,13 +1,13 @@
 import React, {ReactNode, useEffect, useState} from 'react';
-
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
 import {ContentWrapper} from 'components';
-import {Footer, Header, Navbar} from '../components';
-import {useNavigate, useSearchParams} from 'common/hooks';
+import {Footer, Header, Navbar} from '../../../../components';
+import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 interface IProps {
   children: ReactNode;
 }
+
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -17,6 +17,7 @@ const ApplicationContainer = ({children}: IProps) => {
   const {navbarItems} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
+  const location = useLocation();
   const {release} = useReleaseVersion();
   const [searchParams] = useSearchParams();
 
@@ -54,6 +55,9 @@ const ApplicationContainer = ({children}: IProps) => {
             language={language}
             onChangeLanguage={setLanguage}
             navigateTo={navigateTo}
+            pathname={location.pathname}
+            showSearchWrapper={false}
+            showCreateButton={false}
           />
         </Header>
       }

@@ -3,7 +3,7 @@ import {Grid as SemanticGrid} from 'semantic-ui-react';
 import {SemanticFLOATS, SemanticTEXTALIGNMENTS, SemanticVERTICALALIGNMENTS, SemanticWIDTHS} from 'semantic-ui-react/dist/commonjs/generic';
 import {GridReversedProp} from 'semantic-ui-react/dist/commonjs/collections/Grid/Grid';
 import {GridOnlyProp} from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
-import {ItexiaCOLORS} from '../types/ItexiaColors.type';
+import {InowasCOLORS} from '../types/InowasColors.type';
 
 export type IGridProps = {
   as?: any
@@ -34,7 +34,7 @@ export type IGridColumnProps = {
   as?: any
   children?: React.ReactNode
   className?: string
-  color?: ItexiaCOLORS
+  color?: InowasCOLORS
   computer?: SemanticWIDTHS
   floated?: SemanticFLOATS
   largeScreen?: SemanticWIDTHS
@@ -58,7 +58,7 @@ export type IGridRowProps = {
   centered?: boolean
   children?: React.ReactNode
   className?: string
-  color?: ItexiaCOLORS
+  color?: InowasCOLORS
   columns?: SemanticWIDTHS | 'equal'
   divided?: boolean
   only?: GridOnlyProp

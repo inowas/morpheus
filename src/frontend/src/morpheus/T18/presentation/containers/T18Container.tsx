@@ -5,7 +5,7 @@ import SimpleToolGrid from 'components/SimpleToolGrid';
 import image from '../images/T18.png';
 import {useNavigate} from 'common/hooks';
 import {Breadcrumb} from 'components';
-import {useTranslate} from '../../../T02/application';
+import {useTranslate, useShowBreadcrumbs} from '../../application';
 
 export const SETTINGS_INFILTRATION_TYPE_BASIN = 0.07;
 export const SETTINGS_INFILTRATION_TYPE_CYLINDER = 0.02;
@@ -123,6 +123,7 @@ const T18 = () => {
   const [data, setData] = useState<IT18>(defaults);
   const navigateTo = useNavigate();
   const {translate} = useTranslate();
+  const showBreadcrumbs = useShowBreadcrumbs();
 
   const handleChangeSettings = (settings: IT18['settings']) => {
     setData((prevState) => ({...prevState, settings: {...settings}}));
@@ -141,13 +142,13 @@ const T18 = () => {
 
   return (
     <>
-      <Breadcrumb
+      {showBreadcrumbs && <Breadcrumb
         items={[
           {label: translate('tools'), link: '/tools'},
           {label: title},
         ]}
         navigateTo={navigateTo}
-      />
+      />}
       <SimpleToolGrid rows={2}>
         <Background image={image} title={title}/>
         <Chart
