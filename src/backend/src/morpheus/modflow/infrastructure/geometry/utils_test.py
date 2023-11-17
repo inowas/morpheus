@@ -1,8 +1,8 @@
 import json
 
-from morpheus.modflow.infrastructure.geometry.utils import calculate_affected_cells, calculate_grid_cell_centers, \
+from morpheus.modflow.infrastructure.geometry.utils import calculate_affected_cells_from_polygon, calculate_grid_cell_centers, \
     calculate_grid_geometry, calculate_grid_cell_geometries, grid_from_polygon
-from morpheus.modflow.types.SpatialDiscretization import Grid, Rotation, LengthUnit, Point, Polygon
+from morpheus.modflow.types.descritization.SpatialDiscretization import Grid, Rotation, LengthUnit, Point, Polygon
 
 
 def test_calculate_affected_cells() -> None:
@@ -19,7 +19,7 @@ def test_calculate_affected_cells() -> None:
          (13.0, 51.0)]
     ])
 
-    affected_cells = calculate_affected_cells(geometry=geometry, grid=grid)
+    affected_cells = calculate_affected_cells_from_polygon(geometry=geometry, grid=grid)
     assert affected_cells is not None
 
 

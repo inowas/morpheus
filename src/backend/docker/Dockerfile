@@ -4,7 +4,7 @@ FROM node:20 as build_openapi_spec
 
 ADD src/backend/src /src
 
-RUN npx swagger-cli bundle -o /src/morpheus/openapi.bundle.yml -r -t yaml /src/morpheus/openapi.yml
+RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle.yml /src/morpheus/openapi.yml
 
 
 FROM python:3.11-bookworm as base

@@ -2,11 +2,11 @@ import dataclasses
 from typing import TypedDict
 from flask import Request, abort, jsonify
 
-from ....application.write.CreateModflowModel import CreateModflowModelCommand, CreateModflowModelCommandHandler, \
+from ....application.write.CreateBaseModel import CreateBaseModelCommand, CreateBaseModelCommandHandler, \
     CreateGridDict
 from ....incoming import get_logged_in_user_id
-from ....types.Metadata import Description, Tags, Name
-from ....types.SpatialDiscretization import Polygon
+from ....types.discretization.SpatialDiscretization import Polygon
+from ....types.Project import ProjectId
 from ....types.User import UserId
 
 
@@ -16,54 +16,44 @@ class PolygonDict(TypedDict, total=True):
 
 
 @dataclasses.dataclass
-class CreateModflowModelRequest:
-    name: str
-    description: str
-    tags: list[str]
+class CreateBaseModelRequest:
     geometry: PolygonDict
     grid_properties: CreateGridDict
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
-            name=obj['name'],
-            description=obj['description'],
-            tags=obj['tags'],
             geometry=obj['geometry'],
             grid_properties=obj['grid_properties']
         )
 
 
-class CreateModflowModelRequestHandler:
+class CreateBaseModelRequestHandler:
     @staticmethod
-    def handle(request: Request):
+    def handle(request: Request, project_id: str):
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
+        project_id = ProjectId.from_str(project_id)
         user_id = get_logged_in_user_id()
         if user_id is None:
             abort(401, 'Unauthorized')
 
-        create_modflow_model_request = CreateModflowModelRequest.from_dict(obj=request.json)
-        name = Name.from_str(create_modflow_model_request.name)
-        description = Description.from_str(create_modflow_model_request.description)
-        tags = Tags.from_list(create_modflow_model_request.tags)
+        create_modflow_model_request = CreateBaseModelRequest.from_dict(obj=request.json)
         geometry = Polygon.from_dict(create_modflow_model_request.geometry.__dict__)
         grid_properties = create_modflow_model_request.grid_properties
         user_id = UserId.from_value(user_id)
 
-        command = CreateModflowModelCommand(
-            name=name,
-            description=description,
-            tags=tags,
+        command = CreateBaseModelCommand(
+            project_id=project_id,
             geometry=geometry,
             grid_properties=grid_properties,
             user_id=user_id
         )
 
-        result = CreateModflowModelCommandHandler.handle(command=command)
+        result = CreateBaseModelCommandHandler.handle(command=command)
         response = jsonify()
         response.status_code = 201
-        response.headers['location'] = 'modflow/' + result.model_id
+        response.headers['location'] = 'modflow/' + result.model_id.to_str()
 
         return response

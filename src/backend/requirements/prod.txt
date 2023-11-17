@@ -2,6 +2,7 @@ Authlib==1.2.1
 Dynaconf==3.2.4
 Flask==3.0.0
 Flask-Cors==4.0.0
+flopy==3.4.3
 gunicorn==21.2.0
 openapi-core==0.18.1
 pandas==2.1.2

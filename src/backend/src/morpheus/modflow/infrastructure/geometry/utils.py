@@ -1,8 +1,9 @@
 import numpy as np
 import pyproj
+from shapely import affinity, Polygon as ShapelyPolygon, Point as ShapelyPoint, LineString as ShapelyLineString
 
-from morpheus.modflow.types.SpatialDiscretization import Rotation, Polygon, LengthUnit, Grid, Point, AffectedCells
-from shapely import affinity, Polygon as ShapelyPolygon, Point as ShapelyPoint
+from ...types.discretization.SpatialDiscretization import Rotation, Polygon, LengthUnit, Grid, Point, LineString, \
+    AffectedCells
 
 
 def grid_from_polygon(polygon: Polygon, rotation: Rotation, length_unit: LengthUnit,
@@ -116,7 +117,7 @@ def calculate_grid_geometry(grid: Grid) -> Polygon:
     return Polygon(coordinates=[geometry_4326])
 
 
-def calculate_affected_cells(geometry: Polygon, grid: Grid) -> AffectedCells:
+def calculate_affected_cells_from_polygon(geometry: Polygon, grid: Grid) -> AffectedCells:
     affected_cells = AffectedCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
     area = ShapelyPolygon(geometry.coordinates[0])
     grid_cell_centers = calculate_grid_cell_centers(grid)
@@ -124,5 +125,31 @@ def calculate_affected_cells(geometry: Polygon, grid: Grid) -> AffectedCells:
         for y in range(grid.ny()):
             center = ShapelyPoint(grid_cell_centers[y][x].coordinates)
             affected_cells.set_cell_value(x=x, y=y, value=area.contains(center))
+
+    return affected_cells
+
+
+def calculate_affected_cells_from_point(point: Point, grid: Grid) -> AffectedCells:
+    affected_cells = AffectedCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
+    point = ShapelyPoint(point.coordinates)
+    grid_cell_geometries = calculate_grid_cell_geometries(grid)
+    for x in range(grid.nx()):
+        for y in range(grid.ny()):
+            grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[y][x].coordinates[0])
+            affected_cells.set_cell_value(x=x, y=y, value=grid_cell_geometry.contains(point))
+
+    return affected_cells
+
+
+def calculate_affected_cells_from_linestring(linestring: LineString, grid: Grid) -> AffectedCells:
+    affected_cells = AffectedCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
+    grid_cell_geometries = calculate_grid_cell_geometries(grid)
+    linestring = ShapelyLineString(linestring.coordinates)
+
+    for x in range(grid.nx()):
+        for y in range(grid.ny()):
+            grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[y][x].coordinates[0])
+            if grid_cell_geometry.intersects(linestring):
+                affected_cells.set_cell_value(x=x, y=y, value=True)
 
     return affected_cells

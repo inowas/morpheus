@@ -1,15 +1,15 @@
 import dataclasses
-from flask import Request, abort, jsonify
+from flask import Request, abort
 
-from ....application.write.UpdateModflowModelMetadata import UpdateModflowModelMetadataCommand, \
-    UpdateModflowModelMetadataCommandHandler
+from ....application.write.UpdateMetadata import UpdateMetadataCommand, \
+    UpdateMetadataCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Metadata import Description, Tags, Name
-from ....types.ModflowModel import ModelId
+from ....types.Project import ProjectId
 
 
 @dataclasses.dataclass
-class UpdateModflowModelMetadataRequest:
+class UpdateProjectMetadataRequest:
     name: str | None
     description: str | None
     tags: list[str] | None
@@ -23,9 +23,9 @@ class UpdateModflowModelMetadataRequest:
         )
 
 
-class UpdateModflowModelMetadataRequestHandler:
+class UpdateMetadataRequestHandler:
     @staticmethod
-    def handle(request: Request, model_id: str):
+    def handle(request: Request, project_id: str):
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
@@ -33,8 +33,9 @@ class UpdateModflowModelMetadataRequestHandler:
         if user_id is None:
             abort(401, 'Unauthorized')
 
-        model_id = ModelId.from_str(model_id)
-        update_modflow_model_metadata = UpdateModflowModelMetadataRequest.from_dict(obj=request.json)
+        project_id = ProjectId.from_str(project_id)
+
+        update_modflow_model_metadata = UpdateProjectMetadataRequest.from_dict(obj=request.json)
 
         name = update_modflow_model_metadata.name
         if name is not None:
@@ -48,12 +49,12 @@ class UpdateModflowModelMetadataRequestHandler:
         if tags is not None:
             tags = Tags.from_list(update_modflow_model_metadata.tags)
 
-        command = UpdateModflowModelMetadataCommand(
-            model_id=model_id,
+        command = UpdateMetadataCommand(
+            project_id=project_id,
             name=name,
             description=description,
             tags=tags,
         )
 
-        UpdateModflowModelMetadataCommandHandler.handle(command=command)
+        UpdateMetadataCommandHandler.handle(command=command)
         return None, 201

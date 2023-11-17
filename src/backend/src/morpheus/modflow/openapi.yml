@@ -3,25 +3,43 @@ info:
   title: INOWAS API - Modflow Module
   version: 2.0.0
 components:
+  parameters:
+    ProjectId:
+      name: project_id
+      in: path
+      description: "The id of a Modflow Project."
+      required: true
+      schema:
+        type: string
+        example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
   schemas:
-    CreateModflowModelRequest:
+    CreateProjectRequest:
       type: object
-      description: "The Request to create a new ModflowModel."
+      description: "The Request to create a new Modflow Project."
       properties:
         name:
           type: string
-          description: "The name of the model."
-          example: "My first model"
+          description: "The name of the project."
+          example: "My first project"
         description:
           type: string
-          description: "The description of the model."
-          example: "This is my first model"
+          description: "The description of the project."
+          example: "This is my first project"
         tags:
           type: array
-          description: "The tags of the model."
+          description: "The tags of the project."
           items:
             type: string
           example: [ "tag1", "tag2" ]
+      required:
+        - name
+        - description
+        - tags
+
+    CreateBaseModelRequest:
+      type: object
+      description: "The Request to create a new ModflowModel."
+      properties:
         geometry:
           type: object
           description: "The geometry of the feature."
@@ -33,7 +51,13 @@ components:
             coordinates:
               type: array
               description: "The coordinates of the geometry."
-              example: [ [ [ 13.0, 51.0 ], [ 13.0, 51.1 ], [ 13.1, 51.1 ], [ 13.1, 51.0 ], [ 13.0, 51.0 ] ] ]
+              example: [ [
+                [ 13.922514437551428, 50.964720483303836 ],
+                [ 13.925250781947113, 50.965228748412386 ],
+                [ 13.925036413951403, 50.96623732041704 ],
+                [ 13.92222441026388, 50.96609040370362 ],
+                [ 13.922514437551428, 50.964720483303836 ]
+              ] ]
               items:
                 type: array
                 items:
@@ -82,9 +106,80 @@ components:
             - length_unit
 
       required:
-        - name
-        - description
-        - tags
         - geometry
         - grid_properties
 
+    UpdateMetadataRequest:
+      type: object
+      description: "The Request to update the metadata of a Modflow Project."
+      properties:
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+
+    UpdateTimeDiscretizationRequest:
+      $ref: '#/components/schemas/TimeDiscretization'
+
+    GetTimeDiscretizationResponse:
+      $ref: '#/components/schemas/TimeDiscretization'
+
+    ProjectId:
+      type: string
+      description: "The id of a Modflow Project."
+      example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+
+    TimeDiscretization:
+      type: object
+      description: "The time discretization of a Modflow Base Model or Scenario."
+      properties:
+        start_date_time:
+          type: string
+          format: date-time
+          description: "The start date time of the model."
+          example: "2020-01-01T00:00:00Z"
+        end_date_time:
+          type: string
+          format: date-time
+          description: "The end date time of the model."
+          example: "2020-12-31T00:00:00Z"
+        stress_periods:
+          type: array
+          description: "The stress periods of the model."
+          items:
+            type: object
+            properties:
+              start_date_time:
+                type: string
+                format: date-time
+                description: "The start date time of the stress period."
+                example: "2020-01-01T00:00:00Z"
+              number_of_time_steps:
+                type: number
+                description: "The time step size of the stress period."
+                example: 1
+              time_step_multiplier:
+                type: number
+                description: "The time step multiplier of the stress period."
+                example: 1
+              steady_state:
+                type: boolean
+                description: "A flag to indicate if the stress period is steady state."
+                example: false
+          example:
+            - start_date_time: "2020-01-01T00:00:00Z"
+              number_of_time_steps: 1
+              time_step_multiplier: 1
+            - start_date_time: "2020-02-01T00:00:00Z"
+              number_of_time_steps: 1
+              time_step_multiplier: 1

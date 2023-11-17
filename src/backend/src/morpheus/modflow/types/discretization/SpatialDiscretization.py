@@ -5,14 +5,47 @@ import numpy as np
 import pyproj
 
 
+class GeometryFactory:
+    @staticmethod
+    def from_dict(obj: dict):
+        if obj['type'] == 'Polygon':
+            return Polygon.from_dict(obj)
+        elif obj['type'] == 'LineString':
+            return LineString.from_dict(obj)
+        elif obj['type'] == 'Point':
+            return Point.from_dict(obj)
+        else:
+            raise ValueError('Invalid geometry type')
+
+
+@dataclasses.dataclass
+class LineString:
+    coordinates: list[tuple[float, float]]
+    type: Literal['LineString'] = 'LineString'
+
+    def __geo_interface__(self):
+        return {
+            'type': self.type,
+            'coordinates': self.coordinates
+        }
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        if str(obj['type']).lower() != 'LineString'.lower():
+            raise ValueError('Geometry Type must be a LineString')
+        return cls(coordinates=obj['coordinates'])
+
+    def to_dict(self):
+        return {
+            'type': self.type,
+            'coordinates': self.coordinates
+        }
+
+
 @dataclasses.dataclass
 class Point:
     coordinates: tuple[float, float]
     type: Literal['Point'] = 'Point'
-
-    def __init__(self, coordinates: tuple[float, float]):
-        self.coordinates = (round(coordinates[0], 10), round(coordinates[1], 10))
-        self.type = 'Point'
 
     def __geo_interface__(self):
         return {
@@ -24,9 +57,31 @@ class Point:
     def from_dict(cls, obj: dict):
         if str(obj['type']).lower() != 'Point'.lower():
             raise ValueError('Geometry Type must be a Point')
-        return cls(
-            coordinates=obj['coordinates']
-        )
+        return cls(coordinates=obj['coordinates'])
+
+    def to_dict(self):
+        return {
+            'type': self.type,
+            'coordinates': self.coordinates
+        }
+
+
+@dataclasses.dataclass
+class LineString:
+    coordinates: list[tuple[float, float]]
+    type: Literal['LineString'] = 'LineString'
+
+    def __geo_interface__(self):
+        return {
+            'type': self.type,
+            'coordinates': self.coordinates
+        }
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        if str(obj['type']).lower() != 'LineString'.lower():
+            raise ValueError('Geometry Type must be a LineString')
+        return cls(coordinates=obj['coordinates'])
 
     def to_dict(self):
         return {
@@ -40,18 +95,6 @@ class Polygon:
     coordinates: list[list[tuple[float, float]]]
     type: Literal['Polygon'] = 'Polygon'
 
-    def __init__(self, coordinates: list[list[tuple[float, float]]]):
-        self.coordinates = [
-            [(round(coordinate[0], 10), round(coordinate[1], 10)) for coordinate in rings]
-            for rings in coordinates
-        ]
-        self.type = 'Polygon'
-
-    def __eq__(self, other):
-        if not isinstance(other, Polygon):
-            return False
-        return self.coordinates == other.coordinates
-
     def __geo_interface__(self):
         return {
             'type': self.type,
@@ -62,9 +105,7 @@ class Polygon:
     def from_dict(cls, obj: dict):
         if str(obj['type']).lower() != 'Polygon'.lower():
             raise ValueError('Geometry Type must be a Polygon')
-        return cls(
-            coordinates=obj['coordinates']
-        )
+        return cls(coordinates=obj['coordinates'])
 
     def to_dict(self):
         return {
@@ -77,13 +118,13 @@ class Polygon:
 class AffectedCells:
     # 3D array of booleans
     shape: tuple[int, int, int]
-    data: list[list[list[bool]]]
+    data: list[list[list[bool | float | None]]]
 
     @classmethod
     def empty_from_shape(cls, nx: int, ny: int, nz: int = 1):
         return cls(
             shape=(nz, ny, nx),
-            data=np.zeros((nz, ny, nx), dtype=bool).tolist()
+            data=np.zeros((nz, ny, nx), dtype=dtype).tolist()
         )
 
     @classmethod
@@ -125,29 +166,41 @@ class AffectedCells:
             'data': str_data
         }
 
+    def to_bool(self):
+        return np.array(self.data, dtype=bool).tolist()
+
+    def convert_to_float_or_none(self) -> 'AffectedCells':
+        arr = np.array(self.data, dtype=float)
+        arr[arr == 0] = None
+        return AffectedCells(shape=self.shape, data=arr.tolist())
+
+    def convert_to_bool(self) -> 'AffectedCells':
+        arr = np.array(self.data, dtype=bool)
+        return AffectedCells(shape=self.shape, data=arr.tolist())
+
     def get_cell(self, cell: tuple[int, int, int]) -> bool:
         try:
             return self.data[cell[0]][cell[1]][cell[2]]
         except IndexError:
             raise ValueError('cell is out of bounds')
 
-    def set_cell_value(self, value: bool, x: int, y: int, z: int = 0):
+    def set_cell_value(self, value: bool | float | None, x: int, y: int, z: int = 0):
         try:
             self.data[z][y][x] = value
         except IndexError:
             raise ValueError(f'cell x:{x}, y:{y}, z:{z} is out of bounds')
 
-    def get_row(self, row: tuple[int, int]) -> list[bool]:
+    def get_row(self, row: tuple[int, int]) -> list[bool | float]:
         try:
             return self.data[row[0]][row[1]]
         except IndexError:
             raise ValueError(f'row {row[0]} is out of bounds')
 
-    def get_layer(self, layer: tuple[int, int]) -> list[list[bool]]:
+    def get_layer(self, layer: int) -> list[list[bool | float]]:
         try:
-            return self.data[layer[0]]
+            return self.data[layer]
         except IndexError:
-            raise ValueError(f'layer {layer[0]} is out of bounds')
+            raise ValueError(f'layer {layer} is out of bounds')
 
 
 @dataclasses.dataclass(frozen=True)
