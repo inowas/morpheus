@@ -19,30 +19,6 @@ class GeometryFactory:
 
 
 @dataclasses.dataclass
-class LineString:
-    coordinates: list[tuple[float, float]]
-    type: Literal['LineString'] = 'LineString'
-
-    def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
-
-    @classmethod
-    def from_dict(cls, obj: dict):
-        if str(obj['type']).lower() != 'LineString'.lower():
-            raise ValueError('Geometry Type must be a LineString')
-        return cls(coordinates=obj['coordinates'])
-
-    def to_dict(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
-
-
-@dataclasses.dataclass
 class Point:
     coordinates: tuple[float, float]
     type: Literal['Point'] = 'Point'
@@ -65,6 +41,9 @@ class Point:
             'coordinates': self.coordinates
         }
 
+    def as_geojson(self):
+        return self.__geo_interface__()
+
 
 @dataclasses.dataclass
 class LineString:
@@ -88,6 +67,9 @@ class LineString:
             'type': self.type,
             'coordinates': self.coordinates
         }
+
+    def as_geojson(self):
+        return self.__geo_interface__()
 
 
 @dataclasses.dataclass
@@ -113,18 +95,48 @@ class Polygon:
             'coordinates': self.coordinates
         }
 
+    def as_geojson(self):
+        return self.__geo_interface__()
+
+
+@dataclasses.dataclass
+class GeometryCollection:
+    geometries: list[Polygon | LineString | Point]
+    type: Literal['GeometryCollection'] = 'GeometryCollection'
+
+    def __geo_interface__(self):
+        return {
+            'type': self.type,
+            'geometries': [geometry.__geo_interface__() for geometry in self.geometries]
+        }
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        if str(obj['type']).lower() != 'GeometryCollection'.lower():
+            raise ValueError('Geometry Type must be a GeometryCollection')
+        return cls(geometries=[GeometryFactory.from_dict(geometry) for geometry in obj['geometries']])
+
+    def to_dict(self):
+        return {
+            'type': self.type,
+            'geometries': [geometry.to_dict() for geometry in self.geometries]
+        }
+
+    def as_geojson(self):
+        return self.__geo_interface__()
+
 
 @dataclasses.dataclass
 class AffectedCells:
     # 3D array of booleans
     shape: tuple[int, int, int]
-    data: list[list[list[bool | float | None]]]
+    data: list[list[list[bool]]]
 
     @classmethod
     def empty_from_shape(cls, nx: int, ny: int, nz: int = 1):
         return cls(
             shape=(nz, ny, nx),
-            data=np.zeros((nz, ny, nx), dtype=dtype).tolist()
+            data=np.zeros((nz, ny, nx), dtype=bool).tolist()
         )
 
     @classmethod
@@ -169,34 +181,31 @@ class AffectedCells:
     def to_bool(self):
         return np.array(self.data, dtype=bool).tolist()
 
-    def convert_to_float_or_none(self) -> 'AffectedCells':
-        arr = np.array(self.data, dtype=float)
-        arr[arr == 0] = None
-        return AffectedCells(shape=self.shape, data=arr.tolist())
-
-    def convert_to_bool(self) -> 'AffectedCells':
-        arr = np.array(self.data, dtype=bool)
-        return AffectedCells(shape=self.shape, data=arr.tolist())
-
     def get_cell(self, cell: tuple[int, int, int]) -> bool:
         try:
             return self.data[cell[0]][cell[1]][cell[2]]
         except IndexError:
             raise ValueError('cell is out of bounds')
 
-    def set_cell_value(self, value: bool | float | None, x: int, y: int, z: int = 0):
+    def get_cell_value(self, x: int, y: int, z: int = 0):
+        try:
+            return self.data[z][y][x]
+        except IndexError:
+            return False
+
+    def set_cell_value(self, value: bool, x: int, y: int, z: int = 0):
         try:
             self.data[z][y][x] = value
         except IndexError:
             raise ValueError(f'cell x:{x}, y:{y}, z:{z} is out of bounds')
 
-    def get_row(self, row: tuple[int, int]) -> list[bool | float]:
+    def get_row(self, row: tuple[int, int]) -> list[bool]:
         try:
             return self.data[row[0]][row[1]]
         except IndexError:
             raise ValueError(f'row {row[0]} is out of bounds')
 
-    def get_layer(self, layer: int) -> list[list[bool | float]]:
+    def get_layer(self, layer: int) -> list[list[bool]]:
         try:
             return self.data[layer]
         except IndexError:

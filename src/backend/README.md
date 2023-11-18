@@ -5,10 +5,14 @@
 * we suggest [PyCharm](https://www.jetbrains.com/pycharm/) as IDE
   * make sure to mark folder `backend/src` as "Sources Root"
 * an installed local environment (see [main README](../../Readme.md#install-local-environment))
-* we suggest to use [Pyenv](https://github.com/pyenv/pyenv) for python version management and python virtual environments
-  * make sure you have your shell setup for `pyenv`: https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv
-  * also make sure to have your shell setup for `pyenv virtualenv`: https://github.com/pyenv/pyenv-virtualenv#installation
-* if not using Pyenv, make sure to have the current version of [python](https://www.python.org/) installed (see output when running `make install-dev`)
+* we suggest to use [Pyenv](https://github.com/pyenv/pyenv) for python version management and python virtual
+  environments
+  * make sure you have your shell setup
+    for `pyenv`: https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv
+  * also make sure to have your shell setup
+    for `pyenv virtualenv`: https://github.com/pyenv/pyenv-virtualenv#installation
+* if not using Pyenv, make sure to have the current version of [python](https://www.python.org/) installed (see output
+  when running `make install-dev`)
 
 ## Install dev environment
 
@@ -29,9 +33,11 @@ the backend source folder.
 
 ### Option 1: Run flask app through PyCharm
 
-Create a run/debug configuration in PyCharm (see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html)).
+Create a run/debug configuration in PyCharm (
+see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html)).
 
 Choose the following settings:
+
 * "Target type": "Module name"
 * "FLASK_ENV": "development"
 * check "FLASK_DEBUG"
@@ -46,3 +52,8 @@ capabilities of PyCharm.
 
 If you don't use PyCharm, you can run the flask app from command line. Just run `make run-flask-app` the app starts in
 debug mode.
+
+### Keycloak Development Credentials
+
+* username: `dev@inowas.localhost`
+* password: `dev`

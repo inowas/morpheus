@@ -3,7 +3,7 @@ import pyproj
 from shapely import affinity, Polygon as ShapelyPolygon, Point as ShapelyPoint, LineString as ShapelyLineString
 
 from ...types.discretization.SpatialDiscretization import Rotation, Polygon, LengthUnit, Grid, Point, LineString, \
-    AffectedCells
+    AffectedCells, GeometryCollection
 
 
 def grid_from_polygon(polygon: Polygon, rotation: Rotation, length_unit: LengthUnit,
@@ -94,8 +94,18 @@ def calculate_grid_cell_geometries(grid: Grid) -> list[list[Polygon]]:
                                                    origin=origin_3857)  # type: ignore
             geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in
                              list(rotated_polygon_3857.exterior.coords)]
-            geometries[y][x] = Polygon(coordinates=[geometry_4326])
+            geometries[grid.ny() - y - 1][x] = Polygon(coordinates=[geometry_4326])
     return geometries.tolist()
+
+
+def calculate_affected_cells_geometries(affected_cells: AffectedCells, grid: Grid) -> GeometryCollection:
+    cells_geometries = calculate_grid_cell_geometries(grid)
+    geometries = []
+    for x in range(grid.nx()):
+        for y in range(grid.ny()):
+            if affected_cells.get_cell_value(x=x, y=y):
+                geometries.append(cells_geometries[y][x])
+    return GeometryCollection(geometries=geometries)
 
 
 def calculate_grid_geometry(grid: Grid) -> Polygon:
@@ -124,7 +134,7 @@ def calculate_affected_cells_from_polygon(geometry: Polygon, grid: Grid) -> Affe
     for x in range(grid.nx()):
         for y in range(grid.ny()):
             center = ShapelyPoint(grid_cell_centers[y][x].coordinates)
-            affected_cells.set_cell_value(x=x, y=y, value=area.contains(center))
+            affected_cells.set_cell_value(x=x, y=grid.ny() - y - 1, value=area.contains(center))
 
     return affected_cells
 

@@ -8,8 +8,8 @@ from werkzeug.exceptions import HTTPException
 from werkzeug import Response
 from morpheus.common.presentation.schema_validation.SchemaValidation import SchemaValidationException
 from morpheus.settings import settings
-from morpheus.modflow import bootstrap_modflow_module
-from morpheus.sensors import bootstrap_sensors_module
+from morpheus.modflow.bootstrap import bootstrap_modflow_module
+from morpheus.sensors.bootstrap import bootstrap_sensors_module
 
 
 def bootstrap(app: Flask):
