@@ -1,0 +1,32 @@
+build-storybook:
+  image: node:20
+  stage: build
+  dependencies:
+    - test-frontend
+  script:
+    - cd src/frontend
+    - make install-ci
+    - make build-storybook
+  artifacts:
+    paths:
+      - src/frontend/dist/storybook
+    expire_in: 1 days
+  only:
+    - main
+
+deploy-storybook:
+  image: node:20
+  stage: deploy
+  dependencies:
+    - build-storybook
+  before_script:
+    - apt-get update && apt-get install rsync -y
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_STORYBOOK_SERVER")
+  script:
+    - rsync -r --delete-after --quiet -e "ssh src/frontend/dist/storybook/ $USER_STORYBOOK_SERVER@$URL_STORYBOOK_SERVER:$URL_STORYBOOK_PATH
+  only:
+    - main

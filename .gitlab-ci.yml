@@ -35,6 +35,7 @@ include:
   - local: src/frontend/.gitlab-ci.tests.yml
   - local: src/frontend/.gitlab-ci.morpheus.yml
   - local: src/frontend/.gitlab-ci.mfviz.yml
+  - local: src/frontend/.gitlab-ci.storybook.yml
 
   # Backend
   - local: src/backend/.gitlab-ci.publish.yml
