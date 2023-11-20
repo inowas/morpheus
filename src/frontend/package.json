@@ -150,7 +150,7 @@
     "start-storybook": "storybook dev -p 6006",
     "build-morpheus": "webpack --config webpack.config.morpheus.ts --mode production --stats-children",
     "build-mfviz": "webpack --config webpack.config.mfviz.ts --mode production --stats-children",
-    "build-storybook": "storybook build",
+    "build-storybook": "storybook build -o dist/storybook",
     "test": "jest --testPathIgnorePatterns=.*e2e.test.ts --watch",
     "test:ci": "jest --testPathIgnorePatterns=.*e2e.test.ts",
     "test:coverage": "jest --testPathIgnorePatterns=.*e2e.test.ts --coverage",

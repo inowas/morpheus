@@ -22,7 +22,7 @@
     "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": [
-    ".storybook",
+    ".storybook/**/*",
     "__mocks__",
     "__tests__",
     "src",
