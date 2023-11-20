@@ -1,7 +1,6 @@
 import React from 'react';
 import ArticleGrid from '../components/ArticleGrid';
 import PageTitle from '../components/PageTitle';
-import ModelGrid from '../../../../components/ModelGrid/ModelGrid';
 import {useTranslate} from '../../application';
 import {useNavigate} from 'common/hooks';
 import {IModelGridItem} from '../../../../components/ModelGrid/types/ModelGrid.type';
@@ -92,7 +91,7 @@ const DashboardContainer = () => {
 
   return (
     <>
-      <ModelGrid data={models} navigateTo={navigateTo}/>
+      {/*<ModelGrid data={models} navigateTo={navigateTo}/>*/}
       <PageTitle
         title={translate('tools')}
         description={translate('tools_description')}

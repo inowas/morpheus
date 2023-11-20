@@ -10,9 +10,24 @@ const Header = ({children}: IProps) => {
   const [headerHeight, setHeaderHeight] = useState(0);
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
 
-  useEffect(() => {
+  const updateHeaderHeight = () => {
     setHeaderHeight(ref.current?.clientHeight || 0);
+  };
+
+  useEffect(() => {
+    updateHeaderHeight(); // Set initial header height
+
+    const handleResize = () => {
+      updateHeaderHeight(); // Update header height when window resizes
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize); // Cleanup the event listener
+    };
   }, []);
+
 
   return (
     <header

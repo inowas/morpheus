@@ -45,18 +45,18 @@ const ApplicationContainer = ({children}: IProps) => {
         <Header>
           <Navbar
             navbarItems={navbarItems}
-            // languageList={[
-            //   {
-            //     code: 'en-GB',
-            //     label: translate('english'),
-            //   },
-            // ]}
-            // language={language}
-            // onChangeLanguage={setLanguage}
+            languageList={[
+              {
+                code: 'en-GB',
+                label: translate('english'),
+              },
+            ]}
+            language={language}
+            onChangeLanguage={setLanguage}
             navigateTo={navigateTo}
             pathname={location.pathname}
-            showSearchWrapper={true}
-            showCreateButton={true}
+            showSearchWrapper={false}
+            showCreateButton={false}
           />
         </Header>
       }
