@@ -27,6 +27,6 @@ deploy-storybook:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh-add <(echo "$SSH_PRIVATE_KEY_STORYBOOK_SERVER")
   script:
-    - rsync -r --delete-after --quiet -e "ssh src/frontend/dist/storybook/ $USER_STORYBOOK_SERVER@$URL_STORYBOOK_SERVER:$URL_STORYBOOK_PATH
+    - rsync -r --delete-after --quiet -e ssh src/frontend/dist/storybook/ $USER_STORYBOOK_SERVER@$URL_STORYBOOK_SERVER:$URL_STORYBOOK_PATH
   only:
     - main
