@@ -6,7 +6,7 @@ build-storybook:
   script:
     - cd src/frontend
     - make install-ci
-    - make build-storybook
+    - make build-storybook-ci
   artifacts:
     paths:
       - src/frontend/dist/storybook
