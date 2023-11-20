@@ -2,7 +2,7 @@ import dataclasses
 
 from ...infrastructure.persistence.BaseModelRepository import BaseModelRepository
 from morpheus.modflow.types.ModflowModel import ModelId
-from morpheus.modflow.types.discretization.TimeDiscretization import TimeDiscretization, \
+from morpheus.modflow.types.discretization.time.TimeDiscretization import TimeDiscretization, \
     StressPeriodCollection, TimeUnit, EndDateTime, StartDateTime
 
 from ...types.Project import ProjectId

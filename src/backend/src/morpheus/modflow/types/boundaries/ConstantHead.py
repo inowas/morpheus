@@ -1,7 +1,7 @@
 import dataclasses
 from .Boundary import BoundaryBase, BoundaryId, BoundaryType, ObservationId
-from morpheus.modflow.types.discretization.SpatialDiscretization import Point, AffectedCells, LineString
-from morpheus.modflow.types.discretization.TimeDiscretization import DateTime
+from morpheus.modflow.types.discretization.spatial.SpatialDiscretization import Point, AffectedCells, LineString
+from morpheus.modflow.types.discretization.time.TimeDiscretization import DateTime
 
 
 @dataclasses.dataclass

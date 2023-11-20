@@ -7,7 +7,7 @@ from ....application.write.UpdateTimeDiscretization import UpdateTimeDiscretizat
     UpdateTimeDiscretizationCommandHandler
 from ....incoming import get_logged_in_user_id
 from morpheus.modflow.types.ModflowModel import ModelId
-from morpheus.modflow.types.discretization.TimeDiscretization import TimeUnit, EndDateTime, \
+from morpheus.modflow.types.discretization.time.TimeDiscretization import TimeUnit, EndDateTime, \
     StressPeriodCollection, StartDateTime
 from ....types.Project import ProjectId
 

@@ -5,7 +5,7 @@ from ...infrastructure.persistence.BaseModelRepository import BaseModelRepositor
 from ...types.Project import ProjectId
 from ...types.User import UserId
 from ...types.ModflowModel import ModflowModel
-from ...types.discretization.SpatialDiscretization import Polygon, CRS, SpatialDiscretization, \
+from morpheus.modflow.types.discretization.spatial.SpatialDiscretization import Polygon, CRS, SpatialDiscretization, \
     CreateGridDict, LengthUnit, Rotation
 
 
@@ -37,7 +37,7 @@ class CreateBaseModelCommandHandler:
             y_coordinates=command.grid_properties['y_coordinates'],
         )
 
-        affected_cells = utils.calculate_affected_cells_from_polygon(
+        affected_cells = utils.calculate_cells_from_polygon(
             geometry=command.geometry,
             grid=grid
         )

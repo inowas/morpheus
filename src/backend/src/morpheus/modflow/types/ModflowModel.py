@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import String, Uuid
+from morpheus.common.types import Uuid
 from morpheus.modflow.types.boundaries.Boundary import BoundaryCollection
 from morpheus.modflow.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.modflow.types.soil_model.SoilModel import SoilModel

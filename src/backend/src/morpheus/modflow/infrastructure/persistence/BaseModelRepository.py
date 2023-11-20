@@ -1,7 +1,7 @@
 from morpheus.modflow.types.ModflowModel import ModflowModel, ModelId
 from morpheus.modflow.types.Project import ProjectId
 from morpheus.common.infrastructure.persistence.mongodb import Database, get_database_client
-from morpheus.modflow.types.discretization.TimeDiscretization import TimeDiscretization
+from morpheus.modflow.types.discretization.time.TimeDiscretization import TimeDiscretization
 from morpheus.settings import settings
 
 

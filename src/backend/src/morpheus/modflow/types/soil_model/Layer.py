@@ -8,7 +8,7 @@ class LayerId:
     value: str
 
     def __eq__(self, other):
-        return self.value == other.value
+        return self.value == other.values
 
     @classmethod
     def new(cls):
