@@ -1,15 +1,17 @@
 import React, {SyntheticEvent} from 'react';
 import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import './SortDropdown.less';
-import {IModelGridItem} from '../types/ModelGrid.type';
-import {SortOption} from '../ModelGrid';
+import {IModelGridItem} from '../ModelGrid/types/ModelGrid.type';
+import {ISortOption} from './types/SortDropdown.type';
+
 
 interface IProps {
   data: IModelGridItem[];
-  sortOptions: SortOption[];
+  sortOptions: ISortOption[];
   setModelData: (data: IModelGridItem[]) => void;
   placeholder: string
 }
+
 
 const SortDropdown = ({sortOptions, data, setModelData, placeholder}: IProps) => {
 
@@ -39,6 +41,7 @@ const SortDropdown = ({sortOptions, data, setModelData, placeholder}: IProps) =>
 
   return (
     <Dropdown
+      data-testid={'test-sortDropdown'}
       className="sortDropdown"
       selection={true}
       icon="sort amount up"

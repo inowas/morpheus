@@ -1,20 +1,16 @@
 import React, {useState} from 'react';
 import ModelGridItem from './ModelGridItem';
-import SortDropdown from './SortDropdown';
 import styles from './ModelGrid.module.less';
 import {IModelGridItem} from './types/ModelGrid.type';
+import SortDropdown from 'components/SortDropdown';
+import {ISortOption} from 'components/SortDropdown/types/SortDropdown.type';
 
 interface ModelGridProps {
   data: IModelGridItem[];
   navigateTo: (path: string) => void;
 }
 
-export interface SortOption {
-  text: string;
-  value: string;
-}
-
-const sortOptions: SortOption[] = [
+const sortOptions: ISortOption[] = [
   {text: 'Sort by Author', value: 'author'},
   {text: 'Most Recent', value: 'mostRecent'},
   {text: 'Less Recent', value: 'lessRecent'},
