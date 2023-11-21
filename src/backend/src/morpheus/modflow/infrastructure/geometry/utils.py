@@ -1,4 +1,6 @@
 from shapely import Polygon as ShapelyPolygon, Point as ShapelyPoint, LineString as ShapelyLineString
+from shapely.ops import unary_union
+
 from morpheus.modflow.types.discretization.spatial.SpatialDiscretization import Polygon, Grid, Point, GridCells
 from morpheus.modflow.types.geometry import GeometryCollection, LineString
 
@@ -11,6 +13,17 @@ def calculate_affected_cells_geometries(cells: GridCells, grid: Grid) -> Geometr
             if cells.get_cell(x=x, y=y):
                 geometries.append(cells_geometries[x][y])
     return GeometryCollection(geometries=geometries)
+
+
+def calculate_merged_affected_cells_geometries(cells: GridCells, grid: Grid) -> Polygon:
+    geometries = calculate_affected_cells_geometries(cells, grid).geometries
+    geometries = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]
+    geometry = unary_union(geometries)
+    if isinstance(geometry, ShapelyPolygon):
+        geometry_dict = geometry.__geo_interface__
+        return Polygon(coordinates=geometry_dict['coordinates'])
+
+    raise Exception(f'Merged cells geometry is not a polygon, but a {type(geometry)}')
 
 
 def calculate_cells_from_polygon(geometry: Polygon, grid: Grid) -> GridCells:
