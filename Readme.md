@@ -14,6 +14,12 @@ This repository contains the source code for the frontend and backend of the Mor
 - [Python 3](https://www.python.org/)
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
+### Prepare etc/hosts
+
+add the following entries to your `/etc/hosts` file:
+
+* 127.0.0.1 identity.inowas.localhost
+
 ### Install local environment
 
 To prepare local environment run:
@@ -39,16 +45,19 @@ To stop the local environment run:
 When the local environment is running you can run backend cli commands with
 `make run-backend-cli-command-in-local-environment`.
 
-You can see how to run a development environment with debugging for the backend in the [backend README](src/backend/README.md).
+You can see how to run a development environment with debugging for the backend in
+the [backend README](src/backend/README.md).
 
 ### Frontend
 
-The frontend is a [React](https://reactjs.org/) application written in [TypeScript](https://www.typescriptlang.org/) and can be found in the `src/frontend` directory.
+The frontend is a [React](https://reactjs.org/) application written in [TypeScript](https://www.typescriptlang.org/) and
+can be found in the `src/frontend` directory.
 More information about the frontend can be found in the [frontend README](src/frontend/README.md).
 
 ### Backend
 
-The backend is a application written in [Python 3](https://www.python.org/) and can be found in the `src/backend` directory.
+The backend is a application written in [Python 3](https://www.python.org/) and can be found in the `src/backend`
+directory.
 More information about the backend can be found in the [backend README](src/backend/README.md).
 
 ### Mailcatcher

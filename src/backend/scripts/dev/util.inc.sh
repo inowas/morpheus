@@ -65,9 +65,7 @@ function prepareBackendEnvFile {
     && echo "PYTHONUNBUFFERED=1" >> "$backendEnvFile" \
     && echo "FLASK_ENV=development" >> "$backendEnvFile" \
     && echo "FLASK_DEBUG=1" >> "$backendEnvFile" \
-    && echo "FLASK_APP=wsgi:app" >> "$backendEnvFile" \
-    && echo "SSL_CERT_FILE=$localInfrastructureRoot/tls_certificates/rootCA.pem" >> "$backendEnvFile" \
-    && echo "REQUESTS_CA_BUNDLE=$localInfrastructureRoot/tls_certificates/rootCA.pem" >> "$backendEnvFile"
+    && echo "FLASK_APP=wsgi:app" >> "$backendEnvFile"
     exitWithErrorIfLastCommandFailed "Error preparing .env file $backendEnvFile"
     outputSuccess "Successfully prepared file $backendEnvFile"
 }

@@ -196,10 +196,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${IDENTITY_HOST}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${IDENTITY_HOST}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
     profiles:
       - keycloak
