@@ -20,7 +20,7 @@ const models: IModelGridItem[] = [
     meta_author_avatar: '/author/JohnDoe.jpeg',
     meta_author_name: 'John Doe',
     meta_link: 'https://metaLink1',
-    meta_text: new Date().toLocaleDateString(),
+    meta_text: '20.11.2023',
     meta_status: false,
   },
   {
@@ -33,7 +33,7 @@ const models: IModelGridItem[] = [
     meta_author_avatar: '/author/JaneSmith.jpeg',
     meta_author_name: 'Jane Smith',
     meta_link: 'https://metaLink2',
-    meta_text: new Date().toLocaleDateString(),
+    meta_text: '20.11.2023',
     meta_status: false,
   },
   {
@@ -46,7 +46,7 @@ const models: IModelGridItem[] = [
     meta_author_avatar: '/author/RobertJohnson.jpeg',
     meta_author_name: 'Catalin Stefan',
     meta_link: 'https://metaLink3',
-    meta_text: new Date().toLocaleDateString(),
+    meta_text: '20.11.2023',
     meta_status: true,
   },
   {
@@ -59,7 +59,7 @@ const models: IModelGridItem[] = [
     meta_author_avatar: '/author/EmilyBrown.jpeg',
     meta_author_name: 'Emily Brown',
     meta_link: 'https://metaLink4',
-    meta_text: new Date().toLocaleDateString(),
+    meta_text: '20.11.2023',
     meta_status: true,
   },
   {
@@ -72,10 +72,11 @@ const models: IModelGridItem[] = [
     meta_author_avatar: '/author/DavidWilson.jpeg',
     meta_author_name: 'David Wilson',
     meta_link: 'https://metaLink5',
-    meta_text: new Date().toLocaleDateString(),
+    meta_text: '01.11.2023',
     meta_status: true,
   },
 ];
+
 
 const item: IModelGridItem = {
   id: 3,
