@@ -3,7 +3,7 @@
 # include file with helper functions
 source "$(dirname "$0")/../util.inc.sh"
 
-PYTHON_VERSION=3.11.4
+PYTHON_VERSION=3.12.0
 PYTHON_VIRTUAL_ENV=inowas-morpheus-backend-dev-$PYTHON_VERSION
 
 cd $backendRoot
