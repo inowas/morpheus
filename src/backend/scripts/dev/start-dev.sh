@@ -25,7 +25,4 @@ set +a
 $backendRoot/docker/docker-entrypoint.sh
 exitWithErrorIfLastCommandFailed "Error running entrypoint script"
 
-pip install pip_system_certs
-exitWithErrorIfLastCommandFailed "Error installing pip_system_certs"
-
 outputSuccess "Dev environment started"
