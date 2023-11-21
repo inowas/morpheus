@@ -12,7 +12,6 @@ This repository contains the source code for the frontend and backend of the Mor
 - [Node.js](https://nodejs.org/en/)
 - [NVM](https://github.com/nvm-sh/nvm)
 - [Python 3](https://www.python.org/)
-- [mkcert](https://github.com/FiloSottile/mkcert)
 
 ### Prepare etc/hosts
 
@@ -34,9 +33,9 @@ volumes and images and all file ignored by git.
 
 You can then create a fresh local environment by running the `make install-local` again.
 
-### Start and stop local production environment:
+### Start and stop local production environment (without https):
 
-To start a local environment that runs backend and frontend in production mode run:
+To start a local environment that runs backend and frontend in production mode without https run:
 `make start-local`
 
 To stop the local environment run:
@@ -66,7 +65,7 @@ A mailcatcher can be found at http://mailcatcher.inowas.localhost. All mail can 
 
 ### Keycloak
 
-A keycloak server runs at https://identity.inowas.localhost. It has a preconfigured dev realm "inowas" with the client
+A keycloak server runs at http://identity.inowas.localhost. It has a preconfigured dev realm "inowas" with the client
 "morpheus-frontend" and a user "dev@inowas.localhost" with the password "dev". The default dev user for the admin
 console is "admin" with password "dev".
 

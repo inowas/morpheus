@@ -14,7 +14,6 @@ services:
       - "--api.debug=true"
       - "--ping=true"
       - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.postgres.address=:5432"
       - "--entrypoints.mongodb.address=:27017"
       - "--providers.docker=true"
@@ -26,7 +25,6 @@ services:
       - "--log.filePath=/var/log/traefik/traefik.log"
     ports:
       - "80:80"
-      - "443:443"
       - "8080:8080" # for traefik api, dashboard and healthcheck local access
       - "5432:5432" # for postgres local access
       - "27017:27017" # for mongodb local access
@@ -37,11 +35,6 @@ services:
       retries: 3
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik:/etc/traefik
-      - ./tls_certificates:/etc/tls_certificates
-    environment:
-      - TLS_KEY_FILE=${TLS_KEY_FILE}
-      - TLS_CERT_FILE=${TLS_CERT_FILE}
     networks:
       - auth
       - backend
@@ -58,8 +51,6 @@ services:
       context: ${MORPHEUS_PROJECT_ROOT}
       dockerfile: src/backend/docker/Dockerfile
       args:
-        - MKCERT_ROOT_CA_CERTIFICATE=infrastructure/local/tls_certificates/rootCA.pem
-        - CAROOT=/etc/ca_root
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
         - DOCKERFILE_BUILD_BASE_STAGE=local_base
@@ -70,8 +61,6 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    environment:
-      - CAROOT=/etc/ca_root # for local mkcert certificates only
     volumes:
       - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
       - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
@@ -90,11 +79,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.rule=Host(`${BACKEND_HOST}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.middlewares=redirect-to-https@file"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.entrypoints=websecure"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.tls=false"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
     profiles:
       - backend
   cron:
@@ -173,7 +159,7 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${KEYCLOAK_POSTGRES_DB}
       KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
-      KC_HOSTNAME_URL: https://${IDENTITY_HOST}
+      KC_HOSTNAME_URL: http://${IDENTITY_HOST}
       KC_PROXY: edge
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
@@ -196,6 +182,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${IDENTITY_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.tls=false"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
     profiles:
       - keycloak
