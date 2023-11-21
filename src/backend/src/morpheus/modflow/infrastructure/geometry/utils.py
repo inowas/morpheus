@@ -1,4 +1,4 @@
-from shapely import Polygon as ShapelyPolygon, Point as ShapelyPoint, LineString as ShapelyLineString, M
+from shapely import Polygon as ShapelyPolygon, Point as ShapelyPoint, LineString as ShapelyLineString
 from shapely.ops import unary_union
 
 from morpheus.modflow.types.discretization.spatial.SpatialDiscretization import Polygon, Grid, Point, GridCells
