@@ -4,6 +4,7 @@ import {Button, Icon, Image} from 'semantic-ui-react';
 import {IModelGridItem} from '../types/ModelGrid.type';
 
 interface ModelGridItemProps {
+  className?: string;
   data: IModelGridItem;
   navigateTo: (path: string) => void;
   onDeleteButtonClick: () => void;
@@ -11,6 +12,7 @@ interface ModelGridItemProps {
 }
 
 const ModelGridItem: React.FC<ModelGridItemProps> = ({
+  className,
   data,
   navigateTo,
   onDeleteButtonClick,
@@ -28,7 +30,7 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
 
   return (
     <div
-      className={styles.modelGridItem}
+      className={className ? `${styles.modelItem} ${className}` : styles.modelItem}
       onClick={(e) => {
         e.stopPropagation();
         console.log('ModelGridItem clicked');
@@ -42,7 +44,7 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
         fluid={true}
         width="320" height="150"
       />
-      <div className={styles.modelGridContent}>
+      <div className={styles.modelContent}>
         <div className={styles.modelHeadline}>
           <i className={styles.metaStatus} style={{background: data.meta_status ? '#08E600' : '#C8C8C8'}}></i>
           <h5 className={styles.modelTitle}>{data.model_title}</h5>
@@ -81,7 +83,7 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
                 style={{margin: '0'}}
                 className={styles.metaIcon}
                 name="trash alternate outline"
-              />
+            />
             </Button>
             <Button
               onClick={(e) => {
@@ -92,7 +94,7 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
                 style={{margin: '0'}}
                 className={styles.metaIcon}
                 name="clone outline"
-              />
+            />
             </Button>
             <Button
               className={styles.modelBtnView}
