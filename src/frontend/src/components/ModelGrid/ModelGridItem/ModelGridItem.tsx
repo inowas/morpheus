@@ -52,7 +52,6 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
         <div className={styles.modelBtnGroup}>
           <div className={styles.modelAuthor}>
             <Button
-              reset={true}
               className={styles.modelAvatarLink}
               as="a"
               onClick={(e) => {
@@ -74,7 +73,6 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
           </div>
           <div className={styles.modelActions}>
             <Button
-              reset={true}
               onClick={(e) => {
                 e.stopPropagation();
                 onDeleteButtonClick();
@@ -83,10 +81,9 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
                 style={{margin: '0'}}
                 className={styles.metaIcon}
                 name="trash alternate outline"
-            />
+              />
             </Button>
             <Button
-              reset={true}
               onClick={(e) => {
                 e.stopPropagation();
                 onCopyButtonClick();
@@ -95,11 +92,10 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
                 style={{margin: '0'}}
                 className={styles.metaIcon}
                 name="clone outline"
-            />
+              />
             </Button>
             <Button
               className={styles.modelBtnView}
-              reset={true}
               onClick={(e) => {
                 e.stopPropagation();
                 // navigateTo(data.model_map);
