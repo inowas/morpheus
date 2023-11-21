@@ -37,21 +37,6 @@ RUN chown -R flask:flask /mnt
 
 FROM base as local_base
 
-# install mkcert and the CA certificate for local ssl certificates
-
-ARG MKCERT_ROOT_CA_CERTIFICATE
-ARG CAROOT
-
-RUN curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64" \
-    && chmod +x mkcert-v*-linux-amd64 \
-    && cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
-
-COPY ${MKCERT_ROOT_CA_CERTIFICATE} ${CAROOT}/
-RUN mkcert -install
-# make python requests library use the system trust store
-RUN pip install pip_system_certs
-
-
 # set user id and group id for user flask to match the ids on the host system
 
 ARG FLASK_USER_ID

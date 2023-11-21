@@ -40,7 +40,6 @@ Choose the following settings:
 
 * "Target type": "Module name"
 * "FLASK_ENV": "development"
-* check "FLASK_DEBUG"
 * "Python interpreter": choose your virtuelenv
 * "Working directory": choose the backend source folder (src/backend/src)
 

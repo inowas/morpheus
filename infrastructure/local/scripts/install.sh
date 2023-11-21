@@ -29,21 +29,6 @@ else
 fi
 
 
-
-outputHeadline "Installing local tls certificates"
-
-source "$infrastructureRoot/.env" \
-&& mkdir -p "$infrastructureRoot/tls_certificates" \
-&& export CAROOT="$infrastructureRoot/tls_certificates" \
-&& mkcert -install \
-&& mkcert \
-  -key-file "$infrastructureRoot/tls_certificates/${TLS_KEY_FILE}" \
-  -cert-file "$infrastructureRoot/tls_certificates/${TLS_CERT_FILE}" \
-       ${DOMAIN} *.${DOMAIN} *.morpheus.${DOMAIN}
-exitWithErrorIfLastCommandFailed "Error installing tls certificates"
-outputSuccess "Successfully installed tls certificates"
-
-
 outputHeadline "Preparing local mount points"
 
 mkdir -p "$localSensorDataMountpoint"
