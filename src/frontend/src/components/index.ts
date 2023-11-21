@@ -25,6 +25,7 @@ import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Navbar, {INavbarItem} from './Navbar';
+import ModelGrid from './ModelGrid';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -62,6 +63,7 @@ export {
   LoaderAnimation,
   Message,
   Modal,
+  ModelGrid,
   Navbar,
   NotFound,
   Notification,
