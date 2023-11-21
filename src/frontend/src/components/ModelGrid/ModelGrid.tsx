@@ -1,13 +1,27 @@
 import React, {useState} from 'react';
 import ModelGridItem from './ModelGridItem';
+import SortDropdown from './SortDropdown';
 import styles from './ModelGrid.module.less';
 import {IModelGridItem} from './types/ModelGrid.type';
-
 
 interface ModelGridProps {
   data: IModelGridItem[];
   navigateTo: (path: string) => void;
 }
+
+export interface SortOption {
+  text: string;
+  value: string;
+}
+
+const sortOptions: SortOption[] = [
+  {text: 'Sort by Author', value: 'author'},
+  {text: 'Most Recent', value: 'mostRecent'},
+  {text: 'Less Recent', value: 'lessRecent'},
+  {text: 'A-Z', value: 'aToZ'},
+  {text: 'Z-A', value: 'zToA'},
+  {text: 'Most Popular', value: 'mostPopular'},
+];
 
 const title = 'All Models';
 
@@ -29,11 +43,19 @@ const ModelGrid: React.FC<ModelGridProps> = ({data, navigateTo}) => {
 
   return (
     <div className={styles.modelGridWrapper}>
-      {title && (
-        <div className={styles.title}>
-          <h2>{title}</h2>
-        </div>
-      )}
+      <div className={styles.modelGridHeadline}>
+        {title && (
+          <div className={styles.title}>
+            <h2>{title}</h2>
+          </div>
+        )}
+        <SortDropdown
+          placeholder="Order By"
+          sortOptions={sortOptions}
+          data={modelData}
+          setModelData={setModelData}
+        />
+      </div>
       <div className={styles.modelGrid}>
         {modelData.map((item) => (
           <ModelGridItem
