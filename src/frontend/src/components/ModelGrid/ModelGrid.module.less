@@ -3,13 +3,19 @@
 .modelGridWrapper {
   display: flex;
   flex-direction: column;
-  margin: 15px 0;
+  padding: 15px 0;
+
+  .modelGridHeadline {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 
 .modelGrid {
   display: flex;
   flex-wrap: wrap;
   width: calc(100% + 20px);
+  margin-top: 18px;
 
   .modelGridItem {
     width: 100%;

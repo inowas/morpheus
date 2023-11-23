@@ -8,7 +8,10 @@ interface IProps {
 const SectionTitle = ({title}: IProps) => {
 
   return (
-    <div className={styles.title}>
+    <div
+      data-testid="section-title"
+      className={styles.title}
+    >
       <h2>{title}</h2>
     </div>
   );

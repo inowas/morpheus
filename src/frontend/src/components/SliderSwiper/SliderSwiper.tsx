@@ -8,7 +8,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import SectionTitle from '../SectionTitle';
+import SectionTitle from 'components/SectionTitle';
 
 interface IProps {
   sectionTitle?: string;
@@ -18,7 +18,10 @@ interface IProps {
 const SliderSwiper = ({children, sectionTitle}: IProps) => {
 
   return (
-    <div className="swiper-container" data-test="slider-container">
+    <div
+      data-testid="swiper-container"
+      className={sectionTitle ? 'swiper-container sectionTitled' : 'swiper-container'}
+    >
       {sectionTitle && <SectionTitle title={sectionTitle}/>}
       {0 < React.Children.count(children) && (
         <Swiper

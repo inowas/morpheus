@@ -1,19 +1,20 @@
-import React, {SyntheticEvent} from 'react';
+import React, {ReactNode, SyntheticEvent} from 'react';
 import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import './SortDropdown.less';
-import {IModelGridItem} from '../ModelGrid/types/ModelGrid.type';
-import {ISortOption} from './types/SortDropdown.type';
+import {IModelCard} from 'components/ModelCard';
+import {ISortOption} from 'components/SortDropdown';
 
 
 interface IProps {
-  data: IModelGridItem[];
+  data: IModelCard[];
   sortOptions: ISortOption[];
-  setModelData: (data: IModelGridItem[]) => void;
+  setModelData: (data: IModelCard[]) => void;
   placeholder: string
+  children: ReactNode;
 }
 
 
-const SortDropdown = ({sortOptions, data, setModelData, placeholder}: IProps) => {
+const SortDropdown = ({children, sortOptions, data, setModelData, placeholder}: IProps) => {
 
   const handleSort = (e: SyntheticEvent<HTMLElement>, {value}: DropdownProps) => {
     let sortedData = [...data];
@@ -40,15 +41,23 @@ const SortDropdown = ({sortOptions, data, setModelData, placeholder}: IProps) =>
   };
 
   return (
-    <Dropdown
-      data-testid={'test-sortDropdown'}
-      className="sortDropdown"
-      selection={true}
-      icon="sort amount up"
-      placeholder={placeholder}
-      options={sortOptions}
-      onChange={handleSort}
-    />
+    <div
+      data-testid="sort-dropdown-container"
+      className="sortDropdownContainer"
+    >
+      {children}
+      <Dropdown
+        data-testid="sort-dropdown"
+        className="sortDropdown"
+        selection={true}
+        icon="sort amount up"
+        placeholder={placeholder}
+        options={sortOptions}
+        onChange={handleSort}
+      />
+    </div>
+
+
   );
 };
 

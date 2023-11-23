@@ -31,6 +31,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
 
   return (
     <div
+      data-testid="model-card"
       className={className ? `${styles.modelCard} ${className}` : styles.modelCard}
       onClick={(e) => {
         e.stopPropagation();
@@ -41,7 +42,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
       <Image
         className={styles.modelImage}
         src={data.model_image}
-        alt={data.model_title}
+        alt={data.model_description}
         fluid={true}
         width="320" height="150"
       />
@@ -76,6 +77,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
           </div>
           <div className={styles.modelActions}>
             <Button
+              data-testid="delete-button"
               onClick={(e) => {
                 e.stopPropagation();
                 onDeleteButtonClick();
@@ -87,6 +89,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
             />
             </Button>
             <Button
+              data-testid="copy-button"
               onClick={(e) => {
                 e.stopPropagation();
                 onCopyButtonClick();

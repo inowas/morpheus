@@ -1,8 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import ModelCard from './ModelCard';
-import {IModelCard} from './types/ModelCard.type';
+import ModelCard, {IModelCard} from './index';
 
 
 const item: IModelCard = {
