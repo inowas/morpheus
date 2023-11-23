@@ -3,14 +3,14 @@ import ArticleGrid from '../components/ArticleGrid';
 import PageTitle from '../components/PageTitle';
 import {useTranslate} from '../../application';
 import {useNavigate} from 'common/hooks';
-import {IModelGridItem} from 'components/ModelGrid/types/ModelGrid.type';
+import {IModelCard} from 'components/ModelCard/types/ModelCard.type';
 import ModelGrid from 'components/ModelGrid/ModelGrid';
-import SliderSwiper from '../../../../components/SliderSwiper';
-import ModelGridItem from '../../../../components/ModelGrid/ModelGridItem';
+import SliderSwiper from 'components/SliderSwiper';
+import ModelCard from 'components/ModelCard';
 
 const tools = ['T02', 'T04', 'T06', 'T08', 'T09', 'T11', 'T13', 'T14', 'T18'];
 
-const models: IModelGridItem[] = [
+const models: IModelCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -259,6 +259,7 @@ const DashboardContainer = () => {
     toolLink: `/tools/${tool}`,
     documentationLink: translate(`${tool}_documentation_link`),
   }));
+
   const [modelData, setModelData] = useState(models);
 
   const handleDeleteButtonClick = (id: number) => {
@@ -284,7 +285,7 @@ const DashboardContainer = () => {
         sectionTitle={translate('My Models')}
       >
         {filterModelsByAuthorName('Catalin Stefan').map((item) => (
-          <ModelGridItem
+          <ModelCard
             key={item.id} data={item}
             navigateTo={navigateTo}
             onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}

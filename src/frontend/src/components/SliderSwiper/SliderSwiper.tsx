@@ -18,7 +18,7 @@ interface IProps {
 const SliderSwiper = ({children, sectionTitle}: IProps) => {
 
   return (
-    <div className="swiper-container">
+    <div className="swiper-container" data-test="slider-container">
       {sectionTitle && <SectionTitle title={sectionTitle}/>}
       {0 < React.Children.count(children) && (
         <Swiper
@@ -29,9 +29,9 @@ const SliderSwiper = ({children, sectionTitle}: IProps) => {
         >
           {React.Children.map(children, child => <SwiperSlide>{child}</SwiperSlide>)}
           <div className="swiper-navigation">
+            <div className="swiper-button-prev"></div>
             <div className="swiper-pagination"></div>
             <div className="swiper-button-next"></div>
-            <div className="swiper-button-prev"></div>
           </div>
         </Swiper>
       )}

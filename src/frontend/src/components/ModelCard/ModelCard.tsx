@@ -1,17 +1,18 @@
 import React from 'react';
-import styles from './ModelGridItem.module.less';
 import {Button, Icon, Image} from 'semantic-ui-react';
-import {IModelGridItem} from '../types/ModelGrid.type';
+import {IModelCard} from './types/ModelCard.type';
+import styles from './ModelCard.module.less';
+
 
 interface ModelGridItemProps {
   className?: string;
-  data: IModelGridItem;
+  data: IModelCard;
   navigateTo: (path: string) => void;
   onDeleteButtonClick: () => void;
   onCopyButtonClick: () => void;
 }
 
-const ModelGridItem: React.FC<ModelGridItemProps> = ({
+const ModelCard: React.FC<ModelGridItemProps> = ({
   className,
   data,
   navigateTo,
@@ -30,7 +31,7 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
 
   return (
     <div
-      className={className ? `${styles.modelItem} ${className}` : styles.modelItem}
+      className={className ? `${styles.modelCard} ${className}` : styles.modelCard}
       onClick={(e) => {
         e.stopPropagation();
         console.log('ModelGridItem clicked');
@@ -112,4 +113,4 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
   );
 };
 
-export default ModelGridItem;
+export default ModelCard;

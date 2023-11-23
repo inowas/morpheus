@@ -13,20 +13,80 @@
 
   .modelGridItem {
     width: 100%;
-    margin-right: 20px;
-    margin-bottom: 20px;
+  }
 
-    @media (min-width: 680px) {
-      width: calc((100% / 2) - 20px);
+  &.gridColumns2 {
+    .modelGridItem {
+      width: 100%;
       margin-right: 20px;
-    }
+      margin-bottom: 20px;
 
-    @media (min-width: @breakpoint-tablet-horizontal) {
-      width: calc((100% / 3) - 20px);
+      @media (min-width: 680px) {
+        width: calc((100% / 2) - 20px);
+        margin-right: 20px;
+      }
     }
+  }
 
-    @media (min-width: @breakpoint-desktop-small) {
-      width: calc((100% / 4) - 20px);
+  &.gridColumns3 {
+    .modelGridItem {
+      width: 100%;
+      margin-right: 20px;
+      margin-bottom: 20px;
+
+      @media (min-width: 680px) {
+        width: calc((100% / 2) - 20px);
+        margin-right: 20px;
+      }
+
+      @media (min-width: @breakpoint-tablet-horizontal) {
+        width: calc((100% / 3) - 20px);
+      }
+    }
+  }
+
+  &.gridColumns4 {
+    .modelGridItem {
+      width: 100%;
+      margin-right: 20px;
+      margin-bottom: 20px;
+
+      @media (min-width: 680px) {
+        width: calc((100% / 2) - 20px);
+        margin-right: 20px;
+      }
+
+      @media (min-width: @breakpoint-tablet-horizontal) {
+        width: calc((100% / 3) - 20px);
+      }
+
+      @media (min-width: @breakpoint-desktop-small) {
+        width: calc((100% / 4) - 20px);
+      }
+    }
+  }
+
+  &.gridColumns5 {
+    .modelGridItem {
+      width: 100%;
+      margin-right: 20px;
+      margin-bottom: 20px;
+
+      @media (min-width: 680px) {
+        width: calc((100% / 2) - 20px);
+        margin-right: 20px;
+      }
+
+      @media (min-width: @breakpoint-tablet-horizontal) {
+        width: calc((100% / 3) - 20px);
+      }
+
+      @media (min-width: @breakpoint-desktop-small) {
+        width: calc((100% / 4) - 20px);
+      }
+      @media (min-width: @breakpoint-desktop-wide) {
+        width: calc((100% / 5) - 20px);
+      }
     }
   }
 }
