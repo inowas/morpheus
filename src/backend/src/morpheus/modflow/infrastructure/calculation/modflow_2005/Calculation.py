@@ -187,3 +187,11 @@ class Modflow2005Calculation:
             'calculation_type': self.calculation_type,
             'calculation_profile': self.calculation_profile.to_dict(),
         }
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(
+            calculation_id=CalculationId.from_value(obj['calculation_id']),
+            modflow_model=ModflowModel.from_dict(obj['modflow_model']),
+            calculation_profile=Mf2005CalculationProfile.from_dict(obj['calculation_profile']),
+        )
