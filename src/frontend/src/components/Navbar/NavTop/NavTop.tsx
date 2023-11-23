@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Menu} from 'semantic-ui-react';
 import logoTUDresden from '../images/logo-tud.svg';
 import styles from './NavTop.module.less';
-import Wrapper from '../../Wrapper/Wrapper';
+import ContentWrapper from 'components/ContentWrapper/ContentWrapper';
 import AvatarButton from '../AvatarButton/AvatarButton';
 import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
@@ -27,7 +27,7 @@ const NavTop = ({language, languageList, onChangeLanguage, navigateTo}: IProps) 
 
   return (
     <div className={styles.navTop} data-testid={'test-navtop'}>
-      <Wrapper>
+      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
         <div className={styles.inner}>
           <Menu.Item
             data-testid={'test-logo'}
@@ -106,7 +106,7 @@ const NavTop = ({language, languageList, onChangeLanguage, navigateTo}: IProps) 
             )}
           </Menu>
         </div>
-      </Wrapper>
+      </ContentWrapper>
     </div>
   );
 };
