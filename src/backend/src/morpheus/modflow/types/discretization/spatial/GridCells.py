@@ -32,6 +32,9 @@ class GridCells:
     shape: tuple[int, int]
     data: list[GridCell]
 
+    def __len__(self):
+        return len(self.data)
+
     @classmethod
     def empty_from_shape(cls, nx: int, ny: int):
         return cls(

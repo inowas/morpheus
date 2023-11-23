@@ -190,3 +190,6 @@ class Layer:
             'type': self.type.to_value(),
             'data': self.data.to_dict()
         }
+
+    def is_confined(self):
+        return self.type.to_value() == 'confined'

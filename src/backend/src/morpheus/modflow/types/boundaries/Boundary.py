@@ -51,6 +51,7 @@ class BoundaryType:
 class Boundary:
     id: BoundaryId
     type: BoundaryType
+    enabled: bool = True
 
     @classmethod
     def from_dict(cls, obj):
