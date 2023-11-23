@@ -24,17 +24,18 @@ class CalculationId(Uuid):
 
 @dataclasses.dataclass
 class Modflow2005Calculation:
-    calculation_id: CalculationId
-    modflow_model: ModflowModel
+    calculation_id: CalculationId = None
+    modflow_model: ModflowModel = None
+    calculation_profile: Mf2005CalculationProfile = None
     calculation_type = 'mf2005'
-    flopy_model: FlopyModflow = None
 
+    # data calculated during preprocessing
+    flopy_model: FlopyModflow = None
     general_packages = {
         'mf': None,
         'bas': None,
         'dis': None,
     }
-
     boundary_packages = {
         'chd': None,
         'fhb': None,
@@ -54,16 +55,12 @@ class Modflow2005Calculation:
         'str': None,
         'uzf': None,
     }
-
     solver_package = None
     flow_package = None
     output_control_package = None
 
-    def __init__(self,
-                 calculation_id: CalculationId,
-                 modflow_model: ModflowModel,
-                 calculation_profile: Mf2005CalculationProfile
-                 ):
+    def __init__(self, calculation_id: CalculationId, modflow_model: ModflowModel,
+                 calculation_profile: Mf2005CalculationProfile):
         self.calculation_id = calculation_id
         self.modflow_model = modflow_model
         self.calculation_profile = calculation_profile
@@ -182,3 +179,11 @@ class Modflow2005Calculation:
             raise ValueError('Calculation is not preprocessed yet')
 
         self.flopy_model.run_model()
+
+    def to_dict(self) -> dict:
+        return {
+            'calculation_id': self.calculation_id.to_value(),
+            'modflow_model': self.modflow_model.to_dict(),
+            'calculation_type': self.calculation_type,
+            'calculation_profile': self.calculation_profile.to_dict(),
+        }
