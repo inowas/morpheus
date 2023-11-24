@@ -13,8 +13,11 @@ jest.mock('../../application', () => ({
   }),
   useCalculateChartData: () => ({
     calculateChartData: jest.fn().mockResolvedValue({
-      data: [],
-      layout: {},
+      L: 1,
+      W: 1,
+      xData: [1],
+      yData: [1],
+      zData: [[1]],
     }),
   }),
   useNavigate: () => () => {
@@ -36,6 +39,8 @@ describe('Container Tests', () => {
     render(
       <T02Container/>,
     );
+
+    await screen.findByTestId('t02-container');
     expect(screen.getByTestId('t02-container')).toBeInTheDocument();
   });
 });
