@@ -1,32 +1,17 @@
 @import 'components/site.variables';
 
-.modelGridItem {
+.modelCard {
   width: 100%;
-  margin-right: 20px;
-  margin-bottom: 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
   border-radius: 2px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.154229);
+  background-color: @white;
   display: flex;
   flex-direction: column;
   transition: 300ms;
   cursor: pointer;
-
-  @media (min-width: 680px) {
-    width: calc((100% / 2) - 20px);
-    margin-right: 20px;
-  }
-
-  @media (min-width: @breakpoint-tablet-horizontal) {
-    width: calc((100% / 3) - 20px);
-    margin-right: 20px;
-  }
-
-  @media (min-width: @breakpoint-desktop-small) {
-    width: calc((100% / 4) - 20px);
-  }
 
   &:hover,
   &:focus {
@@ -38,7 +23,7 @@
     object-fit: cover;
   }
 
-  .modelGridContent {
+  .modelContent {
     display: flex;
     flex: 1;
     flex-direction: column;

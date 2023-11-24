@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'components';
-import {IModelCard} from 'components/ModelCard';
-import {ISortOption} from 'components/SortDropdown';
+import SliderSwiper from 'components/SliderSwiper';
+import {IModelCard} from '../ModelCard';
+import {ModelCard} from '../index';
 
 const models: IModelCard[] = [
   {
@@ -242,23 +242,50 @@ const models: IModelCard[] = [
   },
 ];
 
-const navbarItems2 = [
-  {
-    name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
-      {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
-      {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
-  },
-  {name: 'filters', label: 'Filters', admin: false, to: '/tools'},
-  {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
+const children = [
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
+    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
 ];
 
-const sortOptions: ISortOption[] = [
-  {text: 'Sort by Author', value: 'author'},
-  {text: 'Most Recent', value: 'mostRecent'},
-  {text: 'Less Recent', value: 'lessRecent'},
-  {text: 'A-Z', value: 'aToZ'},
-  {text: 'Z-A', value: 'zToA'},
-  {text: 'Most Popular', value: 'mostPopular'},
+const childrenImages = [
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-0edbdfc7-9649-4070-bbc7-a004f5cbae63-thumb-8f988e39-d39d-44e1-a311-32a875cb3990.jpg"/>
+  </div>,
+  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
+  </div>,
 ];
 
 
@@ -267,86 +294,30 @@ export default {
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
   * to learn how to generate automatic titles
   */
-  title: 'Modflow/ModelGrid',
-  component: ModelGrid,
-} as Meta<typeof ModelGrid>;
+  title: 'SliderSwiper',
+  component: SliderSwiper,
+} as Meta<typeof SliderSwiper>;
 
-export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
-  const [modelData, setModelData] = useState(models);
-
-  const handleDeleteButtonClick = (id: number) => {
-    // Handle delete functionality here
-    const updatedModelData = modelData.filter((item) => item.id !== id);
-    setModelData(updatedModelData);
-    console.log(`Delete button clicked for ID: ${id}`);
-  };
-
-  const handleCopyButtonClick = (id: number) => {
-    // Handle copy functionality here
-    console.log(`Copy button clicked for ID: ${id}`);
-  };
-
-  const filterModelsByAuthorName = (authorName: string) => {
-    return modelData.filter((model) => model.meta_author_name === authorName);
-  };
-
-  const [filteredData, setFilteredData] = useState(filterModelsByAuthorName('Catalin Stefan'));
-
-
+export const SliderSwiperExample: StoryFn<typeof SliderSwiper> = () => {
   return (
-    <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={filteredData}
-          setModelData={setFilteredData}
-        >
-          <SliderSwiper
-            sectionTitle={'My Models'}
-          >
-            {filteredData.map((item) => (
-              <ModelCard
-                key={item.id} data={item}
-                navigateTo={() => {
-                }}
-                onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-                onCopyButtonClick={() => handleCopyButtonClick(item.id)}
-              />
-            ))}
-          </SliderSwiper>
-        </SortDropdown>
-        <ModelGrid
-          sectionTitle={'All Models'}
-          data={modelData}
-          navigateTo={() => {
-          }}
-          handleDeleteButtonClick={handleDeleteButtonClick}
-          handleCopyButtonClick={handleCopyButtonClick}
-        />
-      </ContentWrapper>
-    </div>
+    <>
+      <SliderSwiper
+        sectionTitle={'Slider Models'}
+      >
+        {models.map((item) => (
+          <ModelCard
+            key={item.id} data={item}
+            navigateTo={() => {
+            }}
+            onDeleteButtonClick={() => console.log('Delete button clicked')}
+            onCopyButtonClick={() => console.log('Copy button clicked')}
+          />
+        ))}
+      </SliderSwiper>
+      <SliderSwiper sectionTitle={'Slider Text'} children={children}/>
+      <SliderSwiper sectionTitle={'Slider Images'} children={childrenImages}/>
+    </>
   );
 };
 
-export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
-  <ModelGrid
-    sectionTitle={'All Models'}
-    data={models}
-    navigateTo={() => {
-    }}
-    handleDeleteButtonClick={() => {
-    }}
-    handleCopyButtonClick={() => {
-    }}
-  />
-;
 

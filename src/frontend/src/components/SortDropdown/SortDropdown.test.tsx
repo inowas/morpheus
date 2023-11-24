@@ -1,9 +1,8 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react';
-import SortDropdown from './SortDropdown';
-import {IModelGridItem} from 'components/ModelGrid/types/ModelGrid.type';
 import userEvent from '@testing-library/user-event';
-import {ISortOption} from './types/SortDropdown.type';
+import {render, screen} from '@testing-library/react';
+import SortDropdown, {ISortOption} from 'components/SortDropdown';
+import {IModelCard} from 'components/ModelCard';
 
 const mockSetModelData = jest.fn();
 
@@ -16,7 +15,7 @@ const sortOptions: ISortOption[] = [
   {text: 'Most Popular', value: 'mostPopular'},
 ];
 
-const modelData: IModelGridItem[] = [
+const modelData: IModelCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -92,10 +91,10 @@ describe('Sort Dropdown Tests', () => {
         sortOptions={sortOptions}
         data={modelData}
         setModelData={mockSetModelData}
-      />,
+      ><h1>Children</h1></SortDropdown>,
     );
 
-    expect(screen.getByTestId('test-sortDropdown')).toBeInTheDocument();
+    expect(screen.getByTestId('sort-dropdown-container')).toBeInTheDocument();
   });
 
   test('It sorts data when a sort option is selected', async () => {
@@ -105,11 +104,11 @@ describe('Sort Dropdown Tests', () => {
         sortOptions={sortOptions}
         data={modelData}
         setModelData={mockSetModelData}
-      />,
+      ><h1>Children</h1></SortDropdown>,
     );
 
     // Find the dropdown and select an option
-    const dropdown = screen.getByTestId('test-sortDropdown');
+    const dropdown = screen.getByTestId('sort-dropdown');
     await userEvent.click(dropdown);
 
     const sortByAuthorOption = screen.getByText('Sort by Author', {selector: 'span'});

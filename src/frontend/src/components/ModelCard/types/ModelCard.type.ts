@@ -1,4 +1,4 @@
-export interface IModelGridItem {
+export interface IModelCard {
   id: number;
   model_description: string;
   model_image: string;
