@@ -26,14 +26,18 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Navbar, {INavbarItem} from './Navbar';
 import ModelGrid from './ModelGrid';
+import ModelCard, {IModelCard} from './ModelCard';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
+import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
+import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Select, {DropdownProps} from './Select/Select';
+import SortDropdown, {ISortOption} from 'components/SortDropdown';
 import Toggle from './Toggle/Toggle';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 
@@ -64,6 +68,7 @@ export {
   Message,
   Modal,
   ModelGrid,
+  ModelCard,
   Navbar,
   NotFound,
   Notification,
@@ -72,8 +77,11 @@ export {
   Pagination,
   Popup,
   Progress,
+  SectionTitle,
   Segment,
   Select,
+  SliderSwiper,
+  SortDropdown,
   Toggle,
 };
 
@@ -88,4 +96,6 @@ export type {
   IInputProps,
   IInputOnChangeData,
   INavbarItem,
+  IModelCard,
+  ISortOption,
 };
