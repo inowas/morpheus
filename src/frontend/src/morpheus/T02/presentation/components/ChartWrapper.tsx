@@ -9,8 +9,6 @@ interface IProps {
 }
 
 const ChartWrapper = ({data}: IProps) => {
-  console.log('ChartWrapper data', data);
-
   const {L, W, xData, yData, zData} = data;
   const [showModal, setShowModal] = useState(false);
 
