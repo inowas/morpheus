@@ -7,8 +7,8 @@ from typing import Literal
 class LayerId:
     value: str
 
-    def __eq__(self, other):
-        return self.value == other.values
+    def __eq__(self, other: 'LayerId'):
+        return self.value == other.value
 
     @classmethod
     def new(cls):
@@ -190,3 +190,6 @@ class Layer:
             'type': self.type.to_value(),
             'data': self.data.to_dict()
         }
+
+    def is_confined(self):
+        return self.type.to_value() == 'confined'

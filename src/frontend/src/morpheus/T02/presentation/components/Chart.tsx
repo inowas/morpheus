@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import {usePlotly} from 'morpheus/common/hooks';
+import {usePlotly} from 'common/hooks';
 
 interface IPlotly {
   newPlot: (

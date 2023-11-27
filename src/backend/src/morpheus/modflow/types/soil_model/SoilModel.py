@@ -44,3 +44,6 @@ class SoilModel:
 
     def bottoms(self):
         return [layer.data.bottom for layer in self.layers]
+
+    def get_layer_ids(self) -> list[LayerId]:
+        return [layer.id for layer in self.layers]

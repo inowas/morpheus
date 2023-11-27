@@ -4,17 +4,12 @@ from morpheus.common.types import Uuid
 from ..ModflowModel import ModflowModel
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class CalculationProfile:
     name: str
     description: str
     packages: {str: dict}
     available_flow_packages: list[str]
-
-    def get_package_data(self, package: str) -> dict:
-        if package not in self.packages:
-            return {}
-        return self.packages[package]
 
     def get_available_packages(self):
         raise NotImplementedError()

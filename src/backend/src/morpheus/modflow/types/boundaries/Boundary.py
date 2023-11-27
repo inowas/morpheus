@@ -1,10 +1,14 @@
 import dataclasses
 from typing import Literal
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, String
 
 
 class BoundaryId(Uuid):
+    pass
+
+
+class ObservationId(Uuid):
     pass
 
 
@@ -47,10 +51,22 @@ class BoundaryType:
         return self.type
 
 
+class BoundaryName(String):
+    pass
+
+
 @dataclasses.dataclass
 class Boundary:
     id: BoundaryId
     type: BoundaryType
+    name: BoundaryName
+    enabled: bool
+
+    def __init__(self, id: BoundaryId, type: BoundaryType, boundary_name: BoundaryName, enabled: bool = True):
+        self.id = id
+        self.type = type
+        self.name = boundary_name
+        self.enabled = enabled
 
     @classmethod
     def from_dict(cls, obj):
@@ -58,25 +74,6 @@ class Boundary:
 
     def to_dict(self):
         raise NotImplementedError()
-
-
-@dataclasses.dataclass(frozen=True)
-class ObservationId:
-    value: str
-
-    @classmethod
-    def from_str(cls, value: str):
-        return cls(value)
-
-    @classmethod
-    def from_value(cls, value: str):
-        return cls.from_str(value)
-
-    def to_str(self):
-        return self.value
-
-    def to_value(self):
-        return self.to_str()
 
 
 @dataclasses.dataclass
@@ -93,3 +90,6 @@ class BoundaryCollection:
 
     def to_list(self):
         return [boundary.to_dict() for boundary in self.boundaries]
+
+    def get_boundaries_of_type(self, boundary_type: BoundaryType):
+        return [boundary for boundary in self.boundaries if boundary.type == boundary_type]

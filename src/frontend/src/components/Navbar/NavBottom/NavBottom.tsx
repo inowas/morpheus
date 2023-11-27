@@ -5,7 +5,7 @@ import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
 import {Image, Input} from 'semantic-ui-react';
 import MenuItem from './MenuItem';
-import Wrapper from '../../Wrapper/Wrapper';
+import ContentWrapper from 'components/ContentWrapper/ContentWrapper';
 import Button from '../../Button/Button';
 
 interface IProps {
@@ -26,7 +26,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSea
 
   return (
     <div className={styles.navBottom}>
-      <Wrapper>
+      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
         <div className={styles.inner}>
           <div className={styles.mainMenuLogo}>
             <Image
@@ -82,7 +82,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSea
             </div>
           </nav>
         </div>
-      </Wrapper>
+      </ContentWrapper>
     </div>
   );
 };

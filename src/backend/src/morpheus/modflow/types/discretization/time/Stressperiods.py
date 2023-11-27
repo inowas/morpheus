@@ -25,7 +25,7 @@ class IsSteadyState(Bool):
 
 @dataclasses.dataclass
 class StressPeriod:
-    start_datetime: StartDateTime
+    start_date_time: StartDateTime
     number_of_time_steps: NumberOfTimeSteps
     time_step_multiplier: TimeStepMultiplier
     steady_state: IsSteadyState
@@ -33,7 +33,7 @@ class StressPeriod:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            start_datetime=StartDateTime.from_value(obj['start_datetime']),
+            start_date_time=StartDateTime.from_value(obj['start_datetime']),
             number_of_time_steps=NumberOfTimeSteps.from_value(obj['number_of_time_steps']),
             time_step_multiplier=TimeStepMultiplier.from_value(obj['time_step_multiplier']),
             steady_state=IsSteadyState.from_value(obj['stress_period_type'] == 'steady')
@@ -41,7 +41,7 @@ class StressPeriod:
 
     def to_dict(self):
         return {
-            'start_datetime': self.start_datetime.to_value(),
+            'start_datetime': self.start_date_time.to_value(),
             'number_of_time_steps': self.number_of_time_steps.to_value(),
             'time_step_multiplier': self.time_step_multiplier.to_value(),
             'steady_state': self.steady_state.to_value()
@@ -54,12 +54,18 @@ class StressPeriodCollection:
 
     def __init__(self, value: list[StressPeriod]):
         self.values = value
-        self.values.sort(key=lambda stress_period: stress_period.start_datetime.to_datetime())
+        self.values.sort(key=lambda stress_period: stress_period.start_date_time.to_datetime())
+
+    def __iter__(self):
+        return iter(self.values)
+
+    def __len__(self) -> int:
+        return len(self.values)
 
     @classmethod
     def new(cls, start_date: StartDateTime):
         return cls(value=[StressPeriod(
-            start_datetime=start_date,
+            start_date_time=start_date,
             number_of_time_steps=NumberOfTimeSteps.from_int(1),
             time_step_multiplier=TimeStepMultiplier.from_float(1.0),
             steady_state=IsSteadyState.yes()
@@ -78,9 +84,6 @@ class StressPeriodCollection:
 
     def to_value(self) -> list[dict]:
         return self.to_list()
-
-    def __len__(self) -> int:
-        return len(self.values)
 
     def number_of_time_steps(self):
         return [stress_period.number_of_time_steps.value for stress_period in self.values]

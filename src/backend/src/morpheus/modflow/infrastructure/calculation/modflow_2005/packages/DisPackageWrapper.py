@@ -1,5 +1,8 @@
 import dataclasses
-from ....types.ModflowModel import ModflowModel
+from flopy.modflow import ModflowDis as FlopyModflowDis
+
+from morpheus.modflow.infrastructure.calculation.modflow_2005 import FlopyModflow
+from morpheus.modflow.types.ModflowModel import ModflowModel
 
 
 @dataclasses.dataclass
@@ -28,25 +31,18 @@ class DisPackageData:
     crs: str = None,
     start_datetime: None | str = None,
 
-    @staticmethod
-    def custom_defaults() -> dict:
-        return {}
-
-    def with_custom_values(self, custom_values: dict):
-        return DisPackageData(**{**dataclasses.asdict(self), **custom_values})
-
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
 
 
-def calculate_dis_package_data(modflow_model: ModflowModel, custom_values: dict) -> DisPackageData:
+def calculate_dis_package_data(modflow_model: ModflowModel) -> DisPackageData:
     dis_package_data = DisPackageData(
         nlay=modflow_model.soil_model.number_of_layers(),
         nrow=modflow_model.spatial_discretization.grid.ny(),
         ncol=modflow_model.spatial_discretization.grid.nx(),
         nper=modflow_model.time_discretization.number_of_stress_periods(),
-        delr=modflow_model.spatial_discretization.grid.y_coordinates,
-        delc=modflow_model.spatial_discretization.grid.x_coordinates,
+        delr=modflow_model.spatial_discretization.grid.y_distances,
+        delc=modflow_model.spatial_discretization.grid.x_distances,
         laycbd=0,
         top=modflow_model.soil_model.top(),
         botm=modflow_model.soil_model.bottoms(),
@@ -59,11 +55,41 @@ def calculate_dis_package_data(modflow_model: ModflowModel, custom_values: dict)
         extension="dis",
         unitnumber=None,
         filenames=None,
-        xul=None,  # TODO: Implement
-        yul=None,  # TODO: Implement
+        xul=modflow_model.spatial_discretization.grid.origin.coordinates[0],
+        yul=modflow_model.spatial_discretization.grid.origin.coordinates[1],
         rotation=modflow_model.spatial_discretization.grid.rotation.to_float(),
         crs=modflow_model.spatial_discretization.grid.crs.to_str(),
-        start_datetime=modflow_model.time_discretization.start_datetime.to_str(),
-    ).with_custom_values(custom_values)
+        start_datetime=modflow_model.time_discretization.start_date_time.to_str(),
+    )
 
     return dis_package_data
+
+
+def create_dis_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowDis:
+    dis_package_data = calculate_dis_package_data(modflow_model)
+    return FlopyModflowDis(
+        model=flopy_modflow,
+        nlay=dis_package_data.nlay,
+        nrow=dis_package_data.nrow,
+        ncol=dis_package_data.ncol,
+        nper=dis_package_data.nper,
+        delr=dis_package_data.delr,
+        delc=dis_package_data.delc,
+        laycbd=dis_package_data.laycbd,
+        top=dis_package_data.top,
+        botm=dis_package_data.botm,
+        perlen=dis_package_data.perlen,
+        nstp=dis_package_data.nstp,
+        tsmult=dis_package_data.tsmult,
+        steady=dis_package_data.steady,
+        itmuni=dis_package_data.itmuni,
+        lenuni=dis_package_data.lenuni,
+        extension=dis_package_data.extension,
+        unitnumber=dis_package_data.unitnumber,
+        filenames=dis_package_data.filenames,
+        xul=dis_package_data.xul,
+        yul=dis_package_data.yul,
+        rotation=dis_package_data.rotation,
+        crs=dis_package_data.crs,
+        start_datetime=dis_package_data.start_datetime,
+    )

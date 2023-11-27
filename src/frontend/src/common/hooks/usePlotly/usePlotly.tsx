@@ -9,11 +9,11 @@ interface IPlotly {
   ) => void;
 }
 
-const usePlotly = (): IPlotly | null => {
-  const [plotly, setPlotly] = useState<IPlotly | null>(null);
+const usePlotly = (): IPlotly | undefined => {
+  const [plotly, setPlotly] = useState<IPlotly | undefined>(window.Plotly);
 
   useEffect(() => {
-    if ('undefined' === typeof window.Plotly) {
+    if (undefined == window.Plotly) {
       const script = document.createElement('script');
       script.src = '/js/plotly-v1.58.5.min.js';
       script.async = true;
