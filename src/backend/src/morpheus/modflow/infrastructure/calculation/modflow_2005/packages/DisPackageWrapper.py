@@ -59,7 +59,7 @@ def calculate_dis_package_data(modflow_model: ModflowModel) -> DisPackageData:
         yul=modflow_model.spatial_discretization.grid.origin.coordinates[1],
         rotation=modflow_model.spatial_discretization.grid.rotation.to_float(),
         crs=modflow_model.spatial_discretization.grid.crs.to_str(),
-        start_datetime=modflow_model.time_discretization.start_datetime.to_str(),
+        start_datetime=modflow_model.time_discretization.start_date_time.to_str(),
     )
 
     return dis_package_data

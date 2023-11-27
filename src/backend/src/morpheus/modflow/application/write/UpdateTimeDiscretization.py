@@ -34,8 +34,8 @@ class UpdateTimeDiscretizationCommandHandler:
         if time_discretization is None:
             raise Exception(f'Could not find time discretization for model with id {model_id.to_str()}')
 
-        start_date_time = time_discretization.start_datetime
-        end_date_time = time_discretization.end_datetime
+        start_date_time = time_discretization.start_date_time
+        end_date_time = time_discretization.end_date_time
         stress_periods = time_discretization.stress_periods
         time_unit = time_discretization.time_unit
 

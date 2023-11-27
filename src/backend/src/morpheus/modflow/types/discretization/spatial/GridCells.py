@@ -1,4 +1,5 @@
 import dataclasses
+
 from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon
 from shapely.ops import unary_union
 from morpheus.modflow.types.discretization.spatial import Grid
@@ -31,9 +32,13 @@ class GridCell:
 class GridCells:
     shape: tuple[int, int]
     data: list[GridCell]
+    cell_geometries: list[list[Polygon | LineString | Point]] | None = dataclasses.field(default_factory=list)
 
     def __len__(self):
         return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
 
     @classmethod
     def empty_from_shape(cls, nx: int, ny: int):
@@ -111,18 +116,21 @@ class GridCells:
         existing_cell = self.get_cell(x=x, y=y)
         if existing_cell:
             existing_cell.value = value
+            self.cell_geometries = None
             return
 
         self.data.append(GridCell(x=x, y=y, value=value))
+        self.cell_geometries = None
 
     def as_geojson(self, grid: Grid):
         cells_geometries = grid.get_cell_geometries()
-        geometries = []
+        cell_geometries = []
         for x in range(grid.nx()):
             for y in range(grid.ny()):
                 if self.get_cell(x=x, y=y):
-                    geometries.append(cells_geometries[x][y])
-        return GeometryCollection(geometries=geometries)
+                    cell_geometries.append(cells_geometries[x][y])
+
+        return GeometryCollection(geometries=cell_geometries)
 
     def as_geojson_outline(self, grid: Grid) -> Polygon:
         geometries = self.as_geojson(grid).geometries

@@ -6,26 +6,26 @@ from .TimeUnit import TimeUnit
 
 @dataclasses.dataclass
 class TimeDiscretization:
-    start_datetime: StartDateTime
-    end_datetime: EndDateTime
+    start_date_time: StartDateTime
+    end_date_time: EndDateTime
     stress_periods: StressPeriodCollection
     time_unit: TimeUnit
 
     def __init__(self, start_date_time: StartDateTime, end_date_time: EndDateTime,
                  stress_periods: StressPeriodCollection,
                  time_unit: TimeUnit):
-        self.start_datetime = start_date_time
-        self.end_datetime = end_date_time
+        self.start_date_time = start_date_time
+        self.end_date_time = end_date_time
         self.stress_periods = stress_periods
         self.time_unit = time_unit
 
-        if self.start_datetime.to_datetime() > self.end_datetime.to_datetime():
+        if self.start_date_time.to_datetime() > self.end_date_time.to_datetime():
             raise ValueError('Start date must be before end date')
 
-        if self.stress_periods.values[-1].start_datetime.to_datetime() > self.end_datetime.to_datetime():
+        if self.stress_periods.values[-1].start_date_time.to_datetime() > self.end_date_time.to_datetime():
             raise ValueError('Last stress period must start before end date')
 
-        if self.stress_periods.values[0].start_datetime.to_datetime() != self.start_datetime.to_datetime():
+        if self.stress_periods.values[0].start_date_time.to_datetime() != self.start_date_time.to_datetime():
             raise ValueError('First stress period must start at start date')
 
     @classmethod
@@ -50,8 +50,8 @@ class TimeDiscretization:
 
     def to_dict(self):
         return {
-            'start_datetime': self.start_datetime.to_value(),
-            'end_datetime': self.end_datetime.to_value(),
+            'start_datetime': self.start_date_time.to_value(),
+            'end_datetime': self.end_date_time.to_value(),
             'stress_periods': self.stress_periods.to_value(),
             'time_unit': self.time_unit.to_value()
         }
@@ -83,8 +83,23 @@ class TimeDiscretization:
         return self.stress_periods.stress_period_types()
 
     def stress_period_lengths(self):
-        for idx, stress_period in enumerate(self.stress_periods.values):
-            start = self.stress_periods.values[idx].start_datetime.to_datetime()
-            end = self.stress_periods.values[idx + 1].start_datetime.to_datetime() if idx + 1 < len(
-                self.stress_periods.values) else self.end_datetime.to_datetime()
+        for idx, stress_period in enumerate(self.stress_periods):
+            start = self.stress_periods.values[idx].start_date_time.to_datetime()
+            end = self.stress_periods.values[idx + 1].start_date_time.to_datetime() if idx + 1 < len(
+                self.stress_periods.values) else self.end_date_time.to_datetime()
             yield (end - start).total_seconds() / self.time_unit_length_in_seconds()
+
+    def get_start_date_times(self) -> list[StartDateTime]:
+        return [stress_period.start_date_time for stress_period in self.stress_periods]
+
+    def get_end_date_times(self) -> list[EndDateTime]:
+        start_date_times = self.get_start_date_times()
+        end_date_times = []
+        for idx, stress_period in enumerate(self.stress_periods):
+            if idx + 1 < len(start_date_times):
+                end_date_times.append(EndDateTime.from_value(start_date_times[idx + 1].to_value()))
+                continue
+
+            end_date_times.append(self.end_date_time)
+
+        return end_date_times
