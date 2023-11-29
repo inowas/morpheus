@@ -14,3 +14,4 @@ scipy==1.11.4
 shapely==2.0.2
 SQLAlchemy==2.0.23
 python-keycloak==3.7.0
+celery==5.3.6

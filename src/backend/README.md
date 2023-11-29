@@ -27,7 +27,7 @@ the backend source folder.
 
 ### Option 1: Run flask app through PyCharm
 
-Create a run/debug configuration in PyCharm (
+Create a "**Flask server**" run/debug configuration in PyCharm (
 see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html)).
 
 Choose the following settings:
@@ -43,10 +43,40 @@ capabilities of PyCharm.
 
 ### Option 2: Run flask app from command line
 
-If you don't use PyCharm, you can run the flask app from command line. Just run `make run-flask-app` the app starts in
+If you don't use PyCharm, you can run the flask app from command line. Just run `make run-flask-app`. The app starts in
 debug mode.
 
-### Keycloak Development Credentials
+## Run/Debug the celery worker
+
+### Option 1: Run celery worker through PyCharm
+
+Create a "**Python**" run/debug configuration in PyCharm (
+see [PyCharm documentation](https://www.jetbrains.com/help/pycharm/run-debug-configuration.html#createExplicitly)).
+
+Choose the following settings:
+
+* as python interpreter choose your virtualenv (from src/backend/.venv)
+* select "script" and as path to script use the path to (from project root) "src/backend/.venv/bin/celery"
+* as script parameters set "-A task_queue worker --loglevel=INFO"
+* "Working directory": choose the backend source folder (src/backend/src)
+
+
+To run or debug the celery worker through PyCharm you must first [start the dev environment](#start-the-dev-environment).
+Now run or debug the celery worker with the configuration from PyCharm. You can set breakpoints in your code and use all the
+capabilities of PyCharm.
+
+### Option 2: Run celery worker from command line
+
+If you don't use PyCharm, you can run the celery worker from command line. Just run `make run-celery-worker`.
+
+## Keycloak Development Credentials
 
 * username: `dev@inowas.localhost`
 * password: `dev`
+
+
+## RabbitMQ Management
+
+* url: http://rabbitmq.inowas.localhost
+* username: see RABBITMQ_DEFAULT_USER in src/backend/src/.env file
+* password: see RABBITMQ_DEFAULT_PASS in src/backend/src/.env file

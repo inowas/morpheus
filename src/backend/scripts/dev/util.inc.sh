@@ -52,6 +52,7 @@ function prepareBackendEnvFile {
     && sed -i.bak -e "/BACKEND_POSTGRES_HOST/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_MONGO_HOST/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_APP_ROOT_PATH/d" -- "$backendEnvFile.tmp" \
+    && sed -i.bak -e "/BACKEND_CELERY_BROKER/d" -- "$backendEnvFile.tmp" \
     && mv "$backendEnvFile.tmp" "$backendEnvFile" \
     && rm -f "$backendEnvFile.tmp.bak" \
     && echo "" >> "$backendEnvFile" \
@@ -62,6 +63,7 @@ function prepareBackendEnvFile {
     && echo "BACKEND_POSTGRES_HOST=localhost" >> "$backendEnvFile" \
     && echo "BACKEND_MONGO_HOST=localhost" >> "$backendEnvFile" \
     && echo "BACKEND_APP_ROOT_PATH=$backendRoot" >> "$backendEnvFile" \
+    && echo "BACKEND_CELERY_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@localhost:5672" >> "$backendEnvFile" \
     && echo "PYTHONUNBUFFERED=1" >> "$backendEnvFile" \
     && echo "FLASK_ENV=development" >> "$backendEnvFile" \
     && echo "FLASK_DEBUG=1" >> "$backendEnvFile" \

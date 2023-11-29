@@ -14,6 +14,7 @@ docker compose -f "$localInfrastructureRoot/docker-compose.yml" \
   --profile mailcatcher \
   --profile keycloak \
   --profile backend_db_only \
+  --profile celery_broker_and_backend_only \
   up -d --build --force-recreate
 exitWithErrorIfLastCommandFailed "Error starting local environment"
 

@@ -16,6 +16,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.postgres.address=:5432"
       - "--entrypoints.mongodb.address=:27017"
+      - "--entrypoints.rabbitmq.address=:5672"
       - "--providers.docker=true"
       - "--providers.docker.exposedByDefault=false"
       - "--providers.file.directory=/etc/traefik"
@@ -28,6 +29,7 @@ services:
       - "8080:8080" # for traefik api, dashboard and healthcheck local access
       - "5432:5432" # for postgres local access
       - "27017:27017" # for mongodb local access
+      - "5672:5672" # for rabbitmq local access
     healthcheck:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
@@ -38,6 +40,7 @@ services:
     networks:
       - auth
       - backend
+      - celery
       - mail
   #  frontend:
   #    build:
@@ -108,7 +111,6 @@ services:
       - backend
   mongodb_backend:
     image: mongo:7.0
-    container_name: ${BACKEND_MONGO_HOST}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
@@ -208,6 +210,42 @@ services:
       - /var/run/postgresql
     profiles:
       - keycloak
+  rabbitmq:
+    image: rabbitmq:3.12.9-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: rabbitmq.${DOMAIN}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    read_only: true
+    user: rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend
+      - celery
+    hostname:
+      ${COMPOSE_PROJECT_NAME}-rabbitmq
+    tmpfs:
+      - /tmp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-rabbitmq_management.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-rabbitmq_management.rule=Host(`rabbitmq.${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-rabbitmq_management.tls=false"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-rabbitmq_management.loadbalancer.server.port=15672"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-rabbitmq.entrypoints=rabbitmq"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-rabbitmq.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-rabbitmq.loadbalancer.server.port=5672"
+    profiles:
+      - celery
+      - celery_broker_and_backend_only
+
 volumes:
   keycloak_data:
     driver: local
@@ -221,10 +259,14 @@ volumes:
     driver: local
   morpheus_sensor_data:
     driver: local
+  rabbitmq_data:
+    driver: local
 networks:
   auth:
     name: ${COMPOSE_PROJECT_NAME}-auth
   backend:
     name: ${COMPOSE_PROJECT_NAME}-backend
+  celery:
+    name: ${COMPOSE_PROJECT_NAME}-celery
   mail:
     name: ${COMPOSE_PROJECT_NAME}-mail
