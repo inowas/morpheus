@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button, Icon, Image} from 'semantic-ui-react';
+import Button from '../Button/Button';
+import {Button as SemanticButton, Icon, Image} from 'semantic-ui-react';
 import {IModelCard} from './types/ModelCard.type';
 import styles from './ModelCard.module.less';
 
@@ -8,8 +9,8 @@ interface ModelGridItemProps {
   className?: string;
   data: IModelCard;
   navigateTo: (path: string) => void;
-  onDeleteButtonClick: () => void;
-  onCopyButtonClick: () => void;
+  onDeleteButtonClick?: (() => void) | undefined;
+  onCopyButtonClick?: (() => void) | undefined;
 }
 
 const ModelCard: React.FC<ModelGridItemProps> = ({
@@ -55,7 +56,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
 
         <div className={styles.modelBtnGroup}>
           <div className={styles.modelAuthor}>
-            <Button
+            <SemanticButton
               className={styles.modelAvatarLink}
               as="a"
               onClick={(e) => {
@@ -72,36 +73,43 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
                 height="14"
               />
               {data.meta_author_name}
-            </Button>
+            </SemanticButton>
             <span className={styles.modelMetaText}><Icon className={styles.metaIcon} name="calendar outline"/>{formattedDate}</span>
           </div>
           <div className={styles.modelActions}>
+            {onDeleteButtonClick &&
+              (<SemanticButton
+                className={styles.buttonIcon}
+                data-testid="delete-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteButtonClick();
+                }}
+              >
+                <Icon
+                  style={{margin: '0'}} className={styles.metaIcon}
+                  name="trash alternate outline"
+                />
+              </SemanticButton>
+              )}
+            {onCopyButtonClick && (
+              <SemanticButton
+                className={styles.buttonIcon}
+                data-testid="copy-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCopyButtonClick();
+                }}
+              >
+                <Icon
+                  style={{margin: '0'}} className={styles.metaIcon}
+                  name="clone outline"
+                />
+              </SemanticButton>
+            )}
+
             <Button
-              data-testid="delete-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteButtonClick();
-              }}
-            ><Icon
-                style={{margin: '0'}}
-                className={styles.metaIcon}
-                name="trash alternate outline"
-            />
-            </Button>
-            <Button
-              data-testid="copy-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onCopyButtonClick();
-              }}
-            ><Icon
-                style={{margin: '0'}}
-                className={styles.metaIcon}
-                name="clone outline"
-            />
-            </Button>
-            <Button
-              className={styles.modelBtnView}
+              size={'small'}
               onClick={(e) => {
                 e.stopPropagation();
                 // navigateTo(data.model_map);

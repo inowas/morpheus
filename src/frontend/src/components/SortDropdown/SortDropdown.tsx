@@ -19,9 +19,6 @@ const SortDropdown = ({children, sortOptions, data, setModelData, placeholder}: 
   const handleSort = (e: SyntheticEvent<HTMLElement>, {value}: DropdownProps) => {
     let sortedData = [...data];
     switch (value) {
-    case 'author':
-      sortedData.sort((a, b) => a.meta_author_name.localeCompare(b.meta_author_name));
-      break;
     case 'mostRecent':
       sortedData.sort((a, b) => new Date(b.meta_text.split('.').reverse().join('-')).getTime() - new Date(a.meta_text.split('.').reverse().join('-')).getTime());
       break;

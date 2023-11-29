@@ -7,8 +7,8 @@ interface ModelGridProps {
   sectionTitle?: string;
   data: IModelCard[];
   navigateTo: (path: string) => void;
-  handleDeleteButtonClick: (id: number) => void;
-  handleCopyButtonClick: (id: number) => void;
+  handleDeleteButtonClick?: ((id: number) => void) | undefined;
+  handleCopyButtonClick?: ((id: number) => void) | undefined;
   columns?: number;
 }
 
@@ -22,16 +22,14 @@ const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, ha
       className={sectionTitle ? `${styles.modelGridWrapper + ' sectionTitled'}` : styles.modelGridWrapper}
     >
       {sectionTitle && <SectionTitle title={sectionTitle}/>}
-      <div
-        className={`${styles.modelGrid} ${styles[gridColumns]} || ''`}
-      >
+      <div className={`${styles.modelGrid} ${styles[gridColumns] ? styles[gridColumns] : ''}`}>
         {data.map((item) => (
           <ModelCard
             className={styles.modelGridItem}
             key={item.id} data={item}
             navigateTo={navigateTo}
-            onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-            onCopyButtonClick={() => handleCopyButtonClick(item.id)}
+            onDeleteButtonClick={handleDeleteButtonClick && (() => handleDeleteButtonClick(item.id))}
+            onCopyButtonClick={handleCopyButtonClick && (() => handleCopyButtonClick(item.id))}
           />
         ))}
       </div>
