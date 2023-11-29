@@ -253,12 +253,10 @@ const navbarItems2 = [
 ];
 
 const sortOptions: ISortOption[] = [
-  {text: 'Sort by Author', value: 'author'},
   {text: 'Most Recent', value: 'mostRecent'},
   {text: 'Less Recent', value: 'lessRecent'},
   {text: 'A-Z', value: 'aToZ'},
   {text: 'Z-A', value: 'zToA'},
-  {text: 'Most Popular', value: 'mostPopular'},
 ];
 
 
@@ -274,24 +272,27 @@ export default {
 export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
   const [modelData, setModelData] = useState(models);
 
+  const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
+    return data.filter((model) => model.meta_author_name === authorName);
+  };
+  
+  const [filteredData, setFilteredData] = useState(filterModelsByAuthorName('Catalin Stefan', modelData));
+
   const handleDeleteButtonClick = (id: number) => {
-    // Handle delete functionality here
-    const updatedModelData = modelData.filter((item) => item.id !== id);
-    setModelData(updatedModelData);
-    console.log(`Delete button clicked for ID: ${id}`);
+    setModelData(prevModelData => {
+      const updatedModelData = prevModelData.filter((item) => item.id !== id);
+      // Update filteredData based on the updated modelData
+      const updatedFilteredData = filterModelsByAuthorName('Catalin Stefan', updatedModelData);
+      setFilteredData(updatedFilteredData);
+      console.log(`Delete button clicked for ID: ${id}`);
+      return updatedModelData;
+    });
   };
 
   const handleCopyButtonClick = (id: number) => {
     // Handle copy functionality here
     console.log(`Copy button clicked for ID: ${id}`);
   };
-
-  const filterModelsByAuthorName = (authorName: string) => {
-    return modelData.filter((model) => model.meta_author_name === authorName);
-  };
-
-  const [filteredData, setFilteredData] = useState(filterModelsByAuthorName('Catalin Stefan'));
-
 
   return (
     <div style={{margin: '-1rem'}}>
@@ -324,14 +325,21 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
             ))}
           </SliderSwiper>
         </SortDropdown>
-        <ModelGrid
-          sectionTitle={'All Models'}
+        <SortDropdown
+          placeholder="Order By"
+          sortOptions={sortOptions}
           data={modelData}
-          navigateTo={() => {
-          }}
-          handleDeleteButtonClick={handleDeleteButtonClick}
-          handleCopyButtonClick={handleCopyButtonClick}
-        />
+          setModelData={setModelData}
+        >
+          <ModelGrid
+            sectionTitle={'All Models'}
+            data={modelData}
+            navigateTo={() => {
+            }}
+            // handleDeleteButtonClick={handleDeleteButtonClick}
+            handleCopyButtonClick={handleCopyButtonClick}
+          />
+        </SortDropdown>
       </ContentWrapper>
     </div>
   );
