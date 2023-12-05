@@ -55,8 +55,8 @@ const ApplicationContainer = ({children}: IProps) => {
             onChangeLanguage={setLanguage}
             navigateTo={navigateTo}
             pathname={location.pathname}
-            showSearchWrapper={false}
-            showCreateButton={false}
+            showSearchWrapper={true}
+            showCreateButton={true}
           />
         </Header>
       }

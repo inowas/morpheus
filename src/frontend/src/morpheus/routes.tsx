@@ -14,6 +14,8 @@ import ApplicationContainer from './application/presentation/containers/Applicat
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
 import SignIn from './application/presentation/containers/AuthContainer';
 import AboutUsContainer from './application/presentation/containers/AboutUsContainer';
+import Overview from './application/presentation/containers/Overview';
+import Filter from './application/presentation/containers/Filter';
 
 const Router = () => {
   const wrapRouteComponent = (component: React.ReactElement) => (
@@ -52,6 +54,8 @@ const Router = () => {
       <Route path="/tools/T18" element={wrapRouteComponent(<T18Container/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
+      <Route path="/overview" element={wrapRouteComponent(<Overview/>)}/>
+      <Route path="/filter" element={wrapRouteComponent(<Filter/>)}/>
       <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
     </Routes>
   );
