@@ -63,7 +63,7 @@ function prepareBackendEnvFile {
     && echo "BACKEND_POSTGRES_HOST=localhost" >> "$backendEnvFile" \
     && echo "BACKEND_MONGO_HOST=localhost" >> "$backendEnvFile" \
     && echo "BACKEND_APP_ROOT_PATH=$backendRoot" >> "$backendEnvFile" \
-    && echo "BACKEND_CELERY_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@localhost:5672" >> "$backendEnvFile" \
+    && echo "BACKEND_CELERY_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@localhost:5672/${RABBITMQ_DEFAULT_VHOST}" >> "$backendEnvFile" \
     && echo "PYTHONUNBUFFERED=1" >> "$backendEnvFile" \
     && echo "FLASK_ENV=development" >> "$backendEnvFile" \
     && echo "FLASK_DEBUG=1" >> "$backendEnvFile" \

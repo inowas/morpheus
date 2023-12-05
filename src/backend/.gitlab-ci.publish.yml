@@ -1,29 +1,56 @@
 variables:
-  MORPHEUS_BACKEND_IMAGE: inowas/morpheus-backend
+  MORPHEUS_BACKEND_API_IMAGE: inowas/morpheus-backend-api
+  MORPHEUS_BACKEND_TASK_QUEUE_IMAGE: inowas/morpheus-backend-task-queue
 
 
-publish-morpheus-backend:dev:
+publish-morpheus-backend-api:dev:
   stage: publish
   before_script:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - DOCKER_BUILDKIT=1 docker build --target backend --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_IMAGE:dev --file src/backend/docker/Dockerfile .
-    - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA
-    - docker push $MORPHEUS_BACKEND_IMAGE:dev
+    - DOCKER_BUILDKIT=1 docker build --target flask_app --tag $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_API_IMAGE:dev --file src/backend/docker/flask.Dockerfile .
+    - docker push $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_SHA
+    - docker push $MORPHEUS_BACKEND_API_IMAGE:dev
   only:
     - main
     - tags
 
-publish-morpheus-backend:prod:
+publish-morpheus-backend-task-queue:dev:
   stage: publish
   before_script:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
   script:
-    - DOCKER_BUILDKIT=1 docker build --target backend --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_BACKEND_IMAGE:latest --file src/backend/docker/Dockerfile .
-    - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_SHA
-    - docker push $MORPHEUS_BACKEND_IMAGE:$CI_COMMIT_TAG
-    - docker push $MORPHEUS_BACKEND_IMAGE:latest
+    - DOCKER_BUILDKIT=1 docker build --target celery_worker --tag $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:dev --file src/backend/docker/celery.Dockerfile .
+    - docker push $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:$CI_COMMIT_SHA
+    - docker push $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:dev
+  only:
+    - main
+    - tags
+
+publish-morpheus-backend-api:prod:
+  stage: publish
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - DOCKER_BUILDKIT=1 docker build --target flask_app --tag $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_BACKEND_API_IMAGE:latest --file src/backend/docker/flask.Dockerfile .
+    - docker push $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_SHA
+    - docker push $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_TAG
+    - docker push $MORPHEUS_BACKEND_API_IMAGE:latest
+  only:
+    - tags
+
+publish-morpheus-backend-task-queue:prod:
+  stage: publish
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - DOCKER_BUILDKIT=1 docker build --target celery_worker --tag $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:$CI_COMMIT_SHA --tag $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:$CI_COMMIT_TAG --tag $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:latest --file src/backend/docker/celery.Dockerfile .
+    - docker push $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:$CI_COMMIT_SHA
+    - docker push $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:$CI_COMMIT_TAG
+    - docker push $MORPHEUS_BACKEND_TASK_QUEUE_IMAGE:latest
   only:
     - tags
