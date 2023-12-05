@@ -62,8 +62,8 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
-#      celery_worker:
-#        condition: service_healthy
+      celery_worker:
+        condition: service_healthy
     env_file:
       - .env
     volumes:
@@ -278,8 +278,8 @@ services:
       - celery
     extra_hosts:
       - rabbitmq.inowas.localhost:host-gateway
-#    healthcheck:
-#      test: [ "CMD", "celery", "-A", "task_queue", "inspect ping"]
+    healthcheck:
+      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping"]
     profiles:
       - celery
 
