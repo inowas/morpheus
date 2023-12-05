@@ -95,5 +95,3 @@ class Metadata:
 
     def with_updated_tags(self, tags: Tags):
         return dataclasses.replace(self, tags=tags)
-
-

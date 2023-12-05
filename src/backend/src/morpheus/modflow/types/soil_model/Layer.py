@@ -2,6 +2,8 @@ import dataclasses
 import uuid
 from typing import Literal
 
+import numpy as np
+
 
 @dataclasses.dataclass(frozen=True)
 class LayerId:
@@ -116,6 +118,56 @@ class LayerData:
     top: float | list[list[float]] | None
     bottom: float | list[list[float]]
 
+    def get_hkl(self):
+        return self.kx
+
+    def get_horizontal_anisotropy(self):
+        return self.ky / self.kx
+
+    def get_vertical_anisotropy(self):
+        return self.kz / self.kx
+
+    def is_wetting_active(self):
+        return False
+
+    def get_layer_average(self):
+        return 0
+
+    def get_transmissivity(self, top: float | list[list[float]]) -> float | list[list[float]]:
+        hk = self.kx
+        botm = self.bottom
+
+        if isinstance(hk, float) and isinstance(botm, float) and isinstance(top, float):
+            return hk * (top - botm)
+
+        shape = None
+        if isinstance(top, list):
+            top = np.array(top)
+            shape = top.shape
+
+        if isinstance(hk, list):
+            hk = np.array(hk)
+            if shape is None:
+                shape = hk.shape
+
+        if isinstance(botm, list):
+            botm = np.array(botm)
+            shape = botm.shape
+
+        if shape is None:
+            raise ValueError('Could not determine shape of top, hk and botm')
+
+        if isinstance(top, float):
+            top = np.full(shape, top)
+
+        if isinstance(hk, float):
+            hk = np.full(shape, hk)
+
+        if isinstance(botm, float):
+            botm = np.full(shape, botm)
+
+        return (hk * (top - botm)).tolist()
+
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
@@ -166,7 +218,7 @@ class Layer:
                 porosity=0.1,
                 specific_storage=0.0001,
                 specific_yield=0.1,
-                initial_head=1,
+                initial_head=1.0,
                 top=1,
                 bottom=0
             )

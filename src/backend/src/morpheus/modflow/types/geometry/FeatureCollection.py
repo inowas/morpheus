@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Literal
 
+from .Feature import Feature
 from .GeometryFactory import GeometryFactory
 from .LineString import LineString
 from .Point import Point

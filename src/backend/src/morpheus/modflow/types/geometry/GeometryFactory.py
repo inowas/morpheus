@@ -1,6 +1,3 @@
-import dataclasses
-from typing import Literal
-
 from .Point import Point
 from .LineString import LineString
 from .Polygon import Polygon

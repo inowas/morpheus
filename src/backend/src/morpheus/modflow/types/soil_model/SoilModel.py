@@ -7,6 +7,9 @@ from .Layer import Layer, LayerId
 class SoilModel:
     layers: list[Layer]
 
+    def __iter__(self):
+        return iter(self.layers)
+
     @classmethod
     def new(cls):
         return cls(layers=[Layer.from_default()])

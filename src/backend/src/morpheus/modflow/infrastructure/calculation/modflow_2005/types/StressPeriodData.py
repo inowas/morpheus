@@ -53,6 +53,9 @@ class StressPeriodData:
             values=values
         ))
 
+    def is_empty(self):
+        return len(self.data) == 0
+
     def to_dict(self) -> dict:
         sp_data = {}
         for item in self.data:

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from morpheus.common.types import DateTime, Float
+from morpheus.common.types import Float
 from .Boundary import BoundaryId, BoundaryType, ObservationId, Boundary, BoundaryName
 from ..discretization.spatial import GridCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
@@ -91,11 +91,24 @@ class ConstantHeadObservation:
             end_head=EndHead.from_value(end_heads[i])) for i, date_time in enumerate(date_times)]
 
     def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> MeanDataItem | None:
+
+        # In range check
+        if end_date_time.to_datetime() < self.raw_data[0].date_time.to_datetime():
+            return None
+
+        if start_date_time.to_datetime() > self.raw_data[-1].date_time.to_datetime():
+            return None
+
         time_series = pd.Series([d.date_time.to_datetime() for d in self.raw_data])
         start_heads = pd.Series([d.start_head.to_value() for d in self.raw_data])
         end_heads = pd.Series([d.end_head.to_value() for d in self.raw_data])
 
-        date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq='1D')
+        # Check if we need to adapt the frequency of the time series
+        freq = '1D'
+        if end_date_time.to_datetime() - start_date_time.to_datetime() < pd.Timedelta('1D'):
+            freq = '1H'
+
+        date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
 
         # create scipy's interp1d function to fill missing values
         start_heads_interpolator = interp1d(time_series.values.astype(float), start_heads.values.astype(float),
@@ -106,19 +119,12 @@ class ConstantHeadObservation:
                                           kind='linear', fill_value='extrapolate')
         end_heads = end_heads_interpolator(date_range.values.astype(float))
 
-        df = pd.DataFrame({
-            'date_time': date_range,
-            'start_head': start_heads,
-            'end_head': end_heads
-        })
-
         return MeanDataItem(
             observation_id=self.id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
-            start_head=StartHead.from_value(df.start_head.mean()),
-
-            end_head=EndHead.from_value(df.end_head.mean())
+            start_head=StartHead.from_value(start_heads.mean()),
+            end_head=EndHead.from_value(end_heads.mean())
         )
 
     def as_geojson(self):
@@ -177,7 +183,7 @@ class ConstantHead(Boundary):
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
-            affected_layers=[LayerId.from_value(l) for l in obj['affected_layers']],
+            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[ConstantHeadObservation.from_dict(p) for p in obj['observation_points']],
             enabled=obj['enabled']
         )
@@ -189,8 +195,8 @@ class ConstantHead(Boundary):
             'name': self.name.to_value(),
             'geometry': self.geometry.to_dict(),
             'affected_cells': self.affected_cells.to_dict(),
-            'affected_layers': [l.to_value() for l in self.affected_layers],
-            'observation_points': [p.to_dict() for p in self.observations],
+            'affected_layers': [layer_id.to_value() for layer_id in self.affected_layers],
+            'observation_points': [observation.to_dict() for observation in self.observations],
             'enabled': self.enabled
         }
 

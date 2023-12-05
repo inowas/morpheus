@@ -1,9 +1,12 @@
 import dataclasses
 from typing import Literal
 
-from .packages.De4PackageWrapper import De4PackageData
-from .packages.OcPackageWrapper import OcPackageData
-from .packages.PcgPackageWrapper import PcgPackageData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.De4PackageWrapper import De4PackageData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GmgPackageWrapper import GmgPackageData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.OcPackageWrapper import OcPackageData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgPackageWrapper import PcgPackageData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import PcgnPackageData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import SipPackageData
 
 
 @dataclasses.dataclass
@@ -26,6 +29,10 @@ class FlowPackage:
 
         return cls(type=value)
 
+    @classmethod
+    def default(cls):
+        return cls(type='lpf')
+
 
 @dataclasses.dataclass
 class SolverPackageData:
@@ -34,13 +41,11 @@ class SolverPackageData:
     https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/solvers.html
 
     TODO: Add support for other solver packages
-    GMG: https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/gmg.html
-    LMG: https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/lmg.html
-    PCGN: https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/pcgn.html
     SIP: https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/sip.html
     """
-    type: Literal['pcg', 'de4'] = 'pcg'
-    data: PcgPackageData | De4PackageData = PcgPackageData()
+    type: Literal['de4', 'gmg', 'pcg', 'pcgn', 'sip'] = 'pcg'
+    data: De4PackageData | GmgPackageData | PcgPackageData | PcgnPackageData | SipPackageData = dataclasses.field(
+        default_factory=PcgPackageData)
 
     def to_dict(self) -> dict:
         return {
@@ -49,10 +54,29 @@ class SolverPackageData:
         }
 
     @classmethod
+    def default(cls):
+        return cls(
+            type='pcg',
+            data=PcgPackageData()
+        )
+
+    @classmethod
     def from_dict(cls, obj: dict):
         ptype = obj.get('type', None)
         if ptype not in list(cls.available_solver_packages().keys()):
             raise ValueError(f'Unknown solver package type: {obj["type"]}')
+
+        if ptype == 'de4':
+            return cls(
+                type=ptype,
+                data=De4PackageData.from_dict(obj['data'])
+            )
+
+        if ptype == 'gmg':
+            return cls(
+                type=ptype,
+                data=GmgPackageData.from_dict(obj['data'])
+            )
 
         if ptype == 'pcg':
             return cls(
@@ -60,10 +84,16 @@ class SolverPackageData:
                 data=PcgPackageData.from_dict(obj['data'])
             )
 
-        if ptype == 'de4':
+        if ptype == 'pcgn':
             return cls(
                 type=ptype,
-                data=De4PackageData.from_dict(obj['data'])
+                data=PcgnPackageData.from_dict(obj['data'])
+            )
+
+        if ptype == 'sip':
+            return cls(
+                type=ptype,
+                data=SipPackageData.from_dict(obj['data'])
             )
 
         raise ValueError(f'Unknown solver package type: {ptype}')
@@ -78,9 +108,9 @@ class SolverPackageData:
 
 @dataclasses.dataclass
 class PackageData:
-    oc: OcPackageData = OcPackageData()
-    flow_package: FlowPackage = FlowPackage()
-    solver_package: SolverPackageData = SolverPackageData()
+    oc: OcPackageData = dataclasses.field(default_factory=OcPackageData)
+    flow_package: FlowPackage = dataclasses.field(default_factory=FlowPackage)
+    solver_package: SolverPackageData = dataclasses.field(default_factory=SolverPackageData)
 
     def to_dict(self) -> dict:
         return {
@@ -97,18 +127,25 @@ class PackageData:
             solver_package=SolverPackageData.from_dict(obj['solver_package'])
         )
 
+    @classmethod
+    def default(cls):
+        return cls(
+            oc=OcPackageData.default(),
+            flow_package=FlowPackage.default(),
+            solver_package=SolverPackageData.default()
+        )
+
 
 @dataclasses.dataclass
 class Mf2005CalculationProfile:
     calculation_type = 'mf2005'
     profile_type = 'default'
-
     name = 'Modflow 2005 default calculation profile'
     description = 'Modflow 2005 default calculation profile'
-    packages: PackageData = PackageData()
+    packages: PackageData
 
     def __init__(self, name: str, description: str, packages: dict):
-        self.name = name
+        self.name = name if name is not None else self.name
         self.description = description
         self.packages = PackageData.from_dict(packages)
 
@@ -120,6 +157,14 @@ class Mf2005CalculationProfile:
 
     def get_solver_package_data(self) -> SolverPackageData:
         return self.packages.solver_package
+
+    @classmethod
+    def new(cls):
+        return cls(
+            name=cls.name,
+            description=cls.description,
+            packages=PackageData.default().to_dict()
+        )
 
     @classmethod
     def from_dict(cls, obj: dict):

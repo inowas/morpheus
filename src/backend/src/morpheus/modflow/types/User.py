@@ -1,4 +1,3 @@
-import dataclasses
 
 from morpheus.common.types import Uuid
 

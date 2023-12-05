@@ -3,51 +3,49 @@ import dataclasses
 from flopy.modflow import ModflowDe4 as FlopyModflowDe4
 
 from morpheus.modflow.infrastructure.calculation.modflow_2005 import FlopyModflow
-from morpheus.modflow.types.ModflowModel import ModflowModel
 
 
 @dataclasses.dataclass
 class De4PackageData:
-    itmx: int = 50,
-    mxup: int = 0,
-    mxlow: int = 0,
-    mxbw: int = 0,
-    ifreq: int = 3,
-    mutd4: int = 0,
-    accl: int = 1.0,
-    hclose: float = 1e-5,
-    iprd4: int = 1,
-    extension: str = "de4",
-    unitnumber: int | None = None,
-    filenames: list[str] | str | None = None,
+    itmx: int
+    mxup: int
+    mxlow: int
+    mxbw: int
+    ifreq: int
+    mutd4: int
+    accl: int
+    hclose: float
+    iprd4: int
+    extension: str
+    unitnumber: int | None
+    filenames: list[str] | str | None
+
+    def __init__(self, itmx=50, mxup=0, mxlow=0, mxbw=0, ifreq=3, mutd4=0, accl=1, hclose=1e-5, iprd4=1,
+                 extension="de4", unitnumber: int | None = None, filenames: list[str] | str | None = None):
+        self.itmx = itmx
+        self.mxup = mxup
+        self.mxlow = mxlow
+        self.mxbw = mxbw
+        self.ifreq = ifreq
+        self.mutd4 = mutd4
+        self.accl = accl
+        self.hclose = hclose
+        self.iprd4 = iprd4
+        self.extension = extension
+        self.unitnumber = unitnumber
+        self.filenames = filenames
 
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
+
+    @classmethod
+    def default(cls):
+        return cls()
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(**obj)
 
 
-def calculate_de4_package_data(modflow_model: ModflowModel) -> De4PackageData:
-    de4_package_data = De4PackageData()
-    return de4_package_data
-
-
-def create_de4_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowDe4:
-    de4_package_data = calculate_de4_package_data(modflow_model)
-    return FlopyModflowDe4(
-        model=flopy_modflow,
-        itmx=de4_package_data.itmx,
-        mxup=de4_package_data.mxup,
-        mxlow=de4_package_data.mxlow,
-        mxbw=de4_package_data.mxbw,
-        ifreq=de4_package_data.ifreq,
-        mutd4=de4_package_data.mutd4,
-        accl=de4_package_data.accl,
-        hclose=de4_package_data.hclose,
-        iprd4=de4_package_data.iprd4,
-        extension=de4_package_data.extension,
-        unitnumber=de4_package_data.unitnumber,
-        filenames=de4_package_data.filenames,
-    )
+def create_de4_package(flopy_modflow: FlopyModflow, package_data: De4PackageData) -> FlopyModflowDe4:
+    return FlopyModflowDe4(model=flopy_modflow, **package_data.to_dict())
