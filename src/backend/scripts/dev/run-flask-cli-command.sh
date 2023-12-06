@@ -6,4 +6,4 @@ source "$(dirname "$0")/util.inc.sh"
 $devScriptsRoot/start-dev.sh
 
 cd $backendRoot/src
-flask $@
+source $backendRoot/.venv/bin/activate && flask $@

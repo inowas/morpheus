@@ -6,4 +6,4 @@ source "$(dirname "$0")/util.inc.sh"
 $devScriptsRoot/start-dev.sh
 
 cd $backendRoot/src
-source $backendRoot/.venv/bin/activate && flask run
+source $backendRoot/.venv/bin/activate && celery -A task_queue worker --loglevel=INFO

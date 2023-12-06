@@ -18,6 +18,7 @@ This repository contains the source code for the frontend and backend of the Mor
 add the following entries to your `/etc/hosts` file:
 
 * 127.0.0.1 identity.inowas.localhost
+* 127.0.0.1 rabbitmq.inowas.localhost
 
 ### Install local environment
 
