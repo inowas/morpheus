@@ -269,7 +269,7 @@ services:
       - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
       - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
     tmpfs:
-      - /tmp:mode=777,size=200m
+      - /tmp
     restart: always
     user: celery
     read_only: true
