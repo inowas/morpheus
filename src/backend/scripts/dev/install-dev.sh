@@ -16,8 +16,7 @@ outputSuccess "Successfully setup local python venv in $venvPath"
 outputHeadline "Installing requirements"
 
 cd $backendRoot
-source $backendRoot/.venv/bin/activate && pip install -r requirements/dev.txt
+source $backendRoot/.venv/bin/activate && pip install -r requirements/dev.txt && get-modflow :python
 
 exitWithErrorIfLastCommandFailed "Error installing requirements"
 outputSuccess "Successfully installed requirements"
-

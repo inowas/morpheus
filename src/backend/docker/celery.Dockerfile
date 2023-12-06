@@ -11,6 +11,7 @@ ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod
 # install python dependencies
 RUN pip install --upgrade pip
 RUN pip install -r ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
+RUN get-modflow :python
 
 # prepare python environment
 ENV PYTHONUNBUFFERED 1
