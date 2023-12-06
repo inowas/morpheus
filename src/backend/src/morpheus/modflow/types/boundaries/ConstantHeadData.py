@@ -1,14 +1,16 @@
 import dataclasses
 import numpy as np
 import pandas as pd
+
 from scipy.interpolate import interp1d
 
-from morpheus.common.types import Float
-from .Boundary import BoundaryId, BoundaryType, ObservationId, Boundary, BoundaryName
-from ..discretization.spatial import GridCells, Grid
+from morpheus.common.types import Float, Uuid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
-from ..geometry import Point, LineString
-from ..soil_model import LayerId
+from ..geometry import Point
+
+
+class ConstantHeadObservationId(Uuid):
+    pass
 
 
 class StartHead(Float):
@@ -21,7 +23,7 @@ class EndHead(Float):
 
 @dataclasses.dataclass
 class MeanDataItem:
-    observation_id: ObservationId
+    observation_id: ConstantHeadObservationId
     start_date_time: StartDateTime
     end_date_time: EndDateTime
     start_head: StartHead
@@ -52,11 +54,11 @@ class DataItem:
 
 @dataclasses.dataclass
 class ConstantHeadObservation:
-    id: ObservationId
+    id: ConstantHeadObservationId
     geometry: Point
     raw_data: list[DataItem]
 
-    def __init__(self, id: ObservationId, geometry: Point, raw_data: list[DataItem]):
+    def __init__(self, id: ConstantHeadObservationId, geometry: Point, raw_data: list[DataItem]):
         self.id = id
         self.geometry = geometry
         self.raw_data = raw_data
@@ -64,7 +66,7 @@ class ConstantHeadObservation:
     @classmethod
     def from_dict(cls, obj):
         return cls(
-            id=ObservationId.from_value(obj['id']),
+            id=ConstantHeadObservationId.from_value(obj['id']),
             geometry=Point.from_dict(obj['geometry']),
             raw_data=[DataItem.from_dict(d) for d in obj['raw_data']]
         )
@@ -129,94 +131,3 @@ class ConstantHeadObservation:
 
     def as_geojson(self):
         return self.geometry.as_geojson()
-
-
-@dataclasses.dataclass
-class ConstantHead(Boundary):
-    id: BoundaryId
-    type: BoundaryType.constant_head()
-    name: BoundaryName
-    geometry: LineString
-    affected_cells: GridCells
-    affected_layers: list[LayerId]
-    observations: list[ConstantHeadObservation]
-    enabled = True
-
-    def __init__(self, id: BoundaryId, name: BoundaryName, geometry: LineString, affected_cells: GridCells,
-                 affected_layers: list[LayerId], observations: list[ConstantHeadObservation], enabled: bool = True):
-        btype = BoundaryType.constant_head()
-        super().__init__(id, btype, name, enabled)
-        self.id = id
-        self.type = btype
-        self.name = name
-        self.geometry = geometry
-        self.affected_cells = affected_cells
-        self.affected_layers = affected_layers
-        self.observations = observations
-
-    @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[ConstantHeadObservation] | None = None):  # -> ConstantHead:
-
-        affected_cells = GridCells.from_linestring(linestring=geometry, grid=grid)
-        if observations is None or len(observations) == 0:
-            observations = [ConstantHeadObservation(
-                id=ObservationId.new(),
-                geometry=Point(coordinates=geometry.coordinates[0]),
-                raw_data=[]
-            )]
-
-        return cls(
-            id=BoundaryId.new(),
-            name=name,
-            geometry=geometry,
-            affected_cells=affected_cells,
-            affected_layers=affected_layers,
-            observations=observations,
-            enabled=True
-        )
-
-    @classmethod
-    def from_dict(cls, obj):
-        return cls(
-            id=BoundaryId.from_value(obj['id']),
-            name=BoundaryName.from_value(obj['name']),
-            geometry=LineString.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
-            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
-            observations=[ConstantHeadObservation.from_dict(p) for p in obj['observation_points']],
-            enabled=obj['enabled']
-        )
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'type': self.type,
-            'name': self.name.to_value(),
-            'geometry': self.geometry.to_dict(),
-            'affected_cells': self.affected_cells.to_dict(),
-            'affected_layers': [layer_id.to_value() for layer_id in self.affected_layers],
-            'observation_points': [observation.to_dict() for observation in self.observations],
-            'enabled': self.enabled
-        }
-
-    def number_of_observations(self):
-        return len(self.observations)
-
-    def get_observations(self):
-        return self.observations
-
-    def get_observation(self, index: int):
-        return self.observations[index]
-
-    def get_observation_by_id(self, id: ObservationId):
-        for observation in self.observations:
-            if observation.id == id:
-                return observation
-        return None
-
-    def as_geojson(self):
-        return self.geometry.as_geojson()
-
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[MeanDataItem]:
-        return [observation.get_mean_data(start_date_time, end_date_time) for observation in self.observations]

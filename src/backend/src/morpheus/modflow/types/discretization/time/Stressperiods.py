@@ -36,7 +36,7 @@ class StressPeriod:
             start_date_time=StartDateTime.from_value(obj['start_datetime']),
             number_of_time_steps=NumberOfTimeSteps.from_value(obj['number_of_time_steps']),
             time_step_multiplier=TimeStepMultiplier.from_value(obj['time_step_multiplier']),
-            steady_state=IsSteadyState.from_value(obj['stress_period_type'] == 'steady')
+            steady_state=IsSteadyState.from_value(obj['steady_state'])
         )
 
     def to_dict(self):

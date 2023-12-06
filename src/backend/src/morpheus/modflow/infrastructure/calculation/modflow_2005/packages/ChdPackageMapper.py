@@ -3,9 +3,8 @@ from shapely import LineString as ShapelyLineString, Point as ShapelyPoint
 
 from morpheus.modflow.infrastructure.calculation.modflow_2005.types.StressPeriodData import StressPeriodData
 from morpheus.modflow.types.ModflowModel import ModflowModel
-from morpheus.modflow.types.boundaries.Boundary import BoundaryType
+from morpheus.modflow.types.boundaries.Boundary import BoundaryType, ConstantHead
 
-from morpheus.modflow.types.boundaries.ConstantHead import ConstantHead
 from morpheus.modflow.types.discretization import TimeDiscretization, SpatialDiscretization
 from morpheus.modflow.types.soil_model import SoilModel
 
