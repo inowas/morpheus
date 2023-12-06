@@ -2,8 +2,7 @@ import dataclasses
 from typing import Literal
 
 from morpheus.common.types import Uuid, String
-from morpheus.modflow.types.boundaries.ConstantHeadData import ConstantHeadObservation, MeanDataItem, \
-    ConstantHeadObservationId
+from morpheus.modflow.types.boundaries.ConstantHeadData import ConstantHeadObservation, ConstantHeadMeanDataItem
 
 from ..discretization.spatial import GridCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
@@ -72,6 +71,9 @@ class Boundary:
     name: BoundaryName
     enabled: bool
 
+    def __eq__(self, other):
+        return self.to_dict() == other.to_dict()
+
     def __init__(self, id: BoundaryId, type: BoundaryType, boundary_name: BoundaryName, enabled: bool = True):
         self.id = id
         self.type = type
@@ -90,6 +92,9 @@ class Boundary:
 class BoundaryCollection:
     boundaries: list[Boundary]
 
+    def __iter__(self):
+        return iter(self.boundaries)
+
     @classmethod
     def new(cls):
         return cls(boundaries=[])
@@ -97,8 +102,14 @@ class BoundaryCollection:
     def add_boundary(self, boundary: Boundary):
         self.boundaries.append(boundary)
 
+    def update_boundary(self, update: Boundary):
+        self.boundaries = [boundary if boundary.id != update.id else update for boundary in self.boundaries]
+
+    def remove_boundary(self, boundary_id: BoundaryId):
+        self.boundaries = [boundary for boundary in self.boundaries if boundary.id != boundary_id]
+
     @classmethod
-    def from_list(cls, collection: list[dict]):
+    def from_dict(cls, collection: list[dict]):
         new_collection = []
         for item in collection:
             boundary_type = BoundaryType.from_value(item.get('type', None))
@@ -108,7 +119,7 @@ class BoundaryCollection:
                 raise ValueError(f'Unknown boundary type: {boundary_type}')
         return cls(boundaries=new_collection)
 
-    def to_list(self):
+    def to_dict(self):
         return [boundary.to_dict() for boundary in self.boundaries]
 
     def get_boundaries_of_type(self, boundary_type: BoundaryType):
@@ -144,11 +155,9 @@ class ConstantHead(Boundary):
 
         affected_cells = GridCells.from_linestring(linestring=geometry, grid=grid)
         if observations is None or len(observations) == 0:
-            observations = [ConstantHeadObservation(
-                id=ConstantHeadObservationId.new(),
-                geometry=Point(coordinates=geometry.coordinates[0]),
-                raw_data=[]
-            )]
+            observations = [
+                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[])
+            ]
 
         return cls(
             id=BoundaryId.new(),
@@ -190,17 +199,9 @@ class ConstantHead(Boundary):
     def get_observations(self):
         return self.observations
 
-    def get_observation(self, index: int):
-        return self.observations[index]
-
-    def get_observation_by_id(self, id: ConstantHeadObservationId):
-        for observation in self.observations:
-            if observation.id == id:
-                return observation
-        return None
-
     def as_geojson(self):
         return self.geometry.as_geojson()
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[MeanDataItem]:
+    def get_mean_data(self, start_date_time: StartDateTime,
+                      end_date_time: EndDateTime) -> list[ConstantHeadMeanDataItem]:
         return [observation.get_mean_data(start_date_time, end_date_time) for observation in self.observations]

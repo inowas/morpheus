@@ -6,6 +6,9 @@ import uuid
 class Uuid:
     value: str
 
+    def __eq__(self, other):
+        return self.value == other.value
+
     @classmethod
     def new(cls):
         return cls(value=str(uuid.uuid4()))

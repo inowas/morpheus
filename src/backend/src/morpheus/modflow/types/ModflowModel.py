@@ -24,7 +24,7 @@ class ModflowModel:
             model_id=ModelId.from_value(obj['model_id']),
             spatial_discretization=SpatialDiscretization.from_dict(obj['spatial_discretization']),
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
-            boundaries=BoundaryCollection.from_list(obj['boundaries']),
+            boundaries=BoundaryCollection.from_dict(obj['boundaries']),
             soil_model=SoilModel.from_dict(obj['soil_model'])
         )
 
@@ -43,7 +43,7 @@ class ModflowModel:
             'model_id': self.model_id.to_value(),
             'spatial_discretization': self.spatial_discretization.to_dict(),
             'time_discretization': self.time_discretization.to_dict(),
-            'boundaries': self.boundaries.to_list(),
+            'boundaries': self.boundaries.to_dict(),
             'soil_model': self.soil_model.to_dict(),
         }
 

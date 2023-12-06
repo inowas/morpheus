@@ -5,6 +5,9 @@ import dataclasses
 class String:
     value: str
 
+    def __eq__(self, other):
+        return self.value == other.value
+
     @classmethod
     def from_str(cls, value: str):
         return cls(value=value)

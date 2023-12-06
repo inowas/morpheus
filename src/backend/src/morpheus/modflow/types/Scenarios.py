@@ -39,14 +39,14 @@ class Scenario:
         return cls(
             scenario_id=ScenarioId.from_value(obj['scenario_id']),
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
-            boundaries=BoundaryCollection.from_list(obj['boundaries']),
-            removed_boundaries=BoundaryCollection.from_list(obj['removed_boundaries'])
+            boundaries=BoundaryCollection.from_dict(obj['boundaries']),
+            removed_boundaries=BoundaryCollection.from_dict(obj['removed_boundaries'])
         )
 
     def to_dict(self) -> dict:
         return {
             'scenario_id': self.scenario_id.to_value(),
             'time_discretization': self.time_discretization.to_dict(),
-            'boundaries': self.boundaries.to_list(),
-            'removed_boundaries': self.removed_boundaries.to_list()
+            'boundaries': self.boundaries.to_dict(),
+            'removed_boundaries': self.removed_boundaries.to_dict()
         }

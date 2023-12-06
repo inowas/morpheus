@@ -9,7 +9,7 @@ from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
 
-class ConstantHeadObservationId(Uuid):
+class ObservationId(Uuid):
     pass
 
 
@@ -22,8 +22,8 @@ class EndHead(Float):
 
 
 @dataclasses.dataclass
-class MeanDataItem:
-    observation_id: ConstantHeadObservationId
+class ConstantHeadMeanDataItem:
+    observation_id: ObservationId
     start_date_time: StartDateTime
     end_date_time: EndDateTime
     start_head: StartHead
@@ -54,19 +54,27 @@ class DataItem:
 
 @dataclasses.dataclass
 class ConstantHeadObservation:
-    id: ConstantHeadObservationId
+    id: ObservationId
     geometry: Point
     raw_data: list[DataItem]
 
-    def __init__(self, id: ConstantHeadObservationId, geometry: Point, raw_data: list[DataItem]):
+    def __init__(self, id: ObservationId, geometry: Point, raw_data: list[DataItem]):
         self.id = id
         self.geometry = geometry
         self.raw_data = raw_data
 
     @classmethod
+    def new(cls, geometry: Point, raw_data: list[DataItem]):
+        return cls(
+            id=ObservationId.new(),
+            geometry=geometry,
+            raw_data=raw_data
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
-            id=ConstantHeadObservationId.from_value(obj['id']),
+            id=ObservationId.from_value(obj['id']),
             geometry=Point.from_dict(obj['geometry']),
             raw_data=[DataItem.from_dict(d) for d in obj['raw_data']]
         )
@@ -92,7 +100,7 @@ class ConstantHeadObservation:
             start_head=StartHead.from_value(start_heads[i]),
             end_head=EndHead.from_value(end_heads[i])) for i, date_time in enumerate(date_times)]
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> MeanDataItem | None:
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> ConstantHeadMeanDataItem | None:
 
         # In range check
         if end_date_time.to_datetime() < self.raw_data[0].date_time.to_datetime():
@@ -121,7 +129,7 @@ class ConstantHeadObservation:
                                           kind='linear', fill_value='extrapolate')
         end_heads = end_heads_interpolator(date_range.values.astype(float))
 
-        return MeanDataItem(
+        return ConstantHeadMeanDataItem(
             observation_id=self.id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
