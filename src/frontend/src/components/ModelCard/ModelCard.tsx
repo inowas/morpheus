@@ -1,16 +1,20 @@
 import React from 'react';
-import styles from './ModelGridItem.module.less';
-import {Button, Icon, Image} from 'semantic-ui-react';
-import {IModelGridItem} from '../types/ModelGrid.type';
+import Button from '../Button/Button';
+import {Button as SemanticButton, Icon, Image} from 'semantic-ui-react';
+import {IModelCard} from './types/ModelCard.type';
+import styles from './ModelCard.module.less';
+
 
 interface ModelGridItemProps {
-  data: IModelGridItem;
+  className?: string;
+  data: IModelCard;
   navigateTo: (path: string) => void;
-  onDeleteButtonClick: () => void;
-  onCopyButtonClick: () => void;
+  onDeleteButtonClick?: (() => void) | undefined;
+  onCopyButtonClick?: (() => void) | undefined;
 }
 
-const ModelGridItem: React.FC<ModelGridItemProps> = ({
+const ModelCard: React.FC<ModelGridItemProps> = ({
+  className,
   data,
   navigateTo,
   onDeleteButtonClick,
@@ -28,7 +32,8 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
 
   return (
     <div
-      className={styles.modelGridItem}
+      data-testid="model-card"
+      className={className ? `${styles.modelCard} ${className}` : styles.modelCard}
       onClick={(e) => {
         e.stopPropagation();
         console.log('ModelGridItem clicked');
@@ -38,11 +43,11 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
       <Image
         className={styles.modelImage}
         src={data.model_image}
-        alt={data.model_title}
+        alt={data.model_description}
         fluid={true}
         width="320" height="150"
       />
-      <div className={styles.modelGridContent}>
+      <div className={styles.modelContent}>
         <div className={styles.modelHeadline}>
           <i className={styles.metaStatus} style={{background: data.meta_status ? '#08E600' : '#C8C8C8'}}></i>
           <h5 className={styles.modelTitle}>{data.model_title}</h5>
@@ -51,7 +56,7 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
 
         <div className={styles.modelBtnGroup}>
           <div className={styles.modelAuthor}>
-            <Button
+            <SemanticButton
               className={styles.modelAvatarLink}
               as="a"
               onClick={(e) => {
@@ -68,34 +73,43 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
                 height="14"
               />
               {data.meta_author_name}
-            </Button>
+            </SemanticButton>
             <span className={styles.modelMetaText}><Icon className={styles.metaIcon} name="calendar outline"/>{formattedDate}</span>
           </div>
           <div className={styles.modelActions}>
+            {onDeleteButtonClick &&
+              (<SemanticButton
+                className={styles.buttonIcon}
+                data-testid="delete-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteButtonClick();
+                }}
+              >
+                <Icon
+                  style={{margin: '0'}} className={styles.metaIcon}
+                  name="trash alternate outline"
+                />
+              </SemanticButton>
+              )}
+            {onCopyButtonClick && (
+              <SemanticButton
+                className={styles.buttonIcon}
+                data-testid="copy-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCopyButtonClick();
+                }}
+              >
+                <Icon
+                  style={{margin: '0'}} className={styles.metaIcon}
+                  name="clone outline"
+                />
+              </SemanticButton>
+            )}
+
             <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteButtonClick();
-              }}
-            ><Icon
-                style={{margin: '0'}}
-                className={styles.metaIcon}
-                name="trash alternate outline"
-              />
-            </Button>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                onCopyButtonClick();
-              }}
-            ><Icon
-                style={{margin: '0'}}
-                className={styles.metaIcon}
-                name="clone outline"
-              />
-            </Button>
-            <Button
-              className={styles.modelBtnView}
+              size={'small'}
               onClick={(e) => {
                 e.stopPropagation();
                 // navigateTo(data.model_map);
@@ -110,4 +124,4 @@ const ModelGridItem: React.FC<ModelGridItemProps> = ({
   );
 };
 
-export default ModelGridItem;
+export default ModelCard;

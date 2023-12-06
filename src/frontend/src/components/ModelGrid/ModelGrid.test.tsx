@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'components';
-import {IModelCard} from 'components/ModelCard';
-import {ISortOption} from 'components/SortDropdown';
+import React from 'react';
+import {render, screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {IModelCard} from '../ModelCard';
+import ModelGrid from '../ModelGrid';
 
 const models: IModelCard[] = [
   {
@@ -242,119 +241,49 @@ const models: IModelCard[] = [
   },
 ];
 
-const navbarItems2 = [
-  {
-    name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
-      {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
-      {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
-  },
-  {name: 'filters', label: 'Filters', admin: false, to: '/tools'},
-  {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
-];
+describe('ModelGrid Tests', () => {
+  test('It renders the ModelGrid component', () => {
+    render(
+      <ModelGrid
+        data={models}
+        navigateTo={jest.fn()}
+        handleDeleteButtonClick={jest.fn()}
+        handleCopyButtonClick={jest.fn()}
+      />,
+    );
 
-const sortOptions: ISortOption[] = [
-  {text: 'Most Recent', value: 'mostRecent'},
-  {text: 'Less Recent', value: 'lessRecent'},
-  {text: 'A-Z', value: 'aToZ'},
-  {text: 'Z-A', value: 'zToA'},
-];
+    expect(screen.getByTestId('model-grid')).toBeInTheDocument();
 
-
-export default {
-  /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
-  title: 'Modflow/ModelGrid',
-  component: ModelGrid,
-} as Meta<typeof ModelGrid>;
-
-export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
-  const [modelData, setModelData] = useState(models);
-
-  const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
-    return data.filter((model) => model.meta_author_name === authorName);
-  };
-  
-  const [filteredData, setFilteredData] = useState(filterModelsByAuthorName('Catalin Stefan', modelData));
-
-  const handleDeleteButtonClick = (id: number) => {
-    setModelData(prevModelData => {
-      const updatedModelData = prevModelData.filter((item) => item.id !== id);
-      // Update filteredData based on the updated modelData
-      const updatedFilteredData = filterModelsByAuthorName('Catalin Stefan', updatedModelData);
-      setFilteredData(updatedFilteredData);
-      console.log(`Delete button clicked for ID: ${id}`);
-      return updatedModelData;
+    // You might want to add more specific checks for rendered elements, like checking for specific model titles, images, etc.
+    // For instance:
+    models.forEach((model) => {
+      expect(screen.getByText(model.model_title)).toBeInTheDocument();
+      expect(screen.getByAltText(model.model_description)).toBeInTheDocument();
     });
-  };
+  });
 
-  const handleCopyButtonClick = (id: number) => {
-    // Handle copy functionality here
-    console.log(`Copy button clicked for ID: ${id}`);
-  };
+  test('It invokes functions correctly on button clicks', async () => {
+    const mockNavigateTo = jest.fn();
+    const mockDeleteButtonClick = jest.fn();
+    const mockCopyButtonClick = jest.fn();
 
-  return (
-    <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={filteredData}
-          setModelData={setFilteredData}
-        >
-          <SliderSwiper
-            sectionTitle={'My Models'}
-          >
-            {filteredData.map((item) => (
-              <ModelCard
-                key={item.id} data={item}
-                navigateTo={() => {
-                }}
-                onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-                onCopyButtonClick={() => handleCopyButtonClick(item.id)}
-              />
-            ))}
-          </SliderSwiper>
-        </SortDropdown>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        >
-          <ModelGrid
-            sectionTitle={'All Models'}
-            data={modelData}
-            navigateTo={() => {
-            }}
-            // handleDeleteButtonClick={handleDeleteButtonClick}
-            handleCopyButtonClick={handleCopyButtonClick}
-          />
-        </SortDropdown>
-      </ContentWrapper>
-    </div>
-  );
-};
+    render(
+      <ModelGrid
+        data={models}
+        navigateTo={mockNavigateTo}
+        handleDeleteButtonClick={mockDeleteButtonClick}
+        handleCopyButtonClick={mockCopyButtonClick}
+      />,
+    );
 
-export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
-  <ModelGrid
-    sectionTitle={'All Models'}
-    data={models}
-    navigateTo={() => {
-    }}
-    handleDeleteButtonClick={() => {
-    }}
-    handleCopyButtonClick={() => {
-    }}
-  />
-;
+    // For example, simulate button clicks and verify if respective functions are called
+    const firstDeleteButton = screen.getAllByTestId('delete-button')[0];
+    await userEvent.click(firstDeleteButton);
+    expect(mockDeleteButtonClick).toHaveBeenCalledWith(models[0].id);
+
+    const secondCopyButton = screen.getAllByTestId('copy-button')[1];
+    await userEvent.click(secondCopyButton);
+    expect(mockCopyButtonClick).toHaveBeenCalledWith(models[1].id);
+  });
+});
 

@@ -1,64 +1,35 @@
-import React, {useState} from 'react';
-import ModelGridItem from './ModelGridItem';
+import React from 'react';
+import ModelCard, {IModelCard} from 'components/ModelCard';
 import styles from './ModelGrid.module.less';
-import {IModelGridItem} from './types/ModelGrid.type';
-import SortDropdown from 'components/SortDropdown';
-import {ISortOption} from 'components/SortDropdown/types/SortDropdown.type';
+import SectionTitle from '../SectionTitle';
 
 interface ModelGridProps {
-  data: IModelGridItem[];
+  sectionTitle?: string;
+  data: IModelCard[];
   navigateTo: (path: string) => void;
+  handleDeleteButtonClick?: ((id: number) => void) | undefined;
+  handleCopyButtonClick?: ((id: number) => void) | undefined;
+  columns?: number;
 }
 
-const sortOptions: ISortOption[] = [
-  {text: 'Sort by Author', value: 'author'},
-  {text: 'Most Recent', value: 'mostRecent'},
-  {text: 'Less Recent', value: 'lessRecent'},
-  {text: 'A-Z', value: 'aToZ'},
-  {text: 'Z-A', value: 'zToA'},
-  {text: 'Most Popular', value: 'mostPopular'},
-];
+const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, handleDeleteButtonClick, handleCopyButtonClick, columns = 4}) => {
 
-const title = 'All Models';
-
-const ModelGrid: React.FC<ModelGridProps> = ({data, navigateTo}) => {
-
-  const [modelData, setModelData] = useState(data);
-
-  const handleDeleteButtonClick = (id: number) => {
-    // Handle delete functionality here
-    const updatedModelData = modelData.filter((item) => item.id !== id);
-    setModelData(updatedModelData);
-    console.log(`Delete button clicked for ID: ${id}`);
-  };
-
-  const handleCopyButtonClick = (id: number) => {
-    // Handle copy functionality here
-    console.log(`Copy button clicked for ID: ${id}`);
-  };
+  const gridColumns = `gridColumns${columns}`;
 
   return (
-    <div className={styles.modelGridWrapper}>
-      <div className={styles.modelGridHeadline}>
-        {title && (
-          <div className={styles.title}>
-            <h2>{title}</h2>
-          </div>
-        )}
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        />
-      </div>
-      <div className={styles.modelGrid}>
-        {modelData.map((item) => (
-          <ModelGridItem
+    <div
+      data-testid="model-grid"
+      className={sectionTitle ? `${styles.modelGridWrapper + ' sectionTitled'}` : styles.modelGridWrapper}
+    >
+      {sectionTitle && <SectionTitle title={sectionTitle}/>}
+      <div className={`${styles.modelGrid} ${styles[gridColumns] ? styles[gridColumns] : ''}`}>
+        {data.map((item) => (
+          <ModelCard
+            className={styles.modelGridItem}
             key={item.id} data={item}
             navigateTo={navigateTo}
-            onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-            onCopyButtonClick={() => handleCopyButtonClick(item.id)}
+            onDeleteButtonClick={handleDeleteButtonClick && (() => handleDeleteButtonClick(item.id))}
+            onCopyButtonClick={handleCopyButtonClick && (() => handleCopyButtonClick(item.id))}
           />
         ))}
       </div>

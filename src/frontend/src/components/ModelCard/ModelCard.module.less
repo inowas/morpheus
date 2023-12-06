@@ -1,32 +1,17 @@
 @import 'components/site.variables';
 
-.modelGridItem {
+.modelCard {
   width: 100%;
-  margin-right: 20px;
-  margin-bottom: 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
   border-radius: 2px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.154229);
+  background-color: @white;
   display: flex;
   flex-direction: column;
   transition: 300ms;
   cursor: pointer;
-
-  @media (min-width: 680px) {
-    width: calc((100% / 2) - 20px);
-    margin-right: 20px;
-  }
-
-  @media (min-width: @breakpoint-tablet-horizontal) {
-    width: calc((100% / 3) - 20px);
-    margin-right: 20px;
-  }
-
-  @media (min-width: @breakpoint-desktop-small) {
-    width: calc((100% / 4) - 20px);
-  }
 
   &:hover,
   &:focus {
@@ -34,11 +19,11 @@
   }
 
   .modelImage {
-    min-height: 150px;
+    height: 150px !important;
     object-fit: cover;
   }
 
-  .modelGridContent {
+  .modelContent {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -48,7 +33,6 @@
 
     .modelHeadline {
       text-align: left;
-      margin-bottom: 14px;
       padding-left: 18px;
       position: relative;
 
@@ -65,21 +49,14 @@
 
       .modelTitle {
         margin: 0 0 5px 0;
-        font-size: 15px;
-        font-weight: 600;
-        font-style: normal;
-        letter-spacing: 0px;
-        line-height: 20px;
         color: #333333;
       }
 
       .modelDescription {
+        color: #666666;
         font-size: 13.5px;
         font-weight: 400;
-        font-style: normal;
-        letter-spacing: 0px;
-        line-height: 19px;
-        color: #666666;
+        line-height: 1.4;
       }
     }
 
@@ -87,15 +64,23 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
+      align-items: center;
 
-      button {
+      .buttonIcon {
         margin: 0;
         padding: 0;
+
         border: none;
         box-shadow: none;
         background: unset;
         cursor: pointer;
         transition: 300ms;
+
+        font-size: 17px;
+        letter-spacing: 0px;
+        line-height: 1;
+        font-weight: 300;
+        color: black;
 
         &:hover,
         &:focus {
@@ -104,6 +89,7 @@
       }
 
       .modelAuthor {
+        margin-top: 14px;
         display: flex;
         align-items: center;
 
@@ -114,13 +100,18 @@
           padding: 0;
           border: none;
           box-shadow: none;
-          color: rgba(221, 39, 39, 1);
+          max-width: 90px;
+
+          color: @ref-color-red;
           text-align: left;
+
           font-size: 11px;
           font-weight: 400;
-          font-style: normal;
-          letter-spacing: 0px;
-          line-height: 16px;
+          line-height: 1.5;
+
+          text-align: left;
+          text-transform: unset;
+
           background: unset;
           transition: 300ms;
 
@@ -140,13 +131,13 @@
         .modelMetaText {
           display: block;
           position: relative;
-          color: rgba(51, 51, 51, 1);
+          color: @ref-color-blackLight;
+
           font-size: 11px;
           font-weight: 400;
-          font-style: normal;
-          letter-spacing: 0px;
+          line-height: 1.5;
+
           text-align: left;
-          line-height: 18px;
           padding-left: 8px;
           padding-right: 10px;
           margin-left: 6px;
@@ -156,42 +147,21 @@
             display: block;
             width: 1px;
             height: 80%;
-            background-color: rgba(51, 51, 51, 1);
+            background-color: @ref-color-blackLight;
             position: absolute;
             top: 10%;
             left: 0;
           }
         }
-
       }
 
       .modelActions {
+        margin-top: 14px;
 
         button:not(:last-child) {
           margin-right: 8px;
         }
-
-
-        .modelBtnView {
-          background-color: #8494B2;
-          border-radius: 0;
-          color: @white;
-          font-size: 12px;
-          font-weight: 400;
-          font-style: normal;
-          letter-spacing: 0px;
-          text-align: left;
-          padding: 10px;
-          transition: 300ms;
-
-          &:hover,
-          &:focus {
-            background-color: @blue;
-          }
-
-        }
       }
-
     }
   }
 }
