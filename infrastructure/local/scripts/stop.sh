@@ -7,4 +7,5 @@ docker compose -f "$infrastructureRoot/docker-compose.yml" \
   --profile mailcatcher \
   --profile keycloak \
   --profile backend \
+  --profile celery \
   down

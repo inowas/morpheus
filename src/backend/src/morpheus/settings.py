@@ -29,6 +29,9 @@ class Settings:
         self.OPENAPI_LOCAL_SPEC_FILE: str = os.path.abspath(os.path.join(os.path.dirname(__file__), 'openapi.yml'))
         self.OPENAPI_BUNDLED_SPEC_FILE: str = os.path.abspath(
             os.path.join(os.path.dirname(__file__), 'openapi.bundle.yml'))
+        self.CELERY_BROKER = values.CELERY_BROKER
+        self.CELERY_RESULT_BACKEND = values.CELERY_RESULT_BACKEND
+        self.CELERY_INCLUDE_TASK_MODULES = ['morpheus.modflow.tasks']
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):

@@ -44,6 +44,10 @@ run-tests:
 fix-code-style:
 	scripts/dev/qa_check/fix-code-style.sh
 
+## run celery worker
+run-celery-worker:
+	scripts/dev/run-celery-worker.sh
+
 ## runs flask app
 run-flask-app:
 	scripts/dev/run-flask-app.sh
