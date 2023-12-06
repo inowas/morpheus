@@ -7,7 +7,7 @@ ADD src/backend/src /src
 RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle.yml /src/morpheus/openapi.yml
 
 
-FROM python:3.11-bookworm as base
+FROM python:3.12-bookworm as base
 
 # add files to image
 ARG BACKEND_APP_ROOT_PATH
