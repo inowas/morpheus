@@ -43,13 +43,11 @@ const useFilterOptions = (data: IModelCard[], updateModelData: (data: IModelCard
         ),
       );
     }
-    console.log(filterOptions);
     updateModelData(filteredData);
   };
 
   useEffect(() => {
     applyFilters();
-    console.log('applyFilters');
   }, [filterOptions]);
 
   const handleFilterChange = (fieldName: string, value: boolean) => {

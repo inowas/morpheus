@@ -1,14 +1,17 @@
 import React, {useState} from 'react';
+import {MapContainer, TileLayer} from 'react-leaflet';
+import {additionalDescription, boundaryDescription, createOwnerOptions, formatNumber} from './infrastructure/calculate';
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import styles from './FormFilter.module.less';
 import Button from '../Button/Button';
-import Slider from 'rc-slider';
 import {IModelCard} from '../ModelCard';
-import {additionalDescription, boundaryDescription, createOwnerOptions} from './infrastructure/calculate';
+import Slider from 'rc-slider';
 import {IFilterOptions} from './types/Filter.type';
 import useFilterOptions from './hooks/useFilter';
+
+import styles from './FormFilter.module.less';
+import 'leaflet/dist/leaflet.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
@@ -46,9 +49,11 @@ const defaultFilterOptions: IFilterOptions = {
   fromDate: '2023-01-01',
   toDate: '2024-01-01',
   gridCellsValue: 36000,
+  mapAccess: false,
 };
 
 const userName: string = 'Catalin Stefan';
+
 
 const options = [
   {key: '1', text: 'React', value: 'React'},
@@ -61,8 +66,6 @@ const options = [
 const FormFilter = ({data, updateModelData}: IProps) => {
   const [modelData, setModelData] = useState(data);
   const ownerOptions = createOwnerOptions(modelData);
-
-
   const countValue = (key: keyof IModelCard, value: string) => {
     let count = 0;
     modelData.forEach((model) => {
@@ -72,15 +75,12 @@ const FormFilter = ({data, updateModelData}: IProps) => {
     });
     return count;
   };
-
   const countStatus = (status: boolean) => {
     return modelData.filter((model) => model.meta_status === status).length;
   };
-
   const rendomCount = () => {
     return Math.floor(Math.random() * 50);
   };
-
   const {
     filterOptions,
     handleRadioChange,
@@ -95,7 +95,6 @@ const FormFilter = ({data, updateModelData}: IProps) => {
 
 
   return (
-
     <Form className={styles.form}>
       <div className={styles.titleWrapper}>
         <h2 className={styles.title}>Filters</h2>
@@ -200,7 +199,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
         </div>
         <div className={styles.dateInputWrapper}>
           <div className={styles.dateInputInner}>
-            <label className={styles.dateLable}>From Date</label>
+            <label className={styles.dateLable}>Date from</label>
             <div className={styles.divider}>
               <DatePicker
                 selected={new Date(filterOptions.fromDate)}
@@ -212,7 +211,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
             </div>
           </div>
           <div className={styles.dateInputInner}>
-            <label className={styles.dateLable}>To Date</label>
+            <label className={styles.dateLable}>Date to</label>
             <div className={styles.divider}>
               <DatePicker
                 selected={new Date(filterOptions.toDate)}
@@ -223,28 +222,6 @@ const FormFilter = ({data, updateModelData}: IProps) => {
               <Icon className={styles.dateIcon} name="calendar outline"/>
             </div>
           </div>
-          {/*<div className={styles.dateInputInner}>*/}
-          {/*  <Input*/}
-          {/*    className={styles.dateInput}*/}
-          {/*    type="date"*/}
-          {/*    label="Date from"*/}
-          {/*    name="fromDate"*/}
-          {/*    value={filterOptions.fromDate}*/}
-          {/*    onChange={handleDateChange}*/}
-          {/*  />*/}
-          {/*  <Icon className={styles.dateIcon} name="calendar outline"/>*/}
-          {/*</div>*/}
-          {/*<div className={styles.dateInputInner}>*/}
-          {/*  <Input*/}
-          {/*    className={styles.dateInput}*/}
-          {/*    type="date"*/}
-          {/*    label="Date to"*/}
-          {/*    name="toDate"*/}
-          {/*    value={filterOptions.toDate}*/}
-          {/*    onChange={handleDateChange}*/}
-          {/*  />*/}
-          {/*  <Icon className={styles.dateIcon} name="calendar outline"/>*/}
-          {/*</div>*/}
         </div>
       </Form.Field>
       {/*// By Boundary Conditions*/}
@@ -253,7 +230,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
         {Object.keys(filterOptions.boundaryValues).map((key) => (
           <div className={styles.checkboxWrapper} key={key}>
             <Checkbox
-              className={styles.checkbox}
+              className={`${styles.checkbox} ${styles.checkboxBoundary}`}
               label={key}
               name={key}
               checked={filterOptions.boundaryValues[key]}
@@ -267,13 +244,19 @@ const FormFilter = ({data, updateModelData}: IProps) => {
       {/*// By Number of Grid Cells*/}
       <Form.Field className={styles.field}>
         <label className={styles.label}>By Number of Grid Cells</label>
-        <Slider
-          min={1}
-          max={240000}
-          step={100}
-          value={filterOptions.gridCellsValue}
-          onChange={handleSlider}
-        />
+        <div className={styles.sliderWrapper}>
+          <Slider
+            className={styles.slider}
+            min={0}
+            max={240000}
+            step={100}
+            value={filterOptions.gridCellsValue}
+            onChange={handleSlider}
+            ariaLabelForHandle={formatNumber(filterOptions.gridCellsValue)}
+          />
+          <span className={styles.sliderLabel}>{formatNumber(0)}</span>
+          <span className={styles.sliderLabel}>{formatNumber(240000)}</span>
+        </div>
       </Form.Field>
       {/*// By Additional Features*/}
       <Form.Field className={styles.field}>
@@ -295,6 +278,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
       <Form.Field className={styles.field}>
         <label className={styles.label}>By Keywords</label>
         <Dropdown
+          className={styles.dropdown}
           name="selectedKeywords"
           placeholder="Select keywords"
           fluid={true}
@@ -308,6 +292,29 @@ const FormFilter = ({data, updateModelData}: IProps) => {
             handleDropdownChange('selectedKeywords', selectedOptions);
           }}
         />
+      </Form.Field>
+      {/*// By Map*/}
+      <Form.Field className={styles.field}>
+        <label className={`${styles.label} ${styles.labelMap}`}>By location
+          <Checkbox
+            className={styles.checkbox}
+            name="mapAccess"
+            checked={filterOptions.mapAccess}
+            onChange={(_, {checked}) => handleFilterChange('mapAccess', checked || false)}
+          />
+        </label>
+        <div className={`${styles.mapWrapper} ${!filterOptions.mapAccess ? styles.hidden : ''}`}>
+          <MapContainer
+            className={styles.map}
+            center={[50.940474211933974, 6.960182189941407]}
+            zoom={1}
+            style={{width: '100%', height: '200px', zIndex: 0}}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </MapContainer>
+        </div>
       </Form.Field>
     </Form>
 

@@ -30,4 +30,5 @@ export interface IFilterOptions {
   fromDate: string,
   toDate: string,
   gridCellsValue: number
+  mapAccess: boolean
 }

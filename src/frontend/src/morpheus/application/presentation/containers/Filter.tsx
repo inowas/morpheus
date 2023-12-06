@@ -279,7 +279,7 @@ const Filter = () => {
       <SortDropdown
         placeholder="Order By"
         sortOptions={sortOptions}
-        data={models}
+        data={modelData}
         setModelData={setModelData}
       >
         <ModelGrid

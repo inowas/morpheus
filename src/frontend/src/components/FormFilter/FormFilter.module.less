@@ -28,10 +28,10 @@ form.form {
 
     label.label {
       color: @ref-color-blackLight;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 16px !important;
+      font-weight: 500;
       letter-spacing: 0px;
-      line-height: 21px;
+      line-height: 21px !important;
       margin-bottom: 8px;
     }
 
@@ -42,6 +42,15 @@ form.form {
       letter-spacing: 0px;
       line-height: 18px;
       margin: 5px;
+    }
+
+    label.labelMap {
+      display: flex;
+      align-items: center;
+
+      .checkbox {
+        margin-left: 10px;
+      }
     }
 
     .checkboxWrapper {
@@ -88,6 +97,14 @@ form.form {
       }
 
 
+    }
+
+    .checkboxBoundary {
+      min-width: 66px;
+    }
+
+    .radioWrapper {
+      margin-bottom: 10px;
     }
 
     .radio {
@@ -142,7 +159,7 @@ form.form {
       }
 
       .dateInput {
-        cursor: p;
+        cursor: pointer;
         padding: 5px;
         margin: 0;
         border: none;
@@ -160,45 +177,6 @@ form.form {
         align-items: baseline;
       }
 
-      .dateInputInner {
-        //display: flex;
-        //align-items: end;
-      }
-
-      .dateInput {
-        //display: flex;
-        //flex-direction: column;
-
-        //div {
-        //  background: transparent;
-        //  color: @ref-color-blackLight;
-        //  font-size: 11px;
-        //  font-weight: 400;
-        //  letter-spacing: 0px;
-        //  line-height: 18px;
-        //  padding: 0;
-        //  text-align: center;
-        //}
-
-        //input {
-        //  padding: 5px;
-        //  margin: 0;
-        //  border: none;
-        //  border-radius: unset;
-        //  text-align: center;
-        //
-        //  color: @ref-color-blackLight;
-        //  font-size: 11px;
-        //  font-weight: 400;
-        //  letter-spacing: 0px;
-        //}
-        //
-        //input[type="date"]::-webkit-inner-spin-button,
-        //input[type="date"]::-webkit-calendar-picker-indicator {
-        //  display: none;
-        //}
-      }
-
       .dateIcon {
         margin: 0 0 0 5px;
       }
@@ -210,6 +188,21 @@ form.form {
       }
     }
 
+    .sliderWrapper {
+      margin-top: 36px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .sliderLabel {
+        color: @ref-color-blackLight;
+        font-size: 11px;
+        font-weight: 400;
+        letter-spacing: 0px;
+        display: inline-block;
+      }
+    }
+
     .metaStatus {
       display: inline-block;
       width: 10px;
@@ -218,7 +211,34 @@ form.form {
       border-radius: 50%;
       margin-left: 5px;
     }
+  }
 
+  .mapWrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+
+    &:after {
+      transition: opacity 300ms linear;
+      content: '';
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0;
+      background-color: @black;
+    }
+  }
+
+  .mapWrapper.hidden {
+    &:after {
+      pointer-events: all;
+      opacity: 0.2;
+    }
   }
 }
 

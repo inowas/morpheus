@@ -32,23 +32,39 @@
   transition: width 300ms linear;
   margin-right: 20px;
 
-  &:before {
-    content: '';
-    display: block;
-    width: 20px;
-    height: calc(100% + @sidebarButton);
-    background: @ref-color-lightGrey;
-    right: 100%;
-    bottom: 0;
-    position: absolute;
-    overflow-y: hidden;
-    transition: inherit;
-  }
+  //&:before {
+  //  content: '';
+  //  display: block;
+  //  width: 20px;
+  //  height: calc(100% + @sidebarButton);
+  //  background: @ref-color-lightGrey;
+  //  right: 100%;
+  //  bottom: 0;
+  //  position: absolute;
+  //  overflow-y: hidden;
+  //  transition: inherit;
+  //}
 
   aside {
+    overflow: hidden;
     width: @sidebarWidth;
-    height: 100%;
     transition: inherit;
+    height: 100%;
+    margin: 0 0 0 -20px;
+    padding-left: 20px;
+
+    &:before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 100%;
+      background: @ref-color-lightGrey;
+      right: 100%;
+      bottom: 0;
+      position: absolute;
+      overflow-y: hidden;
+      transition: inherit;
+    }
   }
 
 }
@@ -59,15 +75,14 @@
     width: 0;
     margin-right: 0;
 
-    &:before {
-      width: 0;
-    }
-
     aside {
-      overflow: hidden;
+      background: transparent;
       min-width: 0;
       width: 0;
 
+      &:before {
+        width: 0;
+      }
     }
   }
 
