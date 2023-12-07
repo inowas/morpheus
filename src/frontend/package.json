@@ -45,7 +45,6 @@
     "recharts": "^2.8.0",
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
-    "semantic-ui-css": "^2.5.0",
     "semantic-ui-less": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
     "source-map-explorer": "^2.5.3",
