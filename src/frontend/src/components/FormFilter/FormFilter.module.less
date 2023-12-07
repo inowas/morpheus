@@ -1,0 +1,244 @@
+@import 'components/site.variables';
+
+form.form {
+  background: @ref-color-lightGrey;
+  height: 100%;
+  padding: 16px 20px 16px 0;
+
+  .titleWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+
+    .title {
+      margin: 0;
+      opacity: 1;
+      color: @ref-color-blackLight;
+      font-size: 25px;
+      font-weight: 400;
+      line-height: 33px;
+      text-transform: uppercase;
+    }
+  }
+
+  .field {
+    margin-bottom: 18px !important;
+
+    label.label {
+      color: @ref-color-blackLight;
+      font-size: 16px !important;
+      font-weight: 500;
+      letter-spacing: 0px;
+      line-height: 21px !important;
+      margin-bottom: 8px;
+    }
+
+    label.labelSmall {
+      color: @ref-color-blackLight;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0px;
+      line-height: 18px;
+      margin: 5px;
+    }
+
+    label.labelMap {
+      display: flex;
+      align-items: center;
+
+      .checkbox {
+        margin-left: 10px;
+      }
+    }
+
+    .checkboxWrapper {
+      display: flex;
+
+      .count,
+      .description {
+        margin: 0 0 0 5px;
+      }
+
+      .count span {
+        color: @ref-color-red;
+      }
+    }
+
+    .checkboxWrapper:not(:last-child) {
+      margin-bottom: 5px;
+    }
+
+    .checkbox {
+
+      label {
+        color: @ref-color-blackLight;
+        font-size: 13.5px;
+        font-weight: 400;
+        letter-spacing: 0px;
+        line-height: 19px;
+
+        &:before {
+          top: 2px;
+        }
+
+        &:after,
+        &:before {
+          width: 15px;
+          height: 15px;
+        }
+
+      }
+
+      input:checked ~ .box:after,
+      input:checked ~ label:after {
+        color: @blue;
+      }
+
+
+    }
+
+    .checkboxBoundary {
+      min-width: 66px;
+    }
+
+    .radioWrapper {
+      margin-bottom: 10px;
+    }
+
+    .radio {
+
+      &:not(:last-child) {
+        padding-right: 10px;
+        border-right: 1px solid @ref-color-red;
+      }
+
+      &:not(:first-child) {
+        padding-left: 10px;
+      }
+
+      label {
+        color: @ref-color-red;
+        font-size: 13.5px;
+        font-weight: 400;
+        letter-spacing: 0px;
+        padding: 0;
+
+        &:after,
+        &:before {
+          content: none !important;
+        }
+      }
+
+      input:checked ~ label {
+        text-decoration: underline;
+      }
+
+    }
+
+    .dateInputWrapper {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: 1fr;
+      grid-column-gap: 20px;
+      grid-row-gap: 0px;
+
+      .dateLable {
+        display: block;
+        margin-right: 20px;
+        padding: 0;
+
+        background: transparent;
+        color: @ref-color-blackLight;
+        font-size: 11px;
+        font-weight: 400;
+        letter-spacing: 0px;
+        line-height: 18px;
+        text-align: center;
+      }
+
+      .dateInput {
+        cursor: pointer;
+        padding: 5px;
+        margin: 0;
+        border: none;
+        border-radius: unset;
+        text-align: center;
+
+        color: @ref-color-blackLight;
+        font-size: 11px;
+        font-weight: 400;
+        letter-spacing: 0px;
+      }
+
+      .divider {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .dateIcon {
+        margin: 0 0 0 5px;
+      }
+    }
+
+    .dropdown {
+      a {
+        color: @blue;
+      }
+    }
+
+    .sliderWrapper {
+      margin-top: 36px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .sliderLabel {
+        color: @ref-color-blackLight;
+        font-size: 11px;
+        font-weight: 400;
+        letter-spacing: 0px;
+        display: inline-block;
+      }
+    }
+
+    .metaStatus {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      flex-basis: 10px;
+      border-radius: 50%;
+      margin-left: 5px;
+    }
+  }
+
+  .mapWrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+
+    &:after {
+      transition: opacity 300ms linear;
+      content: '';
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0;
+      background-color: @black;
+    }
+  }
+
+  .mapWrapper.hidden {
+    &:after {
+      pointer-events: all;
+      opacity: 0.2;
+    }
+  }
+}
+

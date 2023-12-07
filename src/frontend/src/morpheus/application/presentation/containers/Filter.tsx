@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'components';
+import {useTranslate} from '../../application';
+import {useNavigate} from 'common/hooks';
+import ModelGrid from 'components/ModelGrid/ModelGrid';
 import {IModelCard} from 'components/ModelCard';
-import {ISortOption} from 'components/SortDropdown';
-import Sidebar from '../Sidebar';
+import SortDropdown from 'components/SortDropdown';
+import {ISortOption} from 'components/SortDropdown/types/SortDropdown.type';
+import Sidebar from 'components/Sidebar';
 
 const models: IModelCard[] = [
   {
@@ -243,16 +244,6 @@ const models: IModelCard[] = [
   },
 ];
 
-const navbarItems2 = [
-  {
-    name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
-      {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
-      {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
-  },
-  {name: 'filters', label: 'Filters', admin: false, to: '/tools'},
-  {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
-];
-
 const sortOptions: ISortOption[] = [
   {text: 'Most Recent', value: 'mostRecent'},
   {text: 'Less Recent', value: 'lessRecent'},
@@ -260,93 +251,10 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
-export default {
-  /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
-  title: 'Modflow/ModelGrid',
-  component: ModelGrid,
-} as Meta<typeof ModelGrid>;
+const Filter = () => {
 
-export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
-  const [modelData, setModelData] = useState(models);
-
-  const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
-    return data.filter((model) => model.meta_author_name === authorName);
-  };
-
-  const [filteredData, setFilteredData] = useState(filterModelsByAuthorName('Catalin Stefan', modelData));
-
-  const handleDeleteButtonClick = (id: number) => {
-    setModelData(prevModelData => {
-      const updatedModelData = prevModelData.filter((item) => item.id !== id);
-      // Update filteredData based on the updated modelData
-      const updatedFilteredData = filterModelsByAuthorName('Catalin Stefan', updatedModelData);
-      setFilteredData(updatedFilteredData);
-      console.log(`Delete button clicked for ID: ${id}`);
-      return updatedModelData;
-    });
-  };
-
-  const handleCopyButtonClick = (id: number) => {
-    // Handle copy functionality here
-    console.log(`Copy button clicked for ID: ${id}`);
-  };
-
-  return (
-    <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={filteredData}
-          setModelData={setFilteredData}
-        >
-          <SliderSwiper
-            sectionTitle={'My Models'}
-          >
-            {filteredData.map((item) => (
-              <ModelCard
-                key={item.id} data={item}
-                navigateTo={() => {
-                }}
-                onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-                onCopyButtonClick={() => handleCopyButtonClick(item.id)}
-              />
-            ))}
-          </SliderSwiper>
-        </SortDropdown>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        >
-          <ModelGrid
-            sectionTitle={'All Models'}
-            data={modelData}
-            navigateTo={() => {
-            }}
-            // handleDeleteButtonClick={handleDeleteButtonClick}
-            handleCopyButtonClick={handleCopyButtonClick}
-          />
-        </SortDropdown>
-      </ContentWrapper>
-    </div>
-  );
-};
-
-
-export const ModflowFilterPageExample: StoryFn<typeof ModelGrid> = () => {
+  const {translate} = useTranslate();
+  const navigateTo = useNavigate();
   const [modelData, setModelData] = useState(models);
 
   const updateModelData = (newData: IModelCard[]) => {
@@ -355,9 +263,9 @@ export const ModflowFilterPageExample: StoryFn<typeof ModelGrid> = () => {
 
   const sectionTitle = () => {
     if (1 === modelData.length) {
-      return (<><span>1</span> Model found </>);
+      return (<><span>1</span> {translate('Model found')}</>);
     } else {
-      return (<><span>{modelData.length}</span> Models found</>);
+      return (<><span>{modelData.length}</span> {translate('Models found')}</>);
     }
   };
 
@@ -367,47 +275,22 @@ export const ModflowFilterPageExample: StoryFn<typeof ModelGrid> = () => {
   };
 
   return (
-    <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
+    <Sidebar data={modelData} updateModelData={updateModelData}>
+      <SortDropdown
+        placeholder="Order By"
+        sortOptions={sortOptions}
+        data={modelData}
+        setModelData={setModelData}
+      >
+        <ModelGrid
+          sectionTitle={sectionTitle()}
+          data={modelData}
+          navigateTo={navigateTo}
+          handleCopyButtonClick={handleCopyButtonClick}
         />
-      </Header>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <Sidebar data={modelData} updateModelData={updateModelData}>
-          <SortDropdown
-            placeholder="Order By"
-            sortOptions={sortOptions}
-            data={models}
-            setModelData={setModelData}
-          >
-            <ModelGrid
-              sectionTitle={sectionTitle()}
-              data={modelData}
-              navigateTo={() => {
-              }}
-              handleCopyButtonClick={handleCopyButtonClick}
-            />
-          </SortDropdown>
-        </Sidebar>
-      </ContentWrapper>
-    </div>
+      </SortDropdown>
+    </Sidebar>
   );
 };
 
-export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
-  <ModelGrid
-    sectionTitle={'All Models'}
-    data={models}
-    navigateTo={() => {
-    }}
-    handleDeleteButtonClick={() => {
-    }}
-    handleCopyButtonClick={() => {
-    }}
-  />
-;
-
+export default Filter;
