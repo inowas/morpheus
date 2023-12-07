@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useEffect} from 'react';
 import 'rc-slider/assets/index.css';
 import './styles.less';
 import Slider from 'rc-slider';
@@ -13,7 +13,6 @@ interface IProps {
 
 const ParameterSlider = ({parameter, onChange}: IProps) => {
   const [param, setParam] = React.useState(parameter);
-
   const handleBlur = () => onChange(param);
 
   const handleParams = (value: number | number[]) => ({...param, value: Array.isArray(value) ? value[0] : value});
@@ -31,6 +30,10 @@ const ParameterSlider = ({parameter, onChange}: IProps) => {
     setParam(newParam);
     onChange(newParam);
   };
+
+  useEffect(() => {
+    setParam(parameter);
+  }, [parameter]);
 
   return (
     <Grid.Row columns={3} className={styles.row}>

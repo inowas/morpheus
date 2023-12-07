@@ -4,17 +4,14 @@ import styles from './ModelGrid.module.less';
 import SectionTitle from '../SectionTitle';
 
 interface ModelGridProps {
-  sectionTitle?: string;
+  sectionTitle?: string | React.ReactNode;
   data: IModelCard[];
   navigateTo: (path: string) => void;
   handleDeleteButtonClick?: ((id: number) => void) | undefined;
   handleCopyButtonClick?: ((id: number) => void) | undefined;
-  columns?: number;
 }
 
-const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, handleDeleteButtonClick, handleCopyButtonClick, columns = 4}) => {
-
-  const gridColumns = `gridColumns${columns}`;
+const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, handleDeleteButtonClick, handleCopyButtonClick}) => {
 
   return (
     <div
@@ -22,7 +19,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, ha
       className={sectionTitle ? `${styles.modelGridWrapper + ' sectionTitled'}` : styles.modelGridWrapper}
     >
       {sectionTitle && <SectionTitle title={sectionTitle}/>}
-      <div className={`${styles.modelGrid} ${styles[gridColumns] ? styles[gridColumns] : ''}`}>
+      <div className={styles.modelGrid}>
         {data.map((item) => (
           <ModelCard
             className={styles.modelGridItem}

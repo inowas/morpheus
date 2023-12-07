@@ -12,7 +12,7 @@ import 'swiper/css/navigation';
 import SectionTitle from 'components/SectionTitle';
 
 interface IProps {
-  sectionTitle?: string;
+  sectionTitle?: string | React.ReactNode;
   children: ReactNode;
 }
 

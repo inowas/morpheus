@@ -9,7 +9,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 100%;
-  overflow: hidden;
+
 }
 
 .ui.container {
@@ -24,7 +24,7 @@ body {
 .js-plotly-plot {
 
   &.plotlyContainer {
-    display: flex !important;
+    display: flex;
     width: 100%;
     flex-grow: 5;
   }
@@ -40,18 +40,17 @@ body {
       display: flex;
       flex-direction: column;
       left: -5px;
-      top: 10px !important;
-      right: initial !important;
+      top: 10px;
+      right: initial;
     }
 
     .modebar-group {
-      display: flex !important;
+      display: flex;
       flex-direction: column;
-      padding: 0 !important;
+      padding: 0;
     }
   }
 }
-
 
 // Leaflet Map
 .leaflet-control-container .leaflet-top,
@@ -64,4 +63,40 @@ body {
   width: 100%;
   margin: 0 auto;
   z-index: 1;
+}
+
+// REACT DATEPICKER STYLES
+.react-datepicker__month-container .react-datepicker__day--selected,
+.react-datepicker__month-container .react-datepicker__day--in-selecting-range,
+.react-datepicker__month-container .react-datepicker__day--in-range,
+.react-datepicker__month-container .react-datepicker__month-text--selected,
+.react-datepicker__month-container .react-datepicker__month-text--in-selecting-range,
+.react-datepicker__month-container .react-datepicker__month-text--in-range,
+.react-datepicker__month-container .react-datepicker__quarter-text--selected,
+.react-datepicker__month-container .react-datepicker__quarter-text--in-selecting-range,
+.react-datepicker__month-container .react-datepicker__quarter-text--in-range,
+.react-datepicker__month-container .react-datepicker__year-text--selected,
+.react-datepicker__month-container .react-datepicker__year-text--in-selecting-range,
+.react-datepicker__month-container .react-datepicker__year-text--in-range {
+  background-color: @blue;
+}
+
+
+// REACT SLIDER STYLES (rc-slider)
+.rc-slider.rc-slider-horizontal {
+  .rc-slider-track {
+    background-color: @blue;
+  }
+
+  .rc-slider-handle:before {
+    content: attr(aria-label);
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: @ref-color-blackLight;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0px;
+  }
 }
