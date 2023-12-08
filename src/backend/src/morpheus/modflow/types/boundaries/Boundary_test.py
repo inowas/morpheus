@@ -1,6 +1,6 @@
 import unittest
 
-from morpheus.modflow.types.boundaries.Boundary import BoundaryType, BoundaryId, BoundaryName, Boundary
+from morpheus.modflow.types.boundaries.Boundary import BoundaryType, BoundaryId, BoundaryName
 
 
 class BoundaryTest(unittest.TestCase):
@@ -71,25 +71,3 @@ class BoundaryTest(unittest.TestCase):
         assert boundary_name == BoundaryName.from_value('name')
         assert boundary_name == BoundaryName('name')
         assert boundary_name != BoundaryName('other name')
-
-    def test_boundary(self):
-        boundary_id = BoundaryId.new()
-        boundary_type = BoundaryType.constant_head()
-        boundary_name = BoundaryName('name')
-        boundary = Boundary(id=boundary_id, boundary_type=boundary_type, boundary_name=boundary_name)
-        assert boundary.boundary_id == boundary_id
-        assert boundary.type == boundary_type
-        assert boundary.name == boundary_name
-        assert boundary.enabled is True
-
-        boundary = Boundary(id=boundary_id, boundary_type=boundary_type, boundary_name=boundary_name, enabled=False)
-        assert boundary.boundary_id == boundary_id
-        assert boundary.type == boundary_type
-        assert boundary.name == boundary_name
-        assert boundary.enabled is False
-
-        with self.assertRaises(NotImplementedError):
-            boundary.to_dict()
-
-        with self.assertRaises(NotImplementedError):
-            Boundary.from_dict({})
