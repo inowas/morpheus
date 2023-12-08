@@ -48,6 +48,9 @@ fix-code-style:
 run-celery-worker:
 	scripts/dev/run-celery-worker.sh
 
+stop-all-celery-workers:
+	scripts/dev/stop-all-celery-workers.sh
+
 ## runs flask app
 run-flask-app:
 	scripts/dev/run-flask-app.sh
