@@ -63,8 +63,8 @@ def calculate_chd_boundary_stress_period_data(
                 shapely_point = ShapelyPoint(observation.geometry.coordinates)
                 xx.append(line_string.project(shapely_point, normalized=True))
                 yy_start_heads.append(
-                    observation.get_mean_data(start_date_time, end_date_time).start_head.to_value())
-                yy_end_heads.append(observation.get_mean_data(start_date_time, end_date_time).end_head.to_value())
+                    observation.get_data_item(start_date_time, end_date_time).start_head.to_value())
+                yy_end_heads.append(observation.get_data_item(start_date_time, end_date_time).end_head.to_value())
 
             grid_cell_centers = spatial_discretization.grid.get_cell_centers()
             for cell in chd_boundary.affected_cells:

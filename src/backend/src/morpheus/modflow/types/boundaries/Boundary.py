@@ -2,7 +2,7 @@ import dataclasses
 from typing import Literal
 
 from morpheus.common.types import Uuid, String
-from morpheus.modflow.types.boundaries.ConstantHeadData import ConstantHeadObservation, ConstantHeadMeanDataItem
+from morpheus.modflow.types.boundaries.ConstantHeadData import ConstantHeadObservation, ConstantHeadDataItem
 
 from ..discretization.spatial import GridCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
@@ -203,5 +203,5 @@ class ConstantHead(Boundary):
         return self.geometry.as_geojson()
 
     def get_mean_data(self, start_date_time: StartDateTime,
-                      end_date_time: EndDateTime) -> list[ConstantHeadMeanDataItem]:
-        return [observation.get_mean_data(start_date_time, end_date_time) for observation in self.observations]
+                      end_date_time: EndDateTime) -> list[ConstantHeadDataItem]:
+        return [observation.get_data_item(start_date_time, end_date_time) for observation in self.observations]

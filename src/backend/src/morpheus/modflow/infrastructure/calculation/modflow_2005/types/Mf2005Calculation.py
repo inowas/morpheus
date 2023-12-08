@@ -3,7 +3,8 @@ import os
 import tempfile
 
 import flopy.utils.binaryfile as bf
-from flopy.utils.mflistfile import MfListBudget, SwtListBudget
+import numpy as np
+from flopy.utils.mflistfile import MfListBudget
 
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GmgPackageWrapper import create_gmg_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
@@ -31,6 +32,8 @@ class Mf2005Calculation(CalculationBase):
     modflow_model: ModflowModel
     calculation_profile: Mf2005CalculationProfile
     calculation_type = CalculationType.mf2005()
+    workspace_path: str | None
+    base_path: str | None
 
     calculation_state: CalculationState
     calculation_log: CalculationLog | None
@@ -71,7 +74,8 @@ class Mf2005Calculation(CalculationBase):
                  calculation_profile: Mf2005CalculationProfile,
                  calculation_state: CalculationState = CalculationState.created(),
                  calculation_log: CalculationLog | None = None,
-                 calculation_results: CalculationResult | None = None):
+                 calculation_results: CalculationResult | None = None,
+                 workspace_path=None, base_path=None):
 
         self.calculation_id = calculation_id
         self.modflow_model = modflow_model
@@ -79,6 +83,8 @@ class Mf2005Calculation(CalculationBase):
         self.calculation_state = calculation_state
         self.calculation_log = calculation_log
         self.calculation_result = calculation_results
+        self.workspace_path = workspace_path
+        self.base_path = base_path
 
     @classmethod
     def new(cls, modflow_model: ModflowModel, calculation_profile: Mf2005CalculationProfile):
@@ -87,7 +93,6 @@ class Mf2005Calculation(CalculationBase):
 
     @classmethod
     def from_dict(cls, obj):
-
         calculation_log = None
         if 'calculation_log' in obj and obj['calculation_log'] is not None:
             calculation_log = CalculationLog.from_list(obj['calculation_log'])
@@ -103,6 +108,7 @@ class Mf2005Calculation(CalculationBase):
             calculation_state=CalculationState.from_value(obj['calculation_state']),
             calculation_log=calculation_log,
             calculation_results=calculation_results,
+            workspace_path=obj['workspace_path'],
         )
 
     def to_dict(self) -> dict:
@@ -114,11 +120,13 @@ class Mf2005Calculation(CalculationBase):
             'calculation_state': self.calculation_state.to_str(),
             'calculation_log': self.calculation_log.to_list() if self.calculation_log is not None else None,
             'calculation_results': self.calculation_result.to_dict() if self.calculation_result is not None else None,
+            'workspace_path': self.workspace_path,
         }
 
-    def preprocess(self, data_base_path: str):
-        model_ws = os.path.join(data_base_path, self.modflow_model.model_id.to_str())
-        self.flopy_model = create_mf_package(self.modflow_model, model_ws=model_ws)
+    def preprocess(self, base_path: str):
+        self.base_path = os.path.abspath(base_path)
+        self.workspace_path = self.calculation_id.to_str()
+        self.flopy_model = create_mf_package(self.modflow_model, model_ws=self.get_absolute_path_to_workspace())
 
         # general packages
         self.general_packages = {
@@ -273,11 +281,19 @@ class Mf2005Calculation(CalculationBase):
         self.run()
         self.postprocess()
 
+    def get_absolute_path_to_workspace(self) -> str:
+        return os.path.join(self.base_path, self.workspace_path)
+
+    def get_file_with_extension(self, extension: str) -> str | None:
+        absolute_path = self.get_absolute_path_to_workspace()
+        for file in os.listdir(absolute_path):
+            if file.endswith(extension):
+                return os.path.join(self.get_absolute_path_to_workspace(), file)
+        return None
+
     def read_head_results(self) -> AvailableResults | None:
         try:
-            workspace = self.flopy_model.model_ws
-            head_file = os.path.join(workspace, self.flopy_model.name + '.hds')
-            head_file = bf.HeadFile(head_file)
+            head_file = bf.HeadFile(self.get_file_with_extension(".hds"))
             return AvailableResults(
                 times=[float(time) for time in head_file.get_times()],
                 kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in head_file.get_kstpkper()],
@@ -286,11 +302,39 @@ class Mf2005Calculation(CalculationBase):
         except:
             return None
 
+    def read_heads_by_totim(self, totim=0, layer=0):
+        try:
+            head_file = bf.HeadFile(self.get_file_with_extension(".hds"))
+            data = head_file.get_data(totim=totim, mflay=layer)
+            data = np.round(data, 3)
+            data[data <= -999] = None
+            return data.tolist()
+        except:
+            return []
+
+    def read_heads_by_idx(self, idx=0, layer=0):
+        try:
+            head_file = bf.HeadFile(self.get_file_with_extension(".hds"))
+            data = head_file.get_data(idx=idx, mflay=layer)
+            data = np.round(data, 3)
+            data[data <= -999] = None
+            return data.tolist()
+        except:
+            return []
+
+    def read_heads_by_kstpkper(self, kstpkper=(0, 0), layer=0):
+        try:
+            head_file = bf.HeadFile(self.get_file_with_extension(".hds"))
+            data = head_file.get_data(kstpkper=kstpkper, mflay=layer)
+            data = np.round(data, 3)
+            data[data <= -999] = None
+            return data.tolist()
+        except:
+            return []
+
     def read_drawdown_results(self) -> AvailableResults | None:
         try:
-            workspace = self.flopy_model.model_ws
-            drawdown_file = os.path.join(workspace, self.flopy_model.name + '.ddn')
-            drawdown_file = bf.HeadFile(drawdown_file)
+            drawdown_file = bf.HeadFile(self.get_file_with_extension(".ddn"))
             return AvailableResults(
                 times=[float(time) for time in drawdown_file.get_times()],
                 kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in drawdown_file.get_kstpkper()],
@@ -299,11 +343,39 @@ class Mf2005Calculation(CalculationBase):
         except:
             return None
 
+    def read_drawdown_by_totim(self, totim=0, layer=0):
+        try:
+            drawdown_file = bf.HeadFile(self.get_file_with_extension(".ddn"))
+            data = drawdown_file.get_data(totim=totim, mflay=layer)
+            data = np.round(data, 3)
+            data[data < -999] = None
+            return data.tolist()
+        except:
+            return []
+
+    def read_drawdown_by_idx(self, idx=0, layer=0):
+        try:
+            drawdown_file = bf.HeadFile(self.get_file_with_extension(".ddn"))
+            data = drawdown_file.get_data(idx=idx, mflay=layer)
+            data = np.round(data, 3)
+            data[data < -999] = None
+            return data.tolist()
+        except:
+            return []
+
+    def read_drawdown_by_kstpkper(self, kstpkper=(0, 0), layer=0):
+        try:
+            drawdown_file = bf.HeadFile(self.get_file_with_extension(".ddn"))
+            data = drawdown_file.get_data(kstpkper=kstpkper, mflay=layer)
+            data = np.round(data, 3)
+            data[data < -999] = None
+            return data.tolist()
+        except:
+            return []
+
     def read_budget_results(self) -> AvailableResults | None:
         try:
-            workspace = self.flopy_model.model_ws
-            list_budget_file = os.path.join(workspace, self.flopy_model.name + '.list')
-            budget_file = MfListBudget(list_budget_file)
+            budget_file = MfListBudget(self.get_file_with_extension(".list"))
             return AvailableResults(
                 times=[float(time) for time in budget_file.get_times()],
                 kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in budget_file.get_kstpkper()],
@@ -311,6 +383,42 @@ class Mf2005Calculation(CalculationBase):
             )
         except:
             return None
+
+    def read_budget_by_totim(self, totim=0, incremental=False):
+        try:
+            budget_file = MfListBudget(self.get_file_with_extension(".list"))
+            budget = budget_file.get_data(totim=totim, incremental=incremental)
+            values = {}
+            for x in budget:
+                param = str(x[2].decode('UTF-8'))
+                values[param] = float(str(x[1]))
+            return values
+        except:
+            return []
+
+    def read_budget_by_idx(self, idx=0, incremental=False):
+        try:
+            budget_file = MfListBudget(self.get_file_with_extension(".list"))
+            budget = budget_file.get_data(idx=idx, incremental=incremental)
+            values = {}
+            for x in budget:
+                param = str(x[2].decode('UTF-8'))
+                values[param] = float(str(x[1]))
+            return values
+        except:
+            return []
+
+    def read_budget_by_kstpkper(self, kstpkper=(0, 0), incremental=False):
+        try:
+            budget_file = MfListBudget(self.get_file_with_extension(".list"))
+            budget = budget_file.get_data(kstpkper=kstpkper, incremental=incremental)
+            values = {}
+            for x in budget:
+                param = str(x[2].decode('UTF-8'))
+                values[param] = float(str(x[1]))
+            return values
+        except:
+            return []
 
     def read_concentration_results(self) -> AvailableResults | None:
         return None
