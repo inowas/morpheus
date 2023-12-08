@@ -114,7 +114,7 @@ class BoundaryCollection:
         for item in collection:
             boundary_type = BoundaryType.from_value(item.get('type', None))
             if BoundaryType.constant_head() == boundary_type:
-                new_collection.append(ConstantHead.from_dict(item))
+                new_collection.append(ConstantHeadBoundary.from_dict(item))
             else:
                 raise ValueError(f'Unknown boundary type: {boundary_type}')
         return cls(boundaries=new_collection)
@@ -127,7 +127,7 @@ class BoundaryCollection:
 
 
 @dataclasses.dataclass
-class ConstantHead(Boundary):
+class ConstantHeadBoundary(Boundary):
     id: BoundaryId
     type: BoundaryType.constant_head()
     name: BoundaryName

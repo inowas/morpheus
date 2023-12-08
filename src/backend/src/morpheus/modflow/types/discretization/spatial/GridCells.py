@@ -47,6 +47,15 @@ class GridCells:
             data=[]
         )
 
+    def filter(self, predicate):
+        return GridCells(
+            shape=self.shape,
+            data=[cell for cell in self.data if predicate(cell)]
+        )
+
+    def contains(self, cell: GridCell) -> bool:
+        return self.get_cell(x=cell.x, y=cell.y) is not None
+
     @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
         cells = GridCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())

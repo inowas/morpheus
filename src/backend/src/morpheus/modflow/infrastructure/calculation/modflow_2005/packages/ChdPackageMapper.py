@@ -3,7 +3,7 @@ from shapely import LineString as ShapelyLineString, Point as ShapelyPoint
 
 from morpheus.modflow.infrastructure.calculation.modflow_2005.types.StressPeriodData import StressPeriodData
 from morpheus.modflow.types.ModflowModel import ModflowModel
-from morpheus.modflow.types.boundaries.Boundary import BoundaryType, ConstantHead
+from morpheus.modflow.types.boundaries.Boundary import BoundaryType, ConstantHeadBoundary
 
 from morpheus.modflow.types.discretization import TimeDiscretization, SpatialDiscretization
 from morpheus.modflow.types.soil_model import SoilModel
@@ -17,7 +17,7 @@ def calculate_chd_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
     soil_model: SoilModel,
-    chd_boundary: ConstantHead
+    chd_boundary: ConstantHeadBoundary
 ) -> ChdStressPeriodData:
     layer_ids = [layer.id for layer in soil_model.layers]
     sp_data = ChdStressPeriodData()
@@ -35,6 +35,11 @@ def calculate_chd_boundary_stress_period_data(
             continue
 
         layer_indices = [layer_ids.index(layer_id) for layer_id in chd_boundary.affected_layers]
+
+        # we need to filter the affected cells to only include cells that are part of the model
+        chd_boundary.affected_cells = chd_boundary.affected_cells.filter(
+            lambda cell: spatial_discretization.affected_cells.contains(cell))
+
         if chd_boundary.number_of_observations() == 1:
             # if we only have one observation point
             # we can apply the one mean data item for each affected cell
