@@ -1,36 +1,20 @@
 import dataclasses
 import pandas as pd
-
 from scipy.interpolate import interp1d
 
-from morpheus.common.types import Float, Uuid
-from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
-from ..geometry import Point
+from morpheus.common.types import Float
 
-
-class ObservationId(Uuid):
-    pass
+from morpheus.modflow.types.boundaries.Observation import DataItem, ObservationId, StartDateTime, EndDateTime, \
+    RawDataItem, Observation
+from morpheus.modflow.types.geometry import Point
 
 
 class HeadValue(Float):
     pass
 
 
-class EndHead(Float):
-    pass
-
-
 @dataclasses.dataclass
-class ConstantHeadDataItem:
-    observation_id: ObservationId
-    start_date_time: StartDateTime
-    end_date_time: EndDateTime
-    start_head: HeadValue
-    end_head: EndHead
-
-
-@dataclasses.dataclass
-class DataItem:
+class ConstantHeadRawDataItem(RawDataItem):
     date_time: StartDateTime
     head: HeadValue
 
@@ -49,38 +33,36 @@ class DataItem:
 
 
 @dataclasses.dataclass
-class ConstantHeadObservation:
-    id: ObservationId
-    geometry: Point
-    raw_data: list[DataItem]
-
-    def __init__(self, id: ObservationId, geometry: Point, raw_data: list[DataItem]):
-        self.id = id
-        self.geometry = geometry
-        self.raw_data = raw_data
-
-    @classmethod
-    def new(cls, geometry: Point, raw_data: list[DataItem]):
-        return cls(
-            id=ObservationId.new(),
-            geometry=geometry,
-            raw_data=raw_data
-        )
+class ConstantHeadDataItem(DataItem):
+    observation_id: ObservationId
+    start_date_time: StartDateTime
+    end_date_time: EndDateTime
+    start_head: HeadValue
+    end_head: HeadValue
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
-            id=ObservationId.from_value(obj['id']),
-            geometry=Point.from_dict(obj['geometry']),
-            raw_data=[DataItem.from_dict(d) for d in obj['raw_data']]
+            observation_id=ObservationId.from_value(obj['observation_id']),
+            start_date_time=StartDateTime.from_value(obj['start_date_time']),
+            end_date_time=EndDateTime.from_value(obj['end_date_time']),
+            start_head=HeadValue.from_value(obj['start_head']),
+            end_head=HeadValue.from_value(obj['end_head'])
         )
 
     def to_dict(self):
         return {
-            'id': self.id.to_value(),
-            'geometry': self.geometry.to_dict(),
-            'raw_data': [d.to_dict() for d in self.raw_data]
+            'observation_id': self.observation_id.to_value(),
+            'start_date_time': self.start_date_time.to_value(),
+            'end_date_time': self.end_date_time.to_value(),
+            'start_head': self.start_head.to_value(),
+            'end_head': self.end_head.to_value()
         }
+
+
+@dataclasses.dataclass
+class ConstantHeadObservation(Observation):
+    raw_data: list[ConstantHeadRawDataItem]
 
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> ConstantHeadDataItem | None:
 
@@ -108,12 +90,24 @@ class ConstantHeadObservation:
         end_head = heads.item(-1)
 
         return ConstantHeadDataItem(
-            observation_id=self.id,
+            observation_id=self.observation_id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
             start_head=HeadValue.from_value(start_head),
-            end_head=EndHead.from_value(end_head)
+            end_head=HeadValue.from_value(end_head)
         )
 
-    def as_geojson(self):
-        return self.geometry.as_geojson()
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            observation_id=ObservationId.from_value(obj['observation_id']),
+            geometry=Point.from_dict(obj['geometry']),
+            raw_data=[ConstantHeadRawDataItem.from_dict(d) for d in obj['raw_data']]
+        )
+
+    def to_dict(self):
+        return {
+            'observation_id': self.observation_id.to_value(),
+            'geometry': self.geometry.to_dict(),
+            'raw_data': [d.to_dict() for d in self.raw_data]
+        }

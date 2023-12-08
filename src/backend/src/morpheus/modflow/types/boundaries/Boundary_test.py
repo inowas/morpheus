@@ -76,14 +76,14 @@ class BoundaryTest(unittest.TestCase):
         boundary_id = BoundaryId.new()
         boundary_type = BoundaryType.constant_head()
         boundary_name = BoundaryName('name')
-        boundary = Boundary(id=boundary_id, type=boundary_type, boundary_name=boundary_name)
-        assert boundary.id == boundary_id
+        boundary = Boundary(id=boundary_id, boundary_type=boundary_type, boundary_name=boundary_name)
+        assert boundary.boundary_id == boundary_id
         assert boundary.type == boundary_type
         assert boundary.name == boundary_name
         assert boundary.enabled is True
 
-        boundary = Boundary(id=boundary_id, type=boundary_type, boundary_name=boundary_name, enabled=False)
-        assert boundary.id == boundary_id
+        boundary = Boundary(id=boundary_id, boundary_type=boundary_type, boundary_name=boundary_name, enabled=False)
+        assert boundary.boundary_id == boundary_id
         assert boundary.type == boundary_type
         assert boundary.name == boundary_name
         assert boundary.enabled is False

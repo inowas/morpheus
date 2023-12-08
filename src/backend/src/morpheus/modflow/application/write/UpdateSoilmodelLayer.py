@@ -42,4 +42,4 @@ class UpdateSoilmodelLayerCommandHandler:
         soilmodel = soilmodel.with_updated_layer(layer)
 
         modflow_model_repository.update_modflow_model_soilmodel(command.model_id, soilmodel)
-        return UpdateSoilmodelLayerCommandResult(layer_id=layer.id)
+        return UpdateSoilmodelLayerCommandResult(layer_id=layer.boundary_id)

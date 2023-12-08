@@ -47,6 +47,13 @@ class GridCells:
             data=[]
         )
 
+    @classmethod
+    def empty_from_grid(cls, grid: Grid):
+        return cls(
+            shape=(grid.nx(), grid.ny()),
+            data=[]
+        )
+
     def filter(self, predicate):
         return GridCells(
             shape=self.shape,
