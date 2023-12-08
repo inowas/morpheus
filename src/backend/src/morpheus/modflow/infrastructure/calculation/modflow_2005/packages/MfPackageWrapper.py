@@ -40,10 +40,10 @@ class MfPackageData:
         return cls(**obj)
 
 
-def create_mf_package_data(modflow_model: ModflowModel, model_ws: str, exe_name: str) -> MfPackageData:
-    return MfPackageData(modelname=modflow_model.model_id.to_str(), exe_name=exe_name, model_ws=model_ws)
+def create_mf_package_data(modflow_model: ModflowModel, model_ws: str) -> MfPackageData:
+    return MfPackageData(modelname=modflow_model.model_id.to_str(), exe_name='mf2005', model_ws=model_ws)
 
 
-def create_mf_package(modflow_model: ModflowModel, model_ws: str, exe_name: str) -> FlopyModflow:
-    mf_package_data = create_mf_package_data(modflow_model, model_ws, exe_name)
+def create_mf_package(modflow_model: ModflowModel, model_ws: str) -> FlopyModflow:
+    mf_package_data = create_mf_package_data(modflow_model, model_ws)
     return FlopyModflow(**mf_package_data.to_dict())

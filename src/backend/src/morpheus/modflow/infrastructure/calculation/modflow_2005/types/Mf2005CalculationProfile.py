@@ -7,6 +7,7 @@ from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.OcPackage
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgPackageWrapper import PcgPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import PcgnPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import SipPackageData
+from morpheus.modflow.infrastructure.calculation.types.CalculationProfileBase import CalculationProfileBase
 
 
 @dataclasses.dataclass
@@ -137,7 +138,7 @@ class PackageData:
 
 
 @dataclasses.dataclass
-class Mf2005CalculationProfile:
+class Mf2005CalculationProfile(CalculationProfileBase):
     calculation_type = 'mf2005'
     profile_type = 'default'
     name = 'Modflow 2005 default calculation profile'
