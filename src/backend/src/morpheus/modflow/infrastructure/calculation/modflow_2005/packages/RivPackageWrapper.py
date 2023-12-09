@@ -61,8 +61,8 @@ def calculate_riv_package_data(modflow_model: ModflowModel) -> RivPackageData | 
 
 
 def create_riv_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowRiv | None:
-    chd_package_data = calculate_riv_package_data(modflow_model)
-    if chd_package_data is None:
+    package_data = calculate_riv_package_data(modflow_model)
+    if package_data is None:
         return None
 
-    return FlopyModflowRiv(model=flopy_modflow, **chd_package_data.to_dict())
+    return FlopyModflowRiv(model=flopy_modflow, **package_data.to_dict())

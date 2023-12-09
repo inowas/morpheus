@@ -102,5 +102,5 @@ def calculate_dis_package_data(modflow_model: ModflowModel) -> DisPackageData:
 
 
 def create_dis_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowDis:
-    dis_package_data = calculate_dis_package_data(modflow_model)
-    return FlopyModflowDis(model=flopy_modflow, **dis_package_data.to_dict())
+    package_data = calculate_dis_package_data(modflow_model)
+    return FlopyModflowDis(model=flopy_modflow, **package_data.to_dict())

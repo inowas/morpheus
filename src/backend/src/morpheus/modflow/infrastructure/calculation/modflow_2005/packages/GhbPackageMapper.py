@@ -60,7 +60,7 @@ def calculate_ghb_boundary_stress_period_data(
 
                 for layer_idx in layer_indices:
                     sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
-                                      values=[stage.to_float(), conductance.to_float()], sum_to_existing=False)
+                                      values=[stage.to_float(), conductance.to_float()], sum_up_values=False)
 
         if ghb_boundary.number_of_observations() > 1:
             # if we have multiple observation points
@@ -95,7 +95,7 @@ def calculate_ghb_boundary_stress_period_data(
 
                 for layer_idx in layer_indices:
                     sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
-                                      values=[yy_new_stage, yy_new_conductance], sum_to_existing=False)
+                                      values=[yy_new_stage, yy_new_conductance], sum_up_values=False)
 
     return sp_data
 
@@ -110,7 +110,7 @@ def calculate_stress_period_data(model: ModflowModel) -> GhbStressPeriodData | N
             soil_model=model.soil_model,
             ghb_boundary=ghb_boundary
         )
-        sp_data = sp_data.merge(other=sp_data_boundary, sum_to_existing=False)
+        sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
 
     if sp_data.is_empty():
         return None

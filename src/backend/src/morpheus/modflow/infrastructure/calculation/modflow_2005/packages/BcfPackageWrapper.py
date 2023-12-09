@@ -101,5 +101,5 @@ def calculate_bcf_package_data(modflow_model: ModflowModel) -> BcfPackageData:
 
 
 def create_bcf_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowBcf:
-    bcf_package_data = calculate_bcf_package_data(modflow_model)
-    return FlopyModflowBcf(model=flopy_modflow, **bcf_package_data.to_dict())
+    package_data = calculate_bcf_package_data(modflow_model)
+    return FlopyModflowBcf(model=flopy_modflow, **package_data.to_dict())

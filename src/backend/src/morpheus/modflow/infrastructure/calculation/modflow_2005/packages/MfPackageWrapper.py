@@ -45,5 +45,5 @@ def create_mf_package_data(modflow_model: ModflowModel, model_ws: str) -> MfPack
 
 
 def create_mf_package(modflow_model: ModflowModel, model_ws: str) -> FlopyModflow:
-    mf_package_data = create_mf_package_data(modflow_model, model_ws)
-    return FlopyModflow(**mf_package_data.to_dict())
+    package_data = create_mf_package_data(modflow_model, model_ws)
+    return FlopyModflow(**package_data.to_dict())

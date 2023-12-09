@@ -87,7 +87,7 @@ class LpfPackageData:
 
 
 def calculate_lpf_package_data(modflow_model: ModflowModel) -> LpfPackageData:
-    lpf_package_data = LpfPackageData(
+    package_data = LpfPackageData(
         laytyp=[0 if layer.is_confined() else 1 for layer in modflow_model.soil_model.layers],
         layavg=[layer.data.get_layer_average() for layer in modflow_model.soil_model.layers],
         chani=[0 for _ in modflow_model.soil_model.layers],
@@ -115,7 +115,7 @@ def calculate_lpf_package_data(modflow_model: ModflowModel) -> LpfPackageData:
         filenames=None,
         add_package=True,
     )
-    return lpf_package_data
+    return package_data
 
 
 def create_lpf_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowLpf:

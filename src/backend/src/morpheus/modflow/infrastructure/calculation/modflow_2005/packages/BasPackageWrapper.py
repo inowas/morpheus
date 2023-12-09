@@ -65,5 +65,5 @@ def calculate_bas_package_data(modflow_model: ModflowModel) -> BasPackageData:
 
 
 def create_bas_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowBas:
-    bas_package_data = calculate_bas_package_data(modflow_model)
-    return FlopyModflowBas(model=flopy_modflow, **bas_package_data.to_dict())
+    package_data = calculate_bas_package_data(modflow_model)
+    return FlopyModflowBas(model=flopy_modflow, **package_data.to_dict())

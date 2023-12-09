@@ -65,8 +65,8 @@ def calculate_ghb_package_data(modflow_model: ModflowModel) -> GhbPackageData | 
 
 
 def create_ghb_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowGhb | None:
-    chd_package_data = calculate_ghb_package_data(modflow_model)
-    if chd_package_data is None:
+    package_data = calculate_ghb_package_data(modflow_model)
+    if package_data is None:
         return None
 
-    return FlopyModflowGhb(model=flopy_modflow, **chd_package_data.to_dict())
+    return FlopyModflowGhb(model=flopy_modflow, **package_data.to_dict())

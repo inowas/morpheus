@@ -11,6 +11,7 @@ from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GmgPackag
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.RivPackageWrapper import create_riv_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import create_sip_package
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.WelPackageWrapper import create_wel_package
 from morpheus.modflow.infrastructure.calculation.types.CalculationBase import CalculationId, CalculationBase, \
     CalculationResult, CalculationState, CalculationType, CalculationLog, AvailableResults
 from morpheus.modflow.types.ModflowModel import ModflowModel
@@ -143,7 +144,7 @@ class Mf2005Calculation(CalculationBase):
             'chd': create_chd_package(self.flopy_model, self.modflow_model),
             'fhb': None,
             'rch': None,
-            'wel': None,
+            'wel': create_wel_package(self.flopy_model, self.modflow_model),
         }
 
         # head-dependent flux packages

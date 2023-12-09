@@ -60,7 +60,7 @@ def calculate_chd_boundary_stress_period_data(
 
                 for layer_idx in layer_indices:
                     sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
-                                      values=[start_head.to_float(), end_head.to_float()], sum_to_existing=False)
+                                      values=[start_head.to_float(), end_head.to_float()], sum_up_values=False)
 
         if chd_boundary.number_of_observations() > 1:
             # if we have multiple observation points
@@ -93,7 +93,7 @@ def calculate_chd_boundary_stress_period_data(
 
                 for layer_idx in layer_indices:
                     sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
-                                      values=[yy_new_start_head, yy_new_end_head], sum_to_existing=False)
+                                      values=[yy_new_start_head, yy_new_end_head], sum_up_values=False)
 
     return sp_data
 
@@ -108,7 +108,7 @@ def calculate_stress_period_data(model: ModflowModel) -> ChdStressPeriodData | N
             soil_model=model.soil_model,
             chd_boundary=chd_boundary
         )
-        sp_data = sp_data.merge(other=sp_data_boundary, sum_to_existing=False)
+        sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
 
     if sp_data.is_empty():
         return None

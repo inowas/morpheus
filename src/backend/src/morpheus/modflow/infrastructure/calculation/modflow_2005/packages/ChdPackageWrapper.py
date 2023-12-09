@@ -47,8 +47,8 @@ def calculate_chd_package_data(modflow_model: ModflowModel) -> ChdPackageData | 
 
 
 def create_chd_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowChd | None:
-    chd_package_data = calculate_chd_package_data(modflow_model)
-    if chd_package_data is None:
+    package_data = calculate_chd_package_data(modflow_model)
+    if package_data is None:
         return None
 
-    return FlopyModflowChd(model=flopy_modflow, **chd_package_data.to_dict())
+    return FlopyModflowChd(model=flopy_modflow, **package_data.to_dict())
