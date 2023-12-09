@@ -6,8 +6,10 @@ import flopy.utils.binaryfile as bf
 import numpy as np
 from flopy.utils.mflistfile import MfListBudget
 
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GmgPackageWrapper import create_gmg_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.RivPackageWrapper import create_riv_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import create_sip_package
 from morpheus.modflow.infrastructure.calculation.types.CalculationBase import CalculationId, CalculationBase, \
     CalculationResult, CalculationState, CalculationType, CalculationLog, AvailableResults
@@ -150,12 +152,12 @@ class Mf2005Calculation(CalculationBase):
             'drt': None,
             'ets': None,
             'evt': None,
-            'ghb': None,
+            'ghb': create_ghb_package(self.flopy_model, self.modflow_model),
             'lak': None,
             'mnw1': None,
             'mnw2': None,
             'res': None,
-            'riv': None,
+            'riv': create_riv_package(self.flopy_model, self.modflow_model),
             'sfr': None,
             'str': None,
             'uzf': None,

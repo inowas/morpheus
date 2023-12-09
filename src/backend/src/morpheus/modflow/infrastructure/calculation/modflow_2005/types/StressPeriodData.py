@@ -63,3 +63,17 @@ class StressPeriodData:
             sp_data[item.time_step].append([item.layer, item.row, item.column, *item.values])
 
         return sp_data
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        sp_data = cls()
+        for time_step, items in obj.items():
+            for item in items:
+                sp_data.set_value(
+                    time_step=int(time_step),
+                    layer=int(item[0]),
+                    row=int(item[1]),
+                    column=int(item[2]),
+                    values=item[3:]
+                )
+        return sp_data
