@@ -10,6 +10,7 @@ import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
+import FormFilter from './FormFilter';
 import Grid from './Grid';
 import NotFound from './NotFound';
 import Header from './Header';
@@ -37,6 +38,7 @@ import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Select, {DropdownProps} from './Select/Select';
+import Sidebar from './Sidebar/Sidebar';
 import SortDropdown, {ISortOption} from 'components/SortDropdown';
 import Toggle from './Toggle/Toggle';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
@@ -54,6 +56,7 @@ export {
   Divider,
   Dropdown,
   Form,
+  FormFilter,
   Grid,
   Header,
   Footer,
@@ -80,6 +83,7 @@ export {
   SectionTitle,
   Segment,
   Select,
+  Sidebar,
   SliderSwiper,
   SortDropdown,
   Toggle,
