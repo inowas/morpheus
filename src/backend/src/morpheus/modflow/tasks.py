@@ -9,7 +9,9 @@ from morpheus.settings import settings
 
 
 @task_queue.task
-def calculate_modflow_model_by_id(calculation_id: str):
+def calculate_modflow_model_by_id(calculation_id: str, data_base_path: str = None):
+    data_base_path = data_base_path if data_base_path is not None else settings.MORPHEUS_MODFLOW_LOCAL_DATA
+
     calculation_repository = CalculationRepository()
     calculation_id = CalculationId.from_str(calculation_id)
     calculation = calculation_repository.get_calculation(calculation_id=calculation_id)
@@ -19,7 +21,7 @@ def calculate_modflow_model_by_id(calculation_id: str):
 
     calculation.calculation_state = CalculationState.preprocessing()
     calculation_repository.update_calculation_state(calculation=calculation)
-    calculation.set_data_base_path(data_base_path=settings.MORPHEUS_MODFLOW_LOCAL_DATA)
+    calculation.set_data_base_path(data_base_path=data_base_path)
     calculation.preprocess()
     calculation.write_input()
 
