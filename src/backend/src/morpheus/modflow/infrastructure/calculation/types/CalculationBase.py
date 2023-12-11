@@ -12,7 +12,7 @@ class CalculationId(Uuid):
 
 @dataclasses.dataclass(frozen=True)
 class CalculationState:
-    state: Literal['created', 'preprocessed', 'queued', 'running', 'success', 'failed']
+    state: Literal['created', 'preprocessing', 'running', 'success', 'failed']
 
     def __eq__(self, other):
         return self.state == other.state
@@ -24,11 +24,11 @@ class CalculationState:
         return self.state
 
     @classmethod
-    def from_str(cls, value: Literal['created', 'preprocessed', 'queued', 'running', 'success', 'failed']):
+    def from_str(cls, value: Literal['created', 'preprocessing', 'running', 'success', 'failed']):
         return cls(state=value)
 
     @classmethod
-    def from_value(cls, value: Literal['created', 'preprocessed', 'queued', 'running', 'success', 'failed']):
+    def from_value(cls, value: Literal['created', 'preprocessing', 'running', 'success', 'failed']):
         return cls.from_str(value=value)
 
     @classmethod
@@ -37,11 +37,7 @@ class CalculationState:
 
     @classmethod
     def preprocessing(cls):
-        return cls.from_str('preprocessed')
-
-    @classmethod
-    def queued(cls):
-        return cls.from_str('queued')
+        return cls.from_str('preprocessing')
 
     @classmethod
     def running(cls):
@@ -187,7 +183,13 @@ class CalculationBase:
     def from_dict(cls, obj):
         raise NotImplementedError()
 
-    def preprocess(self, data_base_path: str):
+    def set_data_base_path(self, data_base_path: str):
+        raise NotImplementedError()
+
+    def is_base_path_valid(self) -> bool:
+        raise NotImplementedError()
+
+    def preprocess(self):
         raise NotImplementedError()
 
     def has_been_preprocessed(self) -> bool:
@@ -214,7 +216,7 @@ class CalculationBase:
 
         return False
 
-    def process(self, data_base_path: str):
+    def process(self):
         raise NotImplementedError()
 
     def postprocess(self):

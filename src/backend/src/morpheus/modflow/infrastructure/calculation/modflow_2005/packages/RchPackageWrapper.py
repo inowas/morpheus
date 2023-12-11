@@ -51,7 +51,7 @@ def calculate_rch_package_data(modflow_model: ModflowModel) -> RchPackageData | 
     return RchPackageData(stress_period_data=stress_period_data)
 
 
-def create_riv_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowRch | None:
+def create_rch_package(flopy_modflow: FlopyModflow, modflow_model: ModflowModel) -> FlopyModflowRch | None:
     package_data = calculate_rch_package_data(modflow_model)
     if package_data is None:
         return None

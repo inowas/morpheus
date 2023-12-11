@@ -48,6 +48,7 @@ fix-code-style:
 run-celery-worker:
 	scripts/dev/run-celery-worker.sh
 
+## stop all celery workers
 stop-all-celery-workers:
 	scripts/dev/stop-all-celery-workers.sh
 

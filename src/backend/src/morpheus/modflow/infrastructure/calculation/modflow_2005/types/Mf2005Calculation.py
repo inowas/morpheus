@@ -9,6 +9,7 @@ from flopy.utils.mflistfile import MfListBudget
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GmgPackageWrapper import create_gmg_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.RchPackageWrapper import create_rch_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.RivPackageWrapper import create_riv_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import create_sip_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.WelPackageWrapper import create_wel_package
@@ -126,8 +127,16 @@ class Mf2005Calculation(CalculationBase):
             'workspace_path': self.workspace_path,
         }
 
-    def preprocess(self, base_path: str):
-        self.base_path = os.path.abspath(base_path)
+    def set_data_base_path(self, data_base_path: str) -> None:
+        self.base_path = data_base_path
+
+    def is_base_path_valid(self) -> bool:
+        return self.base_path is not None and os.path.exists(self.base_path)
+
+    def preprocess(self):
+        if not self.is_base_path_valid():
+            raise ValueError('Base path is not valid or not set')
+
         self.workspace_path = self.calculation_id.to_str()
         self.flopy_model = create_mf_package(self.modflow_model, model_ws=self.get_absolute_path_to_workspace())
 
@@ -143,7 +152,7 @@ class Mf2005Calculation(CalculationBase):
         self.boundary_packages = {
             'chd': create_chd_package(self.flopy_model, self.modflow_model),
             'fhb': None,
-            'rch': None,
+            'rch': create_rch_package(self.flopy_model, self.modflow_model),
             'wel': create_wel_package(self.flopy_model, self.modflow_model),
         }
 
@@ -276,9 +285,9 @@ class Mf2005Calculation(CalculationBase):
             concentration_results=None,
         )
 
-    def process(self, data_base_path: str):
+    def process(self):
         self.calculation_state = CalculationState.preprocessing()
-        self.preprocess(data_base_path)
+        self.preprocess()
         self.write_input()
         self.calculation_state = CalculationState.running()
         self.run()

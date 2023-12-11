@@ -78,8 +78,7 @@ class Boundary:
     affected_cells: GridCells
     affected_layers: list[LayerId]
     observations: list[Observation]
-    enabled = True
-    enabled: bool
+    enabled: bool = True
 
     def __eq__(self, other):
         return self.to_dict() == other.to_dict()
@@ -199,6 +198,8 @@ class Boundary:
             return GeneralHeadBoundary.from_dict(obj)
         elif BoundaryType.river() == boundary_type:
             return RiverBoundary.from_dict(obj)
+        elif BoundaryType.recharge() == boundary_type:
+            return RechargeBoundary.from_dict(obj)
         elif BoundaryType.well() == boundary_type:
             return WellBoundary.from_dict(obj)
         else:
@@ -269,7 +270,7 @@ class BoundaryCollection:
 
 
 class ConstantHeadBoundary(Boundary):
-    type: BoundaryType.constant_head()
+    type: BoundaryType = BoundaryType.constant_head()
     geometry: LineString
 
     @classmethod
@@ -296,7 +297,7 @@ class ConstantHeadBoundary(Boundary):
 
 
 class GeneralHeadBoundary(Boundary):
-    type: BoundaryType.general_head()
+    type: BoundaryType = BoundaryType.general_head()
     geometry: LineString
 
     @classmethod
@@ -323,7 +324,7 @@ class GeneralHeadBoundary(Boundary):
 
 
 class RiverBoundary(Boundary):
-    type: BoundaryType.river()
+    type: BoundaryType = BoundaryType.river()
     geometry: LineString
 
     @classmethod
@@ -350,7 +351,7 @@ class RiverBoundary(Boundary):
 
 
 class WellBoundary(Boundary):
-    type: BoundaryType.well()
+    type: BoundaryType = BoundaryType.constant_head()
     geometry: Point
 
     @classmethod
@@ -381,7 +382,7 @@ class WellBoundary(Boundary):
 
 
 class RechargeBoundary(Boundary):
-    type: BoundaryType.recharge()
+    type: BoundaryType = BoundaryType.constant_head()
     geometry: Polygon
 
     @classmethod
