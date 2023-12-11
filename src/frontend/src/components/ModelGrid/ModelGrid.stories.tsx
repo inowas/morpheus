@@ -4,7 +4,6 @@ import {Meta, StoryFn} from '@storybook/react';
 import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'components';
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
-import Sidebar from '../Sidebar';
 
 
 const models: IModelCard[] = [
@@ -341,59 +340,6 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>
-      </ContentWrapper>
-    </div>
-  );
-};
-
-
-export const ModflowFilterPageExample: StoryFn<typeof ModelGrid> = () => {
-  const [modelData, setModelData] = useState(models);
-
-  const updateModelData = (newData: IModelCard[]) => {
-    setModelData(newData);
-  };
-
-  const sectionTitle = () => {
-    if (1 === modelData.length) {
-      return (<><span>1</span> Model found </>);
-    } else {
-      return (<><span>{modelData.length}</span> Models found</>);
-    }
-  };
-
-  const handleCopyButtonClick = (id: number) => {
-    // Handle copy functionality here
-    console.log(`Copy button clicked for ID: ${id}`);
-  };
-
-  return (
-    <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <Sidebar data={modelData} updateModelData={updateModelData}>
-          <SortDropdown
-            placeholder="Order By"
-            sortOptions={sortOptions}
-            data={models}
-            setModelData={setModelData}
-          >
-            <ModelGrid
-              sectionTitle={sectionTitle()}
-              data={modelData}
-              navigateTo={() => {
-              }}
-              handleCopyButtonClick={handleCopyButtonClick}
-            />
-          </SortDropdown>
-        </Sidebar>
       </ContentWrapper>
     </div>
   );
