@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'components';
+import {ContentWrapper, FormFilter, Header, ModelGrid, Navbar, Sidebar, SortDropdown} from 'components';
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
-
+import './rc-slider.css';
 
 const models: IModelCard[] = [
   {
@@ -265,28 +265,23 @@ export default {
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
   * to learn how to generate automatic titles
   */
-  title: 'Modflow/ModelGrid',
-  component: ModelGrid,
-} as Meta<typeof ModelGrid>;
+  title: 'Modflow/FormFilter',
+  component: FormFilter,
+} as Meta<typeof FormFilter>;
 
-export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
+export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
   const [modelData, setModelData] = useState(models);
 
-  const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
-    return data.filter((model) => model.meta_author_name === authorName);
+  const updateModelData = (newData: IModelCard[]) => {
+    setModelData(newData);
   };
 
-  const [filteredData, setFilteredData] = useState(filterModelsByAuthorName('Catalin Stefan', modelData));
-
-  const handleDeleteButtonClick = (id: number) => {
-    setModelData(prevModelData => {
-      const updatedModelData = prevModelData.filter((item) => item.id !== id);
-      // Update filteredData based on the updated modelData
-      const updatedFilteredData = filterModelsByAuthorName('Catalin Stefan', updatedModelData);
-      setFilteredData(updatedFilteredData);
-      console.log(`Delete button clicked for ID: ${id}`);
-      return updatedModelData;
-    });
+  const sectionTitle = () => {
+    if (1 === modelData.length) {
+      return (<><span>1</span> Model found </>);
+    } else {
+      return (<><span>{modelData.length}</span> Models found</>);
+    }
   };
 
   const handleCopyButtonClick = (id: number) => {
@@ -305,56 +300,24 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
         />
       </Header>
       <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={filteredData}
-          setModelData={setFilteredData}
-        >
-          <SliderSwiper
-            sectionTitle={'My Models'}
+        <Sidebar data={modelData} updateModelData={updateModelData}>
+          <SortDropdown
+            placeholder="Order By"
+            sortOptions={sortOptions}
+            data={models}
+            setModelData={setModelData}
           >
-            {filteredData.map((item) => (
-              <ModelCard
-                key={item.id} data={item}
-                navigateTo={() => {
-                }}
-                onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-                onCopyButtonClick={() => handleCopyButtonClick(item.id)}
-              />
-            ))}
-          </SliderSwiper>
-        </SortDropdown>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        >
-          <ModelGrid
-            sectionTitle={'All Models'}
-            data={modelData}
-            navigateTo={() => {
-            }}
-            // handleDeleteButtonClick={handleDeleteButtonClick}
-            handleCopyButtonClick={handleCopyButtonClick}
-          />
-        </SortDropdown>
+            <ModelGrid
+              sectionTitle={sectionTitle()}
+              data={modelData}
+              navigateTo={() => {
+              }}
+              handleCopyButtonClick={handleCopyButtonClick}
+            />
+          </SortDropdown>
+        </Sidebar>
       </ContentWrapper>
     </div>
   );
 };
-
-export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
-  <ModelGrid
-    sectionTitle={'All Models'}
-    data={models}
-    navigateTo={() => {
-    }}
-    handleDeleteButtonClick={() => {
-    }}
-    handleCopyButtonClick={() => {
-    }}
-  />
-;
 
