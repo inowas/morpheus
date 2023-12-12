@@ -11,7 +11,7 @@ from .WellObservation import WellObservation, WellRawDataItem
 
 from ..discretization.spatial import GridCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
-from ..geometry import Point, LineString, Polygon
+from ..geometry import Point, LineString, Polygon, GeometryCollection
 from ..soil_model import LayerId
 
 
@@ -237,9 +237,15 @@ class BoundaryCollection:
     def __iter__(self):
         return iter(self.boundaries)
 
+    def __len__(self):
+        return len(self.boundaries)
+
     @classmethod
     def new(cls):
         return cls(boundaries=[])
+
+    def as_geojson(self):
+        return GeometryCollection(geometries=[boundary.geometry for boundary in self.boundaries]).as_geojson()
 
     def add_boundary(self, boundary: Boundary):
         self.boundaries.append(boundary)
@@ -258,8 +264,21 @@ class BoundaryCollection:
             boundary_type = BoundaryType.from_value(item.get('type', None))
             if BoundaryType.constant_head() == boundary_type:
                 new_collection.append(ConstantHeadBoundary.from_dict(item))
-            else:
-                raise ValueError(f'Unknown boundary type: {boundary_type}')
+                continue
+            if BoundaryType.general_head() == boundary_type:
+                new_collection.append(GeneralHeadBoundary.from_dict(item))
+                continue
+            if BoundaryType.river() == boundary_type:
+                new_collection.append(RiverBoundary.from_dict(item))
+                continue
+            if BoundaryType.recharge() == boundary_type:
+                new_collection.append(RechargeBoundary.from_dict(item))
+                continue
+            if BoundaryType.well() == boundary_type:
+                new_collection.append(WellBoundary.from_dict(item))
+                continue
+
+            raise ValueError(f'Unknown boundary type: {boundary_type}')
         return cls(boundaries=new_collection)
 
     def to_dict(self):
@@ -286,7 +305,7 @@ class ConstantHeadBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            boundary_type=BoundaryType.constant_head(),
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
@@ -313,7 +332,7 @@ class GeneralHeadBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            boundary_type=BoundaryType.general_head(),
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
@@ -340,7 +359,7 @@ class RiverBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            boundary_type=BoundaryType.river(),
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
@@ -351,7 +370,7 @@ class RiverBoundary(Boundary):
 
 
 class WellBoundary(Boundary):
-    type: BoundaryType = BoundaryType.constant_head()
+    type: BoundaryType = BoundaryType.well()
     geometry: Point
 
     @classmethod
@@ -371,7 +390,7 @@ class WellBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            boundary_type=BoundaryType.well(),
             name=BoundaryName.from_value(obj['name']),
             geometry=Point.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
@@ -382,7 +401,7 @@ class WellBoundary(Boundary):
 
 
 class RechargeBoundary(Boundary):
-    type: BoundaryType = BoundaryType.constant_head()
+    type: BoundaryType = BoundaryType.recharge()
     geometry: Polygon
 
     @classmethod
@@ -401,7 +420,7 @@ class RechargeBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            boundary_type=BoundaryType.recharge(),
             name=BoundaryName.from_value(obj['name']),
             geometry=Polygon.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),

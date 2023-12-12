@@ -3,12 +3,28 @@ from ...geometry import Polygon
 from . import Crs, Grid, GridCells, Rotation
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class SpatialDiscretization:
     geometry: Polygon
     grid: Grid
-    affected_cells: GridCells | None
-    crs: Crs = Crs.from_str('EPSG:4326')
+    affected_cells: GridCells
+    crs: Crs
+
+    def __init__(self, geometry: Polygon, grid: Grid, affected_cells: GridCells, crs: Crs):
+        self.geometry = geometry
+        self.grid = grid
+        self.affected_cells = affected_cells if affected_cells is not None \
+            else GridCells.from_polygon(polygon=geometry, grid=grid)
+        self.crs = crs if crs is not None else Crs.from_str('EPSG:4326')
+
+    @classmethod
+    def from_geometry_with_grid(cls, geometry: Polygon, grid: Grid, crs: Crs | None = None):
+        return cls(
+            geometry=geometry,
+            grid=grid,
+            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            crs=Crs.from_str('EPSG:4326') if crs is None else crs
+        )
 
     @classmethod
     def new(cls):

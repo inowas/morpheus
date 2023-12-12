@@ -11,11 +11,11 @@ class DateTime:
 
     @classmethod
     def from_datetime(cls, value: datetime):
-        return cls(value=value)
+        return cls(value=value.replace(tzinfo=None))
 
     @classmethod
     def from_str(cls, value: str):
-        return cls(value=datetime.fromisoformat(value))
+        return cls(value=datetime.fromisoformat(value).replace(tzinfo=None))
 
     @classmethod
     def from_value(cls, value: str):

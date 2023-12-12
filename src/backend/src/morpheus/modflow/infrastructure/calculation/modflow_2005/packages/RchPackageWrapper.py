@@ -12,21 +12,18 @@ from .....types.ModflowModel import ModflowModel
 class RchPackageData:
     stress_period_data: RchStressPeriodData
     ipakcb: int
-    dtype: None | list
     irch: int
-    options: None | list
     extension: Literal["rch"]
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: RchStressPeriodData, nrchop: int = 3, ipakcb=0, dtype: None | list = None,
-                 irch: int = 0, extension: Literal["rch"] = "rch", unitnumber: int | None = None,
+    def __init__(self, stress_period_data: RchStressPeriodData, nrchop: int = 3, ipakcb=0, irch: int = 0,
+                 extension: Literal["rch"] = "rch", unitnumber: int | None = None,
                  filenames: list[str] | str | None = None):
         self.stress_period_data = stress_period_data
         self.nrchop = nrchop
         self.ipakcb = ipakcb
         self.irch = irch
-        self.dtype = dtype
         self.extension = extension
         self.unitnumber = unitnumber
         self.filenames = filenames
@@ -36,7 +33,6 @@ class RchPackageData:
             'rech': self.stress_period_data.to_dict(),
             'nrchop': self.nrchop,
             'ipakcb': self.ipakcb,
-            'dtype': self.dtype,
             'irch': self.irch,
             'extension': self.extension,
             'unitnumber': self.unitnumber,

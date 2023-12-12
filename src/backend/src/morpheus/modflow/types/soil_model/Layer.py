@@ -118,6 +118,33 @@ class LayerData:
     top: float | list[list[float]] | None
     bottom: float | list[list[float]]
 
+    def with_updated_kx(self, kx: float | list[list[float]]):
+        return dataclasses.replace(self, kx=kx)
+
+    def with_updated_ky(self, ky: float | list[list[float]]):
+        return dataclasses.replace(self, ky=ky)
+
+    def with_updated_kz(self, kz: float | list[list[float]]):
+        return dataclasses.replace(self, kz=kz)
+
+    def with_updated_porosity(self, porosity: float | list[list[float]]):
+        return dataclasses.replace(self, porosity=porosity)
+
+    def with_updated_specific_storage(self, specific_storage: float | list[list[float]]):
+        return dataclasses.replace(self, specific_storage=specific_storage)
+
+    def with_updated_specific_yield(self, specific_yield: float | list[list[float]]):
+        return dataclasses.replace(self, specific_yield=specific_yield)
+
+    def with_updated_initial_head(self, initial_head: float | list[list[float]]):
+        return dataclasses.replace(self, initial_head=initial_head)
+
+    def with_updated_top(self, top: float | list[list[float]]):
+        return dataclasses.replace(self, top=top)
+
+    def with_updated_bottom(self, bottom: float | list[list[float]]):
+        return dataclasses.replace(self, bottom=bottom)
+    
     def get_hkl(self):
         return self.kx
 

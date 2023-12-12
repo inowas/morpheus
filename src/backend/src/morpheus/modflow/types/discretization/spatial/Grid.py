@@ -84,6 +84,25 @@ class Grid:
     crs = Crs.from_str('EPSG:3857')
 
     @classmethod
+    def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, nx: int, ny: int) -> "Grid":
+        x_coordinates = []
+        y_coordinates = []
+        for x in range(nx):
+            x_coordinates.append(round(1 / nx + x_coordinates[-1] if x > 0 else 0, 5))
+        x_coordinates.append(1)
+
+        for y in range(ny):
+            y_coordinates.append(round(1 / ny + y_coordinates[-1] if y > 0 else 0, 5))
+        y_coordinates.append(1)
+
+        return cls.from_polygon_with_relative_coordinates(
+            polygon=polygon,
+            rotation=rotation,
+            x_coordinates=x_coordinates,
+            y_coordinates=y_coordinates
+        )
+
+    @classmethod
     def from_polygon_with_relative_coordinates(cls, polygon: Polygon, rotation: Rotation, x_coordinates: list[float],
                                                y_coordinates: list[float]) -> "Grid":
 
