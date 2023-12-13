@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from pymongo.database import Database
+from pymongo.collection import Collection
 from morpheus.settings import settings
 
 
@@ -15,3 +16,17 @@ def get_database_client(db_name: str, create_if_not_exist: bool = False) -> Data
         raise ValueError(f'Database {db_name} does not exist')
 
     return client[db_name]
+
+
+def create_or_get_collection(db: Database, collection_name: str) -> Collection:
+    if collection_name in db.list_collection_names():
+        return db.get_collection(collection_name)
+
+    return db.create_collection(collection_name)
+
+
+class RepositoryBase:
+    collection: Collection
+
+    def __init__(self, collection: Collection):
+        self.collection = collection
