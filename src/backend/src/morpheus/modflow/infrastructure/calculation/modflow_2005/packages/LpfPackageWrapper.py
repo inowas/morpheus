@@ -3,6 +3,7 @@ from flopy.modflow import ModflowLpf as FlopyModflowLpf
 
 from morpheus.modflow.infrastructure.calculation.modflow_2005 import FlopyModflow
 from morpheus.modflow.types.ModflowModel import ModflowModel
+from morpheus.modflow.types.soil_model.Layer import LayerType
 
 
 @dataclasses.dataclass
@@ -87,20 +88,30 @@ class LpfPackageData:
 
 
 def calculate_lpf_package_data(modflow_model: ModflowModel) -> LpfPackageData:
+    laytyp = [0 for _ in modflow_model.soil_model.layers]
+    for idx, layer in enumerate(modflow_model.soil_model.layers):
+        if LayerType.confined() == layer.type:
+            laytyp[idx] = 0
+        if LayerType.convertible() == layer.type:
+            laytyp[idx] = 1
+        if LayerType.unconfined() == layer.type:
+            laytyp[idx] = -1
+
     package_data = LpfPackageData(
-        laytyp=[0 if layer.is_confined() else 1 for layer in modflow_model.soil_model.layers],
+        laytyp=laytyp,
         layavg=[layer.data.get_layer_average() for layer in modflow_model.soil_model.layers],
         chani=[0 for _ in modflow_model.soil_model.layers],
         layvka=[0 for _ in modflow_model.soil_model.layers],
-        laywet=[int(layer.data.is_wetting_active()) for layer in modflow_model.soil_model],
+        laywet=[int(layer.data.is_wetting_active()) for layer in modflow_model.soil_model.layers],
         ipakcb=0,  # 53 in the current frontend
         hdry=-1e30,
+        iwdflg=0,
         wetfct=0.1,
         iwetit=1,
         ihdwet=0,
         hk=[layer.data.kx for layer in modflow_model.soil_model.layers],
         hani=[layer.data.get_horizontal_anisotropy() for layer in modflow_model.soil_model.layers],
-        vka=[layer.data.get_vertical_anisotropy() for layer in modflow_model.soil_model.layers],
+        vka=[layer.data.get_vka() for layer in modflow_model.soil_model.layers],
         ss=[layer.data.specific_storage for layer in modflow_model.soil_model.layers],
         sy=[layer.data.specific_yield for layer in modflow_model.soil_model.layers],
         vkcb=0.0,

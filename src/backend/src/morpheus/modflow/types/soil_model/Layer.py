@@ -79,11 +79,14 @@ class LayerDescription:
 
 @dataclasses.dataclass
 class LayerType:
-    type: Literal['confined', 'unconfined']
+    type: Literal['confined', 'convertible', 'unconfined']
 
-    def __init__(self, layer_type: str | Literal['confined', 'unconfined']):
-        if layer_type not in ['confined', 'unconfined']:
-            raise ValueError('Layer type must be either confined or unconfined')
+    def __eq__(self, other):
+        return self.type == other.type
+
+    def __init__(self, layer_type: str | Literal['confined', 'convertible', 'unconfined']):
+        if layer_type not in ['confined', 'convertible', 'unconfined']:
+            raise ValueError('Layer type must be either confined, convertible or unconfined')
         self.type = layer_type
 
     @classmethod
@@ -99,6 +102,10 @@ class LayerType:
         return cls.from_str('confined')
 
     @classmethod
+    def convertible(cls):
+        return cls.from_str('convertible')
+
+    @classmethod
     def unconfined(cls):
         return cls.from_str('unconfined')
 
@@ -111,7 +118,6 @@ class LayerData:
     kx: float | list[list[float]]
     ky: float | list[list[float]]
     kz: float | list[list[float]]
-    porosity: float | list[list[float]]
     specific_storage: float | list[list[float]]
     specific_yield: float | list[list[float]]
     initial_head: float | list[list[float]]
@@ -127,9 +133,6 @@ class LayerData:
     def with_updated_kz(self, kz: float | list[list[float]]):
         return dataclasses.replace(self, kz=kz)
 
-    def with_updated_porosity(self, porosity: float | list[list[float]]):
-        return dataclasses.replace(self, porosity=porosity)
-
     def with_updated_specific_storage(self, specific_storage: float | list[list[float]]):
         return dataclasses.replace(self, specific_storage=specific_storage)
 
@@ -144,9 +147,12 @@ class LayerData:
 
     def with_updated_bottom(self, bottom: float | list[list[float]]):
         return dataclasses.replace(self, bottom=bottom)
-    
-    def get_hkl(self):
+
+    def get_hk(self):
         return self.kx
+
+    def get_vka(self):
+        return self.kz
 
     def get_horizontal_anisotropy(self):
         return self.ky / self.kx
@@ -201,7 +207,6 @@ class LayerData:
             kx=obj['kx'],
             ky=obj['ky'],
             kz=obj['kz'],
-            porosity=obj['porosity'],
             specific_storage=obj['specific_storage'],
             specific_yield=obj['specific_yield'],
             initial_head=obj['initial_head'],
@@ -214,7 +219,6 @@ class LayerData:
             'kx': self.kx,
             'ky': self.ky,
             'kz': self.kz,
-            'porosity': self.porosity,
             'specific_storage': self.specific_storage,
             'specific_yield': self.specific_yield,
             'initial_head': self.initial_head,
@@ -242,7 +246,6 @@ class Layer:
                 kx=1,
                 ky=1,
                 kz=1,
-                porosity=0.1,
                 specific_storage=0.0001,
                 specific_yield=0.1,
                 initial_head=1.0,
@@ -271,4 +274,4 @@ class Layer:
         }
 
     def is_confined(self):
-        return self.type.to_value() == 'confined'
+        return self.type == LayerType.confined()
