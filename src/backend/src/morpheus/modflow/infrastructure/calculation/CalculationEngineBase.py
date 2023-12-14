@@ -1,6 +1,9 @@
+from typing import Tuple
+
 from morpheus.modflow.types.ModflowModel import ModflowModel
-from morpheus.modflow.types.calculation.CalculationEngineRunReport import CalculationEngineRunReport
+from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.modflow.types.calculation.CalculationResult import CalculationResult
 
 
 class CalculationEngineBase:
@@ -13,7 +16,9 @@ class CalculationEngineBase:
     def on_start_running(self, callback):
         self.on_start_running_callback = callback
 
-    def run(self, modflow_model: ModflowModel, calculation_profile: CalculationProfile) -> CalculationEngineRunReport:
+    def run(self, modflow_model: ModflowModel, calculation_profile: CalculationProfile) -> Tuple[
+        CalculationLog, CalculationResult
+    ]:
         raise NotImplementedError
 
     def trigger_start_preprocessing(self):
@@ -27,3 +32,15 @@ class CalculationEngineBase:
             return
 
         self.on_start_running_callback()
+
+    def read_budget(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, incremental=False):
+        raise NotImplementedError
+
+    def read_concentration(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        raise NotImplementedError
+
+    def read_drawdown(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        raise NotImplementedError
+
+    def read_head(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        raise NotImplementedError

@@ -1,10 +1,11 @@
+from typing import Tuple
+
 import flopy.utils.binaryfile as bf
 import numpy as np
 import os
 from flopy.utils.mflistfile import MfListBudget
 from morpheus.modflow.infrastructure.calculation.CalculationEngineBase import CalculationEngineBase
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
-from morpheus.modflow.types.calculation.CalculationEngineRunReport import CalculationEngineRunReport
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, AvailableResults
 from morpheus.modflow.types.ModflowModel import ModflowModel
@@ -36,18 +37,22 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
 
-    def run(self, modflow_model: ModflowModel, calculation_profile: CalculationProfile) -> CalculationEngineRunReport:
+    def run(self, modflow_model: ModflowModel, calculation_profile: CalculationProfile) -> Tuple[
+        CalculationLog, CalculationResult
+    ]:
         if calculation_profile.calculation_engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
         self.trigger_start_preprocessing()
-        flopy_model = self.__prepare_packages(modflow_model, Mf2005CalculationEngineSettings.from_dict(calculation_profile.calculation_engine_settings))
+        flopy_model = self.__prepare_packages(modflow_model, Mf2005CalculationEngineSettings.from_dict(
+            calculation_profile.calculation_engine_settings))
         flopy_model.write_input()
 
         self.trigger_start_running()
         return self.__calculate(flopy_model)
 
-    def __prepare_packages(self, modflow_model: ModflowModel, calculation_profile: Mf2005CalculationEngineSettings) -> FlopyModflow:
+    def __prepare_packages(self, modflow_model: ModflowModel,
+                           calculation_profile: Mf2005CalculationEngineSettings) -> FlopyModflow:
 
         # general packages
 
@@ -100,7 +105,6 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # uzf
         # Not implemented yet
 
-
         # solvers are defined in the calculation profile
         solver_package_data = calculation_profile.get_solver_package_data()
         match solver_package_data.type:
@@ -143,15 +147,12 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         return flopy_model
 
-    def __calculate(self, flopy_model: FlopyModflow) -> CalculationEngineRunReport:
+    def __calculate(self, flopy_model: FlopyModflow) -> Tuple[CalculationLog, CalculationResult]:
         success, report = flopy_model.run_model(report=True)
-        return CalculationEngineRunReport(
-            calculation_log=CalculationLog.try_from_list(report),
-            calculation_result=self.__build_results(success)
-        )
+        return CalculationLog.try_from_list(report), self.__build_results(success)
 
     def __build_results(self, success: bool) -> CalculationResult:
-        if (not success):
+        if not success:
             return CalculationResult.failure(
                 message="Calculation failed",
                 files=os.listdir(self.workspace_path)
@@ -183,36 +184,6 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         except:
             return None
 
-    def read_heads_by_totim(self, totim=0, layer=0):
-        try:
-            head_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".hds"))
-            data = head_file.get_data(totim=totim, mflay=layer)
-            data = np.round(data, 3)
-            data[data <= -999] = None
-            return data.tolist()
-        except:
-            return []
-
-    def read_heads_by_idx(self, idx=0, layer=0):
-        try:
-            head_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".hds"))
-            data = head_file.get_data(idx=idx, mflay=layer)
-            data = np.round(data, 3)
-            data[data <= -999] = None
-            return data.tolist()
-        except:
-            return []
-
-    def read_heads_by_kstpkper(self, kstpkper=(0, 0), layer=0):
-        try:
-            head_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".hds"))
-            data = head_file.get_data(kstpkper=kstpkper, mflay=layer)
-            data = np.round(data, 3)
-            data[data <= -999] = None
-            return data.tolist()
-        except:
-            return []
-
     def __read_drawdown_results(self) -> AvailableResults | None:
         try:
             drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
@@ -223,36 +194,6 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             )
         except:
             return None
-
-    def read_drawdown_by_totim(self, totim=0, layer=0):
-        try:
-            drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
-            data = drawdown_file.get_data(totim=totim, mflay=layer)
-            data = np.round(data, 3)
-            data[data < -999] = None
-            return data.tolist()
-        except:
-            return []
-
-    def read_drawdown_by_idx(self, idx=0, layer=0):
-        try:
-            drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
-            data = drawdown_file.get_data(idx=idx, mflay=layer)
-            data = np.round(data, 3)
-            data[data < -999] = None
-            return data.tolist()
-        except:
-            return []
-
-    def read_drawdown_by_kstpkper(self, kstpkper=(0, 0), layer=0):
-        try:
-            drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
-            data = drawdown_file.get_data(kstpkper=kstpkper, mflay=layer)
-            data = np.round(data, 3)
-            data[data < -999] = None
-            return data.tolist()
-        except:
-            return []
 
     def __read_budget_results(self) -> AvailableResults | None:
         try:
@@ -265,41 +206,53 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         except:
             return None
 
-    def read_budget_by_totim(self, totim=0, incremental=False):
-        try:
-            budget_file = MfListBudget(self.__get_file_with_extension_from_workspace(".list"))
-            budget = budget_file.get_data(totim=totim, incremental=incremental)
-            values = {}
-            for x in budget:
-                param = str(x[2].decode('UTF-8'))
-                values[param] = float(str(x[1]))
-            return values
-        except:
-            return []
-
-    def read_budget_by_idx(self, idx=0, incremental=False):
-        try:
-            budget_file = MfListBudget(self.__get_file_with_extension_from_workspace(".list"))
-            budget = budget_file.get_data(idx=idx, incremental=incremental)
-            values = {}
-            for x in budget:
-                param = str(x[2].decode('UTF-8'))
-                values[param] = float(str(x[1]))
-            return values
-        except:
-            return []
-
-    def read_budget_by_kstpkper(self, kstpkper=(0, 0), incremental=False):
-        try:
-            budget_file = MfListBudget(self.__get_file_with_extension_from_workspace(".list"))
-            budget = budget_file.get_data(kstpkper=kstpkper, incremental=incremental)
-            values = {}
-            for x in budget:
-                param = str(x[2].decode('UTF-8'))
-                values[param] = float(str(x[1]))
-            return values
-        except:
-            return []
-
     def __read_concentration_results(self) -> AvailableResults | None:
         return None
+
+    def read_budget(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, incremental=False):
+        if totim is None and idx is None and kstpkper is None:
+            raise Exception('Either totim, idx or kstpkper must be specified')
+        try:
+            budget_file = MfListBudget(self.__get_file_with_extension_from_workspace(".list"))
+            budget = budget_file.get_data(totim=totim, idx=idx, kstpkper=kstpkper, incremental=incremental)
+            if budget is None:
+                return []
+
+            values = {}
+            for x in budget:
+                param = str(x[2].decode('UTF-8'))
+                values[param] = float(str(x[1]))
+            return values
+        except:
+            return []
+
+    def read_concentration(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        return []
+
+    def read_drawdown(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        if totim is None and idx is None and kstpkper is None:
+            raise Exception('Either totim, idx or kstpkper must be specified')
+        try:
+            drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
+            data = drawdown_file.get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+            if data is None:
+                return []
+            data = np.round(data, 3)
+            data[data < -999] = None
+            return data.tolist()
+        except:
+            return []
+
+    def read_head(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        if totim is None and idx is None and kstpkper is None:
+            raise Exception('Either totim, idx or kstpkper must be specified')
+        try:
+            head_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".hds"))
+            data = head_file.get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+            if data is None:
+                return []
+            data = np.round(data, 3)
+            data[data <= -999] = None
+            return data.tolist()
+        except:
+            return []

@@ -24,10 +24,10 @@ class CalculationProfile:
     calculation_engine_settings: dict
 
     @classmethod
-    def new(cls, type: CalculationEngineType, settings: dict):
+    def new(cls, engine_type: CalculationEngineType, engine_settings: dict):
         return cls(
-            calculation_engine_type=type,
-            calculation_engine_settings=settings
+            calculation_engine_type=engine_type,
+            calculation_engine_settings=engine_settings
         )
 
     @classmethod

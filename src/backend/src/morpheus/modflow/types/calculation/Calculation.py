@@ -55,7 +55,6 @@ class Calculation:
             calculation_result=None,
         )
 
-
     @classmethod
     def from_dict(cls, obj):
         return cls(
@@ -80,18 +79,18 @@ class Calculation:
         }
 
     def set_new_state(self, new_state: CalculationState):
-        self.calculation_state=new_state
+        self.calculation_state = new_state
         self.calculation_lifecycle.append(new_state)
 
     def set_log(self, log: CalculationLog):
-        self.calculation_log=log
+        self.calculation_log = log
 
     def append_to_log(self, message: str):
         if self.calculation_log is None:
-            self.calculation_log=CalculationLog(log=[message])
+            self.calculation_log = CalculationLog(log=[message])
             return
 
         self.calculation_log.log.append(message)
 
     def set_result(self, result: CalculationResult):
-        self.calculation_result=result
+        self.calculation_result = result
