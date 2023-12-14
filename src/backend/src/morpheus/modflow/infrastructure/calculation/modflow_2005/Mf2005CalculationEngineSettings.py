@@ -7,7 +7,7 @@ from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.OcPackage
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgPackageWrapper import PcgPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import PcgnPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import SipPackageData
-from morpheus.modflow.infrastructure.calculation.types.CalculationProfileBase import CalculationProfileBase
+from morpheus.modflow.types.calculation.CalculationProfile import CalculationEngineSettingsBase
 
 
 @dataclasses.dataclass
@@ -137,18 +137,9 @@ class PackageData:
         )
 
 
-@dataclasses.dataclass
-class Mf2005CalculationProfile(CalculationProfileBase):
-    calculation_type = 'mf2005'
-    profile_type = 'default'
-    name = 'Modflow 2005 default calculation profile'
-    description = 'Modflow 2005 default calculation profile'
-    packages: PackageData
-
-    def __init__(self, name: str, description: str, packages: dict):
-        self.name = name if name is not None else self.name
-        self.description = description
-        self.packages = PackageData.from_dict(packages)
+@dataclasses.dataclass(frozen=True)
+class Mf2005CalculationEngineSettings(CalculationEngineSettingsBase):
+    packages: PackageData = dataclasses.field(default_factory=PackageData)
 
     def get_oc_package_data(self) -> OcPackageData:
         return self.packages.oc
@@ -160,26 +151,18 @@ class Mf2005CalculationProfile(CalculationProfileBase):
         return self.packages.solver_package
 
     @classmethod
-    def new(cls):
+    def default(cls):
         return cls(
-            name=cls.name,
-            description=cls.description,
-            packages=PackageData.default().to_dict()
+            packages=PackageData.default()
         )
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            name=obj['name'],
-            description=obj['description'],
-            packages=obj['packages']
+            packages=PackageData.from_dict(obj['packages'])
         )
 
     def to_dict(self) -> dict:
         return {
-            'calculation_type': self.calculation_type,
-            'profile_type': self.profile_type,
-            'name': self.name,
-            'description': self.description,
             'packages': self.packages.to_dict()
         }

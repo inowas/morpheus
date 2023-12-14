@@ -29,6 +29,13 @@ class RivPackageData:
         self.unitnumber = unitnumber
         self.filenames = filenames
 
+    @classmethod
+    def user_input(self) -> dict:
+        return {
+            ipakcb: [0,1],
+            dtype: ['horst','kuchen'],
+        }
+
     def to_dict(self) -> dict:
         return {
             "stress_period_data": self.stress_period_data.to_dict(),

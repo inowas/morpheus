@@ -4,6 +4,7 @@
 source "$(dirname "$0")/util.inc.sh"
 
 localSensorDataMountpoint="$infrastructureRoot/data/morpheus/sensors"
+localModflowDataMountpoint="$infrastructureRoot/data/morpheus/modflow"
 
 
 outputHeadline "Preparing local .env file"
@@ -22,6 +23,7 @@ else
     && sed -i.bak -e "s!__replace_with__flask_group_id!$groupId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__project_root!$projectRoot!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__local_sensor_data_mountpoint!$localSensorDataMountpoint!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__local_modflow_data_mountpoint!$localModflowDataMountpoint!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__celery_user_id!$userId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__celery_group_id!$groupId!g" -- "$envFile.tmp" \
     && mv "$envFile.tmp" "$envFile" \
