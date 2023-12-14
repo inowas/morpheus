@@ -39,7 +39,7 @@ def calculate_riv_boundary_stress_period_data(
 
         # we need to filter the affected cells to only include cells that are part of the model
         riv_boundary.affected_cells = riv_boundary.affected_cells.filter(
-            lambda cell: spatial_discretization.affected_cells.contains(cell))
+            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if riv_boundary.number_of_observations() == 1:
             # if we only have one observation point
@@ -69,12 +69,17 @@ def calculate_riv_boundary_stress_period_data(
             # we need to interpolate the mean data for each affected cell ;(
             line_string = ShapelyLineString(riv_boundary.geometry.coordinates)
 
+            observations = riv_boundary.get_observations()
+            observations.sort(
+                key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True)
+            )
+
             xx: list[float] = []
             yy_river_stages: list[float] = []
             yy_conductances = []
             yy_riverbed_bottoms: list[float] = []
 
-            for observation in riv_boundary.observations:
+            for observation in observations:
                 shapely_point = ShapelyPoint(observation.geometry.coordinates)
                 xx.append(line_string.project(shapely_point, normalized=True))
 

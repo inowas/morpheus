@@ -5,6 +5,8 @@ import numpy as np
 import os
 from flopy.utils.mflistfile import MfListBudget
 from morpheus.modflow.infrastructure.calculation.CalculationEngineBase import CalculationEngineBase
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.DrnPackageWrapper import create_drn_package
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.EvtPackageWrapper import create_evt_package
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, AvailableResults
@@ -79,13 +81,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # head-dependent flux packages
 
         # drn
-        # Not implemented yet
+        create_drn_package(flopy_model, modflow_model)
         # drt
         # Not implemented yet
         # ets
         # Not implemented yet
         # evt
-        # Not implemented yet
+        create_evt_package(flopy_model, modflow_model)
         # ghb
         create_ghb_package(flopy_model, modflow_model)
         # lak

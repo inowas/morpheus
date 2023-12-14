@@ -67,10 +67,15 @@ def calculate_drn_boundary_stress_period_data(
             # we need to interpolate the mean data for each affected cell ;(
             line_string = ShapelyLineString(drn_boundary.geometry.coordinates)
 
+            observations = drn_boundary.get_observations()
+            observations.sort(
+                key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True)
+            )
+
             xx: list[float] = []
             yy_stages: list[float] = []
             yy_conductances = []
-            for observation in drn_boundary.observations:
+            for observation in observations:
                 shapely_point = ShapelyPoint(observation.geometry.coordinates)
                 xx.append(line_string.project(shapely_point, normalized=True))
 
