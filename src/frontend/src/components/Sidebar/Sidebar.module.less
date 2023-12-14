@@ -3,6 +3,7 @@
 // Define the variable for width
 @sidebarWidth: 350px;
 @sidebarButton: 32px;
+@animationSpeed: 400ms;
 
 .sidebarContainer {
 
@@ -29,21 +30,9 @@
   position: relative;
   width: calc(@sidebarWidth - 20px);
   background: @ref-color-lightGrey;
-  transition: width 300ms linear;
+  transition: width @animationSpeed linear;
   margin-right: 20px;
-
-  //&:before {
-  //  content: '';
-  //  display: block;
-  //  width: 20px;
-  //  height: calc(100% + @sidebarButton);
-  //  background: @ref-color-lightGrey;
-  //  right: 100%;
-  //  bottom: 0;
-  //  position: absolute;
-  //  overflow-y: hidden;
-  //  transition: inherit;
-  //}
+  visibility: visible;
 
   aside {
     overflow: hidden;
@@ -74,6 +63,7 @@
   .sidebarAside {
     width: 0;
     margin-right: 0;
+    visibility: hidden;
 
     aside {
       background: transparent;
@@ -87,11 +77,12 @@
   }
 
   .sidebarStickyButton {
-    transform: translateX(-110%);
+    transition: all @animationSpeed linear;
+    transform: translateX(-110%) rotateZ(180deg);
 
     @media (max-width: @breakpoint-tablet) {
       top: 266px;
-      transform: translateX(0);
+      transform: translateX(0) rotateZ(180deg);
     }
   }
 }
@@ -99,8 +90,9 @@
 .sidebarStickyButton {
   position: sticky;
   top: 155px;
-  transform: translateX(calc(@sidebarWidth - 35px));
-  transition: all 300ms linear;
+  transition: all @animationSpeed linear;
+  transform: translateX(calc(@sidebarWidth - 35px)) rotateZ(0deg);
+  cursor: pointer;
 
   padding: 5px;
   margin-top: -@sidebarButton;
@@ -117,11 +109,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  outline: 2px solid transparent;
+
+  &:hover {
+    outline: 2px solid @blue;
+  }
 
   @media (max-width: @breakpoint-tablet-horizontal) {
     top: 226px;
   }
 
+
+  i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .wrapper {

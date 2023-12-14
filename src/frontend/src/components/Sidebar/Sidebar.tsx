@@ -39,7 +39,7 @@ const Sidebar = ({children, data, updateModelData}: IProps) => {
         className={styles.sidebarStickyButton}
         onClick={handleClose}
       >
-        <Icon name="cogs"/>
+        <Icon name="angle double left"/>
       </button>
       <div
         className={styles.sidebarInner}
