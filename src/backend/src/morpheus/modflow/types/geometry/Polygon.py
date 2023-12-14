@@ -1,5 +1,7 @@
 import dataclasses
 from typing import Literal
+from shapely.geometry import Polygon as ShapelyPolygon
+from .Point import Point
 
 
 @dataclasses.dataclass
@@ -12,6 +14,10 @@ class Polygon:
             'type': self.type,
             'coordinates': self.coordinates
         }
+
+    def centroid(self) -> Point:
+        shapely_polygon = ShapelyPolygon(self.coordinates[0])
+        return Point(coordinates=shapely_polygon.centroid.coords[0])
 
     @classmethod
     def from_dict(cls, obj: dict):

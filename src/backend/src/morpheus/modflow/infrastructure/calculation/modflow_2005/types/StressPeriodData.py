@@ -90,11 +90,11 @@ class LayerBasedStressPeriodData(StressPeriodData):
     def is_empty(self):
         return len(self.data) == 0
 
-    def to_dict(self) -> dict:
+    def to_dict(self, idx: int = 0) -> dict:
         sp_data = {}
         sorted_list_of_unique_time_steps = sorted(list(set([item.time_step for item in self.data])))
         for time_step in sorted_list_of_unique_time_steps:
             sp_data.setdefault(time_step, np.zeros(self.shape).tolist())
             for item in self.data:
-                sp_data[time_step][item.row][item.column] = item.values[0]
+                sp_data[time_step][item.row][item.column] = item.values[idx]
         return sp_data

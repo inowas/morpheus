@@ -3,6 +3,8 @@ from typing import Literal
 
 from morpheus.common.types import Uuid, String
 from .ConstantHeadObservation import ConstantHeadObservation
+from .DrainObservation import DrainObservation
+from .EvapotranspirationObservation import EvapotranspirationObservation
 from .GeneralHeadObservation import GeneralHeadObservation
 from .Observation import Observation, DataItem
 from .RechargeObservation import RechargeObservation
@@ -21,22 +23,30 @@ class BoundaryId(Uuid):
 
 @dataclasses.dataclass(frozen=True)
 class BoundaryType:
-    type: Literal['constant_head', 'drain', 'general_head', 'recharge', 'river', 'well']
+    type: Literal['constant_head', 'evapotranspiration', 'drain', 'general_head', 'recharge', 'river', 'well']
 
     def __eq__(self, other):
         return self.type == other.type
 
     @classmethod
-    def from_str(cls, value: Literal['constant_head', 'drain', 'general_head', 'recharge', 'river', 'well']):
+    def from_str(cls, value: Literal[
+        'constant_head', 'evapotranspiration', 'drain', 'general_head', 'recharge', 'river', 'well'
+    ]):
         return cls(type=value)
 
     @classmethod
-    def from_value(cls, value: Literal['constant_head', 'drain', 'general_head', 'recharge', 'river', 'well']):
+    def from_value(cls, value: Literal[
+        'constant_head', 'evapotranspiration', 'drain', 'general_head', 'recharge', 'river', 'well'
+    ]):
         return cls.from_str(value=value)
 
     @classmethod
     def constant_head(cls):
         return cls.from_str('constant_head')
+
+    @classmethod
+    def evapotranspiration(cls):
+        return cls.from_str('evapotranspiration')
 
     @classmethod
     def drain(cls):
@@ -96,114 +106,23 @@ class Boundary:
         self.enabled = enabled
 
     @classmethod
-    def from_geometry_base(cls, boundary_type: BoundaryType, name: BoundaryName, geometry: Point | LineString | Polygon,
-                           grid: Grid, affected_layers: list[LayerId], observations: list[Observation] | None = None):
-
-        affected_cells = GridCells.empty_from_grid(grid=grid)
-
-        if isinstance(geometry, Point):
-            affected_cells = GridCells.from_point(point=geometry, grid=grid)
-
-        if isinstance(geometry, LineString):
-            affected_cells = GridCells.from_linestring(linestring=geometry, grid=grid)
-
-        if isinstance(geometry, Polygon):
-            affected_cells = GridCells.from_polygon(polygon=geometry, grid=grid)
-
-        if observations is None or len(observations) == 0:
-            observation_point_geometry = None
-
-            if isinstance(geometry, Point):
-                observation_point_geometry = geometry
-
-            if isinstance(geometry, LineString):
-                observation_point_geometry = Point(coordinates=geometry.coordinates[0])
-
-            if isinstance(geometry, Polygon):
-                observation_point_geometry = Point(coordinates=geometry.coordinates[0][0])
-
-            if observation_point_geometry is None:
-                raise ValueError('Could not determine observation point geometry')
-
-            observations = [
-                Observation.new(geometry=observation_point_geometry, raw_data=[])
-            ]
-
-        if boundary_type == BoundaryType.constant_head():
-            return ConstantHeadBoundary(
-                boundary_id=BoundaryId.new(),
-                boundary_type=boundary_type,
-                name=name,
-                geometry=geometry,
-                affected_cells=affected_cells,
-                affected_layers=affected_layers,
-                observations=observations,
-                enabled=True
-            )
-
-        if boundary_type == BoundaryType.general_head():
-            return GeneralHeadBoundary(
-                boundary_id=BoundaryId.new(),
-                boundary_type=boundary_type,
-                name=name,
-                geometry=geometry,
-                affected_cells=affected_cells,
-                affected_layers=affected_layers,
-                observations=observations,
-                enabled=True
-            )
-
-        if boundary_type == BoundaryType.recharge():
-            return RechargeBoundary(
-                boundary_id=BoundaryId.new(),
-                boundary_type=boundary_type,
-                name=name,
-                geometry=geometry,
-                affected_cells=affected_cells,
-                affected_layers=affected_layers,
-                observations=observations,
-                enabled=True
-            )
-
-        if boundary_type == BoundaryType.river():
-            return RiverBoundary(
-                boundary_id=BoundaryId.new(),
-                boundary_type=boundary_type,
-                name=name,
-                geometry=geometry,
-                affected_cells=affected_cells,
-                affected_layers=affected_layers,
-                observations=observations,
-                enabled=True
-            )
-
-        if boundary_type == BoundaryType.well():
-            return WellBoundary(
-                boundary_id=BoundaryId.new(),
-                boundary_type=boundary_type,
-                name=name,
-                geometry=geometry,
-                affected_cells=affected_cells,
-                affected_layers=affected_layers,
-                observations=observations,
-                enabled=True
-            )
-
-    @classmethod
     def from_dict(cls, obj):
-        boundary_type = BoundaryType.from_value(obj['type'])
+        boundary_type = BoundaryType.from_value(obj.get('type', None))
         if BoundaryType.constant_head() == boundary_type:
             return ConstantHeadBoundary.from_dict(obj)
-        elif BoundaryType.general_head() == boundary_type:
+        if BoundaryType.drain() == boundary_type:
+            return DrainBoundary.from_dict(obj)
+        if BoundaryType.evapotranspiration() == boundary_type:
+            return EvapotranspirationBoundary.from_dict(obj)
+        if BoundaryType.general_head() == boundary_type:
             return GeneralHeadBoundary.from_dict(obj)
-        elif BoundaryType.river() == boundary_type:
-            return RiverBoundary.from_dict(obj)
-        elif BoundaryType.recharge() == boundary_type:
+        if BoundaryType.recharge() == boundary_type:
             return RechargeBoundary.from_dict(obj)
-        elif BoundaryType.well() == boundary_type:
+        if BoundaryType.river() == boundary_type:
+            return RiverBoundary.from_dict(obj)
+        if BoundaryType.well() == boundary_type:
             return WellBoundary.from_dict(obj)
-        else:
-            raise ValueError(f'Unknown boundary type: {boundary_type}')
+        raise ValueError(f'Unknown boundary type: {boundary_type}')
 
     def to_dict(self):
         return {
@@ -259,27 +178,8 @@ class BoundaryCollection:
 
     @classmethod
     def from_dict(cls, collection: list[dict]):
-        new_collection = []
-        for item in collection:
-            boundary_type = BoundaryType.from_value(item.get('type', None))
-            if BoundaryType.constant_head() == boundary_type:
-                new_collection.append(ConstantHeadBoundary.from_dict(item))
-                continue
-            if BoundaryType.general_head() == boundary_type:
-                new_collection.append(GeneralHeadBoundary.from_dict(item))
-                continue
-            if BoundaryType.river() == boundary_type:
-                new_collection.append(RiverBoundary.from_dict(item))
-                continue
-            if BoundaryType.recharge() == boundary_type:
-                new_collection.append(RechargeBoundary.from_dict(item))
-                continue
-            if BoundaryType.well() == boundary_type:
-                new_collection.append(WellBoundary.from_dict(item))
-                continue
-
-            raise ValueError(f'Unknown boundary type: {boundary_type}')
-        return cls(boundaries=new_collection)
+        boundary_list = [Boundary.from_dict(item) for item in collection]
+        return cls(boundaries=boundary_list)
 
     def to_dict(self):
         return [boundary.to_dict() for boundary in self.boundaries]
@@ -293,24 +193,119 @@ class ConstantHeadBoundary(Boundary):
     geometry: LineString
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString,
-                      grid: Grid, affected_layers: list[LayerId], observations: list[Observation] | None = None):
+    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
+                      observations: list[Observation] | None = None):
         if not isinstance(geometry, LineString):
             raise ValueError('Constant head boundaries must be lines')
 
-        return cls.from_geometry_base(boundary_type=BoundaryType.constant_head(), name=name, geometry=geometry,
-                                      grid=grid, affected_layers=affected_layers, observations=observations)
+        if observations is None:
+            observations = [
+                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+        )
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=BoundaryType.constant_head(),
+            boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[ConstantHeadObservation.from_dict(observation) for observation in obj['observations']],
+            enabled=obj['enabled']
+        )
+
+
+class DrainBoundary(Boundary):
+    type: BoundaryType = BoundaryType.drain()
+    geometry: LineString
+
+    @classmethod
+    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
+                      observations: list[Observation] | None = None):
+        if not isinstance(geometry, LineString):
+            raise ValueError('Drain boundaries must be lines')
+
+        if observations is None:
+            observations = [
+                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+        )
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            boundary_id=BoundaryId.from_value(obj['id']),
+            boundary_type=cls.type,
+            name=BoundaryName.from_value(obj['name']),
+            geometry=LineString.from_dict(obj['geometry']),
+            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
+            observations=[DrainObservation.from_dict(observation) for observation in obj['observations']],
+            enabled=obj['enabled']
+        )
+
+
+class EvapotranspirationBoundary(Boundary):
+    type: BoundaryType = BoundaryType.evapotranspiration()
+    geometry: Polygon
+
+    @classmethod
+    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
+                      observations: list[Observation] | None = None):
+
+        if len(observations) > 1:
+            raise ValueError('Evapotranspiration boundaries can only have one observation point')
+        if not isinstance(geometry, Polygon):
+            raise ValueError('Evapotranspiration boundaries must be polygons')
+
+        if observations is None:
+            centroid = geometry.centroid()
+            observations = [
+                EvapotranspirationObservation.new(geometry=centroid, raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+            enabled=True
+        )
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            boundary_id=BoundaryId.from_value(obj['id']),
+            boundary_type=cls.type,
+            name=BoundaryName.from_value(obj['name']),
+            geometry=Polygon.from_dict(obj['geometry']),
+            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
+            observations=[EvapotranspirationObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
         )
 
@@ -325,19 +320,75 @@ class GeneralHeadBoundary(Boundary):
         if not isinstance(geometry, LineString):
             raise ValueError('General head boundaries must be lines')
 
-        return cls.from_geometry_base(boundary_type=BoundaryType.general_head(), name=name, geometry=geometry,
-                                      grid=grid, affected_layers=affected_layers, observations=observations)
+        if observations is None:
+            observations = [
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+        )
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=BoundaryType.general_head(),
+            boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[GeneralHeadObservation.from_dict(observation) for observation in obj['observations']],
+            enabled=obj['enabled']
+        )
+
+
+class RechargeBoundary(Boundary):
+    type: BoundaryType = BoundaryType.recharge()
+    geometry: Polygon
+
+    @classmethod
+    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
+                      observations: list[Observation] | None = None):
+
+        if len(observations) > 1:
+            raise ValueError('Recharge boundaries can only have one observation point')
+        if not isinstance(geometry, Polygon):
+            raise ValueError('Recharge boundaries must be polygons')
+
+        if observations is None:
+            centroid = geometry.centroid()
+            observations = [
+                RechargeObservation.new(geometry=centroid, raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+            enabled=True
+        )
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            boundary_id=BoundaryId.from_value(obj['id']),
+            boundary_type=BoundaryType.recharge(),
+            name=BoundaryName.from_value(obj['name']),
+            geometry=Polygon.from_dict(obj['geometry']),
+            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
+            observations=[RechargeObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
         )
 
@@ -352,14 +403,26 @@ class RiverBoundary(Boundary):
         if not isinstance(geometry, LineString):
             raise ValueError('River boundaries must be lines')
 
-        return cls.from_geometry_base(boundary_type=BoundaryType.river(), name=name, geometry=geometry,
-                                      grid=grid, affected_layers=affected_layers, observations=observations)
+        if observations is None:
+            observations = [
+                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+        )
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=BoundaryType.river(),
+            boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
@@ -383,48 +446,25 @@ class WellBoundary(Boundary):
             WellObservation.new(geometry=geometry, raw_data=raw_data)
         ]
 
-        return cls.from_geometry_base(boundary_type=BoundaryType.well(), name=name, geometry=geometry,
-                                      grid=grid, affected_layers=affected_layers, observations=observations)
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_point(point=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+        )
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=BoundaryType.well(),
+            boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=Point.from_dict(obj['geometry']),
             affected_cells=GridCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[WellObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
-        )
-
-
-class RechargeBoundary(Boundary):
-    type: BoundaryType = BoundaryType.recharge()
-    geometry: Polygon
-
-    @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
-
-        if len(observations) > 1:
-            raise ValueError('Recharge boundaries can only have one observation point')
-        if not isinstance(geometry, Polygon):
-            raise ValueError('Recharge boundaries must be polygons')
-
-        return cls.from_geometry_base(boundary_type=BoundaryType.recharge(), name=name, geometry=geometry,
-                                      grid=grid, affected_layers=affected_layers, observations=observations)
-
-    @classmethod
-    def from_dict(cls, obj):
-        return cls(
-            boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=BoundaryType.recharge(),
-            name=BoundaryName.from_value(obj['name']),
-            geometry=Polygon.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
-            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
-            observations=[RechargeObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
         )

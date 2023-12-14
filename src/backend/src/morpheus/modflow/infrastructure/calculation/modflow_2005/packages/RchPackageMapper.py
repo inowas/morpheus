@@ -1,11 +1,9 @@
-from morpheus.modflow.infrastructure.calculation.modflow_2005.types.StressPeriodData import \
-    StressPeriodData, LayerBasedStressPeriodData
+from morpheus.modflow.infrastructure.calculation.modflow_2005.types.StressPeriodData import LayerBasedStressPeriodData
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.types.boundaries.Boundary import BoundaryType, RechargeBoundary
 from morpheus.modflow.types.boundaries.RechargeObservation import RechargeDataItem
 
 from morpheus.modflow.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.modflow.types.soil_model import SoilModel
 
 
 class RchStressPeriodData(LayerBasedStressPeriodData):
@@ -15,7 +13,6 @@ class RchStressPeriodData(LayerBasedStressPeriodData):
 def calculate_rch_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: SoilModel,
     rch_boundary: RechargeBoundary
 ) -> RchStressPeriodData:
     grid = spatial_discretization.grid
@@ -38,7 +35,7 @@ def calculate_rch_boundary_stress_period_data(
 
         # we need to filter the affected cells to only include cells that are part of the model
         rch_boundary.affected_cells = rch_boundary.affected_cells.filter(
-            lambda cell: spatial_discretization.affected_cells.contains(cell))
+            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if rch_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]
@@ -63,7 +60,6 @@ def calculate_stress_period_data(model: ModflowModel) -> RchStressPeriodData | N
         sp_data_boundary = calculate_rch_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
-            soil_model=model.soil_model,
             rch_boundary=boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
