@@ -7,7 +7,7 @@ from .DrainObservation import DrainObservation
 from .EvapotranspirationObservation import EvapotranspirationObservation
 from .GeneralHeadObservation import GeneralHeadObservation
 from .Observation import Observation, DataItem
-from .RechargeObservation import RechargeObservation
+from .RechargeObservation import RechargeObservation, RechargeRawDataItem
 from .RiverObservation import RiverObservation
 from .WellObservation import WellObservation, WellRawDataItem
 
@@ -355,19 +355,7 @@ class RechargeBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
-
-        if len(observations) > 1:
-            raise ValueError('Recharge boundaries can only have one observation point')
-        if not isinstance(geometry, Polygon):
-            raise ValueError('Recharge boundaries must be polygons')
-
-        if observations is None:
-            centroid = geometry.centroid()
-            observations = [
-                RechargeObservation.new(geometry=centroid, raw_data=[]),
-            ]
-
+                      raw_data: list[RechargeRawDataItem] | None = None):
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
@@ -375,7 +363,9 @@ class RechargeBoundary(Boundary):
             geometry=geometry,
             affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
-            observations=observations,
+            observations=[
+                RechargeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [])
+            ],
             enabled=True
         )
 

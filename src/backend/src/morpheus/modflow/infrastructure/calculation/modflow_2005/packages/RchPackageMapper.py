@@ -4,6 +4,7 @@ from morpheus.modflow.types.boundaries.Boundary import BoundaryType, RechargeBou
 from morpheus.modflow.types.boundaries.RechargeObservation import RechargeDataItem
 
 from morpheus.modflow.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.modflow.types.soil_model import SoilModel
 
 
 class RchStressPeriodData(LayerBasedStressPeriodData):
@@ -13,6 +14,7 @@ class RchStressPeriodData(LayerBasedStressPeriodData):
 def calculate_rch_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
+    soil_model: SoilModel,
     rch_boundary: RechargeBoundary
 ) -> RchStressPeriodData:
     grid = spatial_discretization.grid
@@ -58,6 +60,7 @@ def calculate_stress_period_data(model: ModflowModel) -> RchStressPeriodData | N
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.recharge())
     for boundary in boundaries:
         sp_data_boundary = calculate_rch_boundary_stress_period_data(
+            soil_model=model.soil_model,
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
             rch_boundary=boundary
