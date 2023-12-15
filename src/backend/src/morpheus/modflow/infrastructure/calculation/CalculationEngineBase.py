@@ -3,7 +3,7 @@ from typing import Tuple
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile
-from morpheus.modflow.types.calculation.CalculationResult import CalculationResult
+from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, Observation
 
 
 class CalculationEngineBase:
@@ -43,4 +43,7 @@ class CalculationEngineBase:
         raise NotImplementedError
 
     def read_head(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        raise NotImplementedError
+
+    def read_head_observations(self) -> list[Observation]:
         raise NotImplementedError

@@ -7,9 +7,10 @@ from flopy.utils.mflistfile import MfListBudget
 from morpheus.modflow.infrastructure.calculation.CalculationEngineBase import CalculationEngineBase
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.DrnPackageWrapper import create_drn_package
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.EvtPackageWrapper import create_evt_package
+from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.HobPackageWrapper import create_hob_package
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
-from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, AvailableResults
+from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.infrastructure.calculation.modflow_2005.Mf2005CalculationEngineSettings import \
     Mf2005CalculationEngineSettings
@@ -142,10 +143,10 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 raise ValueError(f'Unknown flow package type: {flow_package_data.type}')
 
         # output control packages
-        create_oc_package(
-            flopy_model,
-            calculation_profile.get_oc_package_data()
-        )
+        create_oc_package(flopy_model, calculation_profile.get_oc_package_data())
+
+        # observation packages
+        create_hob_package(flopy_model, modflow_model)
 
         return flopy_model
 
@@ -167,6 +168,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             drawdown_results=self.__read_drawdown_results(),
             budget_results=self.__read_budget_results(),
             concentration_results=self.__read_concentration_results(),
+
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -182,6 +184,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 times=[float(time) for time in head_file.get_times()],
                 kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in head_file.get_kstpkper()],
                 number_of_layers=int(head_file.get_data().shape[0]),
+                number_of_observations=len(self.read_head_observations()),
             )
         except:
             return None
@@ -193,6 +196,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 times=[float(time) for time in drawdown_file.get_times()],
                 kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in drawdown_file.get_kstpkper()],
                 number_of_layers=int(drawdown_file.get_data().shape[0]),
+                number_of_observations=0,
             )
         except:
             return None
@@ -204,6 +208,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 times=[float(time) for time in budget_file.get_times()],
                 kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in budget_file.get_kstpkper()],
                 number_of_layers=0,
+                number_of_observations=0,
             )
         except:
             return None
@@ -258,3 +263,29 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return data.tolist()
         except:
             return []
+
+    def read_head_observations(self) -> list[Observation]:
+        hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
+        if not hob_out_file:
+            return []
+
+        observations = []
+        f = open(hob_out_file)
+        header = False
+        counter = 0
+        for line in f:
+            if line.startswith('#'):
+                continue
+
+            if not header:
+                header = line.split('"')[1::2]
+                continue
+
+            values = line.split()
+            observations.append(Observation(
+                simulated=float(values[0]),
+                observed=float(values[1]),
+                name=values[2],
+            ))
+
+        return observations

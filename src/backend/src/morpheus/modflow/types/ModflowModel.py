@@ -3,7 +3,10 @@ import dataclasses
 from morpheus.common.types import Uuid
 from morpheus.modflow.types.boundaries.Boundary import BoundaryCollection
 from morpheus.modflow.types.discretization import SpatialDiscretization, TimeDiscretization
+from morpheus.modflow.types.observations.Observation import ObservationCollection
 from morpheus.modflow.types.soil_model.SoilModel import SoilModel
+from morpheus.modflow.types.transport.Transport import Transport
+from morpheus.modflow.types.variable_density.VariableDensityFlow import VariableDensityFlow
 
 
 class ModelId(Uuid):
@@ -16,7 +19,10 @@ class ModflowModel:
     spatial_discretization: SpatialDiscretization
     time_discretization: TimeDiscretization
     boundaries: BoundaryCollection
+    observations: ObservationCollection
     soil_model: SoilModel
+    transport: Transport
+    variable_density: VariableDensityFlow
 
     @classmethod
     def from_dict(cls, obj):
@@ -25,7 +31,11 @@ class ModflowModel:
             spatial_discretization=SpatialDiscretization.from_dict(obj['spatial_discretization']),
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
             boundaries=BoundaryCollection.from_dict(obj['boundaries']),
-            soil_model=SoilModel.from_dict(obj['soil_model'])
+            observations=ObservationCollection.from_dict(obj['observations'] if 'observations' in obj else []),
+            soil_model=SoilModel.from_dict(obj['soil_model']),
+            transport=Transport.from_dict(obj['transport'] if 'transport' in obj else None),
+            variable_density=VariableDensityFlow.from_dict(
+                obj['variable_density'] if 'variable_density' in obj else None),
         )
 
     @classmethod
@@ -35,7 +45,10 @@ class ModflowModel:
             spatial_discretization=SpatialDiscretization.new(),
             time_discretization=TimeDiscretization.new(),
             boundaries=BoundaryCollection.new(),
+            observations=ObservationCollection.new(),
             soil_model=SoilModel.new(),
+            transport=Transport.new(),
+            variable_density=VariableDensityFlow.new(),
         )
 
     def to_dict(self):
@@ -44,7 +57,10 @@ class ModflowModel:
             'spatial_discretization': self.spatial_discretization.to_dict(),
             'time_discretization': self.time_discretization.to_dict(),
             'boundaries': self.boundaries.to_dict(),
+            'observations': self.observations.to_dict(),
             'soil_model': self.soil_model.to_dict(),
+            'transport': self.transport.to_dict(),
+            'variable_density': self.variable_density.to_dict(),
         }
 
     def with_updated_spatial_discretization(self, spatial_discretization: SpatialDiscretization):
@@ -56,5 +72,14 @@ class ModflowModel:
     def with_updated_boundaries(self, boundaries: BoundaryCollection):
         return dataclasses.replace(self, boundaries=boundaries)
 
+    def with_updated_observations(self, observations: ObservationCollection):
+        return dataclasses.replace(self, observations=observations)
+
     def with_updated_soilmodel(self, soil_model: SoilModel):
         return dataclasses.replace(self, soil_model=soil_model)
+
+    def with_updated_transport(self, transport: Transport):
+        return dataclasses.replace(self, transport=transport)
+
+    def with_updated_variable_density(self, variable_density: VariableDensityFlow):
+        return dataclasses.replace(self, variable_density=variable_density)

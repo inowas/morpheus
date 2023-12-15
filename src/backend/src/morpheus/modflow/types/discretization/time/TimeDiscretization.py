@@ -1,5 +1,6 @@
 import dataclasses
 
+from morpheus.common.types import DateTime
 from .Stressperiods import StartDateTime, EndDateTime, StressPeriodCollection
 from .TimeUnit import TimeUnit
 
@@ -103,3 +104,7 @@ class TimeDiscretization:
             end_date_times.append(self.end_date_time)
 
         return end_date_times
+
+    def get_total_time_from_date_time(self, date_time: DateTime) -> float:
+        total_time_in_seconds = date_time.to_datetime().timestamp() - self.start_date_time.to_datetime().timestamp()
+        return total_time_in_seconds / self.time_unit_length_in_seconds()

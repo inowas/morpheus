@@ -3,10 +3,18 @@ from enum import StrEnum
 
 
 @dataclasses.dataclass(frozen=True)
+class Observation:
+    name: str
+    simulated: float
+    observed: float
+
+
+@dataclasses.dataclass(frozen=True)
 class AvailableResults:
     times: list[float]
     kstpkper: list[(int, int)]
     number_of_layers: int
+    number_of_observations: int
 
     @classmethod
     def from_dict(cls, obj):
@@ -14,6 +22,7 @@ class AvailableResults:
             times=obj['times'],
             kstpkper=obj['kstpkper'],
             number_of_layers=obj['number_of_layers'],
+            number_of_observations=obj['number_of_observations'],
         )
 
     def to_dict(self) -> dict:
@@ -21,6 +30,7 @@ class AvailableResults:
             'times': self.times,
             'kstpkper': self.kstpkper,
             'number_of_layers': self.number_of_layers,
+            'number_of_observations': self.number_of_observations,
         }
 
 
@@ -63,7 +73,7 @@ class CalculationResult:
     ):
         return cls(
             type=CalculationResultType.SUCCESS,
-            message='',
+            message=message if message is not None else '',
             files=files,
             head_results=head_results,
             drawdown_results=drawdown_results,

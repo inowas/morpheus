@@ -75,3 +75,6 @@ class CalculationService:
 
     def read_head(self, idx: int, layer: int):
         return self.engine.read_head(idx=idx, layer=layer)
+
+    def read_head_observations(self):
+        return self.engine.read_head_observations()
