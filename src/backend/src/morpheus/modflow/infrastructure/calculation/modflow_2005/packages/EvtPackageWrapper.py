@@ -36,7 +36,7 @@ class EvtPackageData:
             'surf': self.stress_period_data.get_surface_elevation_sp_data(),
             'evtr': self.stress_period_data.get_evapotranspiration_sp_data(),
             'exdp': self.stress_period_data.get_extinction_depth_sp_data(),
-            'ievt': self.ievt,
+            'ievt': self.stress_period_data.get_layer_index_sp_data(),
             'nevtop': self.nevtop,
             'ipakcb': self.ipakcb,
             'extension': self.extension,

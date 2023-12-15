@@ -4,7 +4,7 @@ from typing import Literal
 from morpheus.common.types import Uuid, String
 from .ConstantHeadObservation import ConstantHeadObservation
 from .DrainObservation import DrainObservation
-from .EvapotranspirationObservation import EvapotranspirationObservation
+from .EvapotranspirationObservation import EvapotranspirationObservation, EvapotranspirationRawDataItem
 from .GeneralHeadObservation import GeneralHeadObservation
 from .Observation import Observation, DataItem
 from .RechargeObservation import RechargeObservation, RechargeRawDataItem
@@ -272,19 +272,7 @@ class EvapotranspirationBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
-
-        if len(observations) > 1:
-            raise ValueError('Evapotranspiration boundaries can only have one observation point')
-        if not isinstance(geometry, Polygon):
-            raise ValueError('Evapotranspiration boundaries must be polygons')
-
-        if observations is None:
-            centroid = geometry.centroid()
-            observations = [
-                EvapotranspirationObservation.new(geometry=centroid, raw_data=[]),
-            ]
-
+                      raw_data: list[EvapotranspirationRawDataItem] | None = None):
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
@@ -292,7 +280,9 @@ class EvapotranspirationBoundary(Boundary):
             geometry=geometry,
             affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
-            observations=observations,
+            observations=[
+                EvapotranspirationObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [])
+            ],
             enabled=True
         )
 
