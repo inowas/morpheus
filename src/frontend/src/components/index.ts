@@ -5,7 +5,7 @@ import ChartModal from './ChartModal';
 import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import Container from './Container/Container';
-import ContentWrapper from './ContentWrapper';
+import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
 import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
@@ -28,6 +28,7 @@ import Modal from './Modal/Modal';
 import Navbar, {INavbarItem} from './Navbar';
 import ModelGrid from './ModelGrid';
 import ModelCard, {IModelCard} from './ModelCard';
+import {ModelWrapper} from './ModelWrapper';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -72,6 +73,8 @@ export {
   Modal,
   ModelGrid,
   ModelCard,
+  // ModelSidebar,
+  ModelWrapper,
   Navbar,
   NotFound,
   Notification,
@@ -102,4 +105,6 @@ export type {
   INavbarItem,
   IModelCard,
   ISortOption,
+  IPageWidth,
+  IPageHeight,
 };

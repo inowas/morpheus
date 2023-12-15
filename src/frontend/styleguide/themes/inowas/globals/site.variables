@@ -986,6 +986,7 @@
 @ref-color-red: #dd2727;
 @ref-color-redDark: #BF1E1E;
 @ref-color-blackLight: #333333;
+@ref-color-underline: #8494B2;
 
 
 @breakpoint-mobile-xs: 320px;

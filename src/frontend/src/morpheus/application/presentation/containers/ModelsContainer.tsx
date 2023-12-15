@@ -1,15 +1,16 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {ContentWrapper, Footer, Header, IPageWidth, Navbar} from 'components';
+import {Footer, Header, IPageWidth, Navbar} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 interface IProps {
   children: ReactNode;
 }
 
+
 type ILanguageCode = 'de-DE' | 'en-GB';
 
-const ApplicationContainer = ({children}: IProps) => {
+const ModelsContainer = ({children}: IProps) => {
 
   const {i18n, translate} = useTranslate();
   const {navbarItems} = useNavbarItems();
@@ -22,7 +23,7 @@ const ApplicationContainer = ({children}: IProps) => {
   const {isEmbedded, setIsEmbedded} = useIsEmbedded();
   const showFooter = !isEmbedded;
   const showHeader = !isEmbedded;
-  const pageSize: IPageWidth = 1440;
+  const pageSize: IPageWidth = 'auto';
 
   if ('true' === searchParams.get('embedded') && !isEmbedded) {
     setIsEmbedded(true);
@@ -60,9 +61,9 @@ const ApplicationContainer = ({children}: IProps) => {
           />
         </Header>
       }
-      <ContentWrapper minHeight={'auto'} maxWidth={pageSize}>
-        {children}
-      </ContentWrapper>
+      {children}
+      {/*<ContentWrapper minHeight={'auto'} maxWidth={pageSize}>*/}
+      {/*</ContentWrapper>*/}
       {showFooter ? <Footer release={release} maxWidth={pageSize}/> :
         <span
           style={{
@@ -76,4 +77,4 @@ const ApplicationContainer = ({children}: IProps) => {
   );
 };
 
-export default ApplicationContainer;
+export default ModelsContainer;

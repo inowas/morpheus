@@ -1,11 +1,13 @@
 import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import styles from './Header.module.less';
+import {ContentWrapper, IPageWidth} from 'components';
 
 interface IProps {
   children: ReactNode;
+  maxWidth?: IPageWidth;
 }
 
-const Header = ({children}: IProps) => {
+const Header = ({children, maxWidth}: IProps) => {
 
   const [headerHeight, setHeaderHeight] = useState(0);
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
@@ -42,7 +44,9 @@ const Header = ({children}: IProps) => {
         ref={ref}
         className={styles.headerInner}
       >
-        {children}
+        <ContentWrapper minHeight={'auto'} maxWidth={maxWidth}>
+          {children}
+        </ContentWrapper>
       </div>
     </header>
   );

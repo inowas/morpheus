@@ -44,6 +44,19 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
 
+  // const geoOptions = {
+  //   position: 'topleft',
+  //   drawText: false,
+  //   drawMarker: false,
+  //   drawCircle: false,
+  //   cutPolygon: false,
+  //   drawRectangle: !(0 < geojson.features.length),
+  //   drawPolygon: !(0 < geojson.features.length),
+  //   drawCircleMarker: false,
+  //   drawPolyline: false,
+  //   editMode: false,}
+  // }
+
   console.log(geojson);
   return (
     <MapContainer

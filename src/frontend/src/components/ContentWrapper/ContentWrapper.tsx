@@ -1,11 +1,13 @@
 import React, {ReactNode} from 'react';
 import styles from './ContentWrapper.module.less';
+import {IPageHeight, IPageWidth} from 'components/ContentWrapper';
 
 interface IProps {
-  maxWidth?: '100vw' | '100%' | 'auto' | 'inherit' | 'initial' | 'unset' | number;
-  minHeight?: '100vh' | '100%' | 'auto' | 'inherit' | 'initial' | 'unset';
+  maxWidth?: IPageWidth;
+  minHeight?: IPageHeight;
   children: ReactNode;
 }
+
 
 const ContentWrapper = ({children, minHeight, maxWidth}: IProps) => (
   <div

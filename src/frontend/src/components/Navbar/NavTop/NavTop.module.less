@@ -1,10 +1,20 @@
 @import 'components/site.variables';
 
 .navTop {
-
   width: 100%;
-  background: @ref-color-active;
   flex: 1 1 auto;
+  position: relative;
+
+  &:before {
+    content: '';
+    width: 100vw;
+    height: 100%;
+    display: block;
+    background: @ref-color-active;
+    position: absolute;
+    top: 0;
+    left: calc(50% - 50vw);
+  }
 
   .inner {
     display: flex;
@@ -18,6 +28,7 @@
       max-height: 30px;
       display: inline-block;
       width: 100%;
+      position: relative;
     }
 
     .menu {

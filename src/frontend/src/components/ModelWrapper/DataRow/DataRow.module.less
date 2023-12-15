@@ -1,0 +1,30 @@
+@import 'components/site.variables';
+
+.dataRow {
+  margin: 0;
+  padding: 0;
+
+  & + .dataRow {
+    margin-top: 20px;
+  }
+}
+
+.headline {
+  border-bottom: 1px solid @ref-color-underline;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 5px;
+  padding-right: 22px;
+
+  button {
+    white-space: nowrap;
+    min-width: 92px;
+  }
+}
+
+.title,
+.subtitle {
+  margin: 0;
+  padding: 0;
+}

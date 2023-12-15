@@ -33,7 +33,6 @@ const Sidebar = ({children, data, updateModelData}: IProps) => {
     <div
       data-testid="sidebar-container"
       className={`${styles.sidebarContainer} ${isOpen ? '' : styles.sidebarClosed}`}
-
     >
       <button
         className={styles.sidebarStickyButton}
