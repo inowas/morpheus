@@ -1,6 +1,9 @@
 {
   "name": "inowas-morpheus-dss",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@geoman-io/leaflet-geoman-free": "^2.14.2",
     "@kitware/vtk.js": "^28.11.0",
     "@react-leaflet/core": "^2.1.0",

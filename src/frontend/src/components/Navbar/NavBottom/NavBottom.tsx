@@ -5,7 +5,6 @@ import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
 import {Image, Input} from 'semantic-ui-react';
 import MenuItem from './MenuItem';
-import ContentWrapper from 'components/ContentWrapper/ContentWrapper';
 import Button from '../../Button/Button';
 
 interface IProps {
@@ -26,63 +25,61 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSea
 
   return (
     <div className={styles.navBottom}>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <div className={styles.inner}>
-          <div className={styles.mainMenuLogo}>
-            <Image
-              alt="An example alt"
-              as="a"
-              href="/"
-              size="tiny"
-              src={logoInowas}
-              className={styles.logo}
-            />
-            <p className={styles.description}>Innovative Groundwater Solutions</p>
-          </div>
-          {isMobile && (
-            <div
-              className={`${styles.menuTrigger} ${openMobileMenu ? styles.menuTrigger__open : ''}`}
-              onClick={handleCloseMobileMenu}
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          )}
-          {showSearchWrapper && (
-            <div className={styles.searchWrapper}>
-              <Input
-                action={true}
-                actionPosition="left"
-                className={`${styles.search}`}
-              >
-                <Button primary={true}>Search</Button>
-                <input/>
-              </Input>
-            </div>
-          )}
-          <nav className={`${styles.nav} ${openMobileMenu ? styles.navOpen : ''}`}>
-            <div className={styles.navWrapper}>
-              <ul className={styles.menu}>
-                {navbarItems.map((item: INavbarItem, idx: number) => {
-                  return <MenuItem
-                    key={idx}
-                    items={item}
-                    onCloseMobileMenu={handleCloseMobileMenu}
-                    pathname={pathname}
-                    navigateTo={navigateTo}
-                  />;
-                })}
-              </ul>
-              {showCreateButton && (
-                <Button className={styles.createButton} primary={true}>
-                  Create new model
-                </Button>
-              )}
-            </div>
-          </nav>
+      <div className={styles.inner}>
+        <div className={styles.mainMenuLogo}>
+          <Image
+            alt="An example alt"
+            as="a"
+            href="/"
+            size="tiny"
+            src={logoInowas}
+            className={styles.logo}
+          />
+          <p className={styles.description}>Innovative Groundwater Solutions</p>
         </div>
-      </ContentWrapper>
+        {isMobile && (
+          <div
+            className={`${styles.menuTrigger} ${openMobileMenu ? styles.menuTrigger__open : ''}`}
+            onClick={handleCloseMobileMenu}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        )}
+        {showSearchWrapper && (
+          <div className={styles.searchWrapper}>
+            <Input
+              action={true}
+              actionPosition="left"
+              className={`${styles.search}`}
+            >
+              <Button primary={true}>Search</Button>
+              <input/>
+            </Input>
+          </div>
+        )}
+        <nav className={`${styles.nav} ${openMobileMenu ? styles.navOpen : ''}`}>
+          <div className={styles.navWrapper}>
+            <ul className={styles.menu}>
+              {navbarItems.map((item: INavbarItem, idx: number) => {
+                return <MenuItem
+                  key={idx}
+                  items={item}
+                  onCloseMobileMenu={handleCloseMobileMenu}
+                  pathname={pathname}
+                  navigateTo={navigateTo}
+                />;
+              })}
+            </ul>
+            {showCreateButton && (
+              <Button className={styles.createButton} primary={true}>
+                Create new model
+              </Button>
+            )}
+          </div>
+        </nav>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,76 @@
+@import 'components/site.variables';
+
+
+.modelWrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.modelContent {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: calc(100vh - 200px);
+
+  @media (min-width: @breakpoint-tablet) {
+    height: auto;
+    min-height: calc(100vh - 200px);
+  }
+
+  .modelMap {
+    width: 100%;
+    height: auto;
+    min-width: 600px;
+  }
+
+  .headline {
+    border-bottom: 1px solid @ref-color-underline;
+    margin: 0;
+    padding-bottom: 5px;
+  }
+
+  h4.headline {
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 8px;
+  }
+
+  .list {
+    margin-top: 10px;
+
+    .item {
+      cursor: pointer;
+    }
+
+    .item.active {
+      font-weight: 600;
+    }
+  }
+
+  .radioGroup {
+    margin-top: 10px;
+
+    & + .headline {
+      margin-top: 20px;
+    }
+
+    .radio {
+      display: block;
+
+      &:not(:last-child) {
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .radioGroupRow {
+    display: flex;
+
+    .radio:not(:last-child) {
+      margin: 0 10px 0 0;
+    }
+  }
+}
+
+
