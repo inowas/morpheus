@@ -7,7 +7,6 @@ interface IProps {
   children: ReactNode;
 }
 
-
 type ILanguageCode = 'de-DE' | 'en-GB';
 
 const ModelsContainer = ({children}: IProps) => {

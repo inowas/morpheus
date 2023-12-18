@@ -3,9 +3,6 @@
 // Define the variable for width
 @sidebarMaxWidth: 700px;
 @sidebarMinWidth: 50px;
-//@media (min-width: @breakpoint-desktop-wide-xl) {
-//  width: @sidebarMaxWidth;
-//}
 
 .dataSidebar {
   background: @light-grey;
@@ -17,6 +14,7 @@
 
 .dataSidebarClosed {
   max-width: @sidebarMinWidth;
+  min-width: @sidebarMinWidth;
 
   .dataChildren {
     visibility: hidden;
@@ -57,4 +55,14 @@
   width: 100%;
   opacity: 1;
   transition: opacity 300ms 300ms;
+  overflow-y: auto;
+  height: 100%;
+
+  overflow-y: auto;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
 }

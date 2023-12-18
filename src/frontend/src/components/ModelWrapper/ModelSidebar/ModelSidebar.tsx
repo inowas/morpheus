@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Menu} from 'semantic-ui-react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
@@ -24,51 +24,55 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import styles from './ModelSidebar.module.less';
 
+const menuItems = [
+  {icon: faPenToSquare, description: 'Setup', title: true, active: false},
+  {icon: faBorderAll, description: 'Model grid', active: false},
+  {icon: faClock, description: 'Stress periods', active: true},
+  {icon: faLayerGroup, description: 'Model layers', active: false},
+  {icon: faFlag, description: 'Boundary conditions', active: false},
+  {icon: faLocationCrosshairs, description: 'Head observations', active: false},
+  {icon: faCompress, description: 'Solute transport', active: false},
+  {icon: faBarsStaggered, description: 'Variable density flow', active: false},
+  {icon: faSliders, description: 'PACKAGES', title: true, active: false},
+  {icon: faFolder, description: 'MODFLOW packages', active: false},
+  {icon: faCompress, description: 'MT3DMS packages', disabled: true, active: false},
+  {icon: faBarsStaggered, description: 'SEAWAT packages', disabled: true, active: false},
+  {icon: faSquareCheck, description: 'RESULTS', title: true, active: false},
+  {icon: faMap, description: 'Groundwater heads', active: false},
+  {icon: faChartSimple, description: 'Budget', active: false},
+  {icon: faCircle, description: 'Concentration', disabled: true, active: false},
+  {icon: faChartLine, description: 'Calibration statistics', active: false},
+  {icon: faArrowUpRightFromSquare, description: 'EXPORT', title: true, active: false},
+  {icon: faNoteSticky, description: 'Export model (JSON)', active: false},
+  {icon: faImage, description: 'Export model results', active: false},
+  {icon: faDownload, description: 'Download MODFLOW files', active: false},
+];
+
 const ModelSidebar = () => {
-  const handleItemClick = (e: React.MouseEvent<HTMLAnchorElement>, itemName: string) => {
-    e.stopPropagation();
-    // Handle click for each menu item based on `itemName`
-    console.log(`Clicked on ${itemName}`);
+  const [listItems, setListItems] = useState(menuItems);
+
+  const handleItemClick = (index: number) => {
+    const updatedListParameters = listItems.map((item, i) => {
+      return (i === index) ? {...item, active: true} : {...item, active: false};
+    });
+    setListItems(updatedListParameters);
   };
 
-  const menuItems = [
-    {icon: faPenToSquare, description: 'Setup', title: true},
-    {icon: faBorderAll, description: 'Model grid'},
-    {icon: faClock, description: 'Stress periods'},
-    {icon: faLayerGroup, description: 'Model layers'},
-    {icon: faFlag, description: 'Boundary conditions'},
-    {icon: faLocationCrosshairs, description: 'Head observations'},
-    {icon: faCompress, description: 'Solute transport'},
-    {icon: faBarsStaggered, description: 'Variable density flow'},
-    {icon: faSliders, description: 'PACKAGES', title: true},
-    {icon: faFolder, description: 'MODFLOW packages'},
-    {icon: faCompress, description: 'MT3DMS packages'},
-    {icon: faBarsStaggered, description: 'SEAWAT packages'},
-    {icon: faSquareCheck, description: 'RESULTS', title: true},
-    {icon: faMap, description: 'Groundwater heads'},
-    {icon: faChartSimple, description: 'Budget'},
-    {icon: faCircle, description: 'Concentration'},
-    {icon: faChartLine, description: 'Calibration statistics'},
-    {icon: faArrowUpRightFromSquare, description: 'EXPORT', title: true},
-    {icon: faNoteSticky, description: 'Export model (JSON)'},
-    {icon: faImage, description: 'Export model results'},
-    {icon: faDownload, description: 'Download MODFLOW files'},
-  ];
 
   return (
     <div className={styles.menu}>
       <div className={styles.listWrapper}>
         <ul className={styles.listScroll}>
-          {menuItems.map((item, index) => (
+          {listItems.map((item, index) => (
             <li
               key={index}
-              className={`${styles.item} ${item.title ? styles.title : ''}`}
+              className={`${styles.item} ${item.title ? styles.title : ''} ${item.active ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
             >
               <Menu.Item
                 data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
                 as="a"
                 className={styles.link}
-                onClick={(e) => handleItemClick(e, item.description)}
+                onClick={(e) => handleItemClick(index)}
               >
                 <span className={styles.icon}><FontAwesomeIcon icon={item.icon}/></span>
                 <span className={styles.description}>{item.description}</span>

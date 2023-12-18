@@ -58,7 +58,11 @@ const listParametrs = [
   {title: 'iBound(-)', active: false},
 ];
 
-const ModelWrapper = () => {
+interface IProps {
+  style?: React.CSSProperties;
+}
+
+const ModelWrapper: React.FC<IProps> = ({...props}) => {
   const [listItems, setListItems] = useState(listParametrs);
 
   const handleItemClick = (index: number) => {
@@ -69,7 +73,7 @@ const ModelWrapper = () => {
   };
 
   return (
-    <div className={styles.modelWrapper}>
+    <div className={styles.modelWrapper} {...props}>
       <ModelSidebar/>
       <div className={styles.modelContent}>
         <DataSidebar>
