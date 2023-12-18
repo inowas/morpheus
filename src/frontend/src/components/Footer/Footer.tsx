@@ -1,20 +1,22 @@
 import React from 'react';
-import {Container, Input} from 'semantic-ui-react';
+import {Input} from 'semantic-ui-react';
 import styles from './Footer.module.less';
 import logoBmbf from './images/logo-bmbf.svg';
 import logoInowas from './images/logo-inowas.svg';
 import logoTUD from './images/logo-tud.svg';
 import logoCopyright from './images/logo-copyright.png';
 import BackToTopButton from '../BackToTopButton/BackToTopButton';
+import {ContentWrapper, IPageWidth} from 'components';
 
 interface IProps {
   release: string;
+  maxWidth?: IPageWidth;
 }
 
-const footer = ({release}: IProps) => (
+const footer = ({release, maxWidth}: IProps) => (
   <footer className={styles.footer} data-testid={'footer'}>
-    <div className={styles.footerTop}>
-      <Container>
+    <ContentWrapper minHeight={'auto'} maxWidth={maxWidth}>
+      <div className={styles.footerTop}>
         <div className={styles.footerTop_row}>
           <div className={styles.footerTop_col}>
             <h3 className={styles.footerTop_title}>Funded by</h3>
@@ -44,10 +46,8 @@ const footer = ({release}: IProps) => (
             </a>
           </div>
         </div>
-      </Container>
-    </div>
-    <div className={styles.footerBottom}>
-      <Container>
+      </div>
+      <div className={styles.footerBottom}>
         <div className={styles.footerWrapper}>
           <div className={styles.footerLogo}>
             <a
@@ -122,9 +122,9 @@ const footer = ({release}: IProps) => (
         <div className={styles.softwareVersion}>
           <span>Release: {release}</span>
         </div>
-      </Container>
-      <BackToTopButton/>
-    </div>
+        <BackToTopButton/>
+      </div>
+    </ContentWrapper>
   </footer>
 );
 

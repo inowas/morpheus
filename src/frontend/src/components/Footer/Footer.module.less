@@ -8,9 +8,22 @@
 .footerTop {
   background: @ref-color-active;
   padding: 4.375rem 0rem 2.1875rem;
+  position: relative;
+
+  &:before {
+    content: '';
+    width: 100vw;
+    height: 100%;
+    display: block;
+    background: @ref-color-active;
+    position: absolute;
+    top: 0;
+    left: calc(50% - 50vw);
+  }
 }
 
 .footerTop_row {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
