@@ -1,9 +1,14 @@
+from enum import StrEnum
 from typing import Tuple
 
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, Observation
+
+
+class CalculationEngineType(StrEnum):
+    MF2005 = 'mf2005'
 
 
 class CalculationEngineBase:

@@ -46,9 +46,12 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         if calculation_profile.calculation_engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
+        calculation_engine_settings = calculation_profile.calculation_engine_settings
+        if not isinstance(calculation_engine_settings, Mf2005CalculationEngineSettings):
+            raise Exception('Calculation profile is not for Mf2005')
+
         self.trigger_start_preprocessing()
-        flopy_model = self.__prepare_packages(modflow_model, Mf2005CalculationEngineSettings.from_dict(
-            calculation_profile.calculation_engine_settings))
+        flopy_model = self.__prepare_packages(modflow_model, calculation_engine_settings)
         flopy_model.write_input()
 
         self.trigger_start_running()

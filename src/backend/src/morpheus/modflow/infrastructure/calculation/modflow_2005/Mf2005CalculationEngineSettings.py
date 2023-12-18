@@ -1,13 +1,13 @@
 import dataclasses
 from typing import Literal
 
+from morpheus.modflow.infrastructure.calculation.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.De4PackageWrapper import De4PackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.GmgPackageWrapper import GmgPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.OcPackageWrapper import OcPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgPackageWrapper import PcgPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.PcgnPackageWrapper import PcgnPackageData
 from morpheus.modflow.infrastructure.calculation.modflow_2005.packages.SipPackageWrapper import SipPackageData
-from morpheus.modflow.types.calculation.CalculationProfile import CalculationEngineSettingsBase
 
 
 @dataclasses.dataclass
