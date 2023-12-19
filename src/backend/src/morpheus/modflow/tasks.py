@@ -1,4 +1,4 @@
-from morpheus.modflow.infrastructure.calculation.service.CalculationService import CalculationService
+from morpheus.modflow.infrastructure.calculation.services.CalculationService import CalculationService
 from morpheus.modflow.types.calculation.Calculation import CalculationId
 from task_queue import task_queue
 

@@ -16,6 +16,15 @@ class CalculationRepository(RepositoryBase):
 
         return Calculation.from_dict(calculation_dict)
 
+    def get_calculation_result(self, calculation_id: CalculationId) -> CalculationResult | None:
+        calculation_dict = self.collection.find_one({'calculation_id': calculation_id.to_str()},
+                                                    {'_id': 0, 'calculation_result': 1})
+        if calculation_dict is None:
+            return None
+
+        return CalculationResult.try_from_dict(calculation_dict['calculation_result'])
+
+
     def save_calculation(self, calculation: Calculation) -> None:
         if self.has_calculation(calculation_id=calculation.calculation_id):
             raise Exception('Calculation already exists.')
@@ -28,31 +37,6 @@ class CalculationRepository(RepositoryBase):
 
         self.collection.replace_one({'calculation_id': calculation.calculation_id.to_str()}, calculation.to_dict())
 
-    def get_calculation_result(self, calculation_id: CalculationId) -> CalculationResult | None:
-        calculation_dict = self.collection.find_one({'calculation_id': calculation_id.to_str()},
-                                                    {'_id': 0, 'calculation_result': 1})
-        if calculation_dict is None:
-            return None
-
-        return CalculationResult.try_from_dict(calculation_dict['calculation_result'])
-
-    def update_calculation_result(self, calculation: Calculation, result: CalculationResult | None) -> None:
-        if not self.has_calculation(calculation_id=calculation.calculation_id):
-            raise Exception('Calculation does not exist yet.')
-
-        self.collection.update_one(
-            {'calculation_id': calculation.calculation_id.to_str()},
-            {'$set': {'result': result.to_dict() if result is not None else None}}
-        )
-
-    def update_calculation_state(self, calculation: Calculation) -> None:
-        if not self.has_calculation(calculation_id=calculation.calculation_id):
-            raise Exception('Calculation does not exist yet.')
-
-        self.collection.update_one(
-            {'calculation_id': calculation.calculation_id.to_str()},
-            {'$set': {'calculation_state': calculation.calculation_state.value}}
-        )
 
     def delete_calculation(self, calculation_id: CalculationId) -> None:
         if not self.has_calculation(calculation_id=calculation_id):
