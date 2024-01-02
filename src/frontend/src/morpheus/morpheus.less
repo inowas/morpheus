@@ -12,6 +12,36 @@ body {
 
 }
 
+.gridTwoColumns {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 20px;
+
+  @media (min-width: @breakpoint-mobile-horizontal) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 0px;
+  }
+
+
+  .rowTwoColumns {
+    label {
+      display: block;
+      margin: 0 20px 5px 0;
+      padding: 0;
+      background: transparent;
+      color: @ref-color-blackLight;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0px;
+      line-height: 18px;
+      text-align: center;
+    }
+  }
+}
+
 .ui.container {
   position: relative;
 
@@ -81,6 +111,42 @@ body {
   background-color: @blue;
 }
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker-wrapper:focus-visible,
+.react-datepicker__input-container:focus-visible {
+}
+
+.react-datepicker-wrapper .react-datepicker__input-container input.dateInput {
+  cursor: pointer;
+  width: 100%;
+  padding: 5px;
+  margin: 0;
+  border: none;
+  border-radius: unset;
+  text-align: center;
+  color: @ref-color-blackLight;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0px;
+}
+
+.react-datepicker-wrapper .react-datepicker__input-container input.dateInput:focus-visible {
+  outline: 1px solid @blue !important;
+}
+
+.dateInputWrapper {
+  .divider {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .dateIcon {
+    margin: 0 0 0 5px;
+  }
+}
 
 // REACT SLIDER STYLES (rc-slider)
 .rc-slider.rc-slider-horizontal {

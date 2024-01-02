@@ -197,29 +197,29 @@ const FormFilter = ({data, updateModelData}: IProps) => {
             onChange={(_, {value}) => handleRadioChange(value as string)}
           />
         </div>
-        <div className={styles.dateInputWrapper}>
-          <div className={styles.dateInputInner}>
-            <label className={styles.dateLable}>Date from</label>
-            <div className={styles.divider}>
+        <div className={'dateInputWrapper gridTwoColumns'}>
+          <div className={'rowTwoColumns'}>
+            <label>Date from</label>
+            <div className={'divider'}>
               <DatePicker
                 selected={new Date(filterOptions.fromDate)}
                 dateFormat="dd.MM.yyyy"
                 onChange={(date) => handleDateChange(date, 'fromDate')}
-                className={styles.dateInput}
+                className={'dateInput'}
               />
-              <Icon className={styles.dateIcon} name="calendar outline"/>
+              <Icon className={'dateIcon'} name="calendar outline"/>
             </div>
           </div>
-          <div className={styles.dateInputInner}>
-            <label className={styles.dateLable}>Date to</label>
-            <div className={styles.divider}>
+          <div className={'rowTwoColumns'}>
+            <label>Date to</label>
+            <div className={'divider'}>
               <DatePicker
                 selected={new Date(filterOptions.toDate)}
                 dateFormat="dd.MM.yyyy"
                 onChange={(date) => handleDateChange(date, 'toDate')}
-                className={styles.dateInput}
+                className={'dateInput'}
               />
-              <Icon className={styles.dateIcon} name="calendar outline"/>
+              <Icon className={'dateIcon'} name="calendar outline"/>
             </div>
           </div>
         </div>

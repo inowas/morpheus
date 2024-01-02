@@ -18,9 +18,20 @@ interface IProps {
   pathname: string;
   showSearchWrapper?: boolean;
   showCreateButton?: boolean;
+  showModelSidebar?: boolean;
 }
 
-const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigateTo, pathname, showSearchWrapper = true, showCreateButton = true}: IProps) => {
+const Navbar = ({
+  navbarItems,
+  language,
+  languageList,
+  onChangeLanguage,
+  navigateTo,
+  pathname,
+  showSearchWrapper = false,
+  showCreateButton = false,
+  showModelSidebar = false,
+}: IProps) => {
 
   return (
     <div data-testid={'test-navbar'} style={{position: 'relative'}}>
@@ -29,6 +40,7 @@ const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigate
         languageList={languageList}
         onChangeLanguage={onChangeLanguage}
         navigateTo={navigateTo}
+        showModelSidebar={showModelSidebar}
       />
       <NavBottom
         navbarItems={navbarItems}
@@ -36,6 +48,8 @@ const Navbar = ({navbarItems, language, languageList, onChangeLanguage, navigate
         navigateTo={navigateTo}
         showSearchWrapper={showSearchWrapper}
         showCreateButton={showCreateButton}
+        showModelSidebar={showModelSidebar}
+
       />
     </div>
   );

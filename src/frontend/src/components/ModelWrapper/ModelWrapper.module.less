@@ -3,7 +3,7 @@
 
 .modelWrapper {
   display: flex;
-  flex: 1;
+  height: inherit;
   overflow: hidden;
 }
 
@@ -11,11 +11,9 @@
   display: flex;
   flex: 1;
   width: 100%;
-  height: calc(100vh - 200px);
 
   @media (min-width: @breakpoint-tablet) {
     height: auto;
-    min-height: calc(100vh - 200px);
   }
 
   .modelMap {
@@ -73,6 +71,19 @@
       margin: 0 10px 0 0;
     }
   }
+
+  .field {
+    margin-top: 16px;
+
+    & + .field {
+      margin-top: 21px;
+    }
+  }
+
+  .field + button {
+    margin-top: 20px;
+  }
+  
 }
 
 

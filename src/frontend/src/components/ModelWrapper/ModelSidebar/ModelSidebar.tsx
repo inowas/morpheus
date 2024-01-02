@@ -70,7 +70,7 @@ const ModelSidebar = () => {
             >
               <Menu.Item
                 data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
-                as="a"
+                as={item.title ? 'h3' : 'a'}
                 className={styles.link}
                 onClick={(e) => handleItemClick(index)}
               >

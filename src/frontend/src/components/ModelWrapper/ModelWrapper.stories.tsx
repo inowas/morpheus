@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {Header, IPageWidth, ModelWrapper, Navbar} from 'components';
+import {Header, IPageWidth, ModelWrapper} from 'components';
 
 
 const navbarItems2 = [
@@ -25,20 +25,30 @@ export default {
 } as Meta<typeof ModelWrapper>;
 
 export const ModelWrapperPageExample: StoryFn<typeof ModelWrapper> = () => {
-
+  const [headerHeight, setHeaderHeight] = React.useState(0);
+  const updateHeaderHeight = (height: number) => {
+    setHeaderHeight(height);
+  };
   const pageSize: IPageWidth = 'auto';
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Header maxWidth={pageSize}>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
-      <ModelWrapper style={{position: 'relative', zIndex: 0}}/>
+      <Header
+        maxWidth={pageSize}
+        navbarItems={navbarItems2}
+        navigateTo={() => {
+        }}
+        pathname={'/'}
+        showSearchWrapper={true}
+        showCreateButton={true}
+        showModelSidebar={true}
+        updateHeight={updateHeaderHeight}
+      />
+      <ModelWrapper
+        headerHeight={headerHeight}
+        showModelSidebar={true}
+        style={{position: 'relative', zIndex: 0}}
+      ></ModelWrapper>
     </div>
   );
 };

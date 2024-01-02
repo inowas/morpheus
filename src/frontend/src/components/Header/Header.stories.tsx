@@ -1,7 +1,34 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import Header from './Header';
+import Header from 'components/Header';
+import {ILanguage} from './Navbar/LanguageSelector/types/languageSelector.type';
+
+const navbarItems = [
+  {
+    name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
+      {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
+      {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
+  },
+  {name: 'tools', label: 'Tools', admin: false, to: '/tools'},
+  {name: 'modflow', label: 'Modflow', admin: false, to: '/modflow'},
+  {name: 'support', label: 'Support', admin: false, to: '/support'},
+  {name: 'news', label: 'News', admin: false, to: '/news'},
+];
+
+const navbarItems2 = [
+  {
+    name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
+      {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
+      {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
+  },
+  {name: 'filters', label: 'Filters', admin: false, to: '/tools'},
+  {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
+];
+
+const languageList: ILanguage[] = [
+  {code: 'en-GB', label: 'English'},
+];
 
 export default {
   /* 👇 The title prop is optional.
@@ -14,11 +41,70 @@ export default {
 
 
 export const HeaderExample: StoryFn<typeof Header> = () => (
-  <Header children={<h2>HEADER</h2>}/>
+  <div style={{margin: '-1rem'}}>
+    <Header
+      navbarItems={navbarItems}
+      language="en-GB"
+      languageList={languageList}
+      onChangeLanguage={() => {
+      }}
+      navigateTo={() => {
+      }}
+      pathname={'/'}
+      showSearchWrapper={true}
+      showCreateButton={true}
+    />
+  </div>
+
 );
 
-export const HeaderExampleH1: StoryFn<typeof Header> = () => (
-  <Header
-    children={<h1>HEADER</h1>}
-  />
+export const HeaderExampleNoSearch: StoryFn<typeof Header> = () => (
+  <div style={{margin: '-1rem'}}>
+    <Header
+      navbarItems={navbarItems2}
+      language="en-GB"
+      languageList={languageList}
+      onChangeLanguage={() => {
+      }}
+      navigateTo={() => {
+      }}
+      pathname={'/'}
+      showSearchWrapper={false}
+      showCreateButton={true}
+    />
+  </div>
+);
+
+export const HeaderExampleNoCreateButton: StoryFn<typeof Header> = () => (
+  <div style={{margin: '-1rem'}}>
+    <Header
+      navbarItems={navbarItems2}
+      language="en-GB"
+      languageList={languageList}
+      onChangeLanguage={() => {
+      }}
+      navigateTo={() => {
+      }}
+      pathname={'/'}
+      showSearchWrapper={true}
+      showCreateButton={false}
+    />
+  </div>
+);
+
+export const HeaderExampleNoCreateButtonNoSearch: StoryFn<typeof Header> = () => (
+  <div style={{margin: '-1rem'}}>
+    <Header
+      navbarItems={navbarItems2}
+      language="en-GB"
+      languageList={languageList}
+      onChangeLanguage={() => {
+      }}
+      navigateTo={() => {
+      }}
+      pathname={'/'}
+      showSearchWrapper={false}
+      showCreateButton={false}
+    />
+  </div>
 );
