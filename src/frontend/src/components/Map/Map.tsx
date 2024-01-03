@@ -57,7 +57,6 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
   //   editMode: false,}
   // }
 
-  console.log(geojson);
   return (
     <MapContainer
       center={coords}

@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-tabs/style/react-tabs.css';
 
-import {Dropdown, Form, FormFieldProps, Icon, List, Radio, TextArea} from 'semantic-ui-react';
+import {Dropdown, Form, Icon, List, Radio, TextArea} from 'semantic-ui-react';
 import {DataGrid, DataRow, DataSidebar, ModelSidebar, UploadFile} from 'components/ModelWrapper';
 import {Button, Map} from 'components';
 import type {FeatureCollection} from 'geojson';
@@ -101,11 +101,12 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
 
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const handleRadioChange = (e: React.FormEvent<HTMLInputElement>, {value}: FormFieldProps) => {
-    setSelectedOption(value as string);
-    console.log(`Selected option: ${value}`);
-  };
+  // const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  // const handleRadioChange = (e: React.FormEvent<HTMLInputElement>, {value}: FormFieldProps) => {
+  //   setSelectedOption(value as string);
+  //   console.log(`Selected option: ${value}`);
+  // };
+
   const hendleDateChange = (name: string, date: Date) => {
     return 'startDate' === name ? setStartDate(date) : setEndDate(date);
   };
@@ -115,8 +116,105 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
     });
     setListItems(updatedListParameters);
   };
-
+  const dataCreate = () => {
+    return <>
+      <DataGrid multiRows={true}>
+        <DataRow title={'Create model'}>
+          <Form.Field className={styles.field}>
+            <label className={'h4'}>Model name<span className="required">*</span></label>
+            <input type="text"/>
+          </Form.Field>
+          <Form.Field className={styles.field}>
+            <label className={'h4'}>Model description<span className="required">*</span></label>
+            <TextArea type="textarea"/>
+          </Form.Field>
+          <Form.Field className={styles.field}>
+            <label className={'h4'}>Model Keywords</label>
+            <Dropdown
+              name="selectedKeywords"
+              placeholder="Select keywords"
+              fluid={true}
+              multiple={true}
+              selection={true}
+              options={options}
+            />
+          </Form.Field>
+          <Form.Field className={styles.field}>
+            <h3 className={'h4'}>Model dates<span className="required">*</span></h3>
+            <div className={'dateInputWrapper gridTwoColumns '}>
+              <div className={'rowTwoColumns'}>
+                <label>Start date</label>
+                <div className={'divider'}>
+                  <DatePicker
+                    name="startDate"
+                    className={'dateInput'}
+                    selected={startDate}
+                    dateFormat="dd.MM.yyyy"
+                    onChange={(date: Date) => hendleDateChange('startDate', date)}
+                  />
+                  <Icon className={'dateIcon'} name="calendar outline"/>
+                </div>
+              </div>
+              <div className={'rowTwoColumns'}>
+                <label>Date to</label>
+                <div className={'divider'}>
+                  <DatePicker
+                    name="endDate"
+                    className={'dateInput'}
+                    selected={endDate}
+                    dateFormat="dd.MM.yyyy"
+                    onChange={(date: Date) => hendleDateChange('endDate', date)}
+                  />
+                  <Icon className={'dateIcon'} name="calendar outline"/>
+                </div>
+              </div>
+            </div>
+          </Form.Field>
+          <Form.Field className={styles.field}>
+            <h3 className={'h4'}>Model units<span className="required">*</span></h3>
+            <div className="gridTwoColumns">
+              <div className={'rowTwoColumns'}>
+                <label>Length unit</label>
+                <Dropdown
+                  placeholder="meters"
+                  selection={true}
+                  options={lengthUnitOptions}
+                />
+              </div>
+              <div className={'rowTwoColumns'}>
+                <label>Time unit</label>
+                <Dropdown
+                  placeholder="days"
+                  selection={true}
+                  options={timeUnitOptions}
+                />
+              </div>
+            </div>
+          </Form.Field>
+          <Button primary={true}>Create model</Button>
+        </DataRow>
+        <DataRow title={'Model geometry'}>
+          <div className={styles.tabsWrapper}>
+            <h2 className="h4">Add model domain</h2>
+            <Tabs>
+              <TabList>
+                <Tab>Drow on map</Tab>
+                <Tab>Upload file</Tab>
+              </TabList>
+              <TabPanel>
+                <Button primary={true} size={'small'}>Drow on map</Button>
+              </TabPanel>
+              <TabPanel>
+                <UploadFile/>
+              </TabPanel>
+            </Tabs>
+          </div>
+        </DataRow>
+      </DataGrid>
+    </>;
+  };
   const dataExample = () => {
+
     return <>
       <DataGrid>
         <DataRow title={'Model layers'}>
@@ -230,105 +328,6 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
     </>;
   };
 
-  const dataCreate = () => {
-    return <>
-      <DataGrid multiRows={true}>
-        <DataRow title={'Create model'}>
-          <Form.Field className={styles.field}>
-            <label className={'h4'}>Model name<span className="required">*</span></label>
-            <input type="text"/>
-          </Form.Field>
-          <Form.Field className={styles.field}>
-            <label className={'h4'}>Model description<span className="required">*</span></label>
-            <TextArea type="textarea"/>
-          </Form.Field>
-          <Form.Field className={styles.field}>
-            <label className={'h4'}>Model Keywords</label>
-            <Dropdown
-              name="selectedKeywords"
-              placeholder="Select keywords"
-              fluid={true}
-              multiple={true}
-              selection={true}
-              options={options}
-            />
-          </Form.Field>
-          <Form.Field className={styles.field}>
-            <h3 className={'h4'}>Model dates<span className="required">*</span></h3>
-            <div className={'dateInputWrapper gridTwoColumns '}>
-              <div className={'rowTwoColumns'}>
-                <label>Start date</label>
-                <div className={'divider'}>
-                  <DatePicker
-                    name="startDate"
-                    className={'dateInput'}
-                    selected={startDate}
-                    dateFormat="dd.MM.yyyy"
-                    onChange={(date: Date) => hendleDateChange('startDate', date)}
-                  />
-                  <Icon className={'dateIcon'} name="calendar outline"/>
-                </div>
-              </div>
-              <div className={'rowTwoColumns'}>
-                <label>Date to</label>
-                <div className={'divider'}>
-                  <DatePicker
-                    name="endDate"
-                    className={'dateInput'}
-                    selected={endDate}
-                    dateFormat="dd.MM.yyyy"
-                    onChange={(date: Date) => hendleDateChange('endDate', date)}
-                  />
-                  <Icon className={'dateIcon'} name="calendar outline"/>
-                </div>
-              </div>
-            </div>
-          </Form.Field>
-          <Form.Field className={styles.field}>
-            <h3 className={'h4'}>Model units<span className="required">*</span></h3>
-            <div className="gridTwoColumns">
-              <div className={'rowTwoColumns'}>
-                <label>Length unit</label>
-                <Dropdown
-                  placeholder="meters"
-                  selection={true}
-                  options={lengthUnitOptions}
-                />
-              </div>
-              <div className={'rowTwoColumns'}>
-                <label>Time unit</label>
-                <Dropdown
-                  placeholder="days"
-                  selection={true}
-                  options={timeUnitOptions}
-                />
-              </div>
-            </div>
-          </Form.Field>
-          <Button primary={true}>Create model</Button>
-          <div style={{marginTop: 'auto', paddingTop: '20px'}}><span className="required">*</span>Mandatory fields</div>
-        </DataRow>
-        <DataRow title={'Model geometry'}>
-          <div className={styles.tabsWrapper}>
-            <h2 className="h4">Add model domain</h2>
-            <Tabs>
-              <TabList>
-                <Tab>Drow on map</Tab>
-                <Tab>Upload file</Tab>
-              </TabList>
-              <TabPanel>
-                <Button primary={true} size={'small'}>Drow on map</Button>
-              </TabPanel>
-              <TabPanel>
-                <UploadFile/>
-              </TabPanel>
-            </Tabs>
-          </div>
-        </DataRow>
-      </DataGrid>
-    </>;
-  };
-
   return (
     <div
       className={styles.modelWrapper}
@@ -338,8 +337,9 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
       <div className={styles.modelContent}>
         <DataSidebar>
           {children ? children : null}
-          {/*{dataCreate()}*/}
+          {dataCreate()}
           {/*{dataExample()}*/}
+          <div style={{marginTop: 'auto', paddingTop: '20px'}}><span className="required">*</span>Mandatory fields</div>
         </DataSidebar>
         <div className={styles.modelMap}>
           <Map
