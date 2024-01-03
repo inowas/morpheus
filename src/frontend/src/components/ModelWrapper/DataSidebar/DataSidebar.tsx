@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const DataSidebar = ({children, showModelSidebar}: IProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSidebarToggle = () => {
     setIsOpen(!isOpen);

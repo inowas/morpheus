@@ -13,7 +13,6 @@ import {DataGrid, DataRow, DataSidebar, ModelSidebar, UploadFile} from 'componen
 import {Button, Map} from 'components';
 import type {FeatureCollection} from 'geojson';
 
-
 interface IProps {
   children?: React.ReactNode;
   style?: React.CSSProperties;
@@ -97,7 +96,7 @@ const timeUnitOptions = [
   {key: '6', text: 'Second', value: 'Second'},
 ];
 
-const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSidebar = true, ...props}) => {
+const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSidebar = false, ...props}) => {
   const [listItems, setListItems] = useState(listParametrs);
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
@@ -232,7 +231,6 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
   };
 
   const dataCreate = () => {
-
     return <>
       <DataGrid multiRows={true}>
         <DataRow title={'Create model'}>
@@ -308,6 +306,7 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
             </div>
           </Form.Field>
           <Button primary={true}>Create model</Button>
+          <div style={{marginTop: 'auto', paddingTop: '20px'}}><span className="required">*</span>Mandatory fields</div>
         </DataRow>
         <DataRow title={'Model geometry'}>
           <div className={styles.tabsWrapper}>
@@ -338,8 +337,9 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
       {showModelSidebar && <ModelSidebar/>}
       <div className={styles.modelContent}>
         <DataSidebar>
-          {dataCreate()}
-          {dataExample()}
+          {children ? children : null}
+          {/*{dataCreate()}*/}
+          {/*{dataExample()}*/}
         </DataSidebar>
         <div className={styles.modelMap}>
           <Map

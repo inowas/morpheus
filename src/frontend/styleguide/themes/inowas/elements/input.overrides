@@ -12,7 +12,7 @@
 }
 
 .ui.selection.dropdown {
-  min-width: 10em !important;
+  min-width: 8em !important;
   width: 100%;
 }
 
