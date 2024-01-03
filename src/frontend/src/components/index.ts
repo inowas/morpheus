@@ -25,7 +25,7 @@ import Loader from './Loader/Loader';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
-// import Navbar, {INavbarItem} from './Navbar';
+import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
 import ModelCard, {IModelCard} from './ModelCard';
 import {ModelWrapper} from './ModelWrapper';
@@ -69,13 +69,12 @@ export {
   Label,
   Loader,
   LoaderAnimation,
+  Map,
   Message,
   Modal,
   ModelGrid,
   ModelCard,
-  // ModelSidebar,
   ModelWrapper,
-  // Navbar,
   NotFound,
   Notification,
   Notifications,
@@ -102,7 +101,6 @@ export type {
   DropdownProps,
   IInputProps,
   IInputOnChangeData,
-  // INavbarItem,
   IModelCard,
   ISortOption,
   IPageWidth,

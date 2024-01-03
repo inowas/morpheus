@@ -1,12 +1,35 @@
 import {render, screen} from '@testing-library/react';
+
 import React from 'react';
 import Header from './Header';
+import {useNavbarItems} from '../../morpheus/application/application';
 
 describe('Header Tests', () => {
-  test('It renders a Header', async () => {
+  test('It renders a Header with default props', async () => {
+    render(<Header
+      navbarItems={[]} navigateTo={() => {
+      }}
+      pathname="/"
+    />);
+    const headerElement = screen.getByTestId('header');
+    expect(headerElement).toBeInTheDocument();
+  });
+
+  test('It renders a Header with specified props', async () => {
+    const {navbarItems} = useNavbarItems();
+    const mockNavigateTo = jest.fn();
     render(
-      <Header data-testid={'header'} children={'header-content'}/>,
+      <Header
+        navbarItems={navbarItems}
+        navigateTo={mockNavigateTo}
+        pathname="/"
+        language="en-GB"
+        showSearchWrapper={true}
+        showCreateButton={true}
+      />,
     );
-    expect(screen.getByTestId('header')).toBeInTheDocument();
+
+    const headerElement = screen.getByTestId('header');
+    expect(headerElement).toBeInTheDocument();
   });
 });

@@ -1,13 +1,18 @@
 import React, {useState} from 'react';
+
+import DatePicker from 'react-datepicker';
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
+
 import styles from './ModelWrapper.module.less';
 import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
+import 'react-tabs/style/react-tabs.css';
+
 import {Dropdown, Form, FormFieldProps, Icon, List, Radio, TextArea} from 'semantic-ui-react';
-import {DataGrid, DataRow, DataSidebar, ModelSidebar} from './index';
-import {Map} from '../Map';
+import {DataGrid, DataRow, DataSidebar, ModelSidebar, UploadFile} from 'components/ModelWrapper';
+import {Button, Map} from 'components';
 import type {FeatureCollection} from 'geojson';
-import Button from '../Button/Button';
+
 
 interface IProps {
   children?: React.ReactNode;
@@ -15,7 +20,6 @@ interface IProps {
   showModelSidebar?: boolean;
   headerHeight?: number;
 }
-
 
 const GEOJSON: FeatureCollection = {
   'type': 'FeatureCollection',
@@ -306,33 +310,21 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
           <Button primary={true}>Create model</Button>
         </DataRow>
         <DataRow title={'Model geometry'}>
-          <Form.Field className={styles.field}>
-            <label className={styles.label}>By Date</label>
-            <div className={styles.radioWrapper}>
-              <Radio
-                className={styles.radio}
-                label="Drow on map"
-                name="dateType"
-                value="option1"
-                checked={'option1' === selectedOption}
-                onChange={handleRadioChange}
-              />
-              <Radio
-                className={styles.radio}
-                label="Upload file"
-                value="option2"
-                checked={'option2' === selectedOption}
-                onChange={handleRadioChange}
-              />
-              <Radio
-                className={styles.radio}
-                label="Paste JSON"
-                value="option3"
-                checked={'option3' === selectedOption}
-                onChange={handleRadioChange}
-              />
-            </div>
-          </Form.Field>
+          <div className={styles.tabsWrapper}>
+            <h2 className="h4">Add model domain</h2>
+            <Tabs>
+              <TabList>
+                <Tab>Drow on map</Tab>
+                <Tab>Upload file</Tab>
+              </TabList>
+              <TabPanel>
+                <Button primary={true} size={'small'}>Drow on map</Button>
+              </TabPanel>
+              <TabPanel>
+                <UploadFile/>
+              </TabPanel>
+            </Tabs>
+          </div>
         </DataRow>
       </DataGrid>
     </>;

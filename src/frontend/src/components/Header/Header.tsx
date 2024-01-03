@@ -24,7 +24,6 @@ interface IProps {
 const Header = ({
   maxWidth,
   updateHeight,
-
   navbarItems,
   language,
   languageList,
@@ -58,7 +57,6 @@ const Header = ({
       window.removeEventListener('resize', handleResize); // Cleanup the event listener
     };
   }, []);
-
 
   return (
     <header
