@@ -2,11 +2,11 @@ import React from 'react';
 import {MapContainer, Polygon, TileLayer} from 'react-leaflet';
 import {LatLngExpression, LatLngTuple} from 'leaflet';
 import Geoman from './Geoman';
-
 import type {FeatureCollection} from 'geojson';
-
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import 'leaflet/dist/leaflet.css';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import '@luomus/leaflet-smooth-wheel-zoom';
 
 interface IProps {
   editable: boolean;
@@ -62,6 +62,8 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
       center={coords}
       zoom={13}
       style={{height: '100vh', width: '100%'}}
+      scrollWheelZoom={false}
+      wheelDebounceTime={100}
     >
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
