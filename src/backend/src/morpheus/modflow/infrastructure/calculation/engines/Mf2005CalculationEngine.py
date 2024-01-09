@@ -7,6 +7,8 @@ from flopy.utils.mflistfile import MfListBudget
 from morpheus.modflow.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import create_drn_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import create_evt_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import \
+    create_fhb_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationType
@@ -76,7 +78,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # chd
         create_chd_package(flopy_model, modflow_model)
         # fhb
-        # Not implemented yet
+        create_fhb_package(flopy_model, modflow_model)
         # rch
         create_rch_package(flopy_model, modflow_model)
         # wel

@@ -6,6 +6,7 @@ from .ConstantHeadObservation import ConstantHeadObservation
 from .DrainObservation import DrainObservation
 from .EvapotranspirationObservation import EvapotranspirationObservation, EvapotranspirationRawDataItem
 from .GeneralHeadObservation import GeneralHeadObservation
+from .FlowAndHeadObservation import FlowAndHeadObservation
 from .Observation import Observation, DataItem
 from .RechargeObservation import RechargeObservation, RechargeRawDataItem
 from .RiverObservation import RiverObservation
@@ -23,20 +24,22 @@ class BoundaryId(Uuid):
 
 @dataclasses.dataclass(frozen=True)
 class BoundaryType:
-    type: Literal['constant_head', 'evapotranspiration', 'drain', 'general_head', 'recharge', 'river', 'well']
+    type: Literal[
+        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'recharge', 'river', 'well'
+    ]
 
     def __eq__(self, other):
         return self.type == other.type
 
     @classmethod
     def from_str(cls, value: Literal[
-        'constant_head', 'evapotranspiration', 'drain', 'general_head', 'recharge', 'river', 'well'
+        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'recharge', 'river', 'well'
     ]):
         return cls(type=value)
 
     @classmethod
     def from_value(cls, value: Literal[
-        'constant_head', 'evapotranspiration', 'drain', 'general_head', 'recharge', 'river', 'well'
+        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'recharge', 'river', 'well'
     ]):
         return cls.from_str(value=value)
 
@@ -47,6 +50,10 @@ class BoundaryType:
     @classmethod
     def evapotranspiration(cls):
         return cls.from_str('evapotranspiration')
+
+    @classmethod
+    def flow_and_head(cls):
+        return cls.from_str('flow_and_head')
 
     @classmethod
     def drain(cls):
@@ -114,6 +121,8 @@ class Boundary:
             return DrainBoundary.from_dict(obj)
         if BoundaryType.evapotranspiration() == boundary_type:
             return EvapotranspirationBoundary.from_dict(obj)
+        if BoundaryType.flow_and_head() == boundary_type:
+            return FlowAndHeadBoundary.from_dict(obj)
         if BoundaryType.general_head() == boundary_type:
             return GeneralHeadBoundary.from_dict(obj)
         if BoundaryType.recharge() == boundary_type:
@@ -298,6 +307,77 @@ class EvapotranspirationBoundary(Boundary):
             observations=[EvapotranspirationObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
         )
+
+
+class FlowAndHeadBoundary(Boundary):
+    type: BoundaryType = BoundaryType.flow_and_head()
+    geometry: LineString
+
+    @classmethod
+    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
+                      observations: list[Observation] | None = None):
+        if not isinstance(geometry, LineString):
+            raise ValueError('Flow and Head boundaries must be lines')
+
+        if observations is None:
+            observations = [
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+            ]
+
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=observations,
+        )
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            boundary_id=BoundaryId.from_value(obj['id']),
+            boundary_type=cls.type,
+            name=BoundaryName.from_value(obj['name']),
+            geometry=LineString.from_dict(obj['geometry']),
+            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
+            observations=[FlowAndHeadObservation.from_dict(observation) for observation in obj['observations']],
+            enabled=obj['enabled']
+        )
+
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem]:
+        raise NotImplementedError()
+
+    def get_head_data(self, start_date_time: StartDateTime):
+        head_data = []
+        for observation in self.observations:
+            if not isinstance(observation, FlowAndHeadObservation):
+                continue
+            head_data.append(observation.get_head_data_item(start_date_time))
+        return head_data
+
+    def get_flow_data(self, start_date_time: StartDateTime):
+        flow_data = []
+        for observation in self.observations:
+            if not isinstance(observation, FlowAndHeadObservation):
+                continue
+            flow_data.append(observation.get_flow_data_item(start_date_time))
+        return flow_data
+
+    def get_date_times(self) -> list[StartDateTime]:
+        date_times = []
+        for observation in self.observations:
+            if not isinstance(observation, FlowAndHeadObservation):
+                continue
+            for date_time in observation.get_date_times():
+                if date_time not in date_times:
+                    date_times.append(date_time)
+
+        date_times.sort(key=lambda date_time: date_time.to_datetime())
+
+        return date_times
 
 
 class GeneralHeadBoundary(Boundary):
