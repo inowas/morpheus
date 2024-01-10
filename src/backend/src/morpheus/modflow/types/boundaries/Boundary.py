@@ -5,8 +5,9 @@ from morpheus.common.types import Uuid, String
 from .ConstantHeadObservation import ConstantHeadObservation
 from .DrainObservation import DrainObservation
 from .EvapotranspirationObservation import EvapotranspirationObservation, EvapotranspirationRawDataItem
-from .GeneralHeadObservation import GeneralHeadObservation
 from .FlowAndHeadObservation import FlowAndHeadObservation
+from .GeneralHeadObservation import GeneralHeadObservation
+from .LakeObservation import LakeObservation, LakeRawDataItem, BedLeakance, InitialStage, StageRange
 from .Observation import Observation, DataItem
 from .RechargeObservation import RechargeObservation, RechargeRawDataItem
 from .RiverObservation import RiverObservation
@@ -25,7 +26,8 @@ class BoundaryId(Uuid):
 @dataclasses.dataclass(frozen=True)
 class BoundaryType:
     type: Literal[
-        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'recharge', 'river', 'well'
+        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain',
+        'general_head', 'lake', 'recharge', 'river', 'well'
     ]
 
     def __eq__(self, other):
@@ -33,13 +35,15 @@ class BoundaryType:
 
     @classmethod
     def from_str(cls, value: Literal[
-        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'recharge', 'river', 'well'
+        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain',
+        'general_head', 'lake', 'recharge', 'river', 'well'
     ]):
         return cls(type=value)
 
     @classmethod
     def from_value(cls, value: Literal[
-        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'recharge', 'river', 'well'
+        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain',
+        'general_head', 'lake', 'recharge', 'river', 'well'
     ]):
         return cls.from_str(value=value)
 
@@ -62,6 +66,10 @@ class BoundaryType:
     @classmethod
     def general_head(cls):
         return cls.from_str('general_head')
+
+    @classmethod
+    def lake(cls):
+        return cls.from_str('lake')
 
     @classmethod
     def recharge(cls):
@@ -125,6 +133,8 @@ class Boundary:
             return FlowAndHeadBoundary.from_dict(obj)
         if BoundaryType.general_head() == boundary_type:
             return GeneralHeadBoundary.from_dict(obj)
+        if BoundaryType.lake() == boundary_type:
+            return LakeBoundary.from_dict(obj)
         if BoundaryType.recharge() == boundary_type:
             return RechargeBoundary.from_dict(obj)
         if BoundaryType.river() == boundary_type:
@@ -194,7 +204,7 @@ class BoundaryCollection:
         return [boundary.to_dict() for boundary in self.boundaries]
 
     def get_boundaries_of_type(self, boundary_type: BoundaryType):
-        return [boundary for boundary in self.boundaries if boundary.type == boundary_type]
+        return [boundary for boundary in self.boundaries if boundary.type == boundary_type and boundary.enabled]
 
 
 class ConstantHeadBoundary(Boundary):
@@ -417,6 +427,46 @@ class GeneralHeadBoundary(Boundary):
             observations=[GeneralHeadObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
         )
+
+
+class LakeBoundary(Boundary):
+    type: BoundaryType = BoundaryType.lake()
+    geometry: Polygon
+    observations: list[LakeObservation]
+
+    @classmethod
+    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
+                      raw_data: list[LakeRawDataItem] = None, bed_leakance: BedLeakance = None,
+                      initial_stage: InitialStage = None, stage_range: StageRange = None):
+        return cls(
+            boundary_id=BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            geometry=geometry,
+            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            affected_layers=affected_layers,
+            observations=[
+                LakeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], bed_leakance=bed_leakance,
+                                    initial_stage=initial_stage, stage_range=stage_range)
+            ],
+            enabled=True
+        )
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            boundary_id=BoundaryId.from_value(obj['id']),
+            boundary_type=cls.type,
+            name=BoundaryName.from_value(obj['name']),
+            geometry=Polygon.from_dict(obj['geometry']),
+            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
+            observations=[LakeObservation.from_dict(observation) for observation in obj['observations']],
+            enabled=obj['enabled']
+        )
+
+    def get_observation(self) -> LakeObservation:
+        return self.observations[0]
 
 
 class RechargeBoundary(Boundary):

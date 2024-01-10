@@ -1,38 +1,59 @@
 from typing import Tuple
 
 import flopy.utils.binaryfile as bf
+from flopy.utils.util_array import Util3d
 import numpy as np
 import os
 from flopy.utils.mflistfile import MfListBudget
 from morpheus.modflow.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import create_drn_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import create_evt_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import \
+    create_drn_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import \
+    create_evt_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import \
     create_fhb_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import \
+    create_hob_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import \
+    create_lak_package
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
 from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationType
 from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import \
     Mf2005CalculationEngineSettings
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import create_gmg_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import create_rch_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import create_riv_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import create_sip_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.WelPackageWrapper import create_wel_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import create_mf_package, \
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import \
+    create_ghb_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import \
+    create_gmg_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import \
+    create_pcgn_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import \
+    create_rch_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import \
+    create_riv_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import \
+    create_sip_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.WelPackageWrapper import \
+    create_wel_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import \
+    create_mf_package, \
     FlopyModflow
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.BasPackageWrapper import create_bas_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.ChdPackageWrapper import create_chd_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.DisPackageWrapper import create_dis_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.BasPackageWrapper import \
+    create_bas_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.ChdPackageWrapper import \
+    create_chd_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.DisPackageWrapper import \
+    create_dis_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.OcPackageWrapper import create_oc_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import create_lpf_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import create_bcf_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import create_de4_package
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import create_pcg_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import \
+    create_lpf_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import \
+    create_bcf_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import \
+    create_de4_package
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import \
+    create_pcg_package
 
 
 class Mf2005CalculationEngine(CalculationEngineBase):
@@ -69,7 +90,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # dis
         create_dis_package(flopy_model, modflow_model)
         # bas
-        create_bas_package(flopy_model, modflow_model)
+        bas = create_bas_package(flopy_model, modflow_model)
 
         # boundary condition packages
 
@@ -97,7 +118,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # ghb
         create_ghb_package(flopy_model, modflow_model)
         # lak
-        # Not implemented yet
+        lak = create_lak_package(flopy_model, modflow_model)
         # mnw1
         # Not implemented yet
         # mnw2
@@ -131,11 +152,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         # flow packages
         flow_package_data = calculation_profile.get_flow_package_data()
+        bcf = None
+        lpf = None
         match flow_package_data.type:
             case 'bcf':
-                create_bcf_package(flopy_model, modflow_model)
+                bcf = create_bcf_package(flopy_model, modflow_model)
             case 'lpf':
-                create_lpf_package(flopy_model, modflow_model)
+                lpf = create_lpf_package(flopy_model, modflow_model)
             case 'huf':
                 raise NotImplementedError()
             case 'hfb6':
@@ -152,6 +175,43 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         # observation packages
         create_hob_package(flopy_model, modflow_model)
+
+        # preprocess lake package
+        if lak is not None:
+            ibound = bas.ibound.array
+            lak_array = lak.lakarr.array[0]
+            ibound[lak_array > 0] = 0
+
+            bas.ibound = Util3d(
+                flopy_model,
+                shape=bas.ibound.shape,
+                dtype=bas.ibound.dtype,
+                name=bas.ibound.name,
+                locat=bas.ibound.locat,
+                value=ibound)
+
+            if lpf is not None:
+                wetdry = np.array(lpf.wetdry.array)
+                wetdry[lak_array > 0] = 0
+                lpf.wetdry = Util3d(
+                    flopy_model,
+                    shape=lpf.wetdry.shape,
+                    dtype=lpf.wetdry.dtype,
+                    name=lpf.wetdry.name,
+                    locat=lpf.wetdry.locat,
+                    value=wetdry)
+
+            if bcf is not None:
+                if isinstance(bcf.wetdry, Util3d):
+                    wetdry = np.array(bcf.wetdry.array)
+                    wetdry[lak_array > 0] = 0
+                    bcf.wetdry = Util3d(
+                        flopy_model,
+                        shape=bcf.wetdry.shape,
+                        dtype=bcf.wetdry.dtype,
+                        name=bcf.wetdry.name,
+                        locat=bcf.wetdry.locat,
+                        value=wetdry)
 
         return flopy_model
 

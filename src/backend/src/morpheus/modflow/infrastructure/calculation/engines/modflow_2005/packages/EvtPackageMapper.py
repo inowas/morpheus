@@ -55,7 +55,7 @@ def calculate_evt_boundary_stress_period_data(
 
         mean_data = mean_data[0]
         if not isinstance(mean_data, EvapotranspirationDataItem):
-            raise TypeError("Expected RechargeDataItem but got {}".format(type(mean_data)))
+            raise TypeError("Expected EvapotranspirationDataItem but got {}".format(type(mean_data)))
 
         surface_elevation = mean_data.surface_elevation
         evapotranspiration = mean_data.evapotranspiration
