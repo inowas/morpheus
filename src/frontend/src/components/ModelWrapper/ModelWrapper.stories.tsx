@@ -10,7 +10,7 @@ import styles from './ModelWrapper.module.less';
 import '../../morpheus/morpheus.less';
 import '../rc-slider.css';
 
-const navbarItems2 = [
+const navbarItems = [
   {
     name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
       {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
@@ -167,14 +167,14 @@ export const ModelWrapperCreateModel: StoryFn<typeof ModelWrapper> = () => {
     <div style={{margin: '-1rem'}}>
       <Header
         maxWidth={pageSize}
-        navbarItems={navbarItems2}
+        updateHeight={updateHeaderHeight}
+        navbarItems={navbarItems}
         navigateTo={() => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
         showCreateButton={true}
         showModelSidebar={showModelSidebar}
-        updateHeight={updateHeaderHeight}
       />
       <ModelWrapper
         headerHeight={headerHeight}
@@ -190,8 +190,6 @@ export const ModelWrapperCreateModel: StoryFn<typeof ModelWrapper> = () => {
 
 export const ModelWrapperGridProperties: StoryFn<typeof ModelWrapper> = () => {
   const [headerHeight, setHeaderHeight] = React.useState(0);
-  const [startDate, setStartDate] = React.useState<Date | null>(new Date());
-  const [endDate, setEndDate] = React.useState<Date | null>(new Date());
   const showModelSidebar = true;
   const updateHeaderHeight = (height: number) => {
     setHeaderHeight(height);
@@ -228,7 +226,7 @@ export const ModelWrapperGridProperties: StoryFn<typeof ModelWrapper> = () => {
           <DataGrid multiRows={true}>
             <div>
               <Radio
-                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '600'}}
+                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '500'}}
                 label="Set by grid size"
                 value="gridSize"
                 checked={'gridSize' === gridType}
@@ -267,7 +265,7 @@ export const ModelWrapperGridProperties: StoryFn<typeof ModelWrapper> = () => {
             </div>
             <div>
               <Radio
-                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '600'}}
+                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '500'}}
                 label="Set by cell size"
                 value="cellSize"
                 checked={'cellSize' === gridType}
@@ -407,14 +405,15 @@ export const ModelWrapperGridProperties: StoryFn<typeof ModelWrapper> = () => {
     <div style={{margin: '-1rem'}}>
       <Header
         maxWidth={pageSize}
-        navbarItems={navbarItems2}
+        updateHeight={updateHeaderHeight}
+        navbarItems={navbarItems}
         navigateTo={() => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
         showCreateButton={true}
         showModelSidebar={showModelSidebar}
-        updateHeight={updateHeaderHeight}
+
       />
       <ModelWrapper
         headerHeight={headerHeight}

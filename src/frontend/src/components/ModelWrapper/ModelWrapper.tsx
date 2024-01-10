@@ -234,7 +234,7 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
           <DataGrid multiRows={true}>
             <div>
               <Radio
-                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '600'}}
+                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '500'}}
                 label="Set by grid size"
                 value="gridSize"
                 checked={'gridSize' === gridType}
@@ -273,7 +273,7 @@ const ModelWrapper: React.FC<IProps> = ({children, headerHeight, showModelSideba
             </div>
             <div>
               <Radio
-                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '600'}}
+                style={{marginBottom: '14px', fontSize: '16px', fontWeight: '500'}}
                 label="Set by cell size"
                 value="cellSize"
                 checked={'cellSize' === gridType}
