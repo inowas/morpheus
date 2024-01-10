@@ -16,7 +16,6 @@ interface IProps {
   }[]
   onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
-  showModelSidebar?: boolean;
 }
 
 const NavTop = ({
@@ -24,7 +23,6 @@ const NavTop = ({
   languageList,
   onChangeLanguage,
   navigateTo,
-  showModelSidebar = false,
 }: IProps) => {
   const [showAvatar, setShowAvatar] = useState(false);
 
@@ -33,7 +31,10 @@ const NavTop = ({
   };
 
   return (
-    <div className={`${styles.navTop} ${showModelSidebar ? styles.withSidebar : ''}`} data-testid={'test-navtop'}>
+    <div
+      className={styles.navTop}
+      data-testid={'test-navtop'}
+    >
       <div className={styles.inner}>
         <Menu.Item
           data-testid={'test-logo'}

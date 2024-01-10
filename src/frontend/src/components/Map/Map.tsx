@@ -6,7 +6,7 @@ import type {FeatureCollection} from 'geojson';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import 'leaflet/dist/leaflet.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@luomus/leaflet-smooth-wheel-zoom';
+import 'leaflet-smooth-wheel-zoom';
 
 interface IProps {
   editable: boolean;

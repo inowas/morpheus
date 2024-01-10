@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'components';
+import {ContentWrapper, Header, IPageWidth, ModelCard, ModelGrid, SliderSwiper, SortDropdown} from 'components';
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
 
@@ -260,6 +260,7 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
+const pageSize: IPageWidth = 'auto';
 export default {
   /* 👇 The title prop is optional.
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
@@ -271,7 +272,7 @@ export default {
 
 export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
   const [modelData, setModelData] = useState(models);
-
+  const showModelSidebar = false;
   const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
     return data.filter((model) => model.meta_author_name === authorName);
   };
@@ -296,14 +297,18 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
+      <Header
+        maxWidth={pageSize}
+        navbarItems={navbarItems2}
+        navigateTo={() => {
+        }}
+        pathname={'/'}
+        showSearchWrapper={true}
+        showCreateButton={true}
+        showModelSidebar={showModelSidebar}
+        updateHeight={(height: number) => {
+        }}
+      />
       <ContentWrapper minHeight={'auto'} maxWidth={1440}>
         <SortDropdown
           placeholder="Order By"

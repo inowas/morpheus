@@ -13,7 +13,6 @@ interface IProps {
   navigateTo: (path: string) => void;
   showSearchWrapper?: boolean;
   showCreateButton?: boolean;
-  showModelSidebar?: boolean;
 }
 
 const NavBottom: React.FC<IProps> = ({
@@ -22,7 +21,6 @@ const NavBottom: React.FC<IProps> = ({
   navigateTo,
   showSearchWrapper = false,
   showCreateButton = false,
-  showModelSidebar = false,
 }) => {
   const {isMobile} = useIsMobile(1199);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -32,7 +30,7 @@ const NavBottom: React.FC<IProps> = ({
   };
 
   return (
-    <div className={`${styles.navBottom} ${showModelSidebar ? styles.withSidebar : ''}`}>
+    <div className={styles.navBottom}>
       <div className={styles.inner}>
         <div className={styles.mainMenuLogo}>
           <Image

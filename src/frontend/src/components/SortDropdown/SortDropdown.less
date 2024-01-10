@@ -11,14 +11,14 @@
     &.ui.selection.dropdown {
       display: flex;
       align-items: flex-end;
-      border: none;
-      padding: 0;
-      min-height: initial;
-      min-width: initial;
+      padding: 0 !important;
+      min-height: initial !important;
       box-shadow: none !important;
       border: none !important;
       z-index: 1;
       background: unset;
+      min-width: initial !important;
+      width: auto;
 
       .divider,
       & > .text:not(.default) {
@@ -44,12 +44,9 @@
         position: absolute;
         left: auto;
         right: 0;
-        width: auto;
-        margin-top: 8px;
-        //border: 1px !important;
-        //border-radius: 5px !important;
-        //box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-        min-width: 100px;
+        width: auto !important;
+        margin-top: 8px !important;
+        min-width: 100px !important;
         max-height: calc(100vh - 200px);
         background-color: @white;
 
@@ -113,7 +110,7 @@
   }
 
   .sectionTitled + .sortDropdown {
-    top: 25px;
+    top: 15px;
   }
 }
 

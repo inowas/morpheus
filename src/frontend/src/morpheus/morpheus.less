@@ -1,4 +1,5 @@
 @import 'components/site.variables';
+@import "helpers";
 
 body {
   color: #4c4c4c;
@@ -10,36 +11,6 @@ body {
   justify-content: space-between;
   min-height: 100%;
 
-}
-
-.gridTwoColumns {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-template-rows: 1fr;
-  grid-column-gap: 0px;
-  grid-row-gap: 20px;
-
-  @media (min-width: @breakpoint-mobile-horizontal) {
-    grid-template-columns: repeat(2, 1fr);
-    grid-column-gap: 20px;
-    grid-row-gap: 0px;
-  }
-
-
-  .rowTwoColumns {
-    label {
-      display: block;
-      margin: 0 20px 5px 0;
-      padding: 0;
-      background: transparent;
-      color: @ref-color-blackLight;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0px;
-      line-height: 18px;
-      text-align: center;
-    }
-  }
 }
 
 .ui.container {
@@ -131,6 +102,7 @@ body {
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
 .react-datepicker-wrapper .react-datepicker__input-container input.dateInput:focus-visible {
@@ -138,6 +110,7 @@ body {
 }
 
 .dateInputWrapper {
+
   .divider {
     display: flex;
     align-items: baseline;
@@ -164,54 +137,6 @@ body {
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0px;
-  }
-}
-
-// REACT TABS STYLES
-.react-tabs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  .react-tabs__tab-list {
-    border: none;
-  }
-
-  .react-tabs__tab {
-    color: @ref-color-red;
-    font-size: 13.5px;
-    font-weight: 400;
-    letter-spacing: 0px;
-    padding: 0;
-
-    &:not(:first-child) {
-      padding-left: 10px;
-    }
-
-    &:not(:last-child) {
-      padding-right: 10px;
-      border-right: 1px solid @ref-color-red;
-    }
-
-    &:focus:after {
-      content: none;
-    }
-  }
-
-  .react-tabs__tab-panel {
-  }
-
-  .react-tabs__tab-panel--selected {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  .react-tabs__tab--selected {
-    border-radius: 0;
-    border: none;
-    background: transparent;
-    text-decoration: underline;
   }
 }
 

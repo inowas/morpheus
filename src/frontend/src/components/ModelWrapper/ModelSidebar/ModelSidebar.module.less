@@ -7,10 +7,18 @@
 
 .menu {
   display: flex;
-  width: @sidebarMinWidth;
-  min-width: @sidebarMinWidth;
+  background: @light-grey;
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  @media (min-width: @breakpoint-tablet) {
+    width: @sidebarMinWidth;
+    min-width: @sidebarMinWidth;
+  }
+
+  &.showSidebar {
+    width: @sidebarMinWidth;
+    min-width: @sidebarMinWidth;
+  }
 
   .listWrapper {
     display: flex;

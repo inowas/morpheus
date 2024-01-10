@@ -197,9 +197,9 @@ const FormFilter = ({data, updateModelData}: IProps) => {
             onChange={(_, {value}) => handleRadioChange(value as string)}
           />
         </div>
-        <div className={'dateInputWrapper gridTwoColumns'}>
+        <div className={'dateInputWrapper fieldGrid'}>
           <div className={'rowTwoColumns'}>
-            <label>Date from</label>
+            <label className="labelSmall">Date from</label>
             <div className={'divider'}>
               <DatePicker
                 selected={new Date(filterOptions.fromDate)}
@@ -211,7 +211,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
             </div>
           </div>
           <div className={'rowTwoColumns'}>
-            <label>Date to</label>
+            <label className="labelSmall">Date to</label>
             <div className={'divider'}>
               <DatePicker
                 selected={new Date(filterOptions.toDate)}

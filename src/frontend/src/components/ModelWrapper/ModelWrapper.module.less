@@ -1,6 +1,5 @@
 @import 'components/site.variables';
 
-
 .modelWrapper {
   display: flex;
   height: inherit;
@@ -72,27 +71,39 @@
     }
   }
 
-  .field {
-    margin-top: 16px;
-
-    & + .field {
-      margin-top: 21px;
-    }
-  }
-
   .field + button {
-    margin-top: 20px;
     width: fit-content;
-
   }
 
   .tabsWrapper {
-    margin-top: 16px;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
     height: 100%;
   }
+
+  .buttonGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    button {
+      min-width: 130px;
+    }
+  }
+
+  .buttonGroupRight {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: flex-end;
+
+    button {
+      min-width: 130px;
+    }
+  }
+
+
 }
 
 

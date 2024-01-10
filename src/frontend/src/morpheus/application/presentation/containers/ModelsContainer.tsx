@@ -16,8 +16,8 @@ const ModelsContainer = () => {
   const [searchParams] = useSearchParams();
 
   const {isEmbedded, setIsEmbedded} = useIsEmbedded();
-  const showFooter = !isEmbedded;
   const showHeader = !isEmbedded;
+  const showModelSidebar = false;
   const pageSize: IPageWidth = 'auto';
   const [headerHeight, setHeaderHeight] = useState(0);
   const updateHeaderHeight = (height: number) => {
@@ -31,7 +31,6 @@ const ModelsContainer = () => {
   if ('false' === searchParams.get('embedded') && isEmbedded) {
     setIsEmbedded(false);
   }
-
 
   useEffect(() => {
     if (language !== i18n.language) {
@@ -60,23 +59,12 @@ const ModelsContainer = () => {
           pathname={location.pathname}
           showSearchWrapper={true}
           showCreateButton={true}
-          showModelSidebar={true}
+          showModelSidebar={showModelSidebar}
         />}
       <ModelWrapper
         headerHeight={headerHeight}
-        showModelSidebar={true}
+        showModelSidebar={showModelSidebar}
       />
-
-
-      {/*{showFooter ? <Footer release={release} maxWidth={pageSize}/> :*/}
-      {/*  <span*/}
-      {/*    style={{*/}
-      {/*      margin: '0 auto',*/}
-      {/*      textAlign: 'center',*/}
-      {/*      fontSize: '0.8rem',*/}
-      {/*    }}*/}
-      {/*  >Release: {release}</span>*/}
-      {/*}*/}
     </>
   );
 };
