@@ -9,7 +9,7 @@ from ....types.Project import ProjectId
 
 
 @dataclasses.dataclass
-class UpdateProjectMetadataRequest:
+class UpdateMetadataRequest:
     name: str | None
     description: str | None
     tags: list[str] | None
@@ -35,7 +35,7 @@ class UpdateMetadataRequestHandler:
 
         project_id = ProjectId.from_str(project_id)
 
-        update_modflow_model_metadata = UpdateProjectMetadataRequest.from_dict(obj=request.json)
+        update_modflow_model_metadata = UpdateMetadataRequest.from_dict(obj=request.json)
 
         name = update_modflow_model_metadata.name
         if name is not None:

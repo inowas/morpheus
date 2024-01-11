@@ -11,130 +11,14 @@ servers:
 
 paths:
   /modflow:
-    get:
-      tags:
-        - Modflow
-      summary: Read list of Modflow Projects
-      description: Read list of Modflow Projects
-      responses:
-        200:
-          description: List of Modflow Projects
-          content:
-            application/json:
-              schema:
-                type: array
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
-    post:
-      tags:
-        - Modflow
-      summary: Create a new modflow project
-      description: Create a new modflow project
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './modflow/openapi.yml#/components/schemas/CreateProjectRequest'
-      responses:
-        201:
-          description: Modflow model was successfully created
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
+    $ref: './modflow/openapi.yml#/paths/~1modflow'
 
   /modflow/{project_id}/base_model:
-    post:
-      tags:
-        - Modflow
-      summary: Create a new modflow model
-      description: Create a new modflow model
-      parameters:
-        - $ref: './modflow/openapi.yml#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './modflow/openapi.yml#/components/schemas/CreateBaseModelRequest'
-      responses:
-        201:
-          description: Basemodel model was successfully created
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
-
-  /modflow/{project_id}/base_model/time_discretization:
-    get:
-      tags:
-        - Modflow
-      summary: Read time discretization of modflow model
-      description: Read time discretization of modflow model
-      parameters:
-        - $ref: './modflow/openapi.yml#/components/parameters/ProjectId'
-      responses:
-        200:
-          description: Time discretization of modflow model
-          content:
-            application/json:
-              schema:
-                $ref: './modflow/openapi.yml#/components/schemas/GetTimeDiscretizationResponse'
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
-    put:
-      tags:
-        - Modflow
-      summary: Update time discretization of modflow model
-      description: Update time discretization of modflow model
-      parameters:
-        - $ref: './modflow/openapi.yml#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './modflow/openapi.yml#/components/schemas/UpdateTimeDiscretizationRequest'
-      responses:
-        204:
-          description: Time discretization of modflow model was successfully updated
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
-
+    $ref: './modflow/openapi.yml#/paths/~1modflow~1{project_id}~1base_model'
 
   /sensors:
-    get:
-      tags:
-        - Sensors
-      summary: Read list od sensors
-      description: Read list of sensors
-      responses:
-        200:
-          description: List of sensors
-          content:
-            application/json:
-              schema:
-                type: array
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
+    $ref: './sensors/openapi.yml#/paths/~1sensors'
+
 
 components:
   securitySchemes:

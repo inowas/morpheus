@@ -2,6 +2,69 @@ openapi: 3.1.0
 info:
   title: INOWAS API - Modflow Module
   version: 2.0.0
+paths:
+  /modflow:
+    get:
+      tags:
+        - Modflow
+      summary: Read list of Modflow Projects
+      description: Read list of Modflow Projects
+      responses:
+        200:
+          description: List of Modflow Projects
+          content:
+            application/json:
+              schema:
+                type: array
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+    post:
+      tags:
+        - Modflow
+      summary: Create a new modflow project
+      description: Create a new modflow project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        201:
+          description: Modflow model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /modflow/{project_id}/base_model:
+    post:
+      tags:
+        - Modflow
+      summary: Create a new modflow model
+      description: Create a new modflow model
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBaseModelRequest'
+      responses:
+        201:
+          description: Basemodel model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
 components:
   parameters:
     ProjectId:

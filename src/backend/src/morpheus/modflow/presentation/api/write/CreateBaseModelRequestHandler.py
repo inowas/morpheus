@@ -5,7 +5,8 @@ from flask import Request, abort, jsonify
 from ....application.write.CreateBaseModel import CreateBaseModelCommand, CreateBaseModelCommandHandler, \
     CreateGridDict
 from ....incoming import get_logged_in_user_id
-from morpheus.modflow.types.discretization.spatial.SpatialDiscretization import Polygon
+
+from ....types.discretization.spatial.SpatialDiscretization import Polygon
 from ....types.Project import ProjectId
 from ....types.User import UserId
 
