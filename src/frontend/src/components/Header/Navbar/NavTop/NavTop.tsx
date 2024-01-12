@@ -8,6 +8,7 @@ import LanguageSelector from '../LanguageSelector/LanguageSelector';
 type ILanguageCode = 'de-DE' | 'en-GB';
 
 interface IProps {
+  style?: React.CSSProperties;
   language?: ILanguageCode;
   languageList?: {
     code: ILanguageCode;
@@ -17,7 +18,12 @@ interface IProps {
   navigateTo: (path: string) => void;
 }
 
-const NavTop = ({language, languageList, onChangeLanguage, navigateTo}: IProps) => {
+const NavTop = ({
+  language,
+  languageList,
+  onChangeLanguage,
+  navigateTo,
+}: IProps) => {
   const [showAvatar, setShowAvatar] = useState(false);
 
   const toggleAvatar = () => {
@@ -25,7 +31,10 @@ const NavTop = ({language, languageList, onChangeLanguage, navigateTo}: IProps) 
   };
 
   return (
-    <div className={styles.navTop} data-testid={'test-navtop'}>
+    <div
+      className={styles.navTop}
+      data-testid={'test-navtop'}
+    >
       <div className={styles.inner}>
         <Menu.Item
           data-testid={'test-logo'}

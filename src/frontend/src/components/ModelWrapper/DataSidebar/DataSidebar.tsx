@@ -4,9 +4,10 @@ import {Icon} from 'semantic-ui-react';
 
 interface IProps {
   children: ReactNode;
+  showModelSidebar?: boolean;
 }
 
-const DataSidebar = ({children}: IProps) => {
+const DataSidebar = ({children, showModelSidebar}: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSidebarToggle = () => {
@@ -15,7 +16,7 @@ const DataSidebar = ({children}: IProps) => {
 
   return (
     <div
-      className={`${styles.dataSidebar} ${isOpen ? '' : styles.dataSidebarClosed}`}
+      className={`${styles.dataSidebar} ${isOpen ? '' : styles.dataSidebarClosed} ${showModelSidebar ? '' : styles.dataSidebarRef}`}
     >
       <button
         className={styles.dataSidebarButton}
@@ -23,7 +24,7 @@ const DataSidebar = ({children}: IProps) => {
       >
         <Icon name={`${isOpen ? 'angle double left' : 'angle double right'}`}/>
       </button>
-      <div className={styles.dataChildren}>
+      <div className={styles.dataWrapper}>
         {children}
       </div>
     </div>

@@ -8,9 +8,11 @@ interface IProps {
   btnTitle?: string;
   onClick?: () => void;
   children?: ReactNode;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
-const DataRow = ({title, subTitle, btnTitle, onClick, children}: IProps) => {
+const DataRow = ({title, subTitle, btnTitle, onClick, children, style, className}: IProps) => {
 
   if (!title && !subTitle && !btnTitle && !children) {
     return null;
@@ -18,7 +20,7 @@ const DataRow = ({title, subTitle, btnTitle, onClick, children}: IProps) => {
 
 
   return (
-    <div className={styles.dataRow}>
+    <div className={`${styles.dataRow} ${className ? className : ''}`} style={style}>
       {title && (
         <div className={styles.headline}>
           <h2 className={`${styles.title} h1`}>{title}</h2>
@@ -36,7 +38,9 @@ const DataRow = ({title, subTitle, btnTitle, onClick, children}: IProps) => {
           <h3 className={`${styles.subtitle} h2`}>{subTitle}</h3>
           {btnTitle && (
             <Button
-              primary={true} size={'small'}
+              primary={true}
+              size={'small'}
+              onClick={onClick}
             >
               {btnTitle}
             </Button>

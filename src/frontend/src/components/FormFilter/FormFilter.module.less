@@ -90,13 +90,6 @@ form.form {
         }
 
       }
-
-      input:checked ~ .box:after,
-      input:checked ~ label:after {
-        color: @blue;
-      }
-
-
     }
 
     .checkboxBoundary {
@@ -135,51 +128,6 @@ form.form {
         text-decoration: underline;
       }
 
-    }
-
-    .dateInputWrapper {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: 1fr;
-      grid-column-gap: 20px;
-      grid-row-gap: 0px;
-
-      .dateLable {
-        display: block;
-        margin-right: 20px;
-        padding: 0;
-
-        background: transparent;
-        color: @ref-color-blackLight;
-        font-size: 11px;
-        font-weight: 400;
-        letter-spacing: 0px;
-        line-height: 18px;
-        text-align: center;
-      }
-
-      .dateInput {
-        cursor: pointer;
-        padding: 5px;
-        margin: 0;
-        border: none;
-        border-radius: unset;
-        text-align: center;
-
-        color: @ref-color-blackLight;
-        font-size: 11px;
-        font-weight: 400;
-        letter-spacing: 0px;
-      }
-
-      .divider {
-        display: flex;
-        align-items: baseline;
-      }
-
-      .dateIcon {
-        margin: 0 0 0 5px;
-      }
     }
 
     .dropdown {

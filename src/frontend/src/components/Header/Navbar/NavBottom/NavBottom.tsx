@@ -5,17 +5,23 @@ import useIsMobile from '../hooks/useIsMobile';
 import styles from './NavBottom.module.less';
 import {Image, Input} from 'semantic-ui-react';
 import MenuItem from './MenuItem';
-import Button from '../../Button/Button';
+import Button from 'components/Button/Button';
 
 interface IProps {
   navbarItems: INavbarItem[];
   pathname: string;
   navigateTo: (path: string) => void;
-  showSearchWrapper: boolean;
-  showCreateButton: boolean;
+  showSearchWrapper?: boolean;
+  showCreateButton?: boolean;
 }
 
-const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSearchWrapper, showCreateButton}) => {
+const NavBottom: React.FC<IProps> = ({
+  navbarItems,
+  pathname,
+  navigateTo,
+  showSearchWrapper = false,
+  showCreateButton = false,
+}) => {
   const {isMobile} = useIsMobile(1199);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
@@ -47,7 +53,7 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSea
             <span></span>
           </div>
         )}
-        {showSearchWrapper && (
+        {(showSearchWrapper && !isMobile) && (
           <div className={styles.searchWrapper}>
             <Input
               action={true}
@@ -78,6 +84,18 @@ const NavBottom: React.FC<IProps> = ({navbarItems, pathname, navigateTo, showSea
               </Button>
             )}
           </div>
+          {(showSearchWrapper && isMobile) && (
+            <div className={styles.searchWrapper}>
+              <Input
+                action={true}
+                actionPosition="left"
+                className={`${styles.search}`}
+              >
+                <Button primary={true}>Search</Button>
+                <input/>
+              </Input>
+            </div>
+          )}
         </nav>
       </div>
     </div>

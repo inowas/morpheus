@@ -1,40 +1,67 @@
-import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
+import React, {RefObject, useEffect, useRef, useState} from 'react';
 import styles from './Header.module.less';
 import {ContentWrapper, IPageWidth} from 'components';
+import Navbar, {INavbarItem} from './Navbar';
+import {ILanguageList} from './Navbar/Navbar';
+
+type ILanguageCode = 'de-DE' | 'en-GB';
 
 interface IProps {
-  children: ReactNode;
   maxWidth?: IPageWidth;
+  updateHeight?: (height: number) => void
+  showModelSidebar?: boolean
+
+  navbarItems: INavbarItem[];
+  language?: ILanguageCode;
+  languageList?: ILanguageList;
+  onChangeLanguage?: (language: ILanguageCode) => void;
+  navigateTo: (path: string) => void;
+  pathname: string;
+  showSearchWrapper?: boolean;
+  showCreateButton?: boolean;
 }
 
-const Header = ({children, maxWidth}: IProps) => {
-
-  const [headerHeight, setHeaderHeight] = useState(0);
+const Header = ({
+  maxWidth,
+  updateHeight,
+  navbarItems,
+  language,
+  languageList,
+  onChangeLanguage,
+  navigateTo,
+  pathname,
+  showModelSidebar = false,
+  showSearchWrapper = false,
+  showCreateButton = false,
+}: IProps) => {
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
+  const [headerHeight, setHeaderHeight] = useState(ref.current?.clientHeight || 0);
 
   const updateHeaderHeight = () => {
-    setHeaderHeight(ref.current?.clientHeight || 0);
+    if (ref.current) {
+      const height = ref.current.clientHeight;
+      setHeaderHeight(height);
+      if (updateHeight) {
+        updateHeight(height); // Notify the parent about the updated height
+      }
+    }
   };
 
   useEffect(() => {
     updateHeaderHeight(); // Set initial header height
-
     const handleResize = () => {
       updateHeaderHeight(); // Update header height when window resizes
     };
-
     window.addEventListener('resize', handleResize);
-
     return () => {
       window.removeEventListener('resize', handleResize); // Cleanup the event listener
     };
   }, []);
 
-
   return (
     <header
       data-testid={'header'}
-      className={styles.header}
+      className={`${showModelSidebar ? styles.withSidebar : ''}`}
       style={{
         paddingTop: headerHeight,
         zIndex: 100,
@@ -44,8 +71,20 @@ const Header = ({children, maxWidth}: IProps) => {
         ref={ref}
         className={styles.headerInner}
       >
-        <ContentWrapper minHeight={'auto'} maxWidth={maxWidth}>
-          {children}
+        <ContentWrapper
+          minHeight={'auto'} maxWidth={maxWidth}
+        >
+          <Navbar
+            navbarItems={navbarItems}
+            languageList={languageList}
+            language={language}
+            onChangeLanguage={onChangeLanguage}
+            navigateTo={navigateTo}
+            pathname={pathname}
+            showModelSidebar={showModelSidebar}
+            showSearchWrapper={showSearchWrapper}
+            showCreateButton={showCreateButton}
+          />
         </ContentWrapper>
       </div>
     </header>

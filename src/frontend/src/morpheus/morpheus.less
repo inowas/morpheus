@@ -1,4 +1,5 @@
 @import 'components/site.variables';
+@import "helpers";
 
 body {
   color: #4c4c4c;
@@ -81,6 +82,44 @@ body {
   background-color: @blue;
 }
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker-wrapper:focus-visible,
+.react-datepicker__input-container:focus-visible {
+}
+
+.react-datepicker-wrapper .react-datepicker__input-container input.dateInput {
+  cursor: pointer;
+  width: 100%;
+  padding: 5px;
+  margin: 0;
+  border: none;
+  border-radius: unset;
+  text-align: center;
+  color: @ref-color-blackLight;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.react-datepicker-wrapper .react-datepicker__input-container input.dateInput:focus-visible {
+  outline: 1px solid @blue !important;
+}
+
+.dateInputWrapper {
+
+  .divider {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .dateIcon {
+    margin: 0 0 0 5px;
+  }
+}
 
 // REACT SLIDER STYLES (rc-slider)
 .rc-slider.rc-slider-horizontal {
@@ -100,3 +139,4 @@ body {
     letter-spacing: 0px;
   }
 }
+

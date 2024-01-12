@@ -48,7 +48,11 @@ const menuItems = [
   {icon: faDownload, description: 'Download MODFLOW files', active: false},
 ];
 
-const ModelSidebar = () => {
+interface IProps {
+  showModelSidebar: boolean;
+}
+
+const ModelSidebar: React.FC<IProps> = ({showModelSidebar}) => {
   const [listItems, setListItems] = useState(menuItems);
 
   const handleItemClick = (index: number) => {
@@ -60,27 +64,29 @@ const ModelSidebar = () => {
 
 
   return (
-    <div className={styles.menu}>
-      <div className={styles.listWrapper}>
-        <ul className={styles.listScroll}>
-          {listItems.map((item, index) => (
-            <li
-              key={index}
-              className={`${styles.item} ${item.title ? styles.title : ''} ${item.active ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
-            >
-              <Menu.Item
-                data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
-                as="a"
-                className={styles.link}
-                onClick={(e) => handleItemClick(index)}
+    <div className={`${styles.menu} ${showModelSidebar ? styles.showSidebar : ''}`}>
+      {showModelSidebar && (
+        <div className={styles.listWrapper}>
+          <ul className={styles.listScroll}>
+            {listItems.map((item, index) => (
+              <li
+                key={index}
+                className={`${styles.item} ${item.title ? styles.title : ''} ${item.active ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
               >
-                <span className={styles.icon}><FontAwesomeIcon icon={item.icon}/></span>
-                <span className={styles.description}>{item.description}</span>
-              </Menu.Item>
-            </li>
-          ))}
-        </ul>
-      </div>
+                <Menu.Item
+                  data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
+                  as={item.title ? 'h3' : 'a'}
+                  className={styles.link}
+                  onClick={(e) => handleItemClick(index)}
+                >
+                  <span className={styles.icon}><FontAwesomeIcon icon={item.icon}/></span>
+                  <span className={styles.description}>{item.description}</span>
+                </Menu.Item>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
 
   );

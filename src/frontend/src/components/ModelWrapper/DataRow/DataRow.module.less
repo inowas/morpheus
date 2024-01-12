@@ -1,11 +1,21 @@
 @import 'components/site.variables';
 
 .dataRow {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 0;
+  gap: 16px;
 
-  & + .dataRow {
-    margin-top: 20px;
+  label {
+    width: 100%;
+    display: block;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    display: block;
   }
 }
 
@@ -28,3 +38,4 @@
   margin: 0;
   padding: 0;
 }
+

@@ -1,15 +1,11 @@
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {Footer, Header, IPageWidth, Navbar} from 'components';
+import {Header, IPageWidth, ModelWrapper} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
-
-interface IProps {
-  children: ReactNode;
-}
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
-const ModelsContainer = ({children}: IProps) => {
+const ModelsContainer = () => {
 
   const {i18n, translate} = useTranslate();
   const {navbarItems} = useNavbarItems();
@@ -20,9 +16,13 @@ const ModelsContainer = ({children}: IProps) => {
   const [searchParams] = useSearchParams();
 
   const {isEmbedded, setIsEmbedded} = useIsEmbedded();
-  const showFooter = !isEmbedded;
   const showHeader = !isEmbedded;
+  const showModelSidebar = false;
   const pageSize: IPageWidth = 'auto';
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const updateHeaderHeight = (height: number) => {
+    setHeaderHeight(height);
+  };
 
   if ('true' === searchParams.get('embedded') && !isEmbedded) {
     setIsEmbedded(true);
@@ -32,46 +32,39 @@ const ModelsContainer = ({children}: IProps) => {
     setIsEmbedded(false);
   }
 
-
   useEffect(() => {
     if (language !== i18n.language) {
       i18n.changeLanguage(language);
     }
   }, [language, i18n]);
 
+  const languageList: { code: ILanguageCode; label: string }[] = [
+    {
+      code: 'en-GB',
+      label: 'English',
+    },
+  ];
+
   return (
     <>
       {showHeader &&
-        <Header maxWidth={pageSize}>
-          <Navbar
-            navbarItems={navbarItems}
-            languageList={[
-              {
-                code: 'en-GB',
-                label: translate('english'),
-              },
-            ]}
-            language={language}
-            onChangeLanguage={setLanguage}
-            navigateTo={navigateTo}
-            pathname={location.pathname}
-            showSearchWrapper={true}
-            showCreateButton={true}
-          />
-        </Header>
-      }
-      {children}
-      {/*<ContentWrapper minHeight={'auto'} maxWidth={pageSize}>*/}
-      {/*</ContentWrapper>*/}
-      {showFooter ? <Footer release={release} maxWidth={pageSize}/> :
-        <span
-          style={{
-            margin: '0 auto',
-            textAlign: 'center',
-            fontSize: '0.8rem',
-          }}
-        >Release: {release}</span>
-      }
+        <Header
+          maxWidth={pageSize}
+          updateHeight={updateHeaderHeight}
+          navbarItems={navbarItems}
+          languageList={languageList}
+          language={language}
+          onChangeLanguage={setLanguage}
+          navigateTo={navigateTo}
+          pathname={location.pathname}
+          showSearchWrapper={true}
+          showCreateButton={true}
+          showModelSidebar={showModelSidebar}
+        />}
+      <ModelWrapper
+        headerHeight={headerHeight}
+        showModelSidebar={showModelSidebar}
+      />
     </>
   );
 };
