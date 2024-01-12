@@ -1,5 +1,5 @@
 import dataclasses
-from ...infrastructure.persistence.ProjectRepository import ProjectRepository
+from ...infrastructure.persistence.ProjectRepository import project_repository
 
 
 @dataclasses.dataclass(frozen=True)
@@ -18,7 +18,7 @@ class ReadModflowModelListQueryResult:
 class ReadModflowModelListQueryHandler:
     @staticmethod
     def handle(query: ReadModflowModelListQuery) -> ReadModflowModelListQueryResult:
-        projects = ProjectRepository().get_project_list()
+        projects =project_repository.get_project_list()
         if projects is None:
             return ReadModflowModelListQueryResult([])
 

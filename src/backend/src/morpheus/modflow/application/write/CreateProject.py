@@ -1,6 +1,6 @@
 import dataclasses
 
-from ...infrastructure.persistence.ProjectRepository import ProjectRepository
+from ...infrastructure.persistence.ProjectRepository import project_repository
 from ...types.Project import ProjectId, Project
 from ...types.User import UserId
 from ...types.Metadata import Metadata, Description, Name, Tags
@@ -27,7 +27,6 @@ class CreateProjectCommandHandler:
         metadata = Metadata(name=command.name, description=command.description, tags=command.tags, )
         project = project.with_updated_metadata(metadata)
 
-        repository = ProjectRepository()
-        repository.save_project(project)
+        project_repository.save_project(project)
 
         return CreateProjectCommandResult(project_id=project.project_id)

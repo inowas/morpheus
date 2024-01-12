@@ -1,8 +1,7 @@
 import dataclasses
 
-from ...infrastructure.persistence.ProjectRepository import ProjectRepository
 from morpheus.modflow.types.ModflowModel import ModelId
-from ...types.soilmodel.Layer import LayerId, LayerName, LayerDescription, LayerType, LayerData
+from ...types.soil_model.Layer import LayerId, LayerName, LayerDescription, LayerType, LayerData
 
 
 @dataclasses.dataclass(frozen=True)
@@ -26,8 +25,7 @@ class UpdateSoilmodelLayerCommandHandler:
     def handle(command: UpdateSoilmodelLayerCommand):
         raise Exception('Not implemented yet')
 
-        # modflow_model_repository = ProjectRepository()
-        # soilmodel = modflow_model_repository.get_modflow_model_soilmodel(command.model_id)
+        # soilmodel = ... get soilmodel from repository
         #
         # if soilmodel is None:
         #     raise Exception(f'Could not find model with id {command.model_id.to_str()}')
@@ -43,5 +41,5 @@ class UpdateSoilmodelLayerCommandHandler:
         #
         # soilmodel = soilmodel.with_updated_layer(layer)
         #
-        # modflow_model_repository.update_modflow_model_soilmodel(command.model_id, soilmodel)
+        # ... persist soilmodel through repository
         # return UpdateSoilmodelLayerCommandResult(layer_id=layer.boundary_id)

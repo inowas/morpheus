@@ -1,6 +1,6 @@
 import dataclasses
 
-from ...infrastructure.persistence.BaseModelRepository import BaseModelRepository
+from ...infrastructure.persistence.BaseModelRepository import base_model_repository
 from morpheus.modflow.types.ModflowModel import ModelId
 from morpheus.modflow.types.discretization.time.TimeDiscretization import TimeDiscretization, \
     StressPeriodCollection, TimeUnit, EndDateTime, StartDateTime
@@ -26,11 +26,10 @@ class UpdateTimeDiscretizationCommandResult:
 class UpdateTimeDiscretizationCommandHandler:
     @staticmethod
     def handle(command: UpdateTimeDiscretizationCommand):
-        repository = BaseModelRepository()
         project_id = command.project_id
         model_id = command.model_id
 
-        time_discretization = repository.get_base_model_time_discretization(project_id, model_id)
+        time_discretization = base_model_repository.get_base_model_time_discretization(project_id, model_id)
         if time_discretization is None:
             raise Exception(f'Could not find time discretization for model with id {model_id.to_str()}')
 
@@ -46,5 +45,5 @@ class UpdateTimeDiscretizationCommandHandler:
             time_unit=time_unit
         )
 
-        repository.update_base_model_time_discretization(project_id, model_id, time_discretization)
+        base_model_repository.update_base_model_time_discretization(project_id, model_id, time_discretization)
         return UpdateTimeDiscretizationCommandResult()

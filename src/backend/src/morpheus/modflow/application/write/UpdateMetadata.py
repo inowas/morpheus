@@ -1,6 +1,6 @@
 import dataclasses
 
-from ...infrastructure.persistence.ProjectRepository import ProjectRepository
+from ...infrastructure.persistence.ProjectRepository import project_repository
 from ...types.Metadata import Description, Name, Tags
 from ...types.Project import ProjectId
 
@@ -21,10 +21,9 @@ class UpdateMetadataCommandResult:
 class UpdateMetadataCommandHandler:
     @staticmethod
     def handle(command: UpdateMetadataCommand):
-        repository = ProjectRepository()
         project_id = command.project_id
 
-        metadata = repository.get_project_metadata(project_id)
+        metadata = project_repository.get_project_metadata(project_id)
         if metadata is None:
             raise Exception(f'Could not find project with id {project_id.to_str()}')
 
@@ -37,6 +36,6 @@ class UpdateMetadataCommandHandler:
         if command.tags is not None:
             metadata = metadata.with_updated_tags(command.tags)
 
-        repository.update_project_metadata(project_id, metadata)
+        project_repository.update_project_metadata(project_id, metadata)
 
         return UpdateMetadataCommandResult()

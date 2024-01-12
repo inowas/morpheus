@@ -1,6 +1,6 @@
 import dataclasses
 
-from ...infrastructure.persistence.BaseModelRepository import BaseModelRepository
+from ...infrastructure.persistence.BaseModelRepository import base_model_repository
 from ...types.Project import ProjectId
 from ...types.User import UserId
 from ...types.ModflowModel import ModflowModel
@@ -46,7 +46,6 @@ class CreateBaseModelCommandHandler:
 
         base_model = base_model.with_updated_spatial_discretization(spatial_discretization)
 
-        repository = BaseModelRepository()
-        repository.save_base_model(project_id=project_id, base_model=base_model)
+        base_model_repository.save_base_model(project_id=project_id, base_model=base_model)
 
         return CreateModflowModelCommandResult()
