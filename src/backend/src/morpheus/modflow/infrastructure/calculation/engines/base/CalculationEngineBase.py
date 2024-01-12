@@ -38,16 +38,40 @@ class CalculationEngineBase:
 
         self.on_start_running_callback()
 
-    def read_budget(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, incremental=False):
+    def read_budget(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        incremental=False
+    ):
         raise NotImplementedError
 
-    def read_concentration(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+    def read_concentration(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        layer=0
+    ):
         raise NotImplementedError
 
-    def read_drawdown(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+    def read_drawdown(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        layer=0
+    ):
         raise NotImplementedError
 
-    def read_head(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+    def read_head(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        layer=0
+    ):
         raise NotImplementedError
 
     def read_head_observations(self) -> list[Observation]:

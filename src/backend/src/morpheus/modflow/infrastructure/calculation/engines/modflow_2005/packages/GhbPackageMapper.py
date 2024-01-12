@@ -108,6 +108,11 @@ def calculate_stress_period_data(model: ModflowModel) -> GhbStressPeriodData | N
     sp_data = GhbStressPeriodData()
     ghb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.general_head())
     for ghb_boundary in ghb_boundaries:
+        if not isinstance(ghb_boundary, GeneralHeadBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(GeneralHeadBoundary.__name__, type(ghb_boundary))
+            )
+
         sp_data_boundary = calculate_ghb_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,

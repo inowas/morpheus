@@ -6,7 +6,7 @@ source $(dirname "$0")/../util.inc.sh
 outputHeadline "Running static code analysis"
 
 cd $backendRoot/src
-pyright --stats .
+source $backendRoot/.venv/bin/activate && pyright --stats .
 exitCode=$?
 if [ $exitCode -ne 0 ]; then
     outputError "Static code analysis found errors"

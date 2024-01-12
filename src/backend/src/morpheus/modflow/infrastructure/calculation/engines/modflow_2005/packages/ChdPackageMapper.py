@@ -106,6 +106,11 @@ def calculate_stress_period_data(model: ModflowModel) -> ChdStressPeriodData | N
     sp_data = ChdStressPeriodData()
     chd_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.constant_head())
     for chd_boundary in chd_boundaries:
+        if not isinstance(chd_boundary, ConstantHeadBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(ConstantHeadBoundary.__name__, type(chd_boundary))
+            )
+
         sp_data_boundary = calculate_chd_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,

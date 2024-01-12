@@ -10,7 +10,7 @@ class SpatialDiscretization:
     affected_cells: GridCells
     crs: Crs
 
-    def __init__(self, geometry: Polygon, grid: Grid, affected_cells: GridCells, crs: Crs):
+    def __init__(self, geometry: Polygon, grid: Grid, affected_cells: GridCells | None, crs: Crs):
         self.geometry = geometry
         self.grid = grid
         self.affected_cells = affected_cells if affected_cells is not None \
@@ -41,7 +41,7 @@ class SpatialDiscretization:
     def from_dict(cls, obj: dict):
         return cls(
             geometry=Polygon.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells'] if obj.get('affected_cells') else None),
+            affected_cells=GridCells.from_dict(obj['affected_cells']) if obj.get('affected_cells') else None,
             grid=Grid.from_dict(obj['grid']),
             crs=Crs.from_value(obj['crs'] if obj.get('crs') else 'EPSG:4326')
         )

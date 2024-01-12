@@ -2,20 +2,29 @@ import os
 
 from pymongo import MongoClient
 
+
+def read_env_var(name: str) -> str:
+    value = os.environ.get(name)
+    if value is None:
+        raise Exception(f"Environment variable {name} not set")
+
+    return value
+
+
 print('creating users for mongodb')
 
-host = os.environ.get('BACKEND_MONGO_HOST')
-port = int(os.environ.get('BACKEND_MONGO_PORT'))
-root_user = os.environ.get('BACKEND_MONGO_INITDB_ROOT_USERNAME')
-root_password = os.environ.get('BACKEND_MONGO_INITDB_ROOT_PASSWORD')
-db_user = os.environ.get('BACKEND_MONGO_USER')
-db_password = os.environ.get('BACKEND_MONGO_PASSWORD')
+host = read_env_var('BACKEND_MONGO_HOST')
+port = read_env_var('BACKEND_MONGO_PORT')
+root_user = read_env_var('BACKEND_MONGO_INITDB_ROOT_USERNAME')
+root_password = read_env_var('BACKEND_MONGO_INITDB_ROOT_PASSWORD')
+db_user = read_env_var('BACKEND_MONGO_USER')
+db_password = read_env_var('BACKEND_MONGO_PASSWORD')
 databases = [
-    os.environ.get('BACKEND_MONGO_SENSOR_DATABASE'),
-    os.environ.get('BACKEND_MONGO_MODFLOW_DATABASE')
+    read_env_var('BACKEND_MONGO_SENSOR_DATABASE'),
+    read_env_var('BACKEND_MONGO_MODFLOW_DATABASE')
 ]
 
-client = MongoClient(host=host, port=port, username=root_user, password=root_password)
+client = MongoClient(host=host, port=int(port), username=root_user, password=root_password)
 
 for database in databases:
     users_info = client[database].command('usersInfo')

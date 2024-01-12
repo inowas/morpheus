@@ -5,6 +5,7 @@ from flask import Request, abort, jsonify
 from ....application.write.CreateBaseModel import CreateBaseModelCommand, CreateBaseModelCommandHandler, \
     CreateGridDict
 from ....incoming import get_logged_in_user_id
+from ....types.ModflowModel import ModelId
 
 from ....types.discretization.spatial.SpatialDiscretization import Polygon
 from ....types.Project import ProjectId
@@ -35,7 +36,6 @@ class CreateBaseModelRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        project_id = ProjectId.from_str(project_id)
         user_id = get_logged_in_user_id()
         if user_id is None:
             abort(401, 'Unauthorized')
@@ -46,15 +46,16 @@ class CreateBaseModelRequestHandler:
         user_id = UserId.from_value(user_id)
 
         command = CreateBaseModelCommand(
-            project_id=project_id,
+            model_id=ModelId.new(),
+            project_id=ProjectId.from_str(project_id),
             geometry=geometry,
             grid_properties=grid_properties,
             user_id=user_id
         )
 
-        result = CreateBaseModelCommandHandler.handle(command=command)
+        CreateBaseModelCommandHandler.handle(command=command)
         response = jsonify()
         response.status_code = 201
-        response.headers['location'] = 'modflow/' + result.model_id.to_str()
+        response.headers['location'] = 'modflow/' + command.model_id.to_str()
 
         return response

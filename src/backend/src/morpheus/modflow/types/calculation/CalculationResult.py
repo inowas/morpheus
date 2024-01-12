@@ -12,7 +12,7 @@ class Observation:
 @dataclasses.dataclass(frozen=True)
 class AvailableResults:
     times: list[float]
-    kstpkper: list[(int, int)]
+    kstpkper: list[(tuple[int, int])]
     number_of_layers: int
     number_of_observations: int
 

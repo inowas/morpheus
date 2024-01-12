@@ -116,6 +116,11 @@ def calculate_stress_period_data(model: ModflowModel) -> RivStressPeriodData | N
     sp_data = RivStressPeriodData()
     riv_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.river())
     for riv_boundary in riv_boundaries:
+        if not isinstance(riv_boundary, RiverBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(RiverBoundary.__name__, type(riv_boundary))
+            )
+
         sp_data_boundary = calculate_riv_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,

@@ -49,12 +49,12 @@ def bootstrap(app: Flask):
         return response
 
     @app.errorhandler(Exception)
-    def handle_internal_server_error(exception):
+    def handle_internal_server_error(exception: Exception):
         if isinstance(exception, HTTPException):
-            return exception
+            raise exception
 
         if isinstance(exception, SchemaValidationException):
-            return exception
+            raise exception
 
         # todo: logging, sentry, ...
         app.logger.exception(exception)

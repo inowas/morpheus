@@ -109,6 +109,11 @@ def calculate_stress_period_data(model: ModflowModel) -> DrnStressPeriodData | N
     sp_data = DrnStressPeriodData()
     drn_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.drain())
     for drn_boundary in drn_boundaries:
+        if not isinstance(drn_boundary, DrainBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(DrainBoundary.__name__, type(drn_boundary))
+            )
+
         sp_data_boundary = calculate_drn_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,

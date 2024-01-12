@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal
+from typing import Literal, TypeVar, Generic
 
 from morpheus.modflow.types.calculation.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import De4PackageData

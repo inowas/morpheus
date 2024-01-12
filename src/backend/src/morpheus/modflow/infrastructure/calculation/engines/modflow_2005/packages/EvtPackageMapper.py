@@ -80,6 +80,13 @@ def calculate_stress_period_data(model: ModflowModel) -> EvtStressPeriodData | N
     sp_data = EvtStressPeriodData(nx=grid.nx(), ny=grid.ny())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.evapotranspiration())
     for boundary in boundaries:
+        if not isinstance(boundary, EvapotranspirationBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(
+                    EvapotranspirationBoundary.__name__, type(boundary)
+                )
+            )
+
         sp_data_boundary = calculate_evt_boundary_stress_period_data(
             soil_model=model.soil_model,
             spatial_discretization=model.spatial_discretization,

@@ -65,8 +65,14 @@ def calculate_wel_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: ModflowModel) -> WelStressPeriodData | None:
     sp_data = WelStressPeriodData()
+
     wel_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.well())
     for wel_boundary in wel_boundaries:
+        if not isinstance(wel_boundary, WellBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(WellBoundary.__name__, type(wel_boundary))
+            )
+
         sp_data_boundary = calculate_wel_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,

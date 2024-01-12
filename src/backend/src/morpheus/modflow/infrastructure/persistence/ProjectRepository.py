@@ -37,10 +37,10 @@ class ProjectRepository(RepositoryBase):
         self.collection.replace_one({'project_id': project.project_id.to_str()}, project.to_dict())
 
     def get_project_permissions(self, project_id: ProjectId) -> Permissions:
-        if not self.has_project(project_id):
+        project = self.collection.find_one({'project_id': project_id.to_str()}, {'permissions': 1})
+        if project is None:
             raise Exception('Project does not exist')
 
-        project = self.collection.find_one({'project_id': project_id.to_str()}, {'permissions': 1})
         return Permissions.from_dict(project['permissions'])
 
     def update_project_permissions(self, project_id: ProjectId, permissions: Permissions) -> None:
@@ -50,9 +50,10 @@ class ProjectRepository(RepositoryBase):
                                    {'$set': {'permissions': permissions.to_dict()}})
 
     def get_project_metadata(self, project_id: ProjectId) -> Metadata:
-        if not self.has_project(project_id):
-            raise Exception('Project does not exist')
         project = self.collection.find_one({'project_id': project_id.to_str()}, {'metadata': 1})
+        if project is None:
+            raise Exception('Project does not exist')
+
         return Metadata.from_dict(project['metadata'])
 
     def update_project_metadata(self, project_id: ProjectId, metadata: Metadata):

@@ -61,6 +61,11 @@ def calculate_stress_period_data(model: ModflowModel) -> RchStressPeriodData | N
     sp_data = RchStressPeriodData(nx=grid.nx(), ny=grid.ny())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.recharge())
     for boundary in boundaries:
+        if not isinstance(boundary, RechargeBoundary):
+            raise TypeError(
+                "Expected boundary of type {} but got {}".format(RechargeBoundary.__name__, type(boundary))
+            )
+
         sp_data_boundary = calculate_rch_boundary_stress_period_data(
             soil_model=model.soil_model,
             spatial_discretization=model.spatial_discretization,

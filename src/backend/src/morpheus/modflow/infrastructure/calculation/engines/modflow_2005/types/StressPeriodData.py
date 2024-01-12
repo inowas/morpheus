@@ -15,7 +15,7 @@ class StressPeriodDataItem:
 class StressPeriodData:
     data: list[StressPeriodDataItem]
 
-    def __init__(self, data: list[StressPeriodDataItem] = None):
+    def __init__(self, data: list[StressPeriodDataItem] | None = None):
         self.data = data or []
 
     def merge(self, other: 'StressPeriodData', sum_up_values: bool = False):
@@ -83,7 +83,7 @@ class LayerBasedStressPeriodData(StressPeriodData):
     shape: tuple[int, int]
     data: list[StressPeriodDataItem]
 
-    def __init__(self, nx: int, ny: int, data: list[StressPeriodDataItem] = None):
+    def __init__(self, nx: int, ny: int, data: list[StressPeriodDataItem] | None = None):
         super().__init__(data=data)
         self.shape = (ny, nx)
 

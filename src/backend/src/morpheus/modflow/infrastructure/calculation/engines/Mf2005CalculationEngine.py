@@ -25,15 +25,15 @@ from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.Mf20
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import \
     create_ghb_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import \
-    create_gmg_package
+    create_gmg_package, GmgPackageData
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import \
-    create_pcgn_package
+    create_pcgn_package, PcgnPackageData
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import \
     create_rch_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import \
     create_riv_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import \
-    create_sip_package
+    create_sip_package, SipPackageData
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.WelPackageWrapper import \
     create_wel_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import \
@@ -51,9 +51,9 @@ from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.L
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import \
     create_bcf_package
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import \
-    create_de4_package
+    create_de4_package, De4PackageData
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import \
-    create_pcg_package
+    create_pcg_package, PcgPackageData
 
 
 class Mf2005CalculationEngine(CalculationEngineBase):
@@ -134,20 +134,33 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # Not implemented yet
 
         # solvers are defined in the calculation profile
-        solver_package_data = calculation_profile.get_solver_package_data()
-        match solver_package_data.type:
+        solver_package = calculation_profile.get_solver_package_data()
+        solver_package_type = solver_package.type
+        solver_package_data = solver_package.data
+
+        match solver_package_type:
             case 'de4':
-                create_de4_package(flopy_model, solver_package_data.data)
+                if not isinstance(solver_package_data, De4PackageData):
+                    raise ValueError(f'Expected {De4PackageData.__name__} but got {type(solver_package_data)}')
+                create_de4_package(flopy_model, solver_package_data)
             case 'gmg':
-                create_gmg_package(flopy_model, solver_package_data.data)
+                if not isinstance(solver_package_data, GmgPackageData):
+                    raise ValueError(f'Expected {GmgPackageData.__name__} but got {type(solver_package_data)}')
+                create_gmg_package(flopy_model, solver_package_data)
             case 'pcg':
-                create_pcg_package(flopy_model, solver_package_data.data)
+                if not isinstance(solver_package_data, PcgPackageData):
+                    raise ValueError(f'Expected {PcgPackageData.__name__} but got {type(solver_package_data)}')
+                create_pcg_package(flopy_model, solver_package_data)
             case 'pcgn':
-                create_pcgn_package(flopy_model, solver_package_data.data)
+                if not isinstance(solver_package_data, PcgnPackageData):
+                    raise ValueError(f'Expected {PcgnPackageData.__name__} but got {type(solver_package_data)}')
+                create_pcgn_package(flopy_model, solver_package_data)
             case 'sip':
-                create_sip_package(flopy_model, solver_package_data.data)
+                if not isinstance(solver_package_data, SipPackageData):
+                    raise ValueError(f'Expected {SipPackageData.__name__} but got {type(solver_package_data)}')
+                create_sip_package(flopy_model, solver_package_data)
             case _:
-                raise ValueError(f'Unknown solver package type: {solver_package_data.type}')
+                raise ValueError(f'Unknown solver package type: {solver_package_type}')
 
         # flow packages
         flow_package_data = calculation_profile.get_flow_package_data()
@@ -216,7 +229,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
     def __calculate(self, flopy_model: FlopyModflow) -> Tuple[CalculationLog, CalculationResult]:
         success, report = flopy_model.run_model(report=True)
-        return CalculationLog.try_from_list(report), self.__build_results(success)
+        return CalculationLog.from_list(report), self.__build_results(success)
 
     def __build_results(self, success: bool) -> CalculationResult:
         if not success:
@@ -242,95 +255,129 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         return None
 
     def __read_head_results(self) -> AvailableResults | None:
-        try:
-            head_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".hds"))
-            return AvailableResults(
-                times=[float(time) for time in head_file.get_times()],
-                kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in head_file.get_kstpkper()],
-                number_of_layers=int(head_file.get_data().shape[0]),
-                number_of_observations=len(self.read_head_observations()),
-            )
-        except:
+        file = self.__get_file_with_extension_from_workspace(".hds")
+        if file is None:
             return None
+
+        bf_head_file = bf.HeadFile(file)
+        return AvailableResults(
+            times=[float(time) for time in bf_head_file.get_times()],
+            kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in bf_head_file.get_kstpkper()],
+            number_of_layers=int(bf_head_file.get_data().shape[0]),
+            number_of_observations=len(self.read_head_observations()),
+        )
 
     def __read_drawdown_results(self) -> AvailableResults | None:
-        try:
-            drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
-            return AvailableResults(
-                times=[float(time) for time in drawdown_file.get_times()],
-                kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in drawdown_file.get_kstpkper()],
-                number_of_layers=int(drawdown_file.get_data().shape[0]),
-                number_of_observations=0,
-            )
-        except:
+        file = self.__get_file_with_extension_from_workspace(".ddn")
+        if file is None:
             return None
 
+        bf_head_file = bf.HeadFile(file)
+        return AvailableResults(
+            times=[float(time) for time in bf_head_file.get_times()],
+            kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in bf_head_file.get_kstpkper()],
+            number_of_layers=int(bf_head_file.get_data().shape[0]),
+            number_of_observations=0,
+        )
+
     def __read_budget_results(self) -> AvailableResults | None:
-        try:
-            budget_file = MfListBudget(self.__get_file_with_extension_from_workspace(".list"))
-            return AvailableResults(
-                times=[float(time) for time in budget_file.get_times()],
-                kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in budget_file.get_kstpkper()],
-                number_of_layers=0,
-                number_of_observations=0,
-            )
-        except:
+        budget_file = self.__get_file_with_extension_from_workspace(".list")
+        if budget_file is None:
             return None
+
+        mf_list_budget = MfListBudget(budget_file)
+        kstpkper_list = mf_list_budget.get_kstpkper()
+        times_list = mf_list_budget.get_times()
+        return AvailableResults(
+            times=[float(time) for time in times_list] if times_list is not None else [],
+            kstpkper=
+            [(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in kstpkper_list]
+            if kstpkper_list is not None
+            else [],
+            number_of_layers=0,
+            number_of_observations=0,
+        )
 
     def __read_concentration_results(self) -> AvailableResults | None:
         return None
 
-    def read_budget(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, incremental=False):
+    def read_budget(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        incremental=False
+    ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
-        try:
-            budget_file = MfListBudget(self.__get_file_with_extension_from_workspace(".list"))
-            budget = budget_file.get_data(totim=totim, idx=idx, kstpkper=kstpkper, incremental=incremental)
-            if budget is None:
-                return []
 
-            values = {}
-            for x in budget:
-                param = str(x[2].decode('UTF-8'))
-                values[param] = float(str(x[1]))
-            return values
-        except:
+        file = self.__get_file_with_extension_from_workspace(".list")
+        if file is None:
             return []
 
-    def read_concentration(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        budget = MfListBudget(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, incremental=incremental)
+        if budget is None:
+            return []
+
+        values = {}
+        for x in budget:
+            param = str(x[2].decode('UTF-8'))
+            values[param] = float(str(x[1]))
+        return values
+
+    def read_concentration(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        layer=0
+    ):
         return []
 
-    def read_drawdown(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+    def read_drawdown(
+        self, totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        layer=0
+    ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
-        try:
-            drawdown_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".ddn"))
-            data = drawdown_file.get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
-            if data is None:
-                return []
-            data = np.round(data, 3)
-            data[data < -999] = None
-            return data.tolist()
-        except:
+
+        file = self.__get_file_with_extension_from_workspace(".ddn")
+        if file is None:
             return []
 
-    def read_head(self, totim: float = None, idx: int = None, kstpkper: Tuple[int, int] = None, layer=0):
+        data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+        if data is None:
+            return []
+        data = np.round(data, 3)
+        data[data < -999] = None
+        return data.tolist()
+
+    def read_head(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        layer=0
+    ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
-        try:
-            head_file = bf.HeadFile(self.__get_file_with_extension_from_workspace(".hds"))
-            data = head_file.get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
-            if data is None:
-                return []
-            data = np.round(data, 3)
-            data[data <= -999] = None
-            return data.tolist()
-        except:
+
+        file = self.__get_file_with_extension_from_workspace(".hds")
+        if file is None:
             return []
+
+        data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+        if data is None:
+            return []
+        data = np.round(data, 3)
+        data[data <= -999] = None
+        return data.tolist()
 
     def read_head_observations(self) -> list[Observation]:
         hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
-        if not hob_out_file:
+        if hob_out_file is None:
             return []
 
         observations = []
