@@ -18,7 +18,7 @@ class ReadModflowModelListQueryResult:
 class ReadModflowModelListQueryHandler:
     @staticmethod
     def handle(query: ReadModflowModelListQuery) -> ReadModflowModelListQueryResult:
-        projects =project_repository.get_project_list()
+        projects = project_repository.get_project_list()
         if projects is None:
             return ReadModflowModelListQueryResult([])
 

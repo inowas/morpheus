@@ -1,7 +1,7 @@
 import dataclasses
 
 from morpheus.modflow.types.ModflowModel import ModelId
-from ...types.soil_model.Layer import LayerId, LayerName, LayerDescription, LayerType, LayerData, Layer
+from ...types.soil_model.Layer import LayerId, LayerName, LayerDescription, LayerType, LayerData
 
 
 @dataclasses.dataclass(frozen=True)

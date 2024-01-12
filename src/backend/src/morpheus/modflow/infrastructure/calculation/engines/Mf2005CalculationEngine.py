@@ -290,8 +290,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         times_list = mf_list_budget.get_times()
         return AvailableResults(
             times=[float(time) for time in times_list] if times_list is not None else [],
-            kstpkper=
-            [(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in kstpkper_list]
+            kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in kstpkper_list]
             if kstpkper_list is not None
             else [],
             number_of_layers=0,
