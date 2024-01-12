@@ -199,6 +199,9 @@ class LayerData:
         if isinstance(botm, float):
             botm = np.full(shape, botm)
 
+        if (not isinstance(top, np.ndarray) or not isinstance(hk, np.ndarray) or not isinstance(botm, np.ndarray)):
+            raise ValueError('Could not convert top, hk and botm to numpy arrays')
+
         return (hk * (top - botm)).tolist()
 
     @classmethod

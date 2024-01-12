@@ -24,7 +24,6 @@ class CalculationRepository(RepositoryBase):
 
         return CalculationResult.try_from_dict(calculation_dict['calculation_result'])
 
-
     def save_calculation(self, calculation: Calculation) -> None:
         if self.has_calculation(calculation_id=calculation.calculation_id):
             raise Exception('Calculation already exists.')
@@ -36,7 +35,6 @@ class CalculationRepository(RepositoryBase):
             raise Exception('Calculation does not exist yet.')
 
         self.collection.replace_one({'calculation_id': calculation.calculation_id.to_str()}, calculation.to_dict())
-
 
     def delete_calculation(self, calculation_id: CalculationId) -> None:
         if not self.has_calculation(calculation_id=calculation_id):

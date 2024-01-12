@@ -1,6 +1,4 @@
 import dataclasses
-import pandas as pd
-from scipy.interpolate import interp1d
 from typing import Literal, List
 
 from morpheus.common.types import Uuid, String, DateTime, Float

@@ -7,7 +7,7 @@ paths:
     get:
       tags:
         - Sensors
-      summary: Read list od sensors
+      summary: Read list of sensors
       description: Read list of sensors
       responses:
         200:

@@ -5,7 +5,6 @@ from morpheus.modflow.types.boundaries.Boundary import BoundaryType, LakeBoundar
 from morpheus.modflow.types.boundaries.LakeObservation import LakeDataItem
 
 from morpheus.modflow.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.modflow.types.soil_model import SoilModel
 
 
 @dataclasses.dataclass

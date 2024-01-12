@@ -1,4 +1,6 @@
-from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import LayerBasedStressPeriodData
+from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import (
+    LayerBasedStressPeriodData
+)
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.types.boundaries.Boundary import BoundaryType, EvapotranspirationBoundary
 from morpheus.modflow.types.boundaries.EvapotranspirationObservation import EvapotranspirationDataItem

@@ -65,7 +65,6 @@ class RemoveAdminUserCommandHandler:
         return RemoveAdminUserCommandResult()
 
 
-
 @dataclasses.dataclass(frozen=True)
 class UpdateVisibilityCommand:
     project_id: ProjectId

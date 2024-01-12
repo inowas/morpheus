@@ -40,7 +40,7 @@ class BaseModelRepository:
             return None
         return ModflowModel.from_dict(project['base_model'])
 
-    def safe_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
+    def save_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
         if self.has_base_model(project_id):
             raise Exception('Base Model already exists')
         self.collection.insert_one({

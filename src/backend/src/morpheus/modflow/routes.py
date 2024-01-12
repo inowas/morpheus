@@ -35,9 +35,9 @@ def register_routes(blueprint: Blueprint):
     def update_metadata(project_id: str):
         return UpdateMetadataRequestHandler().handle(request, project_id), 201
 
-    @blueprint.route('/<project_id>/base_model/time_discretization', methods=['PUT'])
+    @blueprint.route('/<project_id>/base_model/<model_id>/time_discretization', methods=['PUT'])
     @cross_origin()
     @validate_request
     @authenticate()
-    def update_project_base_model_time_discretization(project_id: str):
-        return UpdateTimeDiscretizationRequestHandler().handle(request, project_id), 201
+    def update_project_base_model_time_discretization(project_id: str, model_id: str):
+        return UpdateTimeDiscretizationRequestHandler().handle(request, project_id, model_id), 201

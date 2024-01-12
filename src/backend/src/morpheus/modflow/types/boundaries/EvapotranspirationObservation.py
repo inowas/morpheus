@@ -3,7 +3,7 @@ import pandas as pd
 
 from scipy.interpolate import interp1d
 
-from morpheus.common.types import Float, Integer
+from morpheus.common.types import Float
 from .Observation import ObservationId, RawDataItem, DataItem, Observation
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point

@@ -117,5 +117,6 @@ class CalculationResult:
             'head_results': self.head_results.to_dict() if self.head_results is not None else None,
             'drawdown_results': self.drawdown_results.to_dict() if self.drawdown_results is not None else None,
             'budget_results': self.budget_results.to_dict() if self.budget_results is not None else None,
-            'concentration_results': self.concentration_results.to_dict() if self.concentration_results is not None else None
+            'concentration_results':
+                self.concentration_results.to_dict() if self.concentration_results is not None else None
         }

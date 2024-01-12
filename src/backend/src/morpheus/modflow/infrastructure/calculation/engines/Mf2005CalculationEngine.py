@@ -58,7 +58,6 @@ from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.P
 
 class Mf2005CalculationEngine(CalculationEngineBase):
     workspace_path: str
-    flopy_model: FlopyModflow = None
 
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
@@ -337,7 +336,6 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         observations = []
         f = open(hob_out_file)
         header = False
-        counter = 0
         for line in f:
             if line.startswith('#'):
                 continue

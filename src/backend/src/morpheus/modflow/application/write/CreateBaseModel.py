@@ -47,6 +47,6 @@ class CreateBaseModelCommandHandler:
         base_model = base_model.with_updated_spatial_discretization(spatial_discretization)
 
         repository = BaseModelRepository()
-        repository.safe_base_model(project_id=project_id, base_model=base_model)
+        repository.save_base_model(project_id=project_id, base_model=base_model)
 
         return CreateModflowModelCommandResult()
