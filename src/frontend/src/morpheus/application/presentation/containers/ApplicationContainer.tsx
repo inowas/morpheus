@@ -1,6 +1,6 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {ContentWrapper, Footer, Header, IPageWidth, Navbar} from 'components';
+import {ContentWrapper, Footer, Header, IPageWidth} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 interface IProps {
@@ -23,6 +23,12 @@ const ApplicationContainer = ({children}: IProps) => {
   const showFooter = !isEmbedded;
   const showHeader = !isEmbedded;
   const pageSize: IPageWidth = 1440;
+  const languageList: { code: ILanguageCode; label: string }[] = [
+    {
+      code: 'en-GB',
+      label: 'English',
+    },
+  ];
 
   if ('true' === searchParams.get('embedded') && !isEmbedded) {
     setIsEmbedded(true);
@@ -42,23 +48,17 @@ const ApplicationContainer = ({children}: IProps) => {
   return (
     <>
       {showHeader &&
-        <Header maxWidth={pageSize}>
-          <Navbar
-            navbarItems={navbarItems}
-            languageList={[
-              {
-                code: 'en-GB',
-                label: translate('english'),
-              },
-            ]}
-            language={language}
-            onChangeLanguage={setLanguage}
-            navigateTo={navigateTo}
-            pathname={location.pathname}
-            showSearchWrapper={true}
-            showCreateButton={true}
-          />
-        </Header>
+        <Header
+          maxWidth={pageSize}
+          navbarItems={navbarItems}
+          languageList={languageList}
+          language={language}
+          onChangeLanguage={setLanguage}
+          navigateTo={navigateTo}
+          pathname={location.pathname}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
       }
       <ContentWrapper minHeight={'auto'} maxWidth={pageSize}>
         {children}

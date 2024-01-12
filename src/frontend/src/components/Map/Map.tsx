@@ -6,7 +6,7 @@ import type {FeatureCollection} from 'geojson';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import 'leaflet/dist/leaflet.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@luomus/leaflet-smooth-wheel-zoom';
+import 'leaflet-smooth-wheel-zoom';
 
 interface IProps {
   editable: boolean;
@@ -43,6 +43,19 @@ const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][]
 const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
+
+  // const geoOptions = {
+  //   position: 'topleft',
+  //   drawText: false,
+  //   drawMarker: false,
+  //   drawCircle: false,
+  //   cutPolygon: false,
+  //   drawRectangle: !(0 < geojson.features.length),
+  //   drawPolygon: !(0 < geojson.features.length),
+  //   drawCircleMarker: false,
+  //   drawPolyline: false,
+  //   editMode: false,}
+  // }
 
   return (
     <MapContainer

@@ -16,7 +16,7 @@
   max-width: @sidebarMinWidth;
   min-width: @sidebarMinWidth;
 
-  .dataChildren {
+  .dataWrapper {
     visibility: hidden;
     overflow: hidden;
     width: 0;
@@ -36,6 +36,7 @@
   margin: 0;
   cursor: pointer;
   transition: color 300ms;
+  z-index: 2;
 
   &:hover {
     color: @blue;
@@ -50,7 +51,11 @@
   }
 }
 
-.dataChildren {
+.dataWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   padding: 20px;
   width: 100%;
   opacity: 1;
@@ -64,5 +69,17 @@
 
   &::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
+  }
+
+  & > div + div {
+    margin-top: 20px;
+  }
+}
+
+.dataSidebarRef {
+  .dataWrapper {
+    @media (min-width: @breakpoint-tablet) {
+      padding-left: 40px;
+    }
   }
 }

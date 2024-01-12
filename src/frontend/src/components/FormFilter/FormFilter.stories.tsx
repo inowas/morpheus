@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, FormFilter, Header, ModelGrid, Navbar, Sidebar, SortDropdown} from 'components';
+import {ContentWrapper, FormFilter, Header, IPageWidth, ModelGrid, Sidebar, SortDropdown} from 'components';
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
-import './rc-slider.css';
+import '../rc-slider.css';
 
 const models: IModelCard[] = [
   {
@@ -260,6 +260,8 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
+const pageSize: IPageWidth = 'auto';
+
 export default {
   /* 👇 The title prop is optional.
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
@@ -271,6 +273,7 @@ export default {
 
 export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
   const [modelData, setModelData] = useState(models);
+  const showModelSidebar = false;
 
   const updateModelData = (newData: IModelCard[]) => {
     setModelData(newData);
@@ -291,14 +294,18 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Header>
-        <Navbar
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          pathname={'/'}
-        />
-      </Header>
+      <Header
+        maxWidth={pageSize}
+        navbarItems={navbarItems2}
+        navigateTo={() => {
+        }}
+        pathname={'/'}
+        showSearchWrapper={true}
+        showCreateButton={true}
+        showModelSidebar={showModelSidebar}
+        updateHeight={(height: number) => {
+        }}
+      />
       <ContentWrapper minHeight={'auto'} maxWidth={1440}>
         <Sidebar data={modelData} updateModelData={updateModelData}>
           <SortDropdown

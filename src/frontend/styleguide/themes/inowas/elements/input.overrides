@@ -1,3 +1,154 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+
+.ui.selection.dropdown,
+.ui.multiple.dropdown {
+  border: none !important;
+  border-radius: 0 !important;
+  min-height: 26px !important;
+  padding: 5px !important;
+}
+
+.ui.selection.dropdown {
+  min-width: 8em !important;
+  width: 100%;
+}
+
+
+.ui.selection.dropdown .menu {
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  min-width: 100% !important;
+  width: 100% !important;
+}
+
+.required {
+  color: @ref-color-red;
+}
+
+label.labelSmall {
+  display: block;
+  margin: 0 20px 5px 0;
+  padding: 0;
+  background: transparent;
+  color: @fullBlack;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="search"],
+.field input[type="number"],
+.field input[type="password"],
+.field textarea {
+  width: 100%;
+  border: none;
+  min-height: 26px;
+  padding: 5px 10px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+
+  &:disabled {
+    background-color: transparent;
+  }
+}
+
+.field textarea {
+  resize: none;
+  height: 76px;
+}
+
+.field .dropdown .text {
+  margin: 0 !important;
+}
+
+.field .dropdown.icon {
+  padding: 6px !important;
+}
+
+.field .icon.info {
+  color: #6C84A6;
+  width: 16px;
+  height: 16px;
+  flex: 1 1 16px;
+  font-size: 15px;
+  margin-right: 5px;
+}
+
+.field > .label,
+.field > h1,
+.field > h2,
+.field > h3,
+.field > h4,
+.field > h5,
+.field > h6,
+.field > .h1,
+.field > .h2,
+.field > .h3,
+.field > .h4,
+.field > .h5,
+.field > .h6 {
+  margin-bottom: 9px;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 20px;
+
+  @media (min-width: @breakpoint-mobile-horizontal) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 0px;
+  }
+}
+
+.fieldGridSlider {
+
+  label.labelSmall {
+    margin-right: 0;
+    text-align: left;
+  }
+
+  .fieldSlider {
+    margin-top: 10px;
+  }
+
+  @media (min-width: @breakpoint-mobile-horizontal) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 0;
+    align-items: end;
+
+    .fieldSlider {
+      margin-top: 0;
+      margin-bottom: 6px;
+    }
+  }
+
+  @media (min-width: @breakpoint-tablet-horizontal) {
+    grid-template-columns: repeat(4, 1fr);
+
+    & > :first-child {
+      grid-column: 1 / span 1;
+    }
+
+    & > :last-child {
+      grid-column: 2 / span 3;
+    }
+  }
+
+
+}
+
+
