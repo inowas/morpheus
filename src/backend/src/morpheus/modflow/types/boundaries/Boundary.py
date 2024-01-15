@@ -186,7 +186,9 @@ class BoundaryCollection:
         return GeometryCollection(geometries=[boundary.geometry for boundary in self.boundaries]).as_geojson()
 
     def add_boundary(self, boundary: Boundary):
-        list(self.boundaries).append(boundary)
+        boundaries = list(self.boundaries)
+        boundaries.append(boundary)
+        self.boundaries = boundaries
 
     def update_boundary(self, update: Boundary):
         self.boundaries = [boundary if boundary.boundary_id != update.boundary_id else update for boundary in

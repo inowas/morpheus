@@ -2,7 +2,7 @@ import dataclasses
 from typing import Sequence
 
 from morpheus.modflow.types.ModflowModel import ModflowModel
-from morpheus.modflow.types.boundaries.Boundary import BoundaryType, LakeBoundary, Boundary
+from morpheus.modflow.types.boundaries.Boundary import BoundaryType, Boundary
 from morpheus.modflow.types.boundaries.LakeObservation import LakeDataItem
 
 from morpheus.modflow.types.discretization import TimeDiscretization, SpatialDiscretization
@@ -66,7 +66,7 @@ class LakStressPeriodData:
 def calculate_lak_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    lake_boundaries: Sequence[Boundary]
+    lak_boundaries: Sequence[Boundary]
 ) -> LakStressPeriodData:
     sp_data = LakStressPeriodData()
 
@@ -75,10 +75,7 @@ def calculate_lak_boundary_stress_period_data(
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
 
-        for lake_idx, lak_boundary in enumerate(lake_boundaries):
-            if not isinstance(lak_boundary, LakeBoundary):
-                raise TypeError("Expected LakeBoundary but got {}".format(type(lak_boundary)))
-
+        for lake_idx, lak_boundary in enumerate(lak_boundaries):
             mean_data = lak_boundary.get_mean_data(start_date_time, end_date_time)
 
             if lak_boundary.number_of_observations() == 0 or None in mean_data:
@@ -116,7 +113,7 @@ def calculate_stress_period_data(model: ModflowModel) -> LakStressPeriodData | N
     sp_data = calculate_lak_boundary_stress_period_data(
         spatial_discretization=model.spatial_discretization,
         time_discretization=model.time_discretization,
-        lake_boundaries=model.boundaries.get_boundaries_of_type(BoundaryType.lake())  # Sequence[Boundary]
+        lak_boundaries=model.boundaries.get_boundaries_of_type(BoundaryType.lake())  # Sequence[Boundary]
     )
 
     if sp_data.is_empty():
