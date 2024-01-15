@@ -1,7 +1,7 @@
 import dataclasses
 
 from morpheus.modflow.types.ModflowModel import ModelId
-from ...types.soil_model.Layer import LayerId, LayerName, LayerDescription, LayerType, LayerData
+from ...types.soil_model.Layer import LayerName, LayerDescription, LayerType, LayerData
 
 
 @dataclasses.dataclass(frozen=True)
@@ -11,11 +11,6 @@ class AddSoilmodelLayerCommand:
     description: LayerDescription
     type: LayerType
     data: LayerData
-
-
-@dataclasses.dataclass(frozen=True)
-class AddSoilmodelLayerCommandResult:
-    layer_id: LayerId
 
 
 class AddSoilmodelLayerCommandHandler:

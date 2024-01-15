@@ -8,25 +8,18 @@ from ...types.Metadata import Metadata, Description, Name, Tags
 
 @dataclasses.dataclass(frozen=True)
 class CreateProjectCommand:
+    project_id: ProjectId
     name: Name
     description: Description
     tags: Tags
     user_id: UserId
 
 
-@dataclasses.dataclass(frozen=True)
-class CreateProjectCommandResult:
-    project_id: ProjectId
-
-
 class CreateProjectCommandHandler:
 
     @staticmethod
     def handle(command: CreateProjectCommand):
-        project = Project.new(command.user_id)
+        project = Project.new(user_id=command.user_id, project_id=command.project_id)
         metadata = Metadata(name=command.name, description=command.description, tags=command.tags, )
         project = project.with_updated_metadata(metadata)
-
         project_repository.save_project(project)
-
-        return CreateProjectCommandResult(project_id=project.project_id)

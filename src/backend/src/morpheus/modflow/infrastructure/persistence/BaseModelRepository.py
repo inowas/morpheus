@@ -1,4 +1,4 @@
-from morpheus.modflow.types.ModflowModel import ModflowModel, ModelId
+from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.types.Project import ProjectId
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, \
     create_or_get_collection
@@ -33,19 +33,19 @@ class BaseModelRepository(RepositoryBase):
             'base_model': base_model.to_dict()
         })
 
-    def get_base_model_time_discretization(self, project_id: ProjectId, model_id: ModelId) -> TimeDiscretization | None:
+    def get_base_model_time_discretization(self, project_id: ProjectId) -> TimeDiscretization | None:
         result = self.collection.find_one(
-            {'project_id': project_id.to_str(), 'base_model.model_id': model_id.to_str()},
+            {'project_id': project_id.to_str()},
             {'_id': 0, 'base_model.time_discretization': 1})
         if result is None:
             return None
 
         return TimeDiscretization.from_dict(result['base_model']['time_discretization'])
 
-    def update_base_model_time_discretization(self, project_id: ProjectId, model_id: ModelId,
+    def update_base_model_time_discretization(self, project_id: ProjectId,
                                               time_discretization: TimeDiscretization) -> None:
 
-        self.collection.update_one({'project_id': project_id.to_str(), 'base_model.model_id': model_id.to_str()},
+        self.collection.update_one({'project_id': project_id.to_str()},
                                    {'$set': {'base_model.time_discretization': time_discretization.to_dict()}})
 
 

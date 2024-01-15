@@ -5,6 +5,7 @@ from flask import Request, abort, jsonify
 from ....application.write.CreateProject import CreateProjectCommand, CreateProjectCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Metadata import Description, Tags, Name
+from ....types.Project import ProjectId
 from ....types.User import UserId
 
 
@@ -45,15 +46,16 @@ class CreateProjectRequestHandler:
         user_id = UserId.from_value(user_id)
 
         command = CreateProjectCommand(
+            project_id=ProjectId.new(),
             name=name,
             description=description,
             tags=tags,
             user_id=user_id
         )
 
-        result = CreateProjectCommandHandler.handle(command=command)
+        CreateProjectCommandHandler.handle(command=command)
         response = jsonify()
         response.status_code = 201
-        response.headers['location'] = 'modflow/' + result.model_id.to_str()
+        response.headers['location'] = 'modflow/' + command.project_id.to_str()
 
         return response

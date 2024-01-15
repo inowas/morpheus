@@ -50,9 +50,9 @@ class Project:
     scenarios: list[Scenario]
 
     @classmethod
-    def new(cls, user_id: UserId):
+    def new(cls, project_id: ProjectId, user_id: UserId):
         return cls(
-            project_id=ProjectId.new(),
+            project_id=project_id,
             permissions=Permissions.new(creator_id=user_id),
             metadata=Metadata.new(),
             base_model=None,
