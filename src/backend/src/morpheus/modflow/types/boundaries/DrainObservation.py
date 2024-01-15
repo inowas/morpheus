@@ -94,11 +94,19 @@ class DrainObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
-        stages_interpolator = interp1d(time_series.values.astype(float), stages.values.astype(float),
-                                       kind='linear', fill_value='extrapolate')
+        stages_interpolator = interp1d(
+            time_series.values.astype(float),
+            stages.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         stages = stages_interpolator(date_range.values.astype(float))
-        conductances_interpolator = interp1d(time_series.values.astype(float), conductances.values.astype(float),
-                                             kind='linear', fill_value='extrapolate')
+        conductances_interpolator = interp1d(
+            time_series.values.astype(float),
+            conductances.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         conductances = conductances_interpolator(date_range.values.astype(float))
 
         return DrainDataItem(

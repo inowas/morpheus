@@ -64,6 +64,14 @@ class ConstantHeadDataItem(DataItem):
 class ConstantHeadObservation(Observation):
     raw_data: list[ConstantHeadRawDataItem]
 
+    @classmethod
+    def new(cls, geometry: Point, raw_data: list[ConstantHeadRawDataItem]):
+        return cls(
+            observation_id=ObservationId.new(),
+            geometry=geometry,
+            raw_data=raw_data
+        )
+
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> ConstantHeadDataItem | None:
 
         # In range check
@@ -77,8 +85,12 @@ class ConstantHeadObservation(Observation):
         heads = pd.Series([d.head.to_value() for d in self.raw_data])
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime())
-        heads_interpolator = interp1d(time_series.values.astype(float), heads.values.astype(float),
-                                      kind='linear', fill_value='extrapolate')
+        heads_interpolator = interp1d(
+            time_series.values.astype(float),
+            heads.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         heads = heads_interpolator(date_range.values.astype(float))
 
         start_head = heads.item(0)

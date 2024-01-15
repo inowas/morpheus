@@ -84,17 +84,17 @@ class LayerType:
     def __eq__(self, other):
         return self.type == other.type
 
-    def __init__(self, layer_type: str | Literal['confined', 'convertible', 'unconfined']):
+    def __init__(self, layer_type: Literal['confined', 'convertible', 'unconfined']):
         if layer_type not in ['confined', 'convertible', 'unconfined']:
             raise ValueError('Layer type must be either confined, convertible or unconfined')
         self.type = layer_type
 
     @classmethod
-    def from_str(cls, value: str):
+    def from_str(cls, value: Literal['confined', 'convertible', 'unconfined']):
         return cls(layer_type=value)
 
     @classmethod
-    def from_value(cls, value: str):
+    def from_value(cls, value: Literal['confined', 'convertible', 'unconfined']):
         return cls.from_str(value)
 
     @classmethod

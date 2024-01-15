@@ -178,13 +178,13 @@ class Grid:
         return len(self.y_distances)
 
     def x_coordinates(self):
-        x_coordinates = [0]
+        x_coordinates: list[float] = [0.0]
         for x_distance in self.x_distances:
             x_coordinates.append(x_coordinates[-1] + x_distance)
         return x_coordinates
 
     def y_coordinates(self):
-        y_coordinates = [0]
+        y_coordinates: list[float] = [0.0]
         for y_distance in self.y_distances:
             y_coordinates.append(y_coordinates[-1] + y_distance)
         return y_coordinates

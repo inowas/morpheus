@@ -1,4 +1,6 @@
 import dataclasses
+from typing import Sequence
+
 import pandas as pd
 
 from scipy.interpolate import interp1d
@@ -59,10 +61,10 @@ class WellDataItem(DataItem):
 
 @dataclasses.dataclass
 class WellObservation(Observation):
-    raw_data: list[WellRawDataItem]
+    raw_data: Sequence[WellRawDataItem]
 
     @classmethod
-    def new(cls, geometry: Point, raw_data: list[WellRawDataItem]):
+    def new(cls, geometry: Point, raw_data: Sequence[WellRawDataItem]):
         return cls(
             observation_id=ObservationId.new(),
             geometry=geometry,
@@ -102,8 +104,12 @@ class WellObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
-        pumping_rates_interpolator = interp1d(time_series.values.astype(float), pumping_rates.values.astype(float),
-                                              kind='linear', fill_value='extrapolate')
+        pumping_rates_interpolator = interp1d(
+            time_series.values.astype(float),
+            pumping_rates.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         pumping_rates = pumping_rates_interpolator(date_range.values.astype(float))
 
         return WellDataItem(

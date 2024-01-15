@@ -72,7 +72,7 @@ class StressPeriodCollection:
         )])
 
     @classmethod
-    def from_list(cls, value: list[dict]):
+    def from_list(cls, value: list):
         return cls(value=[StressPeriod.from_dict(obj=stress_period) for stress_period in value])
 
     @classmethod

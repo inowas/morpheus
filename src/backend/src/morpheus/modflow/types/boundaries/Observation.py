@@ -1,15 +1,8 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import Uuid
+from morpheus.modflow.types.discretization.time.Stressperiods import StartDateTime, EndDateTime
 from morpheus.modflow.types.geometry import Point
-
-
-class StartDateTime(DateTime):
-    pass
-
-
-class EndDateTime(DateTime):
-    pass
 
 
 class ObservationId(Uuid):
@@ -47,14 +40,6 @@ class Observation:
     observation_id: ObservationId
     geometry: Point
     raw_data: list[RawDataItem]
-
-    @classmethod
-    def new(cls, geometry: Point, raw_data: list[RawDataItem]):
-        return cls(
-            observation_id=ObservationId.new(),
-            geometry=geometry,
-            raw_data=raw_data
-        )
 
     @classmethod
     def from_dict(cls, obj):

@@ -102,8 +102,12 @@ class RechargeObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
-        pumping_rates_interpolator = interp1d(time_series.values.astype(float), recharge_rates.values.astype(float),
-                                              kind='linear', fill_value='extrapolate')
+        pumping_rates_interpolator = interp1d(
+            time_series.values.astype(float),
+            recharge_rates.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         recharge_rates = pumping_rates_interpolator(date_range.values.astype(float))
 
         return RechargeDataItem(

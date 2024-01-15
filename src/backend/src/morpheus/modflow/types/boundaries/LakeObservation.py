@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .Observation import ObservationId, RawDataItem, DataItem
+from .Observation import ObservationId, RawDataItem, DataItem, Observation
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -115,7 +115,7 @@ class LakeDataItem(DataItem):
 
 
 @dataclasses.dataclass
-class LakeObservation:
+class LakeObservation(Observation):
     observation_id: ObservationId
     geometry: Point
     raw_data: list[LakeRawDataItem]
@@ -175,23 +175,39 @@ class LakeObservation:
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
 
         precipitations = pd.Series([d.precipitation.to_value() for d in self.raw_data])
-        precipitations_interpolator = interp1d(time_series.values.astype(float), precipitations.values.astype(float),
-                                               kind='linear', fill_value='extrapolate')
+        precipitations_interpolator = interp1d(
+            time_series.values.astype(float),
+            precipitations.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         precipitations = precipitations_interpolator(date_range.values.astype(float))
 
         evaporations = pd.Series([d.evaporation.to_value() for d in self.raw_data])
-        evaporations_interpolator = interp1d(time_series.values.astype(float), evaporations.values.astype(float),
-                                             kind='linear', fill_value='extrapolate')
+        evaporations_interpolator = interp1d(
+            time_series.values.astype(float),
+            evaporations.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         evaporations = evaporations_interpolator(date_range.values.astype(float))
 
         runoffs = pd.Series([d.runoff.to_value() for d in self.raw_data])
-        runoff_interpolator = interp1d(time_series.values.astype(float), runoffs.values.astype(float), kind='linear',
-                                       fill_value='extrapolate')
+        runoff_interpolator = interp1d(
+            time_series.values.astype(float),
+            runoffs.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         runoffs = runoff_interpolator(date_range.values.astype(float))
 
         withdrawals = pd.Series([d.withdrawal.to_value() for d in self.raw_data])
-        withdrawal_interpolator = interp1d(time_series.values.astype(float), withdrawals.values.astype(float),
-                                           kind='linear', fill_value='extrapolate')
+        withdrawal_interpolator = interp1d(
+            time_series.values.astype(float),
+            withdrawals.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
 
         withdrawals = withdrawal_interpolator(date_range.values.astype(float))
 

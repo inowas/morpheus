@@ -25,7 +25,7 @@ class UpdateMetadataRequest:
 
 class UpdateMetadataRequestHandler:
     @staticmethod
-    def handle(request: Request, project_id: str):
+    def handle(request: Request, project_id_url_parameter: str):
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
@@ -33,20 +33,20 @@ class UpdateMetadataRequestHandler:
         if user_id is None:
             abort(401, 'Unauthorized')
 
-        project_id = ProjectId.from_str(project_id)
+        project_id = ProjectId.from_str(project_id_url_parameter)
 
         update_modflow_model_metadata = UpdateMetadataRequest.from_dict(obj=request.json)
 
-        name = update_modflow_model_metadata.name
-        if name is not None:
+        name = None
+        if update_modflow_model_metadata.name is not None:
             name = Name.from_str(update_modflow_model_metadata.name)
 
-        description = update_modflow_model_metadata.description
-        if description is not None:
+        description = None
+        if update_modflow_model_metadata.description is not None:
             description = Description.from_str(update_modflow_model_metadata.description)
 
-        tags = update_modflow_model_metadata.tags
-        if tags is not None:
+        tags = None
+        if update_modflow_model_metadata.tags is not None:
             tags = Tags.from_list(update_modflow_model_metadata.tags)
 
         command = UpdateMetadataCommand(

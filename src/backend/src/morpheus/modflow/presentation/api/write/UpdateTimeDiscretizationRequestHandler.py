@@ -1,12 +1,11 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Sequence
 
 from flask import Request, abort
 
 from ....application.write.UpdateTimeDiscretization import UpdateTimeDiscretizationCommand, \
     UpdateTimeDiscretizationCommandHandler
 from ....incoming import get_logged_in_user_id
-from morpheus.modflow.types.ModflowModel import ModelId
 from morpheus.modflow.types.discretization.time.TimeDiscretization import TimeUnit, EndDateTime, \
     StressPeriodCollection, StartDateTime
 from ....types.Project import ProjectId
@@ -23,7 +22,7 @@ class StressPeriod(TypedDict, total=True):
 class UpdateTimeDiscretizationRequest:
     start_date_time: str
     end_datetime: str
-    stress_periods: list[StressPeriod]
+    stress_periods: Sequence[StressPeriod]
     time_unit: Literal['seconds', 'minutes', 'hours', 'days', 'years']
 
     @classmethod
@@ -38,7 +37,7 @@ class UpdateTimeDiscretizationRequest:
 
 class UpdateTimeDiscretizationRequestHandler:
     @staticmethod
-    def handle(request: Request, project_id: str):
+    def handle(request: Request, project_id_parameter: str):
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
@@ -46,13 +45,13 @@ class UpdateTimeDiscretizationRequestHandler:
         if user_id is None:
             abort(401, 'Unauthorized')
 
-        project_id = ProjectId.from_str(project_id)
+        project_id = ProjectId.from_str(project_id_parameter)
 
         update_time_discretization = UpdateTimeDiscretizationRequest.from_dict(obj=request.json)
 
         start_date_time = StartDateTime.from_str(update_time_discretization.start_date_time)
         end_date_time = EndDateTime.from_str(update_time_discretization.end_datetime)
-        stress_periods = StressPeriodCollection.from_list(update_time_discretization.stress_periods)
+        stress_periods = StressPeriodCollection.from_list(list(update_time_discretization.stress_periods))
         time_unit = TimeUnit.from_str(update_time_discretization.time_unit)
 
         command = UpdateTimeDiscretizationCommand(

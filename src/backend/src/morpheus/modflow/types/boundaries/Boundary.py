@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal
+from typing import Literal, Sequence
 
 from morpheus.common.types import Uuid, String
 from .ConstantHeadObservation import ConstantHeadObservation
@@ -102,7 +102,7 @@ class Boundary:
     geometry: Point | LineString | Polygon
     affected_cells: GridCells
     affected_layers: list[LayerId]
-    observations: list[Observation]
+    observations: Sequence[Observation]
     enabled: bool = True
 
     def __eq__(self, other):
@@ -110,7 +110,7 @@ class Boundary:
 
     def __init__(self, boundary_id: BoundaryId, boundary_type: BoundaryType, name: BoundaryName,
                  geometry: LineString | Point | Polygon, affected_cells: GridCells, affected_layers: list[LayerId],
-                 observations: list[Observation], enabled: bool = True):
+                 observations: Sequence[Observation], enabled: bool = True):
         self.boundary_id = boundary_id
         self.type = boundary_type
         self.name = name
@@ -159,18 +159,18 @@ class Boundary:
         return len(self.observations)
 
     def get_observations(self):
-        return self.observations
+        return list(self.observations)
 
     def as_geojson(self):
         return self.geometry.as_geojson()
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem]:
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem | None]:
         return [observation.get_data_item(start_date_time, end_date_time) for observation in self.observations]
 
 
 @dataclasses.dataclass
 class BoundaryCollection:
-    boundaries: list[Boundary]
+    boundaries: Sequence[Boundary] = dataclasses.field(default_factory=list)
 
     def __iter__(self):
         return iter(self.boundaries)
@@ -186,7 +186,7 @@ class BoundaryCollection:
         return GeometryCollection(geometries=[boundary.geometry for boundary in self.boundaries]).as_geojson()
 
     def add_boundary(self, boundary: Boundary):
-        self.boundaries.append(boundary)
+        list(self.boundaries).append(boundary)
 
     def update_boundary(self, update: Boundary):
         self.boundaries = [boundary if boundary.boundary_id != update.boundary_id else update for boundary in
@@ -196,8 +196,8 @@ class BoundaryCollection:
         self.boundaries = [boundary for boundary in self.boundaries if boundary.boundary_id != boundary_id]
 
     @classmethod
-    def from_dict(cls, collection: list[dict]):
-        boundary_list = [Boundary.from_dict(item) for item in collection]
+    def from_dict(cls, collection: Sequence[dict]):
+        boundary_list: Sequence[Boundary] = [Boundary.from_dict(item) for item in collection]
         return cls(boundaries=boundary_list)
 
     def to_dict(self):
@@ -432,12 +432,17 @@ class GeneralHeadBoundary(Boundary):
 class LakeBoundary(Boundary):
     type: BoundaryType = BoundaryType.lake()
     geometry: Polygon
-    observations: list[LakeObservation]
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[LakeRawDataItem] = None, bed_leakance: BedLeakance = None,
-                      initial_stage: InitialStage = None, stage_range: StageRange = None):
+                      raw_data: list[LakeRawDataItem] | None = None,
+                      bed_leakance: BedLeakance | None = None,
+                      initial_stage: InitialStage | None = None,
+                      stage_range: StageRange | None = None):
+        bed_leakance = bed_leakance or BedLeakance.from_float(0.0)
+        initial_stage = initial_stage or InitialStage.from_float(0.0)
+        stage_range = stage_range or StageRange(min=0.0, max=0.0)
+
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
@@ -449,7 +454,7 @@ class LakeBoundary(Boundary):
                 LakeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], bed_leakance=bed_leakance,
                                     initial_stage=initial_stage, stage_range=stage_range)
             ],
-            enabled=True
+            enabled=True,
         )
 
     @classmethod
@@ -465,7 +470,10 @@ class LakeBoundary(Boundary):
             enabled=obj['enabled']
         )
 
-    def get_observation(self) -> LakeObservation:
+    def get_observation(self) -> Observation:
+        if len(self.observations) != 1:
+            raise ValueError('Lake boundary must have exactly one observation')
+
         return self.observations[0]
 
 
@@ -553,7 +561,7 @@ class WellBoundary(Boundary):
             raise ValueError('Well boundaries must be points')
 
         observations = [
-            WellObservation.new(geometry=geometry, raw_data=raw_data)
+            WellObservation.new(geometry=geometry, raw_data=raw_data or []),
         ]
 
         return cls(

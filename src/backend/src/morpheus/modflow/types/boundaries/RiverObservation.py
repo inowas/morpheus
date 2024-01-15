@@ -124,19 +124,30 @@ class RiverObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
-        river_stages_interpolator = interp1d(time_series.values.astype(float), river_stages.values.astype(float),
-                                             kind='linear', fill_value='extrapolate')
+        river_stages_interpolator = interp1d(
+            time_series.values.astype(float),
+            river_stages.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         river_stages = river_stages_interpolator(date_range.values.astype(float))
         river_stage = RiverStage.from_value(river_stages.mean())
 
-        riverbed_bottoms_interpolator = interp1d(time_series.values.astype(float),
-                                                 riverbed_bottoms.values.astype(float),
-                                                 kind='linear', fill_value='extrapolate')
+        riverbed_bottoms_interpolator = interp1d(
+            time_series.values.astype(float),
+            riverbed_bottoms.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         riverbed_bottoms = riverbed_bottoms_interpolator(date_range.values.astype(float))
         riverbed_bottom = RiverbedBottom.from_value(riverbed_bottoms.mean())
 
-        conductances_interpolator = interp1d(time_series.values.astype(float), conductances.values.astype(float),
-                                             kind='linear', fill_value='extrapolate')
+        conductances_interpolator = interp1d(
+            time_series.values.astype(float),
+            conductances.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         conductances = conductances_interpolator(date_range.values.astype(float))
         conductance = Conductance.from_value(conductances.mean())
 

@@ -3,17 +3,10 @@ import pandas as pd
 
 from scipy.interpolate import interp1d
 
-from morpheus.common.types import Float, DateTime
+from morpheus.common.types import Float
 from .Observation import ObservationId, Observation
+from ..discretization.time.Stressperiods import StartDateTime
 from ..geometry import Point
-
-
-class StartDateTime(DateTime):
-    pass
-
-
-class EndDateTime(DateTime):
-    pass
 
 
 class Flow(Float):
@@ -102,8 +95,12 @@ class FlowAndHeadObservation(Observation):
             return None
 
         date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1H')
-        flow_interpolator = interp1d(time_series.values.astype(float), flows.values.astype(float),
-                                     kind='linear', fill_value='extrapolate')
+        flow_interpolator = interp1d(
+            time_series.values.astype(float),
+            flows.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         interpolated_flows = flow_interpolator(date_range.values.astype(float))
 
         return FlowDataItem(
@@ -127,8 +124,12 @@ class FlowAndHeadObservation(Observation):
             return None
 
         date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1H')
-        head_interpolator = interp1d(time_series.values.astype(float), heads.values.astype(float),
-                                     kind='linear', fill_value='extrapolate')
+        head_interpolator = interp1d(
+            time_series.values.astype(float),
+            heads.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         interpolated_heads = head_interpolator(date_range.values.astype(float))
 
         return HeadDataItem(

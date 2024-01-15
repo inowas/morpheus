@@ -125,20 +125,29 @@ class EvapotranspirationObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
-        surface_elevations_interpolator = interp1d(time_series.values.astype(float),
-                                                   surface_elevations.values.astype(float),
-                                                   kind='linear', fill_value='extrapolate')
+        surface_elevations_interpolator = interp1d(
+            time_series.values.astype(float),
+            surface_elevations.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         surface_elevations = surface_elevations_interpolator(date_range.values.astype(float))
 
-        evapotranspiration_interpolator = interp1d(time_series.values.astype(float),
-                                                   evapotranspirations.values.astype(float),
-                                                   kind='linear', fill_value='extrapolate')
+        evapotranspiration_interpolator = interp1d(
+            time_series.values.astype(float),
+            evapotranspirations.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
 
         evapotranspirations = evapotranspiration_interpolator(date_range.values.astype(float))
 
-        extinction_depths_interpolator = interp1d(time_series.values.astype(float),
-                                                  extinction_depths.values.astype(float),
-                                                  kind='linear', fill_value='extrapolate')
+        extinction_depths_interpolator = interp1d(
+            time_series.values.astype(float),
+            extinction_depths.values.astype(float),
+            kind='linear',
+            fill_value='extrapolate'  # type: ignore
+        )
         extinction_depths = extinction_depths_interpolator(date_range.values.astype(float))
 
         return EvapotranspirationDataItem(
