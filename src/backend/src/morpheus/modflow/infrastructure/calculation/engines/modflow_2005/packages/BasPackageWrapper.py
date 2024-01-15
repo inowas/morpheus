@@ -10,7 +10,7 @@ from morpheus.modflow.types.ModflowModel import ModflowModel
 @dataclasses.dataclass
 class BasPackageData:
     ibound: int | list[list[list[int]]]
-    strt: float | list[list[list[float]]]
+    strt: float | list[float | list[list[float]]]
     ifrefm: bool
     ixsec: bool
     ichflg: bool
@@ -20,7 +20,7 @@ class BasPackageData:
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, ibound: int | list[list[list[int]]] = 1, strt: float | list[list[list[float]]] = 1.0,
+    def __init__(self, ibound: int | list[list[list[int]]] = 1, strt: float | list[float | list[list[float]]] = 1.0,
                  ifrefm: bool = True, ixsec: bool = False, ichflg: bool = False, stoper: None | float = None,
                  hnoflo: float = -999.99, extension: str = "bas", unitnumber: None | int = None,
                  filenames: None | str | list[str] = None):
