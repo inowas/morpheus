@@ -155,10 +155,10 @@ class LayerData:
         return self.kz
 
     def get_horizontal_anisotropy(self):
-        return self.ky / self.kx
+        return (np.array(self.ky) / np.array(self.kx)).tolist()
 
     def get_vertical_anisotropy(self):
-        return self.kz / self.kx
+        return (np.array(self.kz) / np.array(self.kx)).tolist()
 
     def is_wetting_active(self):
         return False
@@ -167,41 +167,7 @@ class LayerData:
         return 0
 
     def get_transmissivity(self, top: float | list[list[float]]) -> float | list[list[float]]:
-        hk = self.kx
-        botm = self.bottom
-
-        if isinstance(hk, float) and isinstance(botm, float) and isinstance(top, float):
-            return hk * (top - botm)
-
-        # determine shape
-        shape = None
-
-        if isinstance(top, list):
-            shape = shape if shape is not None else np.array(top).shape
-
-        if isinstance(hk, list):
-            shape = shape if shape is not None else np.array(hk).shape
-
-        if isinstance(botm, list):
-            shape = shape if shape is not None else np.array(botm).shape
-
-        if shape is None:
-            raise ValueError('Could not determine shape of top, hk and botm')
-
-        # convert to numpy arrays
-        hk_np_array = isinstance(hk, list) and np.array(hk, dtype=np.float32) or np.full(shape, hk, dtype=np.float32)
-        botm_np_array = isinstance(botm, list) and np.array(botm, dtype=np.float32) or np.full(shape, botm,
-                                                                                               dtype=np.float32)
-        top_np_array = isinstance(top, list) and np.array(top, dtype=np.float32) or np.full(shape, top,
-                                                                                            dtype=np.float32)
-
-        if (not isinstance(top_np_array, np.ndarray) or
-            not isinstance(hk_np_array, np.ndarray) or
-            not isinstance(botm_np_array, np.ndarray)
-        ):
-            raise ValueError('Could not convert top, hk and botm to numpy arrays')
-
-        return (hk_np_array * (top_np_array - botm_np_array)).tolist()
+        return (np.array(self.kx) * (np.array(top) - np.array(self.bottom))).tolist()
 
     @classmethod
     def from_dict(cls, obj: dict):
