@@ -173,36 +173,35 @@ class LayerData:
         if isinstance(hk, float) and isinstance(botm, float) and isinstance(top, float):
             return hk * (top - botm)
 
+        # determine shape
         shape = None
+
         if isinstance(top, list):
-            top = np.array(top)
-            shape = top.shape
+            shape = shape if shape is not None else np.array(top).shape
 
         if isinstance(hk, list):
-            hk = np.array(hk)
-            if shape is None:
-                shape = hk.shape
+            shape = shape if shape is not None else np.array(hk).shape
 
         if isinstance(botm, list):
-            botm = np.array(botm)
-            shape = botm.shape
+            shape = shape if shape is not None else np.array(botm).shape
 
         if shape is None:
             raise ValueError('Could not determine shape of top, hk and botm')
 
-        if isinstance(top, float):
-            top = np.full(shape, top)
+        # convert to numpy arrays
+        hk_np_array = isinstance(hk, list) and np.array(hk, dtype=np.float32) or np.full(shape, hk, dtype=np.float32)
+        botm_np_array = isinstance(botm, list) and np.array(botm, dtype=np.float32) or np.full(shape, botm,
+                                                                                               dtype=np.float32)
+        top_np_array = isinstance(top, list) and np.array(top, dtype=np.float32) or np.full(shape, top,
+                                                                                            dtype=np.float32)
 
-        if isinstance(hk, float):
-            hk = np.full(shape, hk)
-
-        if isinstance(botm, float):
-            botm = np.full(shape, botm)
-
-        if (not isinstance(top, np.ndarray) or not isinstance(hk, np.ndarray) or not isinstance(botm, np.ndarray)):
+        if (not isinstance(top_np_array, np.ndarray) or
+            not isinstance(hk_np_array, np.ndarray) or
+            not isinstance(botm_np_array, np.ndarray)
+        ):
             raise ValueError('Could not convert top, hk and botm to numpy arrays')
 
-        return (hk * (top - botm)).tolist()
+        return (hk_np_array * (top_np_array - botm_np_array)).tolist()
 
     @classmethod
     def from_dict(cls, obj: dict):
