@@ -38,7 +38,7 @@ class UpdateTimeDiscretizationRequest:
 
 class UpdateTimeDiscretizationRequestHandler:
     @staticmethod
-    def handle(request: Request, project_id: str, model_id: str):
+    def handle(request: Request, project_id: str):
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
@@ -47,7 +47,6 @@ class UpdateTimeDiscretizationRequestHandler:
             abort(401, 'Unauthorized')
 
         project_id = ProjectId.from_str(project_id)
-        model_id = ModelId.from_str(model_id)
 
         update_time_discretization = UpdateTimeDiscretizationRequest.from_dict(obj=request.json)
 
@@ -58,7 +57,6 @@ class UpdateTimeDiscretizationRequestHandler:
 
         command = UpdateTimeDiscretizationCommand(
             project_id=project_id,
-            model_id=model_id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
             stress_periods=stress_periods,
