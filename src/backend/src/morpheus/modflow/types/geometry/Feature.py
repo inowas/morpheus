@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal
+from typing import Literal, Any
 
 from .GeometryFactory import GeometryFactory
 from .LineString import LineString
@@ -9,26 +9,26 @@ from .Polygon import Polygon
 
 @dataclasses.dataclass
 class Feature:
-    geometry: list[Polygon | LineString | Point]
+    geometry: Polygon | LineString | Point
+    properties: dict[str, Any] = dataclasses.field(default_factory=dict)
     type: Literal['Feature'] = 'Feature'
-    properties: dict = dataclasses.field(default_factory=dict)
 
     def __geo_interface__(self):
         return {
             'type': self.type,
-            'geometries': [geometry.__geo_interface__() for geometry in self.geometries]
+            'geometry': self.geometry.__geo_interface__() if self.geometry is not None else None,
         }
 
     @classmethod
     def from_dict(cls, obj: dict):
-        if str(obj['type']).lower() != 'GeometryCollection'.lower():
-            raise ValueError('Geometry Type must be a GeometryCollection')
-        return cls(geometries=[GeometryFactory.from_dict(geometry) for geometry in obj['geometries']])
+        geometry = GeometryFactory.from_dict(obj['geometry'])
+        return cls(geometry=geometry, properties=obj['properties'], type=obj['type'])
 
     def to_dict(self):
         return {
             'type': self.type,
-            'geometries': [geometry.to_dict() for geometry in self.geometries]
+            'geometry': self.geometry.to_dict() if self.geometry is not None else None,
+            'properties': self.properties
         }
 
     def as_geojson(self):
