@@ -19,13 +19,13 @@ class LpfPackageData:
     wetfct: float
     iwetit: int
     ihdwet: int
-    hk: float | list[list[list[float]]]
-    hani: float | list[list[list[float]]]
-    vka: float | list[list[list[float]]]
-    ss: float | list[list[list[float]]]
-    sy: float | list[list[list[float]]]
-    vkcb: float | list[list[list[float]]]
-    wetdry: float | list[list[list[float]]]
+    hk: list[float | list[list[float]]] | float
+    hani: list[float | list[list[float]]] | float
+    vka: list[float | list[list[float]]] | float
+    ss: list[float | list[list[float]]] | float
+    sy: list[float | list[list[float]]] | float
+    vkcb: list[float | list[list[float]]] | float
+    wetdry: list[float | list[list[float]]] | float
     storagecoefficient: bool
     constantcv: bool
     thickstrt: bool
@@ -39,11 +39,12 @@ class LpfPackageData:
     def __init__(self, laytyp: int | list[int] = 0, layavg: int | list[int] = 0, chani: float | list[float] = 1.0,
                  layvka: int | list[int] = 0, laywet: int | list[int] = 0, ipakcb: int | None = None,
                  hdry: float = -1e30, iwdflg: int | list[int] = 0, wetfct: float = 0.1, iwetit: int = 1,
-                 ihdwet: int = 0, hk: float | list[list[list[float]]] = 1.0,
-                 hani: float | list[list[list[float]]] = 1.0, vka: float | list[list[list[float]]] = 1.0,
-                 ss: float | list[list[list[float]]] = 1e-5, sy: float | list[list[list[float]]] = 0.15,
-                 vkcb: float | list[list[list[float]]] = 0.0,
-                 wetdry: float | list[list[list[float]]] = -0.01, storagecoefficient: bool = False,
+                 ihdwet: int = 0, hk: float | list[float | list[list[float]]] = 1.0,
+                 hani: float | list[float | list[list[float]]] = 1.0,
+                 vka: float | list[float | list[list[float]]] = 1.0, ss: float | list[float | list[list[float]]] = 1e-5,
+                 sy: float | list[float | list[list[float]]] = 0.15,
+                 vkcb: float | list[float | list[list[float]]] = 0.0,
+                 wetdry: float | list[float | list[list[float]]] = -0.01, storagecoefficient: bool = False,
                  constantcv: bool = False, thickstrt: bool = False, nocvcorrection: bool = False,
                  novfc: bool = False, extension: str = "lpf", unitnumber: int | None = None,
                  filenames: str | list[str] | None = None, add_package: bool = True):

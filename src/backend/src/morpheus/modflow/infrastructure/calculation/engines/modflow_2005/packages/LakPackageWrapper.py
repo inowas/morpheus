@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal
+from typing import Literal, Tuple
 
 import numpy as np
 from flopy.modflow import ModflowLak as FlopyModflowLak
@@ -20,21 +20,21 @@ class LakPackageData:
     nssitr: int
     surfdep: float
     stages: float | list[float]
-    stage_range: list[float]
+    stage_range: list[Tuple[float, float]]
     lakarr: np.ndarray
     bdlknc: np.ndarray
-    sill_data: dict[list] | None
-    flux_data: dict[list]
+    sill_data: dict[int, list] | None
+    flux_data: dict[int, list]
     extension: Literal["lak"]
     unitnumber: None | int
     filenames: None | str | list[str]
     options: None | list[str]
     lwrt: int
 
-    def __init__(self, nlakes: int = 1, theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001,
-                 surfdep: float = 0.0, stages: list[float] = None, stage_range: list[(float, float)] = None,
-                 lakarr: np.ndarray = None, bdlknc: np.ndarray = None,
-                 sill_data: dict[list] | None = None, flux_data: dict[list] | None = None):
+    def __init__(self, flux_data: dict[int, list], lakarr: np.ndarray, bdlknc: np.ndarray, stages: list[float],
+                 stage_range: list[Tuple[float, float]], sill_data: dict[int, list] | None = None, nlakes: int = 1,
+                 theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001, surfdep: float = 0.0
+                 ):
         self.nlakes = nlakes
         self.ipakcb = None
         self.theta = theta

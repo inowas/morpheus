@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Iterator
 
 from .Layer import Layer, LayerId
 
@@ -7,7 +8,7 @@ from .Layer import Layer, LayerId
 class SoilModel:
     layers: list[Layer]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Layer]:
         return iter(self.layers)
 
     @classmethod
@@ -37,7 +38,11 @@ class SoilModel:
         return len(self.layers)
 
     def top(self):
-        return self.layers[0].data.top
+        top = self.layers[0].data.top
+        if top is not None:
+            return top
+
+        raise ValueError("Top of first layer is not set")
 
     def bottom(self):
         return self.layers[-1].data.bottom

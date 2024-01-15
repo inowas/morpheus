@@ -16,7 +16,7 @@ class HobPackageData:
     iuhobsv: int
     hobdry: float
     tomulth: float
-    hobname: str
+    hobname: str | None
     extension: Literal["hob"]
     no_print: bool
     options: None | list
@@ -24,8 +24,9 @@ class HobPackageData:
     filenames: None | str | list[str]
 
     def __init__(self, head_observation_data: HeadObservationData, iuhobsv: int = 1, hobdry: float = 0.0,
-                 tomulth: float = 1.0, hobname: str = None, extension: Literal["hob"] = "hob", no_print: bool = False,
-                 options: None | list = None, unitnumber: None | int = None, filenames: None | str | list[str] = None):
+                 tomulth: float = 1.0, hobname: str | None = None, extension: Literal["hob"] = "hob",
+                 no_print: bool = False, options: None | list = None, unitnumber: int | None = None,
+                 filenames: None | str | list[str] = None):
         self.head_observation_data = head_observation_data
         self.iuhobsv = iuhobsv
         self.hobdry = hobdry

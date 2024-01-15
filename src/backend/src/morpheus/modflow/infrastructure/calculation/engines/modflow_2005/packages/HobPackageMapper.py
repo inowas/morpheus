@@ -2,13 +2,10 @@ import dataclasses
 
 from morpheus.common.types import Float
 from morpheus.modflow.types.ModflowModel import ModflowModel
+from morpheus.modflow.types.observations.Observation import HeadValue
 
 
 class TotalTime(Float):
-    pass
-
-
-class HeadValue(Float):
     pass
 
 

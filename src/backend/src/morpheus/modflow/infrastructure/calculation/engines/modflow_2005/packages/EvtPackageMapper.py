@@ -10,16 +10,16 @@ from morpheus.modflow.types.soil_model import SoilModel
 
 
 class EvtStressPeriodData(LayerBasedStressPeriodData):
-    def get_surface_elevation_sp_data(self) -> dict[list[list[float]]]:
+    def get_surface_elevation_sp_data(self) -> dict[int, list[list[float]]]:
         return self.to_dict(0)
 
-    def get_evapotranspiration_sp_data(self) -> dict[list[list[float]]]:
+    def get_evapotranspiration_sp_data(self) -> dict[int, list[list[float]]]:
         return self.to_dict(1)
 
-    def get_extinction_depth_sp_data(self) -> dict[list[list[float]]]:
+    def get_extinction_depth_sp_data(self) -> dict[int, list[list[float]]]:
         return self.to_dict(2)
 
-    def get_layer_index_sp_data(self) -> dict[list[list[int]]]:
+    def get_layer_index_sp_data(self) -> dict[int, list[list[int]]]:
         return self.to_dict(3)
 
 

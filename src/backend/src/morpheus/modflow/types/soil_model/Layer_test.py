@@ -80,7 +80,8 @@ def test_get_transmissivity() -> None:
         bottom=5,
     )
 
-    assert layer_data.get_transmissivity([[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]]) == [[5.0, 10.0, 5.0], [5.0, 10.0, 5.0]]
+    assert layer_data.get_transmissivity([[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]]) == [[5.0, 10.0, 5.0],
+                                                                                       [5.0, 10.0, 5.0]]
 
     layer_data = LayerData(
         kx=[[1.0, 2.0, 1.0], [1.0, 2.0, 1.0]],
@@ -93,4 +94,5 @@ def test_get_transmissivity() -> None:
         bottom=[[5.0, 5.0, 5.0], [5.0, 5.0, 5.0]],
     )
 
-    assert layer_data.get_transmissivity([[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]]) == [[5.0, 10.0, 5.0], [5.0, 10.0, 5.0]]
+    assert layer_data.get_transmissivity([[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]]) == [[5.0, 10.0, 5.0],
+                                                                                       [5.0, 10.0, 5.0]]

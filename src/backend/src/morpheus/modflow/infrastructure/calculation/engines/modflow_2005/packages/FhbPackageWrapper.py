@@ -21,9 +21,9 @@ class FhbPackageData:
     bdtimecnstm: float
     bdtime: list[float]
     cnstm5: float
-    ds5: list[list[float]]
+    ds5: list[list[float]] | None
     cnstm7: float
-    ds7: list[list[float]]
+    ds7: list[list[float]] | None
     extension: Literal["fhb"] = "fhb"
     unitnumber: int | None = None
     filenames: list[str] | str | None = None

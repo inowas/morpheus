@@ -71,7 +71,10 @@ def calculate_bcf_package_data(modflow_model: ModflowModel) -> BcfPackageData:
     bottoms = modflow_model.soil_model.bottoms()
     for layer_idx, layer in enumerate(modflow_model.soil_model):
         if layer_idx == 0:
-            transmissivity.append(layer.data.get_transmissivity(layer.data.top))
+            top = layer.data.top
+            if top is None:
+                raise ValueError("Top of first layer is not set")
+            transmissivity.append(layer.data.get_transmissivity(top))
             continue
 
         transmissivity.append(layer.data.get_transmissivity(bottoms[layer_idx - 1]))
@@ -86,7 +89,7 @@ def calculate_bcf_package_data(modflow_model: ModflowModel) -> BcfPackageData:
         wetfct=0.1,
         iwetit=1,
         ihdwet=0,
-        tran=[layer.data.get_transmissivity() for layer in modflow_model.soil_model],
+        tran=transmissivity,
         hy=1.0,
         vcont=1.0,
         sf1=1e-5,

@@ -39,9 +39,9 @@ class ModflowModel:
         )
 
     @classmethod
-    def new(cls, model_id: ModelId):
+    def new(cls, model_id: ModelId | None = None):
         return cls(
-            model_id=model_id,
+            model_id=model_id if model_id is not None else ModelId.new(),
             spatial_discretization=SpatialDiscretization.new(),
             time_discretization=TimeDiscretization.new(),
             boundaries=BoundaryCollection.new(),

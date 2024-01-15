@@ -4,6 +4,7 @@ from typing import Literal, List
 from morpheus.common.types import Uuid, String, DateTime, Float
 
 from ..discretization.spatial import GridCells, Grid
+from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, GeometryCollection
 from ..soil_model import LayerId
 
@@ -33,14 +34,6 @@ class ObservationType:
 
 
 class ObservationName(String):
-    pass
-
-
-class StartDateTime(DateTime):
-    pass
-
-
-class EndDateTime(DateTime):
     pass
 
 
