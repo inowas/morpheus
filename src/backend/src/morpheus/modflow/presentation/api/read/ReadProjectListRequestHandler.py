@@ -1,10 +1,8 @@
-from flask import Request
-
 from ....application.read.ReadProjectList import ReadModflowModelListQuery, ReadModflowModelListQueryHandler
 
 
 class ReadProjectListRequestHandler:
-    def handle(self, request: Request):
+    def handle(self):
         query = ReadModflowModelListQuery()
         result = ReadModflowModelListQueryHandler().handle(query)
         return result.to_dict()

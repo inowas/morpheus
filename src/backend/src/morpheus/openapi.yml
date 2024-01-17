@@ -13,12 +13,14 @@ paths:
   /modflow:
     $ref: './modflow/openapi.yml#/paths/~1modflow'
 
+  /modflow/{project_id}:
+    $ref: './modflow/openapi.yml#/paths/~1modflow~1{project_id}'
+
   /modflow/{project_id}/base_model:
     $ref: './modflow/openapi.yml#/paths/~1modflow~1{project_id}~1base_model'
 
   /sensors:
     $ref: './sensors/openapi.yml#/paths/~1sensors'
-
 
 components:
   securitySchemes:
@@ -29,4 +31,3 @@ components:
 
 security:
   - bearerAuth: [ ]
-

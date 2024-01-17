@@ -12,14 +12,14 @@ class CreateProjectCommand:
     name: Name
     description: Description
     tags: Tags
-    user_id: UserId
+    created_by: UserId
 
 
 class CreateProjectCommandHandler:
 
     @staticmethod
     def handle(command: CreateProjectCommand):
-        project = Project.new(user_id=command.user_id, project_id=command.project_id)
+        project = Project.new(user_id=command.created_by, project_id=command.project_id)
         metadata = Metadata(name=command.name, description=command.description, tags=command.tags, )
         project = project.with_updated_metadata(metadata)
         project_repository.save_project(project)

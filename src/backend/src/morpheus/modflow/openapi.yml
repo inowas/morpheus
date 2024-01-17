@@ -5,10 +5,45 @@ info:
 paths:
   /modflow:
     get:
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: "Search for projects by name, description or tags."
+          required: false
+          default: null
+        - in: query
+          name: public
+          schema:
+            type: boolean
+          required: false
+          default: false
+        - in: query
+          name: user_id
+          schema:
+            type: string
+          description: "The id of the user."
+          required: false
+          default: null
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number."
+          required: false
+          default: 1
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: "The page size."
+          required: false
+          default: 20
       tags:
         - Modflow
-      summary: Read list of Modflow Projects
-      description: Read list of Modflow Projects
+      summary: Read list of Modflow Projects with search parameters
+      description: Read list of Modflow Projects with search parameters
       responses:
         200:
           description: List of Modflow Projects
@@ -16,6 +51,8 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  $ref: '#/components/schemas/ProjectListItem'
         401:
           description: Unauthorized
         403:
@@ -35,6 +72,24 @@ paths:
       responses:
         201:
           description: Modflow model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /modflow/{project_id}:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    delete:
+      tags:
+        - Modflow
+      summary: Delete a modflow project
+      description: Delete a modflow projects
+      responses:
+        204:
+          description: Modflow project was successfully deleted
         401:
           description: Unauthorized
         403:
@@ -246,3 +301,35 @@ components:
             - start_date_time: "2020-02-01T00:00:00Z"
               number_of_time_steps: 1
               time_step_multiplier: 1
+
+    ProjectListItem:
+      type: object
+      description: "A Modflow Project."
+      properties:
+        project_id:
+          type: string
+          description: "The id of the project."
+          example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+        role:
+          type: string
+          enum: [ "owner", "admin", "member", "observer", "viewer" ]
+          description: "The role of the user in the project."
+        image:
+          type: string
+          description: "The image of the project."
+          example: "https://api.morpheus.inowas.com/api/v2/modflow/5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b/assets/5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+

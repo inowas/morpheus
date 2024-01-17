@@ -43,19 +43,18 @@ class CreateBaseModelRequestHandler:
         create_modflow_model_request = CreateBaseModelRequest.from_dict(obj=request.json)
         geometry = Polygon.from_dict(create_modflow_model_request.geometry.__dict__)
         grid_properties = create_modflow_model_request.grid_properties
-        user_id = UserId.from_value(user_id)
 
         command = CreateBaseModelCommand(
             model_id=ModelId.new(),
             project_id=ProjectId.from_str(project_id),
             geometry=geometry,
             grid_properties=grid_properties,
-            user_id=user_id
+            created_by=UserId.from_value(user_id)
         )
 
         CreateBaseModelCommandHandler.handle(command=command)
         response = jsonify()
         response.status_code = 201
-        response.headers['location'] = 'modflow/' + command.model_id.to_str()
+        response.headers['location'] = f'projects/{command.project_id.to_str()}/base_model'
 
         return response

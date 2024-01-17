@@ -43,19 +43,18 @@ class CreateProjectRequestHandler:
         name = Name.from_str(create_modflow_model_request.name)
         description = Description.from_str(create_modflow_model_request.description)
         tags = Tags.from_list(create_modflow_model_request.tags)
-        user_id = UserId.from_value(user_id)
 
         command = CreateProjectCommand(
             project_id=ProjectId.new(),
             name=name,
             description=description,
             tags=tags,
-            user_id=user_id
+            created_by=UserId.from_str(user_id)
         )
 
         CreateProjectCommandHandler.handle(command=command)
         response = jsonify()
         response.status_code = 201
-        response.headers['location'] = 'modflow/' + command.project_id.to_str()
+        response.headers['location'] = f'projects/{command.project_id.to_str()}'
 
         return response

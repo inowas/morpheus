@@ -1,42 +1,13 @@
 import dataclasses
+from morpheus.common.types import String
 
 
-@dataclasses.dataclass
-class Name:
-    value: str
-
-    @classmethod
-    def from_str(cls, value: str):
-        return cls(value=value)
-
-    @classmethod
-    def from_value(cls, value: str):
-        return cls.from_str(value=value)
-
-    def to_str(self):
-        return self.value
-
-    def to_value(self):
-        return self.to_str()
+class Name(String):
+    pass
 
 
-@dataclasses.dataclass
-class Description:
-    value: str
-
-    @classmethod
-    def from_str(cls, value: str):
-        return cls(value=value)
-
-    @classmethod
-    def from_value(cls, value: str):
-        return cls.from_str(value=value)
-
-    def to_str(self):
-        return self.value
-
-    def to_value(self):
-        return self.to_str()
+class Description(String):
+    pass
 
 
 @dataclasses.dataclass

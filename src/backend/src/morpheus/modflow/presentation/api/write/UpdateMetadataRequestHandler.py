@@ -6,6 +6,7 @@ from ....application.write.UpdateMetadata import UpdateMetadataCommand, \
 from ....incoming import get_logged_in_user_id
 from ....types.Metadata import Description, Tags, Name
 from ....types.Project import ProjectId
+from ....types.User import UserId
 
 
 @dataclasses.dataclass
@@ -34,7 +35,6 @@ class UpdateMetadataRequestHandler:
             abort(401, 'Unauthorized')
 
         project_id = ProjectId.from_str(project_id_url_parameter)
-
         update_modflow_model_metadata = UpdateMetadataRequest.from_dict(obj=request.json)
 
         name = None
@@ -54,6 +54,7 @@ class UpdateMetadataRequestHandler:
             name=name,
             description=description,
             tags=tags,
+            updated_by=UserId.from_str(user_id)
         )
 
         UpdateMetadataCommandHandler.handle(command=command)

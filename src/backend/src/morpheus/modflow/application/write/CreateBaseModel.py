@@ -16,7 +16,7 @@ class CreateBaseModelCommand:
     project_id: ProjectId
     geometry: Polygon
     grid_properties: CreateGridDict
-    user_id: UserId
+    created_by: UserId
 
 
 class CreateBaseModelCommandHandler:
@@ -41,5 +41,4 @@ class CreateBaseModelCommandHandler:
         )
 
         base_model = base_model.with_updated_spatial_discretization(spatial_discretization)
-
         base_model_repository.save_base_model(project_id=project_id, base_model=base_model)
