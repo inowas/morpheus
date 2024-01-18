@@ -63,3 +63,4 @@ class UpdateTimeDiscretizationRequestHandler:
         )
 
         UpdateTimeDiscretizationCommandHandler.handle(command=command)
+        return None, 204

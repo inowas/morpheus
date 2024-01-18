@@ -1,6 +1,7 @@
 import dataclasses
 from enum import StrEnum
 
+from morpheus.common.types import Uuid
 from morpheus.modflow.types.calculation.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import \
     Mf2005CalculationEngineSettings
@@ -12,8 +13,13 @@ class CalculationType(StrEnum):
     MT3DMS = 'mt3dms'
 
 
+class CalculationProfileId(Uuid):
+    pass
+
+
 @dataclasses.dataclass(frozen=True)
 class CalculationProfile:
+    calculation_profile_id: CalculationProfileId
     calculation_engine_type: CalculationType
     calculation_engine_settings: CalculationEngineSettingsBase
 
@@ -21,6 +27,7 @@ class CalculationProfile:
     def new(cls, engine_type: CalculationType):
         if engine_type == CalculationType.MF2005:
             return cls(
+                calculation_profile_id=CalculationProfileId.new(),
                 calculation_engine_type=engine_type,
                 calculation_engine_settings=Mf2005CalculationEngineSettings.default()
             )
@@ -32,6 +39,7 @@ class CalculationProfile:
         calculation_engine_type = CalculationType(obj['calculation_engine_type'])
         if calculation_engine_type == CalculationType.MF2005:
             return cls(
+                calculation_profile_id=CalculationProfileId.from_value(obj['calculation_profile_id']),
                 calculation_engine_type=calculation_engine_type,
                 calculation_engine_settings=Mf2005CalculationEngineSettings.from_dict(
                     obj['calculation_engine_settings'])
@@ -41,6 +49,7 @@ class CalculationProfile:
 
     def to_dict(self) -> dict:
         return {
+            'calculation_profile_id': self.calculation_profile_id.value,
             'calculation_engine_type': self.calculation_engine_type.value,
             'calculation_engine_settings': self.calculation_engine_settings.to_dict()
         }

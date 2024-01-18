@@ -1,12 +1,11 @@
 import dataclasses
 
 from morpheus.common.types import Uuid
+from .calculation.CalculationProfile import CalculationProfileId
 from .ModflowModel import ModflowModel
 from .Scenarios import Scenario
-from .Metadata import Metadata
-from .Permissions import Permissions
+from .Settings import Settings
 from .User import UserId
-from .calculation.CalculationProfile import CalculationProfiles
 
 
 class ProjectId(Uuid):
@@ -16,53 +15,49 @@ class ProjectId(Uuid):
 @dataclasses.dataclass(frozen=True)
 class Project:
     project_id: ProjectId
-    permissions: Permissions
-    metadata: Metadata
     base_model: ModflowModel | None
-    calculation_profiles: CalculationProfiles
+    calculation_profile_id: CalculationProfileId | None
     scenarios: list[Scenario]
+    settings: Settings
 
     @classmethod
     def new(cls, user_id: UserId, project_id: ProjectId | None = None):
         return cls(
             project_id=project_id if project_id is not None else ProjectId.new(),
-            permissions=Permissions.new(created_by=user_id),
-            metadata=Metadata.new(),
             base_model=None,
-            calculation_profiles=CalculationProfiles.new(),
-            scenarios=[]
+            calculation_profile_id=None,
+            scenarios=[],
+            settings=Settings.new(user_id=user_id)
         )
-
-    def with_updated_permissions(self, permissions: Permissions):
-        return dataclasses.replace(self, permissions=permissions)
-
-    def with_updated_metadata(self, metadata: Metadata):
-        return dataclasses.replace(self, metadata=metadata)
 
     def with_updated_base_model(self, base_model: ModflowModel):
         return dataclasses.replace(self, base_model=base_model)
 
+    def with_updated_calculation_profile_id(self, calculation_profile_id: CalculationProfileId):
+        return dataclasses.replace(self, calculation_profile_id=calculation_profile_id)
+
     def with_updated_scenarios(self, scenarios: list[Scenario]):
         return dataclasses.replace(self, scenarios=scenarios)
+
+    def with_updated_settings(self, settings: Settings):
+        return dataclasses.replace(self, settings=settings)
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             project_id=ProjectId.from_value(obj['project_id']),
-            permissions=Permissions.from_dict(obj['permissions']),
-            metadata=Metadata.from_dict(obj['metadata']),
             base_model=ModflowModel.from_dict(obj['base_model']) if 'base_model' in obj else None,
-            calculation_profiles=CalculationProfiles.from_dict(
-                obj['calculation_profiles']) if 'calculation_profiles' in obj else CalculationProfiles.new(),
-            scenarios=obj['scenarios'] if 'scenarios' in obj else []
+            calculation_profile_id=CalculationProfileId.from_value(
+                obj['calculation_profile_id']) if 'calculation_profile_id' in obj else None,
+            scenarios=obj['scenarios'] if 'scenarios' in obj else [],
+            settings=Settings.from_dict(obj['settings'])
         )
 
     def to_dict(self):
         return {
             'project_id': self.project_id.to_value(),
-            'permissions': self.permissions.to_dict(),
-            'metadata': self.metadata.to_dict(),
             'base_model': self.base_model.to_dict() if self.base_model is not None else None,
-            'calculation_profiles': self.calculation_profiles.to_dict(),
-            'scenarios': [scenario.to_dict() for scenario in self.scenarios]
+            'calculation_profile_id': self.calculation_profile_id.to_value() if self.calculation_profile_id is not None else None,
+            'scenarios': [scenario.to_dict() for scenario in self.scenarios],
+            'settings': self.settings.to_dict()
         }

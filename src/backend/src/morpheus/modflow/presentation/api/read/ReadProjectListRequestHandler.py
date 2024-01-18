@@ -5,4 +5,4 @@ class ReadProjectListRequestHandler:
     def handle(self):
         query = ReadModflowModelListQuery()
         result = ReadModflowModelListQueryHandler().handle(query)
-        return result.to_dict()
+        return result.to_dict(), 200

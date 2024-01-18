@@ -1,10 +1,10 @@
-from morpheus.modflow.types.Metadata import Metadata
-from morpheus.modflow.types.Permissions import Permissions
+from morpheus.modflow.types.Settings import Metadata
 from morpheus.modflow.types.Project import Project, ProjectId
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, \
     create_or_get_collection
-from morpheus.settings import settings
+from morpheus.settings import settings as app_settings
 from .BaseModelRepository import base_model_repository
+from ...types.Settings import Settings
 
 
 class ProjectRepository(RepositoryBase):
@@ -36,36 +36,27 @@ class ProjectRepository(RepositoryBase):
             raise Exception('Project does not exist')
         self.collection.replace_one({'project_id': project.project_id.to_str()}, project.to_dict())
 
-    def get_project_permissions(self, project_id: ProjectId) -> Permissions:
-        project = self.collection.find_one({'project_id': project_id.to_str()}, {'permissions': 1})
+    def get_project_settings(self, project_id: ProjectId) -> Settings:
+        project = self.collection.find_one({'project_id': project_id.to_str()}, {'settings': 1})
         if project is None:
             raise Exception('Project does not exist')
 
-        return Permissions.from_dict(project['permissions'])
+        return Settings.from_dict(project['settings'])
 
-    def update_project_permissions(self, project_id: ProjectId, permissions: Permissions) -> None:
+    def update_project_settings(self, project_id: ProjectId, settings: Settings) -> None:
         if not self.has_project(project_id):
             raise Exception('Project does not exist')
-        self.collection.update_one({'project_id': project_id.to_str()},
-                                   {'$set': {'permissions': permissions.to_dict()}})
+
+        self.collection.update_one({'project_id': project_id.to_str()}, {'$set': {'settings': settings.to_dict()}})
 
     def get_project_metadata(self, project_id: ProjectId) -> Metadata:
-        project = self.collection.find_one({'project_id': project_id.to_str()}, {'metadata': 1})
-        if project is None:
-            raise Exception('Project does not exist')
-
-        return Metadata.from_dict(project['metadata'])
-
-    def update_project_metadata(self, project_id: ProjectId, metadata: Metadata):
-        if not self.has_project(project_id):
-            raise Exception('Project does not exist')
-        self.collection.update_one({'project_id': project_id.to_str()},
-                                   {'$set': {'metadata': metadata.to_dict()}})
+        project_settings = self.get_project_settings(project_id)
+        return project_settings.metadata
 
 
 project_repository = ProjectRepository(
     collection=create_or_get_collection(
-        get_database_client(settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
+        get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
         'projects'
     )
 )

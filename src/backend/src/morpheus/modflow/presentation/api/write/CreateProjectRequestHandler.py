@@ -4,7 +4,7 @@ from flask import Request, abort, jsonify
 
 from ....application.write.CreateProject import CreateProjectCommand, CreateProjectCommandHandler
 from ....incoming import get_logged_in_user_id
-from ....types.Metadata import Description, Tags, Name
+from ....types.Settings import Description, Tags, Name
 from ....types.Project import ProjectId
 from ....types.User import UserId
 

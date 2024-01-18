@@ -4,13 +4,9 @@ from flask_cors import CORS, cross_origin
 from .incoming import authenticate
 from .presentation.api.read.ReadProjectListRequestHandler import ReadProjectListRequestHandler
 from .presentation.api.write.CreateProjectRequestHandler import CreateProjectRequestHandler
-from .presentation.api.write.UpdateMetadataRequestHandler import UpdateMetadataRequestHandler
-from .presentation.api.write.UpdatePermissionsRequestHandlers import UpdateOwnerRequestHandler, \
-    AddAdminUserRequestHandler, RemoveAdminUserRequestHandler, AddEditorUserRequestHandler, \
-    RemoveEditorUserRequestHandler, AddObserverUserRequestHandler, RemoveObserverUserRequestHandler, \
-    UpdateVisibilityRequestHandler
-from .presentation.api.write.UpdateTimeDiscretizationRequestHandler import \
-    UpdateTimeDiscretizationRequestHandler
+from .presentation.api.write.UpdateSettingsRequestHandlers import UpdateMetadataRequestHandler, AddMemberRequestHandler, UpdateMemberRoleRequestHandler, \
+    RemoveMemberRequestHandler, UpdateVisibilityRequestHandler
+from .presentation.api.write.UpdateTimeDiscretizationRequestHandler import UpdateTimeDiscretizationRequestHandler
 from ..common.presentation.schema_validation.SchemaValidation import validate_request
 
 
@@ -23,81 +19,53 @@ def register_routes(blueprint: Blueprint):
     @validate_request
     @authenticate()
     def create_project():
-        return CreateProjectRequestHandler().handle(request), 201
+        return CreateProjectRequestHandler().handle(request)
 
     @blueprint.route('', methods=['GET'])
     @blueprint.route('/', methods=['GET'])
     @cross_origin()
     @authenticate()
     def list_projects():
-        return ReadProjectListRequestHandler().handle(), 200
+        return ReadProjectListRequestHandler().handle()
 
-    @blueprint.route('/<project_id>/metadata', methods=['PUT'])
+    @blueprint.route('/<project_id>/settings/metadata', methods=['PUT'])
     @cross_origin()
     @validate_request
     @authenticate()
-    def project_metadata_update(project_id: str):
-        return UpdateMetadataRequestHandler().handle(request, project_id), 204
+    def project_settings_update_metadata(project_id: str):
+        return UpdateMetadataRequestHandler().handle(request, project_id)
 
-    @blueprint.route('/<project_id>/permissions/owner', methods=['PUT'])
+    @blueprint.route('/<project_id>/settings/members', methods=['POST'])
     @cross_origin()
     @validate_request
     @authenticate()
-    def project_permissions_update_owner(project_id: str):
-        return UpdateOwnerRequestHandler().handle(request, project_id), 204
+    def project_settings_add_member(project_id: str):
+        return AddMemberRequestHandler().handle(request, project_id)
 
-    @blueprint.route('/<project_id>/permissions/admin', methods=['POST'])
+    @blueprint.route('/<project_id>/settings/members/<user_id>', methods=['PUT'])
     @cross_origin()
     @validate_request
     @authenticate()
-    def project_permissions_add_admin(project_id: str):
-        return AddAdminUserRequestHandler().handle(request, project_id), 204
+    def project_settings_update_member_role(project_id: str, user_id: str):
+        return UpdateMemberRoleRequestHandler().handle(request, project_id, user_id)
 
-    @blueprint.route('/<project_id>/permissions/admin', methods=['DELETE'])
+    @blueprint.route('/<project_id>/settings/members/<user_id>', methods=['DELETE'])
     @cross_origin()
     @validate_request
     @authenticate()
-    def project_permissions_remove_admin(project_id: str):
-        return RemoveAdminUserRequestHandler().handle(request, project_id), 204
+    def project_settings_remove_member(project_id: str, user_id: str):
+        return RemoveMemberRequestHandler().handle(request, project_id, user_id)
 
-    @blueprint.route('/<project_id>/permissions/editor', methods=['POST'])
+    @blueprint.route('/<project_id>/settings/visibility', methods=['PUT'])
     @cross_origin()
     @validate_request
     @authenticate()
-    def project_permissions_add_editor(project_id: str):
-        return AddEditorUserRequestHandler().handle(request, project_id), 204
-
-    @blueprint.route('/<project_id>/permissions/editor', methods=['DELETE'])
-    @cross_origin()
-    @validate_request
-    @authenticate()
-    def project_permissions_remove_editor(project_id: str):
-        return RemoveEditorUserRequestHandler.handle(request, project_id), 204
-
-    @blueprint.route('/<project_id>/permissions/observer', methods=['POST'])
-    @cross_origin()
-    @validate_request
-    @authenticate()
-    def project_permissions_add_observer(project_id: str):
-        return AddObserverUserRequestHandler().handle(request, project_id), 204
-
-    @blueprint.route('/<project_id>/permissions/observer', methods=['DELETE'])
-    @cross_origin()
-    @validate_request
-    @authenticate()
-    def project_permissions_remove_observer(project_id: str):
-        return RemoveObserverUserRequestHandler.handle(request, project_id), 204
-
-    @blueprint.route('/<project_id>/permissions/visibility', methods=['PUT'])
-    @cross_origin()
-    @validate_request
-    @authenticate()
-    def project_permissions_update_visibility(project_id: str):
-        return UpdateVisibilityRequestHandler().handle(request, project_id), 204
+    def project_settings_update_visibility(project_id: str):
+        return UpdateVisibilityRequestHandler().handle(request, project_id)
 
     @blueprint.route('/<project_id>/base_model/time_discretization', methods=['PUT'])
     @cross_origin()
     @validate_request
     @authenticate()
     def project_base_model_time_discretization_update(project_id: str):
-        return UpdateTimeDiscretizationRequestHandler().handle(request, project_id), 204
+        return UpdateTimeDiscretizationRequestHandler().handle(request, project_id)
