@@ -1,138 +1,120 @@
 @import 'components/site.variables';
 
 // Define the variable for width
-@sidebarWidth: 350px;
-@sidebarButton: 32px;
-@animationSpeed: 400ms;
+@sidebarMinWidth: 40px;
 
-.sidebarContainer {
+.sidebarWrapper {
+  display: flex;
+  height: inherit;
+  overflow: hidden;
+}
 
-  .sidebarInner {
-    display: flex;
-    position: relative;
+.sidebarInner {
+  display: flex;
+  flex: 1;
+  width: 100%;
 
-    @media (max-width: @breakpoint-tablet) {
-      width: calc(100vw);
-      overflow: hidden;
-      margin: 0 -1em;
-      padding: 0 1em;
-    }
-  }
-
-
-  .sidebarContent {
-    width: 100%;
-    padding-top: 12px;
+  @media (min-width: @breakpoint-tablet) {
+    height: auto;
   }
 }
 
 .sidebarAside {
+  background: @light-grey;
   position: relative;
-  width: calc(@sidebarWidth - 20px);
-  background: @ref-color-lightGrey;
-  transition: width @animationSpeed linear;
-  margin-right: 20px;
-  visibility: visible;
+  transition: all 300ms;
+  width: 100%;
+  min-width: 350px;
+  padding: 20px 10px 20px 14px;
 
-  aside {
-    overflow: hidden;
-    width: @sidebarWidth;
-    transition: inherit;
+  @media (min-width: @breakpoint-tablet) {
+    padding: 20px 10px 20px 40px;
+  }
+
+  .sidebarAsideInner {
     height: 100%;
-    margin: 0 0 0 -20px;
-    padding-left: 20px;
+    overflow-y: auto;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
 
-    &:before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 100%;
-      background: @ref-color-lightGrey;
-      right: 100%;
-      bottom: 0;
-      position: absolute;
-      overflow-y: hidden;
-      transition: inherit;
+    &::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
     }
+
   }
 
 }
 
-.sidebarClosed {
+.sidebarAsideClosed {
+  max-width: @sidebarMinWidth !important;
+  min-width: @sidebarMinWidth;
+  width: @sidebarMinWidth;
 
-  .sidebarAside {
-    width: 0;
-    margin-right: 0;
+  @media (min-width: @breakpoint-tablet) {
+    padding: 10px 10px 10px 30px;
+  }
+
+  .sidebarAsideInner {
     visibility: hidden;
-
-    aside {
-      background: transparent;
-      min-width: 0;
-      width: 0;
-
-      &:before {
-        width: 0;
-      }
-    }
-  }
-
-  .sidebarStickyButton {
-    transition: all @animationSpeed linear;
-    transform: translateX(-110%) rotateZ(180deg);
-
-    @media (max-width: @breakpoint-tablet) {
-      top: 266px;
-      transform: translateX(0) rotateZ(180deg);
-    }
+    overflow: hidden;
+    width: 0;
+    height: 0;
+    opacity: 0;
   }
 }
 
-.sidebarStickyButton {
-  position: sticky;
-  top: 155px;
-  transition: all @animationSpeed linear;
-  transform: translateX(calc(@sidebarWidth - 35px)) rotateZ(0deg);
+.sidebarAsideButton {
+  position: absolute;
+  top: 25px;
+  right: 6px;
+  border: none;
+  background: transparent;
+  color: @black;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
-
-  padding: 5px;
-  margin-top: -@sidebarButton;
-
-  z-index: 1;
-  color: @blue;
-  background: @white;
-  border-radius: 50px;
-  border: 1px solid @blue;
-
-  width: @sidebarButton;
-  height: @sidebarButton;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  outline: 2px solid transparent;
+  transition: color 300ms;
+  z-index: 2;
 
   &:hover {
-    outline: 2px solid @blue;
+    color: @blue;
   }
-
-  @media (max-width: @breakpoint-tablet-horizontal) {
-    top: 226px;
-  }
-
 
   i {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin: 0;
     padding: 0;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
   }
 }
 
-.wrapper {
-  min-width: @sidebarWidth;
-  padding-right: 20px;
-  height: 100%;
+.sidebarContent {
+  width: 100%;
+  min-width: 320px;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  padding: 10px 14px 20px 10px;
+
+  @media (min-width: @breakpoint-tablet) {
+    padding: 10px 40px 40px 20px;
+
+  }
+
+
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
 }
+
+.sidebarContentFullWidth {
+  padding: 0;
+}
+
 
 

@@ -272,7 +272,6 @@ export default {
 
 export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
   const [modelData, setModelData] = useState(models);
-  const showModelSidebar = false;
   const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
     return data.filter((model) => model.meta_author_name === authorName);
   };
@@ -305,7 +304,6 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
         pathname={'/'}
         showSearchWrapper={true}
         showCreateButton={true}
-        showModelSidebar={showModelSidebar}
         updateHeight={(height: number) => {
         }}
       />
@@ -317,7 +315,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
           setModelData={setFilteredData}
         >
           <SliderSwiper
-            sectionTitle={'My Models'}
+            sectionTitle={'My projects'}
           >
             {filteredData.map((item) => (
               <ModelCard
@@ -337,7 +335,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
           setModelData={setModelData}
         >
           <ModelGrid
-            sectionTitle={'All Models'}
+            sectionTitle={'All projects'}
             data={modelData}
             navigateTo={() => {
             }}
@@ -352,7 +350,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
 
 export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
   <ModelGrid
-    sectionTitle={'All Models'}
+    sectionTitle={'All projects'}
     data={models}
     navigateTo={() => {
     }}

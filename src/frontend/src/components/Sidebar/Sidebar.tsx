@@ -1,30 +1,23 @@
 import React, {ReactNode, useState} from 'react';
 import styles from './Sidebar.module.less';
 import {Icon} from 'semantic-ui-react';
-import FormFilter from 'components/FormFilter';
-import {IModelCard} from '../ModelCard';
+import {IMenuItem, SidebarMenu} from '../SidebarMenu';
 
 interface IProps {
   children: ReactNode;
-  data: IModelCard[];
-  updateModelData: (data: IModelCard[]) => void;
+  headerHeight?: number;
+  open?: boolean;
+  maxWidth?: number;
+  contentFullWidth?: boolean;
+  menuItems?: IMenuItem[];
+  handleItemClick?: (index: number) => void;
 }
 
-const Sidebar = ({children, data, updateModelData}: IProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+const Sidebar = ({children, headerHeight, open = false, maxWidth = 700, contentFullWidth = false, menuItems, handleItemClick}: IProps) => {
+  const sidebarChildren = React.Children.toArray(children);
+  const [isOpen, setIsOpen] = useState(open);
 
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  const handleClose = () => {
-    if (!isOpen) {
-      scrollToTop();
-    }
+  const handleSidebarToggle = () => {
     setIsOpen(!isOpen);
   };
 
@@ -32,27 +25,39 @@ const Sidebar = ({children, data, updateModelData}: IProps) => {
   return (
     <div
       data-testid="sidebar-container"
-      className={`${styles.sidebarContainer} ${isOpen ? '' : styles.sidebarClosed}`}
+      style={{height: `calc(100vh - ${headerHeight}px)`}}
+      className={styles.sidebarWrapper}
     >
-      <button
-        className={styles.sidebarStickyButton}
-        onClick={handleClose}
-      >
-        <Icon name="angle double left"/>
-      </button>
-      <div
-        className={styles.sidebarInner}
-      >
-        <div className={styles.sidebarAside}>
-          <aside>
-            <div className={styles.wrapper}>
-              <FormFilter data={data} updateModelData={updateModelData}/>
-            </div>
-          </aside>
-        </div>
-        <div className={styles.sidebarContent}>
-          {children}
-        </div>
+      {(menuItems && handleItemClick) && <SidebarMenu menuItems={menuItems} handleItemClick={handleItemClick}/>}
+      <div className={styles.sidebarInner}>
+        {sidebarChildren.map((component, index) => {
+          if (0 === index && React.isValidElement(component)) {
+            return (
+              <div
+                key={index}
+                className={`${styles.sidebarAside} ${isOpen ? '' : styles.sidebarAsideClosed}`}
+                style={{maxWidth: maxWidth}}
+              >
+                <button
+                  className={styles.sidebarAsideButton}
+                  onClick={handleSidebarToggle}
+                >
+                  <Icon name={`${isOpen ? 'angle double left' : 'angle double right'}`}/>
+                </button>
+                <div className={styles.sidebarAsideInner}>
+                  {component}
+                </div>
+              </div>
+            );
+          } else if (1 === index && React.isValidElement(component)) {
+            return (
+              <div key={index} className={`${styles.sidebarContent} ${contentFullWidth ? styles.sidebarContentFullWidth : ''}`}>
+                {component}
+              </div>
+            );
+          }
+          return null; // Ignore other types or invalid elements
+        })}
       </div>
     </div>
   );

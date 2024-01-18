@@ -1,6 +1,10 @@
-import React, {useState} from 'react';
-import {Menu} from 'semantic-ui-react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React from 'react';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+import Sidebar from '../Sidebar';
+import {IMenuItem} from '../SidebarMenu';
+
 import {
   faArrowUpRightFromSquare,
   faBarsStaggered,
@@ -22,9 +26,8 @@ import {
   faSliders,
   faSquareCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import styles from './ModelSidebar.module.less';
 
-const menuItems = [
+const menuItems: IMenuItem[] = [
   {icon: faPenToSquare, description: 'Setup', title: true, active: false},
   {icon: faBorderAll, description: 'Model grid', active: false},
   {icon: faClock, description: 'Stress periods', active: true},
@@ -48,51 +51,44 @@ const menuItems = [
   {icon: faDownload, description: 'Download MODFLOW files', active: false},
 ];
 
-interface IProps {
-  showModelSidebar: boolean;
-}
+export default {
+  title: 'Sidebar',
+  component: Sidebar,
+} as Meta<typeof Sidebar>;
 
-const ModelSidebar: React.FC<IProps> = ({showModelSidebar}) => {
-  const [listItems, setListItems] = useState(menuItems);
+export const SidebarExample: StoryFn<typeof Sidebar> = () => (
+  <Sidebar
+    headerHeight={0}
+    open={true}
+    maxWidth={700}
+    contentFullWidth={false}
+  >
+    <div>Aside content</div>
+    <div>Main content</div>
+  </Sidebar>
+);
 
-  const handleItemClick = (index: number) => {
-    const updatedListParameters = listItems.map((item, i) => {
-      return (i === index) ? {...item, active: true} : {...item, active: false};
-    });
-    setListItems(updatedListParameters);
-  };
+export const SidebarSmallSizeExample: StoryFn<typeof Sidebar> = () => (
+  <Sidebar
+    headerHeight={0}
+    open={true}
+    maxWidth={350}
+    contentFullWidth={false}
+  >
+    <div>Aside content</div>
+    <div>Main content</div>
+  </Sidebar>
+);
 
-
-  return (
-    <div className={`${styles.menu} ${showModelSidebar ? styles.showSidebar : ''}`}>
-      {showModelSidebar && (
-        <div className={styles.listWrapper}>
-          <ul className={styles.listScroll}>
-            {listItems.map((item, index) => (
-              <li
-                key={index}
-                className={`${styles.item} ${item.title ? styles.title : ''} ${item.active ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
-              >
-                <Menu.Item
-                  data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
-                  as={item.title ? 'h3' : 'a'}
-                  className={styles.link}
-                  onClick={(e) => handleItemClick(index)}
-                >
-                  <span className={styles.icon}><FontAwesomeIcon icon={item.icon}/></span>
-                  <span className={styles.description}>{item.description}</span>
-                </Menu.Item>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-
-  );
-};
-
-export default ModelSidebar;
-
-
-
+export const SidebarWithSidebarMenuExample: StoryFn<typeof Sidebar> = () => (
+  <Sidebar
+    headerHeight={0}
+    open={true}
+    maxWidth={700}
+    contentFullWidth={false}
+    menuItems={menuItems}
+  >
+    <div>Aside content</div>
+    <div>Main content</div>
+  </Sidebar>
+);

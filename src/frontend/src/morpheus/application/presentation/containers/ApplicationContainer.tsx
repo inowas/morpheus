@@ -22,7 +22,7 @@ const ApplicationContainer = ({children}: IProps) => {
   const {isEmbedded, setIsEmbedded} = useIsEmbedded();
   const showFooter = !isEmbedded;
   const showHeader = !isEmbedded;
-  const pageSize: IPageWidth = 1440;
+  const pageSize: IPageWidth = 'auto';
   const languageList: { code: ILanguageCode; label: string }[] = [
     {
       code: 'en-GB',

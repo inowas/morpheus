@@ -6,12 +6,13 @@ interface IProps {
   maxWidth?: IPageWidth;
   minHeight?: IPageHeight;
   children: ReactNode;
+  showSidebarMenu?: boolean;
 }
 
 
-const ContentWrapper = ({children, minHeight, maxWidth}: IProps) => (
+const ContentWrapper = ({children, minHeight, maxWidth, showSidebarMenu = false}: IProps) => (
   <div
-    className={styles.contentWrapper}
+    className={`${styles.contentWrapper} ${showSidebarMenu ? styles.showSidebarMenu : ''}`}
     style={{
       maxWidth: maxWidth || '100%',
       minHeight: minHeight || '100vh',

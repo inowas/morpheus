@@ -9,14 +9,14 @@ type ILanguageCode = 'de-DE' | 'en-GB';
 interface IProps {
   maxWidth?: IPageWidth;
   updateHeight?: (height: number) => void
-  showModelSidebar?: boolean
-
   navbarItems: INavbarItem[];
+
   language?: ILanguageCode;
   languageList?: ILanguageList;
   onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
   pathname: string;
+  showSidebarMenu?: boolean
   showSearchWrapper?: boolean;
   showCreateButton?: boolean;
 }
@@ -30,7 +30,7 @@ const Header = ({
   onChangeLanguage,
   navigateTo,
   pathname,
-  showModelSidebar = false,
+  showSidebarMenu = false,
   showSearchWrapper = false,
   showCreateButton = false,
 }: IProps) => {
@@ -61,7 +61,7 @@ const Header = ({
   return (
     <header
       data-testid={'header'}
-      className={`${showModelSidebar ? styles.withSidebar : ''}`}
+      className={`${showSidebarMenu ? styles.showSidebarMenu : ''}`}
       style={{
         paddingTop: headerHeight,
         zIndex: 100,
@@ -73,6 +73,7 @@ const Header = ({
       >
         <ContentWrapper
           minHeight={'auto'} maxWidth={maxWidth}
+          showSidebarMenu={showSidebarMenu}
         >
           <Navbar
             navbarItems={navbarItems}
@@ -81,7 +82,6 @@ const Header = ({
             onChangeLanguage={onChangeLanguage}
             navigateTo={navigateTo}
             pathname={pathname}
-            showModelSidebar={showModelSidebar}
             showSearchWrapper={showSearchWrapper}
             showCreateButton={showCreateButton}
           />
