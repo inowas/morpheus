@@ -3,8 +3,7 @@ import {MapContainer, TileLayer} from 'react-leaflet';
 import {additionalDescription, boundaryDescription, createOwnerOptions, formatNumber} from './infrastructure/calculate';
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import DatePicker from 'react-datepicker';
-import Button from '../Button/Button';
-import {IModelCard} from '../ModelCard';
+import {Button, IModelCard} from 'components';
 import Slider from 'rc-slider';
 import {IFilterOptions} from './types/Filter.type';
 import useFilterOptions from './hooks/useFilter';
@@ -81,6 +80,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
   const rendomCount = () => {
     return Math.floor(Math.random() * 50);
   };
+
   const {
     filterOptions,
     handleRadioChange,

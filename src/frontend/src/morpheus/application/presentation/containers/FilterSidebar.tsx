@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
-import {FormFilter, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, Sidebar, SortDropdown} from 'components';
-import '../../morpheus/morpheus.less';
-import 'react-datepicker/dist/react-datepicker.css';
-import '../rc-slider.css';
+import React, {useEffect, useState} from 'react';
+import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
+import {Footer, FormFilter, Header, IModelCard, IPageWidth, ISortOption, Sidebar} from 'components';
+import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
+import SortDropdown from '../../../../components/SortDropdown';
+import ModelGrid from '../../../../components/ModelGrid';
+
+type ILanguageCode = 'de-DE' | 'en-GB';
 
 const models: IModelCard[] = [
   {
@@ -243,16 +244,6 @@ const models: IModelCard[] = [
   },
 ];
 
-const navbarItems2 = [
-  {
-    name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
-      {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
-      {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
-  },
-  {name: 'filters', label: 'Filters', admin: false, to: '/tools'},
-  {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
-];
-
 const sortOptions: ISortOption[] = [
   {text: 'Most Recent', value: 'mostRecent'},
   {text: 'Less Recent', value: 'lessRecent'},
@@ -260,34 +251,50 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
-const pageSize: IPageWidth = 'auto';
+const FilterSidebar = () => {
 
-export default {
-  /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
-  title: 'Modflow/FormFilter',
-  component: FormFilter,
-} as Meta<typeof FormFilter>;
+  const {i18n, translate} = useTranslate();
+  const {navbarItems} = useNavbarItems();
+  const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
+  const navigateTo = useNavigate();
+  const location = useLocation();
+  const {release} = useReleaseVersion();
+  const [searchParams] = useSearchParams();
 
-export const FormFilterExample: StoryFn<typeof FormFilter> = () => {
-  const [modelData, setModelData] = useState(models);
+  const {isEmbedded, setIsEmbedded} = useIsEmbedded();
+  const showHeader = !isEmbedded;
+  const showFooter = !isEmbedded;
 
-  const updateModelData = (newData: IModelCard[]) => {
-    setModelData(newData);
+  const showModelSidebar = false;
+  const pageSize: IPageWidth = 'auto';
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const updateHeaderHeight = (height: number) => {
+    setHeaderHeight(height);
   };
 
-  return (
-    <div style={{paddingLeft: '1rem', backgroundColor: '#eeeeee'}}>
-      <FormFilter data={modelData} updateModelData={updateModelData}/>
-    </div>
-  );
-};
+  if ('true' === searchParams.get('embedded') && !isEmbedded) {
+    setIsEmbedded(true);
+  }
 
-export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
+  if ('false' === searchParams.get('embedded') && isEmbedded) {
+    setIsEmbedded(false);
+  }
+
+  useEffect(() => {
+    if (language !== i18n.language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language, i18n]);
+
+  const languageList: { code: ILanguageCode; label: string }[] = [
+    {
+      code: 'en-GB',
+      label: 'English',
+    },
+  ];
+
+  //TODO add models
   const [modelData, setModelData] = useState(models);
-  const [headerHeight, setHeaderHeight] = useState(0);
 
   const updateModelData = (newData: IModelCard[]) => {
     setModelData(newData);
@@ -295,9 +302,9 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
 
   const sectionTitle = () => {
     if (1 === modelData.length) {
-      return (<><span>1</span> Model found </>);
+      return (<><span>1</span> {translate('Model found')}</>);
     } else {
-      return (<><span>{modelData.length}</span> Models found</>);
+      return (<><span>{modelData.length}</span> {translate('Models found')}</>);
     }
   };
 
@@ -307,19 +314,20 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
   };
 
   return (
-    <div style={{margin: '-1rem'}}>
-      <Header
-        maxWidth={pageSize}
-        navbarItems={navbarItems2}
-        navigateTo={() => {
-        }}
-        pathname={'/'}
-        showSearchWrapper={true}
-        showCreateButton={true}
-        showSidebarMenu={false}
-        updateHeight={(height: number) => {
-        }}
-      />
+    <>
+      {showHeader &&
+        <Header
+          maxWidth={pageSize}
+          updateHeight={updateHeaderHeight}
+          navbarItems={navbarItems}
+          languageList={languageList}
+          language={language}
+          onChangeLanguage={setLanguage}
+          navigateTo={navigateTo}
+          pathname={location.pathname}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />}
       <Sidebar
         headerHeight={headerHeight} open={true}
         maxWidth={350}
@@ -334,14 +342,22 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
           <ModelGrid
             sectionTitle={sectionTitle()}
             data={modelData}
-            navigateTo={() => {
-              console.log('Click on navigate');
-            }}
+            navigateTo={navigateTo}
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>
       </Sidebar>
-    </div>
+      {showFooter ? <Footer release={release} maxWidth={pageSize}/> :
+        <span
+          style={{
+            margin: '0 auto',
+            textAlign: 'center',
+            fontSize: '0.8rem',
+          }}
+        >Release: {release}</span>
+      }
+    </>
   );
 };
 
+export default FilterSidebar;

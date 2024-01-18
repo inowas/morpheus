@@ -27,8 +27,8 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
+import {ModelCreate, ModelGeometry} from './Models';
 import ModelCard, {IModelCard} from './ModelCard';
-import {ModelWrapper} from './ModelWrapper';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -40,8 +40,10 @@ import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Select, {DropdownProps} from './Select/Select';
 import Sidebar from './Sidebar/Sidebar';
+import SidebarMenu from './SidebarMenu/SidebarMenu';
 import SortDropdown, {ISortOption} from 'components/SortDropdown';
 import Toggle from './Toggle/Toggle';
+import UploadFile from './UploadFile/UploadFile';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 
 export {
@@ -73,8 +75,9 @@ export {
   Message,
   Modal,
   ModelGrid,
+  ModelGeometry,
+  ModelCreate,
   ModelCard,
-  ModelWrapper,
   NotFound,
   Notification,
   Notifications,
@@ -86,9 +89,11 @@ export {
   Segment,
   Select,
   Sidebar,
+  SidebarMenu,
   SliderSwiper,
   SortDropdown,
   Toggle,
+  UploadFile,
 };
 
 export type {

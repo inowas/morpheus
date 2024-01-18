@@ -2,7 +2,6 @@ import React from 'react';
 import {INavbarItem} from './types/navbar.type';
 import NavTop from './NavTop/NavTop';
 import NavBottom from './NavBottom/NavBottom';
-import styles from './Navbar.module.less';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 export type ILanguageList = Array<{
@@ -17,9 +16,9 @@ interface IProps {
   onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
   pathname: string;
+  showSidebarMenu?: boolean;
   showSearchWrapper?: boolean;
   showCreateButton?: boolean;
-  showModelSidebar?: boolean;
 }
 
 const Navbar = ({
@@ -31,14 +30,12 @@ const Navbar = ({
   pathname,
   showSearchWrapper = false,
   showCreateButton = false,
-  showModelSidebar = false,
 }: IProps) => {
 
   return (
     <div
       data-testid={'test-navbar'}
       style={{position: 'relative'}}
-      className={`${showModelSidebar ? styles.withSidebar : ''}`}
     >
       <NavTop
         language={language}
