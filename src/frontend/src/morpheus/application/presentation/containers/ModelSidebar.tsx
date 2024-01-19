@@ -3,30 +3,7 @@ import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '..
 import {Footer, Header, IPageWidth, Map, ModelCreate, ModelGeometry, Sidebar} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 import type {FeatureCollection} from 'geojson';
-import {IMenuItem} from 'components/SidebarMenu';
-
-import {
-  faArrowUpRightFromSquare,
-  faBarsStaggered,
-  faBorderAll,
-  faChartLine,
-  faChartSimple,
-  faCircle,
-  faClock,
-  faCompress,
-  faDownload,
-  faFlag,
-  faFolder,
-  faImage,
-  faLayerGroup,
-  faLocationCrosshairs,
-  faMap,
-  faNoteSticky,
-  faPenToSquare,
-  faSliders,
-  faSquareCheck,
-} from '@fortawesome/free-solid-svg-icons';
-
+import menuItems from 'components/SidebarMenu/MenuItems';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -67,30 +44,6 @@ const GEOJSON: FeatureCollection = {
   ],
 };
 
-const menuItems: IMenuItem[] = [
-  {icon: faPenToSquare, description: 'Setup', title: true, active: false},
-  {icon: faBorderAll, description: 'Model grid', active: true},
-  {icon: faClock, description: 'Stress periods', active: false},
-  {icon: faLayerGroup, description: 'Model layers', active: false},
-  {icon: faFlag, description: 'Boundary conditions', active: false},
-  {icon: faLocationCrosshairs, description: 'Head observations', active: false},
-  {icon: faCompress, description: 'Solute transport', active: false},
-  {icon: faBarsStaggered, description: 'Variable density flow', active: false},
-  {icon: faSliders, description: 'PACKAGES', title: true, active: false},
-  {icon: faFolder, description: 'MODFLOW packages', active: false},
-  {icon: faCompress, description: 'MT3DMS packages', disabled: true, active: false},
-  {icon: faBarsStaggered, description: 'SEAWAT packages', disabled: true, active: false},
-  {icon: faSquareCheck, description: 'RESULTS', title: true, active: false},
-  {icon: faMap, description: 'Groundwater heads', active: false},
-  {icon: faChartSimple, description: 'Budget', active: false},
-  {icon: faCircle, description: 'Concentration', disabled: true, active: false},
-  {icon: faChartLine, description: 'Calibration statistics', active: false},
-  {icon: faArrowUpRightFromSquare, description: 'EXPORT', title: true, active: false},
-  {icon: faNoteSticky, description: 'Export model (JSON)', active: false},
-  {icon: faImage, description: 'Export model results', active: false},
-  {icon: faDownload, description: 'Download MODFLOW files', active: false},
-];
-
 const ModelSidebar = () => {
 
   const {i18n, translate} = useTranslate();
@@ -100,14 +53,11 @@ const ModelSidebar = () => {
   const location = useLocation();
   const {release} = useReleaseVersion();
   const [searchParams] = useSearchParams();
-
   const {isEmbedded, setIsEmbedded} = useIsEmbedded();
   const showHeader = !isEmbedded;
   const showFooter = !isEmbedded;
   const pageSize: IPageWidth = 'auto';
   const [headerHeight, setHeaderHeight] = useState(0);
-
-
   const [listItems, setListItems] = useState(menuItems);
 
   const handleItemClick = (index: number) => {
@@ -147,7 +97,7 @@ const ModelSidebar = () => {
 
   const SidebarContent = () => {
     switch (currentContent) {
-    case 'Model grid':
+    case 'Grid properties':
       return <ModelGeometry/>;
     case 'Model layers':
       return <ModelCreate/>;
@@ -159,7 +109,8 @@ const ModelSidebar = () => {
         alignItems: 'center',
       }}
       >
-        Coming soon</pre>;
+        Coming soon
+      </pre>;
     }
   };
 
