@@ -16,11 +16,13 @@ interface IProps {
 const Sidebar = ({children, headerHeight, open = false, maxWidth = 700, contentFullWidth = false, menuItems, handleItemClick}: IProps) => {
   const sidebarChildren = React.Children.toArray(children);
   const [isOpen, setIsOpen] = useState(open);
-
   const handleSidebarToggle = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleSidebarOpen = () => {
+    if (!isOpen) setIsOpen(true);
+  };
 
   return (
     <div
@@ -28,7 +30,10 @@ const Sidebar = ({children, headerHeight, open = false, maxWidth = 700, contentF
       style={{height: `calc(100vh - ${headerHeight}px)`}}
       className={styles.sidebarWrapper}
     >
-      {(menuItems && handleItemClick) && <SidebarMenu menuItems={menuItems} handleItemClick={handleItemClick}/>}
+      {(menuItems && handleItemClick) && <SidebarMenu
+        menuItems={menuItems} handleItemClick={handleItemClick}
+        openDataSidebar={handleSidebarOpen}
+      />}
       <div className={styles.sidebarInner}>
         {sidebarChildren.map((component, index) => {
           if (0 === index && React.isValidElement(component)) {
