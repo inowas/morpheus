@@ -108,7 +108,6 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        showCreateButton={true}
         showSidebarMenu={true}
         updateHeight={(height: number) => {
         }}
@@ -148,7 +147,8 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        showCreateButton={true}
+        hendlerTogglePopup={() => {
+        }}
         showSidebarMenu={false}
         updateHeight={(height: number) => {
         }}

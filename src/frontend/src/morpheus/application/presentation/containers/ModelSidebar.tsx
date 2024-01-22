@@ -67,7 +67,6 @@ const ModelSidebar = () => {
     setListItems(updatedListParameters);
   };
 
-
   const updateHeaderHeight = (height: number) => {
     setHeaderHeight(height);
   };
@@ -114,6 +113,7 @@ const ModelSidebar = () => {
     }
   };
 
+
   return (
     <>
       {showHeader &&
@@ -127,7 +127,6 @@ const ModelSidebar = () => {
           navigateTo={navigateTo}
           pathname={location.pathname}
           showSearchWrapper={true}
-          showCreateButton={true}
           showSidebarMenu={menuItems ? true : false}
         />}
       <Sidebar

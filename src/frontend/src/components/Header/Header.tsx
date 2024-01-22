@@ -18,7 +18,7 @@ interface IProps {
   pathname: string;
   showSidebarMenu?: boolean
   showSearchWrapper?: boolean;
-  showCreateButton?: boolean;
+  hendlerTogglePopup?: () => void;
 }
 
 const Header = ({
@@ -32,7 +32,7 @@ const Header = ({
   pathname,
   showSidebarMenu = false,
   showSearchWrapper = false,
-  showCreateButton = false,
+  hendlerTogglePopup,
 }: IProps) => {
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
   const [headerHeight, setHeaderHeight] = useState(ref.current?.clientHeight || 0);
@@ -83,7 +83,7 @@ const Header = ({
             navigateTo={navigateTo}
             pathname={pathname}
             showSearchWrapper={showSearchWrapper}
-            showCreateButton={showCreateButton}
+            hendlerTogglePopup={hendlerTogglePopup}
           />
         </ContentWrapper>
       </div>

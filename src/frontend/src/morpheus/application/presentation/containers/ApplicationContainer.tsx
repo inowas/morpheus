@@ -45,6 +45,7 @@ const ApplicationContainer = ({children}: IProps) => {
     }
   }, [language, i18n]);
 
+
   return (
     <>
       {showHeader &&
@@ -57,7 +58,7 @@ const ApplicationContainer = ({children}: IProps) => {
           navigateTo={navigateTo}
           pathname={location.pathname}
           showSearchWrapper={true}
-          showCreateButton={true}
+
         />
       }
       <ContentWrapper minHeight={'auto'} maxWidth={pageSize}>

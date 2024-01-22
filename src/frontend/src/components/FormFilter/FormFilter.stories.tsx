@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {FormFilter, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, Sidebar, SortDropdown} from 'components';
+import {FormFilter, FormModelCreate, Header, IModelCard, IPageWidth, ISortOption, Modal, ModelGrid, Sidebar, SortDropdown} from 'components';
 import '../../morpheus/morpheus.less';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../rc-slider.css';
@@ -288,6 +288,7 @@ export const FormFilterExample: StoryFn<typeof FormFilter> = () => {
 export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
   const [modelData, setModelData] = useState(models);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [openPopup, setOpenPopup] = useState(false);
 
   const updateModelData = (newData: IModelCard[]) => {
     setModelData(newData);
@@ -306,8 +307,20 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
     console.log(`Copy button clicked for ID: ${id}`);
   };
 
+  const hendlerTogglePopup = () => {
+    setOpenPopup(!openPopup);
+  };
+
   return (
     <div style={{margin: '-1rem'}}>
+      <Modal.Modal
+        onClose={() => setOpenPopup(false)}
+        onOpen={() => setOpenPopup(true)}
+        open={openPopup}
+        dimmer={'inverted'}
+      >
+        <FormModelCreate hendlerTogglePopup={hendlerTogglePopup}/>
+      </Modal.Modal>
       <Header
         maxWidth={pageSize}
         navbarItems={navbarItems2}
@@ -315,7 +328,7 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        showCreateButton={true}
+        hendlerTogglePopup={hendlerTogglePopup}
         showSidebarMenu={false}
         updateHeight={(height: number) => {
         }}

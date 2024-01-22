@@ -11,6 +11,7 @@ import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
 import FormFilter from './FormFilter';
+import FormModelCreate from './FormModelCreate';
 import Grid from './Grid';
 import NotFound from './NotFound';
 import Header from './Header';
@@ -60,6 +61,7 @@ export {
   Dropdown,
   Form,
   FormFilter,
+  FormModelCreate,
   Grid,
   Header,
   Footer,

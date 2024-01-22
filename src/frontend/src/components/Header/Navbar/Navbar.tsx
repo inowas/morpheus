@@ -18,7 +18,7 @@ interface IProps {
   pathname: string;
   showSidebarMenu?: boolean;
   showSearchWrapper?: boolean;
-  showCreateButton?: boolean;
+  hendlerTogglePopup?: () => void;
 }
 
 const Navbar = ({
@@ -29,7 +29,7 @@ const Navbar = ({
   navigateTo,
   pathname,
   showSearchWrapper = false,
-  showCreateButton = false,
+  hendlerTogglePopup,
 }: IProps) => {
 
   return (
@@ -48,7 +48,8 @@ const Navbar = ({
         pathname={pathname}
         navigateTo={navigateTo}
         showSearchWrapper={showSearchWrapper}
-        showCreateButton={showCreateButton}
+        showCreateButton={hendlerTogglePopup ? true : false}
+        hendlerTogglePopup={hendlerTogglePopup}
       />
     </div>
   );

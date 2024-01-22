@@ -13,6 +13,7 @@ interface IProps {
   navigateTo: (path: string) => void;
   showSearchWrapper?: boolean;
   showCreateButton?: boolean;
+  hendlerTogglePopup?: () => void;
 }
 
 const NavBottom: React.FC<IProps> = ({
@@ -21,6 +22,7 @@ const NavBottom: React.FC<IProps> = ({
   navigateTo,
   showSearchWrapper = false,
   showCreateButton = false,
+  hendlerTogglePopup,
 }) => {
   const {isMobile} = useIsMobile(1199);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -79,7 +81,10 @@ const NavBottom: React.FC<IProps> = ({
               })}
             </ul>
             {showCreateButton && (
-              <Button className={styles.createButton} primary={true}>
+              <Button
+                className={styles.createButton} primary={true}
+                onClick={hendlerTogglePopup}
+              >
                 Create new model
               </Button>
             )}

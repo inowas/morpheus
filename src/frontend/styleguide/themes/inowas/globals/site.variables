@@ -973,6 +973,7 @@
 @ref-color-lightWhite: #f2f2f2;
 @ref-color-middleWhite: #f8f9f9;
 @ref-color-border: #e9e9e9;
+@ref-color-borderGrey: #979797;
 @ref-color-burger: #e0e0e0;
 @ref-color-grey: #bbbbbb;
 @ref-color-greyDark: #666666;

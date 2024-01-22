@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {Footer, FormFilter, Header, IModelCard, IPageWidth, ISortOption, Sidebar} from 'components';
+import {Footer, FormFilter, FormModelCreate, Header, IModelCard, IPageWidth, ISortOption, Modal, ModelGrid, Sidebar, SortDropdown} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
-import SortDropdown from '../../../../components/SortDropdown';
-import ModelGrid from '../../../../components/ModelGrid';
+
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -265,7 +264,10 @@ const FilterSidebar = () => {
   const showHeader = !isEmbedded;
   const showFooter = !isEmbedded;
 
-  const showModelSidebar = false;
+  const [openPopup, setOpenPopup] = useState(true);
+  const [modelData, setModelData] = useState(models);
+
+
   const pageSize: IPageWidth = 'auto';
   const [headerHeight, setHeaderHeight] = useState(0);
   const updateHeaderHeight = (height: number) => {
@@ -293,9 +295,6 @@ const FilterSidebar = () => {
     },
   ];
 
-  //TODO add models
-  const [modelData, setModelData] = useState(models);
-
   const updateModelData = (newData: IModelCard[]) => {
     setModelData(newData);
   };
@@ -313,8 +312,20 @@ const FilterSidebar = () => {
     console.log(`Copy button clicked for ID: ${id}`);
   };
 
+  const hendlerTogglePopup = () => {
+    setOpenPopup(!openPopup);
+  };
+
   return (
     <>
+      <Modal.Modal
+        onClose={() => setOpenPopup(false)}
+        onOpen={() => setOpenPopup(true)}
+        open={openPopup}
+        dimmer={'inverted'}
+      >
+        <FormModelCreate hendlerTogglePopup={hendlerTogglePopup}/>
+      </Modal.Modal>
       {showHeader &&
         <Header
           maxWidth={pageSize}
@@ -326,7 +337,7 @@ const FilterSidebar = () => {
           navigateTo={navigateTo}
           pathname={location.pathname}
           showSearchWrapper={true}
-          showCreateButton={true}
+          hendlerTogglePopup={hendlerTogglePopup}
         />}
       <Sidebar
         headerHeight={headerHeight} open={true}
