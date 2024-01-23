@@ -18,15 +18,17 @@ def get_database_client(db_name: str, create_if_not_exist: bool = False) -> Data
     return client[db_name]
 
 
-def create_or_get_collection(db: Database, collection_name: str) -> Collection:
+def create_or_get_collection(db: Database, collection_name: str, on_create_callback = None) -> Collection:
     if collection_name in db.list_collection_names():
         return db.get_collection(collection_name)
 
-    return db.create_collection(collection_name)
+    collection = db.create_collection(collection_name)
+    if callable(on_create_callback):
+        on_create_callback(collection)
+
+    return collection
 
 
 class RepositoryBase:
-    collection: Collection
-
     def __init__(self, collection: Collection):
         self.collection = collection

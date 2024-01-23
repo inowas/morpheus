@@ -22,12 +22,16 @@ class DateTime:
         return self.value >= other.value
 
     @classmethod
+    def now(cls):
+        return cls(value=datetime.now())
+
+    @classmethod
     def from_datetime(cls, value: datetime):
         return cls(value=value.replace(tzinfo=None))
 
     @classmethod
     def from_str(cls, value: str):
-        return cls(value=datetime.fromisoformat(value).replace(tzinfo=None))
+        return cls(value=datetime.fromisoformat(value))
 
     @classmethod
     def from_value(cls, value: str):
@@ -41,3 +45,6 @@ class DateTime:
 
     def to_value(self) -> str:
         return self.to_str()
+
+    def to_iso_with_timezone(self) -> str:
+        return self.value.astimezone().isoformat()
