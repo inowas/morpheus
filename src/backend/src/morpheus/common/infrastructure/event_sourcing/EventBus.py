@@ -1,4 +1,4 @@
-from morpheus.common.infrastructure.event_sourcing import EventPublisher
+from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventPublisher
 from morpheus.common.infrastructure.event_sourcing.EventStore import EventStore
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 

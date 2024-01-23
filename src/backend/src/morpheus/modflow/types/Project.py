@@ -30,6 +30,25 @@ class Project:
             settings=Settings.new(user_id=user_id)
         )
 
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(
+            project_id=ProjectId.from_value(obj['project_id']),
+            base_model=ModflowModel.from_dict(obj['base_model']) if obj['base_model'] is not None else None,
+            calculation_profile=CalculationProfile.from_dict(obj['calculation_profile']),
+            scenarios=ScenarioCollection.from_dict(obj['scenarios']),
+            settings=Settings.from_dict(obj['settings'])
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'project_id': self.project_id.to_value(),
+            'base_model': self.base_model.to_dict() if self.base_model is not None else None,
+            'calculation_profile': self.calculation_profile.to_dict(),
+            'scenarios': self.scenarios.to_dict(),
+            'settings': self.settings.to_dict()
+        }
+
     def with_updated_base_model(self, base_model: ModflowModel):
         return dataclasses.replace(self, base_model=base_model)
 

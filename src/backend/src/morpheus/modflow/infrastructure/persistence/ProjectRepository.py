@@ -11,7 +11,6 @@ from .ScenariosRepository import scenarios_repository
 
 
 class ProjectRepository:
-    @staticmethod
     def get_project(self, project_id: ProjectId) -> Project:
         base_model = base_model_repository.get_base_model(project_id)
 

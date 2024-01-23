@@ -115,65 +115,73 @@ class MemberCollection:
     members: dict[UserId, Role]
 
     @classmethod
-    def new(cls, user_id: UserId):
+    def new(cls, user_id: UserId) -> 'MemberCollection':
         return cls(
             members={user_id: Role.OWNER}
         )
 
     @classmethod
-    def from_dict(cls, obj: dict):
+    def from_dict(cls, obj: dict) -> 'MemberCollection':
         return cls(
             members={UserId.from_value(user_id): Role.from_str(role) for user_id, role in obj.items()}
         )
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             user_id.to_value(): role.value for user_id, role in self.members.items()
         }
 
-    def with_added_member(self, user_id: UserId, role: Role):
+    def with_added_member(self, user_id: UserId, role: Role) -> 'MemberCollection':
         return dataclasses.replace(self, members={**self.members, user_id: role})
 
-    def with_updated_member(self, user_id: UserId, role: Role):
+    def with_updated_member(self, user_id: UserId, role: Role) -> 'MemberCollection':
         return dataclasses.replace(self, members={**self.members, user_id: role})
 
-    def with_removed_member(self, user_id: UserId):
+    def with_removed_member(self, user_id: UserId) -> 'MemberCollection':
         members = self.members.copy()
         del members[user_id]
         return dataclasses.replace(self, members=members)
 
-    def get_member(self, user_id: UserId):
+    def get_member_role(self, user_id: UserId) -> Role:
+        if user_id not in self.members:
+            raise ValueError(f'User {user_id} is not a member of this project')
         return self.members[user_id]
 
-    def get_members(self):
+    def get_members(self) -> dict[UserId, Role]:
         return self.members
 
-    def has_member(self, user_id: UserId):
+    def has_member(self, user_id: UserId) -> bool:
         return user_id in self.members
 
-    def member_is_owner(self, user_id: UserId):
+    def member_is_owner(self, user_id: UserId) -> bool:
         return self.members[user_id] == Role.OWNER
 
-    def member_is_admin(self, user_id: UserId):
+    def member_is_admin(self, user_id: UserId) -> bool:
         return self.members[user_id] == Role.ADMIN
 
-    def member_is_editor(self, user_id: UserId):
+    def member_is_editor(self, user_id: UserId) -> bool:
         return self.members[user_id] == Role.EDITOR
 
-    def member_is_viewer(self, user_id: UserId):
+    def member_is_viewer(self, user_id: UserId) -> bool:
         return self.members[user_id] == Role.VIEWER
 
-    def member_is_admin_or_owner(self, user_id: UserId):
+    def member_is_admin_or_owner(self, user_id: UserId) -> bool:
         return self.member_is_admin(user_id) or self.member_is_owner(user_id)
 
-    def member_can_edit_members_and_permissions(self, user_id: UserId):
+    def member_can_edit_members_and_permissions(self, user_id: UserId) -> bool:
         return self.member_is_admin_or_owner(user_id)
 
-    def member_can_edit_metadata(self, user_id: UserId):
+    def member_can_edit_metadata(self, user_id: UserId) -> bool:
         return self.member_is_admin_or_owner(user_id)
 
-    def member_can_edit_visibility(self, user_id: UserId):
+    def member_can_edit_visibility(self, user_id: UserId) -> bool:
         return self.member_is_admin_or_owner(user_id)
+
+    def get_owner_id(self) -> UserId:
+        for user_id, role in self.members.items():
+            if role == Role.OWNER:
+                return user_id
+        raise ValueError('No owner found')
 
 
 @dataclasses.dataclass

@@ -18,7 +18,7 @@ def get_database_client(db_name: str, create_if_not_exist: bool = False) -> Data
     return client[db_name]
 
 
-def create_or_get_collection(db: Database, collection_name: str, on_create_callback = None) -> Collection:
+def create_or_get_collection(db: Database, collection_name: str, on_create_callback=None) -> Collection:
     if collection_name in db.list_collection_names():
         return db.get_collection(collection_name)
 
