@@ -1,13 +1,17 @@
 import dataclasses
 from enum import StrEnum
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, Bool
 from morpheus.modflow.types.calculation.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import \
     Mf2005CalculationEngineSettings
 
 
-class CalculationType(StrEnum):
+class IsSelected(Bool):
+    pass
+
+
+class CalculationEngineType(StrEnum):
     MF2005 = 'mf2005'
     MF6 = 'mf6'
     MT3DMS = 'mt3dms'
@@ -19,81 +23,102 @@ class CalculationProfileId(Uuid):
 
 @dataclasses.dataclass(frozen=True)
 class CalculationProfile:
-    calculation_profile_id: CalculationProfileId
-    calculation_engine_type: CalculationType
-    calculation_engine_settings: CalculationEngineSettingsBase
+    profile_id: CalculationProfileId
+    engine_type: CalculationEngineType
+    engine_settings: CalculationEngineSettingsBase
+    is_selected: IsSelected
 
     @classmethod
-    def new(cls, engine_type: CalculationType):
-        if engine_type == CalculationType.MF2005:
+    def new(cls, engine_type: CalculationEngineType):
+        if engine_type == CalculationEngineType.MF2005:
             return cls(
-                calculation_profile_id=CalculationProfileId.new(),
-                calculation_engine_type=engine_type,
-                calculation_engine_settings=Mf2005CalculationEngineSettings.default()
+                profile_id=CalculationProfileId.new(),
+                engine_type=engine_type,
+                engine_settings=Mf2005CalculationEngineSettings.default(),
+                is_selected=IsSelected.yes()
             )
 
         raise NotImplementedError
 
     @classmethod
-    def from_dict(cls, obj: dict):
-        calculation_engine_type = CalculationType(obj['calculation_engine_type'])
-        if calculation_engine_type == CalculationType.MF2005:
+    def from_dict(cls, obj):
+        engine_type = CalculationEngineType(obj['engine_type'])
+        if engine_type == CalculationEngineType.MF2005:
             return cls(
-                calculation_profile_id=CalculationProfileId.from_value(obj['calculation_profile_id']),
-                calculation_engine_type=calculation_engine_type,
-                calculation_engine_settings=Mf2005CalculationEngineSettings.from_dict(
-                    obj['calculation_engine_settings'])
+                profile_id=CalculationProfileId.from_value(obj['profile_id']),
+                engine_type=engine_type,
+                engine_settings=Mf2005CalculationEngineSettings.from_dict(obj['engine_settings']),
+                is_selected=IsSelected.from_value(obj['is_selected'])
             )
 
         raise NotImplementedError
 
     def to_dict(self) -> dict:
         return {
-            'calculation_profile_id': self.calculation_profile_id.value,
-            'calculation_engine_type': self.calculation_engine_type.value,
-            'calculation_engine_settings': self.calculation_engine_settings.to_dict()
+            'profile_id': self.profile_id.value,
+            'engine_type': self.engine_type.value,
+            'engine_settings': self.engine_settings.to_dict(),
+            'is_selected': self.is_selected.to_value()
         }
 
+    def with_updated_is_selected(self, is_selected: IsSelected) -> 'CalculationProfile':
+        return dataclasses.replace(self, is_selected=is_selected)
 
-@dataclasses.dataclass
-class CalculationProfiles:
-    selected_calculation_type: CalculationType
-    values: dict[CalculationType, CalculationProfile]
+
+@dataclasses.dataclass(frozen=True)
+class CalculationProfileCollection:
+    profiles: list[CalculationProfile]
 
     @classmethod
     def new(cls):
-        return cls(
-            selected_calculation_type=CalculationType.MF2005,
-            values={
-                CalculationType.MF2005: CalculationProfile.new(CalculationType.MF2005)
-            },
-        )
+        return cls(profiles=[
+            CalculationProfile.new(CalculationEngineType.MF2005)
+        ])
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls(
-            selected_calculation_type=CalculationType(obj['selected_calculation_type']),
-            values={CalculationType(key): CalculationProfile.from_dict(value) for key, value in obj.items()}
-        )
+        return cls(profiles=[CalculationProfile.from_dict(profile) for profile in obj['profiles']])
 
     def to_dict(self) -> dict:
         return {
-            'selected_calculation_type': self.selected_calculation_type.value,
-            **{key.value: value.to_dict() for key, value in self.values.items()}
+            'profiles': [profile.to_dict() for profile in self.profiles]
         }
 
-    def get_selected_calculation_profile(self) -> CalculationProfile:
-        return self.values[self.selected_calculation_type]
+    def has_profile(self, profile_id: CalculationProfileId) -> bool:
+        for profile in self.profiles:
+            if profile.profile_id == profile_id:
+                return True
 
-    def set_selected_calculation_type(self, calculation_type: CalculationType):
-        return dataclasses.replace(self, selected_calculation_type=calculation_type)
+        return False
 
-    def update_calculation_profile(self, calculation_profile: CalculationProfile):
-        self.values[calculation_profile.calculation_engine_type] = calculation_profile
-        return dataclasses.replace(self, values=self.values)
+    def get_selected_profile(self) -> CalculationProfile:
+        for profile in self.profiles:
+            if profile.is_selected:
+                return profile
 
-    def get_calculation_profile(self, calculation_type: CalculationType) -> CalculationProfile:
-        if calculation_type not in self.values:
-            self.values[calculation_type] = CalculationProfile.new(calculation_type)
+        raise Exception('No selected profile found')
 
-        return self.values[calculation_type]
+    def with_selected_profile(self, profile_id: CalculationProfileId) -> 'CalculationProfileCollection':
+        profiles = []
+        for profile in self.profiles:
+            if profile.profile_id == profile_id:
+                profiles.append(profile.with_updated_is_selected(IsSelected.yes()))
+                continue
+
+            profiles.append(profile.with_updated_is_selected(IsSelected.no()))
+
+        return dataclasses.replace(self, profiles=profiles)
+
+    def with_updated_profile(self, profile: CalculationProfile) -> 'CalculationProfileCollection':
+        profiles = []
+        for p in self.profiles:
+            if p.profile_id == profile.profile_id:
+                profiles.append(profile)
+                continue
+
+            profiles.append(p)
+
+        return dataclasses.replace(self, profiles=profiles)
+
+    def with_added_profile(self, profile: CalculationProfile) -> 'CalculationProfileCollection':
+        return dataclasses.replace(self, profiles=self.profiles + [profile])
