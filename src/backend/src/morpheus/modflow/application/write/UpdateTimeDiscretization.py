@@ -3,6 +3,7 @@ import dataclasses
 from ...infrastructure.persistence.BaseModelRepository import base_model_repository
 from morpheus.modflow.types.discretization.time.TimeDiscretization import TimeDiscretization, \
     StressPeriodCollection, TimeUnit, EndDateTime, StartDateTime
+from ...infrastructure.persistence.ProjectRepository import ProjectRepository
 
 from ...types.Project import ProjectId
 
@@ -14,11 +15,6 @@ class UpdateTimeDiscretizationCommand:
     end_date_time: EndDateTime
     stress_periods: StressPeriodCollection
     time_unit: TimeUnit
-
-
-@dataclasses.dataclass
-class UpdateTimeDiscretizationCommandResult:
-    pass
 
 
 class UpdateTimeDiscretizationCommandHandler:
@@ -42,5 +38,10 @@ class UpdateTimeDiscretizationCommandHandler:
             time_unit=time_unit
         )
 
-        base_model_repository.update_base_model_time_discretization(project_id, time_discretization)
-        return UpdateTimeDiscretizationCommandResult()
+        project_repository = ProjectRepository()
+        base_model = project_repository.get_base_model(project_id)
+        if base_model is None:
+            raise Exception(f'Could not find base model for project with id {project_id.to_str()}')
+
+        base_model = base_model.with_updated_time_discretization(time_discretization)
+        project_repository.update_base_model(project_id=project_id, base_model=base_model)

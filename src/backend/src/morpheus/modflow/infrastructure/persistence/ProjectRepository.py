@@ -1,62 +1,71 @@
-from morpheus.modflow.types.Settings import Metadata
-from morpheus.modflow.types.Project import Project, ProjectId
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, \
-    create_or_get_collection
-from morpheus.settings import settings as app_settings
+from ...types.calculation.CalculationProfile import CalculationProfileCollection, CalculationProfile
+from ...types.ModflowModel import ModflowModel
+from ...types.Project import Project, ProjectId
+from ...types.Scenarios import ScenarioCollection
+from ...types.Settings import Settings, Metadata
+
 from .BaseModelRepository import base_model_repository
-from ...types.Settings import Settings
+from .CalculationProfilesRepository import calculation_profiles_repository
+from .SettingsRepository import settings_repository
+from .ScenariosRepository import scenarios_repository
 
 
-class ProjectRepository(RepositoryBase):
-    def get_project_list(self) -> list[Project]:
-        projects = self.collection.find({}, {'_id': 0, 'project_id': 1, 'permissions': 1, 'metadata': 1})
-        return [Project.from_dict(project) for project in projects]
-
+class ProjectRepository:
+    @staticmethod
     def get_project(self, project_id: ProjectId) -> Project:
-        project = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
-        if project is None:
-            raise Exception('Project does not exist')
-
-        project = Project.from_dict(project)
-
         base_model = base_model_repository.get_base_model(project_id)
-        if base_model is not None:
-            project = project.with_updated_base_model(base_model)
 
-        return project
+        selected_profile = calculation_profiles_repository.get_selected_profile(project_id)
+        settings = settings_repository.get_settings(project_id)
+        scenarios = scenarios_repository.get_scenarios(project_id)
 
-    def save_project(self, project: Project):
-        self.collection.insert_one(project.to_dict())
+        return Project(
+            project_id=project_id,
+            base_model=base_model,
+            calculation_profile=selected_profile,
+            settings=settings,
+            scenarios=scenarios
+        )
 
-    def has_project(self, project_id: ProjectId) -> bool:
-        return self.collection.find_one({'project_id': project_id.to_str()}) is not None
+    def get_projects_metadata(self) -> dict[ProjectId, Metadata]:
+        return settings_repository.get_projects_metadata()
 
-    def update_project(self, project: Project):
-        if not self.has_project(project.project_id):
-            raise Exception('Project does not exist')
-        self.collection.replace_one({'project_id': project.project_id.to_str()}, project.to_dict())
+    def save_project(self, project: Project) -> None:
+        if isinstance(project.base_model, ModflowModel):
+            base_model_repository.save_or_update_base_model(project_id=project.project_id, base_model=project.base_model)
+        calculation_profiles_repository.save_or_update_selected_profile(project.project_id, project.calculation_profile)
+        settings_repository.save_or_update_settings(project.project_id, project.settings)
+        scenarios_repository.save_or_update_scenarios(project.project_id, project.scenarios)
 
-    def get_project_settings(self, project_id: ProjectId) -> Settings:
-        project = self.collection.find_one({'project_id': project_id.to_str()}, {'settings': 1})
-        if project is None:
-            raise Exception('Project does not exist')
+    def get_base_model(self, project_id: ProjectId) -> ModflowModel | None:
+        return base_model_repository.get_base_model(project_id)
 
-        return Settings.from_dict(project['settings'])
+    def update_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
+        base_model_repository.update_base_model(project_id, base_model)
 
-    def update_project_settings(self, project_id: ProjectId, settings: Settings) -> None:
-        if not self.has_project(project_id):
-            raise Exception('Project does not exist')
+    def get_settings(self, project_id: ProjectId) -> Settings:
+        return settings_repository.get_settings(project_id)
 
-        self.collection.update_one({'project_id': project_id.to_str()}, {'$set': {'settings': settings.to_dict()}})
+    def update_settings(self, project_id: ProjectId, settings: Settings) -> None:
+        settings_repository.update_settings(project_id, settings)
 
-    def get_project_metadata(self, project_id: ProjectId) -> Metadata:
-        project_settings = self.get_project_settings(project_id)
-        return project_settings.metadata
+    def get_metadata(self, project_id: ProjectId) -> Metadata:
+        return settings_repository.get_metadata(project_id)
 
+    def update_metadata(self, project_id: ProjectId, metadata: Metadata) -> None:
+        settings_repository.update_metadata(project_id, metadata)
 
-project_repository = ProjectRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'projects'
-    )
-)
+    def get_calculation_profiles(self, project_id: ProjectId) -> CalculationProfileCollection:
+        return calculation_profiles_repository.get_profiles(project_id)
+
+    def get_selected_calculation_profile(self, project_id: ProjectId) -> CalculationProfile:
+        return calculation_profiles_repository.get_selected_profile(project_id)
+
+    def update_selected_calculation_profile(self, project_id: ProjectId, calculation_profile: CalculationProfile) -> None:
+        calculation_profiles_repository.save_or_update_selected_profile(project_id=project_id, profile=calculation_profile)
+
+    def get_scenarios(self, project_id: ProjectId) -> ScenarioCollection:
+        return scenarios_repository.get_scenarios(project_id)
+
+    def update_scenarios(self, project_id: ProjectId, scenarios: ScenarioCollection) -> None:
+        scenarios_repository.update_scenarios(project_id, scenarios)

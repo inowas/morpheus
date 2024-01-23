@@ -1,7 +1,7 @@
 import dataclasses
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
-from ...infrastructure.persistence.ProjectRepository import project_repository
+from ...infrastructure.persistence.ProjectRepository import ProjectRepository
 from ...types.Project import ProjectId
 from ...types.Settings import Settings, Role, Name, Description, Tags, Metadata, Visibility
 from ...types.User import UserId
@@ -21,7 +21,9 @@ class AddMemberCommandHandler:
         new_member_id = command.new_member_id
         current_user_id = command.current_user_id
 
-        settings = project_repository.get_project_settings(project_id)
+        project_repository = ProjectRepository()
+
+        settings = project_repository.get_settings(project_id)
         if not isinstance(settings, Settings):
             raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
 
@@ -32,7 +34,7 @@ class AddMemberCommandHandler:
             return
 
         settings = settings.with_updated_members(settings.members.with_added_member(user_id=new_member_id, role=Role.VIEWER))
-        project_repository.update_project_settings(project_id=project_id, settings=settings)
+        project_repository.update_settings(project_id=project_id, settings=settings)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -51,7 +53,9 @@ class UpdateMemberCommandHandler:
         role = command.role
         current_user_id = command.current_user_id
 
-        settings = project_repository.get_project_settings(project_id)
+        project_repository = ProjectRepository()
+
+        settings = project_repository.get_settings(project_id)
         if not isinstance(settings, Settings):
             raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
 
@@ -62,7 +66,7 @@ class UpdateMemberCommandHandler:
             return
 
         settings = settings.with_updated_members(settings.members.with_updated_member(user_id=member_id, role=role))
-        project_repository.update_project_settings(project_id=project_id, settings=settings)
+        project_repository.update_settings(project_id=project_id, settings=settings)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -79,7 +83,9 @@ class RemoveMemberCommandHandler:
         member_id = command.member_id
         current_user_id = command.current_user_id
 
-        settings = project_repository.get_project_settings(project_id)
+        project_repository = ProjectRepository()
+
+        settings = project_repository.get_settings(project_id)
         if not isinstance(settings, Settings):
             raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
 
@@ -90,7 +96,7 @@ class RemoveMemberCommandHandler:
             return
 
         settings = settings.with_updated_members(settings.members.with_removed_member(user_id=member_id))
-        project_repository.update_project_settings(project_id=project_id, settings=settings)
+        project_repository.update_settings(project_id=project_id, settings=settings)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -105,7 +111,9 @@ class UpdateVisibilityCommandHandler:
     def handle(command: UpdateVisibilityCommand):
         project_id = command.project_id
 
-        settings = project_repository.get_project_settings(project_id)
+        project_repository = ProjectRepository()
+
+        settings = project_repository.get_settings(project_id)
 
         if not isinstance(settings, Settings):
             raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
@@ -115,7 +123,7 @@ class UpdateVisibilityCommandHandler:
                 f'User {command.current_user_id.to_str()} does not have permission to update visibility of project {project_id.to_str()}')
 
         settings = settings.with_updated_visibility(command.visibility)
-        project_repository.update_project_settings(project_id=project_id, settings=settings)
+        project_repository.update_settings(project_id=project_id, settings=settings)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -131,7 +139,10 @@ class UpdateMetadataCommandHandler:
     @staticmethod
     def handle(command: UpdateMetadataCommand) -> None:
         project_id = command.project_id
-        settings = project_repository.get_project_settings(project_id)
+
+        project_repository = ProjectRepository()
+
+        settings = project_repository.get_settings(project_id)
 
         if not isinstance(settings, Settings):
             raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
@@ -149,4 +160,4 @@ class UpdateMetadataCommandHandler:
         metadata = metadata.with_updated_tags(command.tags) if command.tags is not None else metadata
 
         settings = settings.with_updated_metadata(metadata)
-        project_repository.update_project_settings(project_id=project_id, settings=settings)
+        project_repository.update_settings(project_id=project_id, settings=settings)

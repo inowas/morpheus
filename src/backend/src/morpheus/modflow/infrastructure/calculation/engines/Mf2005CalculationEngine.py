@@ -17,7 +17,7 @@ from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.H
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import \
     create_lak_package
 from morpheus.modflow.types.calculation.Calculation import CalculationLog
-from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationType
+from morpheus.modflow.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.modflow.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import \
@@ -65,10 +65,10 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     def run(self, modflow_model: ModflowModel, calculation_profile: CalculationProfile) -> Tuple[
         CalculationLog, CalculationResult
     ]:
-        if calculation_profile.calculation_engine_type != CalculationType.MF2005:
+        if calculation_profile.engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
-        calculation_engine_settings = calculation_profile.calculation_engine_settings
+        calculation_engine_settings = calculation_profile.engine_settings
         if not isinstance(calculation_engine_settings, Mf2005CalculationEngineSettings):
             raise Exception('Calculation profile is not for Mf2005')
 

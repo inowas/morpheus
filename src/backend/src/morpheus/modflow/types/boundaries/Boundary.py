@@ -185,17 +185,35 @@ class BoundaryCollection:
     def as_geojson(self):
         return GeometryCollection(geometries=[boundary.geometry for boundary in self.boundaries]).as_geojson()
 
+    def has_boundary(self, boundary_id: BoundaryId):
+        return any(boundary.boundary_id == boundary_id for boundary in self.boundaries)
+
     def add_boundary(self, boundary: Boundary):
         boundaries = list(self.boundaries)
         boundaries.append(boundary)
         self.boundaries = boundaries
 
+    def with_added_boundary(self, boundary: Boundary):
+        boundaries = list(self.boundaries)
+        boundaries.append(boundary)
+        return dataclasses.replace(self, boundaries=boundaries)
+
     def update_boundary(self, update: Boundary):
-        self.boundaries = [boundary if boundary.boundary_id != update.boundary_id else update for boundary in
-                           self.boundaries]
+        self.boundaries = [boundary if boundary.boundary_id != update.boundary_id else update for boundary in self.boundaries]
+
+    def with_updated_boundary(self, update: Boundary):
+        return dataclasses.replace(self, boundaries=[boundary if boundary.boundary_id != update.boundary_id else update for boundary in self.boundaries])
+
+    def with_added_or_updated_boundary(self, update: Boundary):
+        if update.boundary_id in self.boundaries:
+            return self.with_updated_boundary(update)
+        return self.with_added_boundary(update)
 
     def remove_boundary(self, boundary_id: BoundaryId):
         self.boundaries = [boundary for boundary in self.boundaries if boundary.boundary_id != boundary_id]
+
+    def with_removed_boundary(self, boundary_id: BoundaryId):
+        return dataclasses.replace(self, boundaries=[boundary for boundary in self.boundaries if boundary.boundary_id != boundary_id])
 
     @classmethod
     def from_dict(cls, collection: Sequence[dict]):

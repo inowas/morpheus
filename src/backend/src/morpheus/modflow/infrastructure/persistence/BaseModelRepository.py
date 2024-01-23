@@ -33,6 +33,12 @@ class BaseModelRepository(RepositoryBase):
             'base_model': base_model.to_dict()
         })
 
+    def save_or_update_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
+        if self.has_base_model(project_id):
+            self.update_base_model(project_id, base_model)
+        else:
+            self.save_base_model(project_id, base_model)
+
     def get_base_model_time_discretization(self, project_id: ProjectId) -> TimeDiscretization | None:
         result = self.collection.find_one(
             {'project_id': project_id.to_str()},
