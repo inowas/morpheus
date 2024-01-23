@@ -14,7 +14,7 @@ class EventStoreRepositoryBase:
 
 
 class EventStore:
-    def __init__(self,event_store_repository: EventStoreRepositoryBase):
+    def __init__(self, event_store_repository: EventStoreRepositoryBase):
         self.event_store_repository = event_store_repository
 
     def store(self, event_envelope: EventEnvelope):

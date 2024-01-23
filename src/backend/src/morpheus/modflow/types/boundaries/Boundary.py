@@ -229,11 +229,9 @@ class BoundaryCollection:
 
 class ConstantHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.constant_head()
-    geometry: LineString
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
+    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId], observations: list[Observation] | None = None):
         if not isinstance(geometry, LineString):
             raise ValueError('Constant head boundaries must be lines')
 
@@ -268,7 +266,6 @@ class ConstantHeadBoundary(Boundary):
 
 class DrainBoundary(Boundary):
     type: BoundaryType = BoundaryType.drain()
-    geometry: LineString
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
@@ -307,7 +304,6 @@ class DrainBoundary(Boundary):
 
 class EvapotranspirationBoundary(Boundary):
     type: BoundaryType = BoundaryType.evapotranspiration()
-    geometry: Polygon
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
@@ -341,7 +337,6 @@ class EvapotranspirationBoundary(Boundary):
 
 class FlowAndHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.flow_and_head()
-    geometry: LineString
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
@@ -377,7 +372,7 @@ class FlowAndHeadBoundary(Boundary):
             enabled=obj['enabled']
         )
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem]:
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem | None]:
         raise NotImplementedError()
 
     def get_head_data(self, start_date_time: StartDateTime):
@@ -412,7 +407,6 @@ class FlowAndHeadBoundary(Boundary):
 
 class GeneralHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.general_head()
-    geometry: LineString
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
@@ -451,7 +445,6 @@ class GeneralHeadBoundary(Boundary):
 
 class LakeBoundary(Boundary):
     type: BoundaryType = BoundaryType.lake()
-    geometry: Polygon
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
@@ -499,7 +492,6 @@ class LakeBoundary(Boundary):
 
 class RechargeBoundary(Boundary):
     type: BoundaryType = BoundaryType.recharge()
-    geometry: Polygon
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
@@ -533,7 +525,6 @@ class RechargeBoundary(Boundary):
 
 class RiverBoundary(Boundary):
     type: BoundaryType = BoundaryType.river()
-    geometry: LineString
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
@@ -572,7 +563,6 @@ class RiverBoundary(Boundary):
 
 class WellBoundary(Boundary):
     type: BoundaryType = BoundaryType.well()
-    geometry: Point
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Point, grid: Grid, affected_layers: list[LayerId],

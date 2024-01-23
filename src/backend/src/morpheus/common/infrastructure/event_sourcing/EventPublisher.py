@@ -1,23 +1,22 @@
 import inspect
-from typing import Literal
 
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.common.types.event_sourcing.EventName import EventName
-
 
 ListenToEventAttribute = 'listen_to_event'
 
+
 def listen_to(event):
-  def listener_listening_to(listener):
-    setattr(listener, ListenToEventAttribute, event.__name__)
-    return listener
-  return listener_listening_to
+    def listener_listening_to(listener):
+        setattr(listener, ListenToEventAttribute, event.__name__)
+        return listener
+
+    return listener_listening_to
 
 
 class EventListenerBase:
-    def subscribeToTransaction(self, transaction):
+    def subscribe_to_transaction(self, transaction):
         raise NotImplementedError()
 
 
@@ -39,9 +38,9 @@ class EventPublisher:
             event_arg_type = arg_spec.annotations.get('event')
             metadata_arg_type = arg_spec.annotations.get('metadata')
 
-            if 'event' not in arg_spec.args or not issubclass(event_arg_type, EventBase):
+            if 'event' not in arg_spec.args or event_arg_type is None or not issubclass(event_arg_type, EventBase):
                 raise Exception(f'Event listener {listener} must have an argument called "event" that should by type hinted with a subclass of {EventBase.__name__}')
-            if 'metadata' not in arg_spec.args or not issubclass(metadata_arg_type, EventMetadata):
+            if 'metadata' not in arg_spec.args or metadata_arg_type is None or not issubclass(metadata_arg_type, EventMetadata):
                 raise Exception(f'Event listener {listener} must have an argument called "metadata" that should by type hinted with a subclass of {EventMetadata.__name__}')
 
             if event_class not in self.listeners:

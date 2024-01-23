@@ -9,7 +9,10 @@ import numpy as np
 class LayerId:
     value: str
 
-    def __eq__(self, other: 'LayerId'):
+    def __eq__(self, other):
+        if not isinstance(other, LayerId):
+            return False
+
         return self.value == other.value
 
     @classmethod

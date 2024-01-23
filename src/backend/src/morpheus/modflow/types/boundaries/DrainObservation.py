@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .Observation import ObservationId, Observation
+from .Observation import ObservationId, Observation, DataItem
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -18,7 +18,7 @@ class Conductance(Float):
 
 
 @dataclasses.dataclass
-class DrainDataItem:
+class DrainDataItem(DataItem):
     observation_id: ObservationId
     start_date_time: StartDateTime
     end_date_time: EndDateTime
