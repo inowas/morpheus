@@ -30,7 +30,7 @@ const timeUnitOptions = [
   {key: '6', text: 'Second', value: 'Second'},
 ];
 
-const ModelCreate: React.FC = () => {
+const ModelTest: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
 
@@ -138,4 +138,4 @@ const ModelCreate: React.FC = () => {
   );
 };
 
-export default ModelCreate;
+export default ModelTest;

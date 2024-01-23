@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {FormModelCreate} from 'components/index';
+import {ModelsCreate} from 'components/index';
 import React from 'react';
 
 export default {
@@ -8,15 +8,15 @@ export default {
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
   * to learn how to generate automatic titles
   */
-  title: 'FormModelCreate',
-  component: FormModelCreate,
-} as Meta<typeof FormModelCreate>;
+  title: 'ModelCreate',
+  component: ModelsCreate,
+} as Meta<typeof ModelsCreate>;
 
 
-export const FormModelCreateExample: StoryFn<typeof FormModelCreate> = () => (
+export const ModelCreateExample: StoryFn<typeof ModelsCreate> = () => (
 
   <div style={{padding: 100}}>
-    <FormModelCreate/>
+    <ModelsCreate/>
   </div>
 
 );

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, IPageWidth, ModelCard, ModelGrid, SliderSwiper, SortDropdown} from 'components';
+import {ContentWrapper, Header, IPageWidth, Modal, ModelCard, ModelGrid, ModelsCreate, SliderSwiper, SortDropdown} from 'components';
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
 
@@ -293,9 +293,22 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
     // Handle copy functionality here
     console.log(`Copy button clicked for ID: ${id}`);
   };
+  const [openPopup, setOpenPopup] = useState(false);
+
+  const hendlerTogglePopup = () => {
+    setOpenPopup(!openPopup);
+  };
 
   return (
     <div style={{margin: '-1rem'}}>
+      <Modal.Modal
+        onClose={() => setOpenPopup(false)}
+        onOpen={() => setOpenPopup(true)}
+        open={openPopup}
+        dimmer={'inverted'}
+      >
+        <ModelsCreate hendlerTogglePopup={hendlerTogglePopup}/>
+      </Modal.Modal>
       <Header
         maxWidth={pageSize}
         navbarItems={navbarItems2}
@@ -303,7 +316,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        showCreateButton={true}
+        hendlerTogglePopup={hendlerTogglePopup}
         updateHeight={(height: number) => {
         }}
       />

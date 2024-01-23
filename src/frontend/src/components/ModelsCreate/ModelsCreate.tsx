@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {Button, Dropdown, Form, TextArea} from 'semantic-ui-react';
-import styles from './FormModelCreate.module.less';
-import SVGComponent from './images/SVGComponent.jsx';
+import styles from './ModelsCreate.module.less';
+import Images from './Images';
+import ImageRandom from 'components/ImageRandom';
 
 const options = [
   {key: '1', text: 'React', value: 'React'},
@@ -15,7 +16,7 @@ interface IProps {
   hendlerTogglePopup?: () => void;
 }
 
-const FormModelCreate = ({hendlerTogglePopup}: IProps) => {
+const ModelsCreate = ({hendlerTogglePopup}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
@@ -61,9 +62,9 @@ const FormModelCreate = ({hendlerTogglePopup}: IProps) => {
 
 
   return (
-    <div className={`${styles.container}`} data-testid="formModelCreate-container">
+    <div className={`${styles.container}`} data-testid="ModelCreate-container">
       <div className={styles.image}>
-        <SVGComponent/>
+        <ImageRandom images={Images}/>
       </div>
       <div className={styles.form}>
         <h1 className={styles.title}>
@@ -113,4 +114,4 @@ const FormModelCreate = ({hendlerTogglePopup}: IProps) => {
   );
 };
 
-export default FormModelCreate;
+export default ModelsCreate;

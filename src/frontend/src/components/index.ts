@@ -11,7 +11,7 @@ import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
 import FormFilter from './FormFilter';
-import FormModelCreate from './FormModelCreate';
+import ModelsCreate from './ModelsCreate';
 import Grid from './Grid';
 import NotFound from './NotFound';
 import Header from './Header';
@@ -20,6 +20,7 @@ import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
+import ImageRandom from './ImageRandom/ImageRandom';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -28,7 +29,7 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
-import {ModelCreate, ModelGeometry} from './Models';
+import {ModelGeometry, ModelTest} from './Models';
 import ModelCard, {IModelCard} from './ModelCard';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -61,7 +62,6 @@ export {
   Dropdown,
   Form,
   FormFilter,
-  FormModelCreate,
   Grid,
   Header,
   Footer,
@@ -70,6 +70,7 @@ export {
   IconButton,
   Input,
   Image,
+  ImageRandom,
   Label,
   Loader,
   LoaderAnimation,
@@ -78,8 +79,9 @@ export {
   Modal,
   ModelGrid,
   ModelGeometry,
-  ModelCreate,
+  ModelTest,
   ModelCard,
+  ModelsCreate,
   NotFound,
   Notification,
   Notifications,

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {Footer, FormFilter, FormModelCreate, Header, IModelCard, IPageWidth, ISortOption, Modal, ModelGrid, Sidebar, SortDropdown} from 'components';
+import {Footer, FormFilter, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, Sidebar, SortDropdown} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 
@@ -264,7 +264,6 @@ const FilterSidebar = () => {
   const showHeader = !isEmbedded;
   const showFooter = !isEmbedded;
 
-  const [openPopup, setOpenPopup] = useState(true);
   const [modelData, setModelData] = useState(models);
 
 
@@ -312,20 +311,8 @@ const FilterSidebar = () => {
     console.log(`Copy button clicked for ID: ${id}`);
   };
 
-  const hendlerTogglePopup = () => {
-    setOpenPopup(!openPopup);
-  };
-
   return (
     <>
-      <Modal.Modal
-        onClose={() => setOpenPopup(false)}
-        onOpen={() => setOpenPopup(true)}
-        open={openPopup}
-        dimmer={'inverted'}
-      >
-        <FormModelCreate hendlerTogglePopup={hendlerTogglePopup}/>
-      </Modal.Modal>
       {showHeader &&
         <Header
           maxWidth={pageSize}
@@ -337,7 +324,6 @@ const FilterSidebar = () => {
           navigateTo={navigateTo}
           pathname={location.pathname}
           showSearchWrapper={true}
-          hendlerTogglePopup={hendlerTogglePopup}
         />}
       <Sidebar
         headerHeight={headerHeight} open={true}
