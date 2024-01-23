@@ -1,11 +1,16 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 interface IProps {
   images: string[];
 }
 
 const ImageRandom = ({images}: IProps) => {
-  const randomImage = images[Math.floor(Math.random() * images.length)];
+  const [randomImage, setRandomImage] = useState<string>('');
+
+  useEffect(() => {
+    const newRandomImage = images[Math.floor(Math.random() * images.length)];
+    setRandomImage(newRandomImage);
+  }, [images]);
 
   return (
     <div style={{
