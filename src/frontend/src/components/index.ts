@@ -11,6 +11,7 @@ import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
 import FormFilter from './FormFilter';
+import ModelsCreate from './ModelsCreate';
 import Grid from './Grid';
 import NotFound from './NotFound';
 import Header from './Header';
@@ -27,7 +28,7 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
-import {ModelCreate, ModelGeometry} from './Models';
+import {ModelGeometry, ModelTest} from './Models';
 import ModelCard, {IModelCard} from './ModelCard';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -35,6 +36,7 @@ import Page from './PageContainer/Page';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
+import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
@@ -76,8 +78,9 @@ export {
   Modal,
   ModelGrid,
   ModelGeometry,
-  ModelCreate,
+  ModelTest,
   ModelCard,
+  ModelsCreate,
   NotFound,
   Notification,
   Notifications,
@@ -85,6 +88,7 @@ export {
   Pagination,
   Popup,
   Progress,
+  RandomImage,
   SectionTitle,
   Segment,
   Select,

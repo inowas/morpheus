@@ -48,11 +48,12 @@ label.labelSmall {
 .field input[type="number"],
 .field input[type="password"],
 .field textarea {
-  width: 100%;
-  border: none;
-  min-height: 26px;
-  padding: 5px 10px;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  width: 100% !important;
+  border: none !important;
+  border-radius: unset !important;
+  min-height: 26px !important;
+  padding: 5px 10px !important;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2) !important;
 
   &:disabled {
     background-color: transparent;
