@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Dropdown, Form, TextArea} from 'semantic-ui-react';
 import styles from './ModelsCreate.module.less';
 import Images from './Images';
-import ImageRandom from 'components/ImageRandom';
+import RandomImage from 'components/RandomImage';
 
 const options = [
   {key: '1', text: 'React', value: 'React'},
@@ -64,7 +64,7 @@ const ModelsCreate = ({onCreateButtonClick}: IProps) => {
   return (
     <div className={`${styles.container}`} data-testid="ModelCreate-container">
       <div className={styles.image}>
-        <ImageRandom images={Images}/>
+        <RandomImage images={Images}/>
       </div>
       <div className={styles.form}>
         <h1 className={styles.title}>

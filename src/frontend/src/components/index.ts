@@ -20,7 +20,6 @@ import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
-import ImageRandom from './ImageRandom/ImageRandom';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -37,6 +36,7 @@ import Page from './PageContainer/Page';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
+import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
@@ -70,7 +70,6 @@ export {
   IconButton,
   Input,
   Image,
-  ImageRandom,
   Label,
   Loader,
   LoaderAnimation,
@@ -89,6 +88,7 @@ export {
   Pagination,
   Popup,
   Progress,
+  RandomImage,
   SectionTitle,
   Segment,
   Select,

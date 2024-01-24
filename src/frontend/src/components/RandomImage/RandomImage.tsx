@@ -4,7 +4,7 @@ interface IProps {
   images: string[];
 }
 
-const ImageRandom = ({images}: IProps) => {
+const RandomImage = ({images}: IProps) => {
   const [randomImage, setRandomImage] = useState<string>('');
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const ImageRandom = ({images}: IProps) => {
   );
 };
 
-export default ImageRandom;
+export default RandomImage;
 
 
 
