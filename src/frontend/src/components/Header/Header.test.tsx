@@ -25,7 +25,6 @@ describe('Header Tests', () => {
         pathname="/"
         language="en-GB"
         showSearchWrapper={true}
-        showCreateButton={true}
       />,
     );
 

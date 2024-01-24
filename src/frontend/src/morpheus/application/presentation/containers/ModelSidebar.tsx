@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {Footer, Header, IPageWidth, Map, ModelCreate, ModelGeometry, Sidebar} from 'components';
+import {Footer, Header, IPageWidth, Map, Modal, ModelGeometry, ModelsCreate, Sidebar} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 import type {FeatureCollection} from 'geojson';
 import menuItems from 'components/SidebarMenu/MenuItems';
+import ModelTest from 'components/Models/ModelTest';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -67,7 +68,6 @@ const ModelSidebar = () => {
     setListItems(updatedListParameters);
   };
 
-
   const updateHeaderHeight = (height: number) => {
     setHeaderHeight(height);
   };
@@ -100,7 +100,7 @@ const ModelSidebar = () => {
     case 'Grid properties':
       return <ModelGeometry/>;
     case 'Model layers':
-      return <ModelCreate/>;
+      return <ModelTest/>;
     default:
       return <pre style={{
         height: '100%',
@@ -114,8 +114,22 @@ const ModelSidebar = () => {
     }
   };
 
+  const [openPopup, setOpenPopup] = useState(false);
+
+  const onCreateButtonClick = () => {
+    setOpenPopup(!openPopup);
+  };
+
   return (
     <>
+      <Modal.Modal
+        onClose={() => setOpenPopup(false)}
+        onOpen={() => setOpenPopup(true)}
+        open={openPopup}
+        dimmer={'inverted'}
+      >
+        <ModelsCreate onCreateButtonClick={onCreateButtonClick}/>
+      </Modal.Modal>
       {showHeader &&
         <Header
           maxWidth={pageSize}
@@ -127,8 +141,9 @@ const ModelSidebar = () => {
           navigateTo={navigateTo}
           pathname={location.pathname}
           showSearchWrapper={true}
-          showCreateButton={true}
           showSidebarMenu={menuItems ? true : false}
+          onCreateButtonClick={onCreateButtonClick}
+
         />}
       <Sidebar
         headerHeight={headerHeight}

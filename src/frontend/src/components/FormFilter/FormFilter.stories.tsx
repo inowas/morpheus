@@ -306,6 +306,7 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
     console.log(`Copy button clicked for ID: ${id}`);
   };
 
+
   return (
     <div style={{margin: '-1rem'}}>
       <Header
@@ -315,7 +316,6 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        showCreateButton={true}
         showSidebarMenu={false}
         updateHeight={(height: number) => {
         }}

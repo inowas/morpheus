@@ -1,3 +1,13 @@
 /*******************************
          Theme Overrides
 *******************************/
+
+
+.ui.page.dimmer.modals.active {
+  z-index: 102;
+}
+
+.ui.inverted.dimmer > .ui.modal {
+  background: transparent;
+  box-shadow: none;
+}
