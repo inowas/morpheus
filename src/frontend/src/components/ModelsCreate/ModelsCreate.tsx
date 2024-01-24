@@ -13,10 +13,10 @@ const options = [
 ];
 
 interface IProps {
-  hendlerTogglePopup?: () => void;
+  onCreateButtonClick?: () => void;
 }
 
-const ModelsCreate = ({hendlerTogglePopup}: IProps) => {
+const ModelsCreate = ({onCreateButtonClick}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
@@ -44,7 +44,7 @@ const ModelsCreate = ({hendlerTogglePopup}: IProps) => {
   const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     clearForm();
-    if (hendlerTogglePopup) hendlerTogglePopup();
+    if (onCreateButtonClick) onCreateButtonClick();
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -56,7 +56,7 @@ const ModelsCreate = ({hendlerTogglePopup}: IProps) => {
         selectedKeywords,
       });
       clearForm();
-      if (hendlerTogglePopup) hendlerTogglePopup();
+      if (onCreateButtonClick) onCreateButtonClick();
     }
   };
 

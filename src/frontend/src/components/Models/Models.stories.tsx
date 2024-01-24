@@ -148,7 +148,7 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        hendlerTogglePopup={() => {
+        onCreateButtonClick={() => {
         }}
         showSidebarMenu={false}
         updateHeight={(height: number) => {

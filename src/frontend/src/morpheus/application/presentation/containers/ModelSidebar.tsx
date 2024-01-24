@@ -116,7 +116,7 @@ const ModelSidebar = () => {
 
   const [openPopup, setOpenPopup] = useState(false);
 
-  const hendlerTogglePopup = () => {
+  const onCreateButtonClick = () => {
     setOpenPopup(!openPopup);
   };
 
@@ -128,7 +128,7 @@ const ModelSidebar = () => {
         open={openPopup}
         dimmer={'inverted'}
       >
-        <ModelsCreate hendlerTogglePopup={hendlerTogglePopup}/>
+        <ModelsCreate onCreateButtonClick={onCreateButtonClick}/>
       </Modal.Modal>
       {showHeader &&
         <Header
@@ -142,7 +142,7 @@ const ModelSidebar = () => {
           pathname={location.pathname}
           showSearchWrapper={true}
           showSidebarMenu={menuItems ? true : false}
-          hendlerTogglePopup={hendlerTogglePopup}
+          onCreateButtonClick={onCreateButtonClick}
 
         />}
       <Sidebar

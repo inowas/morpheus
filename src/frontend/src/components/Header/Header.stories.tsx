@@ -52,7 +52,6 @@ export const HeaderExample: StoryFn<typeof Header> = () => (
       }}
       pathname={'/'}
       showSearchWrapper={true}
-      showCreateButton={true}
     />
   </div>
 
@@ -70,7 +69,6 @@ export const HeaderExampleNoSearch: StoryFn<typeof Header> = () => (
       }}
       pathname={'/'}
       showSearchWrapper={false}
-      showCreateButton={true}
     />
   </div>
 );
@@ -87,7 +85,6 @@ export const HeaderExampleNoCreateButton: StoryFn<typeof Header> = () => (
       }}
       pathname={'/'}
       showSearchWrapper={true}
-      showCreateButton={false}
     />
   </div>
 );
@@ -104,7 +101,6 @@ export const HeaderExampleNoCreateButtonNoSearch: StoryFn<typeof Header> = () =>
       }}
       pathname={'/'}
       showSearchWrapper={false}
-      showCreateButton={false}
     />
   </div>
 );
