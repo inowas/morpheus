@@ -12,8 +12,8 @@ class EventBase:
     def get_entity_uuid(self) -> Uuid:
         return self.entity_uuid
 
-    def get_payload(self) -> dict:
-        return self.payload
-
     def get_event_name(self) -> EventName:
         raise NotImplementedError()
+
+    def get_payload(self) -> dict:
+        return self.payload
