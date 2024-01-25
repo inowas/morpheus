@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {Footer, Header, IPageWidth, Map, Modal, ModelGeometry, ModelsCreate, Sidebar} from 'components';
+import {Footer, Header, IPageWidth, Map, Modal, ModelsCreate, Sidebar} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 import type {FeatureCollection} from 'geojson';
 import menuItems from 'components/SidebarMenu/MenuItems';
-import ModelTest from 'components/Models/ModelTest';
+import {ModelGeometry, ModelMetaData, ModelTest} from 'components/Models';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -99,8 +99,10 @@ const ModelSidebar = () => {
     switch (currentContent) {
     case 'Grid properties':
       return <ModelGeometry/>;
-    case 'Model layers':
+    case 'Test':
       return <ModelTest/>;
+    case 'Model layers':
+      return <ModelMetaData/>;
     default:
       return <pre style={{
         height: '100%',

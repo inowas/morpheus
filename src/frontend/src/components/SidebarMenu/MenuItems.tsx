@@ -28,9 +28,10 @@ import {
 
 const menuItems: IMenuItem[] = [
   {icon: faPenToSquare, description: 'Setup', title: true, active: false},
-  {icon: faBorderAll, description: 'Grid properties', active: true},
+  {icon: faPenToSquare, description: 'Test', active: false},
+  {icon: faBorderAll, description: 'Grid properties', active: false},
   {icon: faClock, description: 'Stress periods', active: false},
-  {icon: faLayerGroup, description: 'Model layers', active: false},
+  {icon: faLayerGroup, description: 'Model layers', active: true},
   {icon: faFlag, description: 'Boundary conditions', active: false},
   {icon: faLocationCrosshairs, description: 'Head observations', active: false},
   {icon: faCompress, description: 'Solute transport', active: false},
