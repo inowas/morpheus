@@ -2,7 +2,7 @@ from morpheus.common.types import Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 
 
-class EventStoreRepositoryBase:
+class EventStoreBase:
     def insert(self, event_envelope: EventEnvelope):
         raise NotImplementedError()
 
@@ -14,7 +14,7 @@ class EventStoreRepositoryBase:
 
 
 class EventStore:
-    def __init__(self, event_store_repository: EventStoreRepositoryBase):
+    def __init__(self, event_store_repository: EventStoreBase):
         self.event_store_repository = event_store_repository
 
     def store(self, event_envelope: EventEnvelope):

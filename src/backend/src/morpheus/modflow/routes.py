@@ -3,10 +3,10 @@ from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
 from .presentation.api.read.ReadProjectListRequestHandler import ReadProjectListRequestHandler
-from .presentation.api.write.CreateProjectRequestHandler import CreateProjectRequestHandler
-from .presentation.api.write.UpdateSettingsRequestHandlers import UpdateMetadataRequestHandler, AddMemberRequestHandler, UpdateMemberRoleRequestHandler, \
+from .presentation.api.write.ProjectRequestHandlers import CreateProjectRequestHandler, UpdateMetadataRequestHandler
+from .presentation.api.write.PermissionRequestHandlers import AddMemberRequestHandler, UpdateMemberRoleRequestHandler, \
     RemoveMemberRequestHandler, UpdateVisibilityRequestHandler
-from .presentation.api.write.UpdateTimeDiscretizationRequestHandler import UpdateTimeDiscretizationRequestHandler
+from .presentation.api.write.BaseModelRequestHandlers import UpdateTimeDiscretizationRequestHandler
 from ..common.presentation.schema_validation.SchemaValidation import validate_request
 
 

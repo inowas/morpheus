@@ -1,5 +1,5 @@
 import dataclasses
-from ...infrastructure.persistence.ProjectRepository import ProjectRepository
+from ...infrastructure.persistence.ProjectSummaryProjection import project_summary_projection
 
 
 @dataclasses.dataclass(frozen=True)
@@ -18,13 +18,15 @@ class ReadModflowModelListQueryResult:
 class ReadModflowModelListQueryHandler:
     @staticmethod
     def handle(query: ReadModflowModelListQuery) -> ReadModflowModelListQueryResult:
-        projects_metadata = ProjectRepository().get_projects_metadata()
+        project_summaries = project_summary_projection.find_all()
         result = []
-        for project_id, metadata in projects_metadata.items():
+        for project_summary in project_summaries:
             result.append({
-                'project_id': project_id.to_str(),
-                'name': metadata.name,
-                'description': metadata.description
+                'project_id': project_summary.project_id.to_str(),
+                'name': project_summary.project_name.to_str(),
+                'description': project_summary.project_description.to_str(),
+                'tags': project_summary.project_tags.to_list(),
+                'owner_id': project_summary.owner_id.to_str(),
             })
 
         return ReadModflowModelListQueryResult(data=result)

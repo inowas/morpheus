@@ -1,58 +1,138 @@
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, \
-    create_or_get_collection
+import dataclasses
+
+from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.modflow.types.ModflowModel import ModflowModel
 from morpheus.modflow.types.Project import ProjectId
-from morpheus.modflow.types.discretization import TimeDiscretization
 from morpheus.settings import settings as app_settings
+
+
+@dataclasses.dataclass(frozen=True)
+class BaseModelProjectionDocument:
+    project_id: str
+    base_model: dict
+    hash: str
+    previous_version: str
+    changes_since: int
+    is_latest: bool
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(
+            project_id=obj['project_id'],
+            base_model=obj['base_model'],
+            hash=obj['hash'],
+            previous_version=obj['previous_version'],
+            changes_since=obj['changes_since'],
+            is_latest=obj['is_latest'],
+        )
+
+    def to_dict(self):
+        return dataclasses.asdict(self)
+
+    def get_base_model(self) -> ModflowModel:
+        return ModflowModel.from_dict(self.base_model)
+
+    def with_updated_latest_base_model(self, base_model: ModflowModel):
+        return dataclasses.replace(self, base_model=base_model.to_dict(), hash=base_model.get_hash(), changes_since=self.changes_since + 1, is_latest=True)
+
+    def with_updated_version(self, version: str):
+        return dataclasses.replace(self, previous_version=version, changes_since=0, is_latest=True)
+
+    def with_latest_tag_disabled(self):
+        return dataclasses.replace(self, is_latest=False)
+
+    def with_latest_tag_enabled(self):
+        return dataclasses.replace(self, is_latest=True)
 
 
 class BaseModelProjection(RepositoryBase):
 
-    def has_base_model(self, project_id: ProjectId) -> bool:
-        return self.collection.find_one({'project_id': project_id.to_str()}) is not None
+    def get_latest(self, project_id: ProjectId) -> ModflowModel:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True}, {'_id': 0})
+        if data is None:
+            raise Exception('Base Model does not exist')
 
-    def get_base_model(self, project_id: ProjectId) -> ModflowModel | None:
-        project = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0, 'base_model_id': 1})
-        if project is None:
-            return None
-        return ModflowModel.from_dict(project['base_model'])
+        return BaseModelProjectionDocument.from_dict(dict(data)).get_base_model()
 
-    def save_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
-        if self.has_base_model(project_id):
-            raise Exception('Base Model already exists')
-        self.collection.insert_one({
-            'project_id': project_id.to_str(),
-            'base_model': base_model.to_dict()
-        })
+    def save_non_existent_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True})
+        if data is not None:
+            raise Exception('Latest base model already exists')
 
-    def update_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
-        if not self.has_base_model(project_id):
-            raise Exception('Base Model does not exist yet ')
-        self.collection.insert_one({
-            'project_id': project_id.to_str(),
-            'base_model': base_model.to_dict()
-        })
+        document = BaseModelProjectionDocument(
+            project_id=project_id.to_str(),
+            base_model=base_model.to_dict(),
+            hash=base_model.get_hash(),
+            previous_version='v0.0.0',
+            changes_since=0,
+            is_latest=True,
+        )
 
-    def get_base_model_time_discretization(self, project_id: ProjectId) -> TimeDiscretization | None:
-        result = self.collection.find_one(
-            {'project_id': project_id.to_str()},
-            {'_id': 0, 'base_model.time_discretization': 1})
-        if result is None:
-            return None
+        self.collection.insert_one(document.to_dict())
 
-        return TimeDiscretization.from_dict(result['base_model']['time_discretization'])
+    def set_new_version(self, project_id: ProjectId, version: str) -> None:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True})
+        if data is None:
+            raise Exception('Latest base model does not exist')
 
-    def save_or_update_base_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
-        if self.has_base_model(project_id):
-            self.update_base_model(project_id=project_id, base_model=base_model)
-        else:
-            self.save_base_model(project_id=project_id, base_model=base_model)
+        # get the latest document and set the new version
+        document = BaseModelProjectionDocument.from_dict(dict(data)).with_updated_version(version=version)
 
-    def update_base_model_time_discretization(self, project_id: ProjectId,
-                                              time_discretization: TimeDiscretization) -> None:
+        # disable the latest tag for the old document
+        self.collection.update_many(
+            filter={'project_id': project_id.to_str(), 'is_latest': True},
+            update={'$set': {'is_latest': False}},
+        )
 
-        self.collection.update_one({'project_id': project_id.to_str()},
-                                   {'$set': {'base_model.time_discretization': time_discretization.to_dict()}})
+        self.collection.insert_one(document.to_dict())
+
+    def update_latest(self, project_id: ProjectId, base_model: ModflowModel) -> None:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True})
+        if data is None:
+            raise Exception('Latest base model does not exist')
+
+        document = BaseModelProjectionDocument.from_dict(dict(data)).with_updated_latest_base_model(base_model=base_model)
+        self.collection.replace_one(
+            filter={'project_id': project_id.to_str(), 'is_latest': True},
+            replacement=document.to_dict(),
+        )
+
+    def get_latest_base_model(self, project_id: ProjectId) -> BaseModelProjectionDocument:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True}, {'_id': 0})
+        if data is None:
+            raise Exception('Base Model does not exist')
+
+        return BaseModelProjectionDocument.from_dict(dict(data))
+
+    def switch_to_version(self, project_id: ProjectId, version: str) -> None:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'previous_version': version})
+        if data is None:
+            raise Exception(f'Base Model with version {version} does not exist')
+
+        # remove documents with changes_since > 0
+        self.collection.delete_many(
+            filter={'project_id': project_id.to_str(), 'changes_since': {'$gt': 0}},
+        )
+
+        # disable the latest tag for the old document
+        self.collection.update_many(
+            filter={'project_id': project_id.to_str(), 'is_latest': True},
+            update={'$set': {'is_latest': False}},
+        )
+
+        self.collection.update_one(
+            filter={'project_id': project_id.to_str(), 'previous_version': version},
+            update={'$set': {'is_latest': True}},
+        )
+
+    def remove_version(self, project_id: ProjectId, version: str) -> None:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'previous_version': version})
+        if data is None:
+            raise Exception(f'Base Model with version {version} does not exist')
+
+        self.collection.delete_many(
+            filter={'project_id': project_id.to_str(), 'previous_version': version},
+        )
 
 
 base_model_projection = BaseModelProjection(

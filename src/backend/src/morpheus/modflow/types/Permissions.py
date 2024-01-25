@@ -1,76 +1,9 @@
 import dataclasses
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import Literal
 
-from morpheus.common.types import String
 from morpheus.modflow.types.Group import GroupId
 from morpheus.modflow.types.User import UserId
-
-
-class Name(String):
-    pass
-
-
-class Description(String):
-    pass
-
-
-@dataclasses.dataclass
-class Tags:
-    value: list[str]
-
-    @classmethod
-    def from_list(cls, value: list[str]):
-        return cls(value=value)
-
-    @classmethod
-    def from_value(cls, value: list[str]):
-        return cls.from_list(value=value)
-
-    def to_list(self):
-        return self.value
-
-    def to_value(self):
-        return self.to_list()
-
-
-@dataclasses.dataclass
-class Metadata:
-    name: Name
-    description: Description
-    tags: Tags
-
-    @classmethod
-    def new(cls):
-        return cls(
-            name=Name('New Model'),
-            description=Description('New Model description'),
-            tags=Tags([])
-        )
-
-    @classmethod
-    def from_dict(cls, obj: dict):
-        return cls(
-            name=Name.from_value(obj['name']),
-            description=Description.from_value(obj['description']),
-            tags=Tags.from_value(obj['tags']),
-        )
-
-    def to_dict(self):
-        return {
-            'name': self.name.to_value(),
-            'description': self.description.to_value(),
-            'tags': self.tags.to_value(),
-        }
-
-    def with_updated_name(self, name: Name):
-        return dataclasses.replace(self, name=name)
-
-    def with_updated_description(self, description: Description):
-        return dataclasses.replace(self, description=description)
-
-    def with_updated_tags(self, tags: Tags):
-        return dataclasses.replace(self, tags=tags)
 
 
 class Visibility(Enum):
@@ -90,7 +23,7 @@ class Visibility(Enum):
         return self.value
 
 
-class Role(Enum):
+class Role(StrEnum):
     OWNER = 'owner'
     ADMIN = 'admin'
     EDITOR = 'editor'
@@ -109,15 +42,18 @@ class Role(Enum):
         else:
             raise ValueError(f'Unknown role: {role}')
 
+    def to_str(self):
+        return self.value
+
 
 @dataclasses.dataclass(frozen=True)
 class MemberCollection:
     members: dict[UserId, Role]
 
     @classmethod
-    def new(cls, user_id: UserId) -> 'MemberCollection':
+    def new(cls) -> 'MemberCollection':
         return cls(
-            members={user_id: Role.OWNER}
+            members={}
         )
 
     @classmethod
@@ -207,43 +143,46 @@ class GroupCollection:
 
 
 @dataclasses.dataclass(frozen=True)
-class Settings:
+class Permissions:
+    owner_id: UserId
     groups: GroupCollection
     members: MemberCollection
-    metadata: Metadata
     visibility: Visibility
 
     @classmethod
-    def new(cls, user_id: UserId):
+    def new(cls, owner_id: UserId):
         return cls(
+            owner_id=owner_id,
             groups=GroupCollection.new(),
-            members=MemberCollection.new(user_id=user_id),
-            metadata=Metadata.new(),
+            members=MemberCollection.new(),
             visibility=Visibility.PRIVATE
         )
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
+            owner_id=UserId.from_value(obj['owner_id']),
             groups=GroupCollection.from_dict(obj['groups']),
             members=MemberCollection.from_dict(obj['members']),
-            metadata=Metadata.from_dict(obj['metadata']),
             visibility=Visibility.from_str(obj['visibility'])
         )
 
     def to_dict(self):
         return {
+            'owner_id': self.owner_id.to_value(),
             'groups': self.groups.to_dict(),
             'members': self.members.to_dict(),
-            'metadata': self.metadata.to_dict(),
             'visibility': self.visibility.value
         }
 
     def with_updated_members(self, members: MemberCollection):
         return dataclasses.replace(self, members=members)
 
-    def with_updated_metadata(self, metadata: Metadata):
-        return dataclasses.replace(self, metadata=metadata)
+    def with_updated_groups(self, groups: GroupCollection):
+        return dataclasses.replace(self, groups=groups)
+
+    def with_updated_owner(self, owner_id: UserId):
+        return dataclasses.replace(self, owner_id=owner_id)
 
     def with_updated_visibility(self, visibility: Visibility):
         return dataclasses.replace(self, visibility=visibility)

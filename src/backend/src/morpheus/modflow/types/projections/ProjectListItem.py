@@ -1,7 +1,6 @@
 import dataclasses
 
-from morpheus.modflow.types.Project import ProjectId
-from morpheus.modflow.types.Settings import Name, Description, Tags
+from morpheus.modflow.types.Project import ProjectId, Name, Description, Tags
 from morpheus.modflow.types.User import UserId
 
 

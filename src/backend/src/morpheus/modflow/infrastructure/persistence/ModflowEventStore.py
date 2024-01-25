@@ -3,9 +3,8 @@ import dataclasses
 import pymongo
 from pymongo.collection import Collection
 
-from morpheus.common.infrastructure.event_sourcing.EventStore import EventStoreRepositoryBase
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, \
-    create_or_get_collection
+from morpheus.common.infrastructure.event_sourcing.EventStore import EventStoreBase
+from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.common.types import Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
@@ -15,7 +14,7 @@ from morpheus.settings import settings
 
 
 @dataclasses.dataclass(frozen=True)
-class ModflowEventDocument:
+class ModflowEventStoreDocument:
     event_name: str
     occurred_at: str
     entity_uuid: str
@@ -68,7 +67,7 @@ class ModflowEventDocument:
         }
 
 
-class ModflowEventStoreRepository(RepositoryBase, EventStoreRepositoryBase):
+class ModflowEventStore(RepositoryBase, EventStoreBase):
 
     def __init__(self, collection: Collection, event_factory: ModflowEventFactory):
         super().__init__(collection)
@@ -79,7 +78,7 @@ class ModflowEventStoreRepository(RepositoryBase, EventStoreRepositoryBase):
             entity_uuid=event_envelope.get_event().get_entity_uuid().to_str()
         )
 
-        self.collection.insert_one(ModflowEventDocument.from_envelope_and_version(event_envelope, version).to_dict())
+        self.collection.insert_one(ModflowEventStoreDocument.from_envelope_and_version(event_envelope, version).to_dict())
 
     def _get_next_version_for_entity_uuid(self, entity_uuid: str) -> int:
         count = self.collection.count_documents(
@@ -92,17 +91,17 @@ class ModflowEventStoreRepository(RepositoryBase, EventStoreRepositoryBase):
 
     def find_all_ordered_by_version(self):
         documents = self.collection.find({}).sort('version', pymongo.ASCENDING)
-        return [ModflowEventDocument.from_dict(document).to_envelope() for document in documents]
+        return [ModflowEventStoreDocument.from_dict(document).to_envelope() for document in documents]
 
     def find_all_by_entity_uuid_ordered_by_version(self, entity_uuid: Uuid):
         documents = self.collection.find({'entity_uuid': entity_uuid.to_str()}).sort('version', pymongo.ASCENDING)
-        return [ModflowEventDocument.from_dict(document).to_envelope() for document in documents]
+        return [ModflowEventStoreDocument.from_dict(document).to_envelope() for document in documents]
 
 
-modflow_event_store_repository = ModflowEventStoreRepository(
+modflow_event_store = ModflowEventStore(
     collection=create_or_get_collection(
         get_database_client(settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'events',
+        'modflow_event_store',
         lambda collection: collection.create_index(
             [
                 ('entity_uuid', pymongo.ASCENDING),

@@ -1,14 +1,14 @@
 import dataclasses
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.modflow.types.Project import ProjectSummary, ProjectId
-from morpheus.modflow.types.Settings import Name, Description, Tags
-from morpheus.modflow.types.User import UserId
 from morpheus.settings import settings as app_settings
+
+from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags
+from ...types.User import UserId
 
 
 @dataclasses.dataclass
-class ProjectSummaryDocument:
+class ProjectSummaryProjectionDocument:
     project_id: str
     project_name: str
     project_description: str
@@ -38,9 +38,9 @@ class ProjectSummaryDocument:
         )
 
 
-class ProjectListRepository(RepositoryBase):
+class ProjectSummaryProjection(RepositoryBase):
     def insert_or_update(self, summary: ProjectSummary) -> None:
-        document = ProjectSummaryDocument(
+        document = ProjectSummaryProjectionDocument(
             project_id=summary.project_id.to_str(),
             project_name=summary.project_name.to_str(),
             project_description=summary.project_description.to_str(),
@@ -58,13 +58,20 @@ class ProjectListRepository(RepositoryBase):
         self.collection.insert_one(document.to_dict())
 
     def find_all(self) -> list[ProjectSummary]:
-        documents = [ProjectSummaryDocument.from_dict(obj) for obj in self.collection.find()]
+        documents = [ProjectSummaryProjectionDocument.from_dict(obj) for obj in self.collection.find()]
         return [ProjectSummary.from_dict(obj=document.to_dict()) for document in documents]
 
+    def get_summary(self, project_id: ProjectId) -> ProjectSummary | None:
+        document = self.collection.find_one({'project_id': project_id.to_str()})
+        if document is None:
+            return None
 
-project_list_repository = ProjectListRepository(
+        return ProjectSummaryProjectionDocument.from_dict(obj=dict(document)).to_summary()
+
+
+project_summary_projection: ProjectSummaryProjection = ProjectSummaryProjection(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'project_list_projection'
+        'project_summary_projection'
     )
 )

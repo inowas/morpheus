@@ -73,7 +73,6 @@ class Scenario:
 
         return ModflowModel(
             model_id=ModelId.from_str(self.scenario_id.to_str()),
-            version=base_model.version,
             spatial_discretization=base_model.spatial_discretization,
             time_discretization=base_model.time_discretization if self.time_discretization is None else self.time_discretization,
             boundaries=merged_boundaries,
