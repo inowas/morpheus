@@ -3,7 +3,6 @@ import dataclasses
 import pymongo
 from pymongo.collection import Collection
 
-from morpheus.common.infrastructure.event_sourcing.EventStore import EventStoreBase
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.common.types import Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
@@ -67,7 +66,7 @@ class ModflowEventStoreDocument:
         }
 
 
-class ModflowEventStore(RepositoryBase, EventStoreBase):
+class ModflowEventRepository(RepositoryBase):
 
     def __init__(self, collection: Collection, event_factory: ModflowEventFactory):
         super().__init__(collection)
@@ -98,7 +97,7 @@ class ModflowEventStore(RepositoryBase, EventStoreBase):
         return [ModflowEventStoreDocument.from_dict(document).to_envelope() for document in documents]
 
 
-modflow_event_store = ModflowEventStore(
+modflow_event_repository = ModflowEventRepository(
     collection=create_or_get_collection(
         get_database_client(settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
         'modflow_event_store',

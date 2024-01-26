@@ -1,3 +1,4 @@
+from morpheus.common.application.Projector import ProjectorBase
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.modflow.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
@@ -5,10 +6,13 @@ from morpheus.modflow.infrastructure.persistence.ProjectSummaryProjection import
 from morpheus.modflow.types.Project import ProjectSummary
 
 
-class ProjectSummaryProjector(EventListenerBase):
+class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
 
     def __init__(self, repository: ProjectSummaryProjection):
         self.repository = repository
+
+    def reset(self) -> None:
+        self.repository.remove_all_documents()
 
     @listen_to(ProjectCreatedEvent)
     def on_project_created(self, event: ProjectCreatedEvent, metadata: EventMetadata):

@@ -32,3 +32,6 @@ def create_or_get_collection(db: Database, collection_name: str, on_create_callb
 class RepositoryBase:
     def __init__(self, collection: Collection):
         self.collection = collection
+
+    def remove_all_documents(self) -> None:
+        self.collection.drop()

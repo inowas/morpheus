@@ -1,10 +1,10 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventPublisher
-from morpheus.common.infrastructure.event_sourcing.EventStore import EventStore
+from morpheus.common.infrastructure.event_sourcing.EventStore import EventStoreBase
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 
 
 class EventBus:
-    def __init__(self, event_store: EventStore, event_publisher: EventPublisher):
+    def __init__(self, event_store: EventStoreBase, event_publisher: EventPublisher):
         self.event_store = event_store
         self.event_publisher = event_publisher
 
