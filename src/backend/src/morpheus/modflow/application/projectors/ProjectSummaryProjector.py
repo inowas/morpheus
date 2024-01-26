@@ -2,13 +2,14 @@ from morpheus.common.application.Projector import ProjectorBase
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.modflow.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
-from morpheus.modflow.infrastructure.persistence.ProjectSummaryProjection import ProjectSummaryProjection, project_summary_projection
+from morpheus.modflow.domain.events.PermissionEvents import OwnershipUpdatedEvent
+from morpheus.modflow.infrastructure.persistence.ProjectSummaryRepository import ProjectSummaryRepository, project_summary_repository
 from morpheus.modflow.types.Project import ProjectSummary
 
 
 class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
 
-    def __init__(self, repository: ProjectSummaryProjection):
+    def __init__(self, repository: ProjectSummaryRepository):
         self.repository = repository
 
     def reset(self) -> None:
@@ -46,5 +47,14 @@ class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
 
         self.repository.insert_or_update(summary=project_summary)
 
+    @listen_to(OwnershipUpdatedEvent)
+    def on_ownership_updated(self, event: OwnershipUpdatedEvent, metadata: EventMetadata):
+        project_id = event.get_project_id()
+        project_summary = self.repository.get_summary(project_id)
+        if project_summary is None:
+            raise Exception(f'Could not find project summary for project with id {project_id.to_str()}')
 
-project_summary_projector = ProjectSummaryProjector(project_summary_projection)
+        self.repository.update_owner_id(project_id=project_id, owner_id=event.get_owner_id())
+
+
+project_summary_projector = ProjectSummaryProjector(project_summary_repository)

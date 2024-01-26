@@ -2,12 +2,12 @@ from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.modflow.domain.events.BaseModelEvents import BaseModelCreatedEvent
 from morpheus.modflow.domain.events.ProjectEvents import ProjectCreatedEvent
-from morpheus.modflow.infrastructure.persistence.BaseModelProjection import BaseModelProjection, base_model_projection
+from morpheus.modflow.infrastructure.persistence.BaseModelRepository import BaseModelRepository, base_model_repository
 
 
 class BaseModelProjector(EventListenerBase):
 
-    def __init__(self, repository: BaseModelProjection):
+    def __init__(self, repository: BaseModelRepository):
         self.repository = repository
 
     @listen_to(ProjectCreatedEvent)
@@ -27,4 +27,4 @@ class BaseModelProjector(EventListenerBase):
         self.repository.save_non_existent_model(project_id=project_id, base_model=base_model)
 
 
-base_model_projector = BaseModelProjector(repository=base_model_projection)
+base_model_projector = BaseModelProjector(repository=base_model_repository)

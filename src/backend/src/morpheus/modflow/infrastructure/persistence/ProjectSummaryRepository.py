@@ -8,7 +8,7 @@ from ...types.User import UserId
 
 
 @dataclasses.dataclass
-class ProjectSummaryProjectionDocument:
+class ProjectSummaryRepositoryDocument:
     project_id: str
     project_name: str
     project_description: str
@@ -38,9 +38,9 @@ class ProjectSummaryProjectionDocument:
         )
 
 
-class ProjectSummaryProjection(RepositoryBase):
+class ProjectSummaryRepository(RepositoryBase):
     def insert_or_update(self, summary: ProjectSummary) -> None:
-        document = ProjectSummaryProjectionDocument(
+        document = ProjectSummaryRepositoryDocument(
             project_id=summary.project_id.to_str(),
             project_name=summary.project_name.to_str(),
             project_description=summary.project_description.to_str(),
@@ -57,8 +57,14 @@ class ProjectSummaryProjection(RepositoryBase):
 
         self.collection.insert_one(document.to_dict())
 
+    def update_owner_id(self, project_id: ProjectId, owner_id: UserId) -> None:
+        self.collection.update_one(
+            filter={'project_id': project_id.to_str()},
+            update={'$set': {'owner_id': owner_id.to_str()}},
+        )
+
     def find_all(self) -> list[ProjectSummary]:
-        documents = [ProjectSummaryProjectionDocument.from_dict(obj) for obj in self.collection.find()]
+        documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find()]
         return [ProjectSummary.from_dict(obj=document.to_dict()) for document in documents]
 
     def get_summary(self, project_id: ProjectId) -> ProjectSummary | None:
@@ -66,12 +72,12 @@ class ProjectSummaryProjection(RepositoryBase):
         if document is None:
             return None
 
-        return ProjectSummaryProjectionDocument.from_dict(obj=dict(document)).to_summary()
+        return ProjectSummaryRepositoryDocument.from_dict(obj=dict(document)).to_summary()
 
 
-project_summary_projection: ProjectSummaryProjection = ProjectSummaryProjection(
+project_summary_repository: ProjectSummaryRepository = ProjectSummaryRepository(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'project_summary_projection'
+        'project_summaries_projection'
     )
 )

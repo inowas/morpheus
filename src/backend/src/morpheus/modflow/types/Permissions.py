@@ -98,6 +98,15 @@ class MemberCollection:
     def member_is_editor(self, user_id: UserId) -> bool:
         return self.members[user_id] == Role.EDITOR
 
+    def member_can_manage(self, user_id: UserId) -> bool:
+        return self.member_is_admin_or_owner(user_id)
+
+    def member_can_edit(self, user_id: UserId) -> bool:
+        return self.member_is_admin_or_owner(user_id) or self.member_is_editor(user_id)
+
+    def member_can_view(self, user_id: UserId) -> bool:
+        return self.member_is_admin_or_owner(user_id) or self.member_is_editor(user_id) or self.member_is_viewer(user_id)
+
     def member_is_viewer(self, user_id: UserId) -> bool:
         return self.members[user_id] == Role.VIEWER
 

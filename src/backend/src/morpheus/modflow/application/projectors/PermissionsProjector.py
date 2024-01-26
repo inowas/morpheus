@@ -2,12 +2,12 @@ from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ...domain.events.ProjectEvents import ProjectCreatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, OwnershipUpdatedEvent, VisibilityUpdatedEvent
-from ...infrastructure.persistence.PermissionsProjection import permissions_projection, PermissionsProjection
+from ...infrastructure.persistence.PermissionsRepository import permissions_repository, PermissionsRepository
 
 
 class PermissionsProjector(EventListenerBase):
 
-    def __init__(self, repository: PermissionsProjection):
+    def __init__(self, repository: PermissionsRepository):
         self.repository = repository
 
     @listen_to(ProjectCreatedEvent)
@@ -36,4 +36,4 @@ class PermissionsProjector(EventListenerBase):
         self.repository.update_visibility(project_id=event.get_project_id(), visibility=event.get_visibility())
 
 
-permissions_projector = PermissionsProjector(repository=permissions_projection)
+permissions_projector = PermissionsProjector(repository=permissions_repository)

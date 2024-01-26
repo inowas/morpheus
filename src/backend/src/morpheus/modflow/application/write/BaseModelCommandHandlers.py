@@ -1,7 +1,9 @@
 import dataclasses
 
+from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from ..read.PermissionsReader import PermissionsReader
 from ...domain.events.BaseModelEvents import BaseModelCreatedEvent
 from ...infrastructure.event_sourcing.ModflowEventBus import modflow_event_bus
 from ...types.Project import ProjectId
@@ -30,6 +32,7 @@ class CreateBaseModelCommandHandler:
     def handle(command: CreateBaseModelCommand):
         project_id = command.project_id
         base_model = ModflowModel.new(command.model_id)
+        current_user_id = command.created_by
 
         grid = Grid.from_polygon_with_relative_coordinates(
             polygon=command.geometry,
@@ -44,6 +47,11 @@ class CreateBaseModelCommandHandler:
             grid=grid,
             crs=Crs.from_str('EPSG:4326')
         )
+
+        permissions = PermissionsReader().get_permissions(project_id=project_id)
+
+        if not permissions.members.member_can_edit(user_id=current_user_id):
+            raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to create a base model of {project_id.to_str()}')
 
         base_model = base_model.with_updated_spatial_discretization(spatial_discretization)
         event = BaseModelCreatedEvent.from_base_model(project_id=project_id, base_model=base_model)

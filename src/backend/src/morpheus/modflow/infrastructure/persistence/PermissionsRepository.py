@@ -10,7 +10,7 @@ from ...types.User import UserId
 
 
 @dataclasses.dataclass(frozen=True)
-class PermissionsProjectionDocument:
+class PermissionsRepositoryDocument:
     project_id: str
     owner_id: str
     groups: dict
@@ -46,7 +46,7 @@ class PermissionsProjectionDocument:
         return Visibility(self.visibility)
 
 
-class PermissionsProjection(RepositoryBase):
+class PermissionsRepository(RepositoryBase):
     def has_permissions(self, project_id: ProjectId) -> bool:
         return self.collection.find_one({'project_id': project_id.to_str()}) is not None
 
@@ -55,35 +55,35 @@ class PermissionsProjection(RepositoryBase):
         if data is None:
             return None
 
-        return PermissionsProjectionDocument.from_dict(dict(data)).get_owner()
+        return PermissionsRepositoryDocument.from_dict(dict(data)).get_owner()
 
     def get_groups(self, project_id: ProjectId) -> GroupCollection | None:
         data = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
         if data is None:
             return None
 
-        return PermissionsProjectionDocument.from_dict(dict(data)).get_groups()
+        return PermissionsRepositoryDocument.from_dict(dict(data)).get_groups()
 
     def get_members(self, project_id: ProjectId) -> MemberCollection | None:
         data = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
         if data is None:
             return None
 
-        return PermissionsProjectionDocument.from_dict(dict(data)).get_members()
+        return PermissionsRepositoryDocument.from_dict(dict(data)).get_members()
 
     def get_visibility(self, project_id: ProjectId) -> Visibility | None:
         data = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
         if data is None:
             return None
 
-        return PermissionsProjectionDocument.from_dict(dict(data)).get_visibility()
+        return PermissionsRepositoryDocument.from_dict(dict(data)).get_visibility()
 
     def get_permissions(self, project_id: ProjectId) -> Permissions | None:
         data = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
         if data is None:
             return None
 
-        document = PermissionsProjectionDocument.from_dict(dict(data))
+        document = PermissionsRepositoryDocument.from_dict(dict(data))
         return Permissions(
             owner_id=document.get_owner(),
             groups=document.get_groups(),
@@ -95,7 +95,7 @@ class PermissionsProjection(RepositoryBase):
         if self.has_permissions(project_id):
             raise Exception(f'Permissions already exist for project {project_id.to_str()}')
 
-        self.collection.insert_one(PermissionsProjectionDocument(
+        self.collection.insert_one(PermissionsRepositoryDocument(
             project_id=project_id.to_str(),
             owner_id=permissions.owner_id.to_str(),
             groups=permissions.groups.to_dict(),
@@ -205,7 +205,7 @@ class PermissionsProjection(RepositoryBase):
         )
 
 
-permissions_projection = PermissionsProjection(
+permissions_repository = PermissionsRepository(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
         'permissions_projection'

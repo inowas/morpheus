@@ -7,7 +7,7 @@ from ...types.Scenarios import ScenarioCollection
 
 
 @dataclasses.dataclass(frozen=True)
-class ScenariosProjectionDocument:
+class ScenariosRepositoryDocument:
     project_id: str
     scenarios: dict
 
@@ -28,7 +28,7 @@ class ScenariosProjectionDocument:
         return dataclasses.replace(self, scenarios=scenarios.to_dict())
 
 
-class ScenariosProjection(RepositoryBase):
+class ScenariosRepository(RepositoryBase):
     def has_scenarios(self, project_id: ProjectId) -> bool:
         return self.collection.find_one({'project_id': project_id.to_str()}) is not None
 
@@ -37,20 +37,20 @@ class ScenariosProjection(RepositoryBase):
         if data is None:
             raise Exception('Scenarios do not exist')
 
-        return ScenariosProjectionDocument.from_dict(dict(data)).get_scenarios()
+        return ScenariosRepositoryDocument.from_dict(dict(data)).get_scenarios()
 
     def save_scenarios(self, project_id: ProjectId, scenarios: ScenarioCollection) -> None:
         if self.has_scenarios(project_id):
             raise Exception(f'Scenarios already exist for project {project_id.to_str()}')
 
-        document = ScenariosProjectionDocument(project_id=project_id.to_str(), scenarios=scenarios.to_dict())
+        document = ScenariosRepositoryDocument(project_id=project_id.to_str(), scenarios=scenarios.to_dict())
         self.collection.insert_one(document.to_dict())
 
     def update_scenarios(self, project_id: ProjectId, scenarios: ScenarioCollection) -> None:
         if not self.has_scenarios(project_id):
             raise Exception(f'Scenarios do not exist for project {project_id.to_str()}')
 
-        document = ScenariosProjectionDocument(project_id=project_id.to_str(), scenarios=scenarios.to_dict())
+        document = ScenariosRepositoryDocument(project_id=project_id.to_str(), scenarios=scenarios.to_dict())
         self.collection.update_one(filter={'project_id': project_id.to_str()}, update={'$set': document.to_dict()})
 
     def save_or_update_scenarios(self, project_id: ProjectId, scenarios: ScenarioCollection) -> None:
@@ -60,7 +60,7 @@ class ScenariosProjection(RepositoryBase):
             self.save_scenarios(project_id, scenarios)
 
 
-scenarios_projection = ScenariosProjection(
+scenarios_repository = ScenariosRepository(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
         'scenarios_projection'

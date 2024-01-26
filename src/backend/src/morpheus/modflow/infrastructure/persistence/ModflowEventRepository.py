@@ -100,7 +100,7 @@ class ModflowEventRepository(RepositoryBase):
 modflow_event_repository = ModflowEventRepository(
     collection=create_or_get_collection(
         get_database_client(settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'modflow_event_store',
+        'modflow_events',
         lambda collection: collection.create_index(
             [
                 ('entity_uuid', pymongo.ASCENDING),

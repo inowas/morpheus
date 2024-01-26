@@ -1,13 +1,13 @@
 import dataclasses
 
-from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent
 from ...infrastructure.event_sourcing.ModflowEventBus import modflow_event_bus
-from ...infrastructure.persistence.PermissionsProjection import permissions_projection
+from ..read.PermissionsReader import PermissionsReader
 from ...types.Project import ProjectId
-from ...types.Permissions import Permissions, Role, Visibility
+from ...types.Permissions import Role, Visibility
 from ...types.User import UserId
 
 
@@ -27,10 +27,7 @@ class AddMemberCommandHandler:
         new_member_role = command.new_member_role
         current_user_id = command.current_user_id
 
-        permissions = permissions_projection.get_permissions(project_id)
-        if not isinstance(permissions, Permissions):
-            raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
-
+        permissions = PermissionsReader().get_permissions(project_id=project_id)
         if not permissions.members.member_can_edit_members_and_permissions(new_member_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to add a member to the project {project_id.to_str()}')
 
@@ -59,10 +56,7 @@ class UpdateMemberRoleCommandHandler:
         role = command.role
         current_user_id = command.current_user_id
 
-        permissions = permissions_projection.get_permissions(project_id)
-        if not isinstance(permissions, Permissions):
-            raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
-
+        permissions = PermissionsReader().get_permissions(project_id=project_id)
         if not permissions.members.member_can_edit_members_and_permissions(current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to update a member of the project {project_id.to_str()}')
 
@@ -89,10 +83,7 @@ class RemoveMemberCommandHandler:
         member_id = command.member_id
         current_user_id = command.current_user_id
 
-        permissions = permissions_projection.get_permissions(project_id)
-        if not isinstance(permissions, Permissions):
-            raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
-
+        permissions = PermissionsReader().get_permissions(project_id=project_id)
         if not permissions.members.member_can_edit_members_and_permissions(current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to remove a member from the project {project_id.to_str()}')
 
@@ -118,10 +109,7 @@ class UpdateVisibilityCommandHandler:
         project_id = command.project_id
         current_user_id = command.current_user_id
 
-        permissions = permissions_projection.get_permissions(project_id)
-        if not isinstance(permissions, Permissions):
-            raise NotFoundException(f'Could not find Settings for project with id {project_id.to_str()}')
-
+        permissions = PermissionsReader().get_permissions(project_id=project_id)
         if not permissions.members.member_can_edit_members_and_permissions(current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to remove a member from the project {project_id.to_str()}')
 

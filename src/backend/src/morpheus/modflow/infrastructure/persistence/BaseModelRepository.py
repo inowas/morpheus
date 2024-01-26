@@ -7,7 +7,7 @@ from morpheus.settings import settings as app_settings
 
 
 @dataclasses.dataclass(frozen=True)
-class BaseModelProjectionDocument:
+class BaseModelRepositoryDocument:
     project_id: str
     base_model: dict
     hash: str
@@ -45,21 +45,21 @@ class BaseModelProjectionDocument:
         return dataclasses.replace(self, is_latest=True)
 
 
-class BaseModelProjection(RepositoryBase):
+class BaseModelRepository(RepositoryBase):
 
     def get_latest(self, project_id: ProjectId) -> ModflowModel:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True}, {'_id': 0})
         if data is None:
             raise Exception('Base Model does not exist')
 
-        return BaseModelProjectionDocument.from_dict(dict(data)).get_base_model()
+        return BaseModelRepositoryDocument.from_dict(dict(data)).get_base_model()
 
     def save_non_existent_model(self, project_id: ProjectId, base_model: ModflowModel) -> None:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True})
         if data is not None:
             raise Exception('Latest base model already exists')
 
-        document = BaseModelProjectionDocument(
+        document = BaseModelRepositoryDocument(
             project_id=project_id.to_str(),
             base_model=base_model.to_dict(),
             hash=base_model.get_hash(),
@@ -76,7 +76,7 @@ class BaseModelProjection(RepositoryBase):
             raise Exception('Latest base model does not exist')
 
         # get the latest document and set the new version
-        document = BaseModelProjectionDocument.from_dict(dict(data)).with_updated_version(version=version)
+        document = BaseModelRepositoryDocument.from_dict(dict(data)).with_updated_version(version=version)
 
         # disable the latest tag for the old document
         self.collection.update_many(
@@ -91,18 +91,18 @@ class BaseModelProjection(RepositoryBase):
         if data is None:
             raise Exception('Latest base model does not exist')
 
-        document = BaseModelProjectionDocument.from_dict(dict(data)).with_updated_latest_base_model(base_model=base_model)
+        document = BaseModelRepositoryDocument.from_dict(dict(data)).with_updated_latest_base_model(base_model=base_model)
         self.collection.replace_one(
             filter={'project_id': project_id.to_str(), 'is_latest': True},
             replacement=document.to_dict(),
         )
 
-    def get_latest_base_model(self, project_id: ProjectId) -> BaseModelProjectionDocument:
+    def get_latest_base_model(self, project_id: ProjectId) -> BaseModelRepositoryDocument:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'is_latest': True}, {'_id': 0})
         if data is None:
             raise Exception('Base Model does not exist')
 
-        return BaseModelProjectionDocument.from_dict(dict(data))
+        return BaseModelRepositoryDocument.from_dict(dict(data))
 
     def switch_to_version(self, project_id: ProjectId, version: str) -> None:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'previous_version': version})
@@ -135,9 +135,9 @@ class BaseModelProjection(RepositoryBase):
         )
 
 
-base_model_projection = BaseModelProjection(
+base_model_repository = BaseModelRepository(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'base_model_projection'
+        'base_models_projection'
     )
 )
