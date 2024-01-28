@@ -2,7 +2,7 @@ import dataclasses
 import hashlib
 import json
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, String
 from morpheus.modflow.types.boundaries.Boundary import BoundaryCollection
 from morpheus.modflow.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.modflow.types.observations.Observation import ObservationCollection
@@ -12,6 +12,10 @@ from morpheus.modflow.types.variable_density.VariableDensityFlow import Variable
 
 
 class ModelId(Uuid):
+    pass
+
+
+class Sha1Hash(String):
     pass
 
 
@@ -65,11 +69,11 @@ class ModflowModel:
             'variable_density': self.variable_density.to_dict(),
         }
 
-    def get_hash(self) -> str:
+    def get_sha1_hash(self) -> Sha1Hash:
         dictionary = self.to_dict()
         dictionary.pop('model_id')
         encoded = json.dumps(dictionary, sort_keys=True, ensure_ascii=True).encode()
-        return hashlib.sha1(encoded).hexdigest()
+        return Sha1Hash.from_str(hashlib.sha1(encoded).hexdigest())
 
     def with_updated_spatial_discretization(self, spatial_discretization: SpatialDiscretization):
         return dataclasses.replace(self, spatial_discretization=spatial_discretization)

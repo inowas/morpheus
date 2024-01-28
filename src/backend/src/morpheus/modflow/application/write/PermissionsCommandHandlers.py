@@ -35,7 +35,7 @@ class AddMemberCommandHandler:
             return
 
         event = MemberAddedEvent.from_user_id_and_role(project_id=project_id, user_id=new_member_id, role=new_member_role)
-        event_metadata = EventMetadata(obj={'created_by': current_user_id.to_str()})
+        event_metadata = EventMetadata(created_by=current_user_id.to_str(), rest={})
         envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
         modflow_event_bus.record(event_envelope=envelope)
 
@@ -64,7 +64,7 @@ class UpdateMemberRoleCommandHandler:
             return
 
         event = MemberRoleUpdatedEvent.from_user_id_and_role(project_id=project_id, user_id=member_id, role=role)
-        event_metadata = EventMetadata(obj={'created_by': current_user_id.to_str()})
+        event_metadata = EventMetadata(created_by=current_user_id.to_str(), rest={})
         envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
         modflow_event_bus.record(event_envelope=envelope)
 
@@ -91,7 +91,7 @@ class RemoveMemberCommandHandler:
             return
 
         event = MemberRemovedEvent.from_user_id(project_id=project_id, user_id=member_id)
-        event_metadata = EventMetadata(obj={'created_by': current_user_id.to_str()})
+        event_metadata = EventMetadata(created_by=current_user_id.to_str(), rest={})
         envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
         modflow_event_bus.record(event_envelope=envelope)
 
@@ -114,6 +114,6 @@ class UpdateVisibilityCommandHandler:
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to remove a member from the project {project_id.to_str()}')
 
         event = VisibilityUpdatedEvent.from_visibility(project_id=project_id, visibility=command.visibility)
-        event_metadata = EventMetadata(obj={'created_by': command.current_user_id.to_str()})
+        event_metadata = EventMetadata(created_by=current_user_id.to_str(), rest={})
         envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
         modflow_event_bus.record(event_envelope=envelope)

@@ -4,8 +4,9 @@ from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ..read.PermissionsReader import PermissionsReader
-from ...domain.events.BaseModelEvents import BaseModelCreatedEvent
+from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, LatestBaseModelVersionedEvent
 from ...infrastructure.event_sourcing.ModflowEventBus import modflow_event_bus
+from ...types.BaseModelVersion import BaseModelVersion, VersionId, VersionTag, VersionDescription
 from ...types.Project import ProjectId
 from ...types.User import UserId
 from ...types.ModflowModel import ModflowModel, ModelId
@@ -54,10 +55,20 @@ class CreateBaseModelCommandHandler:
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to create a base model of {project_id.to_str()}')
 
         base_model = base_model.with_updated_spatial_discretization(spatial_discretization)
-        event = BaseModelCreatedEvent.from_base_model(project_id=project_id, base_model=base_model)
-        event_metadata = EventMetadata(obj={'created_by': command.created_by.to_str()})
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
-        modflow_event_bus.record(event_envelope=envelope)
+        create_event = BaseModelCreatedEvent.from_base_model(project_id=project_id, base_model=base_model)
+        create_event_metadata = EventMetadata(created_by=current_user_id.to_str(), rest={})
+        create_event_envelope = EventEnvelope(event=create_event, metadata=create_event_metadata, occurred_at=OccurredAt.now())
+        modflow_event_bus.record(event_envelope=create_event_envelope)
+
+        initial_version = BaseModelVersion(
+            version_id=VersionId.new(),
+            tag=VersionTag.from_str('v0.0.0'),
+            description=VersionDescription.from_str('Initial version'),
+        )
+        tag_version_event = LatestBaseModelVersionedEvent.from_version(project_id=project_id, version=initial_version)
+        tag_version_event_metadata = EventMetadata(created_by=current_user_id.to_str(), rest={})
+        tag_version_event_envelope = EventEnvelope(event=tag_version_event, metadata=tag_version_event_metadata, occurred_at=OccurredAt.now())
+        modflow_event_bus.record(event_envelope=tag_version_event_envelope)
 
 
 @dataclasses.dataclass(frozen=True)

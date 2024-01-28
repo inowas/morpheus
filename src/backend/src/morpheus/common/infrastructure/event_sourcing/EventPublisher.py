@@ -58,4 +58,4 @@ class EventPublisher:
 
         listeners = self.listeners[event_class]
         for listener in listeners.values():
-            listener(event=event_envelope.get_event(), metadata=event_envelope.get_event_metadata())
+            listener(event=event_envelope.get_event(), metadata=event_envelope.get_event_metadata(), occured_at=event_envelope.get_occurred_at())

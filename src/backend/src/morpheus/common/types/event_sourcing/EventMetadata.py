@@ -3,11 +3,17 @@ import dataclasses
 
 @dataclasses.dataclass(frozen=True)
 class EventMetadata:
-    obj: dict
+    created_by: str
+    rest: dict
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls(obj)
+        return cls(
+            created_by=obj['created_by'],
+            rest=obj
+        )
 
-    def to_dict(self) -> dict:
-        return self.obj
+    def to_dict(self):
+        rest = self.rest.copy()
+        rest['created_by'] = self.created_by
+        return rest
