@@ -33,7 +33,7 @@ const ModelsCreate = ({onCreateButtonClick}: IProps) => {
     setSelectedKeywords(data.value as string[]);
   };
 
-  const isFormValid = '' !== projectName.trim() && '' !== projectDescription.trim() && 0 < selectedKeywords.length;
+  const isFormValid = '' !== projectName.trim();
 
   const clearForm = () => {
     setProjectName('');
@@ -79,7 +79,7 @@ const ModelsCreate = ({onCreateButtonClick}: IProps) => {
             />
           </Form.Field>
           <Form.Field className={styles.field}>
-            <label className={`${styles.label} h4`}>Project description<span className="required">*</span></label>
+            <label className={`${styles.label} h4`}>Project description</label>
             <TextArea value={projectDescription} onChange={handleProjectDescriptionChange}/>
           </Form.Field>
           <Form.Field className={styles.field}>
@@ -102,6 +102,7 @@ const ModelsCreate = ({onCreateButtonClick}: IProps) => {
               Cancel
             </Button>
             <Button
+              primary={true}
               disabled={!isFormValid}
               onClick={handleSubmit}
             >
