@@ -9,7 +9,10 @@ class ModflowEventName(StrEnum):
     MEMBER_REMOVED = 'Member Removed'
     MEMBER_ROLE_UPDATED = 'Member Role Updated'
     OWNERSHIP_UPDATED = 'Ownership Updated'
-    TAG_VERSION = 'Tag Version'
+    VERSION_CREATED = 'Version Created'
+    VERSION_ASSIGNED_TO_BASEMODEL = 'Version Assigned to BaseModel'
+    VERSION_DELETED = 'Version Deleted'
+    VERSION_DESCRIPTION_UPDATED = 'Version Description Updated'
     VISIBILITY_UPDATED = 'Visibility Updated'
 
     def to_str(self):

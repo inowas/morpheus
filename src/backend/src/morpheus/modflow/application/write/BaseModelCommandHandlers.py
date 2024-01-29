@@ -5,7 +5,7 @@ from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ..read.PermissionsReader import PermissionsReader
-from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, LatestBaseModelVersionedEvent
+from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, VersionAssignedToBaseModelEvent
 from ...infrastructure.event_sourcing.ModflowEventBus import modflow_event_bus
 from ...types.BaseModelVersion import BaseModelVersion, VersionId, VersionTag, VersionDescription
 from ...types.Project import ProjectId
@@ -67,7 +67,7 @@ class CreateBaseModelCommandHandler:
             description=VersionDescription.from_str('Initial version'),
         )
 
-        tag_version_event = LatestBaseModelVersionedEvent.from_version(project_id=project_id, version=initial_version)
+        tag_version_event = VersionAssignedToBaseModelEvent.from_version(project_id=project_id, version=initial_version)
         tag_version_event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
         tag_version_event_envelope = EventEnvelope(event=tag_version_event, metadata=tag_version_event_metadata, occurred_at=OccurredAt.now())
         modflow_event_bus.record(event_envelope=tag_version_event_envelope)
