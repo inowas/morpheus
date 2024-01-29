@@ -23,7 +23,7 @@ class BaseModelProjector(EventListenerBase):
         if base_model is None:
             return
 
-        changed_by = UserId.from_str(metadata.created_by)
+        changed_by = UserId.from_str(metadata.get_created_by().to_str())
         changed_at = DateTime.from_datetime(occurred_at.to_datetime())
 
         self.base_model_repo.save_base_model(project_id=project_id, base_model=base_model, changed_by=changed_by, changed_at=changed_at)
@@ -33,7 +33,7 @@ class BaseModelProjector(EventListenerBase):
         project_id = event.get_project_id()
         base_model = event.get_base_model()
 
-        changed_by = UserId.from_str(metadata.created_by)
+        changed_by = UserId.from_str(metadata.get_created_by().to_str())
         changed_at = DateTime.from_datetime(occurred_at.to_datetime())
 
         self.base_model_repo.save_base_model(project_id=project_id, base_model=base_model, changed_by=changed_by, changed_at=changed_at)
@@ -42,7 +42,7 @@ class BaseModelProjector(EventListenerBase):
     def on_latest_base_model_version_tagged(self, event: LatestBaseModelVersionedEvent, metadata: EventMetadata, occurred_at: OccurredAt) -> None:
         project_id = event.get_project_id()
         version = event.get_version()
-        changed_by = UserId.from_str(metadata.created_by)
+        changed_by = UserId.from_str(metadata.get_created_by().to_str())
         changed_at = DateTime.from_datetime(occurred_at.to_datetime())
 
         latest_base_model_hash = self.base_model_repo.get_latest_base_model_hash(project_id=project_id)

@@ -1,19 +1,27 @@
 import dataclasses
+from morpheus.common.types import Uuid
 
 
 @dataclasses.dataclass(frozen=True)
 class EventMetadata:
-    created_by: str
-    rest: dict
+    obj: dict
+
+    @classmethod
+    def new(cls, user_id: Uuid, obj: dict | None = None):
+        if obj is None:
+            obj = {}
+        return cls(
+            obj={'created_by': user_id.to_str(), **obj}
+        )
+
+    def get_created_by(self) -> Uuid:
+        if 'created_by' not in self.obj:
+            return Uuid.from_str('00000000-0000-0000-0000-000000000000')
+        return Uuid.from_str(self.obj['created_by'])
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls(
-            created_by=obj['created_by'],
-            rest=obj
-        )
+        return cls(obj=obj)
 
     def to_dict(self):
-        rest = self.rest.copy()
-        rest['created_by'] = self.created_by
-        return rest
+        return self.obj
