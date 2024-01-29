@@ -1,0 +1,337 @@
+openapi: 3.1.0
+info:
+  title: INOWAS API - Modflow Module
+  version: 2.0.0
+paths:
+  /modflow:
+    get:
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: "Search for projects by name, description or tags."
+          required: false
+          default: null
+        - in: query
+          name: public
+          schema:
+            type: boolean
+          required: false
+          default: false
+        - in: query
+          name: user_id
+          schema:
+            type: string
+          description: "The id of the user."
+          required: false
+          default: null
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number."
+          required: false
+          default: 1
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: "The page size."
+          required: false
+          default: 20
+      tags:
+        - Modflow
+      summary: Read list of Modflow Projects with search parameters
+      description: Read list of Modflow Projects with search parameters
+      responses:
+        200:
+          description: List of Modflow Projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectListItem'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+    post:
+      tags:
+        - Modflow
+      summary: Create a new modflow project
+      description: Create a new modflow project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        201:
+          description: Modflow model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /modflow/{project_id}:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    delete:
+      tags:
+        - Modflow
+      summary: Delete a modflow project
+      description: Delete a modflow projects
+      responses:
+        204:
+          description: Modflow project was successfully deleted
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /modflow/{project_id}/base_model:
+    post:
+      tags:
+        - Modflow
+      summary: Create a new modflow model
+      description: Create a new modflow model
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBaseModelRequest'
+      responses:
+        201:
+          description: Basemodel model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+components:
+  parameters:
+    ProjectId:
+      name: project_id
+      in: path
+      description: "The id of a Modflow Project."
+      required: true
+      schema:
+        type: string
+        example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+  schemas:
+    CreateProjectRequest:
+      type: object
+      description: "The Request to create a new Modflow Project."
+      properties:
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+      required:
+        - name
+        - description
+        - tags
+
+    CreateBaseModelRequest:
+      type: object
+      description: "The Request to create a new ModflowModel."
+      properties:
+        geometry:
+          type: object
+          description: "The geometry of the feature."
+          properties:
+            type:
+              type: string
+              enum: [ "Polygon" ]
+              example: "Polygon"
+            coordinates:
+              type: array
+              description: "The coordinates of the geometry."
+              example: [ [
+                [ 13.922514437551428, 50.964720483303836 ],
+                [ 13.925250781947113, 50.965228748412386 ],
+                [ 13.925036413951403, 50.96623732041704 ],
+                [ 13.92222441026388, 50.96609040370362 ],
+                [ 13.922514437551428, 50.964720483303836 ]
+              ] ]
+              items:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+                    minItems: 2
+                    maxItems: 2
+          required:
+            - type
+            - coordinates
+        grid_properties:
+          type: object
+          description: "The grid properties of the model."
+          properties:
+            x_coordinates:
+              type: array
+              description: "The distance along the x axis in percent."
+              example: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]
+              items:
+                type: number
+                minimum: 0
+                maximum: 1
+            y_coordinates:
+              type: array
+              description: "The distance along the y axis in percent."
+              example: [ 0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
+              items:
+                type: number
+                minimum: 0
+                maximum: 1
+            rotation:
+              type: number
+              description: "The grid rotation angle in deg of the model."
+              minimum: -90
+              maximum: 90
+              example: 0.0
+            length_unit:
+              type: string
+              enum: [ "meters", "centimeters", "feet", "unknown" ]
+              example: "meters"
+          required:
+            - x_coordinates
+            - y_coordinates
+            - rotation
+            - length_unit
+
+      required:
+        - geometry
+        - grid_properties
+
+    UpdateMetadataRequest:
+      type: object
+      description: "The Request to update the metadata of a Modflow Project."
+      properties:
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+
+    UpdateTimeDiscretizationRequest:
+      $ref: '#/components/schemas/TimeDiscretization'
+
+    GetTimeDiscretizationResponse:
+      $ref: '#/components/schemas/TimeDiscretization'
+
+    ProjectId:
+      type: string
+      description: "The id of a Modflow Project."
+      example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+
+    TimeDiscretization:
+      type: object
+      description: "The time discretization of a Modflow Base Model or Scenario."
+      properties:
+        start_date_time:
+          type: string
+          format: date-time
+          description: "The start date time of the model."
+          example: "2020-01-01T00:00:00Z"
+        end_date_time:
+          type: string
+          format: date-time
+          description: "The end date time of the model."
+          example: "2020-12-31T00:00:00Z"
+        stress_periods:
+          type: array
+          description: "The stress periods of the model."
+          items:
+            type: object
+            properties:
+              start_date_time:
+                type: string
+                format: date-time
+                description: "The start date time of the stress period."
+                example: "2020-01-01T00:00:00Z"
+              number_of_time_steps:
+                type: number
+                description: "The time step size of the stress period."
+                example: 1
+              time_step_multiplier:
+                type: number
+                description: "The time step multiplier of the stress period."
+                example: 1
+              steady_state:
+                type: boolean
+                description: "A flag to indicate if the stress period is steady state."
+                example: false
+          example:
+            - start_date_time: "2020-01-01T00:00:00Z"
+              number_of_time_steps: 1
+              time_step_multiplier: 1
+            - start_date_time: "2020-02-01T00:00:00Z"
+              number_of_time_steps: 1
+              time_step_multiplier: 1
+
+    ProjectListItem:
+      type: object
+      description: "A Modflow Project."
+      properties:
+        project_id:
+          type: string
+          description: "The id of the project."
+          example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+        owner_id:
+          type: string
+          description: "The id of the owner of the project."
+          example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+        visibility:
+          type: string
+          enum: [ "public", "private" ]
+          description: "The visibility of the project."
+          example: "public"
+
+

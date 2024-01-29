@@ -1,7 +1,11 @@
 .DS_Store
 .idea/
-**/node_modules/
 .env
+**/node_modules/
+**/venv/
 
 /infrastructure/local/tls_certificates/
 /infrastructure/local/data/
+**/openapi.bundle.yml
+/src/backend/src/notebooks/bin/
+/src/backend/src/notebooks/data/

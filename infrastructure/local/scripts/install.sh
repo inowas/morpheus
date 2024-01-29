@@ -4,6 +4,7 @@
 source "$(dirname "$0")/util.inc.sh"
 
 localSensorDataMountpoint="$infrastructureRoot/data/morpheus/sensors"
+localModflowDataMountpoint="$infrastructureRoot/data/morpheus/modflow"
 
 
 outputHeadline "Preparing local .env file"
@@ -22,26 +23,14 @@ else
     && sed -i.bak -e "s!__replace_with__flask_group_id!$groupId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__project_root!$projectRoot!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__local_sensor_data_mountpoint!$localSensorDataMountpoint!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__local_modflow_data_mountpoint!$localModflowDataMountpoint!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__celery_user_id!$userId!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__celery_group_id!$groupId!g" -- "$envFile.tmp" \
     && mv "$envFile.tmp" "$envFile" \
     && rm "$envFile.tmp.bak"
     exitWithErrorIfLastCommandFailed "Error preparing .env file $envFile"
     outputSuccess "Successfully prepared .env file"
 fi
-
-
-
-outputHeadline "Installing local tls certificates"
-
-source "$infrastructureRoot/.env" \
-&& mkdir -p "$infrastructureRoot/tls_certificates" \
-&& export CAROOT="$infrastructureRoot/tls_certificates" \
-&& mkcert -install \
-&& mkcert \
-  -key-file "$infrastructureRoot/tls_certificates/${TLS_KEY_FILE}" \
-  -cert-file "$infrastructureRoot/tls_certificates/${TLS_CERT_FILE}" \
-       ${DOMAIN} *.${DOMAIN} *.morpheus.${DOMAIN}
-exitWithErrorIfLastCommandFailed "Error installing tls certificates"
-outputSuccess "Successfully installed tls certificates"
 
 
 outputHeadline "Preparing local mount points"

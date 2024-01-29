@@ -1,0 +1,4 @@
+import morpheus.authentication.outgoing as authentication_outgoing
+
+authenticate = authentication_outgoing.authenticate
+get_logged_in_user_id = authentication_outgoing.get_logged_in_user_id
