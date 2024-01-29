@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {DataGrid, DataRow} from '../index';
 // import {Button} from 'components';
 import styles from './ModelMetaData.module.less';
-import {Accordion, AccordionContent, AccordionTitle} from 'semantic-ui-react';
+import {Accordion} from 'semantic-ui-react';
 import jsonData from '../ProjectOverview.json';
-import {AccordionItem, AccordionRef} from 'components/Accordion/Accordion';
-
+import {faArrowRight} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const ModelMetaData: React.FC = () => {
   const [data, setData] = useState(jsonData);
@@ -18,71 +18,166 @@ const ModelMetaData: React.FC = () => {
   const generalPanel = (generalData: any) => {
     return (
       <div className={styles.content}>
-        <div className={styles.dataRow}>
+        {generalData.project_name && <div className={styles.contentInner}>
           <span>Model name:</span>
-          <span>{generalData.project_name}</span>
-        </div>
-        <div className={styles.dataRow}>
+          <strong>{generalData.project_name}</strong>
+        </div>}
+        {generalData.project_description && <div className={styles.contentInner}>
           <span>Model description:</span>
           <span>{generalData.project_description}</span>
-        </div>
-        <div className={styles.dataRow}>
+        </div>}
+        {generalData.current_version && <div className={styles.contentInner}>
           <span>Actual model version:</span>
           <span>{generalData.current_version}</span>
-        </div>
-        <div className={styles.dataRow}>
+        </div>}
+        {0 < generalData.previous_versions.length && <div className={styles.contentInner}>
           <span>Other versions:</span>
-          <select name="tags">
+          {/*// TODO can we select other versions? (we can use semantic ui / default select / list  )*/}
+          {/*<Select options={data.general.previous_versions.map((previous_version: any, index: number) => (*/}
+          {/*  {key: index, value: previous_version, text: previous_version}))}*/}
+          {/*/>*/}
+          <select defaultValue={'Other versions'}>
+            <option
+              disabled={true}
+              hidden={true}
+            >Other versions
+            </option>
+            <option
+              disabled={true}
+              value={generalData.current_version}
+            >{generalData.current_version}</option>
             {generalData.previous_versions.map((previous_version: any, index: number) => (
-              <option key={index} value={previous_version}>{previous_version}</option>
+              <option
+                disabled={true}
+                key={index}
+                value={previous_version}
+              >{previous_version}</option>
             ))}
           </select>
-        </div>
-        <div className={styles.dataRow}>
+        </div>}
+        {0 < generalData.tags.length && <div className={styles.contentInner}>
           <span>Model keywords:</span>
-          <select name="tags">
-            {generalData.tags.map((tag: any, index: number) => (
-              <option key={index} value={tag}>{tag}</option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.dataRow}>
+          <div className={styles.tags}>
+            <ul className={styles.tagsInner}>
+              {generalData.tags.map((tag: any, index: number) => (
+                <li key={index}>{tag}</li>
+              ))}
+            </ul>
+          </div>
+        </div>}
+        {generalData.created_at && <div className={styles.contentInner}>
           <span>Created on:</span>
           <span>{formattedDate(generalData.created_at)}</span>
-        </div>
-        <div className={styles.dataRow}>
+        </div>}
+        {generalData.last_updated_at && <div className={styles.contentInner}>
           <span>Last modified on:</span>
           <span>{formattedDate(generalData.last_updated_at)}</span>
-        </div>
-        <div className={styles.dataRow}>
-          <span>Link:</span>
-          <span>{generalData.url}</span>
+        </div>}
+        {/*// TODO what is Title / Should it be a Copy link?*/}
+        {generalData.url && <div className={styles.contentInner}>
+          <span>Link to model:</span>
+          <a href={generalData.url}>Link</a>
+        </div>}
+      </div>
+    );
+  };
+  const permissionPanel = (permissionData: any) => {
+    return (
+      <div className={styles.content}>
+        {/*// TODO what should we do with "visibility": "public"?*/}
+        {0 < permissionData.members.length && <div className={styles.contentInner}>
+          <span>Members:</span>
+          <ul className={styles.list}>
+            {permissionData.members.map((member: any, index: number) => (
+              <li key={index}>{member.name} {member.role && <span>{member.role}</span>}</li>
+            ))}
+          </ul>
+        </div>}
+        {/*// TODO what should we do with "groups"?*/}
+        {0 < permissionData.groups.length && <div className={styles.contentInner}>
+          <span>Members:</span>
+          <ul className={styles.list}>
+            {permissionData.groups.map((group: any, index: number) => (
+              <li key={index}>{group.name} {group.role && <span>{group.role}</span>}</li>
+            ))}
+          </ul>
+        </div>}
+      </div>
+    );
+  };
+
+  const specialDiscrPanel = (specialDiscrData: any) => {
+    return (
+      <div className={styles.content}>
+        {specialDiscrData.length_unit && <div className={styles.contentInner}>
+          <span>Length unit:</span>
+          <span>{specialDiscrData.length_unit}</span>
+        </div>}
+        {specialDiscrData.crs && <div className={styles.contentInner}>
+          <span>Coordinates system:</span>
+          <strong>{specialDiscrData.crs}</strong>
+        </div>}
+        {specialDiscrData.area_unit && specialDiscrData.area && <div className={styles.contentInner}>
+          <span>Total model domain area:</span>
+          <span>{specialDiscrData.area}{'square_meters' === specialDiscrData.area_unit ? ' sq.meters' : ' meters'}</span>
+        </div>}
+        {0 < specialDiscrData.bounding_box.length && <div className={styles.contentInner}>
+          <span>Coordinates of bounding box:</span>
+          <div className={styles.coordinates}>
+            {0 < specialDiscrData.bounding_box.length && (
+              <table>
+                <tbody>
+                  {specialDiscrData.bounding_box.reduce((rows: number[][], value: number, index: number) => {
+                    if (0 === index % 2) {
+                      rows.push([value]);
+                    } else {
+                      rows[rows.length - 1].push(value);
+                    }
+                    return rows;
+                  }, []).map((row: number[], rowIndex: number) => (
+                    <tr key={rowIndex}>
+                      {row.map((cell, cellIndex) => (
+                        <td key={cellIndex}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>}
+        {specialDiscrData.grid_size && <div className={styles.contentInner}>
+          <span>Grid size (no. of rows x columns):</span>
+          <ul>
+            {Object.entries(specialDiscrData.grid_size).map(([key, size]: [string, any]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {size}
+              </li>
+            ))}
+          </ul>
+        </div>}
+        {specialDiscrData.cell_size && <div className={styles.contentInner}>
+          <span>Cell size (cell width x hight):</span>
+          <ul>
+            {Object.entries(specialDiscrData.cell_size).map(([key, size]: [string, any]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {size}
+              </li>
+            ))}
+          </ul>
+        </div>}
+        {specialDiscrData.rotation && <div className={styles.contentInner}>
+          <span>Grid rotation angle:</span>
+          <span>{specialDiscrData.rotation}</span>
+        </div>}
+        <div className={styles.contentInner}>
+          <span>Grid local refinement:</span>
+          <span>{specialDiscrData.grid_local_refinement ? 'YES' : 'NO'}</span>
         </div>
       </div>
     );
   };
 
-
-  // TODO ======VERSION PANEL 2==========================================================
-  const [activeIndices, setActiveIndices] = useState<number[]>([]);
-  const handleItemClick = (index: number) => {
-    const currentIndex = activeIndices.indexOf(index);
-    if (-1 === currentIndex) {
-      setActiveIndices([...activeIndices, index]);
-    } else {
-      const newIndices = [...activeIndices];
-      newIndices.splice(currentIndex, 1);
-      setActiveIndices(newIndices);
-    }
-  };
-  // const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  // const handleItemClick = (index: number) => {
-  //   setActiveIndex(index === activeIndex ? null : index);
-  // };
-  // TODO ======VERSION PANEL 2==========================================================
-
-
-  // TODO ======VERSION PANEL 3==========================================================
   const panels: any[] = [];
   for (let key in data) {
     switch (key) {
@@ -91,7 +186,7 @@ const ModelMetaData: React.FC = () => {
         key: 1,
         title: {
           content: 'General information',
-          icon: false,
+          icon: <FontAwesomeIcon icon={faArrowRight}/>,
         },
         content: {
           content: (
@@ -103,67 +198,47 @@ const ModelMetaData: React.FC = () => {
     }
     case 'permissions': {
       panels.push({
-        key: 'care-for-dogs',
+        key: 'permissions',
         title: {
-          content: 'How do I care for a dog?',
-          icon: false,
+          content: 'Permission rules',
+          icon: <FontAwesomeIcon icon={faArrowRight}/>,
         },
-        content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusantium, ad aliquam consectetur corporis error id ipsa laboriosam laborum maiores modi molestias nesciunt, nobis numquam officiis ratione tempore vero! Officia!',
+        content: {
+          content: (
+            permissionPanel(data[key])
+          ),
+        },
       });
       break;
     }
+    case 'spatial_discretization': {
+      panels.push({
+        key: 'spatial_discretization',
+        title: {
+          content: 'Model geometry',
+          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+        },
+        content: {
+          content: (
+            specialDiscrPanel(data[key])
+          ),
+        },
+      });
+      break;
+    }
+
     }
   }
-  // TODO ======VERSION PANEL 3==========================================================
 
+
+  const defaultActiveIndex = Array.from({length: panels.length}, (_, index) => index);
 
   return (
     <div className={styles.fullHeight}>
       <DataGrid>
-        <DataRow title={'ERSION PANEL 1'}/>
-        <AccordionRef exclusive={false}>
-
-
-          <AccordionItem title="General information">
-            {generalPanel(data.general)}
-          </AccordionItem>
-
-
-          <AccordionItem title="Some title 2">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt dignissimos dolore dolorem eos est ipsam modi nemo odit praesentium vel. Aut itaque nesciunt nobis
-            nostrum obcaecati possimus praesentium repellendus unde.
-          </AccordionItem>
-        </AccordionRef>
-
-        <DataRow title={'ERSION PANEL 2'}/>
-        <Accordion>
-          <AccordionTitle
-            active={activeIndices.includes(0)}
-            index={0}
-            onClick={() => handleItemClick(0)}
-          >
-            General information
-          </AccordionTitle>
-          <AccordionContent active={activeIndices.includes(0)}>
-            {generalPanel(data.general)}
-          </AccordionContent>
-
-          <AccordionTitle
-            active={activeIndices.includes(1)}
-            index={1}
-            onClick={() => handleItemClick(1)}
-          >
-            General information
-          </AccordionTitle>
-          <AccordionContent active={activeIndices.includes(1)}>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt dignissimos dolore dolorem eos est ipsam modi nemo odit praesentium vel. Aut itaque nesciunt nobis
-            nostrum obcaecati possimus praesentium repellendus unde.
-          </AccordionContent>
-        </Accordion>
-
-        <DataRow title={'ERSION PANEL 3'}/>
+        <DataRow title={'Model metadata'}/>
         <Accordion
-          // defaultActiveIndex={[0]}
+          defaultActiveIndex={[2]}
           panels={panels}
           exclusive={false}
         />
