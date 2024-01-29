@@ -324,12 +324,14 @@ components:
           items:
             type: string
           example: [ "tag1", "tag2" ]
-        role:
+        owner_id:
           type: string
-          enum: [ "owner", "admin", "member", "observer", "viewer" ]
-          description: "The role of the user in the project."
-        image:
+          description: "The id of the owner of the project."
+          example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+        visibility:
           type: string
-          description: "The image of the project."
-          example: "https://api.morpheus.inowas.com/api/v2/modflow/5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b/assets/5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+          enum: [ "public", "private" ]
+          description: "The visibility of the project."
+          example: "public"
+
 

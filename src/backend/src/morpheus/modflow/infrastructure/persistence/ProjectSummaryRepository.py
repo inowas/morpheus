@@ -2,6 +2,7 @@ import dataclasses
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.settings import settings as app_settings
+from ...types.Permissions import Visibility
 
 from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags
 from ...types.User import UserId
@@ -14,6 +15,7 @@ class ProjectSummaryRepositoryDocument:
     project_description: str
     project_tags: list[str]
     owner_id: str
+    is_public: bool
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -23,6 +25,7 @@ class ProjectSummaryRepositoryDocument:
             project_description=obj['project_description'],
             project_tags=obj['project_tags'],
             owner_id=obj['owner_id'],
+            is_public=obj['is_public'],
         )
 
     def to_dict(self):
@@ -35,6 +38,7 @@ class ProjectSummaryRepositoryDocument:
             project_description=Description.from_str(self.project_description),
             project_tags=Tags.from_list(self.project_tags),
             owner_id=UserId.from_str(self.owner_id),
+            visibility=Visibility.PUBLIC if self.is_public else Visibility.PRIVATE,
         )
 
 
@@ -46,6 +50,7 @@ class ProjectSummaryRepository(RepositoryBase):
             project_description=summary.project_description.to_str(),
             project_tags=summary.project_tags.to_list(),
             owner_id=summary.owner_id.to_str(),
+            is_public=summary.visibility == Visibility.PUBLIC,
         )
 
         if self.collection.find_one({'project_id': document.project_id}):
@@ -61,6 +66,12 @@ class ProjectSummaryRepository(RepositoryBase):
         self.collection.update_one(
             filter={'project_id': project_id.to_str()},
             update={'$set': {'owner_id': owner_id.to_str()}},
+        )
+
+    def update_visibility(self, project_id: ProjectId, visibility: Visibility) -> None:
+        self.collection.update_one(
+            filter={'project_id': project_id.to_str()},
+            update={'$set': {'is_public': visibility == Visibility.PUBLIC}},
         )
 
     def find_all(self) -> list[ProjectSummary]:
