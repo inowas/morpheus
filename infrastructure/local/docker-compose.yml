@@ -14,9 +14,9 @@ services:
       - "--api.debug=true"
       - "--ping=true"
       - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.postgres.address=:5432"
       - "--entrypoints.mongodb.address=:27017"
+      - "--entrypoints.rabbitmq.address=:5672"
       - "--providers.docker=true"
       - "--providers.docker.exposedByDefault=false"
       - "--providers.file.directory=/etc/traefik"
@@ -26,10 +26,10 @@ services:
       - "--log.filePath=/var/log/traefik/traefik.log"
     ports:
       - "80:80"
-      - "443:443"
       - "8080:8080" # for traefik api, dashboard and healthcheck local access
       - "5432:5432" # for postgres local access
       - "27017:27017" # for mongodb local access
+      - "5672:5672" # for rabbitmq local access
     healthcheck:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
@@ -37,14 +37,10 @@ services:
       retries: 3
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik:/etc/traefik
-      - ./tls_certificates:/etc/tls_certificates
-    environment:
-      - TLS_KEY_FILE=${TLS_KEY_FILE}
-      - TLS_CERT_FILE=${TLS_CERT_FILE}
     networks:
       - auth
       - backend
+      - celery
       - mail
   #  frontend:
   #    build:
@@ -56,10 +52,8 @@ services:
   backend:
     build:
       context: ${MORPHEUS_PROJECT_ROOT}
-      dockerfile: src/backend/docker/Dockerfile
+      dockerfile: src/backend/docker/flask.Dockerfile
       args:
-        - MKCERT_ROOT_CA_CERTIFICATE=infrastructure/local/tls_certificates/rootCA.pem
-        - CAROOT=/etc/ca_root
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
         - DOCKERFILE_BUILD_BASE_STAGE=local_base
@@ -68,13 +62,12 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
+      celery_worker:
+        condition: service_healthy
     env_file:
       - .env
-    environment:
-      - CAROOT=/etc/ca_root # for local mkcert certificates only
     volumes:
-      - ${MORPHEUS_PROJECT_ROOT}/src/backend:${BACKEND_APP_ROOT_PATH}
-      - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
+      - ${LOCAL_MODFLOW_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
       - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
     tmpfs:
       - /tmp:mode=777,size=200m
@@ -85,17 +78,15 @@ services:
       - backend
     extra_hosts:
       - identity.inowas.localhost:host-gateway
+      - rabbitmq.inowas.localhost:host-gateway
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/healthcheck" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.entrypoints=web"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.rule=Host(`${BACKEND_HOST}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.middlewares=redirect-to-https@file"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.entrypoints=websecure"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend-http.tls=false"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-backend.loadbalancer.server.port=8000"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-backend.tls=true"
     profiles:
       - backend
   cron:
@@ -123,7 +114,6 @@ services:
       - backend
   mongodb_backend:
     image: mongo:7.0
-    container_name: ${BACKEND_MONGO_HOST}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
@@ -174,7 +164,7 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${KEYCLOAK_POSTGRES_DB}
       KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
-      KC_HOSTNAME_URL: https://${IDENTITY_HOST}
+      KC_HOSTNAME_URL: http://${IDENTITY_HOST}
       KC_PROXY: edge
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
@@ -197,10 +187,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.entrypoints=web"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.rule=Host(`${IDENTITY_HOST}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.middlewares=redirect-to-https@file"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.entrypoints=websecure"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.rule=Host(`${IDENTITY_HOST}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-keycloak-http.tls=false"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-keycloak.loadbalancer.server.port=8080"
     profiles:
       - keycloak
@@ -226,6 +213,76 @@ services:
       - /var/run/postgresql
     profiles:
       - keycloak
+  rabbitmq:
+    image: rabbitmq:3.12.9-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    read_only: true
+    user: rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend
+      - celery
+    hostname:
+      ${COMPOSE_PROJECT_NAME}-rabbitmq
+    tmpfs:
+      - /tmp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-rabbitmq_management.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-rabbitmq_management.rule=Host(`rabbitmq.${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-rabbitmq_management.tls=false"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-rabbitmq_management.loadbalancer.server.port=15672"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-rabbitmq.entrypoints=rabbitmq"
+      - "traefik.tcp.routers.${COMPOSE_PROJECT_NAME}-rabbitmq.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.${COMPOSE_PROJECT_NAME}-rabbitmq.loadbalancer.server.port=5672"
+    profiles:
+      - celery
+      - celery_broker_and_backend_only
+  celery_worker:
+    build:
+      context: ${MORPHEUS_PROJECT_ROOT}
+      dockerfile: src/backend/docker/celery.Dockerfile
+      args:
+        - CELERY_USER_ID=${CELERY_USER_ID}
+        - CELERY_GROUP_ID=${CELERY_GROUP_ID}
+        - DOCKERFILE_BUILD_BASE_STAGE=local_base
+        - BACKEND_APP_ROOT_PATH=${BACKEND_APP_ROOT_PATH}
+    container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
+    depends_on:
+      mongodb_backend:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ${LOCAL_MODFLOW_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
+      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
+    tmpfs:
+      - /tmp
+    restart: always
+    user: celery
+    read_only: true
+    networks:
+      - backend
+      - celery
+    extra_hosts:
+      - rabbitmq.inowas.localhost:host-gateway
+    healthcheck:
+      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping"]
+    profiles:
+      - celery
+
 volumes:
   keycloak_data:
     driver: local
@@ -239,10 +296,14 @@ volumes:
     driver: local
   morpheus_sensor_data:
     driver: local
+  rabbitmq_data:
+    driver: local
 networks:
   auth:
     name: ${COMPOSE_PROJECT_NAME}-auth
   backend:
     name: ${COMPOSE_PROJECT_NAME}-backend
+  celery:
+    name: ${COMPOSE_PROJECT_NAME}-celery
   mail:
     name: ${COMPOSE_PROJECT_NAME}-mail

@@ -20,7 +20,7 @@ help:
 # Skips the first word
 arguments := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
-# prepare local development environment
+## prepare local development environment
 install-dev:
 	scripts/dev/install-dev.sh
 
@@ -44,6 +44,14 @@ run-tests:
 fix-code-style:
 	scripts/dev/qa_check/fix-code-style.sh
 
+## run celery worker
+run-celery-worker:
+	scripts/dev/run-celery-worker.sh
+
+## stop all celery workers
+stop-all-celery-workers:
+	scripts/dev/stop-all-celery-workers.sh
+
 ## runs flask app
 run-flask-app:
 	scripts/dev/run-flask-app.sh
@@ -51,3 +59,7 @@ run-flask-app:
 ## runs flask cli command (pass command as argument)
 run-flask-cli-command:
 	scripts/dev/run-flask-cli-command.sh "$(arguments)"
+
+## bundle openapi spec
+build-openapi-spec:
+	scripts/dev/build-openapi-spec.sh

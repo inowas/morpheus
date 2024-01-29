@@ -6,7 +6,7 @@ source $(dirname "$0")/../util.inc.sh
 outputHeadline "Checking code style"
 
 cd $backendRoot/src
-flake8 ./
+source $backendRoot/.venv/bin/activate && flake8 ./
 exitCode=$?
 if [ $exitCode -ne 0 ]; then
     outputError "Found code style violations"
