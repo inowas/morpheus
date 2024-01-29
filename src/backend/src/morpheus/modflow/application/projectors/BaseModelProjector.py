@@ -48,7 +48,7 @@ class BaseModelProjector(EventListenerBase):
         self.base_model_version_repo.create_new_version(project_id=project_id, version=version, created_by=created_by, created_at=created_at)
 
     @listen_to(VersionDescriptionUpdatedEvent)
-    def on_version_description_updated(self, event: VersionDescriptionUpdatedEvent) -> None:
+    def on_version_description_updated(self, event: VersionDescriptionUpdatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
         version_id = event.get_version_id()
         description = event.get_description()
