@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from 'mfviz/store';
 import {setCalculation, setError, setLoading} from '../infrastructure/store';
-import {getConfig} from 'config';
+import config from 'config';
 
 interface ICalculation {
   calculation_id: string;
@@ -42,7 +42,7 @@ interface IUseCalculation {
   getColorScaleUrl: (type: 'drawdown' | 'head', timestepIdx: number) => string | null;
 }
 
-const {modflowApiUrl} = getConfig();
+const {modflowApiUrl} = config;
 
 
 const useCalculation = (id?: string): IUseCalculation => {
