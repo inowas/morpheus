@@ -4,8 +4,8 @@ import pymongo
 from pymongo.collection import Collection
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.common.types import Uuid
-from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
+from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.event_sourcing.EventName import EventName
 from morpheus.modflow.domain.events.ModflowEventFactory import ModflowEventFactory, modflow_event_factory
@@ -26,7 +26,7 @@ class ModflowEventStoreDocument:
         event = envelope.get_event()
         return cls(
             event_name=event.get_event_name().to_str(),
-            occurred_at=envelope.get_occurred_at().to_iso_with_timezone(),
+            occurred_at=event.get_occurred_at().to_iso_with_timezone(),
             entity_uuid=event.get_entity_uuid().to_str(),
             version=version,
             payload=event.get_payload(),
@@ -49,10 +49,10 @@ class ModflowEventStoreDocument:
             event=modflow_event_factory.create_event(
                 event_name=EventName.from_str(self.event_name),
                 entity_uuid=Uuid.from_str(self.entity_uuid),
+                occurred_at=DateTime.from_str(self.occurred_at),
                 payload=self.payload
             ),
             metadata=EventMetadata.from_dict(self.metadata),
-            occurred_at=OccurredAt.from_str(self.occurred_at),
         )
 
     def to_dict(self) -> dict:

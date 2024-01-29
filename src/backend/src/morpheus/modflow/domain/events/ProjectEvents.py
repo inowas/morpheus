@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 
@@ -11,9 +11,10 @@ from morpheus.modflow.types.Project import Project, ProjectId, Name, Description
 @dataclasses.dataclass(frozen=True)
 class ProjectCreatedEvent(EventBase):
     @classmethod
-    def from_project(cls, project: Project):
+    def from_project(cls, project: Project, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project.project_id.to_str()),
+            occurred_at=occurred_at,
             payload=project.to_dict(),
         )
 
@@ -30,9 +31,10 @@ class ProjectCreatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class ProjectMetadataUpdatedEvent(EventBase):
     @classmethod
-    def from_props(cls, project_id: ProjectId, name: Name | None = None, description: Description | None = None, tags: Tags | None = None):
+    def from_props(cls, project_id: ProjectId, name: Name | None = None, description: Description | None = None, tags: Tags | None = None, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
                 'name': name.to_str() if name else None,
                 'description': description.to_str() if description else None,

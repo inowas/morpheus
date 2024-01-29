@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 
@@ -13,9 +13,10 @@ from morpheus.modflow.types.User import UserId
 @dataclasses.dataclass(frozen=True)
 class MemberAddedEvent(EventBase):
     @classmethod
-    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role = Role.VIEWER):
+    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role = Role.VIEWER, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
                 'role': role.to_str()
@@ -38,9 +39,10 @@ class MemberAddedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class MemberRemovedEvent(EventBase):
     @classmethod
-    def from_user_id(cls, project_id: ProjectId, user_id: UserId):
+    def from_user_id(cls, project_id: ProjectId, user_id: UserId, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
             }
@@ -59,9 +61,10 @@ class MemberRemovedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class MemberRoleUpdatedEvent(EventBase):
     @classmethod
-    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role):
+    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
                 'role': role.to_str()
@@ -84,9 +87,10 @@ class MemberRoleUpdatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class VisibilityUpdatedEvent(EventBase):
     @classmethod
-    def from_visibility(cls, project_id: ProjectId, visibility: Visibility):
+    def from_visibility(cls, project_id: ProjectId, visibility: Visibility, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
                 'visibility': visibility.to_str()
             }
@@ -105,9 +109,10 @@ class VisibilityUpdatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class OwnershipUpdatedEvent(EventBase):
     @classmethod
-    def from_user_id(cls, project_id: ProjectId, user_id: UserId):
+    def from_user_id(cls, project_id: ProjectId, user_id: UserId, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
                 'owner_id': user_id.to_str(),
             }

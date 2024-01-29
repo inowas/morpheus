@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 
@@ -13,9 +13,10 @@ from morpheus.modflow.types.BaseModelVersion import BaseModelVersion, VersionId,
 @dataclasses.dataclass(frozen=True)
 class BaseModelCreatedEvent(EventBase):
     @classmethod
-    def from_base_model(cls, project_id: ProjectId, base_model: ModflowModel):
+    def from_base_model(cls, project_id: ProjectId, base_model: ModflowModel, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload=base_model.to_dict(),
         )
 
@@ -32,9 +33,10 @@ class BaseModelCreatedEvent(EventBase):
 class VersionCreatedEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: BaseModelVersion):
+    def from_version(cls, project_id: ProjectId, version: BaseModelVersion, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload=version.to_dict(),
         )
 
@@ -51,16 +53,18 @@ class VersionCreatedEvent(EventBase):
 class VersionAssignedToBaseModelEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: BaseModelVersion):
+    def from_version(cls, project_id: ProjectId, version: BaseModelVersion, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={'version_id': version.version_id.to_str()},
         )
 
     @classmethod
-    def from_version_id(cls, project_id: ProjectId, version_id: VersionId):
+    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={'version_id': version_id.to_str()},
         )
 
@@ -77,16 +81,18 @@ class VersionAssignedToBaseModelEvent(EventBase):
 class VersionDeletedEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: BaseModelVersion):
+    def from_version(cls, project_id: ProjectId, version: BaseModelVersion, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={'version_id': version.version_id.to_str()},
         )
 
     @classmethod
-    def from_version_id(cls, project_id: ProjectId, version_id: VersionId):
+    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={'version_id': version_id.to_str()},
         )
 
@@ -103,16 +109,18 @@ class VersionDeletedEvent(EventBase):
 class VersionDescriptionUpdatedEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: BaseModelVersion):
+    def from_version(cls, project_id: ProjectId, version: BaseModelVersion, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={'version_id': version.version_id.to_str(), 'description': version.description.to_str()},
         )
 
     @classmethod
-    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, description: VersionDescription):
+    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, description: VersionDescription, occurred_at: DateTime = DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={'version_id': version_id.to_str(), 'description': description.to_str()},
         )
 

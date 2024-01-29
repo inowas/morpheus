@@ -1,8 +1,8 @@
 import dataclasses
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
-from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
+from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent
 from ...infrastructure.event_sourcing.ModflowEventBus import modflow_event_bus
@@ -35,9 +35,9 @@ class AddMemberCommandHandler:
         if permissions.members.has_member(new_member_id):
             return
 
-        event = MemberAddedEvent.from_user_id_and_role(project_id=project_id, user_id=new_member_id, role=new_member_role)
+        event = MemberAddedEvent.from_user_id_and_role(project_id=project_id, user_id=new_member_id, role=new_member_role, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
         modflow_event_bus.record(event_envelope=envelope)
 
 
@@ -64,9 +64,9 @@ class UpdateMemberRoleCommandHandler:
         if not permissions.members.has_member(member_id):
             return
 
-        event = MemberRoleUpdatedEvent.from_user_id_and_role(project_id=project_id, user_id=member_id, role=role)
+        event = MemberRoleUpdatedEvent.from_user_id_and_role(project_id=project_id, user_id=member_id, role=role, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
         modflow_event_bus.record(event_envelope=envelope)
 
 
@@ -91,9 +91,9 @@ class RemoveMemberCommandHandler:
         if not permissions.members.has_member(member_id):
             return
 
-        event = MemberRemovedEvent.from_user_id(project_id=project_id, user_id=member_id)
+        event = MemberRemovedEvent.from_user_id(project_id=project_id, user_id=member_id, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
         modflow_event_bus.record(event_envelope=envelope)
 
 
@@ -114,7 +114,7 @@ class UpdateVisibilityCommandHandler:
         if not permissions.members.member_can_edit_members_and_permissions(current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to remove a member from the project {project_id.to_str()}')
 
-        event = VisibilityUpdatedEvent.from_visibility(project_id=project_id, visibility=command.visibility)
+        event = VisibilityUpdatedEvent.from_visibility(project_id=project_id, visibility=command.visibility, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
         modflow_event_bus.record(event_envelope=envelope)

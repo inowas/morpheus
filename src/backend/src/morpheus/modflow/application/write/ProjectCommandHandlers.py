@@ -1,7 +1,7 @@
 import dataclasses
 
-from morpheus.common.types import Uuid
-from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope, OccurredAt
+from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 
 from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
@@ -27,9 +27,9 @@ class CreateProjectCommandHandler:
         metadata = project.metadata.with_updated_name(command.name).with_updated_description(command.description).with_updated_tags(command.tags)
         project = project.with_updated_metadata(metadata)
 
-        event = ProjectCreatedEvent.from_project(project=project)
+        event = ProjectCreatedEvent.from_project(project=project, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.created_by.to_str()))
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
         modflow_event_bus.record(event_envelope=envelope)
 
 
@@ -47,7 +47,7 @@ class UpdateMetadataCommandHandler:
     def handle(command: UpdateMetadataCommand) -> None:
         project_id = command.project_id
 
-        event = ProjectMetadataUpdatedEvent.from_props(project_id=project_id, name=command.name, description=command.description, tags=command.tags)
+        event = ProjectMetadataUpdatedEvent.from_props(project_id=project_id, name=command.name, description=command.description, tags=command.tags, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
-        envelope = EventEnvelope(event=event, metadata=event_metadata, occurred_at=OccurredAt.now())
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
         modflow_event_bus.record(event_envelope=envelope)
