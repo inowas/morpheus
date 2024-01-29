@@ -1,23 +1,27 @@
 import React, {useState} from 'react';
 import {DataGrid, DataRow} from '../index';
-// import {Button} from 'components';
+import {Button} from 'components';
 import styles from './ModelMetaData.module.less';
 import {Accordion} from 'semantic-ui-react';
 import jsonData from '../ProjectOverview.json';
-import {faArrowRight} from '@fortawesome/free-solid-svg-icons';
+import {faArrowRight, faDownload} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const ModelMetaData: React.FC = () => {
   const [data, setData] = useState(jsonData);
 
-  const formattedDate = (originalDate: string) => {
+  const formattedDate = (originalDate: string, withTime: boolean = false) => {
     const date = new Date(originalDate);
-    return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const formattedTime = withTime
+      ? ` ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
+      : '';
+
+    return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}${formattedTime}`;
   };
 
   const generalPanel = (generalData: any) => {
     return (
-      <div className={styles.content}>
+      <>
         {generalData.project_name && <div className={styles.contentInner}>
           <span>Model name:</span>
           <strong>{generalData.project_name}</strong>
@@ -67,23 +71,23 @@ const ModelMetaData: React.FC = () => {
         </div>}
         {generalData.created_at && <div className={styles.contentInner}>
           <span>Created on:</span>
-          <span>{formattedDate(generalData.created_at)}</span>
+          <span>{formattedDate(generalData.created_at, true)}</span>
         </div>}
         {generalData.last_updated_at && <div className={styles.contentInner}>
           <span>Last modified on:</span>
-          <span>{formattedDate(generalData.last_updated_at)}</span>
+          <span>{formattedDate(generalData.last_updated_at, true)}</span>
         </div>}
         {/*// TODO what is Title / Should it be a Copy link?*/}
         {generalData.url && <div className={styles.contentInner}>
           <span>Link to model:</span>
           <a href={generalData.url}>Link</a>
         </div>}
-      </div>
+      </>
     );
   };
   const permissionPanel = (permissionData: any) => {
     return (
-      <div className={styles.content}>
+      <>
         {/*// TODO what should we do with "visibility": "public"?*/}
         {0 < permissionData.members.length && <div className={styles.contentInner}>
           <span>Members:</span>
@@ -102,13 +106,13 @@ const ModelMetaData: React.FC = () => {
             ))}
           </ul>
         </div>}
-      </div>
+      </>
     );
   };
 
   const specialDiscrPanel = (specialDiscrData: any) => {
     return (
-      <div className={styles.content}>
+      <>
         {specialDiscrData.length_unit && <div className={styles.contentInner}>
           <span>Length unit:</span>
           <span>{specialDiscrData.length_unit}</span>
@@ -121,6 +125,7 @@ const ModelMetaData: React.FC = () => {
           <span>Total model domain area:</span>
           <span>{specialDiscrData.area}{'square_meters' === specialDiscrData.area_unit ? ' sq.meters' : ' meters'}</span>
         </div>}
+        {/*// TODO is it allways 4 coordinates? Can we use a table? */}
         {0 < specialDiscrData.bounding_box.length && <div className={styles.contentInner}>
           <span>Coordinates of bounding box:</span>
           <div className={styles.coordinates}>
@@ -146,6 +151,7 @@ const ModelMetaData: React.FC = () => {
             )}
           </div>
         </div>}
+        {/*// TODO how should it look like?*/}
         {specialDiscrData.grid_size && <div className={styles.contentInner}>
           <span>Grid size (no. of rows x columns):</span>
           <ul>
@@ -156,6 +162,7 @@ const ModelMetaData: React.FC = () => {
             ))}
           </ul>
         </div>}
+        {/*// TODO how should it look like?*/}
         {specialDiscrData.cell_size && <div className={styles.contentInner}>
           <span>Cell size (cell width x hight):</span>
           <ul>
@@ -174,7 +181,65 @@ const ModelMetaData: React.FC = () => {
           <span>Grid local refinement:</span>
           <span>{specialDiscrData.grid_local_refinement ? 'YES' : 'NO'}</span>
         </div>
-      </div>
+      </>
+    );
+  };
+
+  const timeDiscrPanel = (timeDiscrData: any) => {
+    return (
+      <>
+        {timeDiscrData.time_unit && <div className={styles.contentInner}>
+          <span>Time unit:</span>
+          <span>{timeDiscrData.time_unit}</span>
+        </div>}
+        {timeDiscrData.start_time && <div className={styles.contentInner}>
+          <span>Start date:</span>
+          <span>{formattedDate(timeDiscrData.start_time)}</span>
+        </div>}
+        {timeDiscrData.end_time && <div className={styles.contentInner}>
+          <span>End date:</span>
+          <span>{formattedDate(timeDiscrData.end_time)}</span>
+        </div>}
+        {timeDiscrData.duration && <div className={styles.contentInner}>
+          <span>Total duration:</span>
+          <span>{timeDiscrData.duration}</span>
+        </div>}
+        {timeDiscrData.number_ot_stress_periods && <div className={styles.contentInner}>
+          <span>Number of stress periods:</span>
+          <span>{timeDiscrData.number_ot_stress_periods}</span>
+        </div>}
+      </>
+    );
+  };
+
+  const soilModelPanel = (soilModelData: any) => {
+    return (
+      <>
+        {0 < soilModelData.layers.length && <div className={styles.contentInner}>
+          <span>Number of layers:</span>
+          <span>{soilModelData.layers.length} {1 < soilModelData.layers.length ? ' layers' : ' layers'}</span>
+        </div>}
+        {soilModelData.layers.map((layer: any, index: number) => {
+          return (
+            <div className={styles.contentInner} key={layer.name}>
+              <span>Layer {index + 1}:</span>
+              <div className={styles.multiplyColumn}>
+                <span>{layer.name}</span>
+                <Button
+                  className={styles.downloadButton}
+                  as="a"
+                  href={layer.download_url}
+                  target="_blank"
+                  download={true}
+                  {...(null as any)}
+                >
+                  <FontAwesomeIcon icon={faDownload}/>
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </>
     );
   };
 
@@ -226,10 +291,38 @@ const ModelMetaData: React.FC = () => {
       });
       break;
     }
-
+    case 'time_discretization': {
+      panels.push({
+        key: 1,
+        title: {
+          content: 'Time discretization',
+          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+        },
+        content: {
+          content: (
+            timeDiscrPanel(data[key])
+          ),
+        },
+      });
+      break;
+    }
+    case 'soil_model': {
+      panels.push({
+        key: 1,
+        title: {
+          content: 'Model layers',
+          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+        },
+        content: {
+          content: (
+            soilModelPanel(data[key])
+          ),
+        },
+      });
+      break;
+    }
     }
   }
-
 
   const defaultActiveIndex = Array.from({length: panels.length}, (_, index) => index);
 
@@ -238,7 +331,7 @@ const ModelMetaData: React.FC = () => {
       <DataGrid>
         <DataRow title={'Model metadata'}/>
         <Accordion
-          defaultActiveIndex={[2]}
+          defaultActiveIndex={defaultActiveIndex}
           panels={panels}
           exclusive={false}
         />

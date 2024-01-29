@@ -13,11 +13,17 @@
 
   & > span:first-child {
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   & > *:last-child {
     font-size: 15px;
+  }
+
+  .multiplyColumn {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
   }
 
   select {
@@ -64,9 +70,7 @@
         }
       }
     }
-
   }
-
 
   .coordinates {
     display: flex;
@@ -75,9 +79,23 @@
     justify-content: flex-start;
     gap: 30px;
     row-gap: 10px;
-    //& > *:nth-child(odd) {
-    //  margin-right: 30px;
-    //
-    //}
+  }
+
+  .downloadButton {
+    padding: 0;
+    display: inline-block;
+    background: transparent !important;
+    color: @ref-color-red;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: darken(@ref-color-red, 15, relative);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
