@@ -21,7 +21,7 @@ class PermissionsRepositoryDocument:
     def from_dict(cls, obj: dict):
         return cls(
             project_id=obj['project_id'],
-            owner_id=obj['owner'],
+            owner_id=obj['owner_id'],
             groups=obj['groups'],
             members=obj['members'],
             visibility=obj['visibility'],

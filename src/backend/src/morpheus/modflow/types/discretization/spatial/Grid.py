@@ -14,8 +14,8 @@ from ...geometry import Point, Polygon
 
 
 class CreateGridDict(TypedDict):
-    x_coordinates: list[float]
-    y_coordinates: list[float]
+    nx: int
+    ny: int
     rotation: float
     length_unit: Literal["meters", "centimeters", "feet", "unknown"]
 
