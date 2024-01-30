@@ -1,5 +1,6 @@
 import React from 'react';
 import {useUsers} from '../../application';
+import {IUser} from '../../types';
 
 const UserListContainer = () => {
 
@@ -17,7 +18,7 @@ const UserListContainer = () => {
     <>
       <h1>Users</h1>
       <div>
-        {users.map(user => <div key={user.user_id}>{user.username}</div>)}
+        {users.map((user: IUser) => <div key={user.user_id}>{user.username}</div>)}
       </div>
     </>
   );

@@ -63,7 +63,7 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
 const generateRandomProjects = (count: number, users: IUser[]): IProject[] => {
   const projects: IProject[] = [];
   for (let i = 0; i < count; i++) {
-    projects.push(generateRandomProject(count, getRandomElement(users) as IUser));
+    projects.push(generateRandomProject(i, getRandomElement(users) as IUser));
   }
   return projects;
 };

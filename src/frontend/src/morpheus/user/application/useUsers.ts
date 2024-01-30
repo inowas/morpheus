@@ -66,4 +66,5 @@ const useUsers = (): IUseUsers => {
 };
 
 export default useUsers;
+
 export type {IUser, IUseUsers};
