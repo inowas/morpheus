@@ -152,7 +152,7 @@ class ProjectSummary:
             project_description=Description.from_str(obj['project_description']),
             project_tags=Tags.from_list(obj['project_tags']),
             owner_id=UserId.from_str(obj['owner_id']),
-            visibility=Visibility.from_str(obj['is_public']),
+            visibility=Visibility.from_str(obj['visibility']),
         )
 
     def to_dict(self) -> dict:

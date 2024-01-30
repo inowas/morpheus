@@ -5,7 +5,7 @@ from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ..read.PermissionsReader import PermissionsReader
-from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, VersionAssignedToBaseModelEvent
+from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, VersionAssignedToBaseModelEvent, VersionCreatedEvent
 from ...infrastructure.event_sourcing.ModflowEventBus import modflow_event_bus
 from ...types.BaseModelVersion import BaseModelVersion, VersionId, VersionTag, VersionDescription
 from ...types.Project import ProjectId
@@ -36,11 +36,11 @@ class CreateBaseModelCommandHandler:
         base_model = ModflowModel.new(command.model_id)
         current_user_id = command.created_by
 
-        grid = Grid.from_polygon_with_relative_coordinates(
+        grid = Grid.cartesian_from_polygon(
             polygon=command.geometry,
             rotation=Rotation.from_float(command.grid_properties['rotation']),
-            x_coordinates=command.grid_properties['x_coordinates'],
-            y_coordinates=command.grid_properties['y_coordinates'],
+            nx=command.grid_properties['nx'],
+            ny=command.grid_properties['ny'],
         )
         cells = GridCells.from_polygon(polygon=command.geometry, grid=grid)
         spatial_discretization = SpatialDiscretization(
@@ -52,7 +52,7 @@ class CreateBaseModelCommandHandler:
 
         permissions = PermissionsReader().get_permissions(project_id=project_id)
 
-        if not permissions.members.member_can_edit(user_id=current_user_id):
+        if not permissions.member_can_edit(user_id=current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to create a base model of {project_id.to_str()}')
 
         base_model = base_model.with_updated_spatial_discretization(spatial_discretization)
@@ -66,6 +66,11 @@ class CreateBaseModelCommandHandler:
             tag=VersionTag.from_str('v0.0.0'),
             description=VersionDescription.from_str('Initial version'),
         )
+
+        create_version_event = VersionCreatedEvent.from_version(project_id=project_id, version=initial_version, occurred_at=DateTime.now())
+        create_version_event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
+        create_version_event_envelope = EventEnvelope(event=create_version_event, metadata=create_version_event_metadata)
+        modflow_event_bus.record(event_envelope=create_version_event_envelope)
 
         tag_version_event = VersionAssignedToBaseModelEvent.from_version(project_id=project_id, version=initial_version, occurred_at=DateTime.now())
         tag_version_event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))

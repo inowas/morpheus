@@ -76,7 +76,7 @@ class ProjectSummaryRepository(RepositoryBase):
 
     def find_all(self) -> list[ProjectSummary]:
         documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find()]
-        return [ProjectSummary.from_dict(obj=document.to_dict()) for document in documents]
+        return [document.to_summary() for document in documents]
 
     def get_summary(self, project_id: ProjectId) -> ProjectSummary | None:
         document = self.collection.find_one({'project_id': project_id.to_str()})
