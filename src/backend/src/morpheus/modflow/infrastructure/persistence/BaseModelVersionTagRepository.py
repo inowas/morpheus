@@ -9,7 +9,7 @@ from morpheus.settings import settings as app_settings
 
 
 @dataclasses.dataclass(frozen=True)
-class BaseModelVersionRepositoryDocument:
+class BaseModelVersionTagRepositoryDocument:
     project_id: str
     version_id: str
     tag: str
@@ -35,9 +35,9 @@ class BaseModelVersionRepositoryDocument:
         return BaseModelVersion(version_id=VersionId.from_str(self.version_id), tag=VersionTag.from_str(self.tag), description=VersionDescription.from_str(self.description))
 
 
-class BaseModelVersionRepository(RepositoryBase):
+class BaseModelVersionTagRepository(RepositoryBase):
     def create_new_version(self, project_id: ProjectId, version: BaseModelVersion, created_by: UserId, created_at: DateTime) -> None:
-        document = BaseModelVersionRepositoryDocument(
+        document = BaseModelVersionTagRepositoryDocument(
             project_id=project_id.to_str(),
             version_id=version.version_id.to_str(),
             tag=version.tag.to_str(),
@@ -50,12 +50,20 @@ class BaseModelVersionRepository(RepositoryBase):
     def get_version_by_id(self, project_id: ProjectId, version_id: VersionId) -> BaseModelVersion:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'version_id': version_id.to_str()})
         if data is None:
-            raise ValueError(f'Version with id {version_id.to_str()} does not exist')
+            raise ValueError(f'Version Tag with id {version_id.to_str()} does not exist')
 
-        return BaseModelVersionRepositoryDocument.from_dict(dict(data)).get_version()
+        return BaseModelVersionTagRepositoryDocument.from_dict(dict(data)).get_version()
+
+    def get_version_by_tag(self, project_id: ProjectId, tag: VersionTag) -> BaseModelVersion:
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'tag': tag.to_str()})
+        if data is None:
+            raise ValueError(f'Version Tag with tag {tag.to_str()} does not exist')
+
+        return BaseModelVersionTagRepositoryDocument.from_dict(dict(data)).get_version()
 
     def get_all_versions(self, project_id: ProjectId) -> list[BaseModelVersion]:
-        return [document.get_version() for document in self.collection.find({'project_id': project_id.to_str()}).sort('created_at', -1)]
+        documents = self.collection.find({'project_id': project_id.to_str()}).sort('created_at', -1)
+        return [BaseModelVersionTagRepositoryDocument.from_dict(document).get_version() for document in documents]
 
     def delete_version_by_id(self, project_id: ProjectId, version_id: VersionId) -> None:
         self.collection.delete_one({'project_id': project_id.to_str(), 'version_id': version_id.to_str()})
@@ -67,9 +75,9 @@ class BaseModelVersionRepository(RepositoryBase):
         )
 
 
-base_model_version_repository = BaseModelVersionRepository(
+base_model_version_tag_repository = BaseModelVersionTagRepository(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_MODFLOW_DATABASE, create_if_not_exist=True),
-        'base_model_versions_projection'
+        'base_model_version_tags_projection'
     )
 )

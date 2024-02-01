@@ -5,15 +5,15 @@ from morpheus.modflow.domain.events.BaseModelEvents import BaseModelCreatedEvent
     BaseModelAffectedCellsRecalculatedEvent
 from morpheus.modflow.domain.events.ProjectEvents import ProjectCreatedEvent
 from morpheus.modflow.infrastructure.persistence.BaseModelRepository import BaseModelRepository, base_model_repository
-from morpheus.modflow.infrastructure.persistence.BaseModelVersionRepository import BaseModelVersionRepository, base_model_version_repository
+from morpheus.modflow.infrastructure.persistence.BaseModelVersionTagRepository import BaseModelVersionTagRepository, base_model_version_tag_repository
 from morpheus.modflow.types.User import UserId
 
 
 class BaseModelProjector(EventListenerBase):
 
-    def __init__(self, base_model_repo: BaseModelRepository, base_model_version_repo: BaseModelVersionRepository) -> None:
+    def __init__(self, base_model_repo: BaseModelRepository, base_model_version_tag_repo: BaseModelVersionTagRepository) -> None:
         self.base_model_repo = base_model_repo
-        self.base_model_version_repo = base_model_version_repo
+        self.base_model_version_repo = base_model_version_tag_repo
 
     @listen_to(ProjectCreatedEvent)
     def on_project_created(self, event: ProjectCreatedEvent, metadata: EventMetadata) -> None:
@@ -28,8 +28,20 @@ class BaseModelProjector(EventListenerBase):
 
         self.base_model_repo.save_base_model(project_id=project_id, base_model=base_model, created_at=created_at, created_by=created_by)
 
-    @listen_to([BaseModelAffectedCellsRecalculatedEvent, BaseModelAffectedCellsUpdatedEvent])
-    def on_base_model_affected_cells_updated(self, event: BaseModelAffectedCellsRecalculatedEvent | BaseModelAffectedCellsRecalculatedEvent, metadata: EventMetadata) -> None:
+    @listen_to(BaseModelAffectedCellsRecalculatedEvent)
+    def on_base_model_affected_cells_recalculated(self, event: BaseModelAffectedCellsRecalculatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        affected_cells = event.get_affected_cells()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest = self.base_model_repo.get_latest_base_model(project_id=project_id)
+        latest = latest.with_updated_spatial_discretization(spatial_discretization=latest.spatial_discretization.with_updated_affected_cells(affected_cells=affected_cells))
+        self.base_model_repo.update_base_model(project_id=project_id, base_model=latest, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(BaseModelAffectedCellsUpdatedEvent)
+    def on_base_model_affected_cells_updated(self, event: BaseModelAffectedCellsUpdatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
         affected_cells = event.get_affected_cells()
 
@@ -125,4 +137,4 @@ class BaseModelProjector(EventListenerBase):
         self.base_model_repo.delete_version(project_id=project_id, version_id=version_id)
 
 
-base_model_projector = BaseModelProjector(base_model_repo=base_model_repository, base_model_version_repo=base_model_version_repository)
+base_model_projector = BaseModelProjector(base_model_repo=base_model_repository, base_model_version_tag_repo=base_model_version_tag_repository)
