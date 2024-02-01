@@ -146,11 +146,22 @@ class BaseModelRepository(RepositoryBase):
         if document is None:
             raise Exception(f'Latest Base Model for project with id {project_id} does not exist')
 
-        document = document.with_assigned_version(version=version, changed_at=changed_at, changed_by=changed_by)
-        self.update_latest_document(project_id=project_id, document=document)
+        # do nothing if already tagged with the same version
+        if document.previous_version_id == version.version_id.to_str() and document.changes_since == 0:
+            return None
 
-        # remove documents with changes_since > 0
-        self.remove_intermediate_steps(project_id=project_id)
+        # happy path: update latest document with new version and remove intermediate steps
+        if document.changes_since > 0:
+            document = document.with_assigned_version(version=version, changed_at=changed_at, changed_by=changed_by)
+            self.update_latest_document(project_id=project_id, document=document)
+
+            # remove documents with changes_since > 0
+            self.remove_intermediate_steps(project_id=project_id)
+            return None
+
+        # if set a version twice, we need to create a new document with the same base model and the new version
+        document = document.with_assigned_version(version=version, changed_at=changed_at, changed_by=changed_by)
+        self.append_document(document)
 
     def get_latest_base_model_hash(self, project_id: ProjectId) -> Sha1Hash:
         document = self.get_latest_document(project_id=project_id)

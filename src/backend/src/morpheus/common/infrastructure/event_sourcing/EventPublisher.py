@@ -1,4 +1,5 @@
 import inspect
+from typing import Type
 
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
@@ -7,9 +8,19 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 ListenToEventAttribute = 'listen_to_event'
 
 
-def listen_to(event):
+def listen_to(event: Type[EventBase] | list[Type[EventBase]]):
+    if not isinstance(event, list):
+        events = [event]
+    else:
+        events = event
+
+    if events is not None:
+        if len(events) == 0:
+            raise Exception('At least one event must be provided')
+
     def listener_listening_to(listener):
-        setattr(listener, ListenToEventAttribute, event.__name__)
+        for event_item in events:
+            setattr(listener, ListenToEventAttribute, event_item.__name__)
         return listener
 
     return listener_listening_to

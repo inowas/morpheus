@@ -3,7 +3,7 @@ from typing import Literal, List
 
 from morpheus.common.types import Uuid, String, DateTime, Float
 
-from ..discretization.spatial import GridCells, Grid
+from ..discretization.spatial import ActiveCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, GeometryCollection
 from ..soil_model import LayerId
@@ -70,7 +70,7 @@ class HeadObservation:
     type: ObservationType
     name: ObservationName
     geometry: Point
-    affected_cells: GridCells
+    affected_cells: ActiveCells
     affected_layers: list[LayerId]
     raw_data: list[HeadObservationDataItem]
 
@@ -85,7 +85,7 @@ class HeadObservation:
             type=ObservationType.head_observation(),
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_point(point=geometry, grid=grid),
+            affected_cells=ActiveCells.from_point(point=geometry, grid=grid),
             affected_layers=affected_layers,
             raw_data=raw_data or []
         )
@@ -97,7 +97,7 @@ class HeadObservation:
             type=ObservationType.from_value(obj['type']),
             name=ObservationName.from_value(obj['name']),
             geometry=Point.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             raw_data=[HeadObservationDataItem.from_dict(value) for value in obj['raw_data']]
         )

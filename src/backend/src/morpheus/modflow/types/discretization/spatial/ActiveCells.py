@@ -1,5 +1,6 @@
 import dataclasses
 
+import numpy as np
 from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon
 from shapely.ops import unary_union
 from morpheus.modflow.types.discretization.spatial import Grid
@@ -7,32 +8,38 @@ from morpheus.modflow.types.geometry import GeometryCollection, Polygon, Point, 
 
 
 @dataclasses.dataclass
-class GridCell:
+class ActiveCell:
     x: int
     y: int
-    value: bool | float
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
             x=obj['x'],
             y=obj['y'],
-            value=obj['value']
         )
 
     def to_dict(self):
         return {
             'x': self.x,
             'y': self.y,
-            'value': self.value
         }
+
+    @classmethod
+    def from_tuple(cls, obj: tuple):
+        return cls(
+            x=obj[0],
+            y=obj[1],
+        )
+
+    def to_tuple(self):
+        return self.x, self.y
 
 
 @dataclasses.dataclass
-class GridCells:
+class ActiveCells:
     shape: tuple[int, int]
-    data: list[GridCell]
-    cell_geometries: list[list[Polygon | LineString | Point]] | None = dataclasses.field(default_factory=list)
+    data: list[ActiveCell]
 
     def __len__(self):
         return len(self.data)
@@ -40,32 +47,37 @@ class GridCells:
     def __iter__(self):
         return iter(self.data)
 
+    def __eq__(self, other):
+        if not isinstance(other, ActiveCells):
+            return False
+        return self.to_dict(as_raster=True) == other.to_dict(as_raster=True)
+
     @classmethod
     def empty_from_shape(cls, nx: int, ny: int):
         return cls(
-            shape=(nx, ny),
+            shape=(ny, nx),
             data=[]
         )
 
     @classmethod
     def empty_from_grid(cls, grid: Grid):
         return cls(
-            shape=(grid.nx(), grid.ny()),
+            shape=(grid.ny(), grid.nx()),
             data=[]
         )
 
     def filter(self, predicate):
-        return GridCells(
+        return ActiveCells(
             shape=self.shape,
             data=[cell for cell in self.data if predicate(cell)]
         )
 
-    def contains(self, cell: GridCell) -> bool:
-        return self.get_cell(x=cell.x, y=cell.y) is not None
+    def contains(self, cell: ActiveCell) -> bool:
+        return self.is_active(x=cell.x, y=cell.y) is not None
 
     @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
-        cells = GridCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
+        cells = ActiveCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
         geometries = grid.get_cell_geometries()
         linestring = ShapelyLineString(linestring.coordinates)
 
@@ -73,77 +85,117 @@ class GridCells:
             for y in range(grid.ny()):
                 grid_cell_geometry = ShapelyPolygon(geometries[x][y].coordinates[0])
                 if grid_cell_geometry.intersects(linestring):
-                    cells.set_cell(x=x, y=y, value=True)
+                    cells.set_active(x=x, y=y)
 
         return cells
 
     @classmethod
     def from_polygon(cls, polygon: Polygon, grid: Grid):
-        cells = cls.empty_from_shape(grid.nx(), grid.ny())
+        cells = cls.empty_from_shape(nx=grid.nx(), ny=grid.ny())
         area = ShapelyPolygon(polygon.coordinates[0])
         grid_cell_centers = grid.get_cell_centers()
         for x in range(grid.nx()):
             for y in range(grid.ny()):
                 center = ShapelyPoint(grid_cell_centers[x][y].coordinates)
                 if area.contains(center):
-                    cells.set_cell(x=x, y=y, value=True)
+                    cells.set_active(x=x, y=y)
 
         return cells
 
     @classmethod
     def from_point(cls, point: Point, grid: Grid):
-        cells = GridCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
+        cells = ActiveCells.empty_from_shape(nx=grid.nx(), ny=grid.ny())
         point = ShapelyPoint(point.coordinates)
         grid_cell_geometries = grid.get_cell_geometries()
         for x in range(grid.nx()):
             for y in range(grid.ny()):
                 grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[x][y].coordinates[0])
                 if grid_cell_geometry.contains(point):
-                    cells.set_cell(x=x, y=y, value=True)
+                    cells.set_active(x=x, y=y)
 
         return cells
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls(
-            shape=obj['shape'],
-            data=[GridCell.from_dict(cell) for cell in obj['data']]
-        )
+        if obj['type'] == 'raster':
+            raster_data = np.array(obj['data'], dtype=bool)
+            if raster_data.shape != tuple(obj['shape']):
+                raise ValueError(f'Grid cells shape {obj["shape"]} does not match raster data shape {raster_data.shape}')
 
-    def to_dict(self):
+            empty_value = obj['empty_value']
+            grid_cells = []
+            for y in range(obj['shape'][0]):
+                for x in range(obj['shape'][1]):
+                    value = raster_data[y, x]
+                    if value and value != empty_value:
+                        grid_cells.append(ActiveCell(x=x, y=y))
+
+            return cls(
+                shape=obj['shape'],
+                data=grid_cells
+            )
+
+        if obj['type'] == 'sparse':
+            return cls(
+                shape=obj['shape'],
+                data=[ActiveCell.from_tuple(cell) for cell in obj['data']]
+            )
+
+        raise ValueError(f'Unknown grid cells type: {obj["type"]}')
+
+    def to_dict(self, as_raster: bool | None = None, auto_detect: bool = True):
+        if as_raster is None:
+            if auto_detect:
+                as_raster = len(self.data) > (self.shape[0] * self.shape[1] / 2)
+
+        dict_type = 'raster' if as_raster else 'sparse'
+        if dict_type == 'sparse':
+            return {
+                'type': dict_type,
+                'shape': self.shape,
+                'data': [cell.to_tuple() for cell in self.data]
+            }
+
+        # save as Raster data
+        empty_value = False
+        data = np.full(shape=self.shape, fill_value=empty_value, dtype=bool)
+        for cell in self.data:
+            data[cell.y, cell.x] = True
+
         return {
+            'type': dict_type,
+            'empty_value': empty_value,
             'shape': self.shape,
-            'data': [cell.to_dict() for cell in self.data]
+            'data': data.tolist()
         }
 
-    def get_cell(self, x: int, y: int) -> GridCell | None:
-        if x < 0 or x >= self.shape[0] or y < 0 or y >= self.shape[1]:
-            return None
+    def is_active(self, x: int, y: int) -> bool:
+        if y < 0 or y >= self.shape[0] or x < 0 or x >= self.shape[1]:
+            return False
 
         try:
-            return next(cell for cell in self.data if cell.x == x and cell.y == y)
+            return next(cell for cell in self.data if cell.x == x and cell.y == y) is not None
         except StopIteration:
-            return None
+            return False
 
-    def set_cell(self, value: bool, x: int, y: int):
-        if x < 0 or x >= self.shape[0] or y < 0 or y >= self.shape[1]:
+    def set_inactive(self, x: int, y: int):
+        self.data = [cell for cell in self.data if cell.x != x or cell.y != y]
+
+    def set_active(self, x: int, y: int):
+        if y < 0 or y >= self.shape[0] or x < 0 or x >= self.shape[1]:
             return
 
-        existing_cell = self.get_cell(x=x, y=y)
-        if existing_cell:
-            existing_cell.value = value
-            self.cell_geometries = None
+        if self.is_active(x=x, y=y):
             return
 
-        self.data.append(GridCell(x=x, y=y, value=value))
-        self.cell_geometries = None
+        self.data.append(ActiveCell(x=x, y=y))
 
     def as_geojson(self, grid: Grid):
         cells_geometries = grid.get_cell_geometries()
         cell_geometries = []
         for x in range(grid.nx()):
             for y in range(grid.ny()):
-                if self.get_cell(x=x, y=y):
+                if self.is_active(x=x, y=y):
                     cell_geometries.append(cells_geometries[x][y])
 
         return GeometryCollection(geometries=cell_geometries)

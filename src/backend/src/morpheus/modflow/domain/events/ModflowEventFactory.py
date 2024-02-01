@@ -2,15 +2,26 @@ from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventName import EventName
 from ...domain.events.ModflowEventName import ModflowEventName
 
-from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, VersionAssignedToBaseModelEvent, VersionCreatedEvent, VersionDeletedEvent, VersionDescriptionUpdatedEvent
+from ...domain.events.BaseModelEvents import BaseModelCreatedEvent, VersionAssignedToBaseModelEvent, VersionCreatedEvent, VersionDeletedEvent, VersionDescriptionUpdatedEvent, \
+    BaseModelAffectedCellsUpdatedEvent, BaseModelGeometryUpdatedEvent, BaseModelGridUpdatedEvent, BaseModelTimeDiscretizationUpdatedEvent, BaseModelAffectedCellsRecalculatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
 from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
 
 
 class ModflowEventFactory:
     def create_event(self, event_name: EventName, entity_uuid: Uuid, occurred_at: DateTime, payload: dict):
+        if event_name.to_str() == ModflowEventName.BASE_MODEL_AFFECTED_CELLS_RECALCULATED:
+            return BaseModelAffectedCellsRecalculatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ModflowEventName.BASE_MODEL_AFFECTED_CELLS_UPDATED:
+            return BaseModelAffectedCellsUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ModflowEventName.BASE_MODEL_CREATED:
             return BaseModelCreatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ModflowEventName.BASE_MODEL_GEOMETRY_UPDATED:
+            return BaseModelGeometryUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ModflowEventName.BASE_MODEL_GRID_UPDATED:
+            return BaseModelGridUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ModflowEventName.BASE_MODEL_TIME_DISCRETIZATION_UPDATED:
+            return BaseModelTimeDiscretizationUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ModflowEventName.MEMBER_ADDED:
             return MemberAddedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ModflowEventName.MEMBER_REMOVED:
