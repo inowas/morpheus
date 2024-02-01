@@ -10,22 +10,53 @@ def test_empty_grid_cells() -> None:
     assert len(grid_cells.data) == 0
 
 
-def test_grid_cells_to_dict() -> None:
-    grid_cells = ActiveCells.empty_from_shape(nx=2, ny=4)
+def test_grid_cells_to_sparse_dict() -> None:
+    grid_cells = ActiveCells.empty_from_shape(nx=100, ny=20)
     grid_cells.set_active(x=0, y=0)
     grid_cells.set_active(x=1, y=1)
     assert grid_cells.to_dict(as_raster=False) == {
         'type': 'sparse',
-        'shape': (4, 2),
+        'shape': (20, 100),
         'data': [(0, 0), (1, 1)]
     }
 
+
+def test_grid_cells_to_raster_dict() -> None:
+    grid_cells = ActiveCells.empty_from_shape(nx=2, ny=4)
+    grid_cells.set_active(x=0, y=0)
+    grid_cells.set_active(x=0, y=1)
+    grid_cells.set_active(x=1, y=1)
     assert grid_cells.to_dict(as_raster=True) == {
         'type': 'raster',
         'shape': (4, 2),
         'empty_value': False,
-        'data': [[True, False], [False, True], [False, False], [False, False]]
+        'data': [[True, False], [True, True], [False, False], [False, False]]
     }
+
+
+def test_grid_cells_to_sparse_inverted_dict() -> None:
+    grid_cells = ActiveCells.empty_from_shape(nx=2, ny=5)
+    grid_cells.set_active(x=0, y=0)
+    grid_cells.set_active(x=0, y=1)
+    grid_cells.set_active(x=0, y=2)
+    grid_cells.set_active(x=0, y=3)
+    grid_cells.set_active(x=0, y=4)
+    grid_cells.set_active(x=1, y=1)
+    grid_cells.set_active(x=1, y=2)
+    grid_cells.set_active(x=1, y=3)
+    grid_cells.set_active(x=1, y=4)
+
+    assert grid_cells.to_dict() == {
+        'type': 'sparse_inverted',
+        'shape': (5, 2),
+        'data': [(1, 0)]
+    }
+
+    assert ActiveCells.from_dict({
+        'type': 'sparse_inverted',
+        'shape': (5, 2),
+        'data': [(1, 0)]
+    }) == grid_cells
 
 
 def test_grid_cells_from_dict() -> None:
@@ -81,13 +112,20 @@ def test_grid_cells_autodetect() -> None:
     grid_cells = ActiveCells.empty_from_shape(nx=2, ny=3)
     grid_cells.set_active(x=0, y=0)
     grid_cells.set_active(x=1, y=1)
-
-    assert grid_cells.to_dict(auto_detect=True)['type'] == 'sparse'
-
-    grid_cells = ActiveCells.empty_from_shape(nx=2, ny=3)
-    grid_cells.set_active(x=0, y=0)
-    grid_cells.set_active(x=1, y=1)
     grid_cells.set_active(x=0, y=2)
     grid_cells.set_active(x=1, y=2)
 
     assert grid_cells.to_dict(auto_detect=True)['type'] == 'raster'
+
+    grid_cells = ActiveCells.empty_from_shape(nx=2, ny=5)
+    grid_cells.set_active(x=0, y=0)
+    grid_cells.set_active(x=0, y=1)
+    grid_cells.set_active(x=0, y=2)
+    grid_cells.set_active(x=0, y=3)
+    grid_cells.set_active(x=0, y=4)
+    grid_cells.set_active(x=1, y=1)
+    grid_cells.set_active(x=1, y=2)
+    grid_cells.set_active(x=1, y=3)
+    grid_cells.set_active(x=1, y=4)
+
+    assert grid_cells.to_dict(auto_detect=True)['type'] == 'sparse_inverted'
