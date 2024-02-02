@@ -52,7 +52,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectListItem'
+                  $ref: '#/components/schemas/ProjectSummary'
         401:
           description: Unauthorized
         403:
@@ -302,7 +302,7 @@ components:
               number_of_time_steps: 1
               time_step_multiplier: 1
 
-    ProjectListItem:
+    ProjectSummary:
       type: object
       description: "A Modflow Project."
       properties:
@@ -328,10 +328,12 @@ components:
           type: string
           description: "The id of the owner of the project."
           example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
-        visibility:
+        is_public:
+          type: boolean
+          description: "A flag to indicate if the project is public."
+          example: false
+        created_at:
           type: string
-          enum: [ "public", "private" ]
-          description: "The visibility of the project."
-          example: "public"
-
-
+          format: date-time
+          description: "The creation date time of the project."
+          example: "2020-01-01T00:00:00Z"
