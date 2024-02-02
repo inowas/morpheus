@@ -13,11 +13,17 @@ from .Crs import Crs
 from ...geometry import Point, Polygon
 
 
-class CreateGridDict(TypedDict):
+class CreateGridDict(TypedDict, total=True):
     nx: int
     ny: int
     rotation: float
     length_unit: Literal["meters", "centimeters", "feet", "unknown"]
+
+
+class UpdateGridDict(TypedDict, total=True):
+    relative_x_coordinates: list[float]
+    relative_y_coordinates: list[float]
+    rotation: float
 
 
 @dataclasses.dataclass(frozen=True)
@@ -72,7 +78,7 @@ class Grid:
     """
 
     # Top left corner of the grid
-    # Coordinates are given geojson, WGS84, EPSG:4326
+    # Coordinates are given geojson, WGS84, EPSG:4326 or in defined crs
     origin: Point
 
     # Non-uniform Rectilinear 2D Grid
@@ -85,21 +91,21 @@ class Grid:
 
     @classmethod
     def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, nx: int, ny: int) -> "Grid":
-        x_coordinates = []
-        y_coordinates = []
+        relative_x_coordinates = []
+        relative_y_coordinates = []
         for x in range(nx):
-            x_coordinates.append(round(1 / nx + x_coordinates[-1] if x > 0 else 0, 5))
-        x_coordinates.append(1)
+            relative_x_coordinates.append(round(1 / nx + relative_x_coordinates[-1] if x > 0 else 0, 5))
+        relative_x_coordinates.append(1)
 
         for y in range(ny):
-            y_coordinates.append(round(1 / ny + y_coordinates[-1] if y > 0 else 0, 5))
-        y_coordinates.append(1)
+            relative_y_coordinates.append(round(1 / ny + relative_y_coordinates[-1] if y > 0 else 0, 5))
+        relative_y_coordinates.append(1)
 
         return cls.from_polygon_with_relative_coordinates(
             polygon=polygon,
             rotation=rotation,
-            x_coordinates=x_coordinates,
-            y_coordinates=y_coordinates
+            x_coordinates=relative_x_coordinates,
+            y_coordinates=relative_y_coordinates
         )
 
     @classmethod

@@ -3,9 +3,10 @@ from typing import TypedDict, Literal, Sequence
 from flask import Request, abort, jsonify
 
 from ....application.write.BaseModelCommandHandlers import CreateBaseModelCommand, CreateBaseModelCommandHandler, \
-    CreateGridDict, UpdateTimeDiscretizationCommand, UpdateTimeDiscretizationCommandHandler
+    CreateGridDict, UpdateModelTimeDiscretizationCommand, UpdateTimeDiscretizationCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.ModflowModel import ModelId
+from ....types.discretization import TimeDiscretization
 
 from ....types.discretization.spatial.SpatialDiscretization import Polygon
 from ....types.Project import ProjectId
@@ -105,12 +106,17 @@ class UpdateTimeDiscretizationRequestHandler:
         stress_periods = StressPeriodCollection.from_list(list(update_time_discretization.stress_periods))
         time_unit = TimeUnit.from_str(update_time_discretization.time_unit)
 
-        command = UpdateTimeDiscretizationCommand(
-            project_id=project_id,
+        time_discretization = TimeDiscretization(
             start_date_time=start_date_time,
             end_date_time=end_date_time,
             stress_periods=stress_periods,
             time_unit=time_unit,
+        )
+
+        command = UpdateModelTimeDiscretizationCommand(
+            project_id=project_id,
+            time_discretization=time_discretization,
+            updated_by=UserId.from_value(user_id)
         )
 
         UpdateTimeDiscretizationCommandHandler.handle(command=command)

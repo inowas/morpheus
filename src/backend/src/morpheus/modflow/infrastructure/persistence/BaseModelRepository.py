@@ -14,8 +14,8 @@ class BaseModelRepositoryDocument:
     project_id: str
     base_model: dict
     sha1_hash: str
-    previous_version_id: str | None
-    changes_since: int
+    version_id: str | None
+    number_of_changes: int
     version_string: str | None
     last_change_at: str
     last_change_by: str
@@ -26,8 +26,8 @@ class BaseModelRepositoryDocument:
             project_id=obj['project_id'],
             base_model=obj['base_model'],
             sha1_hash=obj['sha1_hash'],
-            previous_version_id=obj['previous_version_id'],
-            changes_since=obj['changes_since'],
+            version_id=obj['version_id'],
+            number_of_changes=obj['number_of_changes'],
             version_string=obj['version_string'],
             last_change_at=obj['last_change_at'],
             last_change_by=obj['last_change_by'],
@@ -44,17 +44,17 @@ class BaseModelRepositoryDocument:
 
     def with_updated_base_model(self, base_model: ModflowModel, changed_at: DateTime, changed_by: UserId):
         version = self.version_string.split('-')[0] if self.version_string is not None else None
-        version_string = f'{version}-{self.changes_since + 1}' if version is not None else None
+        version_string = f'{version}-{self.number_of_changes + 1}' if version is not None else None
         sha1_hash = base_model.get_sha1_hash().to_str()
 
         return dataclasses.replace(
-            self, base_model=base_model.to_dict(), sha1_hash=sha1_hash, changes_since=self.changes_since + 1,
+            self, base_model=base_model.to_dict(), sha1_hash=sha1_hash, number_of_changes=self.number_of_changes + 1,
             version_string=version_string, last_change_at=changed_at.to_str(), last_change_by=changed_by.to_str()
         )
 
     def with_assigned_version(self, version: BaseModelVersion, changed_at: DateTime, changed_by: UserId):
         return dataclasses.replace(
-            self, previous_version_id=version.version_id.to_str(), version_string=version.to_str(), changes_since=0, last_change_at=changed_at.to_str(),
+            self, version_id=version.version_id.to_str(), version_string=version.to_str(), number_of_changes=0, last_change_at=changed_at.to_str(),
             last_change_by=changed_by.to_str()
         )
 
@@ -97,7 +97,7 @@ class BaseModelRepository(RepositoryBase):
         self.collection.insert_one(document.to_dict())
 
     def remove_intermediate_steps(self, project_id: ProjectId) -> None:
-        self.collection.delete_many(filter={'project_id': project_id.to_str(), 'changes_since': {'$gt': 0}})
+        self.collection.delete_many(filter={'project_id': project_id.to_str(), 'number_of_changes': {'$gt': 0}})
 
     def get_latest_base_model(self, project_id: ProjectId) -> ModflowModel:
         document = self.get_latest_document(project_id)
@@ -122,8 +122,8 @@ class BaseModelRepository(RepositoryBase):
             project_id=project_id.to_str(),
             base_model=base_model.to_dict(),
             sha1_hash=base_model.get_sha1_hash().to_str(),
-            previous_version_id=None,
-            changes_since=0,
+            version_id=None,
+            number_of_changes=0,
             version_string=None,
             last_change_at=created_at.to_str(),
             last_change_by=created_by.to_str(),
@@ -141,16 +141,27 @@ class BaseModelRepository(RepositoryBase):
         self.append_document(new_document)
 
     def assign_version_to_latest_base_model(self, project_id: ProjectId, version: BaseModelVersion, changed_by: UserId, changed_at: DateTime) -> None:
-        # we assign a version to the latest document and delete all intermediate documents with changes_since > 0
+        # we assign a version to the latest document and delete all intermediate documents with number_of_changes > 0
         document = self.get_latest_document(project_id=project_id)
         if document is None:
             raise Exception(f'Latest Base Model for project with id {project_id} does not exist')
 
-        document = document.with_assigned_version(version=version, changed_at=changed_at, changed_by=changed_by)
-        self.update_latest_document(project_id=project_id, document=document)
+        # do nothing if already tagged with the same version
+        if document.version_id == version.version_id.to_str() and document.number_of_changes == 0:
+            return None
 
-        # remove documents with changes_since > 0
-        self.remove_intermediate_steps(project_id=project_id)
+        # happy path: update latest document with new version and remove intermediate steps
+        if document.number_of_changes > 0:
+            document = document.with_assigned_version(version=version, changed_at=changed_at, changed_by=changed_by)
+            self.update_latest_document(project_id=project_id, document=document)
+
+            # remove documents with number_of_changes > 0
+            self.remove_intermediate_steps(project_id=project_id)
+            return None
+
+        # if set a version twice, we need to create a new document with the same base model and the new version
+        document = document.with_assigned_version(version=version, changed_at=changed_at, changed_by=changed_by)
+        self.append_document(document)
 
     def get_latest_base_model_hash(self, project_id: ProjectId) -> Sha1Hash:
         document = self.get_latest_document(project_id=project_id)
@@ -160,7 +171,7 @@ class BaseModelRepository(RepositoryBase):
         return document.get_sha1_hash()
 
     def switch_to_version(self, project_id: ProjectId, version: BaseModelVersion, changed_by: UserId, changed_at: DateTime) -> None:
-        data = self.collection.find_one({'project_id': project_id.to_str(), 'previous_version_id': version.version_id.to_str(), 'changes_since': 0})
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'version_id': version.version_id.to_str(), 'number_of_changes': 0})
         if data is None:
             raise Exception(f'Base Model with version {version} does not exist')
 
@@ -168,16 +179,16 @@ class BaseModelRepository(RepositoryBase):
         document = BaseModelRepositoryDocument.from_dict(dict(data)).with_updated_datetime(changed_at=changed_at, changed_by=changed_by)
         self.collection.update_one({'_id': object_id}, {'$set': document.to_dict()})
 
-        # remove documents with changes_since > 0
+        # remove documents with number_of_changes > 0
         self.remove_intermediate_steps(project_id=project_id)
 
     def delete_version(self, project_id: ProjectId, version_id: VersionId) -> None:
-        data = self.collection.find_one({'project_id': project_id.to_str(), 'previous_version_id': version_id.to_str(), 'changes_since': 0})
+        data = self.collection.find_one({'project_id': project_id.to_str(), 'version_id': version_id.to_str(), 'number_of_changes': 0})
         if data is None:
             raise Exception(f'Base Model with version {version_id} does not exist')
 
         self.collection.delete_one(
-            filter={'project_id': project_id.to_str(), 'previous_version_id': version_id.to_str(), 'changes_since': 0},
+            filter={'project_id': project_id.to_str(), 'version_id': version_id.to_str(), 'number_of_changes': 0},
         )
 
 

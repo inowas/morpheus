@@ -29,6 +29,14 @@ class BaseModelVersion:
         return self.tag.to_str()
 
     @classmethod
+    def new(cls, tag: VersionTag, description: VersionDescription):
+        return cls(
+            version_id=VersionId.new(),
+            tag=tag,
+            description=description
+        )
+
+    @classmethod
     def from_dict(cls, obj: dict):
         return cls(
             version_id=VersionId.from_str(obj['version_id']),
