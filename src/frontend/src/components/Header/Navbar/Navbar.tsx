@@ -18,7 +18,7 @@ interface IProps {
   pathname: string;
   showSidebarMenu?: boolean;
   showSearchWrapper?: boolean;
-  onCreateButtonClick?: () => void;
+  showCreateButton?: boolean;
 }
 
 const Navbar = ({
@@ -29,7 +29,7 @@ const Navbar = ({
   navigateTo,
   pathname,
   showSearchWrapper = false,
-  onCreateButtonClick,
+  showCreateButton,
 }: IProps) => {
 
   return (
@@ -48,7 +48,7 @@ const Navbar = ({
         pathname={pathname}
         navigateTo={navigateTo}
         showSearchWrapper={showSearchWrapper}
-        onCreateButtonClick={onCreateButtonClick}
+        showCreateButton={showCreateButton}
       />
     </div>
   );

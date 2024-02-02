@@ -28,14 +28,15 @@ import {
 
 const menuItems: IMenuItem[] = [
   {icon: faPenToSquare, description: 'Setup', title: true, active: false},
-  {icon: faPenToSquare, description: 'Test', active: false},
+
   {icon: faBorderAll, description: 'Grid properties', active: false},
-  {icon: faClock, description: 'Stress periods', active: false},
-  {icon: faLayerGroup, description: 'Model layers', active: true},
+  {icon: faClock, description: 'Stress periods', active: true},
+  {icon: faLayerGroup, description: 'Model layers', active: false},
   {icon: faFlag, description: 'Boundary conditions', active: false},
   {icon: faLocationCrosshairs, description: 'Head observations', active: false},
   {icon: faCompress, description: 'Solute transport', active: false},
   {icon: faBarsStaggered, description: 'Variable density flow', active: false},
+  {icon: faPenToSquare, description: 'Test', active: false},
   {icon: faSliders, description: 'PACKAGES', title: true, active: false},
   {icon: faFolder, description: 'MODFLOW packages', active: false},
   {icon: faCompress, description: 'MT3DMS packages', disabled: true, active: false},

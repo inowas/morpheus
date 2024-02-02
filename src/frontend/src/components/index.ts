@@ -45,6 +45,7 @@ import Sidebar from './Sidebar/Sidebar';
 import SidebarMenu from './SidebarMenu/SidebarMenu';
 import SortDropdown, {ISortOption} from 'components/SortDropdown';
 import Toggle from './Toggle/Toggle';
+import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 
@@ -97,6 +98,7 @@ export {
   SliderSwiper,
   SortDropdown,
   Toggle,
+  UploadCSVFile,
   UploadFile,
 };
 
