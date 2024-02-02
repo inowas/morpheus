@@ -6,7 +6,7 @@ from flopy.modflow import ModflowLak as FlopyModflowLak
 
 from morpheus.modflow.types.boundaries.Boundary import BoundaryType, LakeBoundary
 from morpheus.modflow.types.boundaries.LakeObservation import LakeObservation
-from morpheus.modflow.types.discretization.spatial.GridCells import GridCell
+from morpheus.modflow.types.discretization.spatial.ActiveCells import ActiveCell
 from .LakPackageMapper import calculate_stress_period_data
 from ...modflow_2005 import FlopyModflow
 from morpheus.modflow.types.ModflowModel import ModflowModel
@@ -105,7 +105,7 @@ def calculate_lak_package_data(modflow_model: ModflowModel) -> LakPackageData | 
         layer_indices = [layer_ids.index(layer_id) for layer_id in lake_boundary.affected_layers]
 
         for affected_cell in lake_boundary.affected_cells:
-            if not isinstance(affected_cell, GridCell):
+            if not isinstance(affected_cell, ActiveCell):
                 raise TypeError("Expected GridCell but got {}".format(type(affected_cell)))
 
             for layer_idx in layer_indices:

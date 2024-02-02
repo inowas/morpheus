@@ -13,7 +13,7 @@ from .RechargeObservation import RechargeObservation, RechargeRawDataItem
 from .RiverObservation import RiverObservation
 from .WellObservation import WellObservation, WellRawDataItem
 
-from ..discretization.spatial import GridCells, Grid
+from ..discretization.spatial import ActiveCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, LineString, Polygon, GeometryCollection
 from ..soil_model import LayerId
@@ -100,7 +100,7 @@ class Boundary:
     type: BoundaryType
     name: BoundaryName
     geometry: Point | LineString | Polygon
-    affected_cells: GridCells
+    affected_cells: ActiveCells
     affected_layers: list[LayerId]
     observations: Sequence[Observation]
     enabled: bool = True
@@ -109,7 +109,7 @@ class Boundary:
         return self.to_dict() == other.to_dict()
 
     def __init__(self, boundary_id: BoundaryId, boundary_type: BoundaryType, name: BoundaryName,
-                 geometry: LineString | Point | Polygon, affected_cells: GridCells, affected_layers: list[LayerId],
+                 geometry: LineString | Point | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
                  observations: Sequence[Observation], enabled: bool = True):
         self.boundary_id = boundary_id
         self.type = boundary_type
@@ -245,7 +245,7 @@ class ConstantHeadBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=observations,
         )
@@ -257,7 +257,7 @@ class ConstantHeadBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[ConstantHeadObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -283,7 +283,7 @@ class DrainBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=observations,
         )
@@ -295,7 +295,7 @@ class DrainBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[DrainObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -313,7 +313,7 @@ class EvapotranspirationBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
                 EvapotranspirationObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [])
@@ -328,7 +328,7 @@ class EvapotranspirationBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=Polygon.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[EvapotranspirationObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -354,7 +354,7 @@ class FlowAndHeadBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=observations,
         )
@@ -366,7 +366,7 @@ class FlowAndHeadBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[FlowAndHeadObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -424,7 +424,7 @@ class GeneralHeadBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=observations,
         )
@@ -436,7 +436,7 @@ class GeneralHeadBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[GeneralHeadObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -461,7 +461,7 @@ class LakeBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
                 LakeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], bed_leakance=bed_leakance,
@@ -477,7 +477,7 @@ class LakeBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=Polygon.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[LakeObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -501,7 +501,7 @@ class RechargeBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_polygon(polygon=geometry, grid=grid),
+            affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
                 RechargeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [])
@@ -516,7 +516,7 @@ class RechargeBoundary(Boundary):
             boundary_type=BoundaryType.recharge(),
             name=BoundaryName.from_value(obj['name']),
             geometry=Polygon.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[RechargeObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -542,7 +542,7 @@ class RiverBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_linestring(linestring=geometry, grid=grid),
+            affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=observations,
         )
@@ -554,7 +554,7 @@ class RiverBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=LineString.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[RiverObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']
@@ -579,7 +579,7 @@ class WellBoundary(Boundary):
             boundary_type=cls.type,
             name=name,
             geometry=geometry,
-            affected_cells=GridCells.from_point(point=geometry, grid=grid),
+            affected_cells=ActiveCells.from_point(point=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=observations,
         )
@@ -591,7 +591,7 @@ class WellBoundary(Boundary):
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             geometry=Point.from_dict(obj['geometry']),
-            affected_cells=GridCells.from_dict(obj['affected_cells']),
+            affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[WellObservation.from_dict(observation) for observation in obj['observations']],
             enabled=obj['enabled']

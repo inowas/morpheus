@@ -87,7 +87,7 @@ def calculate_ghb_boundary_stress_period_data(
 
             grid_cell_centers = spatial_discretization.grid.get_cell_centers()
             for cell in ghb_boundary.affected_cells:
-                if spatial_discretization.affected_cells.get_cell(cell.x, cell.y) is None:
+                if spatial_discretization.affected_cells.is_active(cell.x, cell.y) is None:
                     # if the cell is not part of the model
                     # we do not apply any data for this cell
                     continue
