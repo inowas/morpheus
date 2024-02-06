@@ -37,6 +37,10 @@
   }
 }
 
+.ui.button.primary.disabled {
+  background-color: #BABABA;
+}
+
 .ui.button.secondary {
   background-color: #DD2727;
 

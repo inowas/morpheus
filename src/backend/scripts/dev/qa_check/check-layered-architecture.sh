@@ -6,7 +6,7 @@ source $(dirname "$0")/../util.inc.sh
 outputHeadline "Checking dependencies in layered architecture"
 
 cd $backendRoot/src
-dep_check check morpheus
+source $backendRoot/.venv/bin/activate && dep_check check morpheus
 exitCode=$?
 if [ $exitCode -ne 0 ]; then
     outputError "Found errors in dependencies between layers"

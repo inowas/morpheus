@@ -111,7 +111,7 @@ module.exports = (env: any, argv: any) => {
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
         GIT_RELEASE_DATE: git('log -1 --format=%aI'),
-        MOCKSERVER: env.mockserver || false,
+        MOCKSERVER_ENABLED: !!env.mockserver,
       }),
       new CopyPlugin({
         patterns: [{

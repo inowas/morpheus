@@ -1,3 +1,0 @@
-import morpheus.authentication.outgoing as authentication_outgoing
-
-require_datahub_user = authentication_outgoing.require_logged_in_user

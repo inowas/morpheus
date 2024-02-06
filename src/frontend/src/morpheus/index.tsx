@@ -3,7 +3,12 @@ import {createRoot} from 'react-dom/client';
 
 import App from './App';
 import {I18nextProvider} from 'react-i18next';
+import {Provider} from 'react-redux';
+
+import {makeServer} from '../../mockServer';
+import config from '../config';
 import {getI18n} from './i18n';
+import {store} from './store';
 
 interface IPlotly {
   newPlot: (
@@ -21,6 +26,10 @@ declare global {
   }
 }
 
+if (config.mockServerEnabled) {
+  makeServer({environment: 'development'});
+}
+
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
@@ -31,7 +40,9 @@ root.render(
           ns: ['SimpleTools'],
         })}
     >
-      <App/>
+      <Provider store={store}>
+        <App/>
+      </Provider>
     </I18nextProvider>
   </Suspense>,
 );

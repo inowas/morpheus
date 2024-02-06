@@ -16,6 +16,7 @@ import SignIn from './application/presentation/containers/AuthContainer';
 import AboutUsContainer from './application/presentation/containers/AboutUsContainer';
 import FilterSidebar from './application/presentation/containers/FilterSidebar';
 import ModelSidebar from './application/presentation/containers/ModelSidebar';
+import {ProjectDashboardContainer} from './modflow/presentation/containers';
 
 const Router = () => {
   const wrapRouteComponent = (component: React.ReactElement) => (
@@ -27,6 +28,7 @@ const Router = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/tools"/>}/>
+      <Route path="/news" element={wrapRouteComponent(<ProjectDashboardContainer/>)}/>
       <Route path="/tools" element={wrapRouteComponent(<DashboardContainer/>)}/>
       <Route path="/tools/T02" element={wrapRouteComponent(<T02Container/>)}/>
       <Route path="/tools/T04" element={wrapRouteComponent(<T04Container/>)}/>

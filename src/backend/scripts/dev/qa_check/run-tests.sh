@@ -6,7 +6,7 @@ source $(dirname "$0")/../util.inc.sh
 outputHeadline "running tests"
 
 cd $backendRoot/src
-pytest
+source $backendRoot/.venv/bin/activate && pytest
 exitCode=$?
 if [ $exitCode -ne 0 ]; then
     outputError "Some tests failed"
