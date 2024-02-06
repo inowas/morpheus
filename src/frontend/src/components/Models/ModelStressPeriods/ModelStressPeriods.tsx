@@ -1,36 +1,24 @@
-import React, {useState} from 'react';
-import {Button, Modal, UploadCSVFile, UploadFile} from 'components';
-
+import React from 'react';
+import {ECsvColumnType, UploadCSVFile} from 'components/UploadCSVFile';
 
 const ModelStressPeriods = () => {
 
-  const [popupType, setPopupType] = useState('UploadFile');
-
-  const [openUploadPopup, setOpenUploadPopup] = useState(true);
-  const onUploadPopupToggle = (type: string = '') => {
-    setPopupType(type);
-    setOpenUploadPopup(!openUploadPopup);
+  const onSave = (data: any) => {
+    console.log('Data was saved: ', data);
   };
 
   return (
     <>
-      <Modal.Modal
-        onClose={() => setOpenUploadPopup(false)}
-        onOpen={() => setOpenUploadPopup(true)}
-        open={openUploadPopup}
-        dimmer={'inverted'}
-      >
-        {'UploadFile' === popupType ?
-          <Modal.Content>
-            <UploadCSVFile onClose={onUploadPopupToggle}/>
-          </Modal.Content>
-          :
-          <Modal.Content>
-            <UploadFile onClose={onUploadPopupToggle}/>
-          </Modal.Content>}
-      </Modal.Modal>
-      <Button primary={true} onClick={() => onUploadPopupToggle('UploadCSVFile')}>Upload CSV File</Button>
-      <Button primary={true} onClick={() => onUploadPopupToggle('UploadFile')}>Upload DATASET</Button>
+      <UploadCSVFile
+        onCancel={() => console.log('cancel')}
+        onSave={onSave}
+        columns={[
+          {key: 0, value: 'start_date_time', text: 'Start date', type: ECsvColumnType.DATE_TIME},
+          {key: 1, value: 'nstp', text: 'Time steps'},
+          {key: 2, value: 'tsmult', text: 'Multiplier'},
+          {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},
+        ]}
+      />
     </>
   );
 };

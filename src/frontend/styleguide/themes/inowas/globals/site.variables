@@ -974,6 +974,7 @@
 @ref-color-middleWhite: #f8f9f9;
 @ref-color-border: #e9e9e9;
 @ref-color-borderGrey: #979797;
+@ref-color-borderTable: #d8d8d8;
 @ref-color-burger: #e0e0e0;
 @ref-color-grey: #bbbbbb;
 @ref-color-greyDark: #666666;
@@ -988,7 +989,7 @@
 @ref-color-red: #dd2727;
 @ref-color-redDark: #BF1E1E;
 @ref-color-blackLight: #333333;
-@ref-color-underline: #8494B2;
+@ref-color-underline: #6C84A6;
 
 
 @breakpoint-mobile-xs: 320px;

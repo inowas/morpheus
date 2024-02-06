@@ -1,3 +1,3 @@
-import UploadCSVFile from './UploadCSVFile';
+import UploadCSVFile, {ECsvColumnType} from './UploadCSVFile';
 
-export default UploadCSVFile;
+export {UploadCSVFile, ECsvColumnType};
