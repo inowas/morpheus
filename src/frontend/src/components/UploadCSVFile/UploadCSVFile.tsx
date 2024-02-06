@@ -112,7 +112,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       let result = processedData;
       props.onSave(result);
       props.onCancel();
-      resetState();
+      setOpenUploadPopup(false);
     }
   };
   const handleCansel = () => {
@@ -317,6 +317,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
           onChange={handleUploadFile}
           name="file"
           type="file"
+          accept="text/csv"
         />
         <span>{fileName ? fileName : 'No file selected.'}</span>
       </div>
