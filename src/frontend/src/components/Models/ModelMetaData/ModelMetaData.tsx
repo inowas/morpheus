@@ -324,19 +324,19 @@ const ModelMetaData: React.FC = () => {
     }
   }
 
+  console.log(panels);
+
   const defaultActiveIndex = Array.from({length: panels.length}, (_, index) => index);
 
   return (
-    <div className={styles.fullHeight}>
-      <DataGrid>
-        <DataRow title={'Model metadata'}/>
-        <Accordion
-          defaultActiveIndex={defaultActiveIndex}
-          panels={panels}
-          exclusive={false}
-        />
-      </DataGrid>
-    </div>
+    <DataGrid>
+      <DataRow title={'Model metadata'}/>
+      <Accordion
+        defaultActiveIndex={defaultActiveIndex}
+        panels={panels}
+        exclusive={false}
+      />
+    </DataGrid>
   );
 };
 
