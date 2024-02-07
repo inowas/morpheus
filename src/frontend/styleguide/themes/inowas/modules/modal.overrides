@@ -11,3 +11,9 @@
   background: transparent;
   box-shadow: none;
 }
+
+.ui.page.dimmer.modals .content {
+  padding: 60px 70px 20px;
+  background-color: #EEEEEE;
+}
+

@@ -6,3 +6,9 @@
   z-index: 1;
 }
 
+.ui.mini.pagination.pointing.secondary.menu {
+  border-bottom: unset;
+  display: flex;
+  justify-content: end;
+}
+

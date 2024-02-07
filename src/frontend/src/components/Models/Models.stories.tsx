@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {Header, IPageWidth, Map, ModelGeometry, Sidebar} from 'components';
+import {Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest, Sidebar} from 'components';
 import ModelSidebar from '../../morpheus/application/presentation/containers/ModelSidebar';
 import '../../morpheus/morpheus.less';
 import '../rc-slider.css';
 import type {FeatureCollection} from 'geojson';
 import menuItems from '../SidebarMenu/MenuItems';
-import ModelTest from './ModelTest';
 
 const GEOJSON: FeatureCollection = {
   'type': 'FeatureCollection',
@@ -56,7 +55,6 @@ const navbarItems = [
   {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
 ];
 
-
 const pageSize: IPageWidth = 'auto';
 
 export default {
@@ -79,8 +77,12 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
     switch (currentContent) {
     case 'Grid properties':
       return <ModelGeometry/>;
-    case 'Model layers':
+    case 'Test':
       return <ModelTest/>;
+    case 'Model layers':
+      return <ModelMetaData/>;
+    case 'Stress periods':
+      return <ModelStressPeriods/>;
     default:
       return <pre style={{
         height: '100%',
@@ -138,7 +140,6 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
 export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
   const [headerHeight, setHeaderHeight] = useState(0);
 
-
   return (
     <div style={{margin: '-1rem'}}>
       <Header
@@ -148,8 +149,7 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        onCreateButtonClick={() => {
-        }}
+        showCreateButton={true}
         showSidebarMenu={false}
         updateHeight={(height: number) => {
         }}
