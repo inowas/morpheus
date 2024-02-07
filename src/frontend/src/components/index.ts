@@ -28,7 +28,7 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
-import {ModelGeometry, ModelTest} from './Models';
+import {ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest} from './Models';
 import ModelCard, {IModelCard} from './ModelCard';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -45,6 +45,7 @@ import Sidebar from './Sidebar/Sidebar';
 import SidebarMenu from './SidebarMenu/SidebarMenu';
 import SortDropdown, {ISortOption} from 'components/SortDropdown';
 import Toggle from './Toggle/Toggle';
+import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 
@@ -78,6 +79,8 @@ export {
   Modal,
   ModelGrid,
   ModelGeometry,
+  ModelMetaData,
+  ModelStressPeriods,
   ModelTest,
   ModelCard,
   ModelsCreate,
@@ -97,6 +100,7 @@ export {
   SliderSwiper,
   SortDropdown,
   Toggle,
+  UploadCSVFile,
   UploadFile,
 };
 

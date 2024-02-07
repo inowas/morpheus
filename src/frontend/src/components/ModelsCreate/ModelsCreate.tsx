@@ -13,10 +13,10 @@ const options = [
 ];
 
 interface IProps {
-  onCreateButtonClick?: () => void;
+  onClose?: () => void;
 }
 
-const ModelsCreate = ({onCreateButtonClick}: IProps) => {
+const ModelsCreate = ({onClose}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
@@ -44,7 +44,7 @@ const ModelsCreate = ({onCreateButtonClick}: IProps) => {
   const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     clearForm();
-    if (onCreateButtonClick) onCreateButtonClick();
+    if (onClose) onClose();
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -56,7 +56,7 @@ const ModelsCreate = ({onCreateButtonClick}: IProps) => {
         selectedKeywords,
       });
       clearForm();
-      if (onCreateButtonClick) onCreateButtonClick();
+      if (onClose) onClose();
     }
   };
 

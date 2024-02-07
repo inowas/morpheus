@@ -3,7 +3,11 @@ import Button from 'components/Button/Button';
 import styles from './UploadFile.module.less';
 import {Message} from 'semantic-ui-react';
 
-const UploadFile: React.FC = () => {
+interface IUploadCSVFile {
+  onClose?: () => void;
+}
+
+const UploadFile = ({onClose}: IUploadCSVFile) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -42,6 +46,7 @@ const UploadFile: React.FC = () => {
   const handleCancel = () => {
     setSelectedFile(null);
     setErrorMessage('');
+    onClose?.();
   };
 
   return (

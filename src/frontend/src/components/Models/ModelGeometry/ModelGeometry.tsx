@@ -31,7 +31,7 @@ const ModelGeometry: React.FC = () => {
     <DataGrid>
       <DataRow title={'Model Grid'}/>
       <DataRow subTitle={'Grid resolution'}>
-        <DataGrid multiRows={true}>
+        <DataGrid multiColumns={2}>
           <div>
             <Radio
               style={{marginBottom: '14px', fontSize: '16px', fontWeight: '500'}}

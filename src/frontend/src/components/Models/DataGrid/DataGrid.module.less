@@ -1,20 +1,28 @@
 @import 'components/site.variables';
+@import 'components/site.variables';
 
 .dataGrid {
   display: grid;
   grid-template-columns: minmax(280px, 1fr);
   grid-template-rows: 1fr;
   grid-column-gap: 0px;
-  grid-row-gap: 30px;
+  grid-row-gap: 25px;
+  align-items: center;
 
   @media (min-width: @breakpoint-tablet) {
     grid-template-columns: minmax(360px, 1fr);
   }
 }
 
-.dataGridMulti {
-  @media (min-width: @breakpoint-desktop-small) {
-    grid-template-columns: repeat(2, 1fr);
-    grid-column-gap: 20px;
+.generateMultiColumns(@maxColumns) when (@maxColumns > 1) {
+  .dataGridMulti_@{maxColumns} {
+    @media (min-width: @breakpoint-desktop-small) {
+      grid-template-columns: repeat(@maxColumns, 1fr);
+      grid-column-gap: 20px;
+    }
   }
+
+  .generateMultiColumns(@maxColumns - 1);
 }
+
+.generateMultiColumns(6); // Adjust the value based on your maximum columns

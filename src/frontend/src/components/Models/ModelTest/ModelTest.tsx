@@ -45,7 +45,7 @@ const ModelTest: React.FC = () => {
 
   return (
     <div className={styles.fullHeight}>
-      <DataGrid multiRows={true}>
+      <DataGrid multiColumns={2}>
         <DataRow title={'Create model'}>
           <Form.Field className={styles.field}>
             <label className={'h4'}>Model name<span className="required">*</span></label>
