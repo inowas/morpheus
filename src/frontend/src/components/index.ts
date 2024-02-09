@@ -6,7 +6,6 @@ import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import Container from './Container/Container';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
-import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
@@ -58,7 +57,6 @@ export {
   Confirm,
   Container,
   ContentWrapper,
-  DatePicker,
   Divider,
   Dropdown,
   Form,

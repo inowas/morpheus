@@ -16,13 +16,20 @@
   width: 100%;
 }
 
-
 .ui.selection.dropdown .menu {
   border: none !important;
   border-radius: 0 !important;
   margin: 0 !important;
   min-width: 100% !important;
   width: 100% !important;
+}
+
+.ui.form .field {
+  margin-bottom: 0 !important;
+}
+
+.field .divider > .field {
+  margin-bottom: 0 !important;
 }
 
 .required {
@@ -46,6 +53,7 @@ label.labelSmall {
 .field input[type="email"],
 .field input[type="search"],
 .field input[type="number"],
+.field input[type="date"],
 .field input[type="password"],
 .field textarea {
   width: 100% !important;
@@ -53,10 +61,51 @@ label.labelSmall {
   border-radius: unset !important;
   min-height: 26px !important;
   padding: 5px 10px !important;
+  color: #000000 !important;
+  line-height: 16px !important;
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3) !important;
 
   &:disabled {
     background-color: transparent;
+  }
+}
+
+.field input[type='date']::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+.disabled.field {
+  background-color: transparent;
+  opacity: 1 !important;
+  color: #000000 !important;
+
+  & * {
+    color: inherit !important;
+    opacity: inherit !important;
+    background-color: inherit !important;
+  }
+
+  .disabled.dropdown {
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3) !important;
+    width: 100% !important;
+    border: none !important;
+    border-radius: unset !important;
+    min-height: 26px !important;
+    line-height: 16px !important;
+    padding: 5px 10px !important;
+  }
+
+  .icon {
+    display: none;
   }
 }
 

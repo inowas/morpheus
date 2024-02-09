@@ -8,6 +8,7 @@ import * as Papa from 'papaparse';
 import {ParseResult} from 'papaparse';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from 'moment';
+import {v4 as uuidv4} from 'uuid';
 
 const UploadCSVFile: React.FC<IProps> = (props) => {
 
@@ -39,9 +40,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     setIsFetching(false);
     setPaginationPage(1);
     setOpenUploadPopup(false);
-    if (ref.current) {
-      ref.current.value = '';
-    }
   };
 
   const processData = ({data}: ParseResult<any>) => {
@@ -107,17 +105,40 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     }
   };
 
+  const transformData = (data: any[][] | null): any[] | null => {
+    if (!data) {
+      return null;
+    }
+    const transformedData = data.map((row, idx) => {
+      const [startDateTime, nstp, tsmult, steady] = row;
+
+      return {
+        key: uuidv4(),
+        start_date_time: startDateTime,
+        nstp,
+        tsmult,
+        steady,
+      };
+    });
+    return transformedData;
+  };
+
+
   const handleSave = () => {
     if (processedData) {
-      let result = processedData;
+      let result = transformData(processedData);
       props.onSave(result);
       props.onCancel();
       setOpenUploadPopup(false);
     }
   };
+
   const handleCansel = () => {
     props.onCancel();
     resetState();
+    if (ref.current) {
+      ref.current.value = '';
+    }
   };
 
   const handleChange = (f: (v: any) => void) => (e: any, d: any) => {
@@ -150,8 +171,11 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     return value;
   };
 
-  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const openFileInput = () => {
+    if (fileToParse) {
+      resetState();
+    }
+    const files = ref.current?.files;
     const file = files && 0 < files.length ? files[0] : null;
     if (file) {
       setFileToParse(file);
@@ -161,8 +185,28 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     setOpenUploadPopup(!openUploadPopup);
   };
 
+  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (processedData && 0 < processedData.length) {
+      if (window.confirm('Warning: Data already exists. Overwrite?')) {
+        openFileInput();
+      } else {
+        setOpenUploadPopup(false);
+      }
+    } else {
+      openFileInput();
+    }
+  };
+
   const handleChangePagination = (e: MouseEvent, {activePage}: PaginationProps) =>
     setPaginationPage('number' === typeof activePage ? activePage : 1);
+
+  const renderHeader = () => (
+    <Table.Row>
+      {columns.map((c, cKey) =>
+        <Table.HeaderCell key={cKey}>{c.text}</Table.HeaderCell>,
+      )}
+    </Table.Row>
+  );
 
   const renderProcessedData = () => {
     if (!processedData) {
@@ -275,11 +319,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
                     className={styles.table}
                   >
                     <Table.Header>
-                      <Table.Row>
-                        {columns.map((c, cKey) =>
-                          <Table.HeaderCell key={cKey}>{c.text}</Table.HeaderCell>,
-                        )}
-                      </Table.Row>
+                      {renderHeader()}
                     </Table.Header>
                     <Table.Body>
                       {processedData && renderProcessedData()}
