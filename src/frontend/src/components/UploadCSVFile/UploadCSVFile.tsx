@@ -26,6 +26,11 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [paginationPage, setPaginationPage] = useState<number>(1);
   const [openUploadPopup, setOpenUploadPopup] = useState(false);
+  const [reservedData, setReservedData] = useState<string | null>(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
+  const [resetDataFoo, setResetDataFoo] = useState<any>(() => {
+  });
+
   const rowsPerPage = 50;
   const resetState = () => {
     setColumns(props.columns);
@@ -34,7 +39,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     setFirstRowIsHeader(true);
     setParameterColumns(null);
     setFileToParse(null);
-    setFileName(null);
     setParsingData(false);
     setProcessedData(null);
     setIsFetching(false);
@@ -135,10 +139,12 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
 
   const handleCansel = () => {
     props.onCancel();
-    resetState();
-    if (ref.current) {
-      ref.current.value = '';
-    }
+    setOpenUploadPopup(false);
+    setFileName(reservedData);
+    // resetState();
+    // if (ref.current) {
+    //   ref.current.value = '';
+    // }
   };
 
   const handleChange = (f: (v: any) => void) => (e: any, d: any) => {
@@ -171,29 +177,36 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     return value;
   };
 
-  const openFileInput = () => {
-    if (fileToParse) {
-      resetState();
-    }
+  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log('handleUploadFile');
     const files = ref.current?.files;
     const file = files && 0 < files.length ? files[0] : null;
     if (file) {
-      setFileToParse(file);
-      setParsingData(true);
-      setFileName(file.name);
-    }
-    setOpenUploadPopup(!openUploadPopup);
-  };
-
-  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    if (processedData && 0 < processedData.length) {
-      if (window.confirm('Warning: Data already exists. Overwrite?')) {
-        openFileInput();
+      console.log('file exists');
+      if (processedData && 0 < processedData.length) {
+        console.log('prev Data exists');
+        setResetDataFoo(() => () => {
+          console.error('yes in warning message');
+          resetState();
+          setReservedData(fileName);
+          setParsingData(true);
+          setFileToParse(file);
+          setFileName(file.name);
+          setOpenUploadPopup(!openUploadPopup);
+          setShowConfirmationModal(false);
+        });
+        setShowConfirmationModal(true);
       } else {
-        setOpenUploadPopup(false);
+        console.log('prev Data does not exist');
+        resetState();
+        setReservedData(fileName);
+        setParsingData(true);
+        setFileToParse(file);
+        setFileName(file.name);
+        setOpenUploadPopup(!openUploadPopup);
       }
     } else {
-      openFileInput();
+      console.error('No file added');
     }
   };
 
@@ -347,6 +360,82 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     </>
   );
 
+  const renderMainModal = () => (
+    <Modal.Modal
+      onClose={handleCansel}
+      onOpen={() => setOpenUploadPopup(true)}
+      open={openUploadPopup}
+      dimmer={'inverted'}
+    >
+      <Modal.Content>
+        <DataGrid>
+          {renderContent()}
+          <div className={styles.buttonGroup}>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              onClick={handleCansel}
+            >Cancel</Button>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              primary={!!processedData}
+              disabled={!processedData}
+              onClick={handleSave}
+            >
+              Apply
+            </Button>
+          </div>
+        </DataGrid>
+      </Modal.Content>
+    </Modal.Modal>
+  );
+  
+  const renderConfirmationModal = () => (
+    <Modal.Modal
+      onClose={() => setShowConfirmationModal(false)}
+      onOpen={() => setShowConfirmationModal(true)}
+      open={showConfirmationModal}
+      dimmer={'inverted'}
+    >
+      <Modal.Content>
+        <DataGrid>
+          <DataRow>
+            <p>Warning: Data already exists. Overwrite?</p>
+          </DataRow>
+          <div className={styles.buttonGroup}>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              onClick={() => {
+                console.log('no in warning message');
+                setShowConfirmationModal(false);
+              }}
+            >
+              No
+            </Button>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              primary={true}
+              onClick={() => resetDataFoo()}
+            >
+              Yes
+            </Button>
+          </div>
+        </DataGrid>
+      </Modal.Content>
+    </Modal.Modal>
+  );
+
   return (
     <>
       <div className={styles.fileUpload}>
@@ -361,38 +450,8 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
         />
         <span>{fileName ? fileName : 'No file selected.'}</span>
       </div>
-      <Modal.Modal
-        onClose={handleCansel}
-        onOpen={() => setOpenUploadPopup(true)}
-        open={openUploadPopup}
-        dimmer={'inverted'}
-      >
-        <Modal.Content>
-          <DataGrid>
-            {renderContent()}
-            <div className={styles.buttonGroup}>
-              <Button
-                style={{
-                  fontSize: '17px',
-                  textTransform: 'capitalize',
-                }}
-                onClick={handleCansel}
-              >Cancel</Button>
-              <Button
-                style={{
-                  fontSize: '17px',
-                  textTransform: 'capitalize',
-                }}
-                primary={!!processedData}
-                disabled={!processedData}
-                onClick={handleSave}
-              >
-                Apply
-              </Button>
-            </div>
-          </DataGrid>
-        </Modal.Content>
-      </Modal.Modal>
+      {renderConfirmationModal()}
+      {renderMainModal()}
     </>
   );
 };
