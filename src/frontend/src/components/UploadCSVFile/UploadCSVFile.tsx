@@ -135,7 +135,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       props.onCancel();
       setOpenUploadPopup(false);
       console.log(JSON.stringify(transformData(processedData), null, 2));
-
     }
   };
 
@@ -143,10 +142,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     props.onCancel();
     setOpenUploadPopup(false);
     setFileName(reservedData);
-    // resetFileState();
-    // if (ref.current) {
-    //   ref.current.value = '';
-    // }
   };
 
   const handleChange = (f: (v: any) => void) => (e: any, d: any) => {
@@ -180,15 +175,11 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
   };
 
   const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('handleUploadFile');
     const files = ref.current?.files;
     const file = files && 0 < files.length ? files[0] : null;
     if (file) {
-      console.log('file exists');
       if (processedData && 0 < processedData.length) {
-        console.log('prev Data exists');
         setResetDataFoo(() => () => {
-          console.error('yes in warning message');
           resetFileState();
           setReservedData(fileName);
           setParsingData(true);
@@ -199,7 +190,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
         });
         setShowConfirmationModal(true);
       } else {
-        console.log('prev Data does not exist');
         resetFileState();
         setReservedData(fileName);
         setParsingData(true);
@@ -207,8 +197,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
         setFileName(file.name);
         setOpenUploadPopup(!openUploadPopup);
       }
-    } else {
-      console.error('No file added');
     }
   };
 
@@ -417,7 +405,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
                 textTransform: 'capitalize',
               }}
               onClick={() => {
-                console.log('no in warning message');
                 setShowConfirmationModal(false);
               }}
             >

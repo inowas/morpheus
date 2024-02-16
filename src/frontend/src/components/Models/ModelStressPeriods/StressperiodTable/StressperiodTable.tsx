@@ -1,4 +1,4 @@
-import {Checkbox, CheckboxProps, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
+import {Checkbox, CheckboxProps, Form, Grid, Icon, InputOnChangeData, Message, Popup, Table} from 'semantic-ui-react';
 import React, {ChangeEvent, MouseEvent, useState} from 'react';
 import {Button} from 'components';
 import moment from 'moment';
@@ -7,6 +7,8 @@ import {v4 as uuidv4} from 'uuid';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import styles from './StressperiodTable.module.less';
+
+export const MAX_OUTPUT_PER_PERIOD = 50;
 
 interface IProps {
   stressperiodParams: IStressperiodParams
@@ -30,9 +32,9 @@ const StressperiodTable: React.FC<IProps> = ({
   const [activeValue, setActiveValue] = useState<string>('');
   const [startDateError, setStartDateError] = useState<boolean>(false);
 
-  // const checkValidData = (data: any) => {
-  //   return moment.utc(data, 'YYYY-MM-DD', true).isValid();
-  // };
+  const checkValidData = (data: any) => {
+    return moment.utc(data, 'YYYY-MM-DD', true).isValid();
+  };
 
   const toCsv = () => {
     let text = 'start_date_time;nstp;tsmult;steady\n';
@@ -126,9 +128,10 @@ const StressperiodTable: React.FC<IProps> = ({
     if (activeKey) {
       const edited = {...stressperiodParams.stressperiod![idx]};
       // const parsedDate = moment.utc(edited.start_date_time, 'YYYY-MM-DD', true);
-      // if (!checkValidData(edited.start_date_time)) {
-      //   return;
-      // }
+      if (!checkValidData(edited.start_date_time)) {
+        console.log('checkValidData');
+        return;
+      }
       edited.steady = !!checked;
       handleStressperiodItemChange(activeKey, edited);
     }
@@ -206,6 +209,8 @@ const StressperiodTable: React.FC<IProps> = ({
                 <Form.Input
                   disabled={readOnly}
                   type="number"
+                  error={50 < sp.tsmult}
+                  max={50}
                   name="nstp"
                   idx={idx}
                   value={'nstp' === activeInput && activeIdx === idx ? activeValue : sp.nstp}
@@ -223,7 +228,6 @@ const StressperiodTable: React.FC<IProps> = ({
                   onBlur={() => handleChange(sp.key)}
                   onChange={handleStressperiodChange}
                 />
-                {/*{sp.tsmult}*/}
               </Table.Cell>
               <Table.Cell>
                 <Checkbox
@@ -253,6 +257,27 @@ const StressperiodTable: React.FC<IProps> = ({
 
   return (
     <div className={styles.stressPeriod}>
+      {stressperiodParams.stressperiod &&
+        0 < stressperiodParams.stressperiod.filter((sp) => sp.nstp > MAX_OUTPUT_PER_PERIOD).length &&
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Message warning={true}>
+              <Message.Header>Warning</Message.Header>
+              <p>Results for stressperiods with nstp {'>'} {MAX_OUTPUT_PER_PERIOD} will
+                only be calculated for their first timestep, due to performance issues.</p>
+            </Message>
+          </Grid.Column>
+        </Grid.Row>
+      }
+      {/*{datesInvalid &&*/}
+      {/*  <Grid.Row>*/}
+      {/*    <Grid.Column width={6}>*/}
+      {/*      <Message color={'red'}>*/}
+      {/*        <strong>Error: </strong>Start date of last stress period is greater than end date.*/}
+      {/*      </Message>*/}
+      {/*    </Grid.Column>*/}
+      {/*  </Grid.Row>*/}
+      {/*}*/}
       <div className={styles.tableWrapper}>
         <Table className={styles.table} unstackable={true}>
           {renderHeader()}

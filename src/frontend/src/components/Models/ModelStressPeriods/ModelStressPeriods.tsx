@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {ECsvColumnType, UploadCSVFile} from 'components/UploadCSVFile';
-import {Accordion, Form, Icon} from 'semantic-ui-react';
+import {Accordion} from 'semantic-ui-react';
 import {DataGrid, DataRow} from '../index';
 import moment, {Moment} from 'moment';
-import styles from './ModelStressPeriods.module.less';
 import StressperiodTable from './StressperiodTable';
 import {IStressperiodParams, StressperiodDataType} from '../types/Model.type';
+import StressperiodParametrs from './StressperiodParametrs';
 
 
 const defaultParams: IStressperiodParams = {
@@ -233,76 +233,11 @@ const ModelStressPeriods = () => {
     const startDateMoment = moment(stressperiodParams.startDate, 'DD.MM.YYYY');
     const endDateMoment = moment(stressperiodParams.endDate, 'DD.MM.YYYY');
     const daysDifference = endDateMoment.diff(startDateMoment, 'days');
-    return daysDifference;
+    return daysDifference ? daysDifference : null;
   };
 
   const onSave = (data: StressperiodDataType[] | null) => {
     handleStressperiodChange(data);
-  };
-
-  const parametrsPanel = () => {
-    return (
-      <Form className={styles.parametrsPanel}>
-        <DataGrid multiColumns={4}>
-          <Form.Field className={'dateInputWrapper'}>
-            <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
-              <Icon className={'dateIcon'} name="info circle"/>
-              Start Date
-            </label>
-            <div className={'divider'}>
-              <Form.Input
-                type="date"
-                name={'startDate'}
-                value={moment(stressperiodParams.startDate).format('YYYY-MM-DD')}
-                onChange={(e, {value}) =>
-                  handleDateChange(moment(value), 'startDate')
-                }
-              />
-              <Icon className={'dateIcon'} name="calendar outline"/>
-            </div>
-          </Form.Field>
-          <Form.Field className={'dateInputWrapper'}>
-            <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
-              <Icon className={'dateIcon'} name="info circle"/>
-              End Date
-            </label>
-            <div className={'divider'}>
-              <Form.Input
-                type="date"
-                name={'endDate'}
-                value={moment(stressperiodParams.endDate).format('YYYY-MM-DD')}
-                onChange={(e, {value}) =>
-                  handleDateChange(moment(value), 'endDate')
-                }
-              />
-              <Icon className={'dateIcon'} name="calendar outline"/>
-            </div>
-          </Form.Field>
-          <Form.Field>
-            <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
-              <Icon className={'dateIcon'} name="info circle"/>
-              Time unit
-            </label>
-            <Form.Input
-              name="Total unit"
-              value={stressperiodParams.timeUnit}
-              disabled={true}
-            />
-          </Form.Field>
-          <Form.Field>
-            <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
-              <Icon className={'dateIcon'} name="info circle"/>
-              Total time
-            </label>
-            <Form.Input
-              name="Total time"
-              value={1 < calculateTotalTime() ? `${calculateTotalTime()} days` : `${calculateTotalTime()} day`}
-              disabled={true}
-            />
-          </Form.Field>
-        </DataGrid>
-      </Form>
-    );
   };
 
   const panels: any[] = [
@@ -314,7 +249,11 @@ const ModelStressPeriods = () => {
       },
       content: {
         content: (
-          parametrsPanel()
+          <StressperiodParametrs
+            stressperiodParams={stressperiodParams}
+            handleDateChange={handleDateChange}
+            calculateTotalTime={calculateTotalTime()}
+          />
         ),
       },
     },
