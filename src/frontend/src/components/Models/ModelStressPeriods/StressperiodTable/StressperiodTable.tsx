@@ -1,10 +1,12 @@
-import {Button, Checkbox, CheckboxProps, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
+import {Checkbox, CheckboxProps, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
 import React, {ChangeEvent, MouseEvent, useState} from 'react';
+import {Button} from 'components';
 import moment from 'moment';
 import {IStressperiodParams, StressperiodDataType} from '../../types/Model.type';
 import {v4 as uuidv4} from 'uuid';
-import {faDownload} from '@fortawesome/free-solid-svg-icons';
+import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import styles from './StressperiodTable.module.less';
 
 interface IProps {
   stressperiodParams: IStressperiodParams
@@ -120,11 +122,10 @@ const StressperiodTable: React.FC<IProps> = ({
   };
 
   const handleChangeCheckbox = (e: MouseEvent<HTMLInputElement>, {idx, checked}: CheckboxProps) => {
-
     const activeKey = stressperiodParams.stressperiod ? stressperiodParams.stressperiod[idx]?.key : '';
     if (activeKey) {
       const edited = {...stressperiodParams.stressperiod![idx]};
-      const parsedDate = moment.utc(edited.start_date_time, 'YYYY-MM-DD', true);
+      // const parsedDate = moment.utc(edited.start_date_time, 'YYYY-MM-DD', true);
       // if (!checkValidData(edited.start_date_time)) {
       //   return;
       // }
@@ -134,42 +135,50 @@ const StressperiodTable: React.FC<IProps> = ({
   };
 
   const renderHeader = () => (
-    <Table.Row>
-      <Table.HeaderCell width={1}>No</Table.HeaderCell>
-      <Table.HeaderCell width={6}><Icon className={'dateIcon'} name="info circle"/>Start Date</Table.HeaderCell>
-      <Popup
-        trigger={
-          <Table.HeaderCell width={2}>
-            <Icon className={'dateIcon'} name="info circle"/> Time steps
-          </Table.HeaderCell>
-        }
-        content="No. of time steps"
-        hideOnScroll={true}
-        size="tiny"
-      />
-      <Popup
-        trigger={<Table.HeaderCell width={2}><Icon className={'dateIcon'} name="info circle"/>Multiplier</Table.HeaderCell>}
-        content="Time step multiplier"
-        hideOnScroll={true}
-        size="tiny"
-      />
-      <Popup
-        trigger={<Table.HeaderCell width={2}><Icon className={'dateIcon'} name="info circle"/>Steady state</Table.HeaderCell>}
-        content="State of stress period"
-        hideOnScroll={true}
-        size="tiny"
-      />
-      <Table.HeaderCell width={2}/>
-    </Table.Row>
+    <Table.Header className={styles.tableHeader}>
+      <Table.Row className={styles.tableRow}>
+        <Table.HeaderCell>No</Table.HeaderCell>
+        <Table.HeaderCell><Icon className={'dateIcon'} name="info circle"/>Start Date</Table.HeaderCell>
+        <Popup
+          trigger={
+            <Table.HeaderCell>
+              <Icon className={'dateIcon'} name="info circle"/> Time steps
+            </Table.HeaderCell>
+          }
+          content="No. of time steps"
+          hideOnScroll={true}
+          size="tiny"
+        />
+        <Popup
+          trigger={
+            <Table.HeaderCell><Icon className={'dateIcon'} name="info circle"/>Multiplier</Table.HeaderCell>
+          }
+          content="Time step multiplier"
+          hideOnScroll={true}
+          size="tiny"
+        />
+        <Popup
+          trigger={
+            <Table.HeaderCell><Icon className={'dateIcon'} name="info circle"/>Steady state</Table.HeaderCell>
+          }
+          content="State of stress period"
+          hideOnScroll={true}
+          size="tiny"
+        />
+        <Table.HeaderCell>
+
+        </Table.HeaderCell>
+      </Table.Row>
+    </Table.Header>
   );
 
   const renderBody = () => {
     return (
-      <Table.Body>
+      <Table.Body className={styles.tableBody}>
         {stressperiodParams.stressperiod &&
           stressperiodParams.stressperiod.map((sp, idx) => (
-            <Table.Row key={sp.key}>
-              <Table.Cell>{idx + 1}</Table.Cell>
+            <Table.Row className={styles.tableRow} key={sp.key}>
+              <Table.Cell><span>{idx + 1}</span></Table.Cell>
               <Table.Cell>
                 <Popup
                   content="Start date of first stressperiod must be before all other stressperiods"
@@ -181,6 +190,7 @@ const StressperiodTable: React.FC<IProps> = ({
                       type="date"
                       name={'start_date_time'}
                       idx={idx}
+                      style={{width: '100%'}}
                       value={
                         (activeValue && activeIdx === idx && 'start_date_time' === activeInput)
                           ? moment(activeValue).format('YYYY-MM-DD')
@@ -227,13 +237,12 @@ const StressperiodTable: React.FC<IProps> = ({
               <Table.Cell>
                 {!readOnly && 0 !== idx && (
                   <Button
-                    basic={true}
-                    floated={'right'}
-                    icon={'trash'}
                     onClick={() => {
                       handleStressperiodItemRemove(sp.key);
                     }}
-                  />
+                  >
+                    <FontAwesomeIcon icon={faTrashCan}/>
+                  </Button>
                 )}
               </Table.Cell>
             </Table.Row>
@@ -243,17 +252,21 @@ const StressperiodTable: React.FC<IProps> = ({
   };
 
   return (
-    <div>
-      <Table size={'small'}>
-        <Table.Header>{renderHeader()}</Table.Header>
-        {renderBody()}
-      </Table>
-      <Button icon={true} onClick={addNewStressperiod}>
-        Add new <Icon name="add"/> </Button>
-      <Button icon={true} onClick={handleStressperiodDelete}>
-        Delete all <Icon name="trash"/></Button>
-      <Button icon={true} onClick={handleDownload}>
-        Download all <FontAwesomeIcon icon={faDownload}/></Button>
+    <div className={styles.stressPeriod}>
+      <div className={styles.tableWrapper}>
+        <Table className={styles.table} unstackable={true}>
+          {renderHeader()}
+          {renderBody()}
+        </Table>
+      </div>
+      <div className={styles.buttonsGroup}>
+        <Button className='buttonLink' onClick={addNewStressperiod}>
+          Add new <Icon name="add"/> </Button>
+        <Button className='buttonLink' onClick={handleStressperiodDelete}>
+          Delete all <FontAwesomeIcon icon={faTrashCan}/></Button>
+        <Button className='buttonLink' onClick={handleDownload}>
+          Download all <FontAwesomeIcon icon={faDownload}/></Button>
+      </div>
     </div>
   );
 };

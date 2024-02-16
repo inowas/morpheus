@@ -32,7 +32,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
   });
 
   const rowsPerPage = 50;
-  const resetState = () => {
+  const resetFileState = () => {
     setColumns(props.columns);
     setMetadata(null);
     setDateTimeFormat('YYYY.MM.DD');
@@ -134,6 +134,8 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       props.onSave(result);
       props.onCancel();
       setOpenUploadPopup(false);
+      console.log(JSON.stringify(transformData(processedData), null, 2));
+
     }
   };
 
@@ -141,7 +143,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     props.onCancel();
     setOpenUploadPopup(false);
     setFileName(reservedData);
-    // resetState();
+    // resetFileState();
     // if (ref.current) {
     //   ref.current.value = '';
     // }
@@ -187,7 +189,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
         console.log('prev Data exists');
         setResetDataFoo(() => () => {
           console.error('yes in warning message');
-          resetState();
+          resetFileState();
           setReservedData(fileName);
           setParsingData(true);
           setFileToParse(file);
@@ -198,7 +200,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
         setShowConfirmationModal(true);
       } else {
         console.log('prev Data does not exist');
-        resetState();
+        resetFileState();
         setReservedData(fileName);
         setParsingData(true);
         setFileToParse(file);
@@ -394,7 +396,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       </Modal.Content>
     </Modal.Modal>
   );
-  
+
   const renderConfirmationModal = () => (
     <Modal.Modal
       onClose={() => setShowConfirmationModal(false)}
@@ -405,7 +407,8 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       <Modal.Content>
         <DataGrid>
           <DataRow>
-            <p>Warning: Data already exists. Overwrite?</p>
+            <h2 style={{color: '#BF1E1E'}}>Warning:</h2>
+            <p style={{fontSize: '17px'}}> Data already exists. Overwrite?</p>
           </DataRow>
           <div className={styles.buttonGroup}>
             <Button
