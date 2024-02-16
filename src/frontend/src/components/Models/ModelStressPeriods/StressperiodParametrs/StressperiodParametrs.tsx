@@ -20,14 +20,18 @@ const StressperiodParametrs: React.FC<IProps> = ({
 
   const [startDateError, setStartDateError] = useState<boolean>(false);
   const [endDateError, setEndDateError] = useState<boolean>(false);
+  const startDate = moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY');
+  const endDate = moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY');
+
+
   let totalTime = '';
+
 
   if (calculateTotalTime) {
     totalTime = 1 < calculateTotalTime ? `${calculateTotalTime} days` : `${calculateTotalTime} day`;
   }
 
   const handleChangeStartDateTime = (e: ChangeEvent<HTMLInputElement>, {value}: InputOnChangeData) => {
-    const endDate = moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY');
     const selectedStartDate = moment(value, 'YYYY-MM-DD');
     if (selectedStartDate.isAfter(endDate)) {
       setStartDateError(true);
@@ -38,7 +42,6 @@ const StressperiodParametrs: React.FC<IProps> = ({
   };
 
   const handleChangeEndDateTime = (e: ChangeEvent<HTMLInputElement>, {value}: InputOnChangeData) => {
-    const startDate = moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY');
     const selectedEndDate = moment(value, 'YYYY-MM-DD');
     if (selectedEndDate.isBefore(startDate)) {
       setEndDateError(true);

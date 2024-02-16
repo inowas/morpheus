@@ -9,7 +9,7 @@ export enum ECsvColumnType {
 }
 
 export interface IProps {
-  onSave: (data: StressperiodDataType[] | null) => void
+  onSave: (data: StressperiodDataType[] | []) => void
   onCancel: () => void;
   columns: TColumns;
 }

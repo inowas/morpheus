@@ -31,10 +31,10 @@ const StressperiodTable: React.FC<IProps> = ({
   const [activeInput, setActiveInput] = useState<string | null>(null);
   const [activeValue, setActiveValue] = useState<string>('');
   const [startDateError, setStartDateError] = useState<boolean>(false);
-
-  const checkValidData = (data: any) => {
-    return moment.utc(data, 'YYYY-MM-DD', true).isValid();
-  };
+  const [startDateErrorIdx, setStartDateErrorIdx] = useState<number>(-1);
+  const [startDateErrorContent, setStartDateErrorContent] = useState<string>('');
+  const startDate = moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY');
+  const endDate = moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY');
 
   const toCsv = () => {
     let text = 'start_date_time;nstp;tsmult;steady\n';
@@ -46,9 +46,9 @@ const StressperiodTable: React.FC<IProps> = ({
 
   const addNewStressperiod = () => {
     const lastStressperiod = stressperiodParams.stressperiod && stressperiodParams.stressperiod[stressperiodParams.stressperiod.length - 1];
-    const prevDate = lastStressperiod
+    const prevDate = lastStressperiod && moment(lastStressperiod.start_date_time).isValid()
       ? moment(lastStressperiod.start_date_time).add(1, 'days').format('YYYY-MM-DD')
-      : moment(stressperiodParams.startDate).format('YYYY-MM-DD');
+      : moment(stressperiodParams.endDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
     const newStressperiod: StressperiodDataType = {
       key: uuidv4(),
       start_date_time: prevDate,
@@ -56,7 +56,6 @@ const StressperiodTable: React.FC<IProps> = ({
       tsmult: 0,
       steady: false,
     };
-
     handleStressperiodItemCreate(newStressperiod);
   };
 
@@ -75,48 +74,54 @@ const StressperiodTable: React.FC<IProps> = ({
   const handleStressperiodChange = (
     e: ChangeEvent<HTMLInputElement>, {value, name, idx}: InputOnChangeData,
   ) => {
+    if ('start_date_time' === name) {
+      if (0 !== idx && moment.utc(value).isSameOrBefore(startDate)) {
+        setActiveIdx(null);
+        setActiveValue('');
+        setActiveInput(null);
+        setStartDateErrorIdx(idx);
+        setStartDateError(true);
+        setStartDateErrorContent('Start Date of stressperiod cannot be the same or earlier than specified in general params');
+        return;
+      } else if (0 === idx && moment.utc(value).isBefore(startDate)) {
+        setActiveIdx(null);
+        setActiveValue('');
+        setActiveInput(null);
+        setStartDateErrorIdx(idx);
+        setStartDateError(true);
+        setStartDateErrorContent('The Start Date of the stressperiod cannot be or earlier that specified in the general parameters');
+        return;
+      } else if (moment.utc(value).isAfter(endDate)) {
+        setActiveIdx(null);
+        setActiveValue('');
+        setActiveInput(null);
+        setStartDateErrorIdx(idx);
+        setStartDateError(true);
+        setStartDateErrorContent('The Start Date of the stress period cannot be later than the End Date');
+        return;
+      }
+    }
     setActiveIdx(idx);
     setActiveInput(name);
     setActiveValue(value);
   };
 
+
   const handleChange = (activeKey: string) => {
-
     setStartDateError(false);
-
-    if (null !== activeIdx && activeValue && stressperiodParams.stressperiod) {
-      const edited = stressperiodParams.stressperiod[activeIdx];
+    const editedIndex = stressperiodParams.stressperiod?.findIndex(sp => sp.key === activeKey);
+    if (null !== editedIndex && activeValue && stressperiodParams.stressperiod) {
+      const edited = {...stressperiodParams.stressperiod[editedIndex]};
       if ('start_date_time' === activeInput) {
-
         edited.start_date_time = moment.utc(activeValue).format('YYYY-MM-DD');
-
-        if (0 === activeIdx) {
-          edited.start_date_time = moment.utc(activeValue).format('YYYY-MM-DD');
-        }
-
-        if (0 !== activeIdx && moment(edited.start_date_time).isSameOrBefore(stressperiodParams.startDate)) {
-          setActiveIdx(null);
-          setActiveValue('');
-          setActiveInput(null);
-          setStartDateError(true);
-          return;
-        }
       }
       if ('nstp' === activeInput) {
-        // if (!checkValidData(activeValue)) {
-        //   return;
-        // }
         edited.nstp = parseFloat(activeValue);
       }
       if ('tsmult' === activeInput) {
-        // if (!checkValidData(activeValue)) {
-        //   return;
-        // }
         edited.tsmult = parseFloat(activeValue);
       }
-
       handleStressperiodItemChange(activeKey, edited);
-
       setActiveValue('');
       setActiveIdx(null);
       setActiveInput(null);
@@ -127,11 +132,6 @@ const StressperiodTable: React.FC<IProps> = ({
     const activeKey = stressperiodParams.stressperiod ? stressperiodParams.stressperiod[idx]?.key : '';
     if (activeKey) {
       const edited = {...stressperiodParams.stressperiod![idx]};
-      // const parsedDate = moment.utc(edited.start_date_time, 'YYYY-MM-DD', true);
-      if (!checkValidData(edited.start_date_time)) {
-        console.log('checkValidData');
-        return;
-      }
       edited.steady = !!checked;
       handleStressperiodItemChange(activeKey, edited);
     }
@@ -178,79 +178,79 @@ const StressperiodTable: React.FC<IProps> = ({
   const renderBody = () => {
     return (
       <Table.Body className={styles.tableBody}>
-        {stressperiodParams.stressperiod &&
-          stressperiodParams.stressperiod.map((sp, idx) => (
-            <Table.Row className={styles.tableRow} key={sp.key}>
-              <Table.Cell><span>{idx + 1}</span></Table.Cell>
-              <Table.Cell>
-                <Popup
-                  content="Start date of first stressperiod must be before all other stressperiods"
-                  open={0 === idx && startDateError}
-                  position="top center"
-                  trigger={
-                    <Form.Input
-                      disabled={readOnly}
-                      type="date"
-                      name={'start_date_time'}
-                      idx={idx}
-                      style={{width: '100%'}}
-                      value={
-                        (activeValue && activeIdx === idx && 'start_date_time' === activeInput)
-                          ? moment(activeValue).format('YYYY-MM-DD')
-                          : moment(sp.start_date_time).format('YYYY-MM-DD')
-                      }
-                      onBlur={() => handleChange(sp.key)}
-                      onChange={handleStressperiodChange}
-                    />
-                  }
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <Form.Input
-                  disabled={readOnly}
-                  type="number"
-                  error={50 < sp.tsmult}
-                  max={50}
-                  name="nstp"
-                  idx={idx}
-                  value={'nstp' === activeInput && activeIdx === idx ? activeValue : sp.nstp}
-                  onBlur={() => handleChange(sp.key)}
-                  onChange={handleStressperiodChange}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <Form.Input
-                  disabled={readOnly}
-                  type="number"
-                  name="tsmult"
-                  idx={idx}
-                  value={'tsmult' === activeInput && activeIdx === idx ? activeValue : sp.tsmult.toFixed(3)}
-                  onBlur={() => handleChange(sp.key)}
-                  onChange={handleStressperiodChange}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <Checkbox
-                  name={'steady'}
-                  checked={sp.steady}
-                  disabled={readOnly}
-                  idx={idx}
-                  onClick={handleChangeCheckbox}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                {!readOnly && 0 !== idx && (
-                  <Button
-                    onClick={() => {
-                      handleStressperiodItemRemove(sp.key);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faTrashCan}/>
-                  </Button>
-                )}
-              </Table.Cell>
-            </Table.Row>
-          ))}
+        {stressperiodParams!.stressperiod.map((sp, idx) => (
+          <Table.Row className={styles.tableRow} key={sp.key}>
+            <Table.Cell><span>{idx + 1}</span></Table.Cell>
+            <Table.Cell>
+              <Popup
+                content={startDateErrorContent}
+                open={startDateErrorIdx === idx && startDateError}
+                position="top center"
+                trigger={
+                  <Form.Input
+                    error={startDateErrorIdx === idx && startDateError}
+                    disabled={readOnly}
+                    type="date"
+                    name={'start_date_time'}
+                    idx={idx}
+                    style={{width: '100%'}}
+                    value={
+                      (activeValue && activeIdx === idx && 'start_date_time' === activeInput)
+                        ? moment(activeValue).format('YYYY-MM-DD')
+                        : moment(sp.start_date_time).format('YYYY-MM-DD')
+                    }
+                    onBlur={() => handleChange(sp.key)}
+                    onChange={handleStressperiodChange}
+                  />
+                }
+              />
+            </Table.Cell>
+            <Table.Cell>
+              <Form.Input
+                disabled={readOnly}
+                type="number"
+                error={50 < sp.tsmult}
+                max={50}
+                name="nstp"
+                idx={idx}
+                value={'nstp' === activeInput && activeIdx === idx ? activeValue : sp.nstp}
+                onBlur={() => handleChange(sp.key)}
+                onChange={handleStressperiodChange}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              <Form.Input
+                disabled={readOnly}
+                type="number"
+                name="tsmult"
+                idx={idx}
+                value={'tsmult' === activeInput && activeIdx === idx ? activeValue : sp.tsmult.toFixed(3)}
+                onBlur={() => handleChange(sp.key)}
+                onChange={handleStressperiodChange}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              <Checkbox
+                name={'steady'}
+                checked={sp.steady}
+                disabled={readOnly}
+                idx={idx}
+                onClick={handleChangeCheckbox}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              {!readOnly && 0 !== idx && (
+                <Button
+                  onClick={() => {
+                    handleStressperiodItemRemove(sp.key);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrashCan}/>
+                </Button>
+              )}
+            </Table.Cell>
+          </Table.Row>
+        ))}
       </Table.Body>
     );
   };
@@ -259,7 +259,7 @@ const StressperiodTable: React.FC<IProps> = ({
     <div className={styles.stressPeriod}>
       {stressperiodParams.stressperiod &&
         0 < stressperiodParams.stressperiod.filter((sp) => sp.nstp > MAX_OUTPUT_PER_PERIOD).length &&
-        <Grid.Row>
+        <Grid.Row style={{marginBottom: '10px'}}>
           <Grid.Column width={16}>
             <Message warning={true}>
               <Message.Header>Warning</Message.Header>
@@ -287,9 +287,17 @@ const StressperiodTable: React.FC<IProps> = ({
       <div className={styles.buttonsGroup}>
         <Button className='buttonLink' onClick={addNewStressperiod}>
           Add new <Icon name="add"/> </Button>
-        <Button className='buttonLink' onClick={handleStressperiodDelete}>
+        <Button
+          className='buttonLink'
+          disabled={stressperiodParams.stressperiod && 0 !== stressperiodParams.stressperiod.length ? false : true}
+          onClick={handleStressperiodDelete}
+        >
           Delete all <FontAwesomeIcon icon={faTrashCan}/></Button>
-        <Button className='buttonLink' onClick={handleDownload}>
+        <Button
+          className='buttonLink'
+          disabled={stressperiodParams.stressperiod && 0 !== stressperiodParams.stressperiod.length ? false : true}
+          onClick={handleDownload}
+        >
           Download all <FontAwesomeIcon icon={faDownload}/></Button>
       </div>
     </div>

@@ -8,7 +8,7 @@ export type StressperiodDataType = {
 
 
 export interface IStressperiodParams {
-  stressperiod: null | StressperiodDataType[];
+  stressperiod: [] | StressperiodDataType[];
   startDate: null | string;
   endDate: string;
   timeUnit: string;

@@ -70,6 +70,16 @@ label.labelSmall {
   }
 }
 
+.field.error input[type="text"],
+.field.error input[type="email"],
+.field.error input[type="search"],
+.field.error input[type="number"],
+.field.error input[type="date"],
+.field.error input[type="password"],
+.field.error textarea {
+  box-shadow: inset 0 0 4px rgba(255, 0, 0, 0.7) !important;
+}
+
 .field input[type='date']::-webkit-calendar-picker-indicator {
   background: transparent;
   bottom: 0;

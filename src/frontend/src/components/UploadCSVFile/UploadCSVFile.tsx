@@ -109,9 +109,9 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     }
   };
 
-  const transformData = (data: any[][] | null): any[] | null => {
+  const transformData = (data: any[][] | []): any[] | [] => {
     if (!data) {
-      return null;
+      return [];
     }
     const transformedData = data.map((row, idx) => {
       const [startDateTime, nstp, tsmult, steady] = row;

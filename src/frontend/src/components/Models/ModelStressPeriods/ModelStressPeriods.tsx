@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ECsvColumnType, UploadCSVFile} from 'components/UploadCSVFile';
 import {Accordion} from 'semantic-ui-react';
 import {DataGrid, DataRow} from '../index';
@@ -177,8 +177,24 @@ const columns = [
   {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},
 ];
 const ModelStressPeriods = () => {
-
   const [stressperiodParams, setStressperiodParams] = useState<IStressperiodParams>(defaultParams);
+  const [stressperiodSorted, setStressperiodSorted] = useState<IStressperiodParams>(defaultParams);
+
+  useEffect(() => {
+    const sortedStressperiods = stressperiodParams.stressperiod && [...stressperiodParams.stressperiod].sort((a, b) => {
+      const dateA = moment.utc(a.start_date_time);
+      const dateB = moment.utc(b.start_date_time);
+      if (!dateA.isValid()) return 1; // Move items with null dates to the end
+      if (!dateB.isValid()) return -1; // Move items with null dates to the end
+      return dateA.valueOf() - dateB.valueOf();
+    });
+    setStressperiodSorted((prevParams) => ({
+      ...prevParams,
+      stressperiod: sortedStressperiods || [],
+    }));
+
+  }, [stressperiodParams]);
+
 
   const handleDateChange = (
     date: Moment | null,
@@ -189,15 +205,15 @@ const ModelStressPeriods = () => {
       [name]: date,
     }));
   };
-
+  
   const handleStressperiodDelete = () => {
     setStressperiodParams((prevParams) => ({
       ...prevParams,
-      stressperiod: null,
+      stressperiod: [],
     }));
   };
 
-  const handleStressperiodChange = (data: StressperiodDataType[] | null) => {
+  const handleStressperiodChange = (data: StressperiodDataType[] | []) => {
     setStressperiodParams((prevParams) => ({
       ...prevParams,
       stressperiod: data,
@@ -214,12 +230,14 @@ const ModelStressPeriods = () => {
   };
 
   const handleStressperiodItemRemove = (activeKey: string) => {
+    console.log(activeKey);
     setStressperiodParams((prevParams) => {
       const updatedStressperiodParams = {...prevParams};
       const updatedStressperiods = updatedStressperiodParams.stressperiod?.filter(sp => sp.key !== activeKey) || [];
       updatedStressperiodParams.stressperiod = updatedStressperiods;
       return updatedStressperiodParams;
     });
+    console.log(stressperiodParams);
   };
 
   const handleStressperiodItemCreate = (newStressPeriod: StressperiodDataType) => {
@@ -236,7 +254,7 @@ const ModelStressPeriods = () => {
     return daysDifference ? daysDifference : null;
   };
 
-  const onSave = (data: StressperiodDataType[] | null) => {
+  const onSave = (data: StressperiodDataType[] | []) => {
     handleStressperiodChange(data);
   };
 
@@ -272,7 +290,7 @@ const ModelStressPeriods = () => {
               columns={columns}
             />
             <StressperiodTable
-              stressperiodParams={stressperiodParams}
+              stressperiodParams={stressperiodSorted}
               readOnly={false}
               handleStressperiodItemChange={handleStressperiodItemChange}
               handleStressperiodItemRemove={handleStressperiodItemRemove}
