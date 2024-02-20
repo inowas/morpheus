@@ -195,7 +195,6 @@ const ModelStressPeriods = () => {
 
   }, [stressperiodParams]);
 
-
   const handleDateChange = (
     date: Moment | null,
     name: 'startDate' | 'endDate',
@@ -205,7 +204,7 @@ const ModelStressPeriods = () => {
       [name]: date,
     }));
   };
-  
+
   const handleStressperiodDelete = () => {
     setStressperiodParams((prevParams) => ({
       ...prevParams,
@@ -230,14 +229,12 @@ const ModelStressPeriods = () => {
   };
 
   const handleStressperiodItemRemove = (activeKey: string) => {
-    console.log(activeKey);
     setStressperiodParams((prevParams) => {
       const updatedStressperiodParams = {...prevParams};
       const updatedStressperiods = updatedStressperiodParams.stressperiod?.filter(sp => sp.key !== activeKey) || [];
       updatedStressperiodParams.stressperiod = updatedStressperiods;
       return updatedStressperiodParams;
     });
-    console.log(stressperiodParams);
   };
 
   const handleStressperiodItemCreate = (newStressPeriod: StressperiodDataType) => {

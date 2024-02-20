@@ -70,7 +70,6 @@ const StressperiodTable: React.FC<IProps> = ({
     element.click();
     document.body.removeChild(element);
   };
-
   const handleStressperiodChange = (
     e: ChangeEvent<HTMLInputElement>, {value, name, idx}: InputOnChangeData,
   ) => {

@@ -6,6 +6,8 @@ import {ECsvColumnType, IProps, TColumns} from './types/UploadCSVFile.type';
 import styles from './UploadCSVFile.module.less';
 import * as Papa from 'papaparse';
 import {ParseResult} from 'papaparse';
+import {faDownload} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from 'moment';
 import {v4 as uuidv4} from 'uuid';
@@ -74,6 +76,18 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     setProcessedData(nData);
   };
 
+  // Set default parameter in dropdowns
+  useEffect(() => {
+    if (fileToParse) {
+      const defaultParamColumns: { [name: string]: number } = {};
+      columns.forEach((c, idx) => {
+        defaultParamColumns[c.value] = idx;
+      });
+      setParameterColumns(defaultParamColumns);
+      setIsFetching(true);
+    }
+  }, [fileToParse, columns]);
+
   useEffect(() => {
     setColumns(props.columns);
   }, [props.columns]);
@@ -103,6 +117,20 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     }
   }, [metadata, isFetching]);
 
+  const handleDownloadTemplate = () => {
+    const filename = 'stressperiods_template.csv';
+    const todayDate = moment().format('YYYY-MM-DD');
+    const templateText = `start_date_time;nstp;tsmult;steady\n${todayDate};1;1;1\n`;
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(templateText));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   const handleBlurDateTimeFormat = () => {
     if (metadata && parameterColumns && Object.keys(parameterColumns).length === columns.length) {
       setIsFetching(true);
@@ -127,14 +155,13 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     return transformedData;
   };
 
-
   const handleSave = () => {
     if (processedData) {
       let result = transformData(processedData);
       props.onSave(result);
       props.onCancel();
       setOpenUploadPopup(false);
-      console.log(JSON.stringify(transformData(processedData), null, 2));
+      // console.log(JSON.stringify(transformData(processedData), null, 2));
     }
   };
 
@@ -429,16 +456,24 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
   return (
     <>
       <div className={styles.fileUpload}>
-        <label htmlFor="fileUploadId">Upload file</label>
-        <input
-          id="fileUploadId"
-          ref={ref}
-          onChange={handleUploadFile}
-          name="file"
-          type="file"
-          accept="text/csv"
-        />
-        <span>{fileName ? fileName : 'No file selected.'}</span>
+        <div>
+          <label htmlFor="fileUploadId">Upload file</label>
+          <input
+            id="fileUploadId"
+            ref={ref}
+            onChange={handleUploadFile}
+            name="file"
+            type="file"
+            accept="text/csv"
+          />
+          <span>{fileName ? fileName : 'No file selected.'}</span>
+        </div>
+
+        <Button
+          className='buttonLink'
+          onClick={handleDownloadTemplate}
+        >
+          Download template <FontAwesomeIcon icon={faDownload}/></Button>
       </div>
       {renderConfirmationModal()}
       {renderMainModal()}
