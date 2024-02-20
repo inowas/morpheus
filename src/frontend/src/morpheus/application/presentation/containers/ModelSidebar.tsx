@@ -4,7 +4,7 @@ import {Footer, Header, IPageWidth, Map, Sidebar} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 import type {FeatureCollection} from 'geojson';
 import menuItems from 'components/SidebarMenu/MenuItems';
-import {ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest} from 'components/Models';
+import {DataGrid, ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'components/Models';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -98,9 +98,9 @@ const ModelSidebar = () => {
   const SidebarContent = () => {
     switch (currentContent) {
     case 'Grid properties':
-      return <ModelGeometry/>;
+      return <ModelProperties/>;
     case 'Test':
-      return <ModelTest/>;
+      return <DataGrid><ModelGeometry/><ModelTest/></DataGrid>;
     case 'Model layers':
       return <ModelMetaData/>;
     case 'Stress periods':

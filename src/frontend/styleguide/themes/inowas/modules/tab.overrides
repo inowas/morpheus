@@ -1,6 +1,85 @@
 /*******************************
          Tab Overrides
 *******************************/
+
+[data-variant="primary"] {
+  .ui.secondary.pointing.menu .item {
+    position: relative;
+    color: @ref-color-blackLight;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0px;
+    text-align: left;
+    line-height: 20px;
+    padding: 4px 0;
+    border-bottom: none;
+    display: flex;
+    align-items: baseline;
+    border-bottom: 3px solid transparent !important;
+
+    &:after {
+      visibility: visible;
+      content: '';
+      position: absolute;
+      transform: none;
+      margin: 0;
+      padding: 0;
+      border: none;
+      top: inherit;
+      right: inherit;
+      left: 0;
+      bottom: -3px;
+      height: 3px;
+      background-color: @ref-color-blackLight;
+      display: block;
+      width: calc(100% - 20px);
+      z-index: 2;
+    }
+
+    &:not(:first-child) {
+      margin-left: 14px;
+    }
+
+    &.active {
+      &:after {
+        width: 100%;
+      }
+    }
+
+    &.active.tabItemWithIcon {
+      &:after {
+        width: calc(100% - 20px);
+      }
+    }
+
+
+    i {
+      width: auto;
+      height: auto;
+      margin: 0 0 0 5px;
+
+      &.times.circle.outline {
+        color: #DE4A3A;
+      }
+
+      &.check.circle {
+        color: #5DB145;
+      }
+
+    }
+  }
+
+  .ui.secondary.pointing.menu {
+    border-bottom: 1px solid @ref-color-underline;
+
+  }
+}
+
+[data-variant="secondary"] {
+
+}
+
+
 .tabs {
   display: flex;
   flex-direction: column;

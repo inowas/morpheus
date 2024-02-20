@@ -27,7 +27,7 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
-import {ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest} from './Models';
+import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from './Models';
 import ModelCard, {IModelCard} from './ModelCard';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -80,6 +80,7 @@ export {
   ModelMetaData,
   ModelStressPeriods,
   ModelTest,
+  ModelProperties,
   ModelCard,
   ModelsCreate,
   NotFound,
