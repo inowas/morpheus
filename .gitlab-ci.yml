@@ -9,12 +9,9 @@ cache:
     policy: pull-push
     paths:
       - .npm/
-  - key: &global_cache_node_mods
-    files:
-      - src/frontend/package-lock.json
-    paths:
-      - src/frontend/node_modules/
+  - key: node_modules
     policy: pull-push
+    paths:
       - src/frontend/node_modules/
 
 image: docker:20.10.16
