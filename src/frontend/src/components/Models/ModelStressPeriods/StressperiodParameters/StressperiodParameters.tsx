@@ -12,11 +12,11 @@ interface IProps {
                      name: 'startDate' | 'endDate',) => void;
 }
 
-const StressperiodParametrs: React.FC<IProps> = ({
-  stressperiodParams,
-  handleDateChange,
-  calculateTotalTime,
-}) => {
+const StressperiodParameters: React.FC<IProps> = ({
+                                                    stressperiodParams,
+                                                    handleDateChange,
+                                                    calculateTotalTime,
+                                                  }) => {
 
   const [startDateError, setStartDateError] = useState<boolean>(false);
   const [endDateError, setEndDateError] = useState<boolean>(false);
@@ -129,4 +129,4 @@ const StressperiodParametrs: React.FC<IProps> = ({
   );
 };
 
-export default StressperiodParametrs;
+export default StressperiodParameters;

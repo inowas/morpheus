@@ -9,7 +9,7 @@ import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
 import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
-import FormFilter from './FormFilter';
+import ProjectsFilter from './ProjectsFilter';
 import ModelsCreate from './ModelsCreate';
 import Grid from './Grid';
 import NotFound from './NotFound';
@@ -60,7 +60,6 @@ export {
   Divider,
   Dropdown,
   Form,
-  FormFilter,
   Grid,
   Header,
   Footer,
@@ -89,6 +88,7 @@ export {
   Pagination,
   Popup,
   Progress,
+  ProjectsFilter,
   RandomImage,
   SectionTitle,
   Segment,
