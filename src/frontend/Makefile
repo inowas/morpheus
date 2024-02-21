@@ -21,7 +21,7 @@ install:
 	npm install --legacy-peer-deps
 
 install-ci:
-	npm ci --legacy-peer-deps
+	npm ci --legacy-peer-deps --cache .npm --prefer-offline --verbose
 
 ## Analyze the built morpheus application with source-map-explorer
 analyze-morpheus:
