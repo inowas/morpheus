@@ -5,10 +5,17 @@ stages:
   - deploy
 
 cache:
-  key: npm
-  policy: pull-push
-  paths:
-    - .npm/
+  - key: npm
+    policy: pull-push
+    paths:
+      - .npm/
+  - key: &global_cache_node_mods
+    files:
+      - src/frontend/package-lock.json
+    paths:
+      - src/frontend/node_modules/
+    policy: pull-push
+      - src/frontend/node_modules/
 
 image: docker:20.10.16
 
