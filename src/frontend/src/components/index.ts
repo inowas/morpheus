@@ -6,11 +6,10 @@ import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import Container from './Container/Container';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
-import DatePicker from './DatePicker';
 import Divider from './Divider/Divider';
 import Dropdown from './Dropdown';
 import Form from './Form';
-import FormFilter from './FormFilter';
+import ProjectsFilter from './ProjectsFilter';
 import ModelsCreate from './ModelsCreate';
 import Grid from './Grid';
 import NotFound from './NotFound';
@@ -58,11 +57,9 @@ export {
   Confirm,
   Container,
   ContentWrapper,
-  DatePicker,
   Divider,
   Dropdown,
   Form,
-  FormFilter,
   Grid,
   Header,
   Footer,
@@ -91,6 +88,7 @@ export {
   Pagination,
   Popup,
   Progress,
+  ProjectsFilter,
   RandomImage,
   SectionTitle,
   Segment,

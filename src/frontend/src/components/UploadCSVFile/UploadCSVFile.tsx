@@ -6,8 +6,11 @@ import {ECsvColumnType, IProps, TColumns} from './types/UploadCSVFile.type';
 import styles from './UploadCSVFile.module.less';
 import * as Papa from 'papaparse';
 import {ParseResult} from 'papaparse';
+import {faDownload} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from 'moment';
+import {v4 as uuidv4} from 'uuid';
 
 const UploadCSVFile: React.FC<IProps> = (props) => {
 
@@ -25,23 +28,24 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [paginationPage, setPaginationPage] = useState<number>(1);
   const [openUploadPopup, setOpenUploadPopup] = useState(false);
+  const [reservedData, setReservedData] = useState<string | null>(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
+  const [resetDataFoo, setResetDataFoo] = useState<any>(() => {
+  });
+
   const rowsPerPage = 50;
-  const resetState = () => {
+  const resetFileState = () => {
     setColumns(props.columns);
     setMetadata(null);
     setDateTimeFormat('YYYY.MM.DD');
     setFirstRowIsHeader(true);
     setParameterColumns(null);
     setFileToParse(null);
-    setFileName(null);
     setParsingData(false);
     setProcessedData(null);
     setIsFetching(false);
     setPaginationPage(1);
     setOpenUploadPopup(false);
-    if (ref.current) {
-      ref.current.value = '';
-    }
   };
 
   const processData = ({data}: ParseResult<any>) => {
@@ -72,6 +76,18 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     setProcessedData(nData);
   };
 
+  // Set default parameter in dropdowns
+  useEffect(() => {
+    if (fileToParse) {
+      const defaultParamColumns: { [name: string]: number } = {};
+      columns.forEach((c, idx) => {
+        defaultParamColumns[c.value] = idx;
+      });
+      setParameterColumns(defaultParamColumns);
+      setIsFetching(true);
+    }
+  }, [fileToParse, columns]);
+
   useEffect(() => {
     setColumns(props.columns);
   }, [props.columns]);
@@ -101,23 +117,58 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     }
   }, [metadata, isFetching]);
 
+  const handleDownloadTemplate = () => {
+    const filename = 'stressperiods_template.csv';
+    const todayDate = moment().format('YYYY-MM-DD');
+    const templateText = `start_date_time;nstp;tsmult;steady\n${todayDate};1;1;1\n`;
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(templateText));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   const handleBlurDateTimeFormat = () => {
     if (metadata && parameterColumns && Object.keys(parameterColumns).length === columns.length) {
       setIsFetching(true);
     }
   };
 
+  const transformData = (data: any[][] | []): any[] | [] => {
+    if (!data) {
+      return [];
+    }
+    const transformedData = data.map((row, idx) => {
+      const [startDateTime, nstp, tsmult, steady] = row;
+
+      return {
+        key: uuidv4(),
+        start_date_time: startDateTime,
+        nstp,
+        tsmult,
+        steady,
+      };
+    });
+    return transformedData;
+  };
+
   const handleSave = () => {
     if (processedData) {
-      let result = processedData;
+      let result = transformData(processedData);
       props.onSave(result);
       props.onCancel();
       setOpenUploadPopup(false);
+      // console.log(JSON.stringify(transformData(processedData), null, 2));
     }
   };
+
   const handleCansel = () => {
     props.onCancel();
-    resetState();
+    setOpenUploadPopup(false);
+    setFileName(reservedData);
   };
 
   const handleChange = (f: (v: any) => void) => (e: any, d: any) => {
@@ -151,18 +202,41 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
   };
 
   const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+    const files = ref.current?.files;
     const file = files && 0 < files.length ? files[0] : null;
     if (file) {
-      setFileToParse(file);
-      setParsingData(true);
-      setFileName(file.name);
+      if (processedData && 0 < processedData.length) {
+        setResetDataFoo(() => () => {
+          resetFileState();
+          setReservedData(fileName);
+          setParsingData(true);
+          setFileToParse(file);
+          setFileName(file.name);
+          setOpenUploadPopup(!openUploadPopup);
+          setShowConfirmationModal(false);
+        });
+        setShowConfirmationModal(true);
+      } else {
+        resetFileState();
+        setReservedData(fileName);
+        setParsingData(true);
+        setFileToParse(file);
+        setFileName(file.name);
+        setOpenUploadPopup(!openUploadPopup);
+      }
     }
-    setOpenUploadPopup(!openUploadPopup);
   };
 
   const handleChangePagination = (e: MouseEvent, {activePage}: PaginationProps) =>
     setPaginationPage('number' === typeof activePage ? activePage : 1);
+
+  const renderHeader = () => (
+    <Table.Row>
+      {columns.map((c, cKey) =>
+        <Table.HeaderCell key={cKey}>{c.text}</Table.HeaderCell>,
+      )}
+    </Table.Row>
+  );
 
   const renderProcessedData = () => {
     if (!processedData) {
@@ -275,11 +349,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
                     className={styles.table}
                   >
                     <Table.Header>
-                      <Table.Row>
-                        {columns.map((c, cKey) =>
-                          <Table.HeaderCell key={cKey}>{c.text}</Table.HeaderCell>,
-                        )}
-                      </Table.Row>
+                      {renderHeader()}
                     </Table.Header>
                     <Table.Body>
                       {processedData && renderProcessedData()}
@@ -307,52 +377,106 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     </>
   );
 
+  const renderMainModal = () => (
+    <Modal.Modal
+      onClose={handleCansel}
+      onOpen={() => setOpenUploadPopup(true)}
+      open={openUploadPopup}
+      dimmer={'inverted'}
+    >
+      <Modal.Content>
+        <DataGrid>
+          {renderContent()}
+          <div className={styles.buttonGroup}>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              onClick={handleCansel}
+            >Cancel</Button>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              primary={!!processedData}
+              disabled={!processedData}
+              onClick={handleSave}
+            >
+              Apply
+            </Button>
+          </div>
+        </DataGrid>
+      </Modal.Content>
+    </Modal.Modal>
+  );
+
+  const renderConfirmationModal = () => (
+    <Modal.Modal
+      onClose={() => setShowConfirmationModal(false)}
+      onOpen={() => setShowConfirmationModal(true)}
+      open={showConfirmationModal}
+      dimmer={'inverted'}
+    >
+      <Modal.Content>
+        <DataGrid>
+          <DataRow>
+            <h2 style={{color: '#BF1E1E'}}>Warning:</h2>
+            <p style={{fontSize: '17px'}}> Data already exists. Overwrite?</p>
+          </DataRow>
+          <div className={styles.buttonGroup}>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              onClick={() => {
+                setShowConfirmationModal(false);
+              }}
+            >
+              No
+            </Button>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              primary={true}
+              onClick={() => resetDataFoo()}
+            >
+              Yes
+            </Button>
+          </div>
+        </DataGrid>
+      </Modal.Content>
+    </Modal.Modal>
+  );
+
   return (
     <>
       <div className={styles.fileUpload}>
-        <label htmlFor="fileUploadId">Upload file</label>
-        <input
-          id="fileUploadId"
-          ref={ref}
-          onChange={handleUploadFile}
-          name="file"
-          type="file"
-          accept="text/csv"
-        />
-        <span>{fileName ? fileName : 'No file selected.'}</span>
+        <div>
+          <label htmlFor="fileUploadId">Upload file</label>
+          <input
+            id="fileUploadId"
+            ref={ref}
+            onChange={handleUploadFile}
+            name="file"
+            type="file"
+            accept="text/csv"
+          />
+          <span>{fileName ? fileName : 'No file selected.'}</span>
+        </div>
+
+        <Button
+          className='buttonLink'
+          onClick={handleDownloadTemplate}
+        >
+          Download template <FontAwesomeIcon icon={faDownload}/></Button>
       </div>
-      <Modal.Modal
-        onClose={handleCansel}
-        onOpen={() => setOpenUploadPopup(true)}
-        open={openUploadPopup}
-        dimmer={'inverted'}
-      >
-        <Modal.Content>
-          <DataGrid>
-            {renderContent()}
-            <div className={styles.buttonGroup}>
-              <Button
-                style={{
-                  fontSize: '17px',
-                  textTransform: 'capitalize',
-                }}
-                onClick={handleCansel}
-              >Cancel</Button>
-              <Button
-                style={{
-                  fontSize: '17px',
-                  textTransform: 'capitalize',
-                }}
-                primary={!!processedData}
-                disabled={!processedData}
-                onClick={handleSave}
-              >
-                Apply
-              </Button>
-            </div>
-          </DataGrid>
-        </Modal.Content>
-      </Modal.Modal>
+      {renderConfirmationModal()}
+      {renderMainModal()}
     </>
   );
 };
