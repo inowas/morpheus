@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {Footer, FormFilter, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, Sidebar, SortDropdown} from 'components';
+import {Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 
@@ -250,7 +250,7 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
-const FilterSidebar = () => {
+const FilterProjects = () => {
 
   const {i18n, translate} = useTranslate();
   const {navbarItems} = useNavbarItems();
@@ -329,7 +329,7 @@ const FilterSidebar = () => {
         headerHeight={headerHeight} open={true}
         maxWidth={350}
       >
-        <FormFilter data={modelData} updateModelData={updateModelData}/>
+        <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown
           placeholder="Order By"
           sortOptions={sortOptions}
@@ -357,4 +357,4 @@ const FilterSidebar = () => {
   );
 };
 
-export default FilterSidebar;
+export default FilterProjects;

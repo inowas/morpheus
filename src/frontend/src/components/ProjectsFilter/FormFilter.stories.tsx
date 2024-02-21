@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {FormFilter, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, Sidebar, SortDropdown} from 'components';
+import {Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'components';
 import '../../morpheus/morpheus.less';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../rc-slider.css';
@@ -267,11 +267,11 @@ export default {
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
   * to learn how to generate automatic titles
   */
-  title: 'Modflow/FormFilter',
-  component: FormFilter,
-} as Meta<typeof FormFilter>;
+  title: 'Modflow/ProjectsFilter',
+  component: ProjectsFilter,
+} as Meta<typeof ProjectsFilter>;
 
-export const FormFilterExample: StoryFn<typeof FormFilter> = () => {
+export const FormFilterExample: StoryFn<typeof ProjectsFilter> = () => {
   const [modelData, setModelData] = useState(models);
 
   const updateModelData = (newData: IModelCard[]) => {
@@ -280,12 +280,12 @@ export const FormFilterExample: StoryFn<typeof FormFilter> = () => {
 
   return (
     <div style={{paddingLeft: '1rem', backgroundColor: '#eeeeee'}}>
-      <FormFilter data={modelData} updateModelData={updateModelData}/>
+      <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
     </div>
   );
 };
 
-export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
+export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
   const [modelData, setModelData] = useState(models);
   const [headerHeight, setHeaderHeight] = useState(0);
 
@@ -324,7 +324,7 @@ export const FormFilterPageExample: StoryFn<typeof FormFilter> = () => {
         headerHeight={headerHeight} open={true}
         maxWidth={350}
       >
-        <FormFilter data={modelData} updateModelData={updateModelData}/>
+        <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown
           placeholder="Order By"
           sortOptions={sortOptions}

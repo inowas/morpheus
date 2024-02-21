@@ -1,3 +1,5 @@
+import {StressperiodDataType} from '../../Models/types/Model.type';
+
 export type TColumns = Array<{ key: number; value: string; text: string; type?: ECsvColumnType }>;
 
 export enum ECsvColumnType {
@@ -7,7 +9,7 @@ export enum ECsvColumnType {
 }
 
 export interface IProps {
-  onSave: (ds: any[][]) => void;
+  onSave: (data: StressperiodDataType[] | []) => void
   onCancel: () => void;
   columns: TColumns;
 }

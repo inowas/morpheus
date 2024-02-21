@@ -1,3 +1,6 @@
 /*******************************
          Theme Overrides
 *******************************/
+.ui.warning.message .header {
+  color: @ref-color-red;
+}
