@@ -4,18 +4,15 @@ stages:
   - publish
   - deploy
 
-# global cache settings for all jobs
-# Ensure compatibility with the install job
-# goal: the install job loads the cache and
-# all other jobs can only use it
 cache:
-  # most npm libraries will only have 1 entry for the base project deps
-  - key: &global_cache_node_mods
-      files:
-        - src/frontend/package-lock.json
+  - key: npm
+    policy: pull-push
+    paths:
+      - .npm/
+  - key: node_modules
+    policy: pull-push
     paths:
       - src/frontend/node_modules/
-    policy: pull  # prevent subsequent jobs from modifying cache
 
 image: docker:20.10.16
 
