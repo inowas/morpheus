@@ -3,7 +3,7 @@ import React, {ChangeEvent, useState} from 'react';
 import {IStressperiodParams} from '../../types/Model.type';
 import {DataGrid} from '../../index';
 import moment, {Moment} from 'moment';
-
+import styles from './StressperiodParameters.module.less';
 
 interface IProps {
   stressperiodParams: IStressperiodParams
@@ -13,10 +13,10 @@ interface IProps {
 }
 
 const StressperiodParameters: React.FC<IProps> = ({
-                                                    stressperiodParams,
-                                                    handleDateChange,
-                                                    calculateTotalTime,
-                                                  }) => {
+  stressperiodParams,
+  handleDateChange,
+  calculateTotalTime,
+}) => {
 
   const [startDateError, setStartDateError] = useState<boolean>(false);
   const [endDateError, setEndDateError] = useState<boolean>(false);
@@ -52,7 +52,7 @@ const StressperiodParameters: React.FC<IProps> = ({
   };
 
   return (
-    <Form>
+    <Form className={styles.stressperiodParameters}>
       <DataGrid multiColumns={4}>
         <Form.Field className={'dateInputWrapper'}>
           <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
@@ -66,6 +66,7 @@ const StressperiodParameters: React.FC<IProps> = ({
             trigger={
               <div className={'divider'}>
                 <Form.Input
+                  className={styles.inputField}
                   type="date"
                   name={'startDate'}
                   value={moment(stressperiodParams.startDate, 'DD.MM.YYYY').format('YYYY-MM-DD')}
@@ -90,6 +91,7 @@ const StressperiodParameters: React.FC<IProps> = ({
             trigger={
               <div className={'divider'}>
                 <Form.Input
+                  className={styles.inputField}
                   type="date"
                   name={'endDate'}
                   value={moment(stressperiodParams.endDate, 'DD.MM.YYYY').format('YYYY-MM-DD')}
@@ -108,6 +110,7 @@ const StressperiodParameters: React.FC<IProps> = ({
             Time unit
           </label>
           <Form.Input
+            className={styles.inputField}
             name="Total unit"
             value={stressperiodParams.timeUnit}
             disabled={true}
@@ -119,6 +122,7 @@ const StressperiodParameters: React.FC<IProps> = ({
             Total time
           </label>
           <Form.Input
+            className={styles.inputField}
             name="Total time"
             value={totalTime}
             disabled={true}

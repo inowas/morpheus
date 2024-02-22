@@ -178,7 +178,7 @@ const columns = [
 ];
 const ModelStressPeriods = () => {
   const [stressperiodParams, setStressperiodParams] = useState<IStressperiodParams>(defaultParams);
-  const [stressperiodSorted, setStressperiodSorted] = useState<IStressperiodParams>(defaultParams);
+  const [stressperiodSorted, setStressperiodSorted] = useState<IStressperiodParams>(stressperiodParams);
 
   useEffect(() => {
     const sortedStressperiods = stressperiodParams.stressperiod && [...stressperiodParams.stressperiod].sort((a, b) => {
@@ -188,11 +188,10 @@ const ModelStressPeriods = () => {
       if (!dateB.isValid()) return -1; // Move items with null dates to the end
       return dateA.valueOf() - dateB.valueOf();
     });
-    setStressperiodSorted((prevParams) => ({
-      ...prevParams,
+    setStressperiodSorted(() => ({
+      ...stressperiodParams,
       stressperiod: sortedStressperiods || [],
     }));
-
   }, [stressperiodParams]);
 
   const handleDateChange = (
