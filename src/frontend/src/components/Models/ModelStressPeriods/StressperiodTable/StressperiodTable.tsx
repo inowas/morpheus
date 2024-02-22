@@ -33,8 +33,6 @@ const StressperiodTable: React.FC<IProps> = ({
   const [startDateError, setStartDateError] = useState<boolean>(false);
   const [startDateErrorIdx, setStartDateErrorIdx] = useState<number>(-1);
   const [startDateErrorContent, setStartDateErrorContent] = useState<string>('');
-  const startDate = moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY');
-  const endDate = moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY');
 
   const toCsv = () => {
     let text = 'start_date_time;nstp;tsmult;steady\n';
@@ -48,7 +46,7 @@ const StressperiodTable: React.FC<IProps> = ({
     const lastStressperiod = stressperiodParams.stressperiod && stressperiodParams.stressperiod[stressperiodParams.stressperiod.length - 1];
     const prevDate = lastStressperiod && moment(lastStressperiod.start_date_time).isValid()
       ? moment(lastStressperiod.start_date_time).add(1, 'days').format('YYYY-MM-DD')
-      : moment(stressperiodParams.endDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
+      : moment(stressperiodParams.startDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
     const newStressperiod: StressperiodDataType = {
       key: uuidv4(),
       start_date_time: prevDate,
@@ -74,7 +72,7 @@ const StressperiodTable: React.FC<IProps> = ({
     e: ChangeEvent<HTMLInputElement>, {value, name, idx}: InputOnChangeData,
   ) => {
     if ('start_date_time' === name) {
-      if (0 !== idx && moment.utc(value).isSameOrBefore(startDate)) {
+      if (0 !== idx && moment.utc(value).isSameOrBefore(moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY'))) {
         setActiveIdx(null);
         setActiveValue('');
         setActiveInput(null);
@@ -82,7 +80,7 @@ const StressperiodTable: React.FC<IProps> = ({
         setStartDateError(true);
         setStartDateErrorContent('Start Date of stressperiod cannot be the same or earlier than specified in general params');
         return;
-      } else if (0 === idx && moment.utc(value).isBefore(startDate)) {
+      } else if (0 === idx && moment.utc(value).isBefore(moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY'))) {
         setActiveIdx(null);
         setActiveValue('');
         setActiveInput(null);
@@ -90,7 +88,7 @@ const StressperiodTable: React.FC<IProps> = ({
         setStartDateError(true);
         setStartDateErrorContent('The Start Date of the stressperiod cannot be or earlier that specified in the general parameters');
         return;
-      } else if (moment.utc(value).isAfter(endDate)) {
+      } else if (moment.utc(value).isAfter(moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY'))) {
         setActiveIdx(null);
         setActiveValue('');
         setActiveInput(null);
@@ -104,7 +102,6 @@ const StressperiodTable: React.FC<IProps> = ({
     setActiveInput(name);
     setActiveValue(value);
   };
-
 
   const handleChange = (activeKey: string) => {
     setStartDateError(false);
