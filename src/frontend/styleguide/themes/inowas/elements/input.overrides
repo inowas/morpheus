@@ -16,6 +16,7 @@
   width: 100%;
 }
 
+
 .ui.selection.dropdown .menu {
   border: none !important;
   border-radius: 0 !important;
@@ -25,7 +26,7 @@
 }
 
 .ui.form .field {
-  margin-bottom: 0 !important;
+  margin-bottom: 0;
 }
 
 .field .divider > .field {

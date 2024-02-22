@@ -4,9 +4,9 @@ import {additionalDescription, boundaryDescription, createOwnerOptions, formatNu
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import {Button, IModelCard} from 'components';
 import Slider from 'rc-slider';
-import {IFilterOptions} from './types/Filter.type';
+import {IFilterOptions} from './types/ProjectsFilter.type';
 import useFilterOptions from './hooks/useFilter';
-import styles from './FormFilter.module.less';
+import styles from './ProjectsFilter.module.less';
 import 'leaflet/dist/leaflet.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -61,7 +61,7 @@ const options = [
   {key: '5', text: 'Data', value: 'Data'},
 ];
 
-const FormFilter = ({data, updateModelData}: IProps) => {
+const ProjectsFilter = ({data, updateModelData}: IProps) => {
   const [modelData, setModelData] = useState(data);
   const ownerOptions = createOwnerOptions(modelData);
   const countValue = (key: keyof IModelCard, value: string) => {
@@ -94,7 +94,7 @@ const FormFilter = ({data, updateModelData}: IProps) => {
 
 
   return (
-    <Form className={styles.form}>
+    <Form className={styles.projectsFilterForm}>
       <div className={styles.titleWrapper}>
         <h2 className={styles.title}>Filters</h2>
         <Button
@@ -320,4 +320,4 @@ const FormFilter = ({data, updateModelData}: IProps) => {
   );
 };
 
-export default FormFilter;
+export default ProjectsFilter;

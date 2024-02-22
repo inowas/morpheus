@@ -5,7 +5,7 @@ import {DataGrid, DataRow} from '../index';
 import moment, {Moment} from 'moment';
 import StressperiodTable from './StressperiodTable';
 import {IStressperiodParams, StressperiodDataType} from '../types/Model.type';
-import StressperiodParametrs from './StressperiodParametrs';
+import StressperiodParameters from './StressperiodParameters';
 
 
 const defaultParams: IStressperiodParams = {
@@ -178,7 +178,7 @@ const columns = [
 ];
 const ModelStressPeriods = () => {
   const [stressperiodParams, setStressperiodParams] = useState<IStressperiodParams>(defaultParams);
-  const [stressperiodSorted, setStressperiodSorted] = useState<IStressperiodParams>(defaultParams);
+  const [stressperiodSorted, setStressperiodSorted] = useState<IStressperiodParams>(stressperiodParams);
 
   useEffect(() => {
     const sortedStressperiods = stressperiodParams.stressperiod && [...stressperiodParams.stressperiod].sort((a, b) => {
@@ -188,11 +188,10 @@ const ModelStressPeriods = () => {
       if (!dateB.isValid()) return -1; // Move items with null dates to the end
       return dateA.valueOf() - dateB.valueOf();
     });
-    setStressperiodSorted((prevParams) => ({
-      ...prevParams,
+    setStressperiodSorted(() => ({
+      ...stressperiodParams,
       stressperiod: sortedStressperiods || [],
     }));
-
   }, [stressperiodParams]);
 
   const handleDateChange = (
@@ -221,7 +220,7 @@ const ModelStressPeriods = () => {
 
   const handleStressperiodItemChange = (activeKey: string, updatedStressPeriod: StressperiodDataType) => {
     const updatedStressperiodParams = {...stressperiodParams};
-    const indexOfUpdatedStressPeriod = updatedStressperiodParams.stressperiod?.findIndex(sp => sp.key === activeKey);
+    const indexOfUpdatedStressPeriod = updatedStressperiodParams.stressperiod?.findIndex((sp: StressperiodDataType) => sp.key === activeKey);
     if (indexOfUpdatedStressPeriod !== undefined && -1 !== indexOfUpdatedStressPeriod) {
       updatedStressperiodParams.stressperiod![indexOfUpdatedStressPeriod] = updatedStressPeriod;
       setStressperiodParams(updatedStressperiodParams);
@@ -231,7 +230,7 @@ const ModelStressPeriods = () => {
   const handleStressperiodItemRemove = (activeKey: string) => {
     setStressperiodParams((prevParams) => {
       const updatedStressperiodParams = {...prevParams};
-      const updatedStressperiods = updatedStressperiodParams.stressperiod?.filter(sp => sp.key !== activeKey) || [];
+      const updatedStressperiods = updatedStressperiodParams.stressperiod?.filter((sp: StressperiodDataType) => sp.key !== activeKey) || [];
       updatedStressperiodParams.stressperiod = updatedStressperiods;
       return updatedStressperiodParams;
     });
@@ -264,7 +263,7 @@ const ModelStressPeriods = () => {
       },
       content: {
         content: (
-          <StressperiodParametrs
+          <StressperiodParameters
             stressperiodParams={stressperiodParams}
             handleDateChange={handleDateChange}
             calculateTotalTime={calculateTotalTime()}

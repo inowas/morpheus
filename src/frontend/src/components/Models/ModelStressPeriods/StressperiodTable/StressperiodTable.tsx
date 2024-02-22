@@ -33,12 +33,10 @@ const StressperiodTable: React.FC<IProps> = ({
   const [startDateError, setStartDateError] = useState<boolean>(false);
   const [startDateErrorIdx, setStartDateErrorIdx] = useState<number>(-1);
   const [startDateErrorContent, setStartDateErrorContent] = useState<string>('');
-  const startDate = moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY');
-  const endDate = moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY');
 
   const toCsv = () => {
     let text = 'start_date_time;nstp;tsmult;steady\n';
-    stressperiodParams.stressperiod?.forEach((sp) => {
+    stressperiodParams.stressperiod?.forEach((sp: StressperiodDataType) => {
       text += `${moment(sp.start_date_time).format('YYYY-MM-DD')};${sp.nstp};${sp.tsmult};${sp.steady ? 1 : 0}\n`;
     });
     return text;
@@ -48,7 +46,7 @@ const StressperiodTable: React.FC<IProps> = ({
     const lastStressperiod = stressperiodParams.stressperiod && stressperiodParams.stressperiod[stressperiodParams.stressperiod.length - 1];
     const prevDate = lastStressperiod && moment(lastStressperiod.start_date_time).isValid()
       ? moment(lastStressperiod.start_date_time).add(1, 'days').format('YYYY-MM-DD')
-      : moment(stressperiodParams.endDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
+      : moment(stressperiodParams.startDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
     const newStressperiod: StressperiodDataType = {
       key: uuidv4(),
       start_date_time: prevDate,
@@ -74,7 +72,7 @@ const StressperiodTable: React.FC<IProps> = ({
     e: ChangeEvent<HTMLInputElement>, {value, name, idx}: InputOnChangeData,
   ) => {
     if ('start_date_time' === name) {
-      if (0 !== idx && moment.utc(value).isSameOrBefore(startDate)) {
+      if (0 !== idx && moment.utc(value).isSameOrBefore(moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY'))) {
         setActiveIdx(null);
         setActiveValue('');
         setActiveInput(null);
@@ -82,7 +80,7 @@ const StressperiodTable: React.FC<IProps> = ({
         setStartDateError(true);
         setStartDateErrorContent('Start Date of stressperiod cannot be the same or earlier than specified in general params');
         return;
-      } else if (0 === idx && moment.utc(value).isBefore(startDate)) {
+      } else if (0 === idx && moment.utc(value).isBefore(moment.utc(stressperiodParams.startDate, 'DD.MM.YYYY'))) {
         setActiveIdx(null);
         setActiveValue('');
         setActiveInput(null);
@@ -90,7 +88,7 @@ const StressperiodTable: React.FC<IProps> = ({
         setStartDateError(true);
         setStartDateErrorContent('The Start Date of the stressperiod cannot be or earlier that specified in the general parameters');
         return;
-      } else if (moment.utc(value).isAfter(endDate)) {
+      } else if (moment.utc(value).isAfter(moment.utc(stressperiodParams.endDate, 'DD.MM.YYYY'))) {
         setActiveIdx(null);
         setActiveValue('');
         setActiveInput(null);
@@ -105,10 +103,9 @@ const StressperiodTable: React.FC<IProps> = ({
     setActiveValue(value);
   };
 
-
   const handleChange = (activeKey: string) => {
     setStartDateError(false);
-    const editedIndex = stressperiodParams.stressperiod?.findIndex(sp => sp.key === activeKey);
+    const editedIndex = stressperiodParams.stressperiod?.findIndex((sp: StressperiodDataType) => sp.key === activeKey);
     if (null !== editedIndex && activeValue && stressperiodParams.stressperiod) {
       const edited = {...stressperiodParams.stressperiod[editedIndex]};
       if ('start_date_time' === activeInput) {
@@ -177,7 +174,7 @@ const StressperiodTable: React.FC<IProps> = ({
   const renderBody = () => {
     return (
       <Table.Body className={styles.tableBody}>
-        {stressperiodParams!.stressperiod.map((sp, idx) => (
+        {stressperiodParams!.stressperiod.map((sp: StressperiodDataType, idx: number) => (
           <Table.Row className={styles.tableRow} key={sp.key}>
             <Table.Cell><span>{idx + 1}</span></Table.Cell>
             <Table.Cell>
@@ -257,7 +254,7 @@ const StressperiodTable: React.FC<IProps> = ({
   return (
     <div className={styles.stressPeriod}>
       {stressperiodParams.stressperiod &&
-        0 < stressperiodParams.stressperiod.filter((sp) => sp.nstp > MAX_OUTPUT_PER_PERIOD).length &&
+        0 < stressperiodParams.stressperiod.filter((sp: StressperiodDataType) => sp.nstp > MAX_OUTPUT_PER_PERIOD).length &&
         <Grid.Row style={{marginBottom: '10px'}}>
           <Grid.Column width={16}>
             <Message warning={true}>
@@ -268,15 +265,6 @@ const StressperiodTable: React.FC<IProps> = ({
           </Grid.Column>
         </Grid.Row>
       }
-      {/*{datesInvalid &&*/}
-      {/*  <Grid.Row>*/}
-      {/*    <Grid.Column width={6}>*/}
-      {/*      <Message color={'red'}>*/}
-      {/*        <strong>Error: </strong>Start date of last stress period is greater than end date.*/}
-      {/*      </Message>*/}
-      {/*    </Grid.Column>*/}
-      {/*  </Grid.Row>*/}
-      {/*}*/}
       <div className={styles.tableWrapper}>
         <Table className={styles.table} unstackable={true}>
           {renderHeader()}
