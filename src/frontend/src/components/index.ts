@@ -19,6 +19,7 @@ import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
+import InfoTitle from './InfoTitle/InfoTitle';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -43,6 +44,7 @@ import Select, {DropdownProps} from './Select/Select';
 import Sidebar from './Sidebar/Sidebar';
 import SidebarMenu from './SidebarMenu/SidebarMenu';
 import SortDropdown, {ISortOption} from 'components/SortDropdown';
+import Tab from 'components/Tabs';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
@@ -68,6 +70,7 @@ export {
   IconButton,
   Input,
   Image,
+  InfoTitle,
   Label,
   Loader,
   LoaderAnimation,
@@ -98,6 +101,7 @@ export {
   SidebarMenu,
   SliderSwiper,
   SortDropdown,
+  Tab,
   Toggle,
   UploadCSVFile,
   UploadFile,
