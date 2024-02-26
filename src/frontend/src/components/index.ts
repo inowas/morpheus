@@ -7,6 +7,7 @@ import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import Container from './Container/Container';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
 import Divider from './Divider/Divider';
+import DotsMenu, {IAction} from './DotsMenu';
 import Dropdown from './Dropdown';
 import Form from './Form';
 import ProjectsFilter from './ProjectsFilter';
@@ -60,6 +61,7 @@ export {
   Container,
   ContentWrapper,
   Divider,
+  DotsMenu,
   Dropdown,
   Form,
   Grid,
@@ -108,6 +110,7 @@ export {
 };
 
 export type {
+  IAction,
   ICheckboxProps,
   IConfirm,
   IConfirmProps,

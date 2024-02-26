@@ -1,17 +1,140 @@
 import React from 'react';
 import {DataGrid, DataRow} from '../index';
-import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
-import {Button, InfoTitle, Tab} from 'components';
+import {Accordion, Icon, MenuItem, TabPane} from 'semantic-ui-react';
+import {Button, DotsMenu, IAction, InfoTitle, Tab} from 'components';
+import MovableList from 'components/MovableList/MovableList';
 
 const ModelProperties: React.FC = () => {
-  const panesPrimary = [
+  const yourActions: IAction[] = [
+    {key: 'action1', text: 'Action 1', icon: 'sign language', onClick: () => console.log('Action 1 clicked')},
+    {key: 'action2', text: 'Action 2', icon: 'microphone', onClick: () => console.log('Action 2 clicked')},
+    {key: 'action3', text: 'Action 3', icon: 'share alternate', onClick: () => console.log('Action 3 clicked')},
+    {key: 'action4', text: 'Action 4', icon: 'users', onClick: () => console.log('Action 4 clicked')},
+  ];
+
+  const movableItems: any[] = [
+    [
+      {
+        key: 1,
+        title: {
+          content: (
+            <div className='accordionTitleMenuWrapper'>
+              <Icon className='accordionTitleMenuIcon' name='bars'/>
+              Top layer
+              <DotsMenu actions={yourActions}/>
+            </div>
+          ),
+          icon: false,
+        },
+        content: {
+          content: (
+            <p>General parameters Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro quia, quibusdam sapiente tempore
+              vitae!</p>
+          ),
+        },
+      },
+    ],
+    [
+      {
+        key: 2,
+        title: {
+          content: (
+            <div className='accordionTitleMenuWrapper'>
+              <Icon className='accordionTitleMenuIcon' name='bars'/>
+              Some clay-silt lenses
+              <DotsMenu actions={yourActions}/>
+            </div>
+          ),
+          icon: false,
+        },
+        content: {
+          content: (
+            <p>Some clay-silt lenses. <br/> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro quia, quibusdam
+              sapiente
+              tempore
+              vitae!</p>
+          ),
+        },
+      },
+    ],
+  ];
+
+  const accordionItems: any[] = [
+    {
+      key: 1,
+      title: {
+        content: (
+          <div className='accordionTitleMenuWrapper'>
+            <Icon className='accordionTitleMenuIcon' name='bars'/>
+            Top layer
+            <DotsMenu actions={yourActions}/>
+          </div>
+        ),
+        icon: false,
+      },
+      content: {
+        content: (
+          <p>General parameters Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro quia, quibusdam sapiente
+            tempore
+            vitae!</p>
+        ),
+      },
+    },
+    {
+      key: 2,
+      title: {
+        content: (
+          <div className='accordionTitleMenuWrapper'>
+            <Icon className='accordionTitleMenuIcon' name='bars'/>
+            Some clay-silt lenses
+            <DotsMenu actions={yourActions}/>
+          </div>
+        ),
+        icon: false,
+      },
+      content: {
+        content: (
+          <p>Some clay-silt lenses. <br/> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro quia, quibusdam
+            sapiente
+            tempore
+            vitae!</p>
+        ),
+      },
+    },
+  ];
+
+  // const movableItems = [
+  //   <Accordion
+  //     key={1}
+  //     className='accordionPrimary'
+  //     panels={accordionPanel}
+  //     exclusive={false}
+  //   />,
+  //   <Accordion
+  //     key={2}
+  //     className='accordionPrimary'
+  //     panels={accordionPanel2}
+  //     exclusive={false}
+  //   />,
+  // ];
+  // const movableItems2 = [
+  //   accordionPanel,
+  //   accordionPanel2,
+  // ];
+  // console.log(accordionPanel3);
+  // console.log(movableItems2);
+
+
+  const panelsPrimary = [
     {
       menuItem: (
         <MenuItem key='properties'>
           Properties
         </MenuItem>
       ),
-      render: () => <TabPane attached={false}>Properties</TabPane>,
+      render: () => <TabPane attached={false}>
+        <MovableList items={movableItems}/>
+      </TabPane>,
     },
     {
       menuItem: (
@@ -26,7 +149,7 @@ const ModelProperties: React.FC = () => {
       render: () => <TabPane attached={false}>Validation</TabPane>,
     },
   ];
-  const panesPrimaryV2 = [
+  const panelsPrimaryV2 = [
     {
       menuItem: (
         <MenuItem key='properties'>
@@ -45,10 +168,43 @@ const ModelProperties: React.FC = () => {
           <Icon name='times circle outline'/>
         </MenuItem>
       ),
-      render: () => <TabPane attached={false}>Validation</TabPane>,
+      render: () => <TabPane attached={false}>
+        <Accordion
+          className='accordionPrimary'
+          panels={accordionItems}
+          exclusive={false}
+        />
+        {/*<Accordion*/}
+        {/*  className='accordionPrimary'*/}
+        {/*  panels={[*/}
+        {/*    {*/}
+        {/*      key: 2,*/}
+        {/*      title: {*/}
+        {/*        content: (*/}
+        {/*          <div className='accordionTitleMenuWrapper'>*/}
+        {/*            <Icon className='accordionTitleMenuIcon' name='bars'/>*/}
+        {/*            Some clay-silt lenses*/}
+        {/*            <DotsMenu actions={yourActions}/>*/}
+        {/*          </div>*/}
+        {/*        ),*/}
+        {/*        icon: false,*/}
+        {/*      },*/}
+        {/*      content: {*/}
+        {/*        content: (*/}
+        {/*          <p>Some clay-silt lenses. <br/> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro quia, quibusdam*/}
+        {/*            sapiente*/}
+        {/*            tempore*/}
+        {/*            vitae!</p>*/}
+        {/*        ),*/}
+        {/*      },*/}
+        {/*    },*/}
+        {/*  ]}*/}
+        {/*  exclusive={false}*/}
+        {/*/>*/}
+      </TabPane>,
     },
   ];
-  const panesPrimaryV3 = [
+  const panelsPrimaryV3 = [
     {
       menuItem: 'Upload shapefile',
       render: () => <TabPane attached={false}>Upload shapefile</TabPane>,
@@ -58,7 +214,7 @@ const ModelProperties: React.FC = () => {
       render: () => <TabPane attached={false}>Polygons</TabPane>,
     },
   ];
-  const panesPrimaryV4 = [
+  const panelsPrimaryV4 = [
     {
       menuItem: (
         <MenuItem key='Upload shapefile'>
@@ -106,7 +262,7 @@ const ModelProperties: React.FC = () => {
         <Tab
           variant='primary'
           menu={{secondary: true, pointing: true}}
-          panes={panesPrimaryV3}
+          panes={panelsPrimaryV3}
         />
       </TabPane>,
     },
@@ -115,7 +271,7 @@ const ModelProperties: React.FC = () => {
         <Tab
           variant='primary'
           menu={{secondary: true, pointing: true}}
-          panes={panesPrimaryV4}
+          panes={panelsPrimaryV4}
         />
       </TabPane>,
     },
@@ -127,19 +283,21 @@ const ModelProperties: React.FC = () => {
     {menuItem: 'Starting head', render: () => <TabPane>Tab 9 Content</TabPane>},
     {menuItem: 'iBound', render: () => <TabPane>Tab 10 Content</TabPane>},
   ];
+
+
   return <>
     <DataGrid>
       <DataRow title={'Model Grid'}/>
       <Tab
         variant='primary'
         menu={{secondary: true, pointing: true}}
-        panes={panesPrimary}
+        panes={panelsPrimary}
       />
       <Tab
         variant='primary'
         defaultActiveIndex={1}
         menu={{secondary: true, pointing: true}}
-        panes={panesPrimaryV2}
+        panes={panelsPrimaryV2}
       />
       <div className={'scrollWrapper-Y'}>
         <Tab
@@ -152,7 +310,6 @@ const ModelProperties: React.FC = () => {
         />
       </div>
     </DataGrid>
-
   </>
   ;
 };

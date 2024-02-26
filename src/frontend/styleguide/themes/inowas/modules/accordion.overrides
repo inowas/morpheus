@@ -90,3 +90,56 @@
 .ui.accordion:not(.styled) .title ~ .content:not(.ui) {
   padding: 20px 0 0 0;
 }
+
+
+// Primary Accordion
+
+.ui.accordion.accordionPrimary {
+
+  & + .accordionPrimary {
+    margin-top: 10px;
+  }
+
+  & > .title:not(:first-child) {
+    margin-top: 10px;
+  }
+
+  .title {
+    min-height: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    background: @ref-color-underline;
+    border: 0;
+    padding: 0 38px 0 0;
+    color: @white;
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    text-align: left;
+    line-height: 19px;
+
+    &:before {
+      font-size: 16px;
+      right: 10px;
+      top: 6px;
+    }
+  }
+
+  .accordionTitleMenuWrapper {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .accordionTitleMenuIcon {
+    box-sizing: initial;
+    display: block;
+    height: 100%;
+    margin-right: 12px;
+    padding: 6px;
+    background: @ref-color-activeNav;
+  }
+
+}
+
