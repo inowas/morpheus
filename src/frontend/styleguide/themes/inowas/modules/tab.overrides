@@ -1,6 +1,225 @@
 /*******************************
          Tab Overrides
 *******************************/
+[data-variant="primary"] {
+
+  .ui.secondary.pointing.menu {
+    min-height: auto;
+  }
+
+  .ui.secondary.pointing.menu .item {
+    position: relative;
+    color: @ref-color-blackLight;
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 0px;
+    text-align: left;
+    padding: 0 0 2px 0;
+    border-bottom: none;
+    display: flex;
+    align-items: baseline;
+
+    &:after {
+      transition: background-color 300ms;
+      visibility: visible;
+      content: '';
+      position: absolute;
+      transform: none;
+      margin: 0;
+      padding: 0;
+      border: none;
+      top: inherit;
+      right: inherit;
+      left: 0;
+      bottom: 0px;
+      height: 3px;
+      background-color: transparent;
+      display: block;
+      z-index: 2;
+    }
+
+    &:not(:first-child) {
+      margin-left: 25px;
+    }
+
+    &.active {
+      &:after {
+        width: 100%;
+        background-color: @ref-color-blackLight;
+      }
+
+      &.tabItemWithIcon {
+        &:after {
+          width: calc(100% - 20px);
+        }
+      }
+    }
+
+    i {
+      width: auto;
+      height: auto;
+      margin: 0 0 0 5px;
+
+      &.times.circle.outline {
+        color: #DE4A3A;
+      }
+
+      &.check.circle {
+        color: #5DB145;
+      }
+
+    }
+  }
+
+  .ui.secondary.pointing.menu {
+    border-bottom: 1px solid @ref-color-underline;
+  }
+
+  .ui.tab {
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  & > .ui.secondary.pointing.menu .item {
+    padding-bottom: 8px;
+  }
+
+}
+
+[data-variant="secondary"] {
+  min-width: 650px;
+
+  .column {
+    padding: 0;
+  }
+
+  .ui[class*="two column"].grid > .column {
+    padding: 26px 0;
+
+    &.stretched {
+      .ui.segment {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0 0 0 25px;
+      }
+    }
+
+    &:not(.stretched) {
+      background: @white;
+      box-shadow: 9px 0 10px -11px #BABABA;
+    }
+
+    &.stretched [data-variant="primary"] {
+      .item {
+        font-size: 12px;
+        line-height: 20px;
+        font-weight: 600;
+        text-align: left;
+        height: 27px;
+      }
+
+      .ui.segment {
+        padding: 0;
+      }
+    }
+
+
+  }
+
+  .grid {
+    margin: 0;
+  }
+
+  .ui.vertical.tabular.menu {
+    border: none;
+
+    .item {
+      border: none;
+      padding: 6px 25px;
+      margin: -1px 0 0 0;
+      position: relative;
+      font-size: 13.5px;
+      font-weight: 400;
+      letter-spacing: 0px;
+      text-align: left;
+      line-height: 19px;
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+
+      &:after {
+        content: '';
+        position: absolute;
+        right: 25px;
+        left: 25px;
+        bottom: -1px;
+        height: 1px;
+        width: calc(100% - 50px);
+        background-color: @ref-color-borderTable;
+        display: block;
+      }
+
+      &.active {
+        font-weight: 400;
+        background-color: @ref-color-lightGrey;
+        border-radius: 0 !important;
+        border-top: 1px solid @ref-color-borderTable;
+        border-bottom: 1px solid @ref-color-borderTable;
+
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: -1px;
+          height: calc(100% + 2px);
+          width: 3px;
+          background-color: @ref-color-blackLight;
+          display: block;
+        }
+      }
+    }
+  }
+
+  &.first-item-title {
+    .ui.vertical.tabular.menu .item:first-child {
+      height: 27px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      border: none;
+      border-bottom: 1px solid @ref-color-underline;
+      border-radius: 0;
+      color: @black;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0px;
+      text-align: left;
+      line-height: 20px;
+      margin: 0 25px 15px;
+      padding: 0 0 6px 0;
+
+      &:after {
+        content: none;
+      }
+    }
+  }
+}
+
+[data-variant="primary"],
+[data-variant="secondary"] {
+  &.first-item-title {
+    .ui.vertical.tabular.menu .item:first-child {
+      pointer-events: none;
+    }
+  }
+
+}
+
 .tabs {
   display: flex;
   flex-direction: column;

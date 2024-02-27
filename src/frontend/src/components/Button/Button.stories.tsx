@@ -141,6 +141,66 @@ export const AllButtons: StoryFn<typeof Button> = () => {
           text-decoration: underline;<br/>
         </code>
       </div>
+      <div style={buttonCard}>
+        <Button primary={true} size={'tiny'}>Button Tiny</Button>
+        <br/>
+        <code>
+          padding: 4px 10px;<br/>
+          border-radius: 0;<br/>
+          min-width: 110px;<br/>
+          text-transform: none;<br/>
+          background-color: #009FE3;<br/>
+          color: #FFFFFF;<br/>
+          font-family: "Open Sans", sans-serif;<br/>
+          font-size: 12px;<br/>
+          font-weight: 400;<br/>
+          line-height: 1.5;<br/>
+          <br/>
+          :hover<br/>
+          background-color: #6C84A6;<br/>
+          text-decoration: underline;<br/>
+        </code>
+      </div>
+      <div style={buttonCard}>
+        <Button secondary={true} size={'tiny'}>Button tiny</Button>
+        <br/>
+        <code>
+          padding: 4px 10px;<br/>
+          border-radius: 0;<br/>
+          min-width: 110px;<br/>
+          text-transform: none;<br/>
+          background-color: #DD2727;<br/>
+          color: #FFFFFF;<br/>
+          font-family: "Open Sans", sans-serif;<br/>
+          font-size: 12px;<br/>
+          font-weight: 400;<br/>
+          line-height: 1.5;<br/>
+          <br/>
+          :hover<br/>
+          background-color: #6C84A6;<br/>
+          text-decoration: underline;<br/>
+        </code>
+      </div>
+      <div style={buttonCard}>
+        <Button size={'tiny'}>Button tiny</Button>
+        <br/>
+        <code>
+          padding: 4px 10px;<br/>
+          border-radius: 0;<br/>
+          min-width: 110px;<br/>
+          text-transform: none;<br/>
+          background-color: #8494B2;<br/>
+          color: #FFFFFF;<br/>
+          font-family: "Open Sans", sans-serif;<br/>
+          font-size: 12px;<br/>
+          font-weight: 400;<br/>
+          line-height: 1.5;<br/>
+          <br/>
+          :hover<br/>
+          background-color: #6C84A6;<br/>
+          text-decoration: underline;<br/>
+        </code>
+      </div>
     </div>
   );
 };
