@@ -92,7 +92,7 @@ const ModelProperties: React.FC = () => {
   const movableItems: any[] = [
     [
       {
-        key: 1,
+        key: 1123123,
         title: {
           content: (
             <div className='accordionTitleMenuWrapper'>
@@ -144,6 +144,7 @@ const ModelProperties: React.FC = () => {
             </div>
           ),
         },
+        isOpen: false,
       },
     ],
     [
@@ -167,6 +168,8 @@ const ModelProperties: React.FC = () => {
               vitae!</p>
           ),
         },
+        isOpen: false,
+
       },
     ],
     [
@@ -187,7 +190,7 @@ const ModelProperties: React.FC = () => {
               <Tab
                 variant='secondary'
                 title={true}
-                defaultActiveIndex={2}
+                defaultActiveIndex={1}
                 grid={{rows: 1, columns: 2}}
                 menu={{fluid: true, vertical: true, tabular: true}}
                 panes={panelSecondary}
@@ -195,6 +198,8 @@ const ModelProperties: React.FC = () => {
             </div>
           ),
         },
+        isOpen: false,
+
       },
     ],
     [
@@ -216,6 +221,8 @@ const ModelProperties: React.FC = () => {
               tempore vitae!</p>
           ),
         },
+        isOpen: false,
+
       },
     ],
   ];
@@ -318,33 +325,6 @@ const ModelProperties: React.FC = () => {
           panels={accordionItems}
           exclusive={false}
         />
-        {/*<Accordion*/}
-        {/*  className='accordionPrimary'*/}
-        {/*  panels={[*/}
-        {/*    {*/}
-        {/*      key: 2,*/}
-        {/*      title: {*/}
-        {/*        content: (*/}
-        {/*          <div className='accordionTitleMenuWrapper'>*/}
-        {/*            <Icon className='accordionTitleMenuIcon' name='bars'/>*/}
-        {/*            Some clay-silt lenses*/}
-        {/*            <DotsMenu actions={yourActions}/>*/}
-        {/*          </div>*/}
-        {/*        ),*/}
-        {/*        icon: false,*/}
-        {/*      },*/}
-        {/*      content: {*/}
-        {/*        content: (*/}
-        {/*          <p>Some clay-silt lenses. <br/> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro quia, quibusdam*/}
-        {/*            sapiente*/}
-        {/*            tempore*/}
-        {/*            vitae!</p>*/}
-        {/*        ),*/}
-        {/*      },*/}
-        {/*    },*/}
-        {/*  ]}*/}
-        {/*  exclusive={false}*/}
-        {/*/>*/}
       </TabPane>,
     },
   ];

@@ -167,13 +167,11 @@
 
 
 body > .movableItem {
-  max-height: 30px !important;
-
 
   .ui.accordion.accordionPrimary {
     .title ~ .content.active {
+      margin-bottom: 0;
       background-color: rgb(229, 229, 229);
-      margin-bottom: 0 !important;
 
       * {
         visibility: hidden;
