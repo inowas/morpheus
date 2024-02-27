@@ -1,46 +1,12 @@
 @import 'components/site.variables';
 
-.movableList {
-  ul {
-    list-style: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
+.movableItem {
 
-    &.isDragging,
-    .isDragging {
-      outline: 1px solid red;
-    }
-
-    .movableItem {
-      position: relative;
-    }
-
-    .movableItem + .movableItem {
-      margin-top: 10px;
-    }
-
-
-    .movableButton {
-      position: absolute;
-      z-index: 2;
-      top: 0;
-      left: 0;
-      display: block;
-      height: 31px;
-      width: 30px;
-      margin-right: 12px;
-      padding: 6px;
-      color: @white;
-      background: @ref-color-activeNav;
-    }
-
-    .accordionMovableList {
-      padding: 0;
-      border: 0;
-      width: 100%;
-    }
-
+  & + .movableItem {
+    margin-top: 10px;
   }
 
-
+  [class^="accordionTitleText"] {
+    padding-left: 42px !important;
+  }
 }

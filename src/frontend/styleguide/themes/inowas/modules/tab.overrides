@@ -77,7 +77,6 @@
   }
 
   .ui.tab {
-    margin: 20px 0 0 0;
     padding: 0;
     background: transparent;
     border: none;

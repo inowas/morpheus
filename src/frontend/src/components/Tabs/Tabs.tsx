@@ -34,7 +34,7 @@ const Tab: React.FC<ITabProps> = ({
         }
       }}
       {...(null !== variant ? {'data-variant': variant} : {})}
-      className={`${classNames} ${customClassName || ''}`}
+      className={`${classNames}${customClassName ? ` ${customClassName}` : ''}`}
     />
   );
 };

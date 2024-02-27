@@ -93,7 +93,6 @@
 
 
 // Primary Accordion
-
 .ui.accordion.accordionPrimary {
 
   & + .accordionPrimary {
@@ -125,6 +124,10 @@
     }
   }
 
+  .accordionTitleText {
+    padding: 0 12px;
+  }
+
   .accordionTitleMenuWrapper {
     display: flex;
     width: 100%;
@@ -133,13 +136,36 @@
   }
 
   .accordionTitleMenuIcon {
-    box-sizing: initial;
     display: block;
-    height: 100%;
-    margin-right: 12px;
+    height: 30px;
+    width: 30px;
+    margin: 0;
     padding: 6px;
     background: @ref-color-activeNav;
   }
 
 }
 
+.movableList {
+
+  .ui.accordion.accordionPrimary {
+
+    .title ~ .content:not(.ui) {
+      padding: 0;
+    }
+
+    .title ~ .content.active {
+      margin-bottom: -10px;
+    }
+
+    .title ~ .content:not(.active) {
+      display: none;
+    }
+  }
+
+}
+
+
+body > .movableItem {
+  max-height: 30px !important;
+}
