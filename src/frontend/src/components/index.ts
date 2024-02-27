@@ -31,6 +31,7 @@ import Map from './Map/Map';
 import ModelGrid from './ModelGrid';
 import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from './Models';
 import ModelCard, {IModelCard} from './ModelCard';
+import MovableAccordionList from './MovableAccordionList';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
@@ -87,6 +88,7 @@ export {
   ModelProperties,
   ModelCard,
   ModelsCreate,
+  MovableAccordionList,
   NotFound,
   Notification,
   Notifications,

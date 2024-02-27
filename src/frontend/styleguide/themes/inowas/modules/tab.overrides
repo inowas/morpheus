@@ -83,6 +83,11 @@
     border-radius: 0;
     box-shadow: none;
   }
+
+  & > .ui.secondary.pointing.menu .item {
+    padding-bottom: 8px;
+  }
+
 }
 
 [data-variant="secondary"] {

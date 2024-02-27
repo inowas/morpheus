@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Button, Icon, Popup} from 'semantic-ui-react';
+import {Icon, Popup} from 'semantic-ui-react';
+import {Button} from 'components';
 import styles from './DotsMenu.module.less';
 import {IAction} from './index';
 
@@ -17,7 +18,6 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions}) => {
 
   const handleButtonClick = (e: React.MouseEvent<HTMLElement>, action: IAction) => {
     e.stopPropagation();
-    console.log(`Clicked on ${action.text}`);
     action.onClick();
     setIsOpen(false);
   };
@@ -25,11 +25,13 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions}) => {
   return (
     <Popup
       className={styles.dotsPopup}
-      trigger={<Button
-        className={styles.dotsMenuButton}
-        icon="ellipsis horizontal"
-        onClick={(e: React.MouseEvent<HTMLElement>) => handleToggle(e)}
-      />}
+      trigger={
+        <Button
+          className={styles.dotsMenuButton}
+          icon="ellipsis horizontal"
+          onClick={(e: React.MouseEvent<HTMLElement>) => handleToggle(e)}
+        />
+      }
       on="click"
       position="bottom right"
       open={isOpen}
@@ -38,14 +40,17 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions}) => {
     >
       <Popup.Content>
         {actions.map((action) => (
-          <button
+          <Button
             key={action.key}
+            primary={true}
+            size="tiny"
+            data-variant={action.icon}
             onClick={(e) => handleButtonClick(e, action)}
             className={styles.dotsActiveButton}
           >
             <Icon name={action.icon}/>
             {action.text}
-          </button>
+          </Button>
         ))}
       </Popup.Content>
     </Popup>

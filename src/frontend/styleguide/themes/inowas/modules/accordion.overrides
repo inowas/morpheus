@@ -150,6 +150,11 @@
 
   .ui.accordion.accordionPrimary {
 
+    .title ~ .content {
+      background-color: transparent;
+      transition: background-color 0.3s ease;
+    }
+
     .title ~ .content:not(.ui) {
       padding: 0;
     }
@@ -157,15 +162,23 @@
     .title ~ .content.active {
       margin-bottom: -10px;
     }
-
-    .title ~ .content:not(.active) {
-      display: none;
-    }
   }
-
 }
 
 
 body > .movableItem {
   max-height: 30px !important;
+
+
+  .ui.accordion.accordionPrimary {
+    .title ~ .content.active {
+      background-color: rgb(229, 229, 229);
+      margin-bottom: 0 !important;
+
+      * {
+        visibility: hidden;
+        opacity: 0;
+      }
+    }
+  }
 }
