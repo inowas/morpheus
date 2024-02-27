@@ -19,7 +19,6 @@
   &:focus {
     color: #FFFFFF;
     background-color: #6C84A6;
-    text-decoration: underline;
   }
 }
 
@@ -54,6 +53,19 @@
 .ui.button.small {
   font-size: 12px;
   text-transform: unset;
+}
+
+.ui.button.tiny {
+  opacity: 1;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  padding: 4px 10px;
+  text-align: center;
+  min-width: 110px;
+  text-transform: none;
+  border-radius: 0;
 }
 
 .ui.button.primary {

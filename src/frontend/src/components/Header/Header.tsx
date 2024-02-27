@@ -64,7 +64,7 @@ const Header = ({
       className={`${showSidebarMenu ? styles.showSidebarMenu : ''}`}
       style={{
         paddingTop: headerHeight,
-        zIndex: 100,
+        zIndex: 110,
       }}
     >
       <div

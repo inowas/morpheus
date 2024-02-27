@@ -16,6 +16,7 @@
   width: 100%;
 }
 
+
 .ui.selection.dropdown .menu {
   border: none !important;
   border-radius: 0 !important;
