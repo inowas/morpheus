@@ -2,9 +2,8 @@ import {SemanticICONS} from 'semantic-ui-react';
 import DotsMenu from './DotsMenu';
 
 export interface IAction {
-  key: string;
   text: string;
-  icon: SemanticICONS;
+  icon?: SemanticICONS;
   onClick: () => void;
 }
 

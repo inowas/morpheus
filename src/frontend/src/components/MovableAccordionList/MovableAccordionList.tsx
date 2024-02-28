@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {arrayMove, List} from 'react-movable';
 import {Accordion, Icon} from 'semantic-ui-react';
 import styles from './MovableAccordionList.module.less';
+import {DotsMenu} from '../index';
+import {v4 as uuidv4} from 'uuid';
 
 interface ListItem {
-  key: number;
+  key: number | string;
   title: {
     content: React.ReactNode;
     icon: boolean;
@@ -15,8 +17,8 @@ interface ListItem {
 }
 
 interface MovableAccordionListProps {
-  items: ListItem[][];
-  onMovableListChange: (newItems: ListItem[][]) => void;
+  items: ListItem[];
+  onMovableListChange: (newItems: ListItem[]) => void;
   defaultOpenIndexes?: number[];
 }
 
@@ -26,12 +28,50 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
   defaultOpenIndexes = [],
 }) => {
   const [openIndexes, setOpenIndexes] = useState<number[]>(defaultOpenIndexes);
+  const [openEditingTitle, setOpenEditingTitle] = useState<number | string | null>(null);
+  const [inputValue, setInputValue] = useState('');
 
-  useEffect(() => {
-    setOpenIndexes((prevOpenIndexes) =>
-      prevOpenIndexes.map((index) => Math.min(index, items.length - 1)),
+  const handleSaveTitle = (key: string | number, newTitle: string) => {
+    if (!newTitle) {
+      setOpenEditingTitle(null);
+      return;
+    }
+    const newItems = items.map((item) =>
+      item.key === key
+        ? {...item, title: {content: newTitle, icon: false}}
+        : item,
     );
-  }, [items]);
+    onMovableListChange(newItems);
+    setInputValue('');
+    setOpenEditingTitle(null);
+  };
+  const handleDeleteItem = (key: string | number) => {
+    if (!key) {
+      setOpenEditingTitle(null);
+      return;
+    }
+    const newItems = items.filter((item) => (item.key !== key));
+    onMovableListChange(newItems);
+    setOpenEditingTitle(null);
+  };
+
+  const handleCloneItem = (key: number | string) => {
+    if (!key) {
+      setOpenEditingTitle(null);
+      return;
+    }
+
+    const newItems = items.map((item) => {
+      if (item.key === key) {
+        const clonedItem = {...item, key: uuidv4()};
+        return [item, clonedItem];
+      }
+      return [item];
+    }).flat();
+
+    onMovableListChange(newItems);
+    setOpenEditingTitle(null);
+  };
 
   const handleAccordionClick = (index: number | undefined) => {
     if (index === undefined) {
@@ -43,11 +83,12 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
     setOpenIndexes(newOpenIndexes);
   };
 
+
   return (
     <div className={`${styles.movableList} movableList`}>
       <List
         values={items.map((item) => ({
-          content: item,
+          content: [item],
         }))}
         onChange={({oldIndex, newIndex}) => {
           const newItems = arrayMove(items, oldIndex, newIndex);
@@ -84,7 +125,6 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
           </ul>
         )}
         renderItem={({props, value, index}) => {
-
           return (
             <li
               {...props}
@@ -108,6 +148,42 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
                   height: '30px',
                   width: '30px',
                   marginRight: '12px',
+                  padding: '6px',
+                  color: '#fff',
+                  backgroundColor: '#002557',
+                }}
+              />
+              {openEditingTitle === value.content[0].key && (
+                <div className={styles.renameField}>
+                  <input
+                    type='text'
+                    value={inputValue}
+                    placeholder={String(value.content[0].title.content)}
+                    onChange={(e) => {
+                      const newTitle = e.target.value;
+                      setInputValue(newTitle);
+                    }}
+                  />
+                  <button onClick={() => handleSaveTitle(value.content[0].key, inputValue)}>
+                    Apply
+                  </button>
+                </div>
+              )}
+              <DotsMenu
+                actions={
+                  [
+                    {text: 'Clone', icon: 'clone', onClick: () => handleCloneItem(value.content[0].key)},
+                    {text: 'Delete', icon: 'remove', onClick: () => handleDeleteItem(value.content[0].key)},
+                    {text: 'Rename Item', icon: 'edit', onClick: () => setOpenEditingTitle(value.content[0].key)},
+                  ]
+                }
+                style={{
+                  cursor: 'move',
+                  position: 'absolute',
+                  zIndex: 9999999,
+                  right: 40,
+                  top: 5,
+                  display: 'block',
                   padding: '6px',
                   color: '#fff',
                   backgroundColor: '#002557',
@@ -137,8 +213,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
         }}
       />
     </div>
-  )
-  ;
+  );
 };
 
 export default MovableAccordionList;
