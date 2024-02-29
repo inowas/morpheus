@@ -6,9 +6,10 @@ import {IAction} from './index';
 
 interface DotsMenuProps {
   actions: IAction[];
+  style?: React.CSSProperties;
 }
 
-const DotsMenu: React.FC<DotsMenuProps> = ({actions}) => {
+const DotsMenu: React.FC<DotsMenuProps> = ({actions, style}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
@@ -30,6 +31,7 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions}) => {
           className={styles.dotsMenuButton}
           icon="ellipsis horizontal"
           onClick={(e: React.MouseEvent<HTMLElement>) => handleToggle(e)}
+          style={style}
         />
       }
       on="click"
@@ -39,16 +41,15 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions}) => {
       onOpen={() => setIsOpen(true)}
     >
       <Popup.Content>
-        {actions.map((action) => (
+        {actions.map((action, idx) => (
           <Button
-            key={action.key}
-            primary={true}
+            key={idx}
             size="tiny"
             data-variant={action.icon}
             onClick={(e) => handleButtonClick(e, action)}
             className={styles.dotsActiveButton}
           >
-            <Icon name={action.icon}/>
+            {action.icon && <Icon name={action.icon}/>}
             {action.text}
           </Button>
         ))}
