@@ -109,7 +109,7 @@
     overflow: hidden;
     background: @ref-color-underline;
     border: 0;
-    padding: 0 38px 0 0;
+    padding: 0 38px 0 42px;
     color: @white;
     font-size: 13.5px;
     font-weight: 400;
@@ -124,26 +124,28 @@
     }
   }
 
-  .accordionTitleText {
-    padding: 0 12px;
-  }
 
-  .accordionTitleMenuWrapper {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .accordionTitleMenuIcon {
-    display: block;
-    height: 30px;
-    width: 30px;
-    margin: 0;
-    padding: 6px;
-    background: @ref-color-activeNav;
-  }
-
+  // TODO - remove this when we have a proper solution =>
+  //.accordionTitleText {
+  //  padding: 0 12px;
+  //}
+  //
+  //.accordionTitleMenuWrapper {
+  //  display: flex;
+  //  width: 100%;
+  //  flex-direction: row;
+  //  align-items: center;
+  //}
+  //
+  //.accordionTitleMenuIcon {
+  //  display: block;
+  //  height: 30px;
+  //  width: 30px;
+  //  margin: 0;
+  //  padding: 6px;
+  //  background: @ref-color-activeNav;
+  //}
+  // TODO - remove this when we have a proper solution <=
 }
 
 .movableList {
