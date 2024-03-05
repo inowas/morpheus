@@ -68,7 +68,13 @@ describe('Article Item Tests', () => {
 
     const articleWithLongDescription = {
       ...article,
-      description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur dolorem esse fugiat illo mollitia reprehenderit ullam vero. Ad alias eaque et exercitationem illo ipsa minima molestiae natus neque. Consequatur eveniet, excepturi id, iusto libero minima nostrum nulla, officia quasi sed soluta vitae. Enim eum facilis quisquam repellendus sunt! Ad excepturi facere nam omnis. Ad asperiores eos excepturi incidunt ipsa, itaque molestiae nesciunt nisi odio perspiciatis. Adipisci dignissimos fuga fugiat impedit molestias rerum sed? Aliquid at autem cupiditate deleniti expedita hic natus praesentium saepe velit. Cum dicta dolor, fuga fugiat id minima nulla voluptatibus! Aspernatur dolorum eius inventore molestiae nam nemo nihil soluta sunt veniam? Aut ea explicabo impedit nisi vel vitae voluptatum. Alias dolorem itaque maiores nesciunt quis repellendus reprehenderit saepe tempora ullam? Tempore, vel?',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur dolorem esse fugiat illo mollitia reprehenderit ullam vero. ' +
+        'Ad alias eaque et exercitationem illo ipsa minima molestiae natus neque. Consequatur eveniet, excepturi id, iusto libero minima nostrum nulla, ' +
+        'officia quasi sed soluta vitae. Enim eum facilis quisquam repellendus sunt! Ad excepturi facere nam omnis. Ad asperiores eos excepturi incidunt ipsa, ' +
+        'itaque molestiae nesciunt nisi odio perspiciatis. Adipisci dignissimos fuga fugiat impedit molestias rerum sed? Aliquid at autem cupiditate deleniti ' +
+        'expedita hic natus praesentium saepe velit. Cum dicta dolor, fuga fugiat id minima nulla voluptatibus! Aspernatur dolorum eius inventore molestiae nam ' +
+        'nemo nihil soluta sunt veniam? Aut ea explicabo impedit nisi vel vitae voluptatum. Alias dolorem itaque maiores nesciunt quis repellendus reprehenderit ' +
+        'saepe tempora ullam? Tempore, vel?',
     };
 
     render(

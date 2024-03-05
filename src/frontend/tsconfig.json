@@ -19,7 +19,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "types": [
+      "node",
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
   "include": [
     ".storybook/**/*",

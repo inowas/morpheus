@@ -96,6 +96,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     if (metadata && parameterColumns && Object.keys(parameterColumns).length === columns.length) {
       setIsFetching(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstRowIsHeader, parameterColumns]);
 
   useEffect(() => {
@@ -115,6 +116,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     if (metadata && isFetching) {
       processData(metadata);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metadata, isFetching]);
 
   const handleDownloadTemplate = () => {
@@ -141,7 +143,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
     if (!data) {
       return [];
     }
-    const transformedData = data.map((row, idx) => {
+    const transformedData = data.map((row) => {
       const [startDateTime, nstp, tsmult, steady] = row;
 
       return {

@@ -10,16 +10,6 @@ import config from '../config';
 import {getI18n} from './i18n';
 import {store} from './store';
 
-interface IPlotly {
-  newPlot: (
-    containerId: HTMLElement | string,
-    plotData: any[],
-    layout: any,
-    config: any,
-  ) => void;
-}
-
-
 declare global {
   interface Window {
     Plotly?: IPlotly
@@ -37,7 +27,7 @@ root.render(
     <I18nextProvider
       i18n={
         getI18n({
-          ns: ['SimpleTools'],
+          ns: ['Modflow'],
         })}
     >
       <Provider store={store}>

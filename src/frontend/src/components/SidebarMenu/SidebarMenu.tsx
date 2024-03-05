@@ -37,7 +37,7 @@ const SidebarMenu: React.FC<IProps> = ({menuItems, handleItemClick, openDataSide
                 data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
                 as={item.title ? 'h3' : 'a'}
                 className={styles.link}
-                onClick={(e) => itemClick(index)}
+                onClick={() => itemClick(index)}
               >
                 <span className={styles.icon}><FontAwesomeIcon icon={item.icon}/></span>
                 <span className={styles.description}>{item.description}</span>

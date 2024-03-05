@@ -1,4 +1,4 @@
-import createOwnerOptions from './calculate';
+import {createOwnerOptions} from './calculate';
 
 export {createOwnerOptions};
 

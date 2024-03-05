@@ -1,57 +1,5 @@
+@import 'components/globals';
 @import 'components/site.variables';
-@import "helpers";
-
-body {
-  color: #4c4c4c;
-}
-
-#root {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 100%;
-
-}
-
-.ui.container {
-  position: relative;
-
-  .recharts-wrapper svg {
-    overflow: visible;
-  }
-}
-
-// Plotly Charts
-.js-plotly-plot {
-
-  &.plotlyContainer {
-    display: flex;
-    width: 100%;
-    flex-grow: 5;
-  }
-
-  &.plotlyContainerModal {
-    width: 90%;
-    height: 90%;
-  }
-
-  .modebar-container {
-
-    .modebar {
-      display: flex;
-      flex-direction: column;
-      left: -5px;
-      top: 10px;
-      right: initial;
-    }
-
-    .modebar-group {
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-    }
-  }
-}
 
 // Leaflet Map
 .leaflet-control-container .leaflet-top,
@@ -101,7 +49,7 @@ body {
   color: @ref-color-blackLight;
   font-size: 11px;
   font-weight: 400;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -110,7 +58,6 @@ body {
 }
 
 .dateInputWrapper {
-
   .divider {
     display: flex;
     align-items: baseline;
@@ -136,7 +83,7 @@ body {
     color: @ref-color-blackLight;
     font-size: 11px;
     font-weight: 400;
-    letter-spacing: 0px;
+    letter-spacing: 0;
   }
 }
 

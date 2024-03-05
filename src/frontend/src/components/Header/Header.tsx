@@ -47,6 +47,7 @@ const Header = ({
     }
   };
 
+  // noinspection Eslint
   useEffect(() => {
     updateHeaderHeight(); // Set initial header height
     const handleResize = () => {
@@ -56,6 +57,7 @@ const Header = ({
     return () => {
       window.removeEventListener('resize', handleResize); // Cleanup the event listener
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

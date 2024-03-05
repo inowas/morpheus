@@ -39,6 +39,10 @@ start-morpheus:
 start-mfviz:
 	npm run start-mfviz
 
+## Start the simpletools application in development mode
+start-simpletools:
+	npm run start-simpletools
+
 ## Start storybook
 start-storybook:
 	npm run start-storybook
@@ -50,6 +54,10 @@ build-morpheus:
 ## Build the mfviz application for production
 build-mfviz:
 	npm run build-mfviz
+
+## Build the simpletools application for production
+build-simpletools:
+	npm run build-simpletools
 
 ## build the whole application with mock-server for preview
 build-preview-ci:

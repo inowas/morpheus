@@ -295,10 +295,6 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
   };
   const [openPopup, setOpenPopup] = useState(false);
 
-  const onCreateButtonClick = () => {
-    setOpenPopup(!openPopup);
-  };
-
   return (
     <div style={{margin: '-1rem'}}>
       <Modal.Modal
@@ -307,7 +303,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
         open={openPopup}
         dimmer={'inverted'}
       >
-        <ModelsCreate onCreateButtonClick={onCreateButtonClick}/>
+        <ModelsCreate/>
       </Modal.Modal>
       <Header
         maxWidth={pageSize}
@@ -316,7 +312,6 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
         }}
         pathname={'/'}
         showSearchWrapper={true}
-        onCreateButtonClick={onCreateButtonClick}
         updateHeight={(height: number) => {
         }}
       />

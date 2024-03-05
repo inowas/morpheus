@@ -1,13 +1,5 @@
 import {useEffect, useState} from 'react';
-
-interface IPlotly {
-  newPlot: (
-    containerId: HTMLElement | string,
-    plotData: any[],
-    layout: any,
-    config: any
-  ) => void;
-}
+import './plotly.less';
 
 const usePlotly = (): IPlotly | undefined => {
   const [plotly, setPlotly] = useState<IPlotly | undefined>(window.Plotly);

@@ -42,22 +42,26 @@ const GeomanControls = ({
       map.pm.removeControls();
       setMounted(false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     // set path options
     if (mounted) map.pm.setPathOptions(pathOptions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathOptions, mounted]);
 
   useEffect(() => {
     // set global options
     if (mounted)
       map.pm.setGlobalOptions({layerGroup: container, ...globalOptions});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalOptions, mounted]);
 
   useEffect(() => {
     // set language
     if (mounted) map.pm.setLang(lang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, mounted]);
 
   useEffect(() => {
