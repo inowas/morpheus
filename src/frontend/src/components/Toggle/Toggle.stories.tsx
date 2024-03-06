@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import Toggle from './Toggle';
+import React, {useState} from 'react';
+
 import {Page} from '../index';
+import Toggle from './Toggle';
 
 export default {
   /* 👇 The title prop is optional.

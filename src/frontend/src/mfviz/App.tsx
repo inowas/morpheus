@@ -1,16 +1,17 @@
-import React from 'react';
-import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
-
 import '../../styleguide/semantic.less';
 import './App.less';
+
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
+
+import CalculationResultsContainer from './modules/calculation/presentation/containers/CalculationResultsContainer';
 import Example_1 from './modules/application/presentation/containers/Example_1';
 import Example_2 from './modules/application/presentation/containers/Example_2';
 import Example_3 from './modules/application/presentation/containers/Example_3';
 import Example_4 from './modules/application/presentation/containers/Example_4';
 import Example_5 from './modules/application/presentation/containers/Example_5';
 import ExamplesContainer from './modules/application/presentation/containers/ExamplesContainer';
+import React from 'react';
 import SubmitCalculationIdContainer from './modules/calculation/presentation/containers/SubmitCalculationIdContainer';
-import CalculationResultsContainer from './modules/calculation/presentation/containers/CalculationResultsContainer';
 
 const App = () => {
 

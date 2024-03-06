@@ -1,13 +1,13 @@
-import React, {ReactNode} from 'react';
-import {Swiper, SwiperSlide} from 'swiper/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Navigation, Pagination} from 'swiper/modules';
 // Import Swiper styles
 import './SliderSwiper.less';
-
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Navigation, Pagination} from 'swiper/modules';
+import React, {ReactNode} from 'react';
+import {Swiper, SwiperSlide} from 'swiper/react';
 
 import SectionTitle from 'components/SectionTitle';
 

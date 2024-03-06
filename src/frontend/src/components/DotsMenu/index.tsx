@@ -1,5 +1,5 @@
-import {SemanticICONS} from 'semantic-ui-react';
 import DotsMenu from './DotsMenu';
+import {SemanticICONS} from 'semantic-ui-react';
 
 export interface IAction {
   text: string;

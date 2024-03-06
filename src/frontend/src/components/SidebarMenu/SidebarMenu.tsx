@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {Menu} from 'semantic-ui-react';
+
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import styles from './SidebarMenu.module.less';
 import {IMenuItem} from './types/SidebarMenu.type';
+import {Menu} from 'semantic-ui-react';
+import styles from './SidebarMenu.module.less';
 
 interface IProps {
   menuItems: IMenuItem[];

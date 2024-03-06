@@ -1,9 +1,9 @@
 import {Form, Icon, InputOnChangeData, Popup} from 'semantic-ui-react';
 import React, {ChangeEvent, useState} from 'react';
-import {IStressperiodParams} from '../../types/Model.type';
-import {DataGrid} from '../../index';
 import moment, {Moment} from 'moment';
 
+import {DataGrid} from '../../index';
+import {IStressperiodParams} from '../../types/Model.type';
 
 interface IProps {
   stressperiodParams: IStressperiodParams

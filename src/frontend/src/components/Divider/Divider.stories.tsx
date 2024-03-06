@@ -1,8 +1,9 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {StoryFn, Meta} from '@storybook/react';
-import Divider from './Divider';
 import {Container, Grid, Segment} from 'semantic-ui-react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+
+import Divider from './Divider';
+import React from 'react';
 
 export default {
   /* 👇 The title prop is optional.

@@ -1,4 +1,4 @@
-import {useTranslation, IUseTranslation} from 'common/hooks';
+import {IUseTranslation, useTranslation} from 'common/hooks';
 
 interface IUseTranslate {
   translate: (key: string) => string;

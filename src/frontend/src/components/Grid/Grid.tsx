@@ -1,9 +1,10 @@
+import {SemanticFLOATS, SemanticTEXTALIGNMENTS, SemanticVERTICALALIGNMENTS, SemanticWIDTHS} from 'semantic-ui-react/dist/commonjs/generic';
+
+import {GridOnlyProp} from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
+import {GridReversedProp} from 'semantic-ui-react/dist/commonjs/collections/Grid/Grid';
+import {InowasCOLORS} from '../types/InowasColors.type';
 import React from 'react';
 import {Grid as SemanticGrid} from 'semantic-ui-react';
-import {SemanticFLOATS, SemanticTEXTALIGNMENTS, SemanticVERTICALALIGNMENTS, SemanticWIDTHS} from 'semantic-ui-react/dist/commonjs/generic';
-import {GridReversedProp} from 'semantic-ui-react/dist/commonjs/collections/Grid/Grid';
-import {GridOnlyProp} from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
-import {InowasCOLORS} from '../types/InowasColors.type';
 
 export type IGridProps = {
   as?: any

@@ -1,8 +1,8 @@
+import {IconCorner, IconSizeProp} from 'semantic-ui-react/dist/commonjs/elements/Icon/Icon';
+import {SemanticCOLORS, SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
+
 import React from 'react';
 import {Icon as SemanticIcon} from 'semantic-ui-react';
-import {SemanticCOLORS, SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
-import {IconCorner, IconSizeProp} from 'semantic-ui-react/dist/commonjs/elements/Icon/Icon';
-
 
 export type IIconProps = {
   as?: any

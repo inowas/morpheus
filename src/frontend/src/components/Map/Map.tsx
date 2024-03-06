@@ -1,11 +1,14 @@
-import React from 'react';
-import {MapContainer, Polygon, TileLayer} from 'react-leaflet';
-import {LatLngExpression, LatLngTuple} from 'leaflet';
-import Geoman from './Geoman';
-import type {FeatureCollection} from 'geojson';
+import 'leaflet';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-smooth-wheel-zoom';
+
+import {LatLngExpression, LatLngTuple} from 'leaflet';
+import {MapContainer, Polygon, TileLayer} from 'react-leaflet';
+
+import type {FeatureCollection} from 'geojson';
+import Geoman from './Geoman';
+import React from 'react';
 
 interface IProps {
   editable: boolean;

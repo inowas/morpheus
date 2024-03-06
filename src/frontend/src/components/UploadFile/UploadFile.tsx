@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
+
 import Button from 'components/Button/Button';
-import styles from './UploadFile.module.less';
 import {Message} from 'semantic-ui-react';
+import styles from './UploadFile.module.less';
 
 interface IUploadCSVFile {
   onClose?: () => void;

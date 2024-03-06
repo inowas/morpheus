@@ -1,8 +1,8 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
-import Navbar from './Navbar';
-import {ILanguage} from './LanguageSelector/types/languageSelector.type';
 
+import {ILanguage} from './LanguageSelector/types/languageSelector.type';
+import Navbar from './Navbar';
+import React from 'react';
 
 const mockOnChangeLanguage = jest.fn();
 const mockNavigateTo = jest.fn();

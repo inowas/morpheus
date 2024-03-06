@@ -1,6 +1,6 @@
 import Alerts from './Alerts';
-import useAlerts from './hooks/useAlerts';
 import {IAlert} from './Alert.type';
+import useAlerts from './hooks/useAlerts';
 
 export default Alerts;
 export {useAlerts};

@@ -1,8 +1,9 @@
+import SortDropdown, {ISortOption} from 'components/SortDropdown';
+import {render, screen} from '@testing-library/react';
+
+import {IModelCard} from 'components/ModelCard';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import {render, screen} from '@testing-library/react';
-import SortDropdown, {ISortOption} from 'components/SortDropdown';
-import {IModelCard} from 'components/ModelCard';
 
 const mockSetModelData = jest.fn();
 

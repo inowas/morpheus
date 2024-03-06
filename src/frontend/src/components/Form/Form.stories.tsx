@@ -1,6 +1,7 @@
+import {Form, Page} from 'components/index';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {Form, Page} from 'components/index';
+
 import React from 'react';
 
 export default {

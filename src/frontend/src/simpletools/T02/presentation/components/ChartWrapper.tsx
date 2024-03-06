@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
 import {ChartModal, Grid, Icon} from 'components';
+import React, {useState} from 'react';
 
 import Chart from './Chart';
 import styles from '../containers/T02Container.module.less';

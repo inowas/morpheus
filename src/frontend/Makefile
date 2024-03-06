@@ -87,6 +87,14 @@ cs-check:
 cs-fix:
 	npm run cs-fix
 
+## Run import-sort check
+import-sort-check:
+	npx import-sort-cli -l src/**/*
+
+## Run import-sort fix
+import-sort-fix:
+	npx import-sort-cli --write src/**/*
+
 ## Run dependency checks
 dependency-checks:
 	npm run depcruise:app

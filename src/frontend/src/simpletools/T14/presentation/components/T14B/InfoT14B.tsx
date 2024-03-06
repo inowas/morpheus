@@ -1,8 +1,9 @@
-import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
+
+import {IT14B} from '../../../types/T14.type';
+import React from 'react';
 import {calcDQ} from '../../../application/useCalculationsT14B';
 import {getParameterValues} from 'simpletools/common/utils';
-import {IT14B} from '../../../types/T14.type';
 
 interface IProps {
   parameters: IT14B['parameters'];

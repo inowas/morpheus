@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import InfoTitle from './InfoTitle';
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 const title = 'Some title';

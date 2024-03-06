@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {StoryFn, Meta} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {useState} from 'react';
+
 import Alerts from './index';
 import {IAlert} from './Alert.type';
 import Page from '../PageContainer/Page';

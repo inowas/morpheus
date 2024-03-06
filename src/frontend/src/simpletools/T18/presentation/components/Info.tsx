@@ -1,8 +1,9 @@
-import React from 'react';
 import {Grid, Header, Icon, Message} from 'semantic-ui-react';
 import {calcAH, calcAN, calcAO, isCtoHigh} from '../../application/useCalculations';
-import {getParameterValues} from 'simpletools/common/utils';
+
 import {IT18} from '../../types/T18.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 const renderCoWarning = (CoToHigh: boolean) => {
   if (CoToHigh) {

@@ -1,7 +1,8 @@
-import React from 'react';
 import {Form, Grid, Header, Radio, Segment} from 'semantic-ui-react';
 import {SETTINGS_INFILTRATION_TYPE_BASIN, SETTINGS_INFILTRATION_TYPE_CYLINDER} from '../containers/T18Container';
+
 import {IT18} from '../../types/T18.type';
+import React from 'react';
 
 interface IProps {
   settings: IT18['settings'];

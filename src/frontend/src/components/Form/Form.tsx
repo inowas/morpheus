@@ -1,11 +1,12 @@
-import React from 'react';
+import {InputOnChangeData, StrictInputProps} from 'semantic-ui-react/dist/commonjs/elements/Input/Input';
 import {Form as SemanticForm, StrictRadioProps} from 'semantic-ui-react';
-import {FormProps} from 'semantic-ui-react/dist/commonjs/collections/Form/Form';
 import {SemanticShorthandItem, SemanticWIDTHS} from 'semantic-ui-react/dist/commonjs/generic';
+
+import {FormProps} from 'semantic-ui-react/dist/commonjs/collections/Form/Form';
 import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
+import React from 'react';
 import {StrictDropdownProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown';
 import {StrictFormGroupProps} from 'semantic-ui-react/dist/commonjs/collections/Form/FormGroup';
-import {InputOnChangeData, StrictInputProps} from 'semantic-ui-react/dist/commonjs/elements/Input/Input';
 import styles from './Form.module.less';
 
 export type IFormProps = {

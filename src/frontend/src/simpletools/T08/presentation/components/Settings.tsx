@@ -1,8 +1,8 @@
-import React from 'react';
 import {Form, Grid, Header, Radio, Segment} from 'semantic-ui-react';
-
 import {SETTINGS_CASE_FIXED_TIME, SETTINGS_CASE_VARIABLE_TIME, SETTINGS_INFILTRATION_CONTINUOUS, SETTINGS_INFILTRATION_ONE_TIME} from '../containers/T08Container';
+
 import {IT08} from '../../types/T08.type';
+import React from 'react';
 
 interface IProps {
   settings: IT08['settings'];

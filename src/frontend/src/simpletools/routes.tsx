@@ -1,18 +1,19 @@
-import React from 'react';
 import {Navigate, Route, Routes} from 'react-router-dom';
-import DashboardContainer from './application/presentation/containers/DashboardContainer';
-import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
-import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
-import SignIn from './application/presentation/containers/AuthContainer';
+import {T09AContainer, T09BContainer, T09CContainer, T09Container, T09DContainer, T09EContainer, T09FContainer} from './T09/presentation/containers';
+import {T13AContainer, T13BContainer, T13CContainer, T13Container, T13DContainer, T13EContainer} from './T13/presentation/containers';
+import {T14AContainer, T14BContainer, T14CContainer, T14Container, T14DContainer} from './T14/presentation/containers';
+
 import AboutUsContainer from './application/presentation/containers/AboutUsContainer';
+import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
+import DashboardContainer from './application/presentation/containers/DashboardContainer';
+import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
+import React from 'react';
+import SignIn from './application/presentation/containers/AuthContainer';
 import {T02Container} from './T02/presentation/containers';
 import {T04Container} from './T04/presentation/containers';
 import {T06Container} from './T06/presentation/containers';
 import {T08Container} from './T08/presentation/containers';
-import {T09AContainer, T09BContainer, T09CContainer, T09Container, T09DContainer, T09EContainer, T09FContainer} from './T09/presentation/containers';
 import {T11Container} from './T11/presentation/containers';
-import {T13AContainer, T13BContainer, T13CContainer, T13Container, T13DContainer, T13EContainer} from './T13/presentation/containers';
-import {T14AContainer, T14BContainer, T14CContainer, T14Container, T14DContainer} from './T14/presentation/containers';
 import {T18Container} from './T18/presentation/containers';
 
 const Router = () => {

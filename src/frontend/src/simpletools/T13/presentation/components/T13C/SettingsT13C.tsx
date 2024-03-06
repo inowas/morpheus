@@ -1,9 +1,9 @@
-import React from 'react';
 import {Form, Grid, Header, Icon, Message, Radio, Segment} from 'semantic-ui-react';
 import {IT13B, SETTINGS_SELECTED_H0, SETTINGS_SELECTED_HL} from '../../../types/T13.type';
+
+import React from 'react';
 import {calculateXwd} from '../../../application/useCalculations';
 import {getParameterValues} from '../../../../common/utils';
-
 
 interface IProps {
   settings: IT13B['settings'];

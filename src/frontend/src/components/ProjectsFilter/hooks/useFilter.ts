@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {IModelCard} from '../../ModelCard';
+
 import {IFilterOptions} from '../types/ProjectsFilter.type';
+import {IModelCard} from '../../ModelCard';
 
 const formatDate = (date: Date): string => {
   const day = date.getDate().toString().padStart(2, '0');

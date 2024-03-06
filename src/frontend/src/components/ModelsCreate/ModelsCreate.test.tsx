@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import {ModelsCreate} from '../index';
+import React from 'react';
 
 describe('ModelCreate Tests', () => {
   test('It renders the component', async () => {

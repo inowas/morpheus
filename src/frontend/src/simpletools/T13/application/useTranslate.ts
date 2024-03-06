@@ -1,5 +1,5 @@
-import {useTranslation} from 'common/hooks';
 import {i18n as II18n} from 'i18next';
+import {useTranslation} from 'common/hooks';
 
 interface IUseTranslate {
   translate: (key: string) => string;

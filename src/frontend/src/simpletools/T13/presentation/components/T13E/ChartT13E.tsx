@@ -1,9 +1,10 @@
-import React from 'react';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
 import {calculateDiagramDataT13E, calculateTravelTimeT13E} from '../../../application/useCalculations';
+
 import {IT13E} from '../../../types/T13.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface IProps {
   parameters: IT13E['parameters'];

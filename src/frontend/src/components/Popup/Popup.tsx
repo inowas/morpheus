@@ -1,11 +1,11 @@
+import {PopupProps, StrictPopupProps} from 'semantic-ui-react/dist/commonjs/modules/Popup/Popup';
+
+import {PopupContentProps} from 'semantic-ui-react/dist/commonjs/modules/Popup/PopupContent';
+import {PopupHeaderProps} from 'semantic-ui-react/dist/commonjs/modules/Popup/PopupHeader';
 import React from 'react';
 import {Popup as SemanticLabel} from 'semantic-ui-react';
 import {SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
-import {PopupContentProps} from 'semantic-ui-react/dist/commonjs/modules/Popup/PopupContent';
-import {PopupHeaderProps} from 'semantic-ui-react/dist/commonjs/modules/Popup/PopupHeader';
-import {PopupProps, StrictPopupProps} from 'semantic-ui-react/dist/commonjs/modules/Popup/Popup';
 import {StrictPortalProps} from 'semantic-ui-react/dist/commonjs/addons/Portal';
-
 
 export interface PopupProp extends StrictPopupProps {
   [key: string]: any

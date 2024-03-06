@@ -1,7 +1,8 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+
 import BackToTopButton from './BackToTopButton';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 describe('BackToTopButton Tests', () => {
   test('It renders a BackToTopButton', async () => {

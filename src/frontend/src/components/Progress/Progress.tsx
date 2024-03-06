@@ -1,7 +1,7 @@
-import React from 'react';
-import {Progress as SemanticProgress} from 'semantic-ui-react';
 import {HtmlLabelProps, SemanticCOLORS, SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
 
+import React from 'react';
+import {Progress as SemanticProgress} from 'semantic-ui-react';
 
 export type IProgressProps = {
   as?: any

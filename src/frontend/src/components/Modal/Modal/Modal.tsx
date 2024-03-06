@@ -1,10 +1,11 @@
-import React from 'react';
-import {Modal as SemanticModal} from 'semantic-ui-react';
 import {SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
+
 import {ModalActionsProps} from 'semantic-ui-react/dist/commonjs/modules/Modal/ModalActions';
 import {ModalDimmerProps} from 'semantic-ui-react/dist/commonjs/modules/Modal/ModalDimmer';
 import {ModalHeaderProps} from 'semantic-ui-react/dist/commonjs/modules/Modal/ModalHeader';
 import {ModalProps} from 'semantic-ui-react/dist/commonjs/modules/Modal/Modal';
+import React from 'react';
+import {Modal as SemanticModal} from 'semantic-ui-react';
 
 export type IModalProps = {
   as?: any;

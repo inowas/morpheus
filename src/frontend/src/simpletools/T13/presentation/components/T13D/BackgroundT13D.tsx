@@ -1,13 +1,13 @@
-import React from 'react';
 import {Container, Header} from 'semantic-ui-react';
 
-import {useNavigate} from 'common/hooks';
-import {calculateXwd} from '../../../application/useCalculations';
 import Background from '../Background';
 import {IT13B} from '../../../types/T13.type';
+import React from 'react';
+import {calculateXwd} from '../../../application/useCalculations';
+import {getParameterValues} from 'simpletools/common/utils';
 import image13B from '../../images/T13B.png';
 import image13C from '../../images/T13C.png';
-import {getParameterValues} from 'simpletools/common/utils';
+import {useNavigate} from 'common/hooks';
 
 const tool = (xwd: number) => {
   if (0 <= xwd) {

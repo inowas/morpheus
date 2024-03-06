@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
 import {DataGrid, DataRow} from '../index';
-import {Button} from 'components';
-import styles from './ModelMetaData.module.less';
-import {Accordion} from 'semantic-ui-react';
-import jsonData from '../ProjectOverview.json';
+import React, {useState} from 'react';
 import {faArrowRight, faDownload} from '@fortawesome/free-solid-svg-icons';
+
+import {Accordion} from 'semantic-ui-react';
+import {Button} from 'components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import jsonData from '../ProjectOverview.json';
+import styles from './ModelMetaData.module.less';
 
 const ModelMetaData: React.FC = () => {
   const [data, setData] = useState(jsonData);

@@ -1,6 +1,7 @@
-import React, {ReactNode} from 'react';
-import styles from './ContentWrapper.module.less';
 import {IPageHeight, IPageWidth} from 'components/ContentWrapper';
+import React, {ReactNode} from 'react';
+
+import styles from './ContentWrapper.module.less';
 
 interface IProps {
   maxWidth?: IPageWidth;

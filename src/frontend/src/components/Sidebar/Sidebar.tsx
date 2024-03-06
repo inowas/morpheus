@@ -1,7 +1,8 @@
-import React, {ReactNode, useState} from 'react';
-import styles from './Sidebar.module.less';
-import {Icon} from 'semantic-ui-react';
 import {IMenuItem, SidebarMenu} from '../SidebarMenu';
+import React, {ReactNode, useState} from 'react';
+
+import {Icon} from 'semantic-ui-react';
+import styles from './Sidebar.module.less';
 
 interface IProps {
   children: ReactNode;

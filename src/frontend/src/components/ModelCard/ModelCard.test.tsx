@@ -1,7 +1,8 @@
-import React from 'react';
 import {fireEvent, render, screen} from '@testing-library/react';
-import ModelCard from './ModelCard';
+
 import {IModelCard} from './types/ModelCard.type';
+import ModelCard from './ModelCard';
+import React from 'react';
 
 const model: IModelCard = {
   id: 3,

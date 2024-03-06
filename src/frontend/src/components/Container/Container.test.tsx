@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Container from './Container';
+import React from 'react';
 
 describe('Container Tests', () => {
   test('It renders a Container', async () => {

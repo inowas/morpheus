@@ -1,6 +1,7 @@
-import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
+
 import {IT02} from '../../types/T02.type';
+import React from 'react';
 
 interface IProps {
   parameters: IT02['parameters'];

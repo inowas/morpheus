@@ -1,13 +1,14 @@
+import {ASR, ASTR, Bounds, CS, Ditches, EI, Flooding, IBF, IDF, Ponds, RD, Rooftop, SAT, SSDam, Sanddam, Trenches, WSB} from '../images';
+import {Checkbox, Form, Grid, Header, Icon, Item, Label} from 'semantic-ui-react';
 import React, {useState} from 'react';
+import {useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
+
 import {Breadcrumb} from '../../../../components';
-import {useTranslate, useNavigate, useShowBreadcrumbs} from '../../application';
+import {IT06} from '../../types/T06.type';
 import SimpleToolGrid from 'components/SimpleToolGrid';
 import groupBy from 'lodash.groupby';
 import intersection from 'lodash.intersection';
 import union from 'lodash.union';
-import {Checkbox, Form, Grid, Header, Icon, Item, Label} from 'semantic-ui-react';
-import {IT06} from '../../types/T06.type';
-import {ASR, ASTR, Bounds, CS, Ditches, EI, Flooding, IBF, IDF, Ponds, RD, Rooftop, Sanddam, SAT, SSDam, Trenches, WSB} from '../images';
 
 const defaults: IT06 = {
   condition: [{

@@ -2,7 +2,6 @@ import React from 'react';
 import {Divider as SemanticDivider} from 'semantic-ui-react';
 import {SemanticShorthandContent} from 'semantic-ui-react/dist/commonjs/generic';
 
-
 export type IDividerProps = {
   as?: any
   children?: React.ReactNode

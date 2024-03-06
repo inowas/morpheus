@@ -1,9 +1,10 @@
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
 import {calcDQ, calculateDiagramData} from '../../../application/useCalculationsT14B';
-import React from 'react';
+
 import {IT14B} from '../../../types/T14.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface IProps {
   parameters: IT14B['parameters'];

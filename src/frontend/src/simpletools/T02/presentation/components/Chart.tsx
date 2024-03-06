@@ -1,4 +1,5 @@
 import React, {useEffect, useRef} from 'react';
+
 import cloneDeep from 'lodash.clonedeep';
 import {usePlotly} from 'common/hooks';
 

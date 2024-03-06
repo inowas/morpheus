@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {
   CartesianGrid,
@@ -9,11 +8,13 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
-  exportChartImage,
   exportChartData,
+  exportChartImage,
 } from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
+
 import {IT09E} from '../../../types/T09.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface IUseCalculate {
   dRho: (rHof: number, rHos: number) => number;

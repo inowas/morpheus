@@ -1,7 +1,7 @@
-import type {Map} from 'leaflet'
-
-import {layerEvents} from './layer'
 import type {HandlersWithDebug, Method} from '../types/type'
+
+import type {Map} from 'leaflet'
+import {layerEvents} from './layer'
 
 export function mapEvents(
   map: Map,

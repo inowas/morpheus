@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import Form from './index';
+import React from 'react';
 
 describe('From Tests', () => {
   test('It renders a form input', async () => {

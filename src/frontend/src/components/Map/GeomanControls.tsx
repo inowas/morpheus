@@ -1,9 +1,11 @@
 import '@geoman-io/leaflet-geoman-free';
-import {useEffect, useState} from 'react';
-import {useLeafletContext} from '@react-leaflet/core';
-import type {LayerGroup} from 'leaflet';
-import type {GeomanProps} from './types/type';
+
 import {globalEvents, layerEvents, mapEvents, reference} from './helpers';
+import {useEffect, useState} from 'react';
+
+import type {GeomanProps} from './types/type';
+import type {LayerGroup} from 'leaflet';
+import {useLeafletContext} from '@react-leaflet/core';
 
 const GeomanControls = ({
   options = {},

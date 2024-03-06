@@ -1,12 +1,13 @@
 import {Checkbox, CheckboxProps, Form, Grid, Icon, InputOnChangeData, Message, Popup, Table} from 'semantic-ui-react';
-import React, {ChangeEvent, MouseEvent, useState} from 'react';
-import {Button} from 'components';
-import moment from 'moment';
 import {IStressperiodParams, StressperiodDataType} from '../../types/Model.type';
-import {v4 as uuidv4} from 'uuid';
+import React, {ChangeEvent, MouseEvent, useState} from 'react';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
+
+import {Button} from 'components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import moment from 'moment';
 import styles from './StressperiodTable.module.less';
+import {v4 as uuidv4} from 'uuid';
 
 export const MAX_OUTPUT_PER_PERIOD = 50;
 

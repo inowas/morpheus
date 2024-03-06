@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Icon from './Icon';
+import React from 'react';
 
 describe('Icon Tests', () => {
   test('It renders a Icon', async () => {

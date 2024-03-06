@@ -1,8 +1,8 @@
-import React from 'react';
-import {Segment as SemanticSegment} from 'semantic-ui-react';
 import {SemanticCOLORS, SemanticFLOATS, SemanticShorthandContent, SemanticTEXTALIGNMENTS} from 'semantic-ui-react/dist/commonjs/generic';
-import {SegmentSizeProp} from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
 
+import React from 'react';
+import {SegmentSizeProp} from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
+import {Segment as SemanticSegment} from 'semantic-ui-react';
 
 export type ISegmentProps = {
   as?: any

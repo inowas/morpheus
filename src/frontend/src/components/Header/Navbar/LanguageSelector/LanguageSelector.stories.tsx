@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {ComponentMeta, ComponentStory} from '@storybook/react';
-import Page from 'components/PageContainer/Page';
-import LanguageSelector from './LanguageSelector';
+import React, {useState} from 'react';
+
 import {ILanguage} from './types/languageSelector.type';
+import LanguageSelector from './LanguageSelector';
+import Page from 'components/PageContainer/Page';
 
 export default {
   /* 👇 The title prop is optional.

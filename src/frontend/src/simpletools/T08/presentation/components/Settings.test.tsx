@@ -1,5 +1,6 @@
-import React from 'react';
 import {render, screen, within} from '@testing-library/react';
+
+import React from 'react';
 import Settings from './Settings';
 import {act} from '@testing-library/react-hooks';
 

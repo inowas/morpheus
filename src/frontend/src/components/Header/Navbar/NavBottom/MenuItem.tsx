@@ -1,9 +1,10 @@
 import {IDropdownItem, IMenuItem} from '../types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Menu} from 'semantic-ui-react';
-import useIsMobile from '../hooks/useIsMobile';
-import styles from './NavBottom.module.less';
+
 import Dropdown from './Dropdown';
+import {Menu} from 'semantic-ui-react';
+import styles from './NavBottom.module.less';
+import useIsMobile from '../hooks/useIsMobile';
 
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;

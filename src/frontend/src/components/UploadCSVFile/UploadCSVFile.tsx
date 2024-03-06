@@ -1,15 +1,17 @@
-import React, {ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState} from 'react';
-import {Checkbox, Dimmer, DropdownProps, Form, Icon, List, Loader, Pagination, PaginationProps, Table} from 'semantic-ui-react';
+import * as Papa from 'papaparse';
+
 import {Button, Modal} from 'components';
+import {Checkbox, Dimmer, DropdownProps, Form, Icon, List, Loader, Pagination, PaginationProps, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'components/Models';
 import {ECsvColumnType, IProps, TColumns} from './types/UploadCSVFile.type';
-import styles from './UploadCSVFile.module.less';
-import * as Papa from 'papaparse';
+import React, {ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState} from 'react';
+
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {ParseResult} from 'papaparse';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from 'moment';
+import styles from './UploadCSVFile.module.less';
 import {v4 as uuidv4} from 'uuid';
 
 const UploadCSVFile: React.FC<IProps> = (props) => {

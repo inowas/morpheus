@@ -1,6 +1,6 @@
+import {ILanguage} from '../types/languageSelector.type';
 import de from './de.svg';
 import gb from './gb.svg';
-import {ILanguage} from '../types/languageSelector.type';
 
 interface IFlags {
   [key: string]: string;

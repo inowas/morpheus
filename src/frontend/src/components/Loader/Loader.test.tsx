@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Loader from './Loader';
+import React from 'react';
 
 describe('Loader Tests', () => {
   test('It renders a Loader', async () => {

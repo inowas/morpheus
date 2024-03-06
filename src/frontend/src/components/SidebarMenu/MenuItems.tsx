@@ -1,5 +1,3 @@
-import {IMenuItem} from './types/SidebarMenu.type';
-
 import {
   faArrowUpRightFromSquare,
   faBarsStaggered,
@@ -25,6 +23,8 @@ import {
   faSquareCheck,
   faTimeline,
 } from '@fortawesome/free-solid-svg-icons';
+
+import {IMenuItem} from './types/SidebarMenu.type';
 
 const menuItems: IMenuItem[] = [
   {icon: faPenToSquare, description: 'Setup', title: true, active: false},

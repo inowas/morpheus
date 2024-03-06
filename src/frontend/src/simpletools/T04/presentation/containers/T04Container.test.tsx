@@ -1,5 +1,6 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
+import React from 'react';
 import T04Container from './T04Container';
 
 jest.mock('../../application', () => ({

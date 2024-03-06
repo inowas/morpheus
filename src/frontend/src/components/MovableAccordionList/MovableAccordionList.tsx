@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
-import {arrayMove, List} from 'react-movable';
 import {Accordion, Icon} from 'semantic-ui-react';
-import styles from './MovableAccordionList.module.less';
+import {List, arrayMove} from 'react-movable';
+import React, {useState} from 'react';
+
 import {DotsMenu} from '../index';
+import styles from './MovableAccordionList.module.less';
 import {v4 as uuidv4} from 'uuid';
 
 interface ListItem {

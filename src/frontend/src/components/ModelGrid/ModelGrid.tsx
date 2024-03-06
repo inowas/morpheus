@@ -1,7 +1,8 @@
-import React from 'react';
 import ModelCard, {IModelCard} from 'components/ModelCard';
-import styles from './ModelGrid.module.less';
+
+import React from 'react';
 import SectionTitle from '../SectionTitle';
+import styles from './ModelGrid.module.less';
 
 interface ModelGridProps {
   sectionTitle?: string | React.ReactNode;

@@ -1,9 +1,10 @@
-import React, {useEffect, useRef} from 'react';
-import GeomanControls from './GeomanControls';
-import {FeatureGroup} from 'react-leaflet';
-import type {FeatureCollection} from 'geojson';
 import * as L from 'leaflet';
 
+import React, {useEffect, useRef} from 'react';
+
+import type {FeatureCollection} from 'geojson';
+import {FeatureGroup} from 'react-leaflet';
+import GeomanControls from './GeomanControls';
 
 interface Props {
   geojson: FeatureCollection

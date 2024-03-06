@@ -1,6 +1,6 @@
+import {ContentWrapper, Footer, Header, IPageWidth} from 'components';
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {ContentWrapper, Footer, Header, IPageWidth} from 'components';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 interface IProps {

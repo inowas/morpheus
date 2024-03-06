@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {ECsvColumnType, UploadCSVFile} from 'components/UploadCSVFile';
-import {Accordion} from 'semantic-ui-react';
 import {DataGrid, DataRow} from '../index';
-import moment, {Moment} from 'moment';
-import StressperiodTable from './StressperiodTable';
+import {ECsvColumnType, UploadCSVFile} from 'components/UploadCSVFile';
 import {IStressperiodParams, StressperiodDataType} from '../types/Model.type';
-import StressperiodParameters from './StressperiodParameters';
+import React, {useEffect, useState} from 'react';
+import moment, {Moment} from 'moment';
 
+import {Accordion} from 'semantic-ui-react';
+import StressperiodParameters from './StressperiodParameters';
+import StressperiodTable from './StressperiodTable';
 
 const defaultParams: IStressperiodParams = {
   stressperiod: [

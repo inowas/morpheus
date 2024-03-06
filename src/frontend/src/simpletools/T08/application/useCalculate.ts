@@ -1,6 +1,7 @@
 import {SETTINGS_CASE_FIXED_TIME, SETTINGS_CASE_VARIABLE_TIME, SETTINGS_INFILTRATION_ONE_TIME} from '../presentation/containers/T08Container';
-import {IT08} from '../types/T08.type';
 import {calcC, calcCTau, calcT, calcX} from '../infrastructure';
+
+import {IT08} from '../types/T08.type';
 
 interface IUseCalculate {
   calcC: (t: number, x: number, vx: number, R: number, DL: number) => number;

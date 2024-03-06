@@ -1,5 +1,6 @@
 import {Header, Image} from 'semantic-ui-react';
 import React, {useState} from 'react';
+
 import ImageModal from './ImageModal';
 
 interface IProp {

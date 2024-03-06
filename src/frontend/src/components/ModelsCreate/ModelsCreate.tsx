@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
 import {Button, Dropdown, Form, TextArea} from 'semantic-ui-react';
-import styles from './ModelsCreate.module.less';
+import React, {useState} from 'react';
+
 import Images from './Images';
 import RandomImage from 'components/RandomImage';
+import styles from './ModelsCreate.module.less';
 
 const options = [
   {key: '1', text: 'React', value: 'React'},

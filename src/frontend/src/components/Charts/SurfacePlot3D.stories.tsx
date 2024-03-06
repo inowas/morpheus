@@ -1,7 +1,8 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {StoryFn, Meta} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
+
 import {Container} from 'semantic-ui-react';
+import React from 'react';
 import SurfacePlot3D from './SurfacePlot3D';
 
 export default {

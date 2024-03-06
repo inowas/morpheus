@@ -1,8 +1,9 @@
-import React, {RefObject, useEffect, useRef, useState} from 'react';
-import styles from './Header.module.less';
 import {ContentWrapper, IPageWidth} from 'components';
 import Navbar, {INavbarItem} from './Navbar';
+import React, {RefObject, useEffect, useRef, useState} from 'react';
+
 import {ILanguageList} from './Navbar/Navbar';
+import styles from './Header.module.less';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 

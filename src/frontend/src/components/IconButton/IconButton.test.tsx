@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import IconButton from './IconButton';
+import React from 'react';
 
 describe('IconButton Tests', () => {
   test('It renders a IconButton', async () => {

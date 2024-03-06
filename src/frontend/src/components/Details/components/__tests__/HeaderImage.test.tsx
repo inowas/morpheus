@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import HeaderImage from '../HeaderImage';
+import React from 'react';
 
 describe('HeaderImage component', () => {
   test('renders Title in HeaderImage', () => {

@@ -1,7 +1,7 @@
-import React from 'react';
-import {Container as SemanticContainer} from 'semantic-ui-react';
 import {SemanticShorthandContent, SemanticTEXTALIGNMENTS} from 'semantic-ui-react/dist/commonjs/generic';
 
+import React from 'react';
+import {Container as SemanticContainer} from 'semantic-ui-react';
 
 export type IContainerProps = {
   as?: any

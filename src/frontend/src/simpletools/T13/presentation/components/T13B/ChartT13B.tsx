@@ -1,9 +1,10 @@
-import React from 'react';
-import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
+import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
 import {IT13B, SETTINGS_SELECTED_H0, SETTINGS_SELECTED_HL, SETTINGS_SELECTED_NOTHING} from '../../../types/T13.type';
 import {calculateDiagramDataT13B, calculateXwd} from '../../../application/useCalculations';
+
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface DataObject {
   x: number;

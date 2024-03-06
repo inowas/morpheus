@@ -1,5 +1,6 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
+import React from 'react';
 import T02Container from './T02Container';
 
 // Mock window.Plotly

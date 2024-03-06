@@ -1,14 +1,14 @@
-import React from 'react';
-import {Dropdown as SemanticDropdown, DropdownProps} from 'semantic-ui-react';
-import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
+import {DropdownProps, Dropdown as SemanticDropdown} from 'semantic-ui-react';
+import {HtmlSpanProps, SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
+
 import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 import {DropdownOnSearchChangeData} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown';
-import {HtmlSpanProps, SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
 import {FlagProps} from 'semantic-ui-react/dist/commonjs/elements/Flag';
 import {IconProps} from 'semantic-ui-react/dist/commonjs/elements/Icon';
 import {ImageProps} from 'semantic-ui-react/dist/commonjs/elements/Image';
+import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
+import React from 'react';
 import styles from './Dropdown.module.less';
-
 
 export interface IDropdownProps {
   as?: any

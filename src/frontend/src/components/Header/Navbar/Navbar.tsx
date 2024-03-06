@@ -1,7 +1,7 @@
-import React from 'react';
 import {INavbarItem} from './types/navbar.type';
-import NavTop from './NavTop/NavTop';
 import NavBottom from './NavBottom/NavBottom';
+import NavTop from './NavTop/NavTop';
+import React from 'react';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 export type ILanguageList = Array<{

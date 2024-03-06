@@ -1,7 +1,9 @@
-import React, {SyntheticEvent} from 'react';
-import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import './LanguageSelector.less';
+
+import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import {ILanguage, ILanguageOption} from './types/languageSelector.type';
+import React, {SyntheticEvent} from 'react';
+
 import {getFlagByLanguageCode} from './flags';
 
 interface IProps {

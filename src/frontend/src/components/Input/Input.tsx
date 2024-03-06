@@ -1,8 +1,9 @@
-import React, {forwardRef, RefObject} from 'react';
-import {Input as SemanticInput} from 'semantic-ui-react';
 import {HtmlInputrops, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
-import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
 import {InputOnChangeData, InputProps} from 'semantic-ui-react/dist/commonjs/elements/Input/Input';
+import React, {RefObject, forwardRef} from 'react';
+
+import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
+import {Input as SemanticInput} from 'semantic-ui-react';
 
 interface IInputProps extends IProps {
   [key: string]: any

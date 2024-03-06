@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import Modal from './Modal';
+import React from 'react';
 
 describe('Modal Tests', () => {
   test('It renders a modal', async () => {

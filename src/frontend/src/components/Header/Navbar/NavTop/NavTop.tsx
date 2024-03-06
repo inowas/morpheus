@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
+
+import AvatarButton from '../AvatarButton/AvatarButton';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
 import {Menu} from 'semantic-ui-react';
 import logoTUDresden from '../images/logo-tud.svg';
 import styles from './NavTop.module.less';
-import AvatarButton from '../AvatarButton/AvatarButton';
-import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 

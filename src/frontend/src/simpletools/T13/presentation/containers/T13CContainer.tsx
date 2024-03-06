@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
-import SimpleToolGrid from 'components/SimpleToolGrid';
 import {Background, ChartT13C, InfoT13C, Parameters} from '../components';
-import {IT13C} from '../../types/T13.type';
-import image from '../images/T13C.png';
-import {Breadcrumb} from 'components';
-import {useNavigate} from 'common/hooks';
+import React, {useState} from 'react';
 import {useShowBreadcrumbs, useTranslate} from '../../application';
+
+import {Breadcrumb} from 'components';
+import {IT13C} from '../../types/T13.type';
+import SimpleToolGrid from 'components/SimpleToolGrid';
+import image from '../images/T13C.png';
+import {useNavigate} from 'common/hooks';
 
 const defaults: IT13C = {
   parameters: [{

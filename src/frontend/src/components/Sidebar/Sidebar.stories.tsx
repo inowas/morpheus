@@ -1,7 +1,7 @@
-import React from 'react';
-
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
+
+import React from 'react';
 import Sidebar from '../Sidebar';
 import menuItems from '../SidebarMenu/MenuItems';
 

@@ -1,5 +1,5 @@
-import React from 'react';
 import {IVisibility} from '../../types';
+import React from 'react';
 
 interface IProps {
   colorScaleUrl: string;

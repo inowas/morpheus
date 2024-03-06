@@ -1,8 +1,9 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {StoryFn, Meta} from '@storybook/react';
-import {Container, Segment} from 'semantic-ui-react';
 import {Button, Modal} from 'components/index';
+import {Container, Segment} from 'semantic-ui-react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+
+import React from 'react';
 
 export default {
   /* 👇 The title prop is optional.

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
 import {Button, Form, Grid, Header, Segment} from 'semantic-ui-react';
+import React, {useState} from 'react';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');

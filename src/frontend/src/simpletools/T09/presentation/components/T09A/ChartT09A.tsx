@@ -1,18 +1,19 @@
-import React from 'react';
 import {
-  CartesianGrid,
   Bar,
   BarChart,
+  CartesianGrid,
   Legend,
   ResponsiveContainer,
   XAxis,
   YAxis,
-  exportChartImage,
   exportChartData,
+  exportChartImage,
 } from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
+
 import {IT09A} from '../../../types/T09.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface IUseCalculate {
   calculateZ: (h: number, df: number, ds: number) => number;

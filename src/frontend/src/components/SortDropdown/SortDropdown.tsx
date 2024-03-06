@@ -1,9 +1,10 @@
-import React, {ReactNode, SyntheticEvent} from 'react';
-import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import './SortDropdown.less';
+
+import {Dropdown, DropdownProps} from 'semantic-ui-react';
+import React, {ReactNode, SyntheticEvent} from 'react';
+
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
-
 
 interface IProps {
   data: IModelCard[];

@@ -1,7 +1,8 @@
-import React from 'react';
-import type {FeatureCollection} from 'geojson';
 import {Meta, StoryFn} from '@storybook/react';
+
+import type {FeatureCollection} from 'geojson';
 import {Map} from './index';
+import React from 'react';
 
 const geojson: FeatureCollection = {
   'type': 'FeatureCollection',

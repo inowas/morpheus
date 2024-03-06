@@ -1,6 +1,6 @@
-import React from 'react';
 import {Icon, Popup} from 'semantic-ui-react';
 
+import React from 'react';
 import styles from './InfoTitle.module.less';
 
 interface IProps {

@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import Info from './Info';
+import React from 'react';
 import {defaults} from '../containers/T02Container';
 
 const mounding = {

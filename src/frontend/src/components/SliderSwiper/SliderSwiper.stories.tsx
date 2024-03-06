@@ -1,9 +1,10 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import SliderSwiper from 'components/SliderSwiper';
+
 import {IModelCard} from '../ModelCard';
 import {ModelCard} from '../index';
+import React from 'react';
+import SliderSwiper from 'components/SliderSwiper';
 
 const models: IModelCard[] = [
   {

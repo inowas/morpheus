@@ -1,5 +1,6 @@
+import {ConfirmProps, Confirm as SemanticConfirm} from 'semantic-ui-react';
+
 import React from 'react';
-import {Confirm as SemanticConfirm, ConfirmProps} from 'semantic-ui-react';
 
 export type IConfirmProps = {
   as?: any;

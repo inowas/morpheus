@@ -1,8 +1,9 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
-import Notifications from '../Notifications';
-import userEvent from '@testing-library/user-event';
+
 import {INotification} from '../Notifications.type';
+import Notifications from '../Notifications';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 describe('Tests for Notification Component', () => {
   it('renders null if no alert provided', () => {

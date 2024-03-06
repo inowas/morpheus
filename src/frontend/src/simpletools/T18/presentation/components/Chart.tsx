@@ -1,10 +1,10 @@
-import React from 'react';
-import {IT18} from '../../types/T18.type';
 import {Bar, BarChart, CartesianGrid, Label, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
 import {Button, Grid, Icon} from 'semantic-ui-react';
-import {calculateDiagramData} from '../../application/useCalculations';
 
+import {IT18} from '../../types/T18.type';
+import React from 'react';
+import {calculateDiagramData} from '../../application/useCalculations';
+import {getParameterValues} from 'simpletools/common/utils';
 
 const styles = {
   chart: {

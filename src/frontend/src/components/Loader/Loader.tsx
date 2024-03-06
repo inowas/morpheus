@@ -1,7 +1,7 @@
+import {SemanticSIZES, SemanticShorthandContent} from 'semantic-ui-react/dist/commonjs/generic';
+
 import React from 'react';
 import {Loader as SemanticLoader} from 'semantic-ui-react';
-import {SemanticShorthandContent, SemanticSIZES} from 'semantic-ui-react/dist/commonjs/generic';
-
 
 export type ILoaderProps = {
   as?: any

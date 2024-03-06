@@ -1,6 +1,6 @@
-import type {Layer} from 'leaflet'
-
 import type {HandlersWithDebug, Method} from '../types/type'
+
+import type {Layer} from 'leaflet'
 
 export function layerEvents(
   layer: Layer,

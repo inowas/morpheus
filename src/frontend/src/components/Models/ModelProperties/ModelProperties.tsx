@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {DataGrid, DataRow} from '../index';
 import {Accordion, Icon, MenuItem, TabPane} from 'semantic-ui-react';
 import {Button, InfoTitle, MovableAccordionList, Tab} from 'components';
+import {DataGrid, DataRow} from '../index';
+import React, {useState} from 'react';
 
 const panelsPrimaryV3 = [
   {

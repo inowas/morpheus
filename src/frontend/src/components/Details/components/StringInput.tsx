@@ -1,5 +1,5 @@
-import React, {ChangeEvent} from 'react';
 import {Form, SemanticWIDTHS} from 'semantic-ui-react';
+import React, {ChangeEvent} from 'react';
 
 interface IProps {
   value: string;

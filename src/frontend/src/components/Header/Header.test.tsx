@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 
-import React from 'react';
 import Header from './Header';
+import React from 'react';
 import {useNavbarItems} from '../../morpheus/application/application';
 
 describe('Header Tests', () => {

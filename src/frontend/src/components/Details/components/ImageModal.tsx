@@ -1,4 +1,5 @@
 import {Button, Image, Modal} from 'semantic-ui-react';
+
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 

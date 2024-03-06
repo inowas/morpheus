@@ -1,6 +1,6 @@
+import {Header} from 'semantic-ui-react';
 import React from 'react';
 import styles from './PageTitle.module.less';
-import {Header} from 'semantic-ui-react';
 
 interface IProps {
   title: string;

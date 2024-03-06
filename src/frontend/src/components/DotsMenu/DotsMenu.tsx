@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
 import {Icon, Popup} from 'semantic-ui-react';
+import React, {useState} from 'react';
+
 import {Button} from 'components';
-import styles from './DotsMenu.module.less';
 import {IAction} from './index';
+import styles from './DotsMenu.module.less';
 
 interface DotsMenuProps {
   actions: IAction[];

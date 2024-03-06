@@ -1,5 +1,6 @@
-import React from 'react';
 import {Container as SemanticContainer, Divider as SemanticDivider, Header as SemanticHeader, Segment as SemanticSegment} from 'semantic-ui-react';
+
+import React from 'react';
 
 export type IContainerWithSegmentProps = {
   children?: React.ReactNode;

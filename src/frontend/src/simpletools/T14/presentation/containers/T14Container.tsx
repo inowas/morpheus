@@ -1,13 +1,14 @@
 import {Button, Dimmer, Grid, Header, Icon, Image, Segment} from 'semantic-ui-react';
 import React, {useState} from 'react';
-import {useNavigate} from 'common/hooks';
-import styles from './T14.module.less';
+import {useShowBreadcrumbs, useTranslate} from '../../application';
+
+import {Breadcrumb} from '../../../../components';
 import image14A from '../images/T14A.png';
 import image14B from '../images/T14B.png';
 import image14C from '../images/T14C.png';
 import image14D from '../images/T14D.png';
-import {Breadcrumb} from '../../../../components';
-import {useTranslate, useShowBreadcrumbs} from '../../application';
+import styles from './T14.module.less';
+import {useNavigate} from 'common/hooks';
 
 interface Item {
   tool: string;

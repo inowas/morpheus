@@ -1,6 +1,7 @@
-import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
+
 import {INotification} from './Notifications.type';
+import React from 'react';
 
 interface IProps {
   notifications: INotification[];

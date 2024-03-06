@@ -1,6 +1,7 @@
 import {Grid, Segment} from 'semantic-ui-react';
-import styles from './SimpleToolGrid.module.less';
+
 import React from 'react';
+import styles from './SimpleToolGrid.module.less';
 
 interface IProps {
   rows: number;

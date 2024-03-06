@@ -1,10 +1,10 @@
-import React from 'react';
-import {Select as SemanticSelect} from 'semantic-ui-react';
+import {DropdownOnSearchChangeData, DropdownProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown';
+
 import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
-import {DropdownOnSearchChangeData, DropdownProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown';
+import React from 'react';
+import {Select as SemanticSelect} from 'semantic-ui-react';
 import styles from './Select.module.less';
-
 
 export type ISelectProps = {
   options: DropdownItemProps[];

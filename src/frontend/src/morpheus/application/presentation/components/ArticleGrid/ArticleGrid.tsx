@@ -1,7 +1,8 @@
-import React from 'react';
-import {Grid} from 'components';
-import styles from './ArticleGrid.module.less';
 import ArticleItem, {IArticle} from './ArticleItem/ArticleItem';
+
+import {Grid} from 'components';
+import React from 'react';
+import styles from './ArticleGrid.module.less';
 
 interface IProps {
   articles: IArticle[];

@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
 import {Icon, Message} from 'semantic-ui-react';
+import React, {useEffect} from 'react';
+
 import {IAlert} from './Alert.type';
 
 interface IProps {

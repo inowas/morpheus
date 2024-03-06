@@ -1,7 +1,8 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+
+import React from 'react';
 import Tab from './Tabs';
+import userEvent from '@testing-library/user-event';
 
 describe('Tab Component Tests', () => {
   test('It renders a button', async () => {

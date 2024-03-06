@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Checkbox from './Checkbox';
+import React from 'react';
 
 describe('Checkbox Tests', () => {
   test('It renders a Checkbox', async () => {

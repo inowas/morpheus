@@ -1,9 +1,9 @@
-import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
 import {SETTINGS_CASE_FIXED_TIME, SETTINGS_INFILTRATION_ONE_TIME} from '../containers/T08Container';
-import {IT08} from '../../types/T08.type';
-import {getParameterValues} from 'simpletools/common/utils';
 
+import {IT08} from '../../types/T08.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface ICalculation {
   calcC: (t: number, x: number, vx: number, R: number, DL: number) => number;

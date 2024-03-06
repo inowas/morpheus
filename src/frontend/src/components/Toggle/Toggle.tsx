@@ -1,5 +1,6 @@
-import React from 'react';
 import './toggle.less';
+
+import React from 'react';
 
 interface IProps {
   value: boolean;

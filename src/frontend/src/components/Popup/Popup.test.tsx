@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
+
 import Popup from './Popup';
+import React from 'react';
 
 describe('Popup Tests', () => {
   test('It renders a button', async () => {

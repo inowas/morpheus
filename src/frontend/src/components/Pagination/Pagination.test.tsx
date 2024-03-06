@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Pagination from './Pagination';
+import React from 'react';
 
 describe('Pagination Tests', () => {
   test('It renders a Pagination', async () => {

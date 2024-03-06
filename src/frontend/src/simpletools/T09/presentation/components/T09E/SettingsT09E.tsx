@@ -1,7 +1,7 @@
 import {Form, Grid, Header, Radio, Segment} from 'semantic-ui-react';
-import React from 'react';
-import {IT09E} from '../../../types/T09.type';
 
+import {IT09E} from '../../../types/T09.type';
+import React from 'react';
 
 interface IProps {
   settings: IT09E['settings'];

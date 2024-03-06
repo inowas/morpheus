@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+
 import {usePlotly} from 'common/hooks';
 
 interface IProps {

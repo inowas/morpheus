@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {IT08} from '../../types/T08.type';
 import {Background, Chart, Info, Parameters, Settings} from '../components';
-import SimpleToolGrid from 'components/SimpleToolGrid';
-import image from '../images/T08.png';
-import {Breadcrumb} from '../../../../components';
+import React, {useState} from 'react';
 import {useCalculate, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
+import {Breadcrumb} from '../../../../components';
+import {IT08} from '../../types/T08.type';
+import SimpleToolGrid from 'components/SimpleToolGrid';
+import image from '../images/T08.png';
 
 export const SETTINGS_CASE_FIXED_TIME: number = 1;
 export const SETTINGS_CASE_VARIABLE_TIME: number = 2;

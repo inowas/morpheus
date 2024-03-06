@@ -1,6 +1,8 @@
 export * from 'recharts';
-import * as ReactDOM from 'react-dom';
+
 import './rechartsWrapper.less';
+
+import * as ReactDOM from 'react-dom';
 
 const downloadFile = (name: string, uri: string) => {
   const downloadLink = document.createElement('a');

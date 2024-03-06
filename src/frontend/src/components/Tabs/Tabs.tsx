@@ -1,5 +1,6 @@
-import React from 'react';
 import {Tab as SemanticTab, TabProps} from 'semantic-ui-react';
+
+import React from 'react';
 
 export type ITabProps = {
   activeIndex?: number | string;

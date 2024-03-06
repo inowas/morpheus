@@ -1,12 +1,9 @@
 import React, {Suspense} from 'react';
-import {createRoot} from 'react-dom/client';
 
 import App from './App';
 import {I18nextProvider} from 'react-i18next';
-
+import {createRoot} from 'react-dom/client';
 import {getI18n} from './i18n';
-
-
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

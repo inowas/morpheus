@@ -1,12 +1,13 @@
-import React from 'react';
+import {ContentWrapper, IPageWidth} from 'components';
+
+import BackToTopButton from '../BackToTopButton/BackToTopButton';
 import {Input} from 'semantic-ui-react';
-import styles from './Footer.module.less';
+import React from 'react';
 import logoBmbf from './images/logo-bmbf.svg';
+import logoCopyright from './images/logo-copyright.png';
 import logoInowas from './images/logo-inowas.svg';
 import logoTUD from './images/logo-tud.svg';
-import logoCopyright from './images/logo-copyright.png';
-import BackToTopButton from '../BackToTopButton/BackToTopButton';
-import {ContentWrapper, IPageWidth} from 'components';
+import styles from './Footer.module.less';
 
 interface IProps {
   release: string;

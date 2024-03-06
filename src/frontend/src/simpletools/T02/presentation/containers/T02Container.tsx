@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
 import {Background, ChartWrapper, Info, Parameters} from '../components';
 import {Dimmer, Loader} from 'semantic-ui-react';
-import image from '../images/T02.png';
-import {IT02} from '../../types/T02.type';
+import React, {useEffect, useState} from 'react';
 import {useCalculateChartData, useCalculateMounding, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
+
 import {Breadcrumb} from 'components';
+import {IT02} from '../../types/T02.type';
 import SimpleToolGrid from 'components/SimpleToolGrid';
+import image from '../images/T02.png';
 
 export const defaults: IT02 = {
   parameters: [{

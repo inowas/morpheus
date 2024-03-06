@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
 import {Button, Grid} from 'semantic-ui-react';
-import {ParameterSlider} from 'components/Slider';
+import React, {useEffect, useState} from 'react';
+
 import {IT18} from '../../types/T18.type';
+import {ParameterSlider} from 'components/Slider';
 
 type IParameter = IT18['parameters'][0];
 

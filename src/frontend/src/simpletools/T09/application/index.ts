@@ -1,4 +1,3 @@
-import useTranslate from './useTranslate';
 import useCalculationsT09A from './useCalculationsT09A';
 import useCalculationsT09B from './useCalculationsT09B';
 import useCalculationsT09C from './useCalculationsT09C';
@@ -7,6 +6,7 @@ import useCalculationsT09E from './useCalculationsT09E';
 import useCalculationsT09F from './useCalculationsT09F';
 import {useNavigate} from 'common/hooks';
 import {useShowBreadcrumbs} from '../incoming';
+import useTranslate from './useTranslate';
 
 export {
   useTranslate,

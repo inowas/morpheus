@@ -1,7 +1,8 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
+
 import Container from './Container';
+import React from 'react';
 import Segment from '../Segment/Segment';
 
 export default {

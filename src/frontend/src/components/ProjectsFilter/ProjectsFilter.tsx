@@ -1,16 +1,17 @@
-import React, {useState} from 'react';
-import {MapContainer, TileLayer} from 'react-leaflet';
-import {additionalDescription, boundaryDescription, createOwnerOptions, formatNumber} from './infrastructure/calculate';
-import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
-import {Button, IModelCard} from 'components';
-import Slider from 'rc-slider';
-import {IFilterOptions} from './types/ProjectsFilter.type';
-import useFilterOptions from './hooks/useFilter';
-import styles from './ProjectsFilter.module.less';
 import 'leaflet/dist/leaflet.css';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+import {Button, IModelCard} from 'components';
+import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
+import {MapContainer, TileLayer} from 'react-leaflet';
+import React, {useState} from 'react';
+import {additionalDescription, boundaryDescription, createOwnerOptions, formatNumber} from './infrastructure/calculate';
+
+import DatePicker from 'react-datepicker';
+import {IFilterOptions} from './types/ProjectsFilter.type';
+import Slider from 'rc-slider';
+import styles from './ProjectsFilter.module.less';
+import useFilterOptions from './hooks/useFilter';
 
 interface IProps {
   data: IModelCard[];

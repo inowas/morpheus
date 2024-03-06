@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
 import {DataGrid, DataRow} from '../index';
-import {Button} from 'components';
-import styles from '../Models.module.less';
 import {Dropdown, Form, Icon, Tab, TabPane, TextArea} from 'semantic-ui-react';
-import UploadFile from 'components/UploadFile';
+import React, {useState} from 'react';
+
+import {Button} from 'components';
 import DatePicker from 'react-datepicker';
+import UploadFile from 'components/UploadFile';
+import styles from '../Models.module.less';
 
 const options = [
   {key: '1', text: 'React', value: 'React'},

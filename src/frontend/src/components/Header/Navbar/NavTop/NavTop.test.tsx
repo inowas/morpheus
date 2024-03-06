@@ -1,7 +1,8 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
-import NavTop from './NavTop';
+
 import {ILanguage} from '../LanguageSelector/types/languageSelector.type';
+import NavTop from './NavTop';
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 const languageList: ILanguage[] = [

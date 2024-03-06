@@ -1,6 +1,6 @@
 import {renderHook} from '@testing-library/react-hooks';
-import userEvent from '@testing-library/user-event';
 import {useEventListener} from '../useEventListener';
+import userEvent from '@testing-library/user-event';
 
 describe('useEventListener()', () => {
   it('add event listener to element and calls it', async () => {

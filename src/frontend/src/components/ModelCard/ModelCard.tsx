@@ -1,9 +1,9 @@
-import React from 'react';
-import Button from '../Button/Button';
-import {Button as SemanticButton, Icon, Image} from 'semantic-ui-react';
-import {IModelCard} from './types/ModelCard.type';
-import styles from './ModelCard.module.less';
+import {Icon, Image, Button as SemanticButton} from 'semantic-ui-react';
 
+import Button from '../Button/Button';
+import {IModelCard} from './types/ModelCard.type';
+import React from 'react';
+import styles from './ModelCard.module.less';
 
 interface ModelGridItemProps {
   className?: string;

@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
-import {INavbarItem} from '../types/navbar.type';
-import logoInowas from '../images/logo-inowas.png';
-import useIsMobile from '../hooks/useIsMobile';
-import styles from './NavBottom.module.less';
-import {Image, Input} from 'semantic-ui-react';
-import MenuItem from './MenuItem';
 import {Button, Modal, ModelsCreate} from 'components';
+import {Image, Input} from 'semantic-ui-react';
+import React, {useState} from 'react';
+
+import {INavbarItem} from '../types/navbar.type';
+import MenuItem from './MenuItem';
+import logoInowas from '../images/logo-inowas.png';
+import styles from './NavBottom.module.less';
+import useIsMobile from '../hooks/useIsMobile';
 
 interface IProps {
   navbarItems: INavbarItem[];

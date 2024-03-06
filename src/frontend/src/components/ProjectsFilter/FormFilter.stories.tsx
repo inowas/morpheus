@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
-import {Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'components';
 import '../../morpheus/morpheus.less';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../rc-slider.css';
+
+import {Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'components';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+import React, {useState} from 'react';
 
 const models: IModelCard[] = [
   {

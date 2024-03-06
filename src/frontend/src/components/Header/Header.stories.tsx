@@ -1,8 +1,9 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
+
 import Header from 'components/Header';
 import {ILanguage} from './Navbar/LanguageSelector/types/languageSelector.type';
+import React from 'react';
 
 const navbarItems = [
   {

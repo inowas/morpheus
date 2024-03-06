@@ -1,13 +1,12 @@
 import React, {Suspense} from 'react';
-import {createRoot} from 'react-dom/client';
 
 import App from './App';
 import {I18nextProvider} from 'react-i18next';
 import {Provider} from 'react-redux';
-
-import {makeServer} from '../../mockServer';
 import config from '../config';
+import {createRoot} from 'react-dom/client';
 import {getI18n} from './i18n';
+import {makeServer} from '../../mockServer';
 import {store} from './store';
 
 declare global {

@@ -1,9 +1,11 @@
-import React, {ChangeEvent, useEffect} from 'react';
 import 'rc-slider/assets/index.css';
 import './styles.less';
-import Slider from 'rc-slider';
+
+import React, {ChangeEvent, useEffect} from 'react';
+
 import {Grid} from 'semantic-ui-react';
 import {ISliderParameter} from './IInputType';
+import Slider from 'rc-slider';
 import styles from './Slider.module.less';
 
 interface IProps {

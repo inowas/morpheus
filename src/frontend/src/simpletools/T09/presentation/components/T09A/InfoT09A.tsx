@@ -1,7 +1,8 @@
-import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
-import {getParameterValues} from 'simpletools/common/utils';
+
 import {IT09A} from '../../../types/T09.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface IUseCalculate {
   calculateZ: (h: number, df: number, ds: number) => number;

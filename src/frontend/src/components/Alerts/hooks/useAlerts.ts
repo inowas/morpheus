@@ -1,5 +1,5 @@
-import {useState} from 'react';
 import {IAlert} from '../Alert.type';
+import {useState} from 'react';
 
 const useAlerts = () => {
   const [alerts, setAlerts] = useState<IAlert[]>([]);

@@ -1,5 +1,6 @@
-import React from 'react';
 import {Dropdown, Image} from 'semantic-ui-react';
+
+import React from 'react';
 import styles from './AvatarButton.module.less';
 
 interface IProps {

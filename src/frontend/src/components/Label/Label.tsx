@@ -1,7 +1,7 @@
-import React from 'react';
-import {Label as SemanticLabel} from 'semantic-ui-react';
 import {SemanticCOLORS, SemanticSIZES} from 'semantic-ui-react/dist/commonjs/generic';
 
+import React from 'react';
+import {Label as SemanticLabel} from 'semantic-ui-react';
 
 export type ILabelProps = {
   as?: any;

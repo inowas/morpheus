@@ -1,5 +1,5 @@
-import MenuItem from './MenuItem';
 import {IMenuItem} from '../types/navbar.type';
+import MenuItem from './MenuItem';
 import React from 'react';
 import styles from './NavBottom.module.less';
 

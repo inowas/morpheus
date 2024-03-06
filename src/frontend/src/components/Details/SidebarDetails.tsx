@@ -1,8 +1,9 @@
-import React, {BaseSyntheticEvent, useEffect, useRef, useState} from 'react';
-import {Container, Menu, Segment, Sidebar} from 'semantic-ui-react';
-import {IDetailsAttribute} from './types/DataAttribute.type';
-import HeaderImage from './components/HeaderImage';
 import {Button, Grid, Icon, Label} from 'components/index';
+import {Container, Menu, Segment, Sidebar} from 'semantic-ui-react';
+import React, {BaseSyntheticEvent, useEffect, useRef, useState} from 'react';
+
+import HeaderImage from './components/HeaderImage';
+import {IDetailsAttribute} from './types/DataAttribute.type';
 import StringInput from './components/StringInput';
 
 interface IProps<D> {

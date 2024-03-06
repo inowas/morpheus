@@ -1,8 +1,9 @@
-import React from 'react';
-import {render, screen} from '@testing-library/react';
 import Parameters, {sortParameters} from './Parameters';
-import {defaults} from '../containers/T08Container';
+import {render, screen} from '@testing-library/react';
+
 import {IT08} from '../../types/T08.type';
+import React from 'react';
+import {defaults} from '../containers/T08Container';
 
 type IParameter = IT08['parameters'][0];
 

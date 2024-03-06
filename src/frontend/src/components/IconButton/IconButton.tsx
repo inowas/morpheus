@@ -1,7 +1,8 @@
-import React from 'react';
-import {Button as SemanticButton, SemanticCOLORS, SemanticShorthandItem, SemanticSIZES} from 'semantic-ui-react';
+import {Button as SemanticButton, SemanticCOLORS, SemanticSIZES, SemanticShorthandItem} from 'semantic-ui-react';
+
 import {ButtonProps} from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import {IconProps} from 'semantic-ui-react/dist/commonjs/elements/Icon';
+import React from 'react';
 
 export type IButtonProps = {
   active?: boolean;

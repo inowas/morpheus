@@ -1,8 +1,9 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
 import {Button, InfoTitle, Tab} from 'components';
 import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+
+import React from 'react';
 
 export default {
   /* 👇 The title prop is optional.

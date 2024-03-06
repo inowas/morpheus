@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
-import {Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest, Sidebar} from 'components';
-import ModelSidebar from '../../morpheus/application/presentation/containers/ModelSidebar';
 import '../../morpheus/morpheus.less';
 import '../rc-slider.css';
+
+import {Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest, Sidebar} from 'components';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {Meta, StoryFn} from '@storybook/react';
+import React, {useState} from 'react';
+
 import type {FeatureCollection} from 'geojson';
+import ModelSidebar from '../../morpheus/application/presentation/containers/ModelSidebar';
 import menuItems from '../SidebarMenu/MenuItems';
 
 const GEOJSON: FeatureCollection = {

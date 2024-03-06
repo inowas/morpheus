@@ -1,9 +1,9 @@
-import React from 'react';
-import {Image as SemanticImage} from 'semantic-ui-react';
-import {SemanticFLOATS, SemanticShorthandContent, SemanticShorthandItem, SemanticSIZES, SemanticVERTICALALIGNMENTS} from 'semantic-ui-react/dist/commonjs/generic';
+import {SemanticFLOATS, SemanticSIZES, SemanticShorthandContent, SemanticShorthandItem, SemanticVERTICALALIGNMENTS} from 'semantic-ui-react/dist/commonjs/generic';
+
 import {DimmerProps} from 'semantic-ui-react/dist/commonjs/modules/Dimmer';
 import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
-
+import React from 'react';
+import {Image as SemanticImage} from 'semantic-ui-react';
 
 export type IImageProps = {
   as?: any

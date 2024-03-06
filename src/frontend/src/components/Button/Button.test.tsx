@@ -1,6 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import Button from './Button';
+import React from 'react';
 
 describe('Button Tests', () => {
   test('It renders a button', async () => {

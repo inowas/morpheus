@@ -1,6 +1,7 @@
-import React from 'react';
 import {act, render, screen} from '@testing-library/react';
+
 import ArticleItem from '../ArticleItem';
+import React from 'react';
 
 const article = {
   id: 1,

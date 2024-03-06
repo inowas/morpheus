@@ -1,8 +1,9 @@
-import React from 'react';
 import {Icon, Message} from 'semantic-ui-react';
 import {calculateTravelTimeT13C, calculateXwd} from '../../../application/useCalculations';
-import {getParameterValues} from 'simpletools/common/utils';
+
 import {IT13C} from '../../../types/T13.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface IProps {
   parameters: IT13C['parameters'];

@@ -1,10 +1,10 @@
-import React from 'react';
-import {Message as SemanticMessage} from 'semantic-ui-react';
+import {MessageProps, MessageSizeProp} from 'semantic-ui-react/dist/commonjs/collections/Message/Message';
 import {SemanticCOLORS, SemanticShorthandCollection, SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
+
 import {MessageHeaderProps} from 'semantic-ui-react/dist/commonjs/collections/Message/MessageHeader';
 import {MessageItemProps} from 'semantic-ui-react/dist/commonjs/collections/Message/MessageItem';
-import {MessageProps, MessageSizeProp} from 'semantic-ui-react/dist/commonjs/collections/Message/Message';
-
+import React from 'react';
+import {Message as SemanticMessage} from 'semantic-ui-react';
 
 export type IMessageProps = {
   as?: any

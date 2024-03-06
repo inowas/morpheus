@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Notification from './Notification';
+import React from 'react';
 
 describe('Notification Tests', () => {
   test('It renders a Notification', async () => {

@@ -1,8 +1,9 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import SortDropdown, {ISortOption} from './index';
+
 import {IModelCard} from '../ModelCard';
+import React from 'react';
 
 const sortOptions: ISortOption[] = [
   {text: 'Sort by Author', value: 'author'},

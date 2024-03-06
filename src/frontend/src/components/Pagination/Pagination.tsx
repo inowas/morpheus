@@ -1,9 +1,8 @@
+import {PaginationItemProps} from 'semantic-ui-react/dist/commonjs/addons/Pagination/PaginationItem';
+import {PaginationProps} from 'semantic-ui-react/dist/commonjs/addons/Pagination/Pagination';
 import React from 'react';
 import {Pagination as SemanticPagination} from 'semantic-ui-react';
 import {SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
-import {PaginationItemProps} from 'semantic-ui-react/dist/commonjs/addons/Pagination/PaginationItem';
-import {PaginationProps} from 'semantic-ui-react/dist/commonjs/addons/Pagination/Pagination';
-
 
 export interface IPaginationProps extends PaginationProps {
   'aria-label'?: string

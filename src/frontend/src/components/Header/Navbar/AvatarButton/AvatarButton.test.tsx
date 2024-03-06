@@ -1,7 +1,7 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
-import AvatarButton from './AvatarButton';
 
+import AvatarButton from './AvatarButton';
+import React from 'react';
 
 describe('AvatarButton Tests', () => {
   test('It renders the AvatarButton component', () => {

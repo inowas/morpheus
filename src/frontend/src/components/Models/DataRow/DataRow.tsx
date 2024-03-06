@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react';
-import styles from './DataRow.module.less';
+
 import Button from 'components/Button/Button';
+import styles from './DataRow.module.less';
 
 interface IProps {
   title?: string;

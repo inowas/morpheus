@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import {ContentWrapper, Header, IPageWidth, Modal, ModelCard, ModelGrid, ModelsCreate, SliderSwiper, SortDropdown} from 'components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {ContentWrapper, Header, IPageWidth, Modal, ModelCard, ModelGrid, ModelsCreate, SliderSwiper, SortDropdown} from 'components';
+import React, {useState} from 'react';
+
 import {IModelCard} from 'components/ModelCard';
 import {ISortOption} from 'components/SortDropdown';
-
 
 const models: IModelCard[] = [
   {

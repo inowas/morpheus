@@ -1,6 +1,7 @@
 import {act, renderHook} from '@testing-library/react-hooks';
-import useAlert from '../useAlerts';
+
 import {IAlert} from '../../Alert.type';
+import useAlert from '../useAlerts';
 
 describe('test custom Hook', () => {
 

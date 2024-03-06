@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
+
 import Progress from './Progress';
+import React from 'react';
 
 describe('Progress Tests', () => {
   test('It renders a Progress', async () => {

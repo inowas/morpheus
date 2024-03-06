@@ -1,6 +1,6 @@
-import Map from './Map';
 import Geoman from './Geoman';
 import GeomanControls from './GeomanControls';
+import Map from './Map';
 
 export {
   Map,

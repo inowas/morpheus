@@ -1,8 +1,8 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import SectionTitle from 'components/SectionTitle';
 
+import React from 'react';
+import SectionTitle from 'components/SectionTitle';
 
 export default {
   /* 👇 The title prop is optional.

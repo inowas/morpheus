@@ -1,4 +1,4 @@
-import React from 'react';
+import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 import {
   CartesianGrid,
   Label,
@@ -7,12 +7,13 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
-  exportChartImage,
   exportChartData,
+  exportChartImage,
 } from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
-import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
+
 import {IT09B} from '../../../types/T09.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 interface DataSet {
   x: number;

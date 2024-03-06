@@ -1,8 +1,9 @@
-import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {StoryFn, Meta} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
+
 import Icon from './Icon';
 import {Page} from '../index';
+import React from 'react';
 
 export default {
   /* 👇 The title prop is optional.

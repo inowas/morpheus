@@ -1,9 +1,10 @@
-import React from 'react';
-import {IT08} from '../../types/T08.type';
-import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartImage, exportChartData} from 'components/RechartsWrapper';
-import {getParameterValues} from 'simpletools/common/utils';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
+import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
 import {SETTINGS_CASE_FIXED_TIME, SETTINGS_CASE_VARIABLE_TIME, SETTINGS_INFILTRATION_ONE_TIME} from '../containers/T08Container';
+
+import {IT08} from '../../types/T08.type';
+import React from 'react';
+import {getParameterValues} from 'simpletools/common/utils';
 
 const styles = {
   chart: {

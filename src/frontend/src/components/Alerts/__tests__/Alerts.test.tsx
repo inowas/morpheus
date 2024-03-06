@@ -1,7 +1,8 @@
-import React from 'react';
 import {render, screen} from '@testing-library/react';
+
 import Alerts from '../index';
 import {IAlert} from '../Alert.type';
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Tests for Alerts Component', () => {
