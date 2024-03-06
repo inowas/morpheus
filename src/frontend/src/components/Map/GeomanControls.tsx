@@ -26,20 +26,27 @@ const GeomanControls = ({
     // add controls
     if (!map.pm.controlsVisible()) {
       map.pm.addControls(options);
-      if (onMount) onMount();
+      if (onMount) {
+        onMount();
+      }
       setMounted(true);
     }
+
     return () => {
-      map.pm.disableDraw();
-      map.pm.disableGlobalEditMode();
-      map.pm.disableGlobalRemovalMode();
-      map.pm.disableGlobalDragMode();
-      map.pm.disableGlobalCutMode();
-      map.pm.disableGlobalRotateMode();
-      map.pm.disableGlobalDragMode();
-      map.pm.disableGlobalCutMode();
-      if (onUnmount) onUnmount();
-      map.pm.removeControls();
+      map.pm.disableDraw ? map.pm.disableDraw() : null;
+      map.pm.disableGlobalEditMode ? map.pm.disableGlobalEditMode() : null;
+      map.pm.disableGlobalRemovalMode ? map.pm.disableGlobalRemovalMode() : null;
+      map.pm.disableGlobalDragMode ? map.pm.disableGlobalDragMode() : null;
+      map.pm.disableGlobalCutMode ? map.pm.disableGlobalCutMode() : null;
+      map.pm.disableGlobalRotateMode ? map.pm.disableGlobalRotateMode() : null;
+      map.pm.disableGlobalDragMode ? map.pm.disableGlobalDragMode() : null;
+      map.pm.disableGlobalCutMode ? map.pm.disableGlobalCutMode() : null;
+
+      if (onUnmount) {
+        onUnmount();
+      }
+
+      map.pm.removeControls ? map.pm.removeControls() : null;
       setMounted(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,9 +77,7 @@ const GeomanControls = ({
       const withDebug = Object.fromEntries(
         reference.map((handler) => [handler, (handlers as any)[handler] ?? eventDebugFn]),
       );
-      const layers = layerContainer
-        ? container.getLayers()
-        : map.pm.getGeomanLayers();
+      const layers = layerContainer ? container.getLayers() : map.pm.getGeomanLayers();
       layers.forEach((layer) => layerEvents(layer, withDebug, 'on'));
 
       globalEvents(map, withDebug, 'on');
@@ -85,12 +90,7 @@ const GeomanControls = ({
         setHandlersRef(handlers);
       };
     }
-  }, [
-    mounted,
-    'development' === process.env.NODE_ENV
-      ? Object.entries(handlers).every(([k, fn]) => handlersRef[k] === fn)
-      : true,
-  ]);
+  }, [mounted]);
 
   if (!container) {
     console.warn('[GEOMAN-CONTROLS] No map or container instance found');

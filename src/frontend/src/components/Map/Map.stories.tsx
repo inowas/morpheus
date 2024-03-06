@@ -1,10 +1,9 @@
 import React from 'react';
 import type {FeatureCollection} from 'geojson';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import {Map} from './index';
 
-const GEOJSON: FeatureCollection = {
+const geojson: FeatureCollection = {
   'type': 'FeatureCollection',
   'features': [
     {
@@ -40,7 +39,7 @@ const GEOJSON: FeatureCollection = {
     },
   ],
 };
-const EMPTYGEOJSON: FeatureCollection = {
+const emptyGeojson: FeatureCollection = {
   'type': 'FeatureCollection',
   'features': [],
 };
@@ -53,8 +52,8 @@ export default {
 
 export const NoGeojson: StoryFn<typeof Map> = () => <Map
   editable={true}
-  geojson={EMPTYGEOJSON}
-  setGeojson={(geojson) => {
+  geojson={emptyGeojson}
+  onChangeGeojson={(geojson) => {
     console.log(geojson);
   }}
   coords={[51.051772741784625, 13.72531677893111]}
@@ -62,8 +61,8 @@ export const NoGeojson: StoryFn<typeof Map> = () => <Map
 
 export const Editable: StoryFn<typeof Map> = () => <Map
   editable={true}
-  geojson={GEOJSON}
-  setGeojson={(geojson) => {
+  geojson={geojson}
+  onChangeGeojson={(geojson) => {
     console.log(geojson);
   }}
   coords={[51.051772741784625, 13.72531677893111]}
@@ -71,8 +70,8 @@ export const Editable: StoryFn<typeof Map> = () => <Map
 
 export const NoEditable: StoryFn<typeof Map> = () => <Map
   editable={false}
-  geojson={GEOJSON}
-  setGeojson={(geojson) => {
+  geojson={geojson}
+  onChangeGeojson={(geojson) => {
     console.log(geojson);
   }}
   coords={[51.051772741784625, 13.72531677893111]}

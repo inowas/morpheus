@@ -17,7 +17,7 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/models"/>}/>
+      <Route path="/" element={<Navigate to="/auth"/>}/>
       <Route path="/news" element={wrapRouteComponent(<ProjectDashboardContainer/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>

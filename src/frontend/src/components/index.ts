@@ -16,7 +16,6 @@ import Grid from './Grid';
 import NotFound from './NotFound';
 import Header from './Header';
 import Footer from './Footer';
-import HintPageComponent from './HintPageComponent/HintPageComponent';
 import Icon, {IIconProps} from './Icon/Icon';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
@@ -68,7 +67,6 @@ export {
   Grid,
   Header,
   Footer,
-  HintPageComponent,
   Icon,
   IconButton,
   Input,

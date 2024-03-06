@@ -147,8 +147,8 @@ const ModelSidebar = () => {
         <SidebarContent/>
         <Map
           editable={true}
-          geojson={GEOJSON}
-          setGeojson={(geojson) => {
+          data={GEOJSON}
+          onChange={(geojson) => {
             console.log(geojson);
           }}
           coords={[51.051772741784625, 13.72531677893111]}

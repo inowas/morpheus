@@ -5,14 +5,13 @@ import Geoman from './Geoman';
 import type {FeatureCollection} from 'geojson';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import 'leaflet/dist/leaflet.css';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'leaflet-smooth-wheel-zoom';
 
 interface IProps {
   editable: boolean;
   coords: LatLngTuple;
   geojson: FeatureCollection;
-  setGeojson: (geojson: FeatureCollection) => void;
+  onChangeGeojson: (geojson: FeatureCollection) => void;
 }
 
 const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][][] => {
@@ -40,7 +39,7 @@ const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][]
   return polygonCoordinates;
 };
 
-const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
+const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
 
@@ -65,12 +64,9 @@ const Map = ({coords, geojson, setGeojson, editable}: IProps) => {
       scrollWheelZoom={false}
       wheelDebounceTime={100}
     >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
-      />
-      {editable ? (
-        <Geoman geojson={geojson} setGeojson={setGeojson}/>
-      ) : (
+      <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
+
+      {editable ? <Geoman geojson={geojson} onChangeGeojson={onChangeGeojson}/> : (
         polygonCoordinates.map((coordinates, index) => (
           <Polygon
             key={index}
