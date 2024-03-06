@@ -89,11 +89,11 @@ cs-fix:
 
 ## Run import-sort check
 import-sort-check:
-	npx import-sort-cli -l src/**/*
+	npx import-sort-cli -l **/src/**/*
 
 ## Run import-sort fix
 import-sort-fix:
-	npx import-sort-cli --write src/**/*
+	npx import-sort-cli --write **/src/**/*
 
 ## Run dependency checks
 dependency-checks:
