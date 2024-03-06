@@ -2,8 +2,8 @@ import {DataGrid, DataRow} from '../index';
 import {Form, Icon, Radio} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
-import {Button} from 'components';
-import Slider from 'rc-slider';
+import Button from 'components/Button/Button';
+import Slider from 'components/Slider/SimpleSlider';
 import styles from '../Models.module.less';
 
 const ModelGeometry: React.FC = () => {

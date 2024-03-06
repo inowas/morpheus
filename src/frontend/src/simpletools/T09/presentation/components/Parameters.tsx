@@ -2,7 +2,7 @@ import {Button, Grid} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
 
 import {IParameter} from '../../types/T09.type';
-import {ParameterSlider} from 'components/Slider';
+import {ParameterSlider} from 'components/Slider/ParameterSlider';
 
 interface IProps {
   parameters: IParameter[];
@@ -36,7 +36,7 @@ const Parameters = ({parameters, onChange, onReset}: IProps) => {
     });
     onChange([...newParams]);
   };
-  
+
   const renderParameters = (p: IParameter[]) => (
     p.map(parameter => (
       <ParameterSlider

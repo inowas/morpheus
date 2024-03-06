@@ -1,15 +1,13 @@
-import 'leaflet/dist/leaflet.css';
-import 'react-datepicker/dist/react-datepicker.css';
-
 import {Button, IModelCard} from 'components';
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import {MapContainer, TileLayer} from 'react-leaflet';
 import React, {useState} from 'react';
 import {additionalDescription, boundaryDescription, createOwnerOptions, formatNumber} from './infrastructure/calculate';
 
-import DatePicker from 'react-datepicker';
+import DatePicker from 'components/DatePicker';
+import Slider from 'components/Slider/SimpleSlider';
+
 import {IFilterOptions} from './types/ProjectsFilter.type';
-import Slider from 'rc-slider';
 import styles from './ProjectsFilter.module.less';
 import useFilterOptions from './hooks/useFilter';
 

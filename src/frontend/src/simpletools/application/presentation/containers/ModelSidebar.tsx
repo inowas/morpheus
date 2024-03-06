@@ -9,7 +9,7 @@ import menuItems from 'components/SidebarMenu/MenuItems';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
-const GEOJSON: FeatureCollection = {
+const geojson: FeatureCollection = {
   'type': 'FeatureCollection',
   'features': [
     {
@@ -48,7 +48,7 @@ const GEOJSON: FeatureCollection = {
 
 const ModelSidebar = () => {
 
-  const {i18n, translate} = useTranslate();
+  const {i18n} = useTranslate();
   const {navbarItems} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
@@ -134,7 +134,7 @@ const ModelSidebar = () => {
           pathname={location.pathname}
           showSearchWrapper={true}
           showCreateButton={true}
-          showSidebarMenu={menuItems ? true : false}
+          showSidebarMenu={!!menuItems}
 
         />}
       <Sidebar
@@ -148,9 +148,9 @@ const ModelSidebar = () => {
         <SidebarContent/>
         <Map
           editable={true}
-          data={GEOJSON}
-          onChange={(geojson) => {
-            console.log(geojson);
+          geojson={geojson}
+          onChangeGeojson={(data) => {
+            console.log(data);
           }}
           coords={[51.051772741784625, 13.72531677893111]}
         />

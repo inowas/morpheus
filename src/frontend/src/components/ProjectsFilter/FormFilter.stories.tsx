@@ -1,7 +1,3 @@
-import '../../morpheus/morpheus.less';
-import 'react-datepicker/dist/react-datepicker.css';
-import '../rc-slider.css';
-
 import {Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';

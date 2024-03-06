@@ -1,5 +1,3 @@
-import '../../morpheus/morpheus.less';
-import '../rc-slider.css';
 
 import {Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest, Sidebar} from 'components';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -10,7 +8,7 @@ import type {FeatureCollection} from 'geojson';
 import ModelSidebar from '../../morpheus/application/presentation/containers/ModelSidebar';
 import menuItems from '../SidebarMenu/MenuItems';
 
-const GEOJSON: FeatureCollection = {
+const geojson: FeatureCollection = {
   'type': 'FeatureCollection',
   'features': [
     {
@@ -128,9 +126,9 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
         <SidebarContent/>
         <Map
           editable={true}
-          data={GEOJSON}
-          onChange={(geojson) => {
-            console.log(geojson);
+          geojson={geojson}
+          onChangeGeojson={(data) => {
+            console.log(data);
           }}
           coords={[51.051772741784625, 13.72531677893111]}
         />
@@ -165,9 +163,9 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
         <ModelGeometry/>
         <Map
           editable={true}
-          data={GEOJSON}
-          onChange={(geojson) => {
-            console.log(geojson);
+          geojson={geojson}
+          onChangeGeojson={(data) => {
+            console.log(data);
           }}
           coords={[51.051772741784625, 13.72531677893111]}
         />

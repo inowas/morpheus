@@ -1,5 +1,2 @@
-import ParameterSlider from './ParameterSlider';
-
-export {
-  ParameterSlider,
-};
+export * from './ParameterSlider';
+export * from './SimpleSlider';
