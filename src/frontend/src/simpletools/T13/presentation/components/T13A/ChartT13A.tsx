@@ -1,5 +1,5 @@
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
-import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
+import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'common/components/RechartsWrapper';
 
 import {IT13A} from '../../../types/T13.type';
 import React from 'react';

@@ -1,4 +1,4 @@
-import {Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'components';
+import {Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';

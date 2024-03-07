@@ -1,6 +1,6 @@
 import {useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from 'components';
+import {Breadcrumb} from 'common/components';
 import Iframe from 'react-iframe';
 import React from 'react';
 import styles from './T11.module.less';

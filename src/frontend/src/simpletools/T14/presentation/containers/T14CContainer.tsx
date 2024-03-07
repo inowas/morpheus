@@ -2,9 +2,9 @@ import {Background, ChartT14C, InfoT14C, Parameters} from '../components';
 import React, {useState} from 'react';
 import {useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from 'components';
+import {Breadcrumb} from 'common/components';
 import {IT14C} from '../../types/T14.type';
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import SimpleToolGrid from 'common/components/SimpleToolGrid';
 import image from '../images/T14C.png';
 import {useNavigate} from 'common/hooks';
 

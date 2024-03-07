@@ -1,11 +1,11 @@
-import {DataGrid, ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'components/Models';
-import {Footer, Header, IPageWidth, Map, Sidebar} from 'components';
+import {DataGrid, ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'common/components/Models';
+import {Footer, Header, IPageWidth, Map, Sidebar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
 
 import type {FeatureCollection} from 'geojson';
-import menuItems from 'components/SidebarMenu/MenuItems';
+import menuItems from 'common/components/SidebarMenu/MenuItems';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 

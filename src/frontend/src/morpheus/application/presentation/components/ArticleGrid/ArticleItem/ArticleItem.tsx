@@ -1,4 +1,4 @@
-import {Button, Image} from 'components';
+import {Button, Image} from 'common/components';
 
 import React from 'react';
 import styles from './ArticleItem.module.less';

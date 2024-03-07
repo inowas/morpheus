@@ -1,0 +1,21 @@
+@import '../site.variables';
+
+.breadcrumb {
+  text-transform: capitalize;
+  font-size: 16px;
+  letter-spacing: 0;
+  color: @ref-color-greyDark;
+  font-weight: 600;
+  padding-top: 40px !important;
+}
+
+a.breadcrumb {
+  color: @blue !important;
+  transition: color 300ms;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: @ref-color-greyDark !important;
+  }
+}

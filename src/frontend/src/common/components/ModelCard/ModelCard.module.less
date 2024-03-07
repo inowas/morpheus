@@ -1,0 +1,170 @@
+@import '../site.variables';
+
+.modelCard {
+  width: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.154229);
+  background-color: @white;
+  display: flex;
+  flex-direction: column;
+  transition: 300ms;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+  }
+
+  .modelImage {
+    height: 150px !important;
+    object-fit: cover;
+  }
+
+  .modelContent {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 10px 8px;
+    color: #333333;
+
+    .modelHeadline {
+      text-align: left;
+      padding-left: 18px;
+      position: relative;
+
+      .metaStatus {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        flex-basis: 10px;
+        border-radius: 50%;
+      }
+
+      .modelTitle {
+        margin: 0 0 5px 0;
+        color: #333333;
+      }
+
+      .modelDescription {
+        color: #666666;
+        font-size: 13.5px;
+        font-weight: 400;
+        line-height: 1.4;
+      }
+    }
+
+    .modelBtnGroup {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+
+      .buttonIcon {
+        margin: 0;
+        padding: 0;
+
+        border: none;
+        box-shadow: none;
+        background: unset;
+        cursor: pointer;
+        transition: 300ms;
+
+        font-size: 17px;
+        letter-spacing: 0px;
+        line-height: 1;
+        font-weight: 300;
+        color: black;
+
+        &:hover,
+        &:focus {
+          color: @blue;
+        }
+      }
+
+      .modelAuthor {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+
+        .modelAvatarLink {
+          display: flex;
+          align-items: center;
+          margin: 0;
+          padding: 0;
+          border: none;
+          box-shadow: none;
+          max-width: 90px;
+
+          color: @ref-color-red;
+          text-align: left;
+
+          font-size: 11px;
+          font-weight: 400;
+          line-height: 1.5;
+
+          text-align: left;
+          text-transform: unset;
+
+          background: unset;
+          transition: 300ms;
+
+          &:hover,
+          &:focus {
+            color: @blue;
+          }
+
+          img {
+            width: 14px;
+            height: 14px;
+            flex-basis: 14px;
+            margin: 0 5px 0 0 !important;
+          }
+        }
+
+        .modelMetaText {
+          display: block;
+          position: relative;
+          color: @ref-color-blackLight;
+
+          font-size: 11px;
+          font-weight: 400;
+          line-height: 1.5;
+
+          text-align: left;
+          padding-left: 8px;
+          padding-right: 10px;
+          margin-left: 6px;
+
+          &:before {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 80%;
+            background-color: @ref-color-blackLight;
+            position: absolute;
+            top: 10%;
+            left: 0;
+          }
+        }
+      }
+
+      .modelActions {
+        margin-top: 14px;
+
+        button:not(:last-child) {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+
+
+

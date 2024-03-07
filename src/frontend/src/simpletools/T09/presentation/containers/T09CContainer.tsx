@@ -2,9 +2,9 @@ import {Background, ChartT09C, InfoT09C, Parameters} from '../components';
 import React, {useState} from 'react';
 import {useCalculationsT09C, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from '../../../../components';
+import Breadcrumb from 'common/components/Breadcrumb';
 import {IT09C} from '../../types/T09.type';
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import SimpleToolGrid from 'common/components/SimpleToolGrid';
 import image from '../images/T09C.png';
 
 const defaults: IT09C = {

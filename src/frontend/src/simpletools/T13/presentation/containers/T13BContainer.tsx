@@ -3,8 +3,8 @@ import {IT13B, SETTINGS_SELECTED_NOTHING} from '../../types/T13.type';
 import React, {useState} from 'react';
 import {useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from 'components';
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import {Breadcrumb} from 'common/components';
+import SimpleToolGrid from 'common/components/SimpleToolGrid';
 import image from '../images/T13B.png';
 import {useNavigate} from 'common/hooks';
 

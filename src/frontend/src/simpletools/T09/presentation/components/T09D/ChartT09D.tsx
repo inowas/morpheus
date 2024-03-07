@@ -10,7 +10,7 @@ import {
   YAxis,
   exportChartData,
   exportChartImage,
-} from 'components/RechartsWrapper';
+} from 'common/components/RechartsWrapper';
 
 import {IT09D} from '../../../types/T09.type';
 import React from 'react';

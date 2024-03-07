@@ -1,4 +1,4 @@
-import {ChartModal, Grid, Icon} from 'components';
+import {ChartModal, Grid, Icon} from 'common/components';
 import React, {useState} from 'react';
 
 import Chart from './Chart';

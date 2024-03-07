@@ -1,4 +1,4 @@
-import {ContentWrapper, Footer, Header, IPageWidth} from 'components';
+import {ContentWrapper, Footer, Header, IPageWidth} from 'common/components';
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
 import {useLocation, useNavigate, useSearchParams} from 'common/hooks';

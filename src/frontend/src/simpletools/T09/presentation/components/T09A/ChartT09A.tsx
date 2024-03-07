@@ -8,7 +8,7 @@ import {
   YAxis,
   exportChartData,
   exportChartImage,
-} from 'components/RechartsWrapper';
+} from 'common/components/RechartsWrapper';
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
 
 import {IT09A} from '../../../types/T09.type';

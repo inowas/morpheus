@@ -2,9 +2,9 @@ import {Background, Chart, Info, Parameters, Settings} from '../components';
 import React, {useState} from 'react';
 import {useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from 'components';
+import {Breadcrumb} from 'common/components';
 import {IT18} from '../../types/T18.type';
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import SimpleToolGrid from 'common/components/SimpleToolGrid';
 import image from '../images/T18.png';
 import {useNavigate} from 'common/hooks';
 

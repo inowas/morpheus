@@ -1,4 +1,4 @@
-import {Bar, BarChart, CartesianGrid, Label, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
+import {Bar, BarChart, CartesianGrid, Label, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'common/components/RechartsWrapper';
 import {Button, Grid, Icon} from 'semantic-ui-react';
 
 import {IT18} from '../../types/T18.type';

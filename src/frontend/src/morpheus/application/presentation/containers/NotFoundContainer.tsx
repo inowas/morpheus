@@ -1,4 +1,4 @@
-import {NotFound} from '../../../../components';
+import {NotFound} from 'common/components';
 import React from 'react';
 
 const NotFoundContainer = () => (

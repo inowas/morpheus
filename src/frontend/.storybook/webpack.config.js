@@ -45,7 +45,7 @@ module.exports = ({config}) => {
               math: 'always',
             },
             additionalData: (content) => {
-              const variables = fs.readFileSync('src/components/variables.less');
+              const variables = fs.readFileSync('src/common/components/variables.less');
               return variables + content;
             },
           },

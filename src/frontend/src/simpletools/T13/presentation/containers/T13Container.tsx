@@ -2,7 +2,7 @@ import {Button, Dimmer, Grid, Header, Icon, Image, Segment} from 'semantic-ui-re
 import React, {useState} from 'react';
 import {useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from '../../../../components';
+import Breadcrumb from 'common/components/Breadcrumb';
 import image13A from '../images/T13A.png';
 import image13B from '../images/T13B.png';
 import image13C from '../images/T13C.png';

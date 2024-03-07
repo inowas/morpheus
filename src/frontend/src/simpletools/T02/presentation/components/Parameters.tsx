@@ -2,7 +2,7 @@ import {Button, Grid} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
 
 import {IT02} from '../../types/T02.type';
-import {ParameterSlider} from 'components/Slider/ParameterSlider';
+import {ParameterSlider} from 'common/components/Slider/ParameterSlider';
 
 type IParameter = IT02['parameters'][0];
 

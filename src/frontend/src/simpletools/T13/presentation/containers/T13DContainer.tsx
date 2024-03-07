@@ -2,9 +2,9 @@ import {BackgroundT13D, Parameters} from '../components';
 import React, {useState} from 'react';
 import {useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from 'components';
+import {Breadcrumb} from 'common/components';
 import {IT13D} from '../../types/T13.type';
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import SimpleToolGrid from 'common/components/SimpleToolGrid';
 import {useNavigate} from 'common/hooks';
 
 const defaults: IT13D = {

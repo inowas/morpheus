@@ -1,5 +1,5 @@
 import {Button, Grid, Icon, Segment} from 'semantic-ui-react';
-import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'components/RechartsWrapper';
+import {CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis, exportChartData, exportChartImage} from 'common/components/RechartsWrapper';
 import {calculateDiagramDataT13E, calculateTravelTimeT13E} from '../../../application/useCalculations';
 
 import {IT13E} from '../../../types/T13.type';

@@ -1,0 +1,41 @@
+@import '../../site.variables';
+
+.dataRow {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  gap: 16px;
+
+  label {
+    width: 100%;
+    display: block;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    display: block;
+  }
+}
+
+.headline {
+  border-bottom: 1px solid @ref-color-underline;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 5px;
+  padding-right: 22px;
+
+  button {
+    white-space: nowrap;
+    min-width: 92px;
+  }
+}
+
+.title,
+.subtitle {
+  margin: 0;
+  padding: 0;
+}
+

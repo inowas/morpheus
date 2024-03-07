@@ -3,9 +3,9 @@ import {Checkbox, Form, Grid, Header, Icon, Item, Label} from 'semantic-ui-react
 import React, {useState} from 'react';
 import {useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from '../../../../components';
+import Breadcrumb from 'common/components/Breadcrumb';
 import {IT06} from '../../types/T06.type';
-import SimpleToolGrid from 'components/SimpleToolGrid';
+import SimpleToolGrid from 'common/components/SimpleToolGrid';
 import groupBy from 'lodash.groupby';
 import intersection from 'lodash.intersection';
 import union from 'lodash.union';

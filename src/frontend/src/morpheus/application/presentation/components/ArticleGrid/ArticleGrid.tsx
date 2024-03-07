@@ -1,6 +1,6 @@
 import ArticleItem, {IArticle} from './ArticleItem/ArticleItem';
 
-import {Grid} from 'components';
+import {Grid} from 'common/components';
 import React from 'react';
 import styles from './ArticleGrid.module.less';
 

@@ -5,7 +5,7 @@ import PivotTableUI, {PivotTableUIProps} from 'react-pivottable/PivotTableUI';
 import React, {useState} from 'react';
 import {useCSVData, useNavigate, useShowBreadcrumbs, useTranslate} from '../../application';
 
-import {Breadcrumb} from '../../../../components';
+import {Breadcrumb} from 'common/components';
 
 const tool = 'T04';
 
