@@ -9,7 +9,7 @@ export interface IUseApi extends IUseHttp {
 export default (): IUseApi => {
   const auth = useAuth();
   const apiBaseUrl = config.baseApiUrl;
-  return {...useHttp(apiBaseUrl, auth)};
+  return {...useHttp(apiBaseUrl)};
 };
 
 export type {IHttpError};

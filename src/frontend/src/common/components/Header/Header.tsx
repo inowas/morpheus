@@ -48,7 +48,6 @@ const Header = ({
     }
   };
 
-  // noinspection Eslint
   useEffect(() => {
     updateHeaderHeight(); // Set initial header height
     const handleResize = () => {

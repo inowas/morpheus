@@ -4,7 +4,11 @@ const config = {
   release: process.env.GIT_RELEASE || 'dev',
   releaseDate: process.env.GIT_RELEASE_DATE || 'unknown',
   mockServerEnabled: !!process.env.MOCKSERVER_ENABLED,
+  keycloak: {
+    url: process.env.KEYCLOAK_URL || 'https://identity.inowas.com',
+    realm: process.env.KEYCLOAK_REALM || 'inowas-dev',
+    clientId: process.env.KEYCLOAK_CLIENT_ID || 'morpheus-frontend',
+  },
 };
 
 export default config;
-

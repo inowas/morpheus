@@ -1,6 +1,5 @@
-import {IOAuthToken, IUseAuth} from './useAuthentication';
+import useAuthentication, {IUseAuthentication} from '../application/useAuthentication';
+import {IOAuthToken} from '../types';
 
-import useAuth from './useAuthentication';
-
-export {useAuth};
-export type {IUseAuth, IOAuthToken};
+export {useAuthentication};
+export type {IUseAuthentication, IOAuthToken};

@@ -1,3 +1,4 @@
 import {IOAuthToken} from './OAuthToken.type';
+import {IError} from '../../types';
 
-export type {IOAuthToken};
+export type {IOAuthToken, IError};

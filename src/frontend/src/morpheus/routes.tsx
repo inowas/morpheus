@@ -1,8 +1,9 @@
-import {Navigate, Route, Routes} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 
 import AboutUsContainer from './application/presentation/containers/AboutUsContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
 import FilterProjects from './application/presentation/containers/FilterProjects';
+import HomeContainer from './application/presentation/containers/HomeContainer';
 import ModelSidebar from './application/presentation/containers/ModelSidebar';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
 import {ProjectDashboardContainer} from './modflow/presentation/containers';
@@ -18,7 +19,7 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/auth"/>}/>
+      <Route path="/" element={wrapRouteComponent(<HomeContainer/>)}/>
       <Route path="/news" element={wrapRouteComponent(<ProjectDashboardContainer/>)}/>
       <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>

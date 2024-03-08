@@ -23,12 +23,7 @@ const ApplicationContainer = ({children}: IProps) => {
   const showFooter = !isEmbedded;
   const showHeader = !isEmbedded;
   const pageSize: IPageWidth = 'auto';
-  const languageList: { code: ILanguageCode; label: string }[] = [
-    {
-      code: 'en-GB',
-      label: 'English',
-    },
-  ];
+  const languageList: { code: ILanguageCode; label: string }[] = [{code: 'en-GB', label: 'English'}];
 
   if ('true' === searchParams.get('embedded') && !isEmbedded) {
     setIsEmbedded(true);
@@ -38,39 +33,35 @@ const ApplicationContainer = ({children}: IProps) => {
     setIsEmbedded(false);
   }
 
-
   useEffect(() => {
     if (language !== i18n.language) {
       i18n.changeLanguage(language);
     }
   }, [language, i18n]);
 
-
   return (
     <>
-      {showHeader &&
-        <Header
-          maxWidth={pageSize}
-          navbarItems={navbarItems}
-          languageList={languageList}
-          language={language}
-          onChangeLanguage={setLanguage}
-          navigateTo={navigateTo}
-          pathname={location.pathname}
-          showSearchWrapper={true}
+      {showHeader && <Header
+        maxWidth={pageSize}
+        navbarItems={navbarItems}
+        languageList={languageList}
+        language={language}
+        onChangeLanguage={setLanguage}
+        navigateTo={navigateTo}
+        pathname={location.pathname}
+        showSearchWrapper={true}
+      />}
 
-        />
-      }
       <ContentWrapper minHeight={'auto'} maxWidth={pageSize}>
         {children}
       </ContentWrapper>
+
       {showFooter ? <Footer release={release} maxWidth={pageSize}/> :
-        <span
-          style={{
-            margin: '0 auto',
-            textAlign: 'center',
-            fontSize: '0.8rem',
-          }}
+        <span style={{
+          margin: '0 auto',
+          textAlign: 'center',
+          fontSize: '0.8rem',
+        }}
         >Release: {release}</span>
       }
     </>
