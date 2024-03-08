@@ -29,10 +29,12 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
+      celery_worker:
+        condition: service_healthy
     env_file:
       - .env
     healthcheck:
-      test: curl --fail http://localhost:8000/ || exit 1
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthcheck" ]
       interval: 40s
       timeout: 30s
       retries: 3
@@ -104,6 +106,53 @@ services:
     user: mongodb
     tmpfs:
       - /tmp
+  rabbitmq:
+    image: rabbitmq:3.12.9-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    read_only: true
+    user: rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend
+      - celery
+    hostname:
+      ${COMPOSE_PROJECT_NAME}-rabbitmq
+    tmpfs:
+      - /tmp
+  celery_worker:
+    image: inowas/morpheus-backend-task-queue-worker:${BACKEND_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
+    depends_on:
+      mongodb_backend:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
+      - morpheus_sensor_data::${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+    tmpfs:
+      - /tmp
+    restart: always
+    user: celery
+    read_only: true
+    networks:
+      - backend
+      - celery
+    healthcheck:
+      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping"]
+
 volumes:
   mongodb_backend_data:
     driver: local
@@ -112,6 +161,8 @@ volumes:
   morpheus_sensor_data:
     driver: local
   postgres_backend_data:
+    driver: local
+  rabbitmq_data:
     driver: local
 
 networks:
