@@ -16,7 +16,7 @@ publish-morpheus-backend-api:dev:
     - main
     - tags
 
-publish-morpheus-backend-task-queue:dev:
+publish-morpheus-backend-task-queue-worker:dev:
   stage: publish
   before_script:
     - docker info
@@ -42,7 +42,7 @@ publish-morpheus-backend-api:prod:
   only:
     - tags
 
-publish-morpheus-backend-task-queue:prod:
+publish-morpheus-backend-task-queue-worker:prod:
   stage: publish
   before_script:
     - docker info

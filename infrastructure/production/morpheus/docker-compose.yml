@@ -141,7 +141,7 @@ services:
       - .env
     volumes:
       - morpheus_modflow_data:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
-      - morpheus_sensor_data::${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+      - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
     tmpfs:
       - /tmp
     restart: always
