@@ -168,6 +168,8 @@ volumes:
 networks:
   backend:
     name: ${COMPOSE_PROJECT_NAME}-backend
+  celery:
+    name: ${COMPOSE_PROJECT_NAME}-celery
   traefik:
     name: ${TRAEFIK_NETWORK}
     external: true
