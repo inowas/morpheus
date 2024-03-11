@@ -1,11 +1,10 @@
 import {DataGrid, DataRow} from '../index';
-import {Accordion} from 'semantic-ui-react';
-import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
+import {Accordion, TabPane} from 'semantic-ui-react';
+import {faDownload, faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import React from 'react';
-import InfoTitle from '../../InfoTitle';
-import Button from '../../Button/Button';
+import {Button, Tab} from 'common/components';
 
 const ModelGeometry: React.FC = () => {
 
@@ -18,22 +17,33 @@ const ModelGeometry: React.FC = () => {
     },
     content: {
       content: (
-        <>
-          <InfoTitle
-            title='Upload shapefile'
-            description='Shapefile description'
-            actionText='Add on map'
-            actionDescription='Action description'
-            onAction={() => {
-              console.log('Add on map action');
-            }}
+        <TabPane style={{
+          padding: 0,
+          backgroundColor: 'transparent',
+          border: 'none',
+        }}
+        >
+          <Tab
+            variant='primary'
+            menu={{pointing: true}}
+            panes={[
+              {
+                menuItem: 'Upload file',
+                render: () => <TabPane attached={false}>
+                  <Button
+                    disabled={true}
+                    primary={true}
+                    size={'tiny'}
+                  >Choose file</Button>
+                </TabPane>,
+              },
+              {
+                menuItem: 'Polygons',
+                render: () => <TabPane attached={false}>Polygons</TabPane>,
+              },
+            ]}
           />
-          <Button
-            disabled={true}
-            primary={true}
-            size={'tiny'}
-          >Choose file</Button>
-        </>
+        </TabPane>
       ),
     },
   },
@@ -45,21 +55,33 @@ const ModelGeometry: React.FC = () => {
     },
     content: {
       content: (
-        <>
-          <InfoTitle
-            title='Upload shapefile'
-            description='Shapefile description'
-            actionText='Add on map'
-            actionDescription='Action description'
-            onAction={() => {
-              console.log('Add on map action');
-            }}
-          />
-          <Button
-            primary={true}
-            size={'tiny'}
-          >Choose file</Button>
-        </>
+        <Tab
+          activeIndex={1}
+          variant='primary'
+          menu={{pointing: true}}
+          panes={[
+            {
+              menuItem: 'Grid Properties',
+              render: () => <TabPane attached={false}>Polygons</TabPane>,
+            },
+            {
+              menuItem: 'Upload file',
+              render: () => <TabPane attached={false}>
+                <Button
+                  size={'tiny'}
+                >Choose file</Button>
+                <Button
+                  className='buttonLink'
+                >
+                    Download template <FontAwesomeIcon icon={faDownload}/></Button>
+              </TabPane>,
+            },
+            {
+              menuItem: 'Polygons',
+              render: () => <TabPane attached={false}>Polygons</TabPane>,
+            },
+          ]}
+        />
       ),
     },
   }];

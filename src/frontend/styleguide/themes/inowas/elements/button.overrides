@@ -77,7 +77,7 @@
   }
 }
 
-.ui.button.primary.disabled {
+.ui.button.disabled:not(.buttonLink) {
   background-color: #BABABA;
 }
 
