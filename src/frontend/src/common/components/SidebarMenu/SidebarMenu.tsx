@@ -40,7 +40,7 @@ const SidebarMenu: React.FC<IProps> = ({menuItems, handleItemClick, openDataSide
                 className={styles.link}
                 onClick={() => itemClick(index)}
               >
-                <span className={styles.icon}><FontAwesomeIcon icon={item.icon}/></span>
+                <span className={styles.icon}>{<FontAwesomeIcon icon={item.icon}/>}</span>
                 <span className={styles.description}>{item.description}</span>
               </Menu.Item>
             </li>

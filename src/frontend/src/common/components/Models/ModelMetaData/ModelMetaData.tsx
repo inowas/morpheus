@@ -252,7 +252,7 @@ const ModelMetaData: React.FC = () => {
         key: 1,
         title: {
           content: 'General information',
-          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+          icon: <FontAwesomeIcon icon={faArrowRight} className={'redIcon'}/>,
         },
         content: {
           content: (
@@ -267,7 +267,7 @@ const ModelMetaData: React.FC = () => {
         key: 'permissions',
         title: {
           content: 'Permission rules',
-          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+          icon: <FontAwesomeIcon icon={faArrowRight} className={'redIcon'}/>,
         },
         content: {
           content: (
@@ -282,7 +282,7 @@ const ModelMetaData: React.FC = () => {
         key: 'spatial_discretization',
         title: {
           content: 'Model geometry',
-          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+          icon: <FontAwesomeIcon icon={faArrowRight} className={'redIcon'}/>,
         },
         content: {
           content: (
@@ -297,7 +297,7 @@ const ModelMetaData: React.FC = () => {
         key: 1,
         title: {
           content: 'Time discretization',
-          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+          icon: <FontAwesomeIcon icon={faArrowRight} className={'redIcon'}/>,
         },
         content: {
           content: (
@@ -312,7 +312,7 @@ const ModelMetaData: React.FC = () => {
         key: 1,
         title: {
           content: 'Model layers',
-          icon: <FontAwesomeIcon icon={faArrowRight}/>,
+          icon: <FontAwesomeIcon icon={faArrowRight} className={'redIcon'}/>,
         },
         content: {
           content: (
@@ -324,8 +324,6 @@ const ModelMetaData: React.FC = () => {
     }
     }
   }
-
-  console.log(panels);
 
   const defaultActiveIndex = Array.from({length: panels.length}, (_, index) => index);
 

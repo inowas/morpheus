@@ -8,12 +8,14 @@ import {
   faClock,
   faCodeCompare,
   faCompress,
+  faDatabase,
   faDownLeftAndUpRightToCenter,
   faDownload,
   faFlag,
   faFolder,
   faFolderOpen,
   faImage,
+  faInfo,
   faLayerGroup,
   faLocationCrosshairs,
   faMap,
@@ -28,7 +30,6 @@ import {IMenuItem} from './types/SidebarMenu.type';
 
 const menuItems: IMenuItem[] = [
   {icon: faPenToSquare, description: 'Setup', title: true, active: false},
-
   {icon: faBorderAll, description: 'Grid properties', active: true},
   {icon: faClock, description: 'Stress periods', active: false},
   {icon: faLayerGroup, description: 'Model layers', active: false},
@@ -36,7 +37,8 @@ const menuItems: IMenuItem[] = [
   {icon: faLocationCrosshairs, description: 'Head observations', active: false},
   {icon: faCompress, description: 'Solute transport', active: false},
   {icon: faBarsStaggered, description: 'Variable density flow', active: false},
-  {icon: faPenToSquare, description: 'Test', active: false},
+  {icon: faDatabase, description: 'Meta Data', active: false},
+  {icon: faInfo, description: 'Test', active: false},
   {icon: faSliders, description: 'PACKAGES', title: true, active: false},
   {icon: faFolder, description: 'MODFLOW packages', active: false},
   {icon: faCompress, description: 'MT3DMS packages', disabled: true, active: false},
