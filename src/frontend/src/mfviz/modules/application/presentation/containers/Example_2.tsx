@@ -1,12 +1,12 @@
 import React, {useEffect, useRef} from 'react';
 
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import demData from '../data/dem.csv';
+import demImage from '../images/dem.jpg';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
-import demImage from '../images/dem.jpg';
-import demData from '../data/dem.csv';
 
 const VtkExample2 = () => {
   const vtkContainerRef = useRef<any>(null);

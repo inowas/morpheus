@@ -1,9 +1,10 @@
-import React from 'react';
-
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'jest-canvas-mock';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as ResizeObserverModule from 'resize-observer-polyfill';
+
+import React from 'react';
 
 (global as any).ResizeObserver = ResizeObserverModule.default;
 // @ts-ignore

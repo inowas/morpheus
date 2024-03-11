@@ -1,0 +1,28 @@
+@import 'common/components/site.variables';
+
+.toolWrapper {
+  padding: 0 0 40px 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100vw;
+    min-height: calc(100vh + 80px);
+    height: calc(100% + 80px);
+    top: -80px;
+    left: calc(50% - 50vw);
+    z-index: 0;
+    background: #eff3f6;
+  }
+
+  .iframe {
+    margin-top: 40px;
+    z-index: 2;
+    border: 0;
+    box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.3);
+    border-top: 2px solid @blue;
+  }
+}
+
+

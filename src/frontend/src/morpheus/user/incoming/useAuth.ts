@@ -1,8 +1,7 @@
-import incomingUseAuthenticationHook, {IOAuthToken} from 'morpheus/authentication/outgoing/useAuthentication';
+import incomingUseAuthenticationHook from 'morpheus/authentication/application/useAuthentication';
 
 export interface IUseAuth {
-  token: IOAuthToken;
-  updateToken: (token: IOAuthToken) => void;
+  token: string;
   onUnauthorized: () => void;
 }
 

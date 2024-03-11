@@ -1,15 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
-import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
 
-import demImage1 from '../images/dem.jpg';
-import demImage2 from '../images/dem2.jpg';
+import ControlsE2 from '../components/ControlsE3';
 import demData1 from '../data/dem.csv';
 import demData2 from '../data/dem2.csv';
-import ControlsE2 from '../components/ControlsE3';
+import demImage1 from '../images/dem.jpg';
+import demImage2 from '../images/dem2.jpg';
+import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
+import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
+import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
 
 const VtkExample3 = () => {
   const vtkContainerRef = useRef<any>(null);

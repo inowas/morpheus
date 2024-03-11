@@ -1,8 +1,7 @@
+import {IError, IProjectSummary} from '../types';
 import {useEffect, useRef, useState} from 'react';
 
 import {useApi} from '../incoming';
-import {IError, IProjectSummary} from '../types';
-
 
 interface IUseProjectSummaries {
   projects: IProjectSummary[];

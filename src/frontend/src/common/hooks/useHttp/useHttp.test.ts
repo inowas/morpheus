@@ -1,7 +1,8 @@
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
-import {renderHook} from '@testing-library/react-hooks';
 import useHttp, {IHttpError, IOAuthToken} from './useHttp';
+
+import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
+import {renderHook} from '@testing-library/react-hooks';
 
 describe('Test the useHttp-Hook', () => {
   const mockAxios = new MockAdapter(axios);

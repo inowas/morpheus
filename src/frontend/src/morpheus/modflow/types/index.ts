@@ -1,4 +1,4 @@
-import {IError} from 'morpheus/common/errors';
+import {IError} from 'morpheus/types';
 import {IProjectSummary} from './Project.type';
 
 export type {IError, IProjectSummary};
