@@ -8,7 +8,6 @@ import ApplicationContainer from './application/presentation/containers/Applicat
 import DashboardContainer from './application/presentation/containers/DashboardContainer';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
 import React from 'react';
-import SignIn from './application/presentation/containers/AuthContainer';
 import {T02Container} from './T02/presentation/containers';
 import {T04Container} from './T04/presentation/containers';
 import {T06Container} from './T06/presentation/containers';
@@ -51,7 +50,6 @@ const Router = () => {
       <Route path="/tools/T14/T14C" element={wrapRouteComponent(<T14CContainer/>)}/>
       <Route path="/tools/T14/T14D" element={wrapRouteComponent(<T14DContainer/>)}/>
       <Route path="/tools/T18" element={wrapRouteComponent(<T18Container/>)}/>
-      <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
       <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
     </Routes>

@@ -1,4 +1,3 @@
-import {IOAuthToken} from './OAuthToken.type';
-import {IError} from '../../types';
+import {IUserProfile} from './UserProfile.type';
 
-export type {IOAuthToken, IError};
+export type {IUserProfile};

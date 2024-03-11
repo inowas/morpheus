@@ -1,28 +1,38 @@
-import {useDispatch, useSelector} from 'react-redux';
-import type {RootState} from '../../store';
-import {IOAuthToken} from '../types';
+import {useAuth} from 'react-oidc-context';
+import {IUserProfile} from '../types';
 
 interface IUseAuthentication {
   isAuthenticated: boolean;
-  token: IOAuthToken | null;
-  getUserInfo: () => Promise<any>;
-  logout: () => Promise<void>;
+  isLoading: boolean;
+  accessToken: string | null;
+  signOut: () => Promise<void>;
+  signIn: () => Promise<void>;
+  userProfile?: IUserProfile;
+  error?: Error;
 }
 
 const useAuthentication = (): IUseAuthentication => {
 
-  const dispatch = useDispatch();
+  const auth = useAuth();
 
-  const token = useSelector((state: RootState) => state.authentication.token);
-  const loading = useSelector((state: RootState) => state.authentication.loading);
-  const error = useSelector((state: RootState) => state.authentication.error);
+  const signIn = async () => {
+    await auth.signinRedirect();
+  };
+
+  const signOut = async () => {
+    auth.removeUser();
+    auth.signoutRedirect();
+  };
 
 
   return {
-    isAuthenticated: null !== token,
-    token: token,
-    getUserInfo: () => Promise.resolve(),
-    logout: () => Promise.resolve(),
+    accessToken: auth.user?.access_token || null,
+    error: auth.error,
+    isAuthenticated: auth.isAuthenticated,
+    isLoading: auth.isLoading || auth.activeNavigator !== undefined,
+    signIn: signIn,
+    signOut: signOut,
+    userProfile: auth.user?.profile as IUserProfile | undefined,
   };
 };
 

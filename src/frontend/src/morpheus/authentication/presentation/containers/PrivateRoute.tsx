@@ -1,11 +1,22 @@
 import React from 'react';
-import {Outlet, Navigate} from 'react-router-dom';
-import useAuthentication from '../../application/useAuthentication';
+import {useAuthentication} from '../../outgoing';
+import {Navigate} from 'react-router-dom';
 
+interface IProps {
+  children: React.ReactNode;
+}
 
-const PrivateRoute = () => {
+const PrivateRoute = ({children}: IProps) => {
   const {isAuthenticated} = useAuthentication();
-  return isAuthenticated ? <Outlet/> : <Navigate to="/" replace={true}/>;
+
+  if (isAuthenticated) {
+    return <>{children}</>;
+  }
+
+  return (
+    <Navigate replace={true} to="/auth"/>
+  );
+
 };
 
 export default PrivateRoute;

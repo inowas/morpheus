@@ -8,20 +8,34 @@ import ModelSidebar from './application/presentation/containers/ModelSidebar';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
 import {ProjectDashboardContainer} from './modflow/presentation/containers';
 import React from 'react';
-import SignIn from './application/presentation/containers/AuthContainer';
+import SignIn from './authentication/presentation/containers/AuthContainer';
+import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 
 const Router = () => {
-  const wrapRouteComponent = (component: React.ReactElement) => (
-    <ApplicationContainer>
-      {component}
-    </ApplicationContainer>
-  );
+  const wrapRouteComponent = (component: React.ReactElement, isPrivate: boolean = true) => {
+    if (!isPrivate) {
+      return (
+        <ApplicationContainer>
+          {component}
+        </ApplicationContainer>
+      );
+    }
+
+    return (
+      <PrivateRoute>
+        <ApplicationContainer>
+          {component}
+        </ApplicationContainer>
+      </PrivateRoute>
+    );
+  };
 
   return (
     <Routes>
-      <Route path="/" element={wrapRouteComponent(<HomeContainer/>)}/>
+      <Route path="/" element={wrapRouteComponent(<HomeContainer/>, false)}/>
+      <Route path="/auth" element={wrapRouteComponent(<SignIn/>, false)}/>
+
       <Route path="/news" element={wrapRouteComponent(<ProjectDashboardContainer/>)}/>
-      <Route path="/auth" element={wrapRouteComponent(<SignIn/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
       <Route path="/filter" element={<FilterProjects/>}/>
       <Route path="/models" element={<ModelSidebar/>}/>

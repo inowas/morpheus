@@ -8,7 +8,7 @@ interface IUseTranslation {
 }
 
 const useTranslation = (): IUseTranslation => {
-  const {t: translate, i18n: i18next} = reactI18NextTranslation('SimpleTools');
+  const {t: translate, i18n: i18next} = reactI18NextTranslation();
   return {translate, i18n: i18next, language: i18next.language as 'de' | 'en'};
 };
 
