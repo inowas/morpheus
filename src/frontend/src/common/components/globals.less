@@ -9,7 +9,6 @@ body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 100%;
-
 }
 
 // helpers
@@ -20,4 +19,28 @@ body {
 
 .gepReset {
   gap: 0 !important;
+}
+
+.dateInputWrapper {
+
+  .divider {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .dateIcon {
+    margin: 0 0 0 5px;
+  }
+}
+
+.scrollWrapper-Y {
+  height: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
 }

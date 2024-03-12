@@ -1,5 +1,5 @@
 import {Accordion, Icon} from 'semantic-ui-react';
-import {List, arrayMove} from 'react-movable';
+import {arrayMove, List} from 'react-movable';
 import React, {useState} from 'react';
 
 import {DotsMenu} from '../index';
@@ -86,7 +86,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
 
 
   return (
-    <div className={`${styles.movableList} movableList`}>
+    <div className={`${styles.movableList} ${openEditingTitle ? styles.openEditingTitle : ''} movableList`}>
       <List
         values={items.map((item) => ({
           content: [item],
@@ -150,7 +150,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
                   width: '30px',
                   marginRight: '12px',
                   padding: '6px',
-                  color: '#fff',
+                  color: openEditingTitle === value.content[0].key ? '#009FE3' : '#fff',
                   backgroundColor: '#002557',
                 }}
               />
