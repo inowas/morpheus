@@ -1,7 +1,7 @@
 import {Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'common/components';
 import React, {useEffect, useState} from 'react';
-import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
+import {useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
+import {useLocation, useNavigate} from 'common/hooks';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -257,11 +257,6 @@ const FilterProjects = () => {
   const navigateTo = useNavigate();
   const location = useLocation();
   const {release} = useReleaseVersion();
-  const [searchParams] = useSearchParams();
-
-  const {isEmbedded, setIsEmbedded} = useIsEmbedded();
-  const showHeader = !isEmbedded;
-  const showFooter = !isEmbedded;
 
   const [modelData, setModelData] = useState(models);
 
@@ -271,14 +266,6 @@ const FilterProjects = () => {
   const updateHeaderHeight = (height: number) => {
     setHeaderHeight(height);
   };
-
-  if ('true' === searchParams.get('embedded') && !isEmbedded) {
-    setIsEmbedded(true);
-  }
-
-  if ('false' === searchParams.get('embedded') && isEmbedded) {
-    setIsEmbedded(false);
-  }
 
   useEffect(() => {
     if (language !== i18n.language) {
@@ -312,18 +299,17 @@ const FilterProjects = () => {
 
   return (
     <>
-      {showHeader &&
-        <Header
-          maxWidth={pageSize}
-          updateHeight={updateHeaderHeight}
-          navbarItems={navbarItems}
-          languageList={languageList}
-          language={language}
-          onChangeLanguage={setLanguage}
-          navigateTo={navigateTo}
-          pathname={location.pathname}
-          showSearchWrapper={true}
-        />}
+      <Header
+        maxWidth={pageSize}
+        updateHeight={updateHeaderHeight}
+        navbarItems={navbarItems}
+        languageList={languageList}
+        language={language}
+        onChangeLanguage={setLanguage}
+        navigateTo={navigateTo}
+        pathname={location.pathname}
+        showSearchWrapper={true}
+      />
       <Sidebar
         headerHeight={headerHeight} open={true}
         maxWidth={350}
@@ -343,15 +329,7 @@ const FilterProjects = () => {
           />
         </SortDropdown>
       </Sidebar>
-      {showFooter ? <Footer release={release} maxWidth={pageSize}/> :
-        <span
-          style={{
-            margin: '0 auto',
-            textAlign: 'center',
-            fontSize: '0.8rem',
-          }}
-        >Release: {release}</span>
-      }
+      <Footer release={release} maxWidth={pageSize}/>
     </>
   );
 };

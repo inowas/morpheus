@@ -4,6 +4,7 @@ import useTranslation, {IUseTranslation} from './useTranslation';
 import useLocation from './useLocation';
 import useNavigate from './useNavigate';
 import usePlotly from './usePlotly';
+import useReleaseVersion from './useReleaseVersion';
 import useSearchParams from './useSearchParams';
 
 export {
@@ -11,6 +12,7 @@ export {
   useLocation,
   useNavigate,
   usePlotly,
+  useReleaseVersion,
   useSearchParams,
   useTranslation,
 };

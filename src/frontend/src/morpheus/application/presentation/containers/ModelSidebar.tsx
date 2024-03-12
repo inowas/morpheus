@@ -1,8 +1,8 @@
 import {DataGrid, ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'common/components/Models';
 import {Footer, Header, IPageWidth, Map, Sidebar} from 'common/components';
 import React, {useEffect, useState} from 'react';
-import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {useLocation, useNavigate, useSearchParams} from 'common/hooks';
+import {useNavbarItems, useTranslate} from '../../application';
+import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
 
 import type {FeatureCollection} from 'geojson';
 import menuItems from 'common/components/SidebarMenu/MenuItems';
@@ -48,16 +48,12 @@ const geoJsonPolygon: FeatureCollection = {
 
 const ModelSidebar = () => {
 
-  const {i18n, translate} = useTranslate();
+  const {i18n} = useTranslate();
   const {navbarItems} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
   const location = useLocation();
   const {release} = useReleaseVersion();
-  const [searchParams] = useSearchParams();
-  const {isEmbedded, setIsEmbedded} = useIsEmbedded();
-  const showHeader = !isEmbedded;
-  const showFooter = !isEmbedded;
   const pageSize: IPageWidth = 'auto';
   const [headerHeight, setHeaderHeight] = useState(0);
   const [listItems, setListItems] = useState(menuItems);
@@ -72,14 +68,6 @@ const ModelSidebar = () => {
   const updateHeaderHeight = (height: number) => {
     setHeaderHeight(height);
   };
-
-  if ('true' === searchParams.get('embedded') && !isEmbedded) {
-    setIsEmbedded(true);
-  }
-
-  if ('false' === searchParams.get('embedded') && isEmbedded) {
-    setIsEmbedded(false);
-  }
 
   useEffect(() => {
     if (language !== i18n.language) {
@@ -122,21 +110,20 @@ const ModelSidebar = () => {
 
   return (
     <>
-      {showHeader &&
-        <Header
-          maxWidth={pageSize}
-          updateHeight={updateHeaderHeight}
-          navbarItems={navbarItems}
-          languageList={languageList}
-          language={language}
-          onChangeLanguage={setLanguage}
-          navigateTo={navigateTo}
-          pathname={location.pathname}
-          showSearchWrapper={true}
-          showCreateButton={true}
-          showSidebarMenu={menuItems ? true : false}
+      <Header
+        maxWidth={pageSize}
+        updateHeight={updateHeaderHeight}
+        navbarItems={navbarItems}
+        languageList={languageList}
+        language={language}
+        onChangeLanguage={setLanguage}
+        navigateTo={navigateTo}
+        pathname={location.pathname}
+        showSearchWrapper={true}
+        showCreateButton={true}
+        showSidebarMenu={!!menuItems}
 
-        />}
+      />
       <Sidebar
         headerHeight={headerHeight}
         open={true}
@@ -155,15 +142,7 @@ const ModelSidebar = () => {
           coords={[51.051772741784625, 13.72531677893111]}
         />
       </Sidebar>
-      {showFooter ? <Footer release={release} maxWidth={pageSize}/> :
-        <span
-          style={{
-            margin: '0 auto',
-            textAlign: 'center',
-            fontSize: '0.8rem',
-          }}
-        >Release: {release}</span>
-      }
+      <Footer release={release} maxWidth={pageSize}/>
     </>
   );
 };
