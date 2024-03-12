@@ -1,4 +1,4 @@
-import {DataGrid, ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'common/components/Models';
+import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'common/components/Models';
 import {Footer, Header, IPageWidth, Map, Sidebar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useIsEmbedded, useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
@@ -99,13 +99,25 @@ const ModelSidebar = () => {
   const SidebarContent = () => {
     switch (currentContent) {
     case 'Grid properties':
-      return <ModelProperties/>;
-    case 'Test':
-      return <DataGrid><ModelGeometry/><ModelTest/></DataGrid>;
-    case 'Model layers':
-      return <ModelMetaData/>;
+      return <ModelGeometry/>;
     case 'Stress periods':
       return <ModelStressPeriods/>;
+    case 'Model layers':
+      return <ModelProperties/>;
+    case 'Boundary conditions':
+      return 'Boundary conditions';
+    case 'Head observations':
+      return 'Head observations';
+    case 'Solute transport':
+      return 'Solute transport';
+    case 'Variable density flow':
+      return 'Variable density flow';
+    case 'Meta Data':
+      return <ModelMetaData/>;
+    case 'Test':
+      return <ModelTest/>;
+
+
     default:
       return <pre style={{
         height: '100%',

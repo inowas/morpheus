@@ -64,18 +64,33 @@
     transition: transform 300ms ease;
   }
 
-  svg {
-    background: #DD2727;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    color: #fff;
-    padding: 4px;
-    box-sizing: border-box;
-    margin-left: 15px;
-  }
+  span {
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    text-align: left;
+    line-height: 25px;
 
+    svg:not(.redIcon) {
+      margin: 0 10px;
+      max-width: 18px;
+      height: 16px;
+      margin-left: 15px;
+    }
+
+    .redIcon {
+      background: #DD2727;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: #fff;
+      padding: 4px;
+      box-sizing: border-box;
+      margin-left: 15px;
+    }
+  }
 }
+
 
 .ui.accordion .title.active {
   &:before {
