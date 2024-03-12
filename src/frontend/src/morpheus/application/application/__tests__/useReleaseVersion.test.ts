@@ -1,5 +1,5 @@
 import {renderHook} from '@testing-library/react-hooks';
-import useReleaseVersion from '../useReleaseVersion';
+import useReleaseVersion from '../../../../common/hooks/useReleaseVersion/useReleaseVersion';
 
 jest.mock('config', () => ({
   release: 'test-123',
