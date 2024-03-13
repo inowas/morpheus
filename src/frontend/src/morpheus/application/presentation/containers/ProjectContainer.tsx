@@ -1,5 +1,5 @@
 import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'common/components/Models';
-import {Footer, Header, IPageWidth, Map, Sidebar} from 'common/components';
+import {ApplicationContentWrapper, Footer, Header, IPageWidth, Map} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
@@ -46,7 +46,7 @@ const geoJsonPolygon: FeatureCollection = {
   ],
 };
 
-const ModelSidebar = () => {
+const ProjectContainer = () => {
 
   const {i18n} = useTranslate();
   const {navbarItems} = useNavbarItems();
@@ -136,7 +136,7 @@ const ModelSidebar = () => {
         showSidebarMenu={!!menuItems}
 
       />
-      <Sidebar
+      <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={true}
         maxWidth={700}
@@ -153,10 +153,10 @@ const ModelSidebar = () => {
           }}
           coords={[51.051772741784625, 13.72531677893111]}
         />
-      </Sidebar>
+      </ApplicationContentWrapper>
       <Footer release={release} maxWidth={pageSize}/>
     </>
   );
 };
 
-export default ModelSidebar;
+export default ProjectContainer;

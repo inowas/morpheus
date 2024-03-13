@@ -1,8 +1,8 @@
-import {IMenuItem, SidebarMenu} from '../SidebarMenu';
+import {IMenuItem, SidebarMenu} from 'common/components/SidebarMenu';
 import React, {ReactNode, useState} from 'react';
 
 import {Icon} from 'semantic-ui-react';
-import styles from './Sidebar.module.less';
+import styles from './ApplicationContentWrapper.module.less';
 
 interface IProps {
   children: ReactNode;
@@ -14,7 +14,7 @@ interface IProps {
   handleItemClick?: (index: number) => void;
 }
 
-const Sidebar = ({children, headerHeight, open = false, maxWidth = 700, contentFullWidth = false, menuItems, handleItemClick}: IProps) => {
+const ApplicationContentWrapper = ({children, headerHeight, open = false, maxWidth = 700, contentFullWidth = false, menuItems, handleItemClick}: IProps) => {
   const sidebarChildren = React.Children.toArray(children);
   const [isOpen, setIsOpen] = useState(open);
   const handleSidebarToggle = () => {
@@ -27,15 +27,14 @@ const Sidebar = ({children, headerHeight, open = false, maxWidth = 700, contentF
 
   return (
     <div
-      data-testid="sidebar-container"
       style={{height: `calc(100vh - ${headerHeight}px)`}}
-      className={styles.sidebarWrapper}
+      className={styles.wrapper}
     >
       {(menuItems && handleItemClick) && <SidebarMenu
         menuItems={menuItems} handleItemClick={handleItemClick}
         openDataSidebar={handleSidebarOpen}
       />}
-      <div className={styles.sidebarInner}>
+      <div className={styles.mainContentWrapper}>
         {sidebarChildren.map((component, index) => {
           if (0 === index && React.isValidElement(component)) {
             return (
@@ -69,6 +68,6 @@ const Sidebar = ({children, headerHeight, open = false, maxWidth = 700, contentF
   );
 };
 
-export default Sidebar;
+export default ApplicationContentWrapper;
 
 

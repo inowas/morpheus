@@ -4,7 +4,7 @@ import AboutUsContainer from './application/presentation/containers/AboutUsConta
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
 import FilterProjects from './application/presentation/containers/FilterProjects';
 import HomeContainer from './application/presentation/containers/HomeContainer';
-import ModelSidebar from './application/presentation/containers/ModelSidebar';
+import ProjectContainer from './application/presentation/containers/ProjectContainer';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
 import {ProjectDashboardContainer} from './modflow/presentation/containers';
 import React from 'react';
@@ -38,7 +38,7 @@ const Router = () => {
       <Route path="/news" element={wrapRouteComponent(<ProjectDashboardContainer/>)}/>
       <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
       <Route path="/filter" element={<FilterProjects/>}/>
-      <Route path="/models" element={<ModelSidebar/>}/>
+      <Route path="/models" element={<ProjectContainer/>}/>
       <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
     </Routes>
   );

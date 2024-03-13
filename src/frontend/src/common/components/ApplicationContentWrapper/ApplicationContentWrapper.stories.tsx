@@ -1,17 +1,16 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-
 import React from 'react';
-import Sidebar from '../Sidebar';
-import menuItems from '../SidebarMenu/MenuItems';
+import {ApplicationContentWrapper} from 'common/components';
+import menuItems from 'common/components/SidebarMenu/MenuItems';
 
 export default {
-  title: 'Sidebar',
-  component: Sidebar,
-} as Meta<typeof Sidebar>;
+  title: 'ApplicationContentWrapper',
+  component: ApplicationContentWrapper,
+} as Meta<typeof ApplicationContentWrapper>;
 
-export const SidebarExample: StoryFn<typeof Sidebar> = () => (
-  <Sidebar
+export const ApplicationContentWrapperExample: StoryFn<typeof ApplicationContentWrapper> = () => (
+  <ApplicationContentWrapper
     headerHeight={0}
     open={true}
     maxWidth={700}
@@ -19,11 +18,11 @@ export const SidebarExample: StoryFn<typeof Sidebar> = () => (
   >
     <div>Aside content</div>
     <div>Main content</div>
-  </Sidebar>
+  </ApplicationContentWrapper>
 );
 
-export const SidebarSmallSizeExample: StoryFn<typeof Sidebar> = () => (
-  <Sidebar
+export const ApplicationContentWrapperSmallSizeExample: StoryFn<typeof ApplicationContentWrapper> = () => (
+  <ApplicationContentWrapper
     headerHeight={0}
     open={true}
     maxWidth={350}
@@ -31,10 +30,10 @@ export const SidebarSmallSizeExample: StoryFn<typeof Sidebar> = () => (
   >
     <div>Aside content</div>
     <div>Main content</div>
-  </Sidebar>
+  </ApplicationContentWrapper>
 );
 
-export const SidebarWithSidebarMenuExample: StoryFn<typeof Sidebar> = () => {
+export const ApplicationContentWrapperWithSidebarMenuExample: StoryFn<typeof ApplicationContentWrapper> = () => {
   const [listItems, setListItems] = React.useState(menuItems);
   const handleItemClick = (index: number) => {
     const updatedListParameters = listItems.map((item, i) => {
@@ -43,7 +42,7 @@ export const SidebarWithSidebarMenuExample: StoryFn<typeof Sidebar> = () => {
     setListItems(updatedListParameters);
   };
 
-  return <Sidebar
+  return <ApplicationContentWrapper
     headerHeight={0}
     open={true}
     maxWidth={700}
@@ -53,5 +52,5 @@ export const SidebarWithSidebarMenuExample: StoryFn<typeof Sidebar> = () => {
   >
     <div>Aside content</div>
     <div>Main content</div>
-  </Sidebar>;
+  </ApplicationContentWrapper>;
 };

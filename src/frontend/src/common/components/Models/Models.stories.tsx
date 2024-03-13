@@ -1,10 +1,10 @@
-import {Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest, Sidebar} from 'common/components';
+import {ApplicationContentWrapper, Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 
 import type {FeatureCollection} from 'geojson';
-import ModelSidebar from "../../../morpheus/application/presentation/containers/ModelSidebar";
+import ProjectContainer from '../../../morpheus/application/presentation/containers/ProjectContainer';
 import menuItems from '../SidebarMenu/MenuItems';
 
 const geojson: FeatureCollection = {
@@ -62,11 +62,11 @@ export default {
   * to learn how to generate automatic titles
   */
   title: 'Modflow/Models',
-  component: ModelSidebar,
-} as Meta<typeof ModelSidebar>;
+  component: ProjectContainer,
+} as Meta<typeof ProjectContainer>;
 
 
-export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
+export const ModelsExample: StoryFn<typeof ProjectContainer> = () => {
   const [listItems, setListItems] = useState(menuItems);
   const [headerHeight, setHeaderHeight] = useState(0);
 
@@ -74,22 +74,22 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
 
   const SidebarContent = () => {
     switch (currentContent) {
-      case 'Grid properties':
-        return <ModelGeometry/>;
-      case 'Test':
-        return <ModelTest/>;
-      case 'Model layers':
-        return <ModelMetaData/>;
-      case 'Stress periods':
-        return <ModelStressPeriods/>;
-      default:
-        return <pre style={{
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        >
+    case 'Grid properties':
+      return <ModelGeometry/>;
+    case 'Test':
+      return <ModelTest/>;
+    case 'Model layers':
+      return <ModelMetaData/>;
+    case 'Stress periods':
+      return <ModelStressPeriods/>;
+    default:
+      return <pre style={{
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      >
         Coming soon</pre>;
     }
   };
@@ -114,7 +114,7 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
         updateHeight={(height: number) => {
         }}
       />
-      <Sidebar
+      <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={false}
         maxWidth={700}
@@ -131,12 +131,12 @@ export const ModelsExample: StoryFn<typeof ModelSidebar> = () => {
           }}
           coords={[51.051772741784625, 13.72531677893111]}
         />
-      </Sidebar>
+      </ApplicationContentWrapper>
     </div>
   );
 };
 
-export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
+export const ModelsNoSidebarMenuExample: StoryFn<typeof ProjectContainer> = () => {
   const [headerHeight, setHeaderHeight] = useState(0);
 
   return (
@@ -153,7 +153,7 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
         updateHeight={(height: number) => {
         }}
       />
-      <Sidebar
+      <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={false}
         maxWidth={700}
@@ -168,7 +168,7 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ModelSidebar> = () => {
           }}
           coords={[51.051772741784625, 13.72531677893111]}
         />
-      </Sidebar>
+      </ApplicationContentWrapper>
     </div>
   );
 };

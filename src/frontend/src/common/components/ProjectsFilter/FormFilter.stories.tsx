@@ -1,4 +1,4 @@
-import {Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, SortDropdown} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
@@ -317,7 +317,7 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
         updateHeight={(height: number) => {
         }}
       />
-      <Sidebar
+      <ApplicationContentWrapper
         headerHeight={headerHeight} open={true}
         maxWidth={350}
       >
@@ -337,7 +337,7 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>
-      </Sidebar>
+      </ApplicationContentWrapper>
     </div>
   );
 };
