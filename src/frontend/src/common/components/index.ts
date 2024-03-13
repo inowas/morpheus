@@ -10,6 +10,7 @@ import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Select, {DropdownProps} from './Select/Select';
 import SortDropdown, {ISortOption} from 'common/components/SortDropdown';
 
+import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
 import Breadcrumb from './Breadcrumb';
 import Button from './Button/Button';
@@ -44,7 +45,6 @@ import ProjectsFilter from './ProjectsFilter';
 import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
-import Sidebar from './Sidebar/Sidebar';
 import SidebarMenu from './SidebarMenu/SidebarMenu';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Tab from 'common/components/Tabs';
@@ -53,6 +53,7 @@ import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 
 export {
+  ApplicationContentWrapper,
   Breadcrumb,
   Button,
   BackToTopButton,
@@ -100,7 +101,6 @@ export {
   SectionTitle,
   Segment,
   Select,
-  Sidebar,
   SidebarMenu,
   SliderSwiper,
   SortDropdown,

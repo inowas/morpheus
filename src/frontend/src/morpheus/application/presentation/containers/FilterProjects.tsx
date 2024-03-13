@@ -1,7 +1,7 @@
-import {Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, Sidebar, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, SortDropdown} from 'common/components';
 import React, {useEffect, useState} from 'react';
-import {useNavbarItems, useReleaseVersion, useTranslate} from '../../application';
-import {useLocation, useNavigate} from 'common/hooks';
+import {useNavbarItems, useTranslate} from '../../application';
+import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -310,7 +310,7 @@ const FilterProjects = () => {
         pathname={location.pathname}
         showSearchWrapper={true}
       />
-      <Sidebar
+      <ApplicationContentWrapper
         headerHeight={headerHeight} open={true}
         maxWidth={350}
       >
@@ -328,7 +328,7 @@ const FilterProjects = () => {
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>
-      </Sidebar>
+      </ApplicationContentWrapper>
       <Footer release={release} maxWidth={pageSize}/>
     </>
   );
