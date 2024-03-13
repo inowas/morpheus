@@ -1,4 +1,4 @@
-import {ContentWrapper, Header, IPageWidth, Modal, ModelCard, ModelGrid, ModelsCreate, SliderSwiper, SortDropdown} from 'common/components';
+import {ContentWrapper, Header, HeaderWrapper, IPageWidth, Modal, ModelCard, ModelGrid, ModelsCreate, Navbar, SliderSwiper, SortDropdown} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
@@ -305,16 +305,25 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
       >
         <ModelsCreate/>
       </Modal.Modal>
-      <Header
+      <HeaderWrapper
         maxWidth={pageSize}
-        navbarItems={navbarItems2}
-        navigateTo={() => {
-        }}
-        pathname={'/'}
-        showSearchWrapper={true}
         updateHeight={(height: number) => {
         }}
-      />
+        showSidebarMenu={false}
+      >
+        <Header
+          navigateTo={() => {
+          }}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems2}
+          navigateTo={() => {
+          }}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
       <ContentWrapper minHeight={'auto'} maxWidth={1440}>
         <SortDropdown
           placeholder="Order By"
