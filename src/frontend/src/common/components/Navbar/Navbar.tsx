@@ -52,7 +52,10 @@ const Navbar: React.FC<IProps> = ({
       {/* End of popup to create new model */}
 
       {/* Navbar */}
-      <div className={styles.navbar}>
+      <div
+        className={styles.navbar}
+        data-testid={'test-navbar'}
+      >
         <div className={styles.inner}>
           <div className={styles.mainMenuLogo}>
             <Image
@@ -69,6 +72,7 @@ const Navbar: React.FC<IProps> = ({
             <div
               className={`${styles.menuTrigger} ${openMobileMenu ? styles.menuTrigger__open : ''}`}
               onClick={handleCloseMobileMenu}
+              data-testid={'menu-trigger'}
             >
               <span></span>
               <span></span>
@@ -87,7 +91,10 @@ const Navbar: React.FC<IProps> = ({
               </Input>
             </div>
           )}
-          <nav className={`${styles.nav} ${openMobileMenu ? styles.navOpen : ''}`}>
+          <nav
+            data-testid={'test-nav'}
+            className={`${styles.nav} ${openMobileMenu ? styles.navOpen : ''}`}
+          >
             <div className={styles.navWrapper}>
               <ul className={styles.menu}>
                 {navbarItems.map((item: INavbarItem, idx: number) => {
@@ -102,7 +109,8 @@ const Navbar: React.FC<IProps> = ({
               </ul>
               {showCreateButton && (
                 <Button
-                  className={styles.createButton} primary={true}
+                  className={styles.createButton}
+                  primary={true}
                   onClick={onCreateButtonClick}
                 >
                   Create new model

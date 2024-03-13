@@ -33,8 +33,8 @@ const Header = ({
 
   return (
     <div
-      className={styles.navTop}
-      data-testid={'test-navtop'}
+      className={styles.header}
+      data-testid={'test-header'}
     >
       <div className={styles.inner}>
         <Menu.Item

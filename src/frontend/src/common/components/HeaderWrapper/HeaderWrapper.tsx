@@ -43,10 +43,9 @@ const HeaderWrapper = ({
   return (
     <header
       className={styles.header}
-      data-testid={'header'}
+      data-testid={'test-headerWrapper'}
       style={{
         paddingTop: headerHeight,
-        zIndex: 110,
       }}
     >
       <div

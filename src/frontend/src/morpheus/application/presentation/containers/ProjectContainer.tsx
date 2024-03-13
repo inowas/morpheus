@@ -87,34 +87,34 @@ const ProjectContainer = () => {
 
   const SidebarContent = () => {
     switch (currentContent) {
-      case 'Grid properties':
-        return <ModelGeometry/>;
-      case 'Stress periods':
-        return <ModelStressPeriods/>;
-      case 'Model layers':
-        return <ModelProperties/>;
-      case 'Boundary conditions':
-        return 'Boundary conditions';
-      case 'Head observations':
-        return 'Head observations';
-      case 'Solute transport':
-        return 'Solute transport';
-      case 'Variable density flow':
-        return 'Variable density flow';
-      case 'Meta Data':
-        return <ModelMetaData/>;
-      case 'Test':
-        return <ModelTest/>;
+    case 'Grid properties':
+      return <ModelGeometry/>;
+    case 'Stress periods':
+      return <ModelStressPeriods/>;
+    case 'Model layers':
+      return <ModelProperties/>;
+    case 'Boundary conditions':
+      return 'Boundary conditions';
+    case 'Head observations':
+      return 'Head observations';
+    case 'Solute transport':
+      return 'Solute transport';
+    case 'Variable density flow':
+      return 'Variable density flow';
+    case 'Meta Data':
+      return <ModelMetaData/>;
+    case 'Test':
+      return <ModelTest/>;
 
 
-      default:
-        return <pre style={{
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        >
+    default:
+      return <pre style={{
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      >
         Coming soon
       </pre>;
     }
@@ -123,19 +123,6 @@ const ProjectContainer = () => {
 
   return (
     <>
-      {/*<Header*/}
-      {/*  maxWidth={pageSize}*/}
-      {/*  updateHeight={updateHeaderHeight}*/}
-      {/*  navbarItems={navbarItems}*/}
-      {/*  languageList={languageList}*/}
-      {/*  language={language}*/}
-      {/*  onChangeLanguage={setLanguage}*/}
-      {/*  navigateTo={navigateTo}*/}
-      {/*  pathname={location.pathname}*/}
-      {/*  showSearchWrapper={true}*/}
-      {/*  showCreateButton={true}*/}
-      {/*  showSidebarMenu={!!menuItems}*/}
-      {/*/>*/}
       <HeaderWrapper
         maxWidth={pageSize}
         updateHeight={updateHeaderHeight}
