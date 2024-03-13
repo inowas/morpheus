@@ -1,20 +1,12 @@
-import {ContentWrapper, IPageWidth} from 'common/components';
 import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import styles from './HeaderWrapper.module.less';
 
 interface IProps {
-  maxWidth?: IPageWidth;
   updateHeight?: (height: number) => void;
-  showSidebarMenu?: boolean;
   children: ReactNode;
 }
 
-const HeaderWrapper = ({
-  maxWidth,
-  updateHeight,
-  showSidebarMenu = false,
-  children,
-}: IProps) => {
+const HeaderWrapper = ({updateHeight, children}: IProps) => {
   const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
   const [headerHeight, setHeaderHeight] = useState(ref.current?.clientHeight || 0);
 
@@ -48,17 +40,8 @@ const HeaderWrapper = ({
         paddingTop: headerHeight,
       }}
     >
-      <div
-        ref={ref}
-        className={styles.headerInner}
-      >
-        <ContentWrapper
-          minHeight={'auto'}
-          maxWidth={maxWidth}
-          showSidebarMenu={showSidebarMenu}
-        >
-          {children}
-        </ContentWrapper>
+      <div ref={ref} className={styles.headerInner}>
+        {children}
       </div>
     </header>
   );
