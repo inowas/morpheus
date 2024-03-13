@@ -1,11 +1,11 @@
 import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
+import {DataGrid, DataRow} from './DataGrid';
 import DotsMenu, {IAction} from './DotsMenu';
 import Icon, {IIconProps} from './Icon/Icon';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
-import ModelCard, {IModelCard} from './ModelCard';
-import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from './Models';
+import ModelCard, {IProjectCard} from './ModelCard';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Select, {DropdownProps} from './Select/Select';
 import SortDropdown, {ISortOption} from 'common/components/SortDropdown';
@@ -34,7 +34,6 @@ import Map from './Map/Map';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import ModelGrid from './ModelGrid';
-import ModelsCreate from './ModelsCreate';
 import MovableAccordionList from './MovableAccordionList';
 import Navbar from './Navbar';
 import NotFound from './NotFound';
@@ -47,7 +46,6 @@ import ProjectsFilter from './ProjectsFilter';
 import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
-import SidebarMenuV1 from './SidebarMenu/SidebarMenuV1';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Tab from 'common/components/Tabs';
 import Toggle from './Toggle/Toggle';
@@ -64,6 +62,8 @@ export {
   Confirm,
   Container,
   ContentWrapper,
+  DataGrid,
+  DataRow,
   Divider,
   DotsMenu,
   Dropdown,
@@ -84,13 +84,7 @@ export {
   Message,
   Modal,
   ModelGrid,
-  ModelGeometry,
-  ModelMetaData,
-  ModelStressPeriods,
-  ModelTest,
-  ModelProperties,
   ModelCard,
-  ModelsCreate,
   MovableAccordionList,
   Navbar,
   NotFound,
@@ -105,7 +99,6 @@ export {
   SectionTitle,
   Segment,
   Select,
-  SidebarMenuV1,
   SliderSwiper,
   SortDropdown,
   Tab,
@@ -125,7 +118,7 @@ export type {
   DropdownProps,
   IInputProps,
   IInputOnChangeData,
-  IModelCard,
+  IProjectCard,
   ISortOption,
   IPageWidth,
   IPageHeight,

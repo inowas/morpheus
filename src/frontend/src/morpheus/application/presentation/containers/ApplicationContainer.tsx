@@ -6,11 +6,12 @@ import {ContentContainer} from '../components';
 
 interface IProps {
   children: ReactNode;
+  disableFooter?: boolean;
 }
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
-const ApplicationContainer = ({children}: IProps) => {
+const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
 
   const {i18n} = useTranslate();
   const {navbarItems} = useNavbarItems();
@@ -50,7 +51,7 @@ const ApplicationContainer = ({children}: IProps) => {
         {children}
       </ContentContainer>
 
-      <Footer release={release} maxWidth={pageSize}/>
+      {!disableFooter && <Footer release={release} maxWidth={pageSize}/>}
     </>
   );
 };

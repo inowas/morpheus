@@ -28,7 +28,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
-import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from '../../../../common/components';
+
+import LayersContainer from '../containers/LayersContainer';
+import ProjectMetadataContainer from '../containers/ProjectMetadataContainer';
+import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
+import TestingContainer from '../containers/TestingContainer';
+import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 
 export interface IMenuItem {
   icon: IconDefinition;
@@ -42,15 +47,15 @@ export interface IMenuItem {
 
 const sidebarItems: IMenuItem[] = [
   {icon: faPenToSquare, description: 'Setup', title: true, active: false, slug: 'setup'},
-  {icon: faBorderAll, description: 'Grid properties', active: true, slug: 'spatial-discretization', component: <ModelGeometry/>},
-  {icon: faClock, description: 'Stress periods', active: false, slug: 'time-discretization', component: <ModelStressPeriods/>},
-  {icon: faLayerGroup, description: 'Model layers', active: false, slug: 'layers', component: <ModelProperties/>},
+  {icon: faBorderAll, description: 'Grid properties', active: true, slug: 'spatial-discretization', component: <SpatialDiscretizationContainer/>},
+  {icon: faClock, description: 'Stress periods', active: false, slug: 'time-discretization', component: <TimeDiscretizationContainer/>},
+  {icon: faLayerGroup, description: 'Model layers', active: false, slug: 'layers', component: <LayersContainer/>},
   {icon: faFlag, description: 'Boundary conditions', active: false, slug: 'boundary-conditions'},
   {icon: faLocationCrosshairs, description: 'Head observations', active: false, slug: 'head-observations'},
   {icon: faCompress, description: 'Solute transport', active: false, slug: 'solute-transport'},
   {icon: faBarsStaggered, description: 'Variable density flow', active: false, slug: 'variable-density-flow'},
-  {icon: faDatabase, description: 'Meta Data', active: false, slug: 'meta-data', component: <ModelMetaData/>},
-  {icon: faInfo, description: 'Test', active: false, slug: 'test', component: <ModelTest/>},
+  {icon: faDatabase, description: 'Project Metadata', active: false, slug: 'meta-data', component: <ProjectMetadataContainer/>},
+  {icon: faInfo, description: 'Testing', active: false, slug: 'test', component: <TestingContainer/>},
   {icon: faSliders, description: 'PACKAGES', title: true, active: false, slug: 'packages'},
   {icon: faFolder, description: 'MODFLOW packages', active: false, slug: 'modflow-packages'},
   {icon: faCompress, description: 'MT3DMS packages', disabled: true, active: false, slug: 'mt3dms-packages'},

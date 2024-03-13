@@ -1,12 +1,13 @@
-import {ContentWrapper, Header, HeaderWrapper, IPageWidth, Modal, ModelCard, ModelGrid, ModelsCreate, Navbar, SliderSwiper, SortDropdown} from 'common/components';
+import {ContentWrapper, Header, HeaderWrapper, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 
-import {IModelCard} from 'common/components/ModelCard';
+import {IProjectCard} from 'common/components/ModelCard';
 import {ISortOption} from 'common/components/SortDropdown';
+import CreateProjectModal from '../../../morpheus/modflow/presentation/components/CreateProjectModal';
 
-const models: IModelCard[] = [
+const models: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -271,7 +272,7 @@ export default {
 
 export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
   const [modelData, setModelData] = useState(models);
-  const filterModelsByAuthorName = (authorName: string, data: IModelCard[]) => {
+  const filterModelsByAuthorName = (authorName: string, data: IProjectCard[]) => {
     return data.filter((model) => model.meta_author_name === authorName);
   };
 
@@ -296,14 +297,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Modal.Modal
-        onClose={() => setOpenPopup(false)}
-        onOpen={() => setOpenPopup(true)}
-        open={openPopup}
-        dimmer={'inverted'}
-      >
-        <ModelsCreate/>
-      </Modal.Modal>
+      <CreateProjectModal isOpen={openPopup} onClose={() => setOpenPopup(false)}/>
       <HeaderWrapper updateHeight={() => ({})}>
         <Header
           navigateTo={() => {
@@ -331,8 +325,6 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
             {filteredData.map((item) => (
               <ModelCard
                 key={item.id} data={item}
-                navigateTo={() => {
-                }}
                 onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
                 onCopyButtonClick={() => handleCopyButtonClick(item.id)}
               />
@@ -348,8 +340,6 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
           <ModelGrid
             sectionTitle={'All projects'}
             data={modelData}
-            navigateTo={() => {
-            }}
             // handleDeleteButtonClick={handleDeleteButtonClick}
             handleCopyButtonClick={handleCopyButtonClick}
           />
@@ -363,12 +353,9 @@ export const ModelGridExample: StoryFn<typeof ModelGrid> = () =>
   <ModelGrid
     sectionTitle={'All projects'}
     data={models}
-    navigateTo={() => {
-    }}
     handleDeleteButtonClick={() => {
     }}
     handleCopyButtonClick={() => {
     }}
-  />
-;
+  />;
 

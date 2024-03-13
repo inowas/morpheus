@@ -1,5 +1,5 @@
-import ModflowContainer from './ModflowContainer';
+import ModflowBaseModelPage from './ModflowBaseModelPage';
 
 export {
-  ModflowContainer,
+  ModflowBaseModelPage,
 };

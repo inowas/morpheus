@@ -6,7 +6,7 @@ import styles from './SidebarMenu.module.less';
 
 interface IProps {
   menuItems: ISidebarMenuItem[];
-  onClickCallback?: () => void;
+  onClickCallback?: (item: ISidebarMenuItem) => void;
 }
 
 const SidebarMenu: React.FC<IProps> = ({menuItems, onClickCallback}) => {
@@ -36,7 +36,7 @@ const SidebarMenu: React.FC<IProps> = ({menuItems, onClickCallback}) => {
                   }
 
                   if (onClickCallback) {
-                    onClickCallback();
+                    onClickCallback(item);
                   }
                 }}
               >
