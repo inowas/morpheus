@@ -2,7 +2,6 @@
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {ApplicationContentWrapper} from 'common/components';
-import menuItems from 'common/components/SidebarMenu/MenuItems';
 
 export default {
   title: 'ApplicationContentWrapper',
@@ -15,6 +14,7 @@ export const ApplicationContentWrapperExample: StoryFn<typeof ApplicationContent
     open={true}
     maxWidth={700}
     contentFullWidth={false}
+    menuItems={[]}
   >
     <div>Aside content</div>
     <div>Main content</div>
@@ -27,6 +27,7 @@ export const ApplicationContentWrapperSmallSizeExample: StoryFn<typeof Applicati
     open={true}
     maxWidth={350}
     contentFullWidth={false}
+    menuItems={[]}
   >
     <div>Aside content</div>
     <div>Main content</div>
@@ -34,21 +35,13 @@ export const ApplicationContentWrapperSmallSizeExample: StoryFn<typeof Applicati
 );
 
 export const ApplicationContentWrapperWithSidebarMenuExample: StoryFn<typeof ApplicationContentWrapper> = () => {
-  const [listItems, setListItems] = React.useState(menuItems);
-  const handleItemClick = (index: number) => {
-    const updatedListParameters = listItems.map((item, i) => {
-      return (i === index) ? {...item, active: true} : {...item, active: false};
-    });
-    setListItems(updatedListParameters);
-  };
 
   return <ApplicationContentWrapper
     headerHeight={0}
     open={true}
     maxWidth={700}
     contentFullWidth={false}
-    menuItems={listItems}
-    handleItemClick={handleItemClick}
+    menuItems={[]}
   >
     <div>Aside content</div>
     <div>Main content</div>

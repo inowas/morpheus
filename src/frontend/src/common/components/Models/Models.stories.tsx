@@ -68,7 +68,6 @@ export default {
 
 export const ModelsExample: StoryFn<typeof ProjectContainer> = () => {
   const [listItems, setListItems] = useState(menuItems);
-  const [headerHeight, setHeaderHeight] = useState(0);
 
   const currentContent = listItems.find(item => item.active)?.description;
 
@@ -94,21 +93,9 @@ export const ModelsExample: StoryFn<typeof ProjectContainer> = () => {
     }
   };
 
-  const handleItemClick = (index: number) => {
-    const updatedListParameters = listItems.map((item, i) => {
-      return (i === index) ? {...item, active: true} : {...item, active: false};
-    });
-    setListItems(updatedListParameters);
-  };
-
   return (
     <div style={{margin: '-1rem'}}>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={(height: number) => {
-        }}
-        showSidebarMenu={false}
-      >
+      <HeaderWrapper>
         <Header
           navigateTo={() => {
           }}
@@ -123,12 +110,11 @@ export const ModelsExample: StoryFn<typeof ProjectContainer> = () => {
         />
       </HeaderWrapper>
       <ApplicationContentWrapper
-        headerHeight={headerHeight}
+        headerHeight={0}
         open={false}
         maxWidth={700}
         contentFullWidth={true}
-        menuItems={listItems}
-        handleItemClick={handleItemClick}
+        menuItems={[]}
       >
         <SidebarContent/>
         <Map
@@ -149,12 +135,7 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ProjectContainer> = () =
 
   return (
     <div style={{margin: '-1rem'}}>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={(height: number) => {
-        }}
-        showSidebarMenu={false}
-      >
+      <HeaderWrapper>
         <Header
           navigateTo={() => {
           }}
@@ -173,6 +154,7 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ProjectContainer> = () =
         open={false}
         maxWidth={700}
         contentFullWidth={true}
+        menuItems={[]}
       >
         <ModelGeometry/>
         <Map

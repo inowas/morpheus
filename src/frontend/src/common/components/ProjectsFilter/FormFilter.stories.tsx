@@ -307,12 +307,7 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={(height: number) => {
-        }}
-        showSidebarMenu={false}
-      >
+      <HeaderWrapper updateHeight={() => ({})}>
         <Header
           navigateTo={() => {
           }}
@@ -329,6 +324,8 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
       <ApplicationContentWrapper
         headerHeight={headerHeight} open={true}
         maxWidth={350}
+        contentFullWidth={false}
+        menuItems={[]}
       >
         <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown

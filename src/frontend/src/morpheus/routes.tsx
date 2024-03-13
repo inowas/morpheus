@@ -6,21 +6,21 @@ import FilterProjects from './application/presentation/containers/FilterProjects
 import HomeContainer from './application/presentation/containers/HomeContainer';
 import ProjectContainer from './application/presentation/containers/ProjectContainer';
 import NotFoundContainer from './application/presentation/containers/NotFoundContainer';
-import {ProjectDashboardContainer} from './modflow/presentation/containers';
+import {ModflowContainer} from './modflow/presentation/containers';
 import React from 'react';
 import SignIn from './authentication/presentation/containers/AuthContainer';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 
 const Router = () => {
-  const wrapRouteComponent = (component: React.ReactElement, isPrivate: boolean = true) => {
-    if (!isPrivate) {
-      return (
-        <ApplicationContainer>
-          {component}
-        </ApplicationContainer>
-      );
-    }
+  const wrapPublicComponent = (component: React.ReactElement) => {
+    return (
+      <ApplicationContainer>
+        {component}
+      </ApplicationContainer>
+    );
+  };
 
+  const wrapPrivateComponent = (component: React.ReactElement) => {
     return (
       <PrivateRoute>
         <ApplicationContainer>
@@ -32,14 +32,15 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={wrapRouteComponent(<HomeContainer/>, false)}/>
-      <Route path="/auth" element={wrapRouteComponent(<SignIn/>, false)}/>
+      <Route path="/" element={wrapPublicComponent(<HomeContainer/>)}/>
+      <Route path="/auth" element={wrapPublicComponent(<SignIn/>)}/>
+      <Route path="/modflow/:id?/:property?/:propertyId?" element={wrapPublicComponent(<ModflowContainer basePath={'/modflow'}/>)}/>
+      <Route path="/about-us" element={wrapPublicComponent(<AboutUsContainer/>)}/>
 
-      <Route path="/news" element={wrapRouteComponent(<ProjectDashboardContainer/>)}/>
-      <Route path="/about-us" element={wrapRouteComponent(<AboutUsContainer/>)}/>
-      <Route path="/filter" element={<FilterProjects/>}/>
-      <Route path="/models" element={<ProjectContainer/>}/>
-      <Route path="*" element={wrapRouteComponent(<NotFoundContainer/>)}/>
+      <Route path="/projects" element={wrapPrivateComponent(<ProjectContainer/>)}/>
+      <Route path="/filter" element={wrapPrivateComponent(<FilterProjects/>)}/>
+      <Route path="/news" element={wrapPrivateComponent(<ModflowContainer basePath={'/modflow'}/>)}/>
+      <Route path="*" element={wrapPublicComponent(<NotFoundContainer/>)}/>
     </Routes>
   );
 };

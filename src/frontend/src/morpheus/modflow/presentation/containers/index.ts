@@ -1,5 +1,5 @@
-import ProjectDashboardContainer from './ProjectDashboardContainer';
+import ModflowContainer from './ModflowContainer';
 
 export {
-  ProjectDashboardContainer,
+  ModflowContainer,
 };

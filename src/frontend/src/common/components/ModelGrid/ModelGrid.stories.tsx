@@ -260,7 +260,6 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
-const pageSize: IPageWidth = 'auto';
 export default {
   /* 👇 The title prop is optional.
   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
@@ -305,12 +304,7 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
       >
         <ModelsCreate/>
       </Modal.Modal>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={(height: number) => {
-        }}
-        showSidebarMenu={false}
-      >
+      <HeaderWrapper updateHeight={() => ({})}>
         <Header
           navigateTo={() => {
           }}

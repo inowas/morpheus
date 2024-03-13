@@ -1,58 +1,54 @@
 import React, {useState} from 'react';
 
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {IMenuItem} from './types/SidebarMenu.type';
+import {ISidebarMenuItem} from './types/SidebarMenu.type';
 import {Menu} from 'semantic-ui-react';
 import styles from './SidebarMenu.module.less';
 
 interface IProps {
-  menuItems: IMenuItem[];
-  handleItemClick: (index: number) => void;
-  openDataSidebar?: () => void;
+  menuItems: ISidebarMenuItem[];
+  onClickCallback?: () => void;
 }
 
-const SidebarMenu: React.FC<IProps> = ({menuItems, handleItemClick, openDataSidebar}) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const openSidebar = () => setIsSidebarOpen(true);
-  const closeSidebar = () => setIsSidebarOpen(false);
-  const itemClick = (index: number) => {
-    handleItemClick(index);
-    if (openDataSidebar) openDataSidebar();
-    closeSidebar();
-  };
+const SidebarMenu: React.FC<IProps> = ({menuItems, onClickCallback}) => {
+  // handles internal state for the sidebar menu
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <div
       className={styles.sidebarMenu}
-      onMouseEnter={() => openSidebar()}
-      onMouseLeave={() => closeSidebar()}
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
     >
-      <div className={`${styles.sidebarMenuWrapper} ${isSidebarOpen ? styles.open : ''}`}>
+      <div className={`${styles.sidebarMenuWrapper} ${isOpen ? styles.open : ''}`}>
         <ul className={styles.sidebarMenuList}>
           {menuItems.map((item, index) => (
             <li
               key={index}
-              className={`${styles.item} ${item.title ? styles.title : ''} ${item.active ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
+              className={`${styles.item} ${item.isTitle ? styles.title : ''} ${item.isActive ? styles.active : ''} ${item.isDisabled ? styles.disabled : ''}`}
             >
               <Menu.Item
-                data-testid={`test-item-${item.description.toLowerCase().replace(/ /g, '-')}`}
-                as={item.title ? 'h3' : 'a'}
+                data-testid={`test-item-${item.slug}`}
+                as={item.isTitle ? 'h3' : 'a'}
                 className={styles.link}
-                onClick={() => itemClick(index)}
+                onClick={() => {
+                  if (item.onClick) {
+                    item.onClick();
+                  }
+
+                  if (onClickCallback) {
+                    onClickCallback();
+                  }
+                }}
               >
-                <span className={styles.icon}>{<FontAwesomeIcon icon={item.icon}/>}</span>
-                <span className={styles.description}>{item.description}</span>
+                <span className={styles.icon}>{item.icon}</span>
+                <span className={styles.description}>{item.name}</span>
               </Menu.Item>
             </li>
           ))}
         </ul>
       </div>
     </div>
-
   );
 };
 
 export default SidebarMenu;
-
-
-

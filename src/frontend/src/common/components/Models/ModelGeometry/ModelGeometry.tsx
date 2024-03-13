@@ -7,8 +7,6 @@ import React from 'react';
 import {Button, Tab} from 'common/components';
 
 const ModelGeometry: React.FC = () => {
-
-
   const panels: any[] = [{
     key: 1,
     title: {

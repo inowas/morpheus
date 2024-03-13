@@ -300,11 +300,7 @@ const FilterProjects = () => {
 
   return (
     <>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={updateHeaderHeight}
-        showSidebarMenu={!!menuItems}
-      >
+      <HeaderWrapper updateHeight={updateHeaderHeight}>
         <Header
           navigateTo={navigateTo}
           language={language}
@@ -319,10 +315,12 @@ const FilterProjects = () => {
           showCreateButton={true}
         />
       </HeaderWrapper>
+
       <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={true}
         maxWidth={350}
+        menuItems={[]}
       >
         <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown

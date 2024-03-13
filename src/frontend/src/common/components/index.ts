@@ -47,7 +47,7 @@ import ProjectsFilter from './ProjectsFilter';
 import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
-import SidebarMenu from './SidebarMenu/SidebarMenu';
+import SidebarMenuV1 from './SidebarMenu/SidebarMenuV1';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Tab from 'common/components/Tabs';
 import Toggle from './Toggle/Toggle';
@@ -105,7 +105,7 @@ export {
   SectionTitle,
   Segment,
   Select,
-  SidebarMenu,
+  SidebarMenuV1,
   SliderSwiper,
   SortDropdown,
   Tab,

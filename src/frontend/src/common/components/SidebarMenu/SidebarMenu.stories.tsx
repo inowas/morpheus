@@ -2,15 +2,15 @@
 import {Meta, StoryFn} from '@storybook/react';
 
 import React from 'react';
-import {SidebarMenu} from '../SidebarMenu';
+import {SidebarMenuV1} from '../SidebarMenu';
 import menuItems from './MenuItems';
 
 export default {
   title: 'SidebarMenu',
-  component: SidebarMenu,
-} as Meta<typeof SidebarMenu>;
+  component: SidebarMenuV1,
+} as Meta<typeof SidebarMenuV1>;
 
-export const SidebarMenuExample: StoryFn<typeof SidebarMenu> = () => {
+export const SidebarMenuExample: StoryFn<typeof SidebarMenuV1> = () => {
 
   const [listItems, setListItems] = React.useState(menuItems);
 
@@ -23,7 +23,7 @@ export const SidebarMenuExample: StoryFn<typeof SidebarMenu> = () => {
 
   return (
     <div style={{position: 'relative', height: '100vh', display: 'block'}}>
-      <SidebarMenu menuItems={listItems} handleItemClick={handleItemClick}/>
+      <SidebarMenuV1 menuItems={listItems} handleItemClick={handleItemClick}/>
     </div>
   );
 

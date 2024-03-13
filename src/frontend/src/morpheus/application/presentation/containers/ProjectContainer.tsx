@@ -124,9 +124,7 @@ const ProjectContainer = () => {
   return (
     <>
       <HeaderWrapper
-        maxWidth={pageSize}
         updateHeight={updateHeaderHeight}
-        showSidebarMenu={!!menuItems}
       >
         <Header
           navigateTo={navigateTo}
