@@ -1,7 +1,8 @@
-import {ContentWrapper, Footer, Header, IPageWidth} from 'common/components';
+import {ContentWrapper, Footer, Header, HeaderWrapper, IPageWidth, Navbar} from 'common/components';
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
+
 
 interface IProps {
   children: ReactNode;
@@ -29,21 +30,28 @@ const ApplicationContainer = ({children}: IProps) => {
 
   return (
     <>
-      <Header
+      <HeaderWrapper
         maxWidth={pageSize}
-        navbarItems={navbarItems}
-        languageList={languageList}
-        language={language}
-        onChangeLanguage={setLanguage}
-        navigateTo={navigateTo}
-        pathname={location.pathname}
-        showSearchWrapper={true}
-      />
+        showSidebarMenu={false}
+      >
+        <Header
+          navigateTo={navigateTo}
+          language={language}
+          languageList={languageList}
+          onChangeLanguage={setLanguage}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={navigateTo}
+          showSearchWrapper={true}
+          showCreateButton={false}
+        />
+      </HeaderWrapper>
 
       <ContentWrapper minHeight={'auto'} maxWidth={pageSize}>
         {children}
       </ContentWrapper>
-
       <Footer release={release} maxWidth={pageSize}/>
     </>
   );

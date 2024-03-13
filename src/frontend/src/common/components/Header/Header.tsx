@@ -1,95 +1,120 @@
-import {ContentWrapper, IPageWidth} from 'common/components';
-import Navbar, {INavbarItem} from './Navbar';
-import React, {RefObject, useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 
-import {ILanguageList} from './Navbar/Navbar';
+import AvatarButton from './AvatarButton/AvatarButton';
+import LanguageSelector from './LanguageSelector/LanguageSelector';
+import {Menu} from 'semantic-ui-react';
+import logoTUDresden from './images/logo-tud.svg';
 import styles from './Header.module.less';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
 interface IProps {
-  maxWidth?: IPageWidth;
-  updateHeight?: (height: number) => void
-  navbarItems: INavbarItem[];
-
+  style?: React.CSSProperties;
   language?: ILanguageCode;
-  languageList?: ILanguageList;
+  languageList?: {
+    code: ILanguageCode;
+    label: string;
+  }[]
   onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
-  pathname: string;
-  showSidebarMenu?: boolean
-  showSearchWrapper?: boolean;
-  showCreateButton?: boolean;
 }
 
 const Header = ({
-  maxWidth,
-  updateHeight,
-  navbarItems,
   language,
   languageList,
   onChangeLanguage,
   navigateTo,
-  pathname,
-  showSidebarMenu = false,
-  showSearchWrapper = false,
-  showCreateButton,
 }: IProps) => {
-  const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
-  const [headerHeight, setHeaderHeight] = useState(ref.current?.clientHeight || 0);
+  const [showAvatar, setShowAvatar] = useState(false);
 
-  const updateHeaderHeight = () => {
-    if (ref.current) {
-      const height = ref.current.clientHeight;
-      setHeaderHeight(height);
-      if (updateHeight) {
-        updateHeight(height); // Notify the parent about the updated height
-      }
-    }
+  const toggleAvatar = () => {
+    setShowAvatar(!showAvatar);
   };
 
-  useEffect(() => {
-    updateHeaderHeight(); // Set initial header height
-    const handleResize = () => {
-      updateHeaderHeight(); // Update header height when window resizes
-    };
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize); // Cleanup the event listener
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
-    <header
-      data-testid={'header'}
-      className={`${showSidebarMenu ? styles.showSidebarMenu : ''}`}
-      style={{
-        paddingTop: headerHeight,
-        zIndex: 110,
-      }}
+    <div
+      className={styles.navTop}
+      data-testid={'test-navtop'}
     >
-      <div
-        ref={ref}
-        className={styles.headerInner}
-      >
-        <ContentWrapper
-          minHeight={'auto'} maxWidth={maxWidth}
-          showSidebarMenu={showSidebarMenu}
+      <div className={styles.inner}>
+        <Menu.Item
+          data-testid={'test-logo'}
+          as="a"
+          className={styles.logo}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateTo('/');
+          }}
         >
-          <Navbar
-            navbarItems={navbarItems}
-            languageList={languageList}
-            language={language}
-            onChangeLanguage={onChangeLanguage}
-            navigateTo={navigateTo}
-            pathname={pathname}
-            showSearchWrapper={showSearchWrapper}
-            showCreateButton={showCreateButton}
+          <img
+            className={styles.logo}
+            src={logoTUDresden}
+            alt={'logo'}
           />
-        </ContentWrapper>
+        </Menu.Item>
+        <Menu
+          className={styles.menu}
+          secondary={true}
+          position="right"
+        >
+          <Menu.Item
+            name="Contact"
+            as="a"
+            className={styles.item}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('/contact/');
+            }}
+          />
+          <Menu.Item
+            name="Legal Notice"
+            as="a"
+            className={styles.item}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('/imprint/');
+            }}
+          />
+          <Menu.Item
+            name="Accessibility"
+            as="a"
+            className={styles.item}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('/declaration-on-accessibility/');
+            }}
+          />
+
+          {showAvatar ?
+            <div className={styles.itemLogin}>
+              <AvatarButton
+                image={'https://www.gravatar.com/avatar/4d94d3e077d7b5f527ac629be4800130/?s=80'}
+              />
+            </div>
+            :
+            <div className={styles.itemLogin}>
+              <Menu.Item
+                name="Sign in!"
+                as="a"
+                className={styles.item}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateTo('/auth');
+                  toggleAvatar();
+                }}
+              />
+            </div>
+          }
+          {language && languageList && onChangeLanguage && (
+            <LanguageSelector
+              language={language}
+              languageList={languageList}
+              onChangeLanguage={onChangeLanguage}
+            />
+          )}
+        </Menu>
       </div>
-    </header>
+    </div>
   );
 };
 

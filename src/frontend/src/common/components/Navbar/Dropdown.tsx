@@ -1,7 +1,7 @@
-import {IMenuItem} from '../types/navbar.type';
+import {IMenuItem} from './types/navbar.type';
 import MenuItem from './MenuItem';
 import React from 'react';
-import styles from './NavBottom.module.less';
+import styles from './Navbar.module.less';
 
 interface ItemProps {
   submenus: IMenuItem[];

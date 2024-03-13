@@ -1,11 +1,12 @@
 import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from 'common/components/Models';
-import {ApplicationContentWrapper, Footer, Header, IPageWidth, Map} from 'common/components';
+import {ApplicationContentWrapper, Footer, Header, HeaderWrapper, IPageWidth, Map, Navbar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
 
 import type {FeatureCollection} from 'geojson';
 import menuItems from 'common/components/SidebarMenu/MenuItems';
+
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -86,34 +87,34 @@ const ProjectContainer = () => {
 
   const SidebarContent = () => {
     switch (currentContent) {
-    case 'Grid properties':
-      return <ModelGeometry/>;
-    case 'Stress periods':
-      return <ModelStressPeriods/>;
-    case 'Model layers':
-      return <ModelProperties/>;
-    case 'Boundary conditions':
-      return 'Boundary conditions';
-    case 'Head observations':
-      return 'Head observations';
-    case 'Solute transport':
-      return 'Solute transport';
-    case 'Variable density flow':
-      return 'Variable density flow';
-    case 'Meta Data':
-      return <ModelMetaData/>;
-    case 'Test':
-      return <ModelTest/>;
+      case 'Grid properties':
+        return <ModelGeometry/>;
+      case 'Stress periods':
+        return <ModelStressPeriods/>;
+      case 'Model layers':
+        return <ModelProperties/>;
+      case 'Boundary conditions':
+        return 'Boundary conditions';
+      case 'Head observations':
+        return 'Head observations';
+      case 'Solute transport':
+        return 'Solute transport';
+      case 'Variable density flow':
+        return 'Variable density flow';
+      case 'Meta Data':
+        return <ModelMetaData/>;
+      case 'Test':
+        return <ModelTest/>;
 
 
-    default:
-      return <pre style={{
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-      >
+      default:
+        return <pre style={{
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        >
         Coming soon
       </pre>;
     }
@@ -122,20 +123,38 @@ const ProjectContainer = () => {
 
   return (
     <>
-      <Header
+      {/*<Header*/}
+      {/*  maxWidth={pageSize}*/}
+      {/*  updateHeight={updateHeaderHeight}*/}
+      {/*  navbarItems={navbarItems}*/}
+      {/*  languageList={languageList}*/}
+      {/*  language={language}*/}
+      {/*  onChangeLanguage={setLanguage}*/}
+      {/*  navigateTo={navigateTo}*/}
+      {/*  pathname={location.pathname}*/}
+      {/*  showSearchWrapper={true}*/}
+      {/*  showCreateButton={true}*/}
+      {/*  showSidebarMenu={!!menuItems}*/}
+      {/*/>*/}
+      <HeaderWrapper
         maxWidth={pageSize}
         updateHeight={updateHeaderHeight}
-        navbarItems={navbarItems}
-        languageList={languageList}
-        language={language}
-        onChangeLanguage={setLanguage}
-        navigateTo={navigateTo}
-        pathname={location.pathname}
-        showSearchWrapper={true}
-        showCreateButton={true}
         showSidebarMenu={!!menuItems}
-
-      />
+      >
+        <Header
+          navigateTo={navigateTo}
+          language={language}
+          languageList={languageList}
+          onChangeLanguage={setLanguage}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={navigateTo}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
       <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={true}

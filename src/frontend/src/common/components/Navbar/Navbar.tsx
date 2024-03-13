@@ -2,11 +2,11 @@ import {Button, Modal, ModelsCreate} from 'common/components';
 import {Image, Input} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
-import {INavbarItem} from '../types/navbar.type';
+import {INavbarItem} from './types/navbar.type';
 import MenuItem from './MenuItem';
-import logoInowas from '../images/logo-inowas.png';
-import styles from './NavBottom.module.less';
-import useIsMobile from '../hooks/useIsMobile';
+import logoInowas from './images/logo-inowas.png';
+import styles from './Navbar.module.less';
+import useIsMobile from 'common/hooks/useIsMobile';
 
 interface IProps {
   navbarItems: INavbarItem[];
@@ -16,14 +16,14 @@ interface IProps {
   showCreateButton?: boolean;
 }
 
-const NavBottom: React.FC<IProps> = ({
+const Navbar: React.FC<IProps> = ({
   navbarItems,
   pathname,
   navigateTo,
   showSearchWrapper = false,
   showCreateButton = false,
 }) => {
-  const {isMobile} = useIsMobile(1199);
+  const {isMobile} = useIsMobile();
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   const handleCloseMobileMenu = () => {
@@ -31,12 +31,14 @@ const NavBottom: React.FC<IProps> = ({
   };
 
   const [openPopup, setOpenPopup] = useState(false);
+
   const onCreateButtonClick = () => {
     setOpenPopup(!openPopup);
   };
 
   return (
     <>
+      {/* Popup to create new model */}
       {showCreateButton && (
         <Modal.Modal
           onClose={() => setOpenPopup(false)}
@@ -47,7 +49,10 @@ const NavBottom: React.FC<IProps> = ({
           <ModelsCreate onClose={onCreateButtonClick}/>
         </Modal.Modal>
       )}
-      <div className={styles.navBottom}>
+      {/* End of popup to create new model */}
+
+      {/* Navbar */}
+      <div className={styles.navbar}>
         <div className={styles.inner}>
           <div className={styles.mainMenuLogo}>
             <Image
@@ -123,4 +128,4 @@ const NavBottom: React.FC<IProps> = ({
   );
 };
 
-export default NavBottom;
+export default Navbar;

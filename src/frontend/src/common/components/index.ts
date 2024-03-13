@@ -22,6 +22,7 @@ import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
 import Header from './Header';
+import HeaderWrapper from './HeaderWrapper';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
@@ -35,6 +36,7 @@ import Modal from './Modal/Modal';
 import ModelGrid from './ModelGrid';
 import ModelsCreate from './ModelsCreate';
 import MovableAccordionList from './MovableAccordionList';
+import Navbar from './Navbar';
 import NotFound from './NotFound';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -68,6 +70,7 @@ export {
   Form,
   Grid,
   Header,
+  HeaderWrapper,
   Footer,
   Icon,
   IconButton,
@@ -89,6 +92,7 @@ export {
   ModelCard,
   ModelsCreate,
   MovableAccordionList,
+  Navbar,
   NotFound,
   Notification,
   Notifications,

@@ -1,7 +1,8 @@
-import {ApplicationContentWrapper, Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Footer, Header, HeaderWrapper, IModelCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
+import menuItems from '../../../../common/components/SidebarMenu/MenuItems';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
@@ -299,19 +300,28 @@ const FilterProjects = () => {
 
   return (
     <>
-      <Header
+      <HeaderWrapper
         maxWidth={pageSize}
         updateHeight={updateHeaderHeight}
-        navbarItems={navbarItems}
-        languageList={languageList}
-        language={language}
-        onChangeLanguage={setLanguage}
-        navigateTo={navigateTo}
-        pathname={location.pathname}
-        showSearchWrapper={true}
-      />
+        showSidebarMenu={!!menuItems}
+      >
+        <Header
+          navigateTo={navigateTo}
+          language={language}
+          languageList={languageList}
+          onChangeLanguage={setLanguage}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={navigateTo}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
       <ApplicationContentWrapper
-        headerHeight={headerHeight} open={true}
+        headerHeight={headerHeight}
+        open={true}
         maxWidth={350}
       >
         <ProjectsFilter data={modelData} updateModelData={updateModelData}/>

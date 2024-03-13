@@ -1,4 +1,4 @@
-import {ApplicationContentWrapper, Header, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest} from 'common/components';
+import {ApplicationContentWrapper, Header, HeaderWrapper, IPageWidth, Map, ModelGeometry, ModelMetaData, ModelStressPeriods, ModelTest, Navbar} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
@@ -103,17 +103,25 @@ export const ModelsExample: StoryFn<typeof ProjectContainer> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Header
+      <HeaderWrapper
         maxWidth={pageSize}
-        navbarItems={navbarItems}
-        navigateTo={() => {
-        }}
-        pathname={'/'}
-        showSearchWrapper={true}
-        showSidebarMenu={true}
         updateHeight={(height: number) => {
         }}
-      />
+        showSidebarMenu={false}
+      >
+        <Header
+          navigateTo={() => {
+          }}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={() => {
+          }}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
       <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={false}
@@ -141,18 +149,25 @@ export const ModelsNoSidebarMenuExample: StoryFn<typeof ProjectContainer> = () =
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Header
+      <HeaderWrapper
         maxWidth={pageSize}
-        navbarItems={navbarItems}
-        navigateTo={() => {
-        }}
-        pathname={'/'}
-        showSearchWrapper={true}
-        showCreateButton={true}
-        showSidebarMenu={false}
         updateHeight={(height: number) => {
         }}
-      />
+        showSidebarMenu={false}
+      >
+        <Header
+          navigateTo={() => {
+          }}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={() => {
+          }}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
       <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={false}

@@ -1,10 +1,10 @@
-import {IDropdownItem, IMenuItem} from '../types/navbar.type';
+import {IDropdownItem, IMenuItem} from './types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import Dropdown from './Dropdown';
 import {Menu} from 'semantic-ui-react';
-import styles from './NavBottom.module.less';
-import useIsMobile from '../hooks/useIsMobile';
+import styles from './Navbar.module.less';
+import useIsMobile from 'common/hooks/useIsMobile';
 
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;
@@ -19,7 +19,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
 
   const [dropdown, setDropdown] = useState(false);
-  const {isMobile} = useIsMobile(1199);
+  const {isMobile} = useIsMobile();
   const ref = useRef<HTMLLIElement | null>(null);
 
   useEffect(() => {

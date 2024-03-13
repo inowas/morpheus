@@ -1,7 +1,8 @@
-import {ApplicationContentWrapper, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Header, HeaderWrapper, IModelCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
+import '../globals.less';
 
 const models: IModelCard[] = [
   {
@@ -306,17 +307,25 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <Header
+      <HeaderWrapper
         maxWidth={pageSize}
-        navbarItems={navbarItems2}
-        navigateTo={() => {
-        }}
-        pathname={'/'}
-        showSearchWrapper={true}
-        showSidebarMenu={false}
         updateHeight={(height: number) => {
         }}
-      />
+        showSidebarMenu={false}
+      >
+        <Header
+          navigateTo={() => {
+          }}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems2}
+          navigateTo={() => {
+          }}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
       <ApplicationContentWrapper
         headerHeight={headerHeight} open={true}
         maxWidth={350}
