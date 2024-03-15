@@ -2,14 +2,13 @@ import * as Papa from 'papaparse';
 
 import {Button, Modal} from 'common/components';
 import {Checkbox, Dimmer, DropdownProps, Form, Icon, List, Loader, Pagination, PaginationProps, Table} from 'semantic-ui-react';
-import {DataGrid, DataRow} from 'common/components/Models';
+import {DataGrid, DataRow} from 'common/components/DataGrid';
 import {ECsvColumnType, IProps, TColumns} from './types/UploadCSVFile.type';
 import React, {ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState} from 'react';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {ParseResult} from 'papaparse';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import moment from 'moment';
 import styles from './UploadCSVFile.module.less';
 import {v4 as uuidv4} from 'uuid';
@@ -299,7 +298,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
           {metadata && 0 === metadata.errors.length &&
             <>
               <DataRow>
-                <DataGrid multiColumns={2}>
+                <DataGrid columns={2}>
                   <Form.Field className={styles.dateFormat}>
                     <label className={`${styles.dateFormatLabel} labelSmall`} style={{textAlign: 'left', fontWeight: 600}}>
                       <Icon className={'dateIcon'} name="info circle"/>
@@ -324,7 +323,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
                   </Form.Field>
                 </DataGrid>
               </DataRow>
-              <DataGrid multiColumns={4}>
+              <DataGrid columns={4}>
                 {columns.map((c, key) => (
                   <Form.Field key={key}>
                     <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>

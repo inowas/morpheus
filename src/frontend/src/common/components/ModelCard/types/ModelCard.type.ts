@@ -1,4 +1,4 @@
-export interface IModelCard {
+export interface IProjectCard {
   id: number;
   model_description: string;
   model_image: string;
@@ -10,5 +10,6 @@ export interface IModelCard {
   meta_link: string;
   meta_text: string;
   meta_status: boolean;
+  onClick?: () => void;
 }
 

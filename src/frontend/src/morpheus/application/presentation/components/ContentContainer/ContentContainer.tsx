@@ -6,7 +6,6 @@ interface IProps {
   children: ReactNode;
 }
 
-
 const ContentContainer = ({children}: IProps) => (
   <div className={`${styles.contentContainer}`}>
     {children}

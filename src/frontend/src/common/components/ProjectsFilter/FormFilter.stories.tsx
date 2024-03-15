@@ -1,10 +1,10 @@
-import {ApplicationContentWrapper, Header, HeaderWrapper, IModelCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Header, HeaderWrapper, IProjectCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import '../globals.less';
 
-const models: IModelCard[] = [
+const models: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -272,7 +272,7 @@ export default {
 export const FormFilterExample: StoryFn<typeof ProjectsFilter> = () => {
   const [modelData, setModelData] = useState(models);
 
-  const updateModelData = (newData: IModelCard[]) => {
+  const updateModelData = (newData: IProjectCard[]) => {
     setModelData(newData);
   };
 
@@ -287,7 +287,7 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
   const [modelData, setModelData] = useState(models);
   const [headerHeight, setHeaderHeight] = useState(0);
 
-  const updateModelData = (newData: IModelCard[]) => {
+  const updateModelData = (newData: IProjectCard[]) => {
     setModelData(newData);
   };
 
@@ -307,12 +307,7 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={(height: number) => {
-        }}
-        showSidebarMenu={false}
-      >
+      <HeaderWrapper updateHeight={() => ({})}>
         <Header
           navigateTo={() => {
           }}
@@ -329,6 +324,8 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
       <ApplicationContentWrapper
         headerHeight={headerHeight} open={true}
         maxWidth={350}
+        contentFullWidth={false}
+        menuItems={[]}
       >
         <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown
@@ -340,9 +337,6 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
           <ModelGrid
             sectionTitle={sectionTitle()}
             data={modelData}
-            navigateTo={() => {
-              console.log('Click on navigate');
-            }}
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>

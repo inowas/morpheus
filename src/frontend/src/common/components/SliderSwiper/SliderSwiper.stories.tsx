@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 
-import {IModelCard} from '../ModelCard';
+import {IProjectCard} from '../ModelCard';
 import {ModelCard} from '../index';
 import React from 'react';
 import SliderSwiper from 'common/components/SliderSwiper';
 
-const models: IModelCard[] = [
+const models: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -308,8 +308,6 @@ export const SliderSwiperExample: StoryFn<typeof SliderSwiper> = () => {
         {models.map((item) => (
           <ModelCard
             key={item.id} data={item}
-            navigateTo={() => {
-            }}
             onDeleteButtonClick={() => console.log('Delete button clicked')}
             onCopyButtonClick={() => console.log('Copy button clicked')}
           />

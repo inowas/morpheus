@@ -1,12 +1,11 @@
-import {ApplicationContentWrapper, Footer, Header, HeaderWrapper, IModelCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Footer, Header, HeaderWrapper, IProjectCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
-import menuItems from '../../../../common/components/SidebarMenu/MenuItems';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
-const models: IModelCard[] = [
+const models: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -281,7 +280,7 @@ const FilterProjects = () => {
     },
   ];
 
-  const updateModelData = (newData: IModelCard[]) => {
+  const updateModelData = (newData: IProjectCard[]) => {
     setModelData(newData);
   };
 
@@ -300,11 +299,7 @@ const FilterProjects = () => {
 
   return (
     <>
-      <HeaderWrapper
-        maxWidth={pageSize}
-        updateHeight={updateHeaderHeight}
-        showSidebarMenu={!!menuItems}
-      >
+      <HeaderWrapper updateHeight={updateHeaderHeight}>
         <Header
           navigateTo={navigateTo}
           language={language}
@@ -319,10 +314,12 @@ const FilterProjects = () => {
           showCreateButton={true}
         />
       </HeaderWrapper>
+
       <ApplicationContentWrapper
         headerHeight={headerHeight}
         open={true}
         maxWidth={350}
+        menuItems={[]}
       >
         <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown
@@ -334,7 +331,6 @@ const FilterProjects = () => {
           <ModelGrid
             sectionTitle={sectionTitle()}
             data={modelData}
-            navigateTo={navigateTo}
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>

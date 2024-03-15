@@ -1,4 +1,4 @@
-import {IMenuItem, SidebarMenu} from 'common/components/SidebarMenu';
+import {ISidebarMenuItem, SidebarMenu} from 'common/components/SidebarMenu';
 import React, {ReactNode, useState} from 'react';
 
 import {Icon} from 'semantic-ui-react';
@@ -10,30 +10,23 @@ interface IProps {
   open?: boolean;
   maxWidth?: number;
   contentFullWidth?: boolean;
-  menuItems?: IMenuItem[];
-  handleItemClick?: (index: number) => void;
+  menuItems: ISidebarMenuItem[];
 }
 
-const ApplicationContentWrapper = ({children, headerHeight, open = false, maxWidth = 700, contentFullWidth = false, menuItems, handleItemClick}: IProps) => {
-  const sidebarChildren = React.Children.toArray(children);
-  const [isOpen, setIsOpen] = useState(open);
-  const handleSidebarToggle = () => {
-    setIsOpen(!isOpen);
-  };
+const ApplicationContentWrapper = ({children, headerHeight, open = false, maxWidth = 700, contentFullWidth = false, menuItems}: IProps) => {
 
-  const handleSidebarOpen = () => {
-    if (!isOpen) setIsOpen(true);
-  };
+  const sidebarChildren = React.Children.toArray(children);
+
+  const [isOpen, setIsOpen] = useState<boolean>(open);
+  const handleSidebarToggleClick = () => setIsOpen(!isOpen);
 
   return (
     <div
       style={{height: `calc(100vh - ${headerHeight}px)`}}
       className={styles.wrapper}
     >
-      {(menuItems && handleItemClick) && <SidebarMenu
-        menuItems={menuItems} handleItemClick={handleItemClick}
-        openDataSidebar={handleSidebarOpen}
-      />}
+      <SidebarMenu menuItems={menuItems} onClickCallback={() => setIsOpen(true)}/>
+
       <div className={styles.mainContentWrapper}>
         {sidebarChildren.map((component, index) => {
           if (0 === index && React.isValidElement(component)) {
@@ -45,7 +38,7 @@ const ApplicationContentWrapper = ({children, headerHeight, open = false, maxWid
               >
                 <button
                   className={styles.sidebarAsideButton}
-                  onClick={handleSidebarToggle}
+                  onClick={handleSidebarToggleClick}
                 >
                   <Icon name={`${isOpen ? 'angle double left' : 'angle double right'}`}/>
                 </button>
