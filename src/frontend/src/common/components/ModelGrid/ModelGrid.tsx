@@ -1,4 +1,4 @@
-import ModelCard, {IModelCard} from 'common/components/ModelCard';
+import ModelCard, {IProjectCard} from 'common/components/ModelCard';
 
 import React from 'react';
 import SectionTitle from '../SectionTitle';
@@ -6,13 +6,12 @@ import styles from './ModelGrid.module.less';
 
 interface ModelGridProps {
   sectionTitle?: string | React.ReactNode;
-  data: IModelCard[];
-  navigateTo: (path: string) => void;
+  data: IProjectCard[];
   handleDeleteButtonClick?: ((id: number) => void) | undefined;
   handleCopyButtonClick?: ((id: number) => void) | undefined;
 }
 
-const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, handleDeleteButtonClick, handleCopyButtonClick}) => {
+const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, handleDeleteButtonClick, handleCopyButtonClick}) => {
 
   return (
     <div
@@ -25,7 +24,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, navigateTo, ha
           <ModelCard
             className={styles.modelGridItem}
             key={item.id} data={item}
-            navigateTo={navigateTo}
+            onClick={item.onClick}
             onDeleteButtonClick={handleDeleteButtonClick && (() => handleDeleteButtonClick(item.id))}
             onCopyButtonClick={handleCopyButtonClick && (() => handleCopyButtonClick(item.id))}
           />

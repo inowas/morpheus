@@ -1,4 +1,4 @@
-import {Button, Modal, ModelsCreate} from 'common/components';
+import {Button, Modal} from 'common/components';
 import {Image, Input} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
@@ -7,6 +7,7 @@ import MenuItem from './MenuItem';
 import logoInowas from './images/logo-inowas.png';
 import styles from './Navbar.module.less';
 import useIsMobile from 'common/hooks/useIsMobile';
+import CreateProjectContainer from '../../../morpheus/modflow/presentation/containers/CreateProjectContainer';
 
 interface IProps {
   navbarItems: INavbarItem[];
@@ -46,7 +47,7 @@ const Navbar: React.FC<IProps> = ({
           open={openPopup}
           dimmer={'inverted'}
         >
-          <ModelsCreate onClose={onCreateButtonClick}/>
+          <Button/>
         </Modal.Modal>
       )}
       {/* End of popup to create new model */}

@@ -1,10 +1,10 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 
-import {IModelCard} from './types/ModelCard.type';
+import {IProjectCard} from './types/ModelCard.type';
 import ModelCard from './ModelCard';
 import React from 'react';
 
-const model: IModelCard = {
+const model: IProjectCard = {
   id: 3,
   model_description: 'Small model at NU campus',
   model_image: 'https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg',
@@ -23,7 +23,6 @@ describe('ModelCard Component', () => {
     render(
       <ModelCard
         data={model}
-        navigateTo={jest.fn()}
         onDeleteButtonClick={jest.fn()}
         onCopyButtonClick={jest.fn()}
       />,
@@ -39,14 +38,12 @@ describe('ModelCard Component', () => {
   });
 
   test('invokes functions correctly on button clicks', () => {
-    const mockNavigateTo = jest.fn();
     const mockDeleteButtonClick = jest.fn();
     const mockCopyButtonClick = jest.fn();
 
     render(
       <ModelCard
         data={model}
-        navigateTo={mockNavigateTo}
         onDeleteButtonClick={mockDeleteButtonClick}
         onCopyButtonClick={mockCopyButtonClick}
       />,

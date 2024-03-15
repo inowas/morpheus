@@ -90,7 +90,7 @@ const UploadFile = ({onClose}: IUploadCSVFile) => {
         <Button
           size={'small'}
           onClick={handleCancel}
-        >Cancle</Button>
+        >Cancel</Button>
         <Button
           size={'small'}
           primary={true}

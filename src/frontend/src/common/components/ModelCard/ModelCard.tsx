@@ -1,14 +1,14 @@
 import {Icon, Image, Button as SemanticButton} from 'semantic-ui-react';
 
 import Button from '../Button/Button';
-import {IModelCard} from './types/ModelCard.type';
+import {IProjectCard} from './types/ModelCard.type';
 import React from 'react';
 import styles from './ModelCard.module.less';
 
 interface ModelGridItemProps {
   className?: string;
-  data: IModelCard;
-  navigateTo: (path: string) => void;
+  data: IProjectCard;
+  onClick?: () => void;
   onDeleteButtonClick?: (() => void) | undefined;
   onCopyButtonClick?: (() => void) | undefined;
 }
@@ -16,7 +16,7 @@ interface ModelGridItemProps {
 const ModelCard: React.FC<ModelGridItemProps> = ({
   className,
   data,
-  navigateTo,
+  onClick,
   onDeleteButtonClick,
   onCopyButtonClick,
 }) => {
@@ -61,7 +61,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
               as="a"
               onClick={(e) => {
                 e.stopPropagation();
-                navigateTo(data.meta_link);
+                if (onClick) onClick();
               }}
             >
               <Image
@@ -113,7 +113,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
               onClick={(e) => {
                 e.stopPropagation();
                 // navigateTo(data.model_map);
-                console.log(window.location.href);
+                if (onClick) onClick();
               }}
               aria-label="Open Tool"
             >View</Button>

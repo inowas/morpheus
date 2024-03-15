@@ -1,5 +1,5 @@
-import ProjectDashboardContainer from './ProjectDashboardContainer';
+import ModflowBaseModelPage from './ModflowBaseModelPage';
 
 export {
-  ProjectDashboardContainer,
+  ModflowBaseModelPage,
 };
