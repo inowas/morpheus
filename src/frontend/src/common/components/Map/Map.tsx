@@ -9,7 +9,7 @@ import {MapContainer, Polygon, TileLayer} from 'react-leaflet';
 
 import type {FeatureCollection} from 'geojson';
 import Geoman from './Geoman';
-import React from 'react';
+import React, {useRef} from 'react';
 
 interface IProps {
   editable: boolean;
@@ -47,6 +47,9 @@ const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
 
+  const mapRef = useRef(null);
+
+
   // const geoOptions = {
   //   position: 'topleft',
   //   drawText: false,
@@ -62,6 +65,7 @@ const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
 
   return (
     <MapContainer
+      ref={mapRef}
       center={coords}
       zoom={13}
       style={{height: '100vh', width: '100%'}}
@@ -69,7 +73,6 @@ const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
       wheelDebounceTime={100}
     >
       <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
-
       {editable ? <Geoman geojson={geojson} onChangeGeojson={onChangeGeojson}/> : (
         polygonCoordinates.map((coordinates, index) => (
           <Polygon

@@ -5,6 +5,7 @@ import config from '../src/config';
 import {generateRandomUsers, IUser} from './data/users';
 import {generateRandomProjects} from './data/projects';
 import {IProjectSummary} from 'morpheus/modflow/types/Project.type';
+import {getProjectMetadata} from './data/projectMetadata';
 
 export function makeServer({environment = 'test'} = {}) {
   return createServer({
@@ -28,6 +29,12 @@ export function makeServer({environment = 'test'} = {}) {
           });
 
         return new Response(200, {}, projectSummaries);
+      });
+
+      this.get('projects/:id/metadata', (schema, request) => {
+        const id = request.params.id;
+        const metadata = getProjectMetadata(id);
+        return new Response(200, {}, metadata);
       });
 
       this.get('users', (schema) => {

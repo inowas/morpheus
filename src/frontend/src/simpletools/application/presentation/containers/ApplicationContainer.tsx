@@ -50,15 +50,10 @@ const ApplicationContainer = ({children}: IProps) => {
     <>
       {showHeader &&
         <Header
-          maxWidth={pageSize}
-          navbarItems={navbarItems}
           languageList={languageList}
           language={language}
           onChangeLanguage={setLanguage}
           navigateTo={navigateTo}
-          pathname={location.pathname}
-          showSearchWrapper={true}
-
         />
       }
       <ContentWrapper minHeight={'auto'} maxWidth={pageSize}>

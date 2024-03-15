@@ -3,13 +3,13 @@ import './SortDropdown.less';
 import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import React, {ReactNode, SyntheticEvent} from 'react';
 
-import {IModelCard} from 'common/components/ModelCard';
+import {IProjectCard} from 'common/components/ModelCard';
 import {ISortOption} from 'common/components/SortDropdown';
 
 interface IProps {
-  data: IModelCard[];
+  data: IProjectCard[];
   sortOptions: ISortOption[];
-  setModelData: (data: IModelCard[]) => void;
+  setModelData: (data: IProjectCard[]) => void;
   placeholder: string
   children: ReactNode;
 }

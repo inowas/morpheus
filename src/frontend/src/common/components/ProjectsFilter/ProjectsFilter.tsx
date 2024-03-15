@@ -1,4 +1,4 @@
-import {Button, IModelCard} from 'common/components';
+import {Button, IProjectCard} from 'common/components';
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import {MapContainer, TileLayer} from 'react-leaflet';
 import React, {useState} from 'react';
@@ -11,8 +11,8 @@ import styles from './ProjectsFilter.module.less';
 import useFilterOptions from './hooks/useFilter';
 
 interface IProps {
-  data: IModelCard[];
-  updateModelData: (data: IModelCard[]) => void;
+  data: IProjectCard[];
+  updateModelData: (data: IProjectCard[]) => void;
 }
 
 const defaultFilterOptions: IFilterOptions = {
@@ -62,7 +62,7 @@ const options = [
 const ProjectsFilter = ({data, updateModelData}: IProps) => {
   const [modelData, setModelData] = useState(data);
   const ownerOptions = createOwnerOptions(modelData);
-  const countValue = (key: keyof IModelCard, value: string) => {
+  const countValue = (key: keyof IProjectCard, value: string) => {
     let count = 0;
     modelData.forEach((model) => {
       if (model[key] === value) {
