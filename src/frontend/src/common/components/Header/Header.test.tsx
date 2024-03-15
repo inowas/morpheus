@@ -1,44 +1,61 @@
 import {render, screen} from '@testing-library/react';
-
+import {ILanguage} from './LanguageSelector/types/languageSelector.type';
 import Header from './Header';
 import React from 'react';
+import userEvent from '@testing-library/user-event';
+
+const languageList: ILanguage[] = [
+  {code: 'en-GB', label: 'English'},
+];
+
+const mockOnChangeLanguage = jest.fn();
+const mockNavigateTo = jest.fn();
+
+const language = 'en-GB';
 
 describe('Header Tests', () => {
-  test('It renders a Header with default props', async () => {
-    render(<Header
-      navbarItems={[]} navigateTo={() => {
-      }}
-      pathname="/"
-    />);
-    const headerElement = screen.getByTestId('header');
-    expect(headerElement).toBeInTheDocument();
-  });
-
-  const navbarItems = [
-    {
-      name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
-        {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
-        {name: 'T04', label: 'T04: Database for GIS-based Suitability Mapping', admin: false, to: '/tools/T04'}],
-    },
-    {name: 'tools', label: 'Tools', admin: false, to: '/tools'},
-    {name: 'modflow', label: 'Modflow', admin: false, to: '/modflow'},
-    {name: 'support', label: 'Support', admin: false, to: '/support'},
-    {name: 'news', label: 'News', admin: false, to: '/news'},
-  ];
-
-  test('It renders a Header with specified props', async () => {
-    const mockNavigateTo = jest.fn();
+  test('It renders the Header component', () => {
     render(
       <Header
-        navbarItems={navbarItems}
+        language={language}
+        languageList={languageList}
+        onChangeLanguage={mockOnChangeLanguage}
         navigateTo={mockNavigateTo}
-        pathname="/"
-        language="en-GB"
-        showSearchWrapper={true}
       />,
     );
 
-    const headerElement = screen.getByTestId('header');
-    expect(headerElement).toBeInTheDocument();
+    expect(screen.getByTestId('test-header')).toBeInTheDocument();
+    expect(screen.getByTestId('test-logo')).toBeInTheDocument();
+  });
+
+  test('It calls navigateTo when logo is clicked', async () => {
+    render(
+      <Header
+        language={language}
+        languageList={languageList}
+        onChangeLanguage={mockOnChangeLanguage}
+        navigateTo={mockNavigateTo}
+      />,
+    );
+
+    const logo = screen.getByTestId('test-logo');
+    await userEvent.click(logo);
+
+    expect(mockNavigateTo).toHaveBeenCalledWith('/');
+  });
+
+  test('It calls navigateTo with the correct path on menu item click', async () => {
+    render(
+      <Header
+        language={language}
+        languageList={languageList}
+        onChangeLanguage={mockOnChangeLanguage}
+        navigateTo={mockNavigateTo}
+      />,
+    );
+    const contactItem = screen.getByText('Contact');
+    await userEvent.click(contactItem);
+
+    expect(mockNavigateTo).toHaveBeenCalledWith('/contact/');
   });
 });

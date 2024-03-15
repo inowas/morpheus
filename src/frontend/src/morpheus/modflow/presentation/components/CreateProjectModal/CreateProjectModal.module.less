@@ -1,0 +1,93 @@
+@import 'common/components/site.variables.less';
+
+.container {
+  display: flex;
+  justify-content: flex-end;
+
+  & > div {
+    height: auto;
+    width: 100%;
+
+    @media (min-width: @breakpoint-tablet) {
+      width: 50%;
+    }
+
+  }
+}
+
+.form {
+  background: @ref-color-lightGrey;
+  padding: 66px 20px 20px;
+  position: relative;
+
+  @media (min-width: @breakpoint-tablet) {
+    padding: 66px 40px 20px;
+  }
+
+  @media (min-width: @breakpoint-tablet-horizontal) {
+    padding: 66px 72px 20px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: 0;
+    left: 30px;
+    height: 7%;
+    width: 100%;
+    transform: skewX(300deg);
+    background: #D8D8D8;
+  }
+}
+
+.image {
+  display: none;
+
+  @media (min-width: @breakpoint-tablet) {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+}
+
+.title {
+  border-bottom: 1px solid @ref-color-borderGrey;
+  padding-bottom: 6px;
+  margin-bottom: 18px;
+}
+
+.form .field label.label {
+  font-size: 16px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0;
+  text-align: left;
+  line-height: 21px;
+}
+
+.form .field textarea {
+  resize: none;
+  height: 76px;
+}
+
+
+.mandatory {
+  border-bottom: 1px solid @ref-color-borderGrey;
+  padding-bottom: 6px;
+  margin-top: 40px;
+  margin-bottom: 22px;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+
+  button {
+    min-width: 94px;
+  }
+
+  button:nth-child(2) {
+    flex: 1;
+  }
+}

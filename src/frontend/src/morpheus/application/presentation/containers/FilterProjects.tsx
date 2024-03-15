@@ -1,11 +1,11 @@
-import {ApplicationContentWrapper, Footer, Header, IModelCard, IPageWidth, ISortOption, ModelGrid, ProjectsFilter, SortDropdown} from 'common/components';
+import {ApplicationContentWrapper, Footer, Header, HeaderWrapper, IProjectCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
 
 type ILanguageCode = 'de-DE' | 'en-GB';
 
-const models: IModelCard[] = [
+const models: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -280,7 +280,7 @@ const FilterProjects = () => {
     },
   ];
 
-  const updateModelData = (newData: IModelCard[]) => {
+  const updateModelData = (newData: IProjectCard[]) => {
     setModelData(newData);
   };
 
@@ -299,20 +299,27 @@ const FilterProjects = () => {
 
   return (
     <>
-      <Header
-        maxWidth={pageSize}
-        updateHeight={updateHeaderHeight}
-        navbarItems={navbarItems}
-        languageList={languageList}
-        language={language}
-        onChangeLanguage={setLanguage}
-        navigateTo={navigateTo}
-        pathname={location.pathname}
-        showSearchWrapper={true}
-      />
+      <HeaderWrapper updateHeight={updateHeaderHeight}>
+        <Header
+          navigateTo={navigateTo}
+          language={language}
+          languageList={languageList}
+          onChangeLanguage={setLanguage}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={navigateTo}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
+
       <ApplicationContentWrapper
-        headerHeight={headerHeight} open={true}
+        headerHeight={headerHeight}
+        open={true}
         maxWidth={350}
+        menuItems={[]}
       >
         <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         <SortDropdown
@@ -324,7 +331,6 @@ const FilterProjects = () => {
           <ModelGrid
             sectionTitle={sectionTitle()}
             data={modelData}
-            navigateTo={navigateTo}
             handleCopyButtonClick={handleCopyButtonClick}
           />
         </SortDropdown>

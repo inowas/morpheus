@@ -1,11 +1,11 @@
 import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
+import {DataGrid, DataRow} from './DataGrid';
 import DotsMenu, {IAction} from './DotsMenu';
 import Icon, {IIconProps} from './Icon/Icon';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
-import ModelCard, {IModelCard} from './ModelCard';
-import {ModelGeometry, ModelMetaData, ModelProperties, ModelStressPeriods, ModelTest} from './Models';
+import ModelCard, {IProjectCard} from './ModelCard';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Select, {DropdownProps} from './Select/Select';
 import SortDropdown, {ISortOption} from 'common/components/SortDropdown';
@@ -22,6 +22,7 @@ import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
 import Header from './Header';
+import HeaderWrapper from './HeaderWrapper';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
@@ -33,8 +34,8 @@ import Map from './Map/Map';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import ModelGrid from './ModelGrid';
-import ModelsCreate from './ModelsCreate';
 import MovableAccordionList from './MovableAccordionList';
+import Navbar from './Navbar';
 import NotFound from './NotFound';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -45,7 +46,6 @@ import ProjectsFilter from './ProjectsFilter';
 import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
-import SidebarMenu from './SidebarMenu/SidebarMenu';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Tab from 'common/components/Tabs';
 import Toggle from './Toggle/Toggle';
@@ -62,12 +62,15 @@ export {
   Confirm,
   Container,
   ContentWrapper,
+  DataGrid,
+  DataRow,
   Divider,
   DotsMenu,
   Dropdown,
   Form,
   Grid,
   Header,
+  HeaderWrapper,
   Footer,
   Icon,
   IconButton,
@@ -81,14 +84,9 @@ export {
   Message,
   Modal,
   ModelGrid,
-  ModelGeometry,
-  ModelMetaData,
-  ModelStressPeriods,
-  ModelTest,
-  ModelProperties,
   ModelCard,
-  ModelsCreate,
   MovableAccordionList,
+  Navbar,
   NotFound,
   Notification,
   Notifications,
@@ -101,7 +99,6 @@ export {
   SectionTitle,
   Segment,
   Select,
-  SidebarMenu,
   SliderSwiper,
   SortDropdown,
   Tab,
@@ -121,7 +118,7 @@ export type {
   DropdownProps,
   IInputProps,
   IInputOnChangeData,
-  IModelCard,
+  IProjectCard,
   ISortOption,
   IPageWidth,
   IPageHeight,

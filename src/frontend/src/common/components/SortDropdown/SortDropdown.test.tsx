@@ -1,7 +1,7 @@
 import SortDropdown, {ISortOption} from 'common/components/SortDropdown';
 import {render, screen} from '@testing-library/react';
 
-import {IModelCard} from 'common/components/ModelCard';
+import {IProjectCard} from 'common/components/ModelCard';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -14,7 +14,7 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
-const modelData: IModelCard[] = [
+const modelData: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',

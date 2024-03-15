@@ -2,7 +2,7 @@
 import {Meta, StoryFn} from '@storybook/react';
 import SortDropdown, {ISortOption} from './index';
 
-import {IModelCard} from '../ModelCard';
+import {IProjectCard} from '../ModelCard';
 import React from 'react';
 
 const sortOptions: ISortOption[] = [
@@ -14,7 +14,7 @@ const sortOptions: ISortOption[] = [
   {text: 'Most Popular', value: 'mostPopular'},
 ];
 
-const modelData: IModelCard[] = [
+const modelData: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',

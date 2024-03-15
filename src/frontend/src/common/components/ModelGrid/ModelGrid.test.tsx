@@ -1,11 +1,11 @@
 import {render, screen} from '@testing-library/react';
 
-import {IModelCard} from '../ModelCard';
+import {IProjectCard} from '../ModelCard';
 import ModelGrid from '../ModelGrid';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-const models: IModelCard[] = [
+const models: IProjectCard[] = [
   {
     id: 0,
     model_description: 'A comprehensive guide to React development',
@@ -247,7 +247,6 @@ describe('ModelGrid Tests', () => {
     render(
       <ModelGrid
         data={models}
-        navigateTo={jest.fn()}
         handleDeleteButtonClick={jest.fn()}
         handleCopyButtonClick={jest.fn()}
       />,
@@ -271,7 +270,6 @@ describe('ModelGrid Tests', () => {
     render(
       <ModelGrid
         data={models}
-        navigateTo={mockNavigateTo}
         handleDeleteButtonClick={mockDeleteButtonClick}
         handleCopyButtonClick={mockCopyButtonClick}
       />,

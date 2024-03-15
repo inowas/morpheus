@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 
 import {IFilterOptions} from '../types/ProjectsFilter.type';
-import {IModelCard} from '../../ModelCard';
+import {IProjectCard} from '../../ModelCard';
 
 const formatDate = (date: Date): string => {
   const day = date.getDate().toString().padStart(2, '0');
@@ -10,8 +10,8 @@ const formatDate = (date: Date): string => {
   return `${month}.${day}.${year}`;
 };
 
-const useFilterOptions = (data: IModelCard[], updateModelData: (data: IModelCard[]) => void, userName: string, defaultFilterOptions: IFilterOptions) => {
-  const [modelData, setModelData] = useState<IModelCard[]>(data);
+const useFilterOptions = (data: IProjectCard[], updateModelData: (data: IProjectCard[]) => void, userName: string, defaultFilterOptions: IFilterOptions) => {
+  const [modelData, setModelData] = useState<IProjectCard[]>(data);
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>(defaultFilterOptions);
 
   const applyFilters = () => {
