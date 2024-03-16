@@ -4,7 +4,7 @@ import {NotFound} from 'common/components';
 
 import AboutUsPage from './application/presentation/containers/AboutUsContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
-import {ProjectAssetsPage, ProjectBaseModelPage, ProjectPage, ProjectScenariosPage} from './modflow/presentation/containers';
+import {ProjectAssetsPage, ProjectBaseModelPage, ProjectPage, ProjectScenariosPage, ProjectsSettingsPage} from './modflow/presentation/containers';
 import SignInPage from './authentication/presentation/containers/AuthContainer';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 import ProjectsPage from './modflow/presentation/containers/ProjectListPage';
@@ -44,6 +44,7 @@ const Router = () => {
         element={wrapPublicComponent(<ProjectScenariosPage basePath={'/projects'} section={'scenarios'}/>, true)}
       />
       <Route path="/projects/:projectId/assets" element={wrapPublicComponent(<ProjectAssetsPage basePath={'/projects'}/>, true)}/>
+      <Route path="/projects/:projectId/settings/:property?" element={wrapPublicComponent(<ProjectsSettingsPage basePath={'/projects'}/>, true)}/>
 
       <Route path="/private" element={wrapPrivateComponent(<div>Private</div>)}/>
       <Route path="/about-us" element={wrapPublicComponent(<AboutUsPage/>)}/>

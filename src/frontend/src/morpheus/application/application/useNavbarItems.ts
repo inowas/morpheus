@@ -48,6 +48,26 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: an
     admin: false,
     to: '/projects/' + projectId + '/assets',
   },
+  {
+    name: 'settings',
+    label: translate('Settings'),
+    admin: false,
+    basepath: '/projects/' + projectId + '/settings',
+    subMenu: [
+      {
+        name: 'general',
+        label: translate('General'),
+        admin: false,
+        to: '/projects/' + projectId + '/settings/general',
+      },
+      {
+        name: 'permissions',
+        label: translate('Permissions'),
+        admin: false,
+        to: '/projects/' + projectId + '/settings/permissions',
+      },
+    ],
+  },
 ]);
 
 interface IUseNavbarItems {
