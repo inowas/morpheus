@@ -14,7 +14,7 @@ export default {
 } as Meta<typeof Error>;
 
 
-export const LoadingExample: StoryFn<typeof Error> = () => (
+export const ErrorExample: StoryFn<typeof Error> = () => (
   <Error/>
 );
 
