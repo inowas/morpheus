@@ -8,12 +8,13 @@ import {ModflowContainer} from '../components';
 
 interface IProps {
   basePath: string;
+  section: 'basemodel';
 }
 
-const ModflowBaseModelPage = ({basePath}: IProps) => {
+const ModflowBaseModelPage = ({basePath, section}: IProps) => {
 
-  const {id, property = 'spatial-discretization'} = useParams<{
-    id: string;
+  const {projectId, property = 'spatial-discretization'} = useParams<{
+    projectId?: string;
     property?: string;
     propertyId?: string;
   }>();
@@ -29,12 +30,12 @@ const ModflowBaseModelPage = ({basePath}: IProps) => {
         isDisabled: item.disabled,
         isTitle: !!item.title,
         slug: item.slug,
-        onClick: () => navigate(`${basePath}/${id}/${item.slug}`),
+        onClick: () => navigate(`${basePath}/${projectId}/${section}/${item.slug}`),
         component: item.component,
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sidebarItems, id, property, basePath]);
+  }, [sidebarItems, projectId, property]);
 
   const renderContent = (slug: string) => {
     const component = sidebarMenuItems.find((item) => item.slug === slug)?.component;

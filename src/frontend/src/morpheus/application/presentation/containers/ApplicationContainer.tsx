@@ -14,7 +14,8 @@ type ILanguageCode = 'de-DE' | 'en-GB';
 const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
 
   const {i18n} = useTranslate();
-  const {navbarItems} = useNavbarItems();
+
+  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
   const location = useLocation();
@@ -42,8 +43,8 @@ const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
           pathname={location.pathname}
           navbarItems={navbarItems}
           navigateTo={navigateTo}
-          showSearchWrapper={true}
-          showCreateButton={false}
+          showSearchWrapper={showSearchBar}
+          showCreateButton={showButton}
         />
       </HeaderWrapper>
 

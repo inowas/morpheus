@@ -7,7 +7,6 @@ import MenuItem from './MenuItem';
 import logoInowas from './images/logo-inowas.png';
 import styles from './Navbar.module.less';
 import useIsMobile from 'common/hooks/useIsMobile';
-import CreateProjectContainer from '../../../morpheus/modflow/presentation/containers/CreateProjectContainer';
 
 interface IProps {
   navbarItems: INavbarItem[];

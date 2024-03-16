@@ -1,5 +1,11 @@
-import ModflowBaseModelPage from './ModflowBaseModelPage';
+import ProjectAssetsPage from './AssetsPage';
+import ProjectBaseModelPage from './ModflowBaseModelPage';
+import ProjectPage from './ProjectPage';
+import ProjectScenariosPage from './ScenariosPage';
 
 export {
-  ModflowBaseModelPage,
+  ProjectAssetsPage,
+  ProjectBaseModelPage,
+  ProjectPage,
+  ProjectScenariosPage,
 };
