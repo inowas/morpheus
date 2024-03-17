@@ -126,7 +126,7 @@ const SpatialDiscretizationContainer = () => {
   const defaultActiveIndex = Array.from({length: panels.length}, (_, index) => index);
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700}>
         <DataGrid>
           <DataRow title={'Model Geometry'}/>
           <Accordion
