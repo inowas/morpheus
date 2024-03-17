@@ -1,79 +1,131 @@
 import {INavbarItem} from 'common/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
+import {useParams, useLocation} from 'react-router-dom';
 
-const getNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
+const getProjectDashboardNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
   {
     name: 'home',
     label: translate('home'),
     admin: false,
-    basepath: '/',
+    to: '/',
+  },
+  {
+    name: 'filter',
+    label: translate('filter'),
+    admin: false,
+    to: '#filter',
+  },
+  {
+    name: 'documentation',
+    label: translate('documentation'),
+    admin: false,
+    to: '/documentation',
+  },
+]);
+
+const getProjectNavbarItems = (translate: (key: string) => string, projectId: any): INavbarItem[] => ([
+  {
+    name: 'project',
+    label: translate('Overview'),
+    admin: false,
+    to: '/projects/' + projectId,
+  },
+  {
+    name: 'basemodel',
+    label: translate('Basemodel'),
+    admin: false,
+    to: '/projects/' + projectId + '/basemodel',
+  },
+  {
+    name: 'scenarios',
+    label: translate('Scenarios'),
+    admin: false,
+    to: '/projects/' + projectId + '/scenarios',
+  },
+  {
+    name: 'assets',
+    label: translate('Assets'),
+    admin: false,
+    to: '/projects/' + projectId + '/assets',
+  },
+  {
+    name: 'settings',
+    label: translate('Settings'),
+    admin: false,
+    basepath: '/projects/' + projectId + '/settings',
     subMenu: [
       {
-        name: 'about_us',
-        label: translate('about_us'),
+        name: 'general',
+        label: translate('General'),
         admin: false,
-        to: '/about-us',
+        to: '/projects/' + projectId + '/settings/general',
       },
       {
-        name: 'software_releases',
-        label: translate('software_releases'),
+        name: 'permissions',
+        label: translate('Permissions'),
         admin: false,
-        to: '/software-releases',
-      },
-      {
-        name: 'publications',
-        label: translate('publications'),
-        admin: false,
-        to: '/publications',
-      },
-      {
-        name: 'projects',
-        label: translate('projects'),
-        admin: false,
-        to: '/projects',
+        to: '/projects/' + projectId + '/settings/permissions',
       },
     ],
-  },
-  {
-    name: 'tools',
-    label: translate('tools'),
-    admin: false,
-    basepath: '/tools',
-    subMenu: ['T02', 'T04', 'T06', 'T08', 'T09', 'T11', 'T13', 'T14', 'T18'].map((tool) => ({
-      name: tool,
-      label: `${tool}: ${translate(`${tool}_title`)}`,
-      admin: false,
-      to: `/tools/${tool}`,
-    })),
-  },
-  {
-    name: 'modflow',
-    label: translate('modflow'),
-    admin: false,
-    to: '/modflow',
-  },
-  {
-    name: 'support',
-    label: translate('support'),
-    admin: false,
-    to: '/support',
-  },
-  {
-    name: 'news',
-    label: translate('news'),
-    admin: false,
-    to: '/news',
   },
 ]);
 
 interface IUseNavbarItems {
   navbarItems: INavbarItem[];
+  showSearchBar: boolean;
+  showButton: boolean;
 }
 
 const useNavbarItems = (): IUseNavbarItems => {
   const {translate} = useTranslate();
+  const params = useParams();
+  const location = useLocation();
+
+  console.log('params', params);
+  console.log('location', location);
+
+  const isDashboardPage = location.pathname.includes('projects') && 0 === Object.keys(params).length;
+  const isProjectPage = location.pathname.includes('projects') && params.projectId !== undefined;
+
+  if (isDashboardPage) {
+    return ({
+      navbarItems: getProjectDashboardNavbarItems(translate),
+      showSearchBar: true,
+      showButton: true,
+    });
+  }
+
+  if (isProjectPage) {
+    return ({
+      navbarItems: getProjectNavbarItems(translate, params.projectId),
+      showSearchBar: false,
+      showButton: false,
+    });
+  }
+
   return ({
-    navbarItems: getNavbarItems(translate),
+    navbarItems: [
+      {
+        name: 'projects',
+        label: translate('Projects'),
+        admin: false,
+        to: '/projects',
+      },
+      {
+        name: 'support',
+        label: translate('support'),
+        admin: false,
+        to: '/support',
+      },
+      {
+        name: 'news',
+        label: translate('news'),
+        admin: false,
+        to: '/news',
+      },
+    ],
+    showSearchBar: false,
+    showButton: false,
   });
 };
 
