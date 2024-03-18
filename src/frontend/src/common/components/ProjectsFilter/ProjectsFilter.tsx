@@ -1,4 +1,4 @@
-import {Button, IProjectCard} from 'common/components';
+import {Button, ICard} from 'common/components';
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import {MapContainer, TileLayer} from 'react-leaflet';
 import React, {useState} from 'react';
@@ -11,8 +11,8 @@ import styles from './ProjectsFilter.module.less';
 import useFilterOptions from './hooks/useFilter';
 
 interface IProps {
-  data: IProjectCard[];
-  updateModelData: (data: IProjectCard[]) => void;
+  data: ICard[];
+  updateModelData: (data: ICard[]) => void;
 }
 
 const defaultFilterOptions: IFilterOptions = {
@@ -62,7 +62,7 @@ const options = [
 const ProjectsFilter = ({data, updateModelData}: IProps) => {
   const [modelData, setModelData] = useState(data);
   const ownerOptions = createOwnerOptions(modelData);
-  const countValue = (key: keyof IProjectCard, value: string) => {
+  const countValue = (key: keyof ICard, value: string) => {
     let count = 0;
     modelData.forEach((model) => {
       if (model[key] === value) {
@@ -72,7 +72,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
     return count;
   };
   const countStatus = (status: 'green' | 'yellow' | 'red' | 'grey') => {
-    return modelData.filter((model) => status === model.status_color).length;
+    return modelData.filter((model) => status === model.status).length;
   };
 
   const randomCount = () => {
@@ -114,7 +114,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
             checked={filterOptions.myModels}
             onChange={(_, {checked}) => handleFilterChange('myModels', checked || false)}
           />
-          <span className={styles.count}>(<span>{countValue('owner_name', userName)}</span>)</span>
+          <span className={styles.count}>(<span>{countValue('author', userName)}</span>)</span>
         </div>
         <div className={styles.checkboxWrapper}>
           <Checkbox

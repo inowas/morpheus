@@ -5,10 +5,10 @@ import {DataGrid, DataRow} from './DataGrid';
 import DotsMenu, {IAction} from './DotsMenu';
 import Icon, {IIconProps} from './Icon/Icon';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
-import ModelCard, {IProjectCard} from './ModelCard';
+import ModelCard, {ICard} from './CardGrid/Card';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Select, {DropdownProps} from './Select/Select';
-import SortDropdown, {ISortOption} from 'common/components/SortDropdown';
+import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 
 import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
@@ -33,7 +33,8 @@ import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Map from './Map/Map';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
-import ModelGrid from './ModelGrid';
+import ModelCreate from './ModelCreate';
+import CardGrid from './CardGrid/Grid';
 import MovableAccordionList from './MovableAccordionList';
 import Navbar from './Navbar';
 import NotFound from './NotFound';
@@ -57,6 +58,7 @@ export {
   Breadcrumb,
   Button,
   BackToTopButton,
+  CardGrid,
   ChartModal,
   Checkbox,
   Confirm,
@@ -68,7 +70,6 @@ export {
   DotsMenu,
   Dropdown,
   Form,
-  Grid,
   Header,
   HeaderWrapper,
   Footer,
@@ -83,7 +84,8 @@ export {
   Map,
   Message,
   Modal,
-  ModelGrid,
+  Grid,
+  ModelCreate,
   ModelCard,
   MovableAccordionList,
   Navbar,
@@ -118,7 +120,7 @@ export type {
   DropdownProps,
   IInputProps,
   IInputOnChangeData,
-  IProjectCard,
+  ICard,
   ISortOption,
   IPageWidth,
   IPageHeight,

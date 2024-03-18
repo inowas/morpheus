@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 
 import {IFilterOptions} from '../types/ProjectsFilter.type';
-import {IProjectCard} from '../../ModelCard';
+import {ICard} from '../../CardGrid/Card';
 
 const formatDate = (date: Date): string => {
   const day = date.getDate().toString().padStart(2, '0');
@@ -10,8 +10,8 @@ const formatDate = (date: Date): string => {
   return `${month}.${day}.${year}`;
 };
 
-const useFilterOptions = (data: IProjectCard[], updateModelData: (data: IProjectCard[]) => void, userName: string, defaultFilterOptions: IFilterOptions) => {
-  const [modelData, setModelData] = useState<IProjectCard[]>(data);
+const useFilterOptions = (data: ICard[], updateModelData: (data: ICard[]) => void, userName: string, defaultFilterOptions: IFilterOptions) => {
+  const [modelData, setModelData] = useState<ICard[]>(data);
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>(defaultFilterOptions);
 
   const applyFilters = () => {
@@ -19,20 +19,20 @@ const useFilterOptions = (data: IProjectCard[], updateModelData: (data: IProject
     let filteredData = [...modelData];
 
     if (filterOptions.myModels) {
-      filteredData = filteredData.filter((model) => model.owner_name === userName);
+      filteredData = filteredData.filter((model) => model.author === userName);
     }
 
     if (filterOptions.calculationsFinalized && !filterOptions.calculationsNotFinalized) {
-      filteredData = filteredData.filter((model) => model.status_color);
+      filteredData = filteredData.filter((model) => model.status);
     }
 
     if (filterOptions.calculationsNotFinalized && !filterOptions.calculationsFinalized) {
-      filteredData = filteredData.filter((model) => !model.status_color);
+      filteredData = filteredData.filter((model) => !model.status);
     }
 
     if (0 < filterOptions.selectedOwners.length) {
       filteredData = filteredData.filter((model) =>
-        filterOptions.selectedOwners.includes(model.owner_name),
+        filterOptions.selectedOwners.includes(model.author),
       );
     }
 
@@ -40,7 +40,7 @@ const useFilterOptions = (data: IProjectCard[], updateModelData: (data: IProject
       const keywords = filterOptions.selectedKeywords.map((keyword) => keyword.toLowerCase());
       filteredData = filteredData.filter((model) =>
         keywords.some((key) =>
-          model.description.toLowerCase().includes(key) || model.name.toLowerCase().includes(key),
+          model.description.toLowerCase().includes(key) || model.title.toLowerCase().includes(key),
         ),
       );
     }

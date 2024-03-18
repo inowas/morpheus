@@ -25,6 +25,8 @@ export function makeServer({environment = 'test'} = {}) {
               owner_id: p.permissions.owner_id,
               is_public: p.permissions.is_public,
               created_at: p.metadata.created_at,
+              status_color: 'green',
+              image: p.metadata.image,
             };
           });
 
@@ -37,16 +39,27 @@ export function makeServer({environment = 'test'} = {}) {
         return new Response(200, {}, metadata);
       });
 
-      this.get('projects/:projectId/base-model/time-discretization', (schema, request) => {
+      this.get('projects/:projectId/model/time-discretization', (schema, request) => {
         const projectId = request.params.projectId;
         const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
         if (!project) {
           return new Response(404, {}, {message: 'Project not found'});
         }
 
-        return new Response(200, {}, project.base_model.time_discretization);
+        return new Response(200, {}, project.model.time_discretization);
       });
 
+      this.put('projects/:projectId/model/time-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        const timeDiscretization = JSON.parse(request.requestBody);
+        schema.db.projects.update({project_id: projectId, model: {...project.model, time_discretization: timeDiscretization}});
+        return new Response(204);
+      });
 
       this.get('users', (schema) => {
         return schema.db.users as IUser[];

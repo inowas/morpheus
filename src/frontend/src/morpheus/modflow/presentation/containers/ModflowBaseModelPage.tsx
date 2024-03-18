@@ -8,7 +8,7 @@ import {ModflowContainer} from '../components';
 
 interface IProps {
   basePath: string;
-  section: 'basemodel';
+  section: 'model';
 }
 
 const ModflowBaseModelPage = ({basePath, section}: IProps) => {

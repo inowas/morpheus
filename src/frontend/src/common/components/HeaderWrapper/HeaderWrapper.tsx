@@ -1,5 +1,7 @@
 import React, {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import styles from './HeaderWrapper.module.less';
+import {ContentWrapper} from '../index';
+
 
 interface IProps {
   updateHeight?: (height: number) => void;
@@ -34,14 +36,16 @@ const HeaderWrapper = ({updateHeight, children}: IProps) => {
 
   return (
     <header
-      className={styles.header}
+      className={styles.headerWrapper}
       data-testid={'test-headerWrapper'}
       style={{
         paddingTop: headerHeight,
       }}
     >
-      <div ref={ref} className={styles.headerInner}>
-        {children}
+      <div ref={ref} className={styles.headerWrapperInner}>
+        <ContentWrapper>
+          {children}
+        </ContentWrapper>
       </div>
     </header>
   );

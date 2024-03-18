@@ -16,7 +16,7 @@ const ContentWrapper = ({children, minHeight, maxWidth, showSidebarMenu = false}
     className={`${styles.contentWrapper} ${showSidebarMenu ? styles.showSidebarMenu : ''}`}
     style={{
       maxWidth: maxWidth || '100%',
-      minHeight: minHeight || '100vh',
+      minHeight: minHeight || 'auto',
     }}
   >
     {children}

@@ -80,7 +80,21 @@ const panelSecondary = [
   {menuItem: 'Specific storage', render: () => <TabPane>Tab 7 Content</TabPane>},
   {menuItem: 'Specific yield', render: () => <TabPane>Tab 8 Content</TabPane>},
   {menuItem: 'Starting head', render: () => <TabPane>Tab 9 Content</TabPane>},
-  {menuItem: 'iBound', render: () => <TabPane>Tab 10 Content</TabPane>},
+  {
+    menuItem: 'iBound',
+    render: () => <TabPane><p>Tab 10 Content</p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. A at autem earum eius et fugiat itaque magnam recusandae rem ut? Animi
+      atque distinctio eum quod sint tempora tempore? Ad alias aliquam aliquid assumenda autem deserunt dignissimos dolore dolorem doloribus, dolorum eum iure magnam magni
+      molestiae natus nihil nostrum nulla odio optio pariatur, perspiciatis provident quaerat quos sapiente sint soluta ut voluptatem. Aut beatae cum dicta, dignissimos dolores et
+      ex illo molestiae neque perferendis quae quis ut voluptates! Autem, blanditiis dicta ea illo iusto magnam maxime natus nobis, perspiciatis porro provident ratione voluptatem!
+      Aspernatur delectus distinctio et exercitationem, maxime optio quod!<br/>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi enim, fugiat iusto nemo quo rem. Aut culpa distinctio dolorum est, ipsa laboriosam laudantium minus nam,
+      obcaecati omnis pariatur perspiciatis ratione, rerum tempore veniam. Dicta eveniet incidunt magni minus nostrum quam sint tenetur voluptatum. Architecto cupiditate error
+      ipsum placeat quibusdam repellat voluptates. Accusamus aperiam consequuntur enim, esse facere iusto nobis perferendis quae qui repellendus soluta sunt vel voluptatem.
+      Accusamus, autem debitis deserunt dicta eligendi est et expedita fuga, hic ipsa iure, laudantium molestias neque non optio quibusdam reiciendis repellat sit temporibus velit?
+      Autem consectetur, cupiditate facilis iure labore maxime soluta vero?
+
+    </TabPane>,
+  },
 ];
 const ModelProperties: React.FC = () => {
 

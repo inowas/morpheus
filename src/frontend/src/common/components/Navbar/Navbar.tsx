@@ -1,4 +1,4 @@
-import {Button, Modal} from 'common/components';
+import {Button, Modal, ModelCreate} from 'common/components';
 import {Image, Input} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
@@ -46,7 +46,7 @@ const Navbar: React.FC<IProps> = ({
           open={openPopup}
           dimmer={'inverted'}
         >
-          <Button/>
+          <ModelCreate onClose={onCreateButtonClick}/>
         </Modal.Modal>
       )}
       {/* End of popup to create new model */}

@@ -1,12 +1,14 @@
 import {v4} from 'uuid';
 import {IUser} from './users';
 import {ITimeDiscretizationApi} from 'morpheus/modflow/application/useTimeDiscretization';
+import fixedUuids from './fixedUuids';
+import {ITimeUnit} from 'morpheus/modflow/types/TimeDiscretization.type';
 
 interface IProject {
   project_id: string;
   metadata: IMetadata;
   permissions: IPermissions;
-  base_model: {
+  model: {
     model_id: string;
     time_discretization: ITimeDiscretizationApi;
   };
@@ -46,7 +48,7 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
   const createdAt = new Date(new Date().getTime() - (numberOfDaysToSubstract * 24 * 60 * 60 * 1000));
 
   return {
-    project_id: v4().toString(),
+    project_id: fixedUuids[counter],
     metadata: {
       name: 'Project Name ' + counter.toFixed(0),
       description: 'Project Description ' + counter.toFixed(0),
@@ -60,20 +62,18 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
       users: [],
       is_public: 0.5 < Math.random(),
     },
-    base_model: {
+    model: {
       model_id: v4().toString(),
       time_discretization: {
         start_date_time: new Date('2010-01-01').toISOString(),
         end_date_time: new Date('2015-12-31').toISOString(),
-        time_unit: 1,
-        stress_periods: [
-          {
-            start_date_time: new Date('2010-01-01').toISOString(),
-            number_of_time_steps: 1,
-            time_step_multiplier: 1,
-            steady_state: true,
-          },
-        ],
+        time_unit: ITimeUnit.DAYS,
+        stress_periods: [{
+          start_date_time: new Date('2010-01-01').toISOString(),
+          number_of_time_steps: 1,
+          time_step_multiplier: 1,
+          steady_state: true,
+        }],
       },
     },
     calculation_profile: {},

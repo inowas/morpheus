@@ -61,4 +61,3 @@ const useProjectList = (): IUseProjectSummaries => {
 };
 
 export default useProjectList;
-

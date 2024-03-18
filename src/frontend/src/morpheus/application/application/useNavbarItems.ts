@@ -31,10 +31,10 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: an
     to: '/projects/' + projectId,
   },
   {
-    name: 'basemodel',
+    name: 'model',
     label: translate('Model'),
     admin: false,
-    to: '/projects/' + projectId + '/basemodel',
+    to: '/projects/' + projectId + '/model',
   },
   {
     name: 'scenarios',

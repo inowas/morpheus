@@ -3,7 +3,6 @@ import {BodyContent, SidebarContent} from '../components';
 import {TimeDiscretizationContent, TimeDiscretizationBody} from '../components/TimeDiscretization';
 import useTimeDiscretization from '../../application/useTimeDiscretization';
 import {useParams} from 'react-router-dom';
-import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
 
 const TimeDiscretizationContainer = () => {
@@ -15,8 +14,8 @@ const TimeDiscretizationContainer = () => {
     return null;
   }
 
-  if (loading) {
-    return <Loading/>;
+  if (!timeDiscretization) {
+    return null;
   }
 
   if (error) {
@@ -26,7 +25,11 @@ const TimeDiscretizationContainer = () => {
   return (
     <>
       <SidebarContent maxWidth={600}>
-        <TimeDiscretizationContent/>
+        <TimeDiscretizationContent
+          timeDiscretization={timeDiscretization}
+          onChange={updateTimeDiscretization}
+          loading={loading}
+        />
       </SidebarContent>
       <BodyContent>
         <TimeDiscretizationBody/>

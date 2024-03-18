@@ -45,7 +45,7 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
       }
       setLoading(true);
       setError(null);
-      const result = await httpGet<ITimeDiscretizationApi>(`/projects/${projectId}/base-model/time-discretization`);
+      const result = await httpGet<ITimeDiscretizationApi>(`/projects/${projectId}/model/time-discretization`);
 
       if (!isMounted.current) {
         return;
@@ -111,7 +111,7 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
     };
 
 
-    const result = await httpPut<ITimeDiscretizationApi>(`/projects/${projectId}/base-model/time-discretization`, timeDiscretizationPutRequest);
+    const result = await httpPut<ITimeDiscretizationApi>(`/projects/${projectId}/model/time-discretization`, timeDiscretizationPutRequest);
 
     if (result.ok) {
       setTimeDiscretization(timeDiscretizationUdpate);

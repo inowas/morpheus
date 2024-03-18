@@ -1,17 +1,7 @@
-// TODO: This type is old and should be replaced with ITimeDiscretization
-export interface IStressperiodParams {
-  stressperiod: StressperiodDataType;
-  startDate: null | string;
-  endDate: string;
-  timeUnit: string;
-}
-
-export type StressperiodDataType = any;
-
 export interface ITimeDiscretization {
   startDateTime: string;
   endDateTime: string;
-  timeUnit: number;
+  timeUnit: ITimeUnit;
   stressPeriods: IStressPeriod[];
 }
 
@@ -20,4 +10,13 @@ export interface IStressPeriod {
   numberOfTimeSteps: number;
   timeStepMultiplier: number;
   steadyState: boolean;
+}
+
+export enum ITimeUnit {
+  UNDEFINED = 0,
+  SECONDS = 1,
+  MINUTES = 2,
+  HOURS = 3,
+  DAYS = 4,
+  YEARS = 5,
 }
