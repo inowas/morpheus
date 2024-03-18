@@ -1,7 +1,7 @@
 import './SortDropdown.less';
 
 import {Dropdown, DropdownProps} from 'semantic-ui-react';
-import React, {ReactNode, SyntheticEvent} from 'react';
+import React, {SyntheticEvent} from 'react';
 
 import {IProjectCard} from 'common/components/ModelCard';
 import {ISortOption} from 'common/components/SortDropdown';
@@ -11,11 +11,12 @@ interface IProps {
   sortOptions: ISortOption[];
   setModelData: (data: IProjectCard[]) => void;
   placeholder: string
-  children: ReactNode;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
 
-const SortDropdown = ({children, sortOptions, data, setModelData, placeholder}: IProps) => {
+const SortDropdown = ({sortOptions, data, setModelData, placeholder, style, className}: IProps) => {
 
   const handleSort = (e: SyntheticEvent<HTMLElement>, {value}: DropdownProps) => {
     let sortedData = [...data];
@@ -41,12 +42,12 @@ const SortDropdown = ({children, sortOptions, data, setModelData, placeholder}: 
   return (
     <div
       data-testid="sort-dropdown-container"
-      className="sortDropdownContainer"
+      className={`sortDropdownContainer ${className ? className : ''}`}
+      style={style}
     >
-      {children}
       <Dropdown
         data-testid="sort-dropdown"
-        className="sortDropdown"
+        className='sortDropdown'
         selection={true}
         icon="sort amount up"
         placeholder={placeholder}

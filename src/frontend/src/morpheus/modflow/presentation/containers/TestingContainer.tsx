@@ -6,7 +6,7 @@ import {TestingBody, TestingContent} from '../components/Testing';
 const TestingContainer = () => {
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={700}>
         <TestingContent/>
       </SidebarContent>
       <BodyContent>
