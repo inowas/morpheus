@@ -214,7 +214,13 @@ const panesSecondary = [
   {menuItem: 'Specific storage', render: () => <TabPane>Tab 7 Content</TabPane>},
   {menuItem: 'Specific yield', render: () => <TabPane>Tab 8 Content</TabPane>},
   {menuItem: 'Starting head', render: () => <TabPane>Tab 9 Content</TabPane>},
-  {menuItem: 'iBound', render: () => <TabPane>Tab 10 Content</TabPane>},
+  {menuItem: 'iBound',
+    render: () => <TabPane>Tab 10 Content Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus beatae culpa, delectus deserunt dolorum et eum facere facilis fugiat,
+      in ipsum minus nesciunt nulla officia perspiciatis provident quidem reiciendis similique sit soluta suscipit vero voluptas. Ad commodi cupiditate deserunt dolore eveniet
+      impedit in nobis quasi sint voluptatibus. Ab alias amet architecto cupiditate dignissimos dolor dolorem doloremque error esse est eum facere illo illum ipsa iure maiores modi
+      nemo omnis pariatur placeat quae quas quasi qui quibusdam quos reiciendis suscipit tempora temporibus velit veniam vitae, voluptate voluptatem voluptates? Dolor eaque eius,
+      excepturi facilis illum minima obcaecati placeat porro quaerat recusandae repellat!</TabPane>,
+  },
 ];
 
 export const TabPrimary: StoryFn<typeof Button> = () => {

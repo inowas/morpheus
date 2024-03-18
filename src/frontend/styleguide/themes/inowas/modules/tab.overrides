@@ -100,8 +100,6 @@
 }
 
 [data-variant="secondary"] {
-  min-width: 650px;
-
   .column {
     padding: 0;
   }
