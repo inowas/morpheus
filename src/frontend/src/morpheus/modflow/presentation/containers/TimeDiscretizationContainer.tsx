@@ -346,7 +346,7 @@ const TimeDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700}>
         <DataGrid>
           <DataRow title={'Time discretization'}/>
           <Accordion

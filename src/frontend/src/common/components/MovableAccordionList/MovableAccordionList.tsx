@@ -21,11 +21,13 @@ interface MovableAccordionListProps {
   items: ListItem[];
   onMovableListChange: (newItems: ListItem[]) => void;
   defaultOpenIndexes?: number[];
+  openEachOnClick?: boolean;
 }
 
 const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
   items,
   onMovableListChange,
+  openEachOnClick = false,
   defaultOpenIndexes = [],
 }) => {
   const [openIndexes, setOpenIndexes] = useState<number[]>(defaultOpenIndexes);
@@ -78,15 +80,17 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
     if (index === undefined) {
       return;
     }
+
     const newOpenIndexes = openIndexes.includes(index)
       ? openIndexes.filter((item) => item !== index)
-      : [...openIndexes, index];
+      : (openEachOnClick ? [...openIndexes, index] : [index]);
+
     setOpenIndexes(newOpenIndexes);
   };
 
 
   return (
-    <div className={`${styles.movableList} ${openEditingTitle ? styles.openEditingTitle : ''} movableList`}>
+    <div className={'movableList'}>
       <List
         values={items.map((item) => ({
           content: [item],

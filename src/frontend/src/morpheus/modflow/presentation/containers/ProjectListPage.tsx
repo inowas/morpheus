@@ -1,4 +1,4 @@
-import {IProjectCard, ISortOption, ModelGrid, ProjectsFilter, SortDropdown} from 'common/components';
+import {ContentWrapper, IProjectCard, ISortOption, ModelGrid, ProjectsFilter} from 'common/components';
 import React, {useState} from 'react';
 import {useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
@@ -288,21 +288,20 @@ const ProjectListPage = ({basePath}: IProps) => {
   return (
     <>
       <ModflowContainer headerHeight={140}>
-        <SidebarContent maxWidth={500}>
+        <SidebarContent maxWidth={350}>
           <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         </SidebarContent>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        >
+        <ContentWrapper>
           <ModelGrid
-            sectionTitle={sectionTitle()}
+            placeholder="Order By"
+            sortOptions={sortOptions}
+            setModelData={setModelData}
+
             data={modelData}
+            sectionTitle={sectionTitle()}
             handleCopyButtonClick={handleCopyButtonClick}
           />
-        </SortDropdown>
+        </ContentWrapper>
       </ModflowContainer>
     </>
   );
