@@ -55,7 +55,6 @@ const panels: any[] = [{
   content: {
     content: (
       <Tab
-        activeIndex={1}
         variant='primary'
         menu={{pointing: true}}
         panes={[
