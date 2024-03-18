@@ -21,7 +21,7 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
   onCopyButtonClick,
 }) => {
 
-  const formattedDate = data.meta_text.replace(/\//g, '.');
+  const formattedDate = data.last_updated_at.replace(/\//g, '.');
   const renderDescription = (description: string) => {
     const maxLength = 40;
     if (maxLength >= description.length) {
@@ -36,22 +36,21 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
       className={className ? `${styles.modelCard} ${className}` : styles.modelCard}
       onClick={(e) => {
         e.stopPropagation();
-        console.log('ModelGridItem clicked');
-        // navigateTo(data.model_Link);
+        if (onClick) onClick();
       }}
     >
       <Image
         className={styles.modelImage}
-        src={data.model_image}
-        alt={data.model_description}
+        src={data.image}
+        alt={data.description}
         fluid={true}
         width="320" height="150"
       />
       <div className={styles.modelContent}>
         <div className={styles.modelHeadline}>
-          <i className={styles.metaStatus} style={{background: data.meta_status ? '#08E600' : '#C8C8C8'}}></i>
-          <h5 className={styles.modelTitle}>{data.model_title}</h5>
-          <p className={styles.modelDescription}>{renderDescription(data.model_description)}</p>
+          <i className={styles.metaStatus} style={{background: data.status_color}}></i>
+          <h5 className={styles.modelTitle}>{data.name}</h5>
+          <p className={styles.modelDescription}>{renderDescription(data.description)}</p>
         </div>
 
         <div className={styles.modelBtnGroup}>
@@ -64,15 +63,8 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
                 if (onClick) onClick();
               }}
             >
-              <Image
-                avatar={true}
-                // src={data.meta_author_avatar}
-                src={'https://www.gravatar.com/avatar/4d94d3e077d7b5f527ac629be4800130/?s=80'}
-                alt={data.meta_author_name}
-                width="14"
-                height="14"
-              />
-              {data.meta_author_name}
+              <Icon name="user" style={{margin: '5'}}/>
+              {data.owner_name}
             </SemanticButton>
             <span className={styles.modelMetaText}><Icon className={styles.metaIcon} name="calendar outline"/>{formattedDate}</span>
           </div>
@@ -112,7 +104,6 @@ const ModelCard: React.FC<ModelGridItemProps> = ({
               size={'small'}
               onClick={(e) => {
                 e.stopPropagation();
-                // navigateTo(data.model_map);
                 if (onClick) onClick();
               }}
               aria-label="Open Tool"

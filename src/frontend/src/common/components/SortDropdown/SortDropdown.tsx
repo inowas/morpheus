@@ -21,16 +21,16 @@ const SortDropdown = ({children, sortOptions, data, setModelData, placeholder}: 
     let sortedData = [...data];
     switch (value) {
     case 'mostRecent':
-      sortedData.sort((a, b) => new Date(b.meta_text.split('.').reverse().join('-')).getTime() - new Date(a.meta_text.split('.').reverse().join('-')).getTime());
+      sortedData.sort((a, b) => new Date(b.last_updated_at.split('.').reverse().join('-')).getTime() - new Date(a.last_updated_at.split('.').reverse().join('-')).getTime());
       break;
     case 'lessRecent':
-      sortedData.sort((a, b) => new Date(a.meta_text.split('.').reverse().join('-')).getTime() - new Date(b.meta_text.split('.').reverse().join('-')).getTime());
+      sortedData.sort((a, b) => new Date(a.last_updated_at.split('.').reverse().join('-')).getTime() - new Date(b.last_updated_at.split('.').reverse().join('-')).getTime());
       break;
     case 'aToZ':
-      sortedData.sort((a, b) => a.model_title.localeCompare(b.model_title));
+      sortedData.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case 'zToA':
-      sortedData.sort((a, b) => b.model_title.localeCompare(a.model_title));
+      sortedData.sort((a, b) => b.name.localeCompare(a.name));
       break;
     default:
       break;

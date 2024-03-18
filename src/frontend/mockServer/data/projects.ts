@@ -1,18 +1,23 @@
 import {v4} from 'uuid';
 import {IUser} from './users';
+import {ITimeDiscretizationApi} from 'morpheus/modflow/application/useTimeDiscretization';
 
 interface IProject {
   project_id: string;
   metadata: IMetadata;
   permissions: IPermissions;
-  baseModel: object;
-  calculationProfile: object;
+  base_model: {
+    model_id: string;
+    time_discretization: ITimeDiscretizationApi;
+  };
+  calculation_profile: object;
   scenarios: object[];
 }
 
 interface IMetadata {
   name: string;
   description: string;
+  image?: string;
   tags: string[];
   created_at: string;
 }
@@ -47,6 +52,7 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
       description: 'Project Description ' + counter.toFixed(0),
       tags: ['tag1', 'tag2'],
       created_at: createdAt.toISOString(),
+      image: 0.5 < Math.random() ? 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg' : undefined,
     },
     permissions: {
       owner_id: user.user_id,
@@ -54,8 +60,23 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
       users: [],
       is_public: 0.5 < Math.random(),
     },
-    baseModel: {},
-    calculationProfile: {},
+    base_model: {
+      model_id: v4().toString(),
+      time_discretization: {
+        start_date_time: new Date('2010-01-01').toISOString(),
+        end_date_time: new Date('2015-12-31').toISOString(),
+        time_unit: 1,
+        stress_periods: [
+          {
+            start_date_time: new Date('2010-01-01').toISOString(),
+            number_of_time_steps: 1,
+            time_step_multiplier: 1,
+            steady_state: true,
+          },
+        ],
+      },
+    },
+    calculation_profile: {},
     scenarios: [],
   };
 };

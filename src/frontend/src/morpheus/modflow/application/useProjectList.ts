@@ -1,17 +1,17 @@
-import {IError, IProjectSummary} from '../types';
+import {IError, IProjectListItem} from '../types';
 import {useEffect, useRef, useState} from 'react';
 
 import {useApi} from '../incoming';
 
 interface IUseProjectSummaries {
-  projects: IProjectSummary[];
+  projects: IProjectListItem[];
   loading: boolean;
   error: IError | null;
 }
 
-const useProjectSummaries = (): IUseProjectSummaries => {
+const useProjectList = (): IUseProjectSummaries => {
   const isMounted = useRef(true);
-  const [projects, setProjects] = useState<IProjectSummary[]>([]);
+  const [projects, setProjects] = useState<IProjectListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
@@ -60,5 +60,5 @@ const useProjectSummaries = (): IUseProjectSummaries => {
   };
 };
 
-export default useProjectSummaries;
+export default useProjectList;
 

@@ -19,20 +19,20 @@ const useFilterOptions = (data: IProjectCard[], updateModelData: (data: IProject
     let filteredData = [...modelData];
 
     if (filterOptions.myModels) {
-      filteredData = filteredData.filter((model) => model.meta_author_name === userName);
+      filteredData = filteredData.filter((model) => model.owner_name === userName);
     }
 
     if (filterOptions.calculationsFinalized && !filterOptions.calculationsNotFinalized) {
-      filteredData = filteredData.filter((model) => model.meta_status);
+      filteredData = filteredData.filter((model) => model.status_color);
     }
 
     if (filterOptions.calculationsNotFinalized && !filterOptions.calculationsFinalized) {
-      filteredData = filteredData.filter((model) => !model.meta_status);
+      filteredData = filteredData.filter((model) => !model.status_color);
     }
 
     if (0 < filterOptions.selectedOwners.length) {
       filteredData = filteredData.filter((model) =>
-        filterOptions.selectedOwners.includes(model.meta_author_name),
+        filterOptions.selectedOwners.includes(model.owner_name),
       );
     }
 
@@ -40,7 +40,7 @@ const useFilterOptions = (data: IProjectCard[], updateModelData: (data: IProject
       const keywords = filterOptions.selectedKeywords.map((keyword) => keyword.toLowerCase());
       filteredData = filteredData.filter((model) =>
         keywords.some((key) =>
-          model.model_description.toLowerCase().includes(key) || model.model_title.toLowerCase().includes(key),
+          model.description.toLowerCase().includes(key) || model.name.toLowerCase().includes(key),
         ),
       );
     }

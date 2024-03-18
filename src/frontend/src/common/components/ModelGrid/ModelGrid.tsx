@@ -23,10 +23,10 @@ const ModelGrid: React.FC<ModelGridProps> = ({sectionTitle, data, handleDeleteBu
         {data.map((item) => (
           <ModelCard
             className={styles.modelGridItem}
-            key={item.id} data={item}
+            key={item.projectId} data={item}
             onClick={item.onClick}
-            onDeleteButtonClick={handleDeleteButtonClick && (() => handleDeleteButtonClick(item.id))}
-            onCopyButtonClick={handleCopyButtonClick && (() => handleCopyButtonClick(item.id))}
+            onDeleteButtonClick={handleDeleteButtonClick && (() => handleDeleteButtonClick(item.projectId))}
+            onCopyButtonClick={handleCopyButtonClick && (() => handleCopyButtonClick(item.projectId))}
           />
         ))}
       </div>

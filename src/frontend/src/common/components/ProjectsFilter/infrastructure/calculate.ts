@@ -3,7 +3,7 @@ import {IProjectCard} from 'common/components/ModelCard';
 function getAuthorCounts(models: IProjectCard[]): Record<string, number> {
   const authorCounts: Record<string, number> = {};
   models.forEach(model => {
-    const authorName = model.meta_author_name;
+    const authorName = model.owner_name;
 
     if (authorCounts[authorName]) {
       authorCounts[authorName]++;
