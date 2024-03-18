@@ -2,16 +2,14 @@
 
 .sortDropdownContainer {
   position: relative;
+  display: inline-block;
 
   .sortDropdown {
-    position: absolute;
-    top: 5px;
-    right: 0;
 
     &.ui.selection.dropdown {
       display: flex;
       align-items: flex-end;
-      padding: 0 !important;
+      padding: 0 0 0 24px !important;
       min-height: initial !important;
       box-shadow: none !important;
       border: none !important;
@@ -36,7 +34,7 @@
 
       .icon {
         position: absolute;
-        right: 100%;
+        left: 0;
         bottom: 2px;
       }
 
@@ -107,10 +105,6 @@
       }
 
     }
-  }
-
-  .sectionTitled + .sortDropdown {
-    top: 15px;
   }
 }
 

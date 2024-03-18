@@ -33,6 +33,7 @@ import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import Map from './Map/Map';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
+import ModelCreate from './ModelCreate';
 import ModelGrid from './ModelGrid';
 import MovableAccordionList from './MovableAccordionList';
 import Navbar from './Navbar';
@@ -84,6 +85,7 @@ export {
   Message,
   Modal,
   ModelGrid,
+  ModelCreate,
   ModelCard,
   MovableAccordionList,
   Navbar,

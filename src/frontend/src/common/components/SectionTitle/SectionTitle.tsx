@@ -4,13 +4,17 @@ import styles from './SectionTitle.module.less';
 
 interface IProps {
   title: string | ReactNode;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
-const SectionTitle = ({title}: IProps) => {
+const SectionTitle = ({title, style, className}: IProps) => {
 
   return (
     <div
       data-testid="section-title"
+      className={className}
+      style={style}
     >
       {'string' === typeof title ?
         <h2 className={styles.sectionTitle}>{title}</h2> :

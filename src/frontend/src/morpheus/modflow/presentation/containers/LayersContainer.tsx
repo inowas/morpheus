@@ -6,7 +6,7 @@ import {LayersBody, LayersContent} from '../components/Layers';
 const TestingContainer = () => {
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={700}>
         <LayersContent/>
       </SidebarContent>
       <BodyContent>

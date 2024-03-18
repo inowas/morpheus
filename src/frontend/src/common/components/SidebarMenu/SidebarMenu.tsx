@@ -31,6 +31,7 @@ const SidebarMenu: React.FC<IProps> = ({menuItems, onClickCallback}) => {
                 as={item.isTitle ? 'h3' : 'a'}
                 className={styles.link}
                 onClick={() => {
+                  setIsOpen(false);
                   if (item.onClick) {
                     item.onClick();
                   }
