@@ -1,8 +1,8 @@
-import {ContentWrapper, IProjectCard, ISortOption, ModelGrid, ProjectsFilter} from 'common/components';
+import {ContentWrapper, IProjectCard, ISortOption, ModelGrid, Navbar, ProjectsFilter} from 'common/components';
 import React, {useState} from 'react';
-import {useNavigate} from 'common/hooks';
+import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
-import {useTranslate} from '../../../application/application';
+import {useNavbarItems, useTranslate} from '../../../application/application';
 
 
 const models: IProjectCard[] = [
@@ -257,6 +257,9 @@ const ProjectListPage = ({basePath}: IProps) => {
 
   const {translate} = useTranslate();
   const navigateTo = useNavigate();
+  const location = useLocation();
+  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+
 
   const [modelData, setModelData] = useState<IProjectCard[]>(
     models.map((model) => {
@@ -287,7 +290,14 @@ const ProjectListPage = ({basePath}: IProps) => {
 
   return (
     <>
-      <ModflowContainer headerHeight={140}>
+      <Navbar
+        location={location}
+        navbarItems={navbarItems}
+        navigateTo={navigateTo}
+        showSearchWrapper={showSearchBar}
+        showCreateButton={showButton}
+      />
+      <ModflowContainer>
         <SidebarContent maxWidth={350}>
           <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
         </SidebarContent>

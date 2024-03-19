@@ -1,4 +1,4 @@
-import {ContentWrapper, Header, HeaderWrapper, ModelCard, ModelGrid, Navbar, SliderSwiper, SortDropdown} from 'common/components';
+import {ContentWrapper, Header, ModelCard, ModelGrid, Navbar, SliderSwiper} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
@@ -298,52 +298,40 @@ export const ModflowPageExample: StoryFn<typeof ModelGrid> = () => {
   return (
     <div style={{margin: '-1rem'}}>
       <CreateProjectModal isOpen={openPopup} onClose={() => setOpenPopup(false)}/>
-      <HeaderWrapper updateHeight={() => ({})}>
-        <Header
-          navigateTo={() => {
-          }}
-        />
-        <Navbar
-          pathname={location.pathname}
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          showSearchWrapper={true}
-          showCreateButton={true}
-        />
-      </HeaderWrapper>
-      <ContentWrapper minHeight={'auto'} maxWidth={1440}>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={filteredData}
-          setModelData={setFilteredData}
+      <Header
+        navigateTo={() => {
+        }}
+      />
+      <Navbar
+        location={location}
+        navbarItems={navbarItems2}
+        navigateTo={() => {
+        }}
+        showSearchWrapper={true}
+        showCreateButton={true}
+      />
+      <ContentWrapper
+        minHeight={'auto'} maxWidth={1440}
+        style={{paddingTop: '140px'}}
+      >
+        <SliderSwiper
+          sectionTitle={'My projects'}
         >
-          <SliderSwiper
-            sectionTitle={'My projects'}
-          >
-            {filteredData.map((item) => (
-              <ModelCard
-                key={item.id} data={item}
-                onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
-                onCopyButtonClick={() => handleCopyButtonClick(item.id)}
-              />
-            ))}
-          </SliderSwiper>
-        </SortDropdown>
-        <SortDropdown
+          {filteredData.map((item) => (
+            <ModelCard
+              key={item.id} data={item}
+              onDeleteButtonClick={() => handleDeleteButtonClick(item.id)}
+              onCopyButtonClick={() => handleCopyButtonClick(item.id)}
+            />
+          ))}
+        </SliderSwiper>
+        <ModelGrid
           placeholder="Order By"
           sortOptions={sortOptions}
-          data={modelData}
           setModelData={setModelData}
-        >
-          <ModelGrid
-            sectionTitle={'All projects'}
-            data={modelData}
-            // handleDeleteButtonClick={handleDeleteButtonClick}
-            handleCopyButtonClick={handleCopyButtonClick}
-          />
-        </SortDropdown>
+          data={modelData}
+          handleCopyButtonClick={handleCopyButtonClick}
+        />
       </ContentWrapper>
     </div>
   );

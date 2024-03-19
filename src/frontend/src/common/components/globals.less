@@ -51,10 +51,24 @@ body {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
 
+  //width
   &::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+    width: 4px;
+  }
+
+  // Track
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  // Handle
+  &::-webkit-scrollbar-thumb {
+    background: @blue;
+  }
+
+  // Handle on hover
+  &::-webkit-scrollbar-thumb:hover {
+    background: #0277CC;
   }
 }

@@ -68,6 +68,18 @@ const navbarItems = [
     to: '/news',
   },
 ];
+const location = {
+  hash:
+    '',
+  key:
+    'kofvch0s',
+  pathname:
+    '/',
+  search:
+    '',
+  state:
+    null,
+};
 
 describe('Navbar Tests', () => {
 
@@ -75,7 +87,7 @@ describe('Navbar Tests', () => {
     render(
       <Navbar
         navbarItems={navbarItems}
-        pathname="/"
+        location={location}
         navigateTo={mockNavigateTo}
       />,
     );
@@ -89,7 +101,8 @@ describe('Navbar Tests', () => {
   test('renders sub-menu items when a parent menu item is clicked', async () => {
     render(
       <Navbar
-        navbarItems={navbarItems} pathname="/"
+        navbarItems={navbarItems}
+        location={location}
         navigateTo={mockNavigateTo}
       />,
     );
@@ -103,7 +116,8 @@ describe('Navbar Tests', () => {
   test('renders sub-menu items for tools when "tools" is clicked', async () => {
     render(
       <Navbar
-        navbarItems={navbarItems} pathname="/"
+        navbarItems={navbarItems}
+        location={location}
         navigateTo={mockNavigateTo}
       />,
     );
@@ -116,5 +130,5 @@ describe('Navbar Tests', () => {
       expect(screen.getByText(`${tool}: tools_title`)).toBeInTheDocument();
     });
   });
-  
+
 });

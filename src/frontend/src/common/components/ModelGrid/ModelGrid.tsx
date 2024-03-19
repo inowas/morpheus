@@ -42,7 +42,8 @@ const ModelGrid: React.FC<ModelGridProps> = ({
         />}
       </div>
       <div
-        className="scrollWrapper-X" style={{
+        className="scrollWrapper-X"
+        style={{
           padding: 20,
           width: 'calc(100% + 40px)',
           height: 'calc(100% + 40px)',

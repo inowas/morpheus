@@ -3,8 +3,10 @@ import {useParams} from 'react-router-dom';
 import {ISidebarMenuItem, SidebarMenu} from 'common/components/SidebarMenu';
 import {sidebarItems} from '../helpers/sidebarMenu';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {useNavigate} from 'common/hooks';
+import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer} from '../components';
+import {Navbar} from '../../../../common/components';
+import {useNavbarItems} from '../../../application/application';
 
 interface IProps {
   basePath: string;
@@ -12,6 +14,9 @@ interface IProps {
 }
 
 const ModflowBaseModelPage = ({basePath, section}: IProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
 
   const {projectId, property = 'spatial-discretization'} = useParams<{
     projectId?: string;
@@ -19,7 +24,6 @@ const ModflowBaseModelPage = ({basePath, section}: IProps) => {
     propertyId?: string;
   }>();
 
-  const navigate = useNavigate();
 
   const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => {
     return sidebarItems.map((item) => {
@@ -54,10 +58,20 @@ const ModflowBaseModelPage = ({basePath, section}: IProps) => {
   };
 
   return (
-    <ModflowContainer headerHeight={140}>
-      <SidebarMenu menuItems={sidebarMenuItems}/>
-      {renderContent(property)}
-    </ModflowContainer>
+    <>
+      <Navbar
+        location={location}
+        navbarItems={navbarItems}
+        navigateTo={navigate}
+        showSearchWrapper={showSearchBar}
+        showCreateButton={showButton}
+      />
+      <ModflowContainer>
+        <SidebarMenu menuItems={sidebarMenuItems}/>
+        {renderContent(property)}
+      </ModflowContainer>
+    </>
+
   );
 };
 

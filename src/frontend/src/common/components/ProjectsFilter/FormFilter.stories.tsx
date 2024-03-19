@@ -1,8 +1,9 @@
-import {ApplicationContentWrapper, Header, HeaderWrapper, IProjectCard, IPageWidth, ISortOption, ModelGrid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
+import {ContentWrapper, Header, IPageWidth, IProjectCard, ISortOption, ModelGrid, Navbar, ProjectsFilter} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import '../globals.less';
+import {ModflowContainer, SidebarContent} from '../../../morpheus/modflow/presentation/components';
 
 const models: IProjectCard[] = [
   {
@@ -307,40 +308,34 @@ export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
 
   return (
     <div style={{margin: '-1rem'}}>
-      <HeaderWrapper updateHeight={() => ({})}>
-        <Header
-          navigateTo={() => {
-          }}
-        />
-        <Navbar
-          pathname={location.pathname}
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          showSearchWrapper={true}
-          showCreateButton={true}
-        />
-      </HeaderWrapper>
-      <ApplicationContentWrapper
-        headerHeight={headerHeight} open={true}
-        maxWidth={350}
-        contentFullWidth={false}
-        menuItems={[]}
-      >
-        <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        >
+      <Header
+        navigateTo={() => {
+        }}
+      />
+      <Navbar
+        location={location}
+        navbarItems={navbarItems2}
+        navigateTo={() => {
+        }}
+        showSearchWrapper={true}
+        showCreateButton={true}
+      />
+      <ModflowContainer>
+        <SidebarContent maxWidth={350}>
+          <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
+        </SidebarContent>
+        <ContentWrapper>
           <ModelGrid
-            sectionTitle={sectionTitle()}
+            placeholder="Order By"
+            sortOptions={sortOptions}
+            setModelData={setModelData}
+
             data={modelData}
+            sectionTitle={sectionTitle()}
             handleCopyButtonClick={handleCopyButtonClick}
           />
-        </SortDropdown>
-      </ApplicationContentWrapper>
+        </ContentWrapper>
+      </ModflowContainer>
     </div>
   );
 };

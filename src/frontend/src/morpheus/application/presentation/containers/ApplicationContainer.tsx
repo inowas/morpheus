@@ -1,4 +1,4 @@
-import {Footer, Header, HeaderWrapper, IPageWidth, Navbar} from 'common/components';
+import {Footer, Header, IPageWidth} from 'common/components';
 import React, {ReactNode, useEffect, useState} from 'react';
 import {useNavbarItems, useTranslate} from '../../application';
 import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
@@ -32,22 +32,12 @@ const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
 
   return (
     <>
-      <HeaderWrapper>
-        <Header
-          navigateTo={navigateTo}
-          language={language}
-          languageList={languageList}
-          onChangeLanguage={setLanguage}
-        />
-        <Navbar
-          pathname={location.pathname}
-          navbarItems={navbarItems}
-          navigateTo={navigateTo}
-          showSearchWrapper={showSearchBar}
-          showCreateButton={showButton}
-        />
-      </HeaderWrapper>
-
+      <Header
+        navigateTo={navigateTo}
+        language={language}
+        languageList={languageList}
+        onChangeLanguage={setLanguage}
+      />
       <ContentContainer>
         {children}
       </ContentContainer>

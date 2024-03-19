@@ -7,12 +7,13 @@ interface IProps {
 
 }
 
-const ModflowContainer = ({children, headerHeight = 0}: IProps) => (
+const ModflowContainer = ({children, headerHeight = 140}: IProps) => (
   <div
     style={{
-      height: `calc(100vh - ${headerHeight}px)`,
+      height: '100vh',
       display: 'flex',
       overflow: 'hidden',
+      paddingTop: headerHeight,
     }}
   >
     {children}
