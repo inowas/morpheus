@@ -1,9 +1,9 @@
-import {IProjectCard} from 'common/components/ModelCard';
+import {ICard} from 'common/components/CardGrid/Card';
 
-function getAuthorCounts(models: IProjectCard[]): Record<string, number> {
+function getAuthorCounts(models: ICard[]): Record<string, number> {
   const authorCounts: Record<string, number> = {};
   models.forEach(model => {
-    const authorName = model.meta_author_name;
+    const authorName = model.author;
 
     if (authorCounts[authorName]) {
       authorCounts[authorName]++;
@@ -14,7 +14,7 @@ function getAuthorCounts(models: IProjectCard[]): Record<string, number> {
   return authorCounts;
 }
 
-function createOwnerOptions(models: IProjectCard[]) {
+function createOwnerOptions(models: ICard[]) {
   const authorCounts = getAuthorCounts(models);
   const ownerOptions = Object.keys(authorCounts).map(authorName => ({
     key: authorName,

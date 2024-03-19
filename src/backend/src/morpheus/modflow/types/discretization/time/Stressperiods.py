@@ -33,7 +33,7 @@ class StressPeriod:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            start_date_time=StartDateTime.from_value(obj['start_datetime']),
+            start_date_time=StartDateTime.from_value(obj['start_date_time']),
             number_of_time_steps=NumberOfTimeSteps.from_value(obj['number_of_time_steps']),
             time_step_multiplier=TimeStepMultiplier.from_value(obj['time_step_multiplier']),
             steady_state=IsSteadyState.from_value(obj['steady_state'])
@@ -41,7 +41,7 @@ class StressPeriod:
 
     def to_dict(self):
         return {
-            'start_datetime': self.start_date_time.to_value(),
+            'start_date_time': self.start_date_time.to_value(),
             'number_of_time_steps': self.number_of_time_steps.to_value(),
             'time_step_multiplier': self.time_step_multiplier.to_value(),
             'steady_state': self.steady_state.to_value()

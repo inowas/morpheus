@@ -1,4 +1,4 @@
 import {IError} from 'morpheus/types';
-import {IProjectSummary} from './Project.type';
+import {IProjectListItem} from './Project.type';
 
-export type {IError, IProjectSummary};
+export type {IError, IProjectListItem};

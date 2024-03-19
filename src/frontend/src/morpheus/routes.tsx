@@ -36,8 +36,8 @@ const Router = () => {
       <Route path="/projects" element={wrapPublicComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>
       <Route path="/projects/:projectId" element={wrapPublicComponent(<ProjectPage basePath={'/projects'}/>, true)}/>
       <Route
-        path="/projects/:projectId/basemodel/:property?/:propertyId?"
-        element={wrapPublicComponent(<ProjectBaseModelPage basePath={'/projects'} section={'basemodel'}/>, true)}
+        path="/projects/:projectId/model/:property?/:propertyId?"
+        element={wrapPublicComponent(<ProjectBaseModelPage basePath={'/projects'} section={'model'}/>, true)}
       />
       <Route
         path="/projects/:projectId/scenarios/:scenarioId?/:property?/:propertyId?"
