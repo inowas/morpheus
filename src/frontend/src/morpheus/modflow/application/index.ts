@@ -1,5 +1,5 @@
 import useProjectMetadata from './useProjectMetadata';
-import useProjectSummaries from './useProjectSummaries';
+import useProjectList from './useProjectList';
 import useTranslate from './useTranslate';
 
-export {useProjectMetadata, useProjectSummaries, useTranslate};
+export {useProjectMetadata, useProjectList, useTranslate};

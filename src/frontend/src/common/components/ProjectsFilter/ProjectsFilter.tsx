@@ -1,4 +1,4 @@
-import {Button, IProjectCard} from 'common/components';
+import {Button, ICard} from 'common/components';
 import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
 import {MapContainer, TileLayer} from 'react-leaflet';
 import React, {useState} from 'react';
@@ -11,8 +11,8 @@ import styles from './ProjectsFilter.module.less';
 import useFilterOptions from './hooks/useFilter';
 
 interface IProps {
-  data: IProjectCard[];
-  updateModelData: (data: IProjectCard[]) => void;
+  data: ICard[];
+  updateModelData: (data: ICard[]) => void;
 }
 
 const defaultFilterOptions: IFilterOptions = {
@@ -62,7 +62,7 @@ const options = [
 const ProjectsFilter = ({data, updateModelData}: IProps) => {
   const [modelData, setModelData] = useState(data);
   const ownerOptions = createOwnerOptions(modelData);
-  const countValue = (key: keyof IProjectCard, value: string) => {
+  const countValue = (key: keyof ICard, value: string) => {
     let count = 0;
     modelData.forEach((model) => {
       if (model[key] === value) {
@@ -71,10 +71,11 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
     });
     return count;
   };
-  const countStatus = (status: boolean) => {
-    return modelData.filter((model) => model.meta_status === status).length;
+  const countStatus = (status: 'green' | 'yellow' | 'red' | 'grey') => {
+    return modelData.filter((model) => status === model.status).length;
   };
-  const rendomCount = () => {
+
+  const randomCount = () => {
     return Math.floor(Math.random() * 50);
   };
 
@@ -113,7 +114,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
             checked={filterOptions.myModels}
             onChange={(_, {checked}) => handleFilterChange('myModels', checked || false)}
           />
-          <span className={styles.count}>(<span>{countValue('meta_author_name', userName)}</span>)</span>
+          <span className={styles.count}>(<span>{countValue('author', userName)}</span>)</span>
         </div>
         <div className={styles.checkboxWrapper}>
           <Checkbox
@@ -122,7 +123,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
             name="modelsFromGroups"
             checked={filterOptions.modelsFromGroups}
             onChange={(_, {checked}) => handleFilterChange('modelsFromGroups', checked || false)}
-          /><span className={styles.count}>(<span>{rendomCount()}</span>)</span>
+          /><span className={styles.count}>(<span>{randomCount()}</span>)</span>
         </div>
         <label className={styles.labelSmall}>Owners</label>
         <Dropdown
@@ -152,7 +153,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
             checked={filterOptions.calculationsFinalized}
             onChange={(_, {checked}) => handleFilterChange('calculationsFinalized', checked || false)}
           />
-          <span className={styles.count}>(<span>{countStatus(true)}</span>)<i className={styles.metaStatus} style={{background: '#08E600'}}></i></span>
+          <span className={styles.count}>(<span>{countStatus('green')}</span>)<i className={styles.metaStatus} style={{background: '#08E600'}}></i></span>
         </div>
         <div className={styles.checkboxWrapper}>
           <Checkbox
@@ -162,7 +163,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
             checked={filterOptions.calculationsNotFinalized}
             onChange={(_, {checked}) => handleFilterChange('calculationsNotFinalized', checked || false)}
           />
-          <span className={styles.count}>(<span>{countStatus(false)}</span>)<i className={styles.metaStatus} style={{background: '#C8C8C8'}}></i></span>
+          <span className={styles.count}>(<span>{countStatus('yellow')}</span>)<i className={styles.metaStatus} style={{background: '#C8C8C8'}}></i></span>
         </div>
       </Form.Field>
       {/*// By Date*/}
@@ -234,7 +235,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
               onChange={(event, {checked}) => handleBoundaryChange(key, checked || false)}
             />
             <p className={styles.description}>{boundaryDescription(key)}</p>
-            <span className={styles.count}>(<span>{rendomCount()}</span>)</span>
+            <span className={styles.count}>(<span>{randomCount()}</span>)</span>
           </div>
         ))}
       </Form.Field>
@@ -267,7 +268,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
               checked={filterOptions.additionalFeatures[key]}
               onChange={(event, {checked}) => handleAdditionalFeaturesChange(key, checked || false)}
             />
-            <span className={styles.count}>(<span>{rendomCount()}</span>)</span>
+            <span className={styles.count}>(<span>{randomCount()}</span>)</span>
           </div>
         ))}
       </Form.Field>

@@ -1,10 +1,9 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
+import {ApplicationContentWrapper, Footer, Header, HeaderWrapper, ICard, IPageWidth, ISortOption, Grid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
+import React, {useEffect, useState} from 'react';
+import {useNavbarItems, useTranslate} from '../../application';
+import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
 
-import {ICard} from '../CardGrid/Card';
-import {ModelCard} from '../index';
-import React from 'react';
-import SliderSwiper from 'common/components/SliderSwiper';
+type ILanguageCode = 'de-DE' | 'en-GB';
 
 const models: ICard[] = [
   {
@@ -243,80 +242,102 @@ const models: ICard[] = [
   },
 ];
 
-const children = [
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
-  <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi consequatur cumque ducimus laboriosam, mollitia pariatur. Asperiores corporis eum ex tempora? Atque
-    est modi mollitia omnis perspiciatis quam ratione rerum.</div>,
+const sortOptions: ISortOption[] = [
+  {text: 'Most Recent', value: 'mostRecent'},
+  {text: 'Less Recent', value: 'lessRecent'},
+  {text: 'A-Z', value: 'aToZ'},
+  {text: 'Z-A', value: 'zToA'},
 ];
 
-const childrenImages = [
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-0edbdfc7-9649-4070-bbc7-a004f5cbae63-thumb-8f988e39-d39d-44e1-a311-32a875cb3990.jpg"/>
-  </div>,
-  <div style={{overflow: 'hidden'}}><img src="https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg"/>
-  </div>,
-];
+const FilterProjects = () => {
+
+  const {i18n, translate} = useTranslate();
+  const {navbarItems} = useNavbarItems();
+  const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
+  const navigateTo = useNavigate();
+  const location = useLocation();
+  const {release} = useReleaseVersion();
+
+  const [modelData, setModelData] = useState(models);
 
 
-export default {
-  /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
-  title: 'SliderSwiper',
-  component: SliderSwiper,
-} as Meta<typeof SliderSwiper>;
+  const pageSize: IPageWidth = 'auto';
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const updateHeaderHeight = (height: number) => {
+    setHeaderHeight(height);
+  };
 
-export const SliderSwiperExample: StoryFn<typeof SliderSwiper> = () => {
+  useEffect(() => {
+    if (language !== i18n.language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language, i18n]);
+
+  const languageList: { code: ILanguageCode; label: string }[] = [
+    {
+      code: 'en-GB',
+      label: 'English',
+    },
+  ];
+
+  const updateModelData = (newData: ICard[]) => {
+    setModelData(newData);
+  };
+
+  const sectionTitle = () => {
+    if (1 === modelData.length) {
+      return (<><span>1</span> {translate('Model found')}</>);
+    } else {
+      return (<><span>{modelData.length}</span> {translate('Models found')}</>);
+    }
+  };
+
+  const handleCopyButtonClick = (id: number) => {
+    // Handle copy functionality here
+    console.log(`Copy button clicked for ID: ${id}`);
+  };
+
   return (
     <>
-      <SliderSwiper
-        sectionTitle={'Slider Models'}
+      <HeaderWrapper updateHeight={updateHeaderHeight}>
+        <Header
+          navigateTo={navigateTo}
+          language={language}
+          languageList={languageList}
+          onChangeLanguage={setLanguage}
+        />
+        <Navbar
+          pathname={location.pathname}
+          navbarItems={navbarItems}
+          navigateTo={navigateTo}
+          showSearchWrapper={true}
+          showCreateButton={true}
+        />
+      </HeaderWrapper>
+
+      <ApplicationContentWrapper
+        headerHeight={headerHeight}
+        open={true}
+        maxWidth={350}
+        menuItems={[]}
       >
-        {models.map((item) => (
-          <ModelCard
-            key={item.id} data={item}
-            onDelete={() => console.log('Delete button clicked')}
-            onCopy={() => console.log('Copy button clicked')}
+        <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
+        <SortDropdown
+          placeholder="Order By"
+          sortOptions={sortOptions}
+          data={modelData}
+          setModelData={setModelData}
+        >
+          <Grid
+            title={sectionTitle()}
+            cards={modelData}
+            onCopy={handleCopyButtonClick}
           />
-        ))}
-      </SliderSwiper>
-      <SliderSwiper sectionTitle={'Slider Text'} children={children}/>
-      <SliderSwiper sectionTitle={'Slider Images'} children={childrenImages}/>
+        </SortDropdown>
+      </ApplicationContentWrapper>
+      <Footer release={release} maxWidth={pageSize}/>
     </>
   );
 };
 
-
+export default FilterProjects;

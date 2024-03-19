@@ -3,8 +3,8 @@ import {createServer, Response} from 'miragejs';
 
 import config from '../src/config';
 import {generateRandomUsers, IUser} from './data/users';
-import {generateRandomProjects} from './data/projects';
-import {IProjectSummary} from 'morpheus/modflow/types/Project.type';
+import {generateRandomProjects, IProject} from './data/projects';
+import {IProjectListItem} from 'morpheus/modflow/types/Project.type';
 import {getProjectMetadata} from './data/projectMetadata';
 
 export function makeServer({environment = 'test'} = {}) {
@@ -15,7 +15,7 @@ export function makeServer({environment = 'test'} = {}) {
       this.namespace = 'api/v1';
 
       this.get('projects', (schema) => {
-        const projectSummaries: IProjectSummary[] = schema.db.projects.map(
+        const projectSummaries: IProjectListItem[] = schema.db.projects.map(
           (p) => {
             return {
               project_id: p.project_id,
@@ -25,6 +25,8 @@ export function makeServer({environment = 'test'} = {}) {
               owner_id: p.permissions.owner_id,
               is_public: p.permissions.is_public,
               created_at: p.metadata.created_at,
+              status_color: 'green',
+              image: p.metadata.image,
             };
           });
 
@@ -35,6 +37,28 @@ export function makeServer({environment = 'test'} = {}) {
         const id = request.params.id;
         const metadata = getProjectMetadata(id);
         return new Response(200, {}, metadata);
+      });
+
+      this.get('projects/:projectId/model/time-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        return new Response(200, {}, project.model.time_discretization);
+      });
+
+      this.put('projects/:projectId/model/time-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        const timeDiscretization = JSON.parse(request.requestBody);
+        schema.db.projects.update({project_id: projectId, model: {...project.model, time_discretization: timeDiscretization}});
+        return new Response(204);
       });
 
       this.get('users', (schema) => {
@@ -81,22 +105,6 @@ export function makeServer({environment = 'test'} = {}) {
 
         schema.db.users.remove(id);
         return new Response(204, {}, {});
-      });
-
-      this.get('modflow', (schema) => {
-        const projectSummaries: IProjectSummary[] = schema.db.projects.map(
-          (p) => {
-            return {
-              project_id: p.project_id,
-              name: p.metadata.name,
-              description: p.metadata.description,
-              tags: p.metadata.tags,
-              owner_id: p.permissions.owner_id,
-              is_public: p.permissions.is_public,
-              created_at: p.metadata.created_at,
-            };
-          });
-        return projectSummaries;
       });
 
       // ignore all /auth requests

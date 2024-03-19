@@ -9,7 +9,7 @@ const Error = ({message}: IProps) => {
   return (
     <div className={styles.wrapper} data-testid={'error'}>
       <h1 className={styles.title}>Error</h1>
-      <p>{message || 'Error'}</p>
+      <p className={styles.message}>{message || 'Error'}</p>
     </div>
   );
 };

@@ -31,10 +31,10 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: an
     to: '/projects/' + projectId,
   },
   {
-    name: 'basemodel',
-    label: translate('Basemodel'),
+    name: 'model',
+    label: translate('Model'),
     admin: false,
-    to: '/projects/' + projectId + '/basemodel',
+    to: '/projects/' + projectId + '/model',
   },
   {
     name: 'scenarios',
@@ -80,9 +80,6 @@ const useNavbarItems = (): IUseNavbarItems => {
   const {translate} = useTranslate();
   const params = useParams();
   const location = useLocation();
-
-  console.log('params', params);
-  console.log('location', location);
 
   const isDashboardPage = location.pathname.includes('projects') && 0 === Object.keys(params).length;
   const isProjectPage = location.pathname.includes('projects') && params.projectId !== undefined;
