@@ -10,11 +10,11 @@ interface ListItemProps {
   items: IMenuItem | IDropdownItem;
   depthLevel?: number;
   onCloseMobileMenu: () => void;
-  pathname: string;
+  location: any;
   navigateTo: (path: string) => void;
 }
 
-const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobileMenu, pathname, navigateTo}) => {
+const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobileMenu, location, navigateTo}) => {
   const isMenuItem = (item: IMenuItem | IDropdownItem): item is IMenuItem => (item as IMenuItem).to !== undefined;
   const isDropdownItem = (item: IMenuItem | IDropdownItem): item is IDropdownItem => (item as IDropdownItem).basepath !== undefined;
 
@@ -37,7 +37,6 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
     };
   }, [dropdown, isMobile]);
 
-  const currentPathname = pathname;
 
   const onSetDropdown = useCallback((value: boolean) => {
     setDropdown(value);
@@ -45,7 +44,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
 
 
   const isActive = (path: string): boolean => {
-    return path === currentPathname;
+    return path === location.pathname || location.hash === path;
   };
 
   const onMouseEnter = () => {
@@ -99,6 +98,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
             to={items.basepath}
             aria-expanded={dropdown ? 'true' : 'false'}
             aria-haspopup="menu"
+            data-url={items.basepath}
             className={isActive(items.basepath) ? styles.active : ''}
             onClick={() => {
               closeMobile();
@@ -114,7 +114,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
             <span aria-hidden="true" className={styles.icon}></span>
           </button>}
           <Dropdown
-            pathname={pathname}
+            location={location}
             navigateTo={navigateTo}
             dropdown={dropdown}
             submenus={items.subMenu}

@@ -3,34 +3,20 @@ import React from 'react';
 import styles from './CardGrid.module.less';
 import ModelCard, {ICard} from '../Card';
 import SectionTitle from 'common/components/SectionTitle';
-import SortDropdown, {ISortOption} from '../SortDropdown';
 
 interface ICardGrid {
-  sortOptions?: ISortOption[];
-  onChangeCards?: (data: ICard[]) => void;
-  placeholder?: string;
-
   title?: string | React.ReactNode;
   cards: ICard[];
 }
 
 const CardGrid: React.FC<ICardGrid> = ({
-  sortOptions,
-  placeholder = 'Order By',
   title,
   cards,
-  onChangeCards,
+
 }) => (
   <div data-testid="model-grid" className={styles.modelGridWrapper}>
     <div className={styles.modelGridHeader}>
-
       {title && <SectionTitle title={title}/>}
-      {onChangeCards && sortOptions && <SortDropdown
-        placeholder={placeholder}
-        setModelData={onChangeCards}
-        sortOptions={sortOptions}
-        data={cards}
-      />}
     </div>
     <div
       className="scrollWrapper-X"

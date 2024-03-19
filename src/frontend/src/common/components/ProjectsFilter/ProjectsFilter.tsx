@@ -13,6 +13,7 @@ import useFilterOptions from './hooks/useFilter';
 interface IProps {
   data: ICard[];
   updateModelData: (data: ICard[]) => void;
+  style?: React.CSSProperties;
 }
 
 const defaultFilterOptions: IFilterOptions = {
@@ -59,7 +60,7 @@ const options = [
   {key: '5', text: 'Data', value: 'Data'},
 ];
 
-const ProjectsFilter = ({data, updateModelData}: IProps) => {
+const ProjectsFilter = ({data, updateModelData, style}: IProps) => {
   const [modelData, setModelData] = useState(data);
   const ownerOptions = createOwnerOptions(modelData);
   const countValue = (key: keyof ICard, value: string) => {
@@ -93,7 +94,7 @@ const ProjectsFilter = ({data, updateModelData}: IProps) => {
 
 
   return (
-    <Form className={styles.projectsFilterForm}>
+    <Form className={styles.projectsFilterForm} style={{...style}}>
       <div className={styles.titleWrapper}>
         <h2 className={styles.title}>Filters</h2>
         <Button

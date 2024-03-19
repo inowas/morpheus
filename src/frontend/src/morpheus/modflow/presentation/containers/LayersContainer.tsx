@@ -3,7 +3,7 @@ import {BodyContent, SidebarContent} from '../components';
 import {LayersBody, LayersContent} from '../components/Layers';
 
 
-const TestingContainer = () => {
+const LayersContainer = () => {
   return (
     <>
       <SidebarContent maxWidth={700}>
@@ -11,10 +11,9 @@ const TestingContainer = () => {
       </SidebarContent>
       <BodyContent>
         <LayersBody/>
-
       </BodyContent>
     </>
   );
 };
 
-export default TestingContainer;
+export default LayersContainer;

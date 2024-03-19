@@ -1,4 +1,4 @@
-import {Icon, Image, Button as SemanticButton} from 'semantic-ui-react';
+import {Button as SemanticButton, Icon, Image} from 'semantic-ui-react';
 
 import Button from '../../Button/Button';
 import React from 'react';
@@ -9,7 +9,7 @@ export interface ICard {
   title: string;
   description: string;
   image?: string;
-  author: string;
+  author?: string;
   date_time: string;
   status: ICardStatus
   onViewClick?: () => void;

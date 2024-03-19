@@ -1,9 +1,28 @@
 @import '../site.variables';
 
 .navbar {
+  display: flex;
+  width: 100%;
+  flex: 1 1 auto;
+  position: fixed;
+  top: 50px;
+  z-index: 1001;
+  height: 90px;
+  max-height: 90px;
+  background-color: @white;
+  box-shadow: 0 3px 2px 0 rgba(50, 50, 50, 0.06);
+
+  & > [class^="contentWrapper--"] {
+    padding: 0 1em 0 64px;
+
+    @media (min-width: @breakpoint-tablet) {
+      padding: 0 50px 0 70px;
+    }
+  }
 
   .inner {
     display: flex;
+    height: 100%;
     justify-content: space-between;
     align-items: stretch;
     flex-wrap: wrap;
@@ -92,6 +111,7 @@
     flex-direction: column;
     list-style: none;
     padding: 0;
+    height: 100%;
     width: calc(100% - 2em);
     margin-left: 1em;
     margin-right: 1em;
@@ -120,7 +140,7 @@
   .menuItem {
     position: relative;
     width: 100%;
-
+    height: 100%;
     cursor: pointer;
 
     &:not(:last-child) {
