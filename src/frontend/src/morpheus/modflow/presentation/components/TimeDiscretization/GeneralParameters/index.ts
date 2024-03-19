@@ -1,0 +1,3 @@
+import TimeDiscretizationGeneralParameters from './TimeDiscretizationGeneralParameters';
+
+export default TimeDiscretizationGeneralParameters;

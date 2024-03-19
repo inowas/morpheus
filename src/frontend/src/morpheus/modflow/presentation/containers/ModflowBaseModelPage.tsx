@@ -10,7 +10,7 @@ import {useNavbarItems} from '../../../application/application';
 
 interface IProps {
   basePath: string;
-  section: 'basemodel';
+  section: 'model';
 }
 
 const ModflowBaseModelPage = ({basePath, section}: IProps) => {
