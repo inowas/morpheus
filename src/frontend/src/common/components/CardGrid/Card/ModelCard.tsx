@@ -21,7 +21,6 @@ export interface ICard {
 
 type ICardStatus = 'green' | 'yellow' | 'red' | 'grey';
 const ModelCard: React.FC<ICard> = ({
-  key,
   title,
   description,
   image,
