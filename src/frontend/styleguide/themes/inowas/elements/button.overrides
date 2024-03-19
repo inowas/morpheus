@@ -15,10 +15,17 @@
   text-transform: uppercase;
   transition: 300ms;
 
-  &:hover,
-  &:focus {
+  svg {
+    transition: color 300ms;
+  }
+
+  &:hover {
     color: #FFFFFF;
     background-color: #6C84A6;
+
+    .fa-trash-can {
+      color: @ref-color-red;
+    }
   }
 }
 
@@ -44,8 +51,7 @@
   }
 
 
-  &:hover,
-  &:focus {
+  &:hover {
     color: @ref-color-active;
   }
 }

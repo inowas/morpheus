@@ -1,247 +1,12 @@
-import {ApplicationContentWrapper, Header, HeaderWrapper, ICard, IPageWidth, ISortOption, Grid, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
+import {CardGrid, ContentWrapper, Header, ICard, ISortOption, Navbar, ProjectsFilter, SortDropdown} from 'common/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import '../globals.less';
+import {useTranslate} from '../../../morpheus/modflow/application';
+import {ModflowContainer, SidebarContent} from '../../../morpheus/modflow/presentation/components';
 
-const models: ICard[] = [
-  {
-    id: 0,
-    description: 'A comprehensive guide to React development',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
-    title: 'React Mastery: The Complete Guide',
-    model_Link: '/tools/01',
-    model_map: '/tools/01',
-    owner_avatar: '/author/JohnDoe.jpeg',
-    author: 'John Doe',
-    meta_link: 'https://metaLink1',
-    date_time: '20.11.2023',
-    status: false,
-  },
-  {
-    id: 1,
-    description: 'Explore the world of machine learning with Python',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg',
-    title: 'Machine Learning with Python',
-    model_Link: '/tools/02',
-    model_map: '/tools/01',
-    owner_avatar: '/author/JaneSmith.jpeg',
-    author: 'Jane Smith',
-    meta_link: 'https://metaLink2',
-    date_time: '20.11.2023',
-    status: false,
-  },
-  {
-    id: 2,
-    description: 'Base model in the Ezousa valley',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
-    title: 'Ezousa MAR site',
-    model_Link: '/tools/03',
-    model_map: '/tools/01',
-    owner_avatar: '/author/RobertJohnson.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink3',
-    date_time: '20.11.2023',
-    status: true,
-  },
-  {
-    id: 3,
-    description: 'Small model at NU campus',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg',
-    title: 'Simulation ofSUDS impact',
-    model_Link: '/tools/04',
-    model_map: '/tools/01',
-    owner_avatar: '/author/EmilyBrown.jpeg',
-    author: 'Emily Brown',
-    meta_link: 'https://metaLink4',
-    date_time: '20.11.2023',
-    status: true,
-  },
-  {
-    id: 4,
-    description: 'Explore the world of data science and analytics',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
-    title: 'Data Science Foundations',
-    model_Link: '/tools/05',
-    model_map: '/tools/01',
-    owner_avatar: '/author/DavidWilson.jpeg',
-    author: 'David Wilson',
-    meta_link: 'https://metaLink5',
-    date_time: '01.11.2023',
-    status: true,
-  },
-  {
-    id: 5,
-    description: 'Introduction to cybersecurity and its applications',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg',
-    title: 'Cybersecurity Basics',
-    model_Link: '/tools/06',
-    model_map: '/tools/01',
-    owner_avatar: '/author/AliceJohnson.jpeg',
-    author: 'Alice Johnson',
-    meta_link: 'https://metaLink6',
-    date_time: '15.10.2023',
-    status: true,
-  },
-  {
-    id: 6,
-    description: 'Discover the fundamentals of cloud computing',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-0edbdfc7-9649-4070-bbc7-a004f5cbae63-thumb-8f988e39-d39d-44e1-a311-32a875cb3990.jpg',
-    title: 'Cloud Computing Essentials',
-    model_Link: '/tools/07',
-    model_map: '/tools/01',
-    owner_avatar: '/author/JamesSmith.jpeg',
-    author: 'James Smith',
-    meta_link: 'https://metaLink7',
-    date_time: '05.01.2020',
-    status: false,
-  },
-  {
-    id: 7,
-    description: 'Model description 1',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
-    title: 'Model Title 1',
-    model_Link: '/tools/08',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink8',
-    date_time: '25.10.2023',
-    status: true,
-  },
-  {
-    id: 8,
-    description: 'Model description 2',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-0edbdfc7-9649-4070-bbc7-a004f5cbae63-thumb-8f988e39-d39d-44e1-a311-32a875cb3990.jpg',
-    title: 'Model Title 2',
-    model_Link: '/tools/09',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink9',
-    date_time: '27.10.2023',
-    status: false,
-  },
-  {
-    id: 9,
-    description: 'Model description 3',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg',
-    title: 'Model Title 3',
-    model_Link: '/tools/10',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink10',
-    date_time: '30.10.2023',
-    status: true,
-  },
-  {
-    id: 10,
-    description: 'Model description 4',
-    image: 'image_url_4.jpg',
-    title: 'Model Title 4',
-    model_Link: '/tools/11',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink11',
-    date_time: '02.10.2023',
-    status: true,
-  },
-  {
-    id: 11,
-    description: 'Model description 5',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg',
-    title: 'Model Title 5',
-    model_Link: '/tools/12',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink12',
-    date_time: '05.10.2023',
-    status: false,
-  },
-  {
-    id: 12,
-    description: 'Exploring Advanced Data Structures',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg',
-    title: 'Advanced Data Structures',
-    model_Link: '/tools/13',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink13',
-    date_time: '10.11.2023',
-    status: true,
-  },
-  {
-    id: 13,
-    description: 'Introduction to Quantum Computing',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg',
-    title: 'Quantum Computing Basics',
-    model_Link: '/tools/14',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink14',
-    date_time: '03.09.2023',
-    status: false,
-  },
-  {
-    id: 14,
-    description: 'Optimizing Neural Network Architectures',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
-    title: 'Neural Network Optimization',
-    model_Link: '/tools/15',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink15',
-    date_time: '20.08.2023',
-    status: true,
-  },
-  {
-    id: 15,
-    description: 'Advanced Algorithms in Computational Biology',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-0edbdfc7-9649-4070-bbc7-a004f5cbae63-thumb-8f988e39-d39d-44e1-a311-32a875cb3990.jpg',
-    title: 'Computational Biology Algorithms',
-    model_Link: '/tools/16',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink16',
-    date_time: '15.07.2023',
-    status: false,
-  },
-  {
-    id: 16,
-    description: 'Introduction to Natural Language Processing',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-f1b69584-61c4-434f-9b81-f2272ec8e9ce-thumb-56626f85-c69e-4875-ac1c-a6d1cca81c5a.jpg',
-    title: 'Natural Language Processing Basics',
-    model_Link: '/tools/17',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink17',
-    date_time: '25.06.2023',
-    status: true,
-  },
-  {
-    id: 17,
-    description: 'Exploring Big Data Management Techniques',
-    image: 'https://datahub.inowas.com/uploaded/thumbs/map-fffea850-2cbf-4bff-a362-f19b899586d0-thumb-4cf377ab-8401-4204-a4b6-196a416180a2.jpg',
-    title: 'Big Data Management',
-    model_Link: '/tools/18',
-    model_map: '/tools/01',
-    owner_avatar: '/author/CatalinStefan.jpeg',
-    author: 'Catalin Stefan',
-    meta_link: 'https://metaLink18',
-    date_time: '10.05.2023',
-    status: false,
-  },
-];
-
-const navbarItems2 = [
+const navbarItems = [
   {
     name: 'home', label: 'Home', admin: false, basepath: '/', subMenu: [
       {name: 'T02', label: 'T02: Groundwater Mounding (Hantush)', admin: false, to: '/tools/T02'},
@@ -251,6 +16,174 @@ const navbarItems2 = [
   {name: 'documentation', label: 'Documentation', admin: false, to: '/modflow'},
 ];
 
+const projects: ICard[] = [
+  {
+    'key': 'd734ec7e-3abb-4718-be07-71c89134bc51',
+    'title': 'Project Name 0',
+    'description': 'Project Description 0',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '30.05.2023',
+    onViewClick: () => console.log('View', 'Project Name 0'),
+    onDeleteClick: () => console.log('Delete', 'Project Name 0'),
+    onCopyClick: () => console.log('Copy', 'Project Name 0'),
+  },
+  {
+    'key': 'f60b8894-b5fd-4ec6-b99b-70ac3b4b7c99',
+    'title': 'Project Name 1',
+    'description': 'Project Description 1',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '24.03.2023',
+    onViewClick: () => console.log('View', 'Project Name 1'),
+    onDeleteClick: () => console.log('Delete', 'Project Name 1'),
+    onCopyClick: () => console.log('Copy', 'Project Name 1'),
+  },
+  {
+    'key': '10f70ffd-bbb0-49cd-8d65-10f52dfb7559',
+    'title': 'Project Name 2',
+    'description': 'Project Description 2',
+    'status': 'green',
+    'date_time': '03.03.2024',
+    onViewClick: () => console.log('View', 'Project Name 2'),
+    onDeleteClick: () => console.log('Delete', 'Project Name 2'),
+    onCopyClick: () => console.log('Copy', 'Project Name 2'),
+  },
+  {
+    'key': 'b4493378-47f5-4042-bc07-73f632a57953',
+    'title': 'Project Name 3',
+    'description': 'Project Description 3',
+    'status': 'green',
+    'date_time': '30.10.2023',
+
+  },
+  {
+    'key': '7617c29b-e656-481f-bf95-afb32a8b513a',
+    'title': 'Project Name 4',
+    'description': 'Project Description 4',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '20.05.2023',
+  },
+  {
+    'key': 'f2184f6a-b64b-4f9a-805a-32f7d53ab729',
+    'title': 'Project Name 5',
+    'description': 'Project Description 5',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '13.10.2023',
+    onViewClick: () => console.log('View', 'Project Name 5'),
+    onDeleteClick: () => console.log('Delete', 'Project Name 5'),
+    onCopyClick: () => console.log('Copy', 'Project Name 5'),
+  },
+  {
+    'key': '9a14ea45-4e62-457e-8881-0b43f48e8bae',
+    'title': 'Project Name 6',
+    'description': 'Project Description 6',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '02.09.2023',
+  },
+  {
+    'key': '7444e9ce-1b97-421b-9312-88031e584e9a',
+    'title': 'Project Name 7',
+    'description': 'Project Description 7',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '02.03.2024',
+  },
+  {
+    'key': '82c19560-cc1e-43c0-ab3f-871c70ded456',
+    'title': 'Project Name 8',
+    'description': 'Project Description 8',
+    'status': 'green',
+    'date_time': '23.06.2023',
+    onViewClick: () => console.log('View', 'Project Name 8'),
+    onDeleteClick: () => console.log('Delete', 'Project Name 8'),
+  },
+  {
+    'key': 'a210b946-d534-4df1-a884-ac5047d66b45',
+    'title': 'Project Name 9',
+    'description': 'Project Description 9',
+    'status': 'green',
+    'date_time': '06.04.2023',
+  },
+  {
+    'key': '93d19269-1c4c-4167-8c45-30f42db2eaeb',
+    'title': 'Project Name 10',
+    'description': 'Project Description 10',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '04.08.2023',
+    onViewClick: () => console.log('View', 'Project Name 10'),
+    onDeleteClick: () => console.log('Delete', 'Project Name 10'),
+    onCopyClick: () => console.log('Copy', 'Project Name 10'),
+  },
+  {
+    'key': '7b599b34-d0c8-41df-9fb2-0463f26f6663',
+    'title': 'Project Name 11',
+    'description': 'Project Description 11',
+    'status': 'green',
+    'date_time': '21.07.2023',
+  },
+  {
+    'key': '160be895-60ff-4bae-9da3-172d66b435eb',
+    'title': 'Project Name 12',
+    'description': 'Project Description 12',
+    'status': 'green',
+    'date_time': '23.04.2023',
+  },
+  {
+    'key': '18bb774d-4b2b-45e0-b8b9-f9881a7af1a2',
+    'title': 'Project Name 13',
+    'description': 'Project Description 13',
+    'status': 'green',
+    'date_time': '02.09.2023',
+  },
+  {
+    'key': '251046ae-2574-4c26-98d2-e472efd0d615',
+    'title': 'Project Name 14',
+    'description': 'Project Description 14',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '22.02.2024',
+  },
+  {
+    'key': 'f569aaf7-ca5d-4c6d-8ea5-f5df5caf974c',
+    'title': 'Project Name 15',
+    'description': 'Project Description 15',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '03.05.2023',
+  },
+  {
+    'key': 'a5a879b3-6dcb-486d-a856-05a36501fcf2',
+    'title': 'Project Name 16',
+    'description': 'Project Description 16',
+    'status': 'green',
+    'date_time': '09.11.2023',
+  },
+  {
+    'key': '9414cc06-bc53-4182-8939-40c0cbe2fddd',
+    'title': 'Project Name 17',
+    'description': 'Project Description 17',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '10.09.2023',
+    onViewClick: () => console.log('View', 'Project Name 17'),
+    onCopyClick: () => console.log('Copy', 'Project Name 17'),
+  },
+  {
+    'key': '270003b2-702a-4a32-8e50-9eb68de5807b',
+    'title': 'Project Name 18',
+    'description': 'Project Description 18',
+    'image': 'https://datahub.inowas.com/uploaded/thumbs/map-5f79bb9b-e8a8-4219-b78e-494b7b17120c-thumb-cab25e87-6b4a-4574-ad08-9ae20e77ba2d.jpg',
+    'status': 'green',
+    'date_time': '29.07.2023',
+  },
+
+];
+
 const sortOptions: ISortOption[] = [
   {text: 'Most Recent', value: 'mostRecent'},
   {text: 'Less Recent', value: 'lessRecent'},
@@ -258,7 +191,18 @@ const sortOptions: ISortOption[] = [
   {text: 'Z-A', value: 'zToA'},
 ];
 
-const pageSize: IPageWidth = 'auto';
+const location = {
+  hash:
+    '',
+  key:
+    'k7tdeakh',
+  pathname:
+    '/',
+  search:
+    '',
+  state:
+    null,
+};
 
 export default {
   /* 👇 The title prop is optional.
@@ -270,77 +214,69 @@ export default {
 } as Meta<typeof ProjectsFilter>;
 
 export const FormFilterExample: StoryFn<typeof ProjectsFilter> = () => {
-  const [modelData, setModelData] = useState(models);
+
+  const [cards, setCards] = useState<ICard[]>(projects);
 
   const updateModelData = (newData: ICard[]) => {
-    setModelData(newData);
+    setCards(newData);
   };
 
   return (
     <div style={{paddingLeft: '1rem', backgroundColor: '#eeeeee'}}>
-      <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
+      <ProjectsFilter
+        data={cards}
+        updateModelData={updateModelData}
+        style={{padding: '1rem'}}
+      />
     </div>
   );
 };
 
 export const FormFilterPageExample: StoryFn<typeof ProjectsFilter> = () => {
-  const [modelData, setModelData] = useState(models);
-  const [headerHeight, setHeaderHeight] = useState(0);
 
-  const updateModelData = (newData: ICard[]) => {
-    setModelData(newData);
-  };
+  const [cards, setCards] = useState<ICard[]>(projects);
 
-  const sectionTitle = () => {
-    if (1 === modelData.length) {
-      return (<><span>1</span> Model found </>);
-    } else {
-      return (<><span>{modelData.length}</span> Models found</>);
-    }
-  };
-
-  const handleCopyButtonClick = (id: number) => {
-    // Handle copy functionality here
-    console.log(`Copy button clicked for ID: ${id}`);
-  };
-
+  const {translate} = useTranslate();
 
   return (
     <div style={{margin: '-1rem'}}>
-      <HeaderWrapper updateHeight={() => ({})}>
-        <Header
-          navigateTo={() => {
-          }}
-        />
-        <Navbar
-          pathname={location.pathname}
-          navbarItems={navbarItems2}
-          navigateTo={() => {
-          }}
-          showSearchWrapper={true}
-          showCreateButton={true}
-        />
-      </HeaderWrapper>
-      <ApplicationContentWrapper
-        headerHeight={headerHeight} open={true}
-        maxWidth={350}
-        contentFullWidth={false}
-        menuItems={[]}
-      >
-        <ProjectsFilter data={modelData} updateModelData={updateModelData}/>
-        <SortDropdown
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          data={modelData}
-          setModelData={setModelData}
-        >
-          <Grid
-            title={sectionTitle()}
-            cards={modelData}
-            onCopy={handleCopyButtonClick}
+      <Header
+        navigateTo={() => {
+        }}
+      />
+      <Navbar
+        location={location}
+        navbarItems={navbarItems}
+        navigateTo={() => {
+        }}
+        showSearchWrapper={false}
+        showCreateButton={false}
+      />
+      <ModflowContainer>
+        <SidebarContent maxWidth={350}>
+          <div style={{padding: 20}}>
+            <h3>{translate('Projects filter')}</h3>
+          </div>
+        </SidebarContent>
+        <ContentWrapper style={{position: 'relative'}}>
+          <SortDropdown
+            placeholder="Order By"
+            setModelData={setCards}
+            sortOptions={sortOptions}
+            data={cards}
+            style={{
+              position: 'absolute',
+              top: 20,
+              right: 50,
+              zIndex: 10,
+            }}
           />
-        </SortDropdown>
-      </ApplicationContentWrapper>
+          <CardGrid
+            cards={cards}
+            title={<><span>{cards.length}</span> {translate('Projects found')}</>}
+          />
+        </ContentWrapper>
+      </ModflowContainer>
     </div>
   );
 };

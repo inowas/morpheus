@@ -19,7 +19,10 @@ interface IProps {
 const SortDropdown = ({sortOptions, data, setModelData, placeholder, style, className}: IProps) => {
 
   const handleSort = (e: SyntheticEvent<HTMLElement>, {value}: DropdownProps) => {
+
+
     let sortedData = [...data];
+    
     switch (value) {
     case 'mostRecent':
       sortedData.sort((a, b) => new Date(b.date_time.split('.').reverse().join('-')).getTime() - new Date(a.date_time.split('.').reverse().join('-')).getTime());
@@ -34,6 +37,7 @@ const SortDropdown = ({sortOptions, data, setModelData, placeholder, style, clas
       sortedData.sort((a, b) => b.title.localeCompare(a.title));
       break;
     default:
+      console.log('default');
       break;
     }
     setModelData(sortedData);
