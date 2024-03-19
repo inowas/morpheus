@@ -89,7 +89,9 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
         />
         <Popup
           trigger={
-            <Table.HeaderCell><Icon className={'dateIcon'} name="info circle"/>Steady</Table.HeaderCell>
+            <Table.HeaderCell style={{textAlign: 'center', width: '70px'}}>
+              <Icon className={'dateIcon'} name="info circle"/>Steady
+            </Table.HeaderCell>
           }
           content="State of stress period"
           hideOnScroll={true}
@@ -149,7 +151,7 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
                 }}
               />
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell style={{textAlign: 'right', width: '70px'}}>
               <Checkbox
                 name={'steady'}
                 checked={sp.steadyState}
