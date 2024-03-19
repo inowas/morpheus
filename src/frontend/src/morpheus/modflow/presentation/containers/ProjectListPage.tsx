@@ -1,10 +1,12 @@
-import {ContentWrapper, ICard, ISortOption, CardGrid} from 'common/components';
+import {CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'common/hooks';
+import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
 import {useProjectList, useTranslate} from '../../application';
 import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
+import {useNavbarItems} from '../../../application/application';
+import SortDropdown from '../../../../common/components/CardGrid/SortDropdown';
 
 
 const sortOptions: ISortOption[] = [
@@ -20,11 +22,24 @@ interface IProps {
 
 const ProjectListPage = ({basePath}: IProps) => {
 
-  const {translate} = useTranslate();
   const navigateTo = useNavigate();
-
+  const location = useLocation();
+  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {translate} = useTranslate();
   const {projects, loading, error} = useProjectList();
   const [cards, setCards] = useState<ICard[]>([]);
+
+  const formatDate = (inputDate: string): string => {
+    const parsedDate: Date = new Date(inputDate);
+    let day: number | string = parsedDate.getUTCDate();
+    let month: number | string = parsedDate.getUTCMonth() + 1; // Months are zero-indexed
+    const year: number = parsedDate.getUTCFullYear();
+    day = 10 > day ? '0' + day : day;
+    month = 10 > month ? '0' + month : month;
+    const formattedDate: string = `${day}.${month}.${year}`;
+    return formattedDate;
+  };
+
 
   useEffect(() => {
     setCards(projects.map((project) => {
@@ -34,11 +49,13 @@ const ProjectListPage = ({basePath}: IProps) => {
         description: project.description,
         image: project.image,
         status: 'green',
+        date_time: formatDate(project.created_at),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
         onDeleteClick: () => console.log('Delete', project.project_id),
         onCopyClick: () => console.log('Copy', project.project_id),
       } as ICard;
     }));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
 
@@ -51,23 +68,41 @@ const ProjectListPage = ({basePath}: IProps) => {
   }
 
   return (
-    <ModflowContainer headerHeight={140}>
-      <SidebarContent maxWidth={350}>
-        <div style={{padding: 20}}>
-          <h3>{translate('Projects filter')}</h3>
-        </div>
-        {/*<ProjectsFilter data={modelData} updateModelData={updateModelData}/>*/}
-      </SidebarContent>
-      <ContentWrapper>
-        <CardGrid
-          placeholder="Order By"
-          sortOptions={sortOptions}
-          onChangeCards={setCards}
-          cards={cards}
-          title={<><span>{projects.length}</span> {translate('Projects found')}</>}
-        />
-      </ContentWrapper>
-    </ModflowContainer>
+    <>
+      <Navbar
+        location={location}
+        navbarItems={navbarItems}
+        navigateTo={navigateTo}
+        showSearchWrapper={showSearchBar}
+        showCreateButton={showButton}
+      />
+      <ModflowContainer>
+        <SidebarContent maxWidth={350}>
+          <div style={{padding: 20}}>
+            <h3>{translate('Projects filter')}</h3>
+          </div>
+          {/*<ProjectsFilter data={modelData} updateModelData={updateModelData}/>*/}
+        </SidebarContent>
+        <ContentWrapper style={{position: 'relative'}}>
+          <SortDropdown
+            placeholder="Order By"
+            setModelData={setCards}
+            sortOptions={sortOptions}
+            data={cards}
+            style={{
+              position: 'absolute',
+              top: 20,
+              right: 50,
+              zIndex: 10,
+            }}
+          />
+          <CardGrid
+            cards={cards}
+            title={<><span>{projects.length}</span> {translate('Projects found')}</>}
+          />
+        </ContentWrapper>
+      </ModflowContainer>
+    </>
   );
 };
 

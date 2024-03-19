@@ -11,5 +11,13 @@
   background: @white;
   z-index: inherit;
   box-shadow: 0 3px 2px 0 rgba(50, 50, 50, 0.06);
+
+  & > [class^="contentWrapper--"] {
+    padding: 0 1em 0 64px;
+
+    @media (min-width: @breakpoint-tablet) {
+      padding: 0 50px 0 70px;
+    }
+  }
 }
 
