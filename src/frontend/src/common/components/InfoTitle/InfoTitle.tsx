@@ -1,6 +1,7 @@
 import {Icon, Popup} from 'semantic-ui-react';
 import React from 'react';
 import styles from './InfoTitle.module.less';
+import Button from '../Button/Button';
 
 interface IAction {
   actionText: string;
@@ -10,12 +11,13 @@ interface IAction {
 
 interface IProps {
   title: string;
+  isLocked?: boolean;
   description?: string;
   actions?: IAction[];
   secondary?: boolean;
 }
 
-const InfoTitle = ({title, description, actions, secondary}: IProps) => {
+const InfoTitle = ({title, description, actions, secondary, isLocked}: IProps) => {
   return (
     <div data-testid="info-title" className={styles.infoTitle}>
       {description && (
@@ -34,7 +36,7 @@ const InfoTitle = ({title, description, actions, secondary}: IProps) => {
           <Popup
             key={index}
             trigger={action.onClick ?
-              <button onClick={action.onClick}><Icon className={'dateIcon'} name="info circle"/>{action.actionText}</button> :
+              <Button disabled={isLocked} onClick={action.onClick}><Icon className={'dateIcon'} name="info circle"/>{action.actionText}</Button> :
               <span><Icon className={'dateIcon'} name="info circle"/>{action.actionText}</span>}
             content={action.actionDescription}
             hideOnScroll={true}

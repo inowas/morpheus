@@ -32,6 +32,16 @@ export const InfoTitleExample: StoryFn<typeof InfoTitle> = () => {
           {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
         ]}
       />
+      <InfoTitle
+        title="Upload shapefile"
+        description="Shapefile description"
+        isLocked={true}
+        actions={[
+          {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: () => console.log('Action 1')},
+          {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
+        ]}
+      />
+
 
       <InfoTitle
         title="Upload raster (secondary)"
@@ -50,6 +60,16 @@ export const InfoTitleExample: StoryFn<typeof InfoTitle> = () => {
         title="Upload shapefile (secondary)"
         secondary={true}
         description="Shapefile description"
+        actions={[
+          {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: () => console.log('Action 1')},
+          {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
+        ]}
+      />
+      <InfoTitle
+        title="Upload shapefile (secondary)"
+        secondary={true}
+        description="Shapefile description"
+        isLocked={true}
         actions={[
           {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: () => console.log('Action 1')},
           {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},

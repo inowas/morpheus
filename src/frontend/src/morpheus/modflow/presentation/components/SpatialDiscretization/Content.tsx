@@ -25,6 +25,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               Number of rows
             </Label>
             <Input
+              disabled={locked}
               type="number"
               defaultValue={100}
               step={1}
@@ -36,6 +37,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               Number of columns
             </Label>
             <Input
+              disabled={locked}
               type="number"
               defaultValue={100}
               step={1}
@@ -47,6 +49,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               Cell height (m)
             </Label>
             <Input
+              disabled={locked}
               type="number"
               defaultValue={101.5}
               step={0.1}
@@ -58,6 +61,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               Cell width (m)
             </Label>
             <Input
+              disabled={locked}
               type="number"
               defaultValue={100.1}
               step={0.1}
@@ -67,12 +71,14 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
         <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
           <Button
             size={'tiny'}
+            disabled={locked}
           >
             {'Reset'}
           </Button>
           <Button
             primary={true}
             size={'tiny'}
+            disabled={locked}
           >
             {'Apply'}
           </Button>
@@ -87,14 +93,11 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
     intersection: 0,
   });
 
-
   const renderRotationTab = () => {
-
     const handleRotationChange = (newValue: number | number[]) => {
       const newRotationAngle = Array.isArray(newValue) ? newValue[0] : newValue;
       setGridRotation({...gridRotation, rotationAngle: newRotationAngle});
     };
-
     const handleIntersectionChange = (newValue: number | number[]) => {
       const newIntersection = Array.isArray(newValue) ? newValue[0] : newValue;
       setGridRotation({...gridRotation, intersection: newIntersection});
@@ -105,11 +108,12 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
         <DataGrid>
           <div className="fieldGridSlider">
             <div className="field">
-              <label className="labelSmall">
+              <Label className="labelSmall">
                 <Icon className={'dateIcon'} name="info circle"/>
                 Rotation angle (°)
-              </label>
-              <input
+              </Label>
+              <Input
+                disabled={locked}
                 name="rotationAngle"
                 type="number"
                 value={gridRotation.rotationAngle}
@@ -118,6 +122,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               />
             </div>
             <Slider
+              disabled={locked}
               className="fieldSlider"
               min={0}
               max={24000}
@@ -128,11 +133,12 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
           </div>
           <div className="fieldGridSlider">
             <div className="field">
-              <label className="labelSmall">
+              <Label className="labelSmall">
                 <Icon className={'dateIcon'} name="info circle"/>
                 Intersection
-              </label>
-              <input
+              </Label>
+              <Input
+                disabled={locked}
                 name="intersection"
                 type="number"
                 value={gridRotation.intersection}
@@ -141,6 +147,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               />
             </div>
             <Slider
+              disabled={locked}
               className="fieldSlider"
               min={0}
               max={24000}
@@ -153,12 +160,14 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
         <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
           <Button
             size={'tiny'}
+            disabled={locked}
           >
             {'Reset'}
           </Button>
           <Button
             primary={true}
             size={'tiny'}
+            disabled={locked}
           >
             {'Apply'}
           </Button>
@@ -166,6 +175,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
       </>
     );
   };
+
 
   const panels: AccordionPanelProps[] = [{
     key: 1,
@@ -179,12 +189,14 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
           <InfoTitle
             title={'Upload file'}
             secondary={true}
+            isLocked={locked}
             actions={[
               {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: () => console.log('Action 1')},
               {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
             ]}
           />
           <Button
+            disabled={locked}
             size={'tiny'}
           >Choose file</Button>
         </>
@@ -213,9 +225,11 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               menuItem: 'Upload file',
               render: () => <TabPane attached={false}>
                 <Button
+                  disabled={locked}
                   size={'tiny'}
                 >Choose file</Button>
                 <Button
+                  disabled={locked}
                   className='buttonLink'
                 >
                     Download template <FontAwesomeIcon icon={faDownload}/></Button>
