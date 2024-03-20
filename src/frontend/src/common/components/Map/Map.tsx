@@ -5,11 +5,11 @@ import './leaflet-map.less';
 import 'leaflet-smooth-wheel-zoom';
 
 import {LatLngExpression, LatLngTuple} from 'leaflet';
-import {MapContainer, Polygon, TileLayer} from 'react-leaflet';
+import {MapContainer, Polygon, TileLayer, useMap} from 'react-leaflet';
 
 import type {FeatureCollection} from 'geojson';
 import Geoman from './Geoman';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 interface IProps {
   editable: boolean;
@@ -43,11 +43,51 @@ const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][]
   return polygonCoordinates;
 };
 
+interface IMapEffectProps {
+  mapRef: React.MutableRefObject<null | L.Map>;
+}
+
+const MapRef = ({mapRef}: IMapEffectProps) => {
+  const map = useMap();
+  useEffect(() => {
+    if (map) {
+      mapRef.current = map;
+    }
+    return () => {
+      mapRef.current = null;
+    };
+  }, [map]);
+
+  return null;
+};
+
 const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
 
-  const mapRef = useRef(null);
+  const mapRef = useRef<null | L.Map>(null);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    const resizeObserver = new ResizeObserver(() => {
+      const map = mapRef.current;
+      if (map) {
+        map.invalidateSize();
+      }
+    });
+
+    if (container) {
+      resizeObserver.observe(container);
+    }
+
+    return () => {
+      if (container) {
+        resizeObserver.unobserve(container);
+      }
+    };
+  }, []);
 
 
   // const geoOptions = {
@@ -64,25 +104,27 @@ const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
   // }
 
   return (
-    <MapContainer
-      ref={mapRef}
-      center={coords}
-      zoom={13}
-      style={{height: '100vh', width: '100%'}}
-      scrollWheelZoom={false}
-      wheelDebounceTime={100}
-    >
-      <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
-      {editable ? <Geoman geojson={geojson} onChangeGeojson={onChangeGeojson}/> : (
-        polygonCoordinates.map((coordinates, index) => (
-          <Polygon
-            key={index}
-            positions={coordinates[0]}
-            pathOptions={redOptions}
-          />
-        ))
-      )}
-    </MapContainer>
+    <div ref={containerRef} style={{height: '100vh', width: '100%'}}>
+      <MapContainer
+        center={coords}
+        zoom={13}
+        style={{height: '100vh', width: '100%'}}
+        scrollWheelZoom={false}
+        wheelDebounceTime={100}
+      >
+        <MapRef mapRef={mapRef}/>
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
+        {editable ? <Geoman geojson={geojson} onChangeGeojson={onChangeGeojson}/> : (
+          polygonCoordinates.map((coordinates, index) => (
+            <Polygon
+              key={index}
+              positions={coordinates[0]}
+              pathOptions={redOptions}
+            />
+          ))
+        )}
+      </MapContainer>
+    </div>
   );
 };
 
