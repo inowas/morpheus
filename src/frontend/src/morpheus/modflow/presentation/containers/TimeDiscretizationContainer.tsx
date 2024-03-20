@@ -24,7 +24,7 @@ const TimeDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={700}>
+      <SidebarContent maxWidth={600}>
         <TimeDiscretizationContent
           timeDiscretization={timeDiscretization}
           onChange={updateTimeDiscretization}

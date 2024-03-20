@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {Meta, StoryFn} from '@storybook/react';
+import { Meta, StoryFn } from "@storybook/react";
 
-import {Container} from 'semantic-ui-react';
-import React from 'react';
-import SurfacePlot3D from './SurfacePlot3D';
+import { Container } from "semantic-ui-react";
+import React from "react";
+import SurfacePlot3D from "./SurfacePlot3D";
 
 export default {
-  title: 'Charts/SurfacePlot3D',
+  title: "Charts/SurfacePlot3D",
   component: SurfacePlot3D,
 } as Meta<typeof SurfacePlot3D>;
 
@@ -28,11 +28,15 @@ const data = [
   [8.93, 8.97, 8.97, 9.18, 9.2, 9.18],
 ];
 
-const add = (z: number[][], value: number) => z.map((row) => row.map((cell) => cell + value));
+const add = (z: number[][], value: number) =>
+  z.map((row) => row.map((cell) => cell + value));
 
 export const Primary: StoryFn<typeof SurfacePlot3D> = () => (
-  <Container fluid={true} style={{border: '1px solid black'}}>
-    <SurfacePlot3D data={[{z: data, showscale: false, opacity: 1}]} title={''}/>
+  <Container fluid={true} style={{ border: "1px solid black" }}>
+    <SurfacePlot3D
+      data={[{ z: data, showscale: false, opacity: 1 }]}
+      title={""}
+    />
   </Container>
 );
 
@@ -41,10 +45,10 @@ export const Secondary: StoryFn<typeof SurfacePlot3D> = () => {
     <Container>
       <SurfacePlot3D
         data={[
-          {z: data, showscale: true, opacity: 1},
-          {z: add(data, 1), showscale: false, opacity: 1},
+          { z: data, showscale: true, opacity: 1 },
+          { z: add(data, 1), showscale: false, opacity: 1 },
         ]}
-        title={''}
+        title={""}
       />
     </Container>
   );
