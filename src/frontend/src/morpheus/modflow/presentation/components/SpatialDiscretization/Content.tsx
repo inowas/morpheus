@@ -1,6 +1,7 @@
-import React from 'react';
-import {Accordion, AccordionPanelProps, TabPane} from 'semantic-ui-react';
-import {Button, DataGrid, DataRow, Tab} from 'common/components';
+import React, {useState} from 'react';
+import {Accordion, AccordionPanelProps, Form, Icon, Input, Label, TabPane} from 'semantic-ui-react';
+import {Button, DataGrid, SectionTitle, Tab} from 'common/components';
+import Slider from 'common/components/Slider/SimpleSlider';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload, faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {ISpatialDiscretization} from '../../../types';
@@ -14,15 +15,155 @@ interface IProps {
 
 const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, onChangeLock}: IProps) => {
 
-  const renderLockedIcon = (isLocked: boolean) => {
+  const renderGridPropertiesTab = () => {
     return (
-      <span>
-        <FontAwesomeIcon
-          icon={isLocked ? faLock : faUnlock }
-          onClick={() => onChangeLock(!isLocked)}
-        />
-        {isLocked ? 'Locked' : 'Unlocked'}
-      </span>
+      <>
+        <DataGrid columns={4}>
+          <Form.Field>
+            <Label className="labelSmall">
+              <Icon name="info circle"/>
+              Number of rows
+            </Label>
+            <Input
+              type="number"
+              defaultValue={100}
+              step={1}
+            />
+          </Form.Field>
+          <Form.Field>
+            <Label className="labelSmall">
+              <Icon name="info circle"/>
+              Number of columns
+            </Label>
+            <Input
+              type="number"
+              defaultValue={100}
+              step={1}
+            />
+          </Form.Field>
+          <Form.Field>
+            <Label className="labelSmall">
+              <Icon name="info circle"/>
+              Cell height (m)
+            </Label>
+            <Input
+              type="number"
+              defaultValue={101.5}
+              step={0.1}
+            />
+          </Form.Field>
+          <Form.Field>
+            <Label className="labelSmall">
+              <Icon name="info circle"/>
+              Cell width (m)
+            </Label>
+            <Input
+              type="number"
+              defaultValue={100.1}
+              step={0.1}
+            />
+          </Form.Field>
+        </DataGrid>
+        <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
+          <Button
+            size={'tiny'}
+          >
+            {'Reset'}
+          </Button>
+          <Button
+            primary={true}
+            size={'tiny'}
+          >
+            {'Apply'}
+          </Button>
+        </DataGrid>
+      </>
+    );
+  };
+
+
+  const [gridRotation, setGridRotation] = useState({
+    rotationAngle: 12000,
+    intersection: 0,
+  });
+
+
+  const renderRotationTab = () => {
+
+    const handleRotationChange = (newValue: number | number[]) => {
+      const newRotationAngle = Array.isArray(newValue) ? newValue[0] : newValue;
+      setGridRotation({...gridRotation, rotationAngle: newRotationAngle});
+    };
+
+    const handleIntersectionChange = (newValue: number | number[]) => {
+      const newIntersection = Array.isArray(newValue) ? newValue[0] : newValue;
+      setGridRotation({...gridRotation, intersection: newIntersection});
+    };
+
+    return (
+      <>
+        <DataGrid>
+          <div className="fieldGridSlider">
+            <div className="field">
+              <label className="labelSmall">
+                <Icon className={'dateIcon'} name="info circle"/>
+                Rotation angle (°)
+              </label>
+              <input
+                name="rotationAngle"
+                type="number"
+                value={gridRotation.rotationAngle}
+                onChange={(e) => handleRotationChange(parseInt(e.target.value))}
+                step={1}
+              />
+            </div>
+            <Slider
+              className="fieldSlider"
+              min={0}
+              max={24000}
+              step={100}
+              value={gridRotation.rotationAngle}
+              onChange={handleRotationChange}
+            />
+          </div>
+          <div className="fieldGridSlider">
+            <div className="field">
+              <label className="labelSmall">
+                <Icon className={'dateIcon'} name="info circle"/>
+                Intersection
+              </label>
+              <input
+                name="intersection"
+                type="number"
+                value={gridRotation.intersection}
+                onChange={(e) => handleIntersectionChange(parseInt(e.target.value))}
+                step={1}
+              />
+            </div>
+            <Slider
+              className="fieldSlider"
+              min={0}
+              max={24000}
+              step={100}
+              value={gridRotation.intersection}
+              onChange={handleIntersectionChange}
+            />
+          </div>
+        </DataGrid>
+        <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
+          <Button
+            size={'tiny'}
+          >
+            {'Reset'}
+          </Button>
+          <Button
+            primary={true}
+            size={'tiny'}
+          >
+            {'Apply'}
+          </Button>
+        </DataGrid>
+      </>
     );
   };
 
@@ -30,7 +171,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
     key: 1,
     title: {
       content: 'Model domain',
-      icon: renderLockedIcon(locked),
+      icon: false,
     },
     content: {
       content: (
@@ -67,8 +208,8 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
   {
     key: 2,
     title: {
-      content: 'Model domain',
-      icon: renderLockedIcon(locked),
+      content: 'Model grid',
+      icon: false,
     },
     content: {
       content: (
@@ -78,7 +219,9 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
           panes={[
             {
               menuItem: 'Grid Properties',
-              render: () => <TabPane attached={false}>Polygons</TabPane>,
+              render: () => <TabPane attached={false}>
+                {renderGridPropertiesTab()}
+              </TabPane>,
             },
             {
               menuItem: 'Upload file',
@@ -93,8 +236,10 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
               </TabPane>,
             },
             {
-              menuItem: 'Polygons',
-              render: () => <TabPane attached={false}>Polygons</TabPane>,
+              menuItem: 'Rotation',
+              render: () => <TabPane attached={false}>
+                {renderRotationTab()}
+              </TabPane>,
             },
           ]}
         />
@@ -104,7 +249,14 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
 
   return (
     <DataGrid>
-      <DataRow title={'Model Geometry'}/>
+      <SectionTitle
+        title={'Model Geometry'}
+        faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
+        faIconText={locked ? 'Locked' : 'Unlocked'}
+        faIconOnClick={() => {
+          onChangeLock(!locked);
+        }}
+      />
       <Accordion
         defaultActiveIndex={[0, 1]}
         panels={panels}

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Polygon} from 'geojson';
-import {SpatialDiscretizationContent, Body} from '../components/SpatialDiscretization';
+import {Body, SpatialDiscretizationContent} from '../components/SpatialDiscretization';
 
 
 const geoJsonPolygon: Polygon = {
@@ -39,7 +39,7 @@ const SpatialDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700}>
         <SpatialDiscretizationContent
           locked={locked}
           onChangeLock={setLocked}

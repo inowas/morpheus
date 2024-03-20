@@ -1,6 +1,5 @@
 import {Accordion, Icon, MenuItem, TabPane} from 'semantic-ui-react';
-import {Button, InfoTitle, MovableAccordionList, Tab} from 'common/components';
-import {DataGrid, DataRow} from 'common/components/DataGrid';
+import {Button, DataGrid, InfoTitle, MovableAccordionList, SectionTitle, Tab} from 'common/components';
 import React, {useState} from 'react';
 
 const panelsPrimaryV3 = [
@@ -316,7 +315,7 @@ const ModelProperties: React.FC = () => {
 
   return <>
     <DataGrid>
-      <DataRow title={'Model Grid'}/>
+      <SectionTitle title={'Model Grid'}/>
       <Tab
         variant='primary'
         menu={{secondary: true, pointing: true}}
