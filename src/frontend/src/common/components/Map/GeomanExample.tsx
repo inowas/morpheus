@@ -11,7 +11,7 @@ interface Props {
   onChangeGeojson: (geojson: FeatureCollection) => void
 }
 
-const Geoman = ({geojson, onChangeGeojson}: Props) => {
+const GeomanExample = ({geojson, onChangeGeojson}: Props) => {
   const ref = useRef<L.FeatureGroup>(L.featureGroup());
 
   const handleChange = () => {
@@ -95,4 +95,4 @@ const Geoman = ({geojson, onChangeGeojson}: Props) => {
   );
 };
 
-export default Geoman;
+export default GeomanExample;

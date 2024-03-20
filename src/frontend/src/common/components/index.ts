@@ -30,7 +30,7 @@ import InfoTitle from './InfoTitle/InfoTitle';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
-import Map from './Map/Map';
+import MapExample from './Map/MapExample';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import ModelCreate from './ModelCreate';
@@ -81,7 +81,7 @@ export {
   Label,
   Loader,
   LoaderAnimation,
-  Map,
+  MapExample,
   Message,
   Modal,
   Grid,

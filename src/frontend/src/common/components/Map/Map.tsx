@@ -1,47 +1,18 @@
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
-import 'leaflet';
+import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import './leaflet-map.less';
 import 'leaflet-smooth-wheel-zoom';
 
-import {LatLngExpression, LatLngTuple} from 'leaflet';
-import {MapContainer, Polygon, TileLayer, useMap} from 'react-leaflet';
+import {LatLngTuple} from 'leaflet';
+import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
-import type {FeatureCollection} from 'geojson';
-import Geoman from './Geoman';
 import React, {useEffect, useRef} from 'react';
 
 interface IProps {
-  editable: boolean;
-  coords: LatLngTuple;
-  geojson: FeatureCollection;
-  onChangeGeojson: (geojson: FeatureCollection) => void;
+  center?: LatLngTuple;
+  zoom?: number;
+  children: React.ReactNode[] | React.ReactNode;
 }
-
-const getPolygonCoordinates = (geoJSON: FeatureCollection): LatLngExpression[][][] => {
-  const polygonCoordinates: LatLngExpression[][][] = [];
-  for (const feature of geoJSON.features) {
-    if ('Polygon' === feature.geometry.type) {
-      const coordinates: LatLngExpression[] = feature.geometry.coordinates[0].map((coord) => [
-        coord[1],
-        coord[0],
-        coord[2] || 0, // Add a default value for the third element if it's not present
-      ]);
-      polygonCoordinates.push([coordinates]);
-    } else if ('MultiPolygon' === feature.geometry.type) {
-      const multiPolygonCoordinates: LatLngExpression[][][] = feature.geometry.coordinates.map((polygonCoords) => {
-        const coordinates: LatLngExpression[] = polygonCoords[0].map((coord) => [
-          coord[1],
-          coord[0],
-          coord[2] || 0, // Add a default value for the third element if it's not present
-        ]);
-        return [coordinates];
-      });
-      polygonCoordinates.push(...multiPolygonCoordinates);
-    }
-  }
-  return polygonCoordinates;
-};
 
 interface IMapEffectProps {
   mapRef: React.MutableRefObject<null | L.Map>;
@@ -56,15 +27,16 @@ const MapRef = ({mapRef}: IMapEffectProps) => {
     return () => {
       mapRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
   return null;
 };
 
-const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
-  const redOptions = {color: 'red'};
-  const polygonCoordinates = getPolygonCoordinates(geojson);
+const defaultCenter: LatLngTuple = [51.05, 13.71];
+const defaultZoom = 13;
 
+const Map = ({center, zoom, children}: IProps) => {
   const mapRef = useRef<null | L.Map>(null);
   const containerRef = useRef(null);
 
@@ -89,40 +61,18 @@ const Map = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
     };
   }, []);
 
-
-  // const geoOptions = {
-  //   position: 'topleft',
-  //   drawText: false,
-  //   drawMarker: false,
-  //   drawCircle: false,
-  //   cutPolygon: false,
-  //   drawRectangle: !(0 < geojson.features.length),
-  //   drawPolygon: !(0 < geojson.features.length),
-  //   drawCircleMarker: false,
-  //   drawPolyline: false,
-  //   editMode: false,}
-  // }
-
   return (
-    <div ref={containerRef} style={{height: '100vh', width: '100%'}}>
+    <div ref={containerRef} style={{height: '100%', width: '100%'}}>
       <MapContainer
-        center={coords}
-        zoom={13}
-        style={{height: '100vh', width: '100%'}}
+        center={center || defaultCenter}
+        zoom={zoom || defaultZoom}
+        style={{height: '100%', width: '100%'}}
         scrollWheelZoom={false}
         wheelDebounceTime={100}
       >
         <MapRef mapRef={mapRef}/>
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
-        {editable ? <Geoman geojson={geojson} onChangeGeojson={onChangeGeojson}/> : (
-          polygonCoordinates.map((coordinates, index) => (
-            <Polygon
-              key={index}
-              positions={coordinates[0]}
-              pathOptions={redOptions}
-            />
-          ))
-        )}
+        {children}
       </MapContainer>
     </div>
   );

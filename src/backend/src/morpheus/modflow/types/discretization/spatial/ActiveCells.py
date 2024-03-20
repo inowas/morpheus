@@ -118,7 +118,7 @@ class ActiveCells:
     @classmethod
     def from_dict(cls, obj: dict):
 
-        available_dict_types = ['raster', 'sparse', 'sparse_inverted']
+        available_dict_types = ['raster', 'sparse', 'sparse_inverse']
         if obj['type'] not in available_dict_types:
             raise ValueError(f'Unknown grid cells dict_type: {obj["type"]}')
 
@@ -146,7 +146,7 @@ class ActiveCells:
                 data=[ActiveCell.from_tuple(cell) for cell in obj['data']]
             )
 
-        if obj['type'] == 'sparse_inverted':
+        if obj['type'] == 'sparse_inverse':
             raster_data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
             for cell in obj['data']:
                 raster_data[cell[1], cell[0]] = False
@@ -166,13 +166,13 @@ class ActiveCells:
 
     def to_dict(self, as_raster: bool | None = None, auto_detect: bool = True):
 
-        available_dict_types = ['raster', 'sparse', 'sparse_inverted']
+        available_dict_types = ['raster', 'sparse', 'sparse_inverse']
         dict_type: str = 'raster' if as_raster else 'sparse'
         if auto_detect:
             if len(self.data) <= (self.shape[0] * self.shape[1] * 0.10):
                 dict_type = 'sparse'
             elif len(self.data) >= (self.shape[0] * self.shape[1] * 0.90):
-                dict_type = 'sparse_inverted'
+                dict_type = 'sparse_inverse'
             else:
                 dict_type = 'raster'
 
@@ -189,7 +189,7 @@ class ActiveCells:
                 'data': [cell.to_tuple() for cell in self.data]
             }
 
-        if dict_type == 'sparse_inverted':
+        if dict_type == 'sparse_inverse':
             inverted_value = False
             raster = np.full(shape=self.shape, fill_value=inverted_value, dtype=bool)
             for cell in self.data:
