@@ -11,7 +11,37 @@
   height: 27px;
   border-bottom: 1px solid @ref-color-underline;
   display: flex;
+  gap: 10px;
   justify-content: space-between;
+
+
+  .secondary {
+    position: relative;
+    background: transparent;
+    color: #333333;
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 0px;
+    text-align: left;
+    padding: 0 0 2px 0;
+    border-bottom: none;
+    display: flex;
+    align-items: baseline;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      height: 3px;
+      display: block;
+      z-index: 2;
+      width: 100%;
+      background-color: #333333;
+    }
+  }
+
 
   i {
     color: @ref-color-underline;
@@ -21,26 +51,43 @@
     margin-right: 5px;
   }
 
-  button {
-    padding: 0 1px 0 0;
-    font-size: 12px;
-    line-height: 20px;
-    font-weight: 600;
-    background: transparent;
-    border: none;
-    letter-spacing: 0px;
-    text-align: left;
-    color: @ref-color-red;
+  .actions {
+    display: flex;
+    gap: 10px;
 
-    &:hover,
-    &:focus,
-    &:active {
-      color: @ref-color-underline;
+    i {
+      display: flex;
+      align-items: center;
+    }
 
+    span,
+    button {
+      display: flex;
+      align-items: center;
+      padding: 0 1px 0 0;
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 400;
+      background: transparent;
+      border: none;
+      letter-spacing: 0px;
+      text-align: left;
+    }
+
+    button {
+      cursor: pointer;
+      color: @ref-color-red;
+
+      &:hover {
+        color: @ref-color-underline;
+
+      }
     }
   }
+
+
 }
 
-* + .infoTitle {
-  margin-top: 16px;
-}
+//* + .infoTitle {
+//  margin-top: 16px;
+//}

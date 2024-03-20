@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Accordion, AccordionPanelProps, Form, Icon, Input, Label, TabPane} from 'semantic-ui-react';
-import {Button, DataGrid, SectionTitle, Tab} from 'common/components';
+import {Button, DataGrid, InfoTitle, SectionTitle, Tab} from 'common/components';
 import Slider from 'common/components/Slider/SimpleSlider';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload, faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
@@ -175,33 +175,19 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, locked, 
     },
     content: {
       content: (
-        <TabPane style={{
-          padding: 0,
-          backgroundColor: 'transparent',
-          border: 'none',
-        }}
-        >
-          <Tab
-            variant='primary'
-            menu={{pointing: true}}
-            panes={[
-              {
-                menuItem: 'Upload file',
-                render: () => <TabPane attached={false}>
-                  <Button
-                    disabled={true}
-                    primary={true}
-                    size={'tiny'}
-                  >Choose file</Button>
-                </TabPane>,
-              },
-              {
-                menuItem: 'Polygons',
-                render: () => <TabPane attached={false}>Polygons</TabPane>,
-              },
+        <>
+          <InfoTitle
+            title={'Upload file'}
+            secondary={true}
+            actions={[
+              {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: () => console.log('Action 1')},
+              {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
             ]}
           />
-        </TabPane>
+          <Button
+            size={'tiny'}
+          >Choose file</Button>
+        </>
       ),
     },
   },
