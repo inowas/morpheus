@@ -1,8 +1,7 @@
 import {v4} from 'uuid';
 import {IUser} from './users';
-import {ITimeDiscretizationApi} from 'morpheus/modflow/application/useTimeDiscretization';
 import fixedUuids from './fixedUuids';
-import {ITimeUnit} from 'morpheus/modflow/types/TimeDiscretization.type';
+import {ITimeDiscretization, ITimeUnit} from 'morpheus/modflow/types/TimeDiscretization.type';
 
 interface IProject {
   project_id: string;
@@ -10,7 +9,7 @@ interface IProject {
   permissions: IPermissions;
   model: {
     model_id: string;
-    time_discretization: ITimeDiscretizationApi;
+    time_discretization: ITimeDiscretization;
   };
   calculation_profile: object;
   scenarios: object[];

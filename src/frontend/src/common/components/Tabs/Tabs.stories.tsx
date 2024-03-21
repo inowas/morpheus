@@ -1,23 +1,22 @@
-import { Button, InfoTitle, Tab } from "common/components";
-import { Icon, MenuItem, TabPane } from "semantic-ui-react";
+import React from 'react';
+import {Button, InfoTitle, Tab} from 'common/components';
+import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Meta, StoryFn } from "@storybook/react";
-
-import React from "react";
+import {Meta, StoryFn} from '@storybook/react';
 
 export default {
   /* 👇 The title prop is optional.
    * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
    * to learn how to generate automatic titles
    */
-  title: "Tab",
+  title: 'Tab',
   component: Tab,
 } as Meta<typeof Tab>;
 
 const wrapper: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "60px",
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '60px',
 };
 
 const panesPrimary = [
@@ -80,7 +79,7 @@ const panesPrimary = [
     menuItem: (
       <MenuItem key="validation" className="tabItemWithIcon">
         Validation
-        <Icon name="check circle" />
+        <Icon name="check circle"/>
       </MenuItem>
     ),
     render: () => (
@@ -181,7 +180,7 @@ const panesPrimaryV2 = [
     menuItem: (
       <MenuItem key="validation" className="tabItemWithIcon">
         Validation
-        <Icon name="times circle outline" />
+        <Icon name="times circle outline"/>
       </MenuItem>
     ),
     render: () => (
@@ -224,11 +223,11 @@ const panesPrimaryV2 = [
 ];
 const panesPrimaryV3 = [
   {
-    menuItem: "Upload shapefile",
+    menuItem: 'Upload shapefile',
     render: () => <TabPane attached={false}>Upload shapefile</TabPane>,
   },
   {
-    menuItem: "Polygons",
+    menuItem: 'Polygons',
     render: () => <TabPane attached={false}>Polygons</TabPane>,
   },
 ];
@@ -244,75 +243,77 @@ const panesPrimaryV4 = [
 ];
 const panesSecondary = [
   {
-    menuItem: "Layer properties",
+    menuItem: 'Layer properties',
     render: () => <TabPane></TabPane>,
   },
   {
-    menuItem: "Confinement",
+    menuItem: 'Confinement',
     render: () => (
       <TabPane>
         <InfoTitle
           title="Upload shapefile"
           description="Shapefile description"
-          actionText="Add on map"
-          actionDescription="Action description"
-          onAction={() => {
-            console.log("Add on map action");
-          }}
+          actions={[{
+            actionText: 'Choose file',
+            actionDescription: 'Action description',
+            onClick: () => {
+              console.log('Choose file action');
+            },
+          }]}
         />
-        <Button size={"tiny"}>Choose file</Button>
-        <InfoTitle title="Upload raster" description="raster description" />
-        <Button size={"tiny"}>Choose file</Button>
+        <Button size={'tiny'}>Choose file</Button>
+        <InfoTitle title="Upload raster" description="raster description"/>
+        <Button size={'tiny'}>Choose file</Button>
       </TabPane>
     ),
   },
   {
-    menuItem: "Top elevation",
+    menuItem: 'Top elevation',
     render: () => (
       <TabPane>
         <Tab
           variant="primary"
-          menu={{ secondary: true, pointing: true }}
+          menu={{secondary: true, pointing: true}}
           panes={panesPrimaryV3}
         />
       </TabPane>
     ),
   },
   {
-    menuItem: "Bottom elevation",
+    menuItem: 'Bottom elevation',
     render: () => (
       <TabPane>
         <Tab
           variant="primary"
-          menu={{ secondary: true, pointing: true }}
+          menu={{secondary: true, pointing: true}}
           panes={panesPrimaryV4}
         />
       </TabPane>
     ),
   },
   {
-    menuItem: "Hydraulic conductivity along rows",
+    menuItem: 'Hydraulic conductivity along rows',
     render: () => <TabPane>Tab 4 Content</TabPane>,
   },
   {
-    menuItem: "Horizontal hydraulic anisotropy",
+    menuItem: 'Horizontal hydraulic anisotropy',
     render: () => <TabPane>Tab 5 Content</TabPane>,
   },
   {
-    menuItem: "Vertical hydraulic conductivity",
+    menuItem: 'Vertical hydraulic conductivity',
     render: () => <TabPane>Tab 6 Content</TabPane>,
   },
   {
-    menuItem: "Specific storage",
+    menuItem: 'Specific storage',
     render: () => <TabPane>Tab 7 Content</TabPane>,
   },
   {
-    menuItem: "Specific yield",
+    menuItem: 'Specific yield',
     render: () => <TabPane>Tab 8 Content</TabPane>,
   },
-  { menuItem: "Starting head", render: () => <TabPane>Tab 9 Content</TabPane> },
+  {menuItem: 'Starting head', render: () => <TabPane>Tab 9 Content</TabPane>},
   {
-    menuItem: "iBound",
+    menuItem: 'iBound',
     render: () => (
       <TabPane>
         Tab 10 Content Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -336,13 +337,13 @@ export const TabPrimary: StoryFn<typeof Button> = () => {
     <div style={wrapper}>
       <Tab
         variant="primary"
-        menu={{ secondary: true, pointing: true }}
+        menu={{secondary: true, pointing: true}}
         panes={panesPrimary}
       />
       <Tab
         variant="primary"
         defaultActiveIndex={1}
-        menu={{ secondary: true, pointing: true }}
+        menu={{secondary: true, pointing: true}}
         panes={panesPrimaryV2}
       />
     </div>
@@ -352,25 +353,25 @@ export const TabSecondary: StoryFn<typeof Button> = () => {
   return (
     <div style={wrapper}>
       <div
-        className={"scrollWrapper-Y"}
-        style={{ background: "#eeeeee", padding: "50px" }}
+        className={'scrollWrapper-Y'}
+        style={{background: '#eeeeee', padding: '50px'}}
       >
         <Tab
           variant="secondary"
           title={true}
           defaultActiveIndex={1}
-          grid={{ rows: 1, columns: 2 }}
-          menu={{ fluid: true, vertical: true, tabular: true }}
+          grid={{rows: 1, columns: 2}}
+          menu={{fluid: true, vertical: true, tabular: true}}
           panes={panesSecondary}
         />
       </div>
-      <div className={"scrollWrapper-Y"} style={{ padding: "50px" }}>
+      <div className={'scrollWrapper-Y'} style={{padding: '50px'}}>
         <Tab
           variant="secondary"
           title={true}
           defaultActiveIndex={2}
-          grid={{ rows: 1, columns: 2 }}
-          menu={{ fluid: true, vertical: true, tabular: true }}
+          grid={{rows: 1, columns: 2}}
+          menu={{fluid: true, vertical: true, tabular: true}}
           panes={panesSecondary}
         />
       </div>

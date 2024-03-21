@@ -1,22 +1,22 @@
 export interface ITimeDiscretization {
-  startDateTime: string;
-  endDateTime: string;
-  timeUnit: ITimeUnit;
-  stressPeriods: IStressPeriod[];
+  start_date_time: string;
+  end_date_time: string;
+  time_unit: ITimeUnit;
+  stress_periods: IStressPeriod[];
 }
 
 export interface IStressPeriod {
-  startDateTime: string;
-  numberOfTimeSteps: number;
-  timeStepMultiplier: number;
-  steadyState: boolean;
+  start_date_time: string;
+  number_of_time_steps: number;
+  time_step_multiplier: number;
+  steady_state: boolean;
 }
 
 export enum ITimeUnit {
-  UNDEFINED = 0,
-  SECONDS = 1,
-  MINUTES = 2,
-  HOURS = 3,
-  DAYS = 4,
-  YEARS = 5,
+  UNDEFINED = 'undefined',
+  SECONDS = 'seconds',
+  MINUTES = 'minutes',
+  HOURS = 'hours',
+  DAYS = 'days',
+  YEARS = 'years',
 }
