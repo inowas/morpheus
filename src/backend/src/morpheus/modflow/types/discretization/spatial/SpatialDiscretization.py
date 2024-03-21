@@ -9,10 +9,11 @@ class SpatialDiscretization:
     grid: Grid
     affected_cells: ActiveCells
 
-    def __init__(self, geometry: Polygon, grid: Grid, affected_cells: ActiveCells | None):
+    def __init__(self, geometry: Polygon, grid: Grid, affected_cells: ActiveCells | None, crs: Crs | None = None):
         self.geometry = geometry
         self.grid = grid
         self.affected_cells = affected_cells if affected_cells is not None else ActiveCells.from_polygon(polygon=geometry, grid=grid)
+        self.crs = Crs.from_epsg(4326) if crs is None else crs
 
     @classmethod
     def from_geometry_with_grid(cls, geometry: Polygon, grid: Grid, crs: Crs | None = None):
@@ -27,8 +28,8 @@ class SpatialDiscretization:
         polygon = Polygon(coordinates=[[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]])
         return cls(
             geometry=polygon,
-            affected_cells=ActiveCells.empty_from_shape(nx=1, ny=1),
-            grid=Grid.from_polygon_with_relative_coordinates(polygon=polygon, rotation=Rotation.from_float(0), x_coordinates=[0, 1], y_coordinates=[0, 1]),
+            affected_cells=ActiveCells.empty_from_shape(n_col=1, n_row=1),
+            grid=Grid.from_polygon_with_relative_coordinates(polygon=polygon, rotation=Rotation.from_float(0), relative_col_coordinates=[0, 1], relative_row_coordinates=[0, 1]),
         )
 
     @classmethod

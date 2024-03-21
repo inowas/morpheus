@@ -16,6 +16,10 @@ class Crs:
             raise ValueError('Invalid CRS')
 
     @classmethod
+    def from_epsg(cls, epsg: int):
+        return cls(value=f'EPSG:{epsg}')
+
+    @classmethod
     def from_value(cls, crs: str):
         return cls.from_str(crs)
 

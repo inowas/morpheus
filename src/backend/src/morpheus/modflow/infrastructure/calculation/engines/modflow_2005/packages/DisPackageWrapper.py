@@ -77,11 +77,11 @@ class DisPackageData:
 def calculate_dis_package_data(modflow_model: ModflowModel) -> DisPackageData:
     dis_package_data = DisPackageData(
         nlay=modflow_model.soil_model.number_of_layers(),
-        nrow=modflow_model.spatial_discretization.grid.ny(),
-        ncol=modflow_model.spatial_discretization.grid.nx(),
+        nrow=modflow_model.spatial_discretization.grid.n_row(),
+        ncol=modflow_model.spatial_discretization.grid.n_col(),
         nper=modflow_model.time_discretization.number_of_stress_periods(),
-        delr=modflow_model.spatial_discretization.grid.x_distances,
-        delc=modflow_model.spatial_discretization.grid.y_distances,
+        delr=modflow_model.spatial_discretization.grid.col_widths,
+        delc=modflow_model.spatial_discretization.grid.row_heights,
         laycbd=0,
         top=modflow_model.soil_model.top(),
         botm=modflow_model.soil_model.bottoms(),
