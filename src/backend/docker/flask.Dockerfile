@@ -9,9 +9,9 @@ RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle
 
 FROM python:3.12-bookworm as base
 
-# add files to image
 ARG BACKEND_APP_ROOT_PATH
 
+# add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
 ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
@@ -28,11 +28,6 @@ ENV FLASK_ENV production
 
 # create system user flask
 RUN addgroup --system flask && adduser --system --group flask
-
-# prepare mount points for user flask
-RUN mkdir -p /mnt/sensors
-RUN mkdir -p /mnt/modflow
-RUN chown -R flask:flask /mnt
 
 
 FROM base as local_base

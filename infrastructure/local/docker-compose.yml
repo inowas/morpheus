@@ -67,8 +67,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ${LOCAL_MODFLOW_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
-      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
+      - ${LOCAL_PROJECT_ASSET_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_ASSET_DATA}:rw
+      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
+      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSOR_LOCAL_DATA}:rw
     tmpfs:
       - /tmp:mode=777,size=200m
     restart: always
@@ -266,8 +267,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${LOCAL_MODFLOW_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
-      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
     tmpfs:
       - /tmp
     restart: always
@@ -280,6 +280,10 @@ services:
       - rabbitmq.inowas.localhost:host-gateway
     healthcheck:
       test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
     profiles:
       - celery
 
@@ -291,10 +295,6 @@ volumes:
   postgres_backend_data:
     driver: local
   mongodb_backend_data:
-    driver: local
-  morpheus_modflow_data:
-    driver: local
-  morpheus_sensor_data:
     driver: local
   rabbitmq_data:
     driver: local

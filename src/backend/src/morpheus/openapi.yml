@@ -4,23 +4,30 @@ info:
   version: 2.0.0
 
 servers:
+  - url: http://127.0.0.1:5000
+    description: Local Development API
   - url: http://localhost:5000
     description: Local Development API
+  - url: http://api.morpheus.inowas.localhost
+    description: Local API
   - url: https://api.morpheus.inowas.com
     description: Production API
 
 paths:
-  /modflow:
-    $ref: './modflow/openapi.yml#/paths/~1modflow'
+  /projects:
+    $ref: './project/openapi.yml#/paths/~1projects'
 
-  /modflow/{project_id}:
-    $ref: './modflow/openapi.yml#/paths/~1modflow~1{project_id}'
+  /projects/{project_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}'
 
-  /modflow/{project_id}/base_model:
-    $ref: './modflow/openapi.yml#/paths/~1modflow~1{project_id}~1base_model'
+  /projects/{project_id}/model:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model'
+
+  /projects/{project_id}/preview_image:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1preview_image'
 
   /sensors:
-    $ref: './sensors/openapi.yml#/paths/~1sensors'
+    $ref: './sensor/openapi.yml#/paths/~1sensors'
 
 components:
   securitySchemes:
