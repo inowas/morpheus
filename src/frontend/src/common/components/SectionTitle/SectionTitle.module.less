@@ -1,0 +1,39 @@
+@import '../site.variables';
+
+
+.headline {
+  border-bottom: 1px solid @ref-color-underline;
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+  padding-right: 22px;
+
+  .faIcon,
+  .faButton {
+    background: transparent;
+    border: none;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .faButton {
+    cursor: pointer;
+    transition: color 300ms;
+
+    &:hover {
+      color: @blue;
+    }
+  }
+
+  .button {
+    white-space: nowrap;
+    min-width: 92px;
+    margin-left: auto;
+  }
+}
+
+.title,
+.subtitle {
+  margin: 0;
+  padding: 0;
+}

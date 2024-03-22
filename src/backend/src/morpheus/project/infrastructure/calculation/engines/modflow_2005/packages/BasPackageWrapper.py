@@ -56,7 +56,7 @@ def calculate_bas_package_data(model: Model) -> BasPackageData:
         ibound = np.zeros((number_of_layers, cells.shape[1], cells.shape[0]), dtype=int)
         for layer_index in range(number_of_layers):
             for cell in cells:
-                ibound[layer_index, cell.y, cell.x] = 1
+                ibound[layer_index, cell.row, cell.col] = 1
         ibound = ibound.tolist()
 
     initial_heads = model.soil_model.initial_heads()

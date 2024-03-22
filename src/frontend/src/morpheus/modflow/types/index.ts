@@ -1,4 +1,7 @@
-import {IError} from 'morpheus/common/errors';
-import {IProjectSummary} from './Project.type';
+// General types
+export * from 'morpheus/types';
 
-export type {IError, IProjectSummary};
+// Modflow types
+export * from './Project.type';
+export * from './SpatialDiscretization.type';
+export * from './TimeDiscretization.type';

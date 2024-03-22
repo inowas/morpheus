@@ -1,10 +1,10 @@
+import {IData, IVisibility} from '../../types';
 import React, {useEffect, useState} from 'react';
+
+import ControlsModflow3DResults from '../components/ControlsModflow3DResults';
+import {Modflow3DResults} from '../components';
 import {useCalculation} from '../../application';
 import {useParams} from 'react-router-dom';
-import {Modflow3DResults} from '../components';
-import ControlsModflow3DResults from '../components/ControlsModflow3DResults';
-import {IData, IVisibility} from '../../types';
-
 
 const CalculationResultsContainer = () => {
 

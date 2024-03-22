@@ -1,5 +1,13 @@
-import ProjectDashboardContainer from './ProjectDashboardContainer';
+import ProjectAssetsPage from './AssetsPage';
+import ProjectBaseModelPage from './ModflowBaseModelPage';
+import ProjectPage from './ProjectPage';
+import ProjectScenariosPage from './ScenariosPage';
+import ProjectsSettingsPage from './SettingsPage';
 
 export {
-  ProjectDashboardContainer,
+  ProjectAssetsPage,
+  ProjectBaseModelPage,
+  ProjectPage,
+  ProjectScenariosPage,
+  ProjectsSettingsPage,
 };

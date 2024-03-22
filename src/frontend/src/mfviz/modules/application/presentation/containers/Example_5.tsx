@@ -1,12 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
-import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
 
 import head_image from '../images/example_5_head.png';
 import head_json from '../data/example_5_head.json';
+import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
+import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
+import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
 
 const fillNullValuesWithNearest = (data: Array<number | null>[]) => {
   for (let rowIdx = 0; rowIdx < data.length; rowIdx++) {

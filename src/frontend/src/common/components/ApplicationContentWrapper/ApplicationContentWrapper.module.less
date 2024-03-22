@@ -1,0 +1,20 @@
+@import '../site.variables';
+
+// Define the variable for width
+@sidebarMinWidth: 40px;
+
+.wrapper {
+  display: flex;
+  height: inherit;
+  overflow: hidden;
+}
+
+.mainContentWrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+
+  @media (min-width: @breakpoint-tablet) {
+    height: auto;
+  }
+}

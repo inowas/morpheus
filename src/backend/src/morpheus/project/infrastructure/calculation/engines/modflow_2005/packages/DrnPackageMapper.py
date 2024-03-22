@@ -59,7 +59,7 @@ def calculate_drn_boundary_stress_period_data(
                     continue
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
                                       values=[stage.to_float(), conductance.to_float()], sum_up_values=False)
 
         if drn_boundary.number_of_observations() > 1:
@@ -88,18 +88,18 @@ def calculate_drn_boundary_stress_period_data(
 
             grid_cell_centers = spatial_discretization.grid.get_cell_centers()
             for cell in drn_boundary.affected_cells:
-                if spatial_discretization.affected_cells.is_active(cell.x, cell.y) is None:
+                if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
                     # if the cell is not part of the model
                     # we do not apply any data for this cell
                     continue
 
-                center = ShapelyPoint(grid_cell_centers[cell.x][cell.y].coordinates)
+                center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
                 xx_new = [line_string.project(center, normalized=True)]
                 yy_new_stage = float(np.interp(xx_new, xx, yy_stages)[0])
                 yy_new_conductance = float(np.interp(xx_new, xx, yy_conductances)[0])
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
                                       values=[yy_new_stage, yy_new_conductance], sum_up_values=False)
 
     return sp_data

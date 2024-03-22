@@ -86,8 +86,8 @@ def calculate_observation_items(model: Model) -> HeadObservationData:
                 head_observation_data.add_item(item=HeadObservationItem(
                     name=observation.name.to_value(),
                     layer=layer_idx,
-                    row=cell.y,
-                    column=cell.x,
+                    row=cell.row,
+                    column=cell.col,
                     time_series_data=time_series_data
                 ))
 

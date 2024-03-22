@@ -1,16 +1,16 @@
 import React, {useEffect, useRef, useState} from 'react';
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
-import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
-// @ts-ignore
-import vtkCubeAxesActor from '@kitware/vtk.js/Rendering/Core/CubeAxesActor';
 
-import demImage1 from '../images/dem.jpg';
+import ControlsE4 from '../components/ControlsE4';
 import demData1 from '../data/dem.csv';
 import demData2 from '../data/dem2.csv';
-import ControlsE4 from '../components/ControlsE4';
+import demImage1 from '../images/dem.jpg';
+import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
+// @ts-ignore
+import vtkCubeAxesActor from '@kitware/vtk.js/Rendering/Core/CubeAxesActor';
+import vtkElevationReader from '@kitware/vtk.js/IO/Misc/ElevationReader';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
+import vtkTexture from '@kitware/vtk.js/Rendering/Core/Texture';
 
 const hexToRgbFraction = (hex: string) => {
   hex = hex.replace(/^#/, '');

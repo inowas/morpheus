@@ -1,0 +1,113 @@
+variables:
+  SIMPLETOOLS_IMAGE: inowas/simpletools-frontend
+  SIMPLETOOLS_DEVELOPMENT_PATH: /srv/docker/simpletools.development
+  SIMPLETOOLS_PRODUCTION_PATH: /srv/docker/simpletools.production
+
+build-simpletools:dev:
+  image: node:20
+  stage: build
+  dependencies:
+    - test-frontend
+  script:
+    - cd src/frontend
+    - make install-ci
+    - make build-simpletools
+  artifacts:
+    paths:
+      - src/frontend/dist/simpletools
+    expire_in: 1 days
+  only:
+    - main
+    - tags
+
+publish-simpletools:dev:
+  stage: publish
+  dependencies:
+    - build-simpletools:dev
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - docker build --tag $SIMPLETOOLS_IMAGE:$CI_COMMIT_SHA --tag $SIMPLETOOLS_IMAGE:dev --file src/frontend/docker/Dockerfile.simpletools .
+    - docker push $SIMPLETOOLS_IMAGE:$CI_COMMIT_SHA
+    - docker push $SIMPLETOOLS_IMAGE:dev
+  only:
+    - main
+    - tags
+
+deploy-simpletools:dev:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - publish-simpletools:dev
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  script:
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_DEVELOPMENT_PATH && docker compose down"
+    - scp -P22 ./infrastructure/production/mfviz/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$SIMPLETOOLS_DEVELOPMENT_PATH/docker-compose.yml
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_DEVELOPMENT_PATH && docker compose pull"
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_DEVELOPMENT_PATH && docker compose up -d --force-recreate"
+  environment:
+    name: development
+    url: https://dev.tools.inowas.com
+  only:
+    - tags
+
+build-simpletools:prod:
+  image: node:20
+  stage: build
+  dependencies:
+    - test-frontend
+  script:
+    - cd src/frontend
+    - make install-ci
+    - make build-simpletools
+  artifacts:
+    paths:
+      - src/frontend/dist/simpletools
+    expire_in: 1 days
+  only:
+    - tags
+
+publish-simpletools:prod:
+  stage: publish
+  dependencies:
+    - build-simpletools:prod
+
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - docker build --tag $SIMPLETOOLS_IMAGE:$CI_COMMIT_SHA --tag $SIMPLETOOLS_IMAGE:$CI_COMMIT_TAG --tag $SIMPLETOOLS_IMAGE:latest --file src/frontend/docker/Dockerfile.simpletools .
+    - docker push $SIMPLETOOLS_IMAGE:$CI_COMMIT_SHA
+    - docker push $SIMPLETOOLS_IMAGE:$CI_COMMIT_TAG
+    - docker push $SIMPLETOOLS_IMAGE:latest
+  only:
+    - tags
+
+deploy-simpletools:prod:
+  image: ubuntu:22.04
+  stage: deploy
+  dependencies:
+    - publish-simpletools:dev
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  script:
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_PRODUCTION_PATH && docker compose down"
+    - scp -P22 ./infrastructure/production/mfviz/docker-compose.yml root@$URL_DEVELOPMENT_SERVER:/$SIMPLETOOLS_PRODUCTION_PATH/docker-compose.yml
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_PRODUCTION_PATH && docker compose pull"
+    - ssh -p22 root@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_PRODUCTION_PATH && docker compose up -d --force-recreate"
+  environment:
+    name: development
+    url: https://tools.inowas.com
+  only:
+    - tags
+

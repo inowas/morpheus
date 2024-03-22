@@ -1,3 +1,3 @@
-import {IOAuthToken} from './OAuthToken.type';
+import {IUserProfile} from './UserProfile.type';
 
-export type {IOAuthToken};
+export type {IUserProfile};

@@ -40,8 +40,8 @@ class CreateModelCommandHandler:
         grid = Grid.cartesian_from_polygon(
             polygon=command.geometry,
             rotation=Rotation.from_float(command.grid_properties['rotation']),
-            nx=command.grid_properties['nx'],
-            ny=command.grid_properties['ny'],
+            n_col=command.grid_properties['n_col'],
+            n_row=command.grid_properties['n_row'],
         )
         cells = ActiveCells.from_polygon(polygon=command.geometry, grid=grid)
         spatial_discretization = SpatialDiscretization(
@@ -118,26 +118,67 @@ class UpdateModelGridCommand:
 class UpdateModelGridCommandHandler:
     @staticmethod
     def handle(command: UpdateModelGridCommand):
+        # Todo - make grid updatable like Grid.withUpdatedWidthsAndHeights
+
         project_id = command.project_id
         current_user_id = command.updated_by
         permissions = PermissionsReader().get_permissions(project_id=project_id)
 
-        relative_x_coordinates = command.update_grid['relative_x_coordinates']
-        relative_y_coordinates = command.update_grid['relative_y_coordinates']
-        rotation = Rotation.from_float(command.update_grid['rotation'])
+        model_reader = ModelReader()
+        current_grid = model_reader.get_latest_model(project_id=project_id).spatial_discretization.grid
+        if current_grid is None:
+            raise ValueError('The grid must be created before it can be updated')
+
+        rotation = current_grid.rotation
+
+        n_col = command.update_grid.get('n_col')
+        n_row = command.update_grid.get('n_row')
+
+        relative_col_coordinates = [1 / n_col * i for i in range(n_col)]
+        relative_col_coordinates.append(1.0)
+
+        relative_row_coordinates = [1 / n_row * i for i in range(n_row)]
+        relative_row_coordinates.append(1.0)
+
+        col_widths = command.update_grid.get('col_widths', None)
+        total_width = command.update_grid.get('total_width', None)
+
+        if col_widths is not None:
+            if len(col_widths) != n_col:
+                raise ValueError('The number of column widths must match the number of columns')
+
+            if sum(col_widths) != total_width:
+                raise ValueError('The sum of the column widths must match the total width')
+
+            if col_widths and total_width:
+                relative_col_coordinates = [sum(col_widths[:i]) / total_width for i in range(n_col)]
+                relative_col_coordinates.append(1.0)
+
+        row_heights = command.update_grid.get('row_heights', None)
+        total_height = command.update_grid.get('total_height', None)
+
+        if row_heights is not None:
+            if len(row_heights) != n_row:
+                raise ValueError('The number of row heights must match the number of rows')
+
+            if sum(row_heights) != total_height:
+                raise ValueError('The sum of the row heights must match the total height')
+
+            if row_heights and total_height:
+                relative_row_coordinates = [sum(row_heights[:i]) / total_height for i in range(n_row)]
+                relative_row_coordinates.append(1.0)
 
         if not permissions.member_can_edit(user_id=current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to update the grid of {project_id.to_str()}')
 
-        model_reader = ModelReader()
         model = model_reader.get_latest_model(project_id=project_id)
 
         geometry = model.spatial_discretization.geometry
         new_grid = Grid.from_polygon_with_relative_coordinates(
             polygon=geometry,
             rotation=rotation,
-            x_coordinates=relative_x_coordinates,
-            y_coordinates=relative_y_coordinates
+            relative_col_coordinates=relative_col_coordinates,
+            relative_row_coordinates=relative_row_coordinates,
         )
 
         new_affected_cells = ActiveCells.from_polygon(polygon=geometry, grid=new_grid)

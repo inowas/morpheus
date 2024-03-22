@@ -1,10 +1,12 @@
-import React, {useRef, useEffect, useState} from 'react';
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
-import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
+
+import React, {useEffect, useRef, useState} from 'react';
+
 import ControlsE1 from '../components/ControlsE1';
+import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
+import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 
 const VtkExample = () => {
   const vtkContainerRef = useRef<any>(undefined);

@@ -1,12 +1,10 @@
-import {useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-
 import {IError, IUser} from '../types';
-import {useApi} from '../incoming';
+import {setError, setLoading, setUsers} from '../infrastructure/store';
+import {useDispatch, useSelector} from 'react-redux';
 
 import type {RootState} from 'morpheus/store';
-
-import {setUsers, setError, setLoading} from '../infrastructure/store';
+import {useApi} from '../incoming';
+import {useEffect} from 'react';
 
 interface IUseUsers {
   fetchUsers: () => Promise<void>;

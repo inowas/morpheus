@@ -4,6 +4,7 @@ interface IUser {
   user_id: string;
   username: string;
   email: string;
+  user_image?: string;
   full_name: string;
   is_superuser: boolean;
   status: IUserStatus;

@@ -1,7 +1,7 @@
-import React from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 import ExamplesNavbar from '../components/ExamplesNavbar';
-import {useLocation, useNavigate} from 'react-router-dom';
+import React from 'react';
 
 interface IProps {
   children: React.ReactNode;

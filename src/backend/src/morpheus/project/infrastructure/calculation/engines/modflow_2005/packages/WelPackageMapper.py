@@ -57,7 +57,7 @@ def calculate_wel_boundary_stress_period_data(
                 # for pumping rates we distribute the pumping rate equally over all layers
                 # pumping rates will be summed up
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
                                       values=[pumping_rate.to_float() / len(layer_indices)], sum_up_values=True)
 
     return sp_data

@@ -30,7 +30,7 @@ def calculate_evt_boundary_stress_period_data(
     evt_boundary: EvapotranspirationBoundary
 ) -> EvtStressPeriodData:
     grid = spatial_discretization.grid
-    sp_data = EvtStressPeriodData(nx=grid.nx(), ny=grid.ny())
+    sp_data = EvtStressPeriodData(nx=grid.n_col(), ny=grid.n_row())
 
     layer_ids = [layer.id for layer in soil_model.layers]
     layer_indices = [layer_ids.index(layer_id) for layer_id in evt_boundary.affected_layers]
@@ -66,7 +66,7 @@ def calculate_evt_boundary_stress_period_data(
         for cell in evt_boundary.affected_cells:
             # evapotranspiration rates will be replaced
             sp_data.set_value(
-                time_step=stress_period_idx, row=cell.y, column=cell.x,
+                time_step=stress_period_idx, row=cell.row, column=cell.col,
                 values=[surface_elevation.to_float(), evapotranspiration.to_float(),
                         extinction_depth.to_float(), layer_index],
                 sum_up_values=False
@@ -77,7 +77,7 @@ def calculate_evt_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: Model) -> EvtStressPeriodData | None:
     grid = model.spatial_discretization.grid
-    sp_data = EvtStressPeriodData(nx=grid.nx(), ny=grid.ny())
+    sp_data = EvtStressPeriodData(nx=grid.n_col(), ny=grid.n_row())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.evapotranspiration())
     for boundary in boundaries:
         if not isinstance(boundary, EvapotranspirationBoundary):

@@ -78,8 +78,8 @@ class LakPackageData:
 def calculate_lak_package_data(model: Model) -> LakPackageData | None:
     lake_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.lake())
 
-    nx = model.spatial_discretization.grid.nx()
-    ny = model.spatial_discretization.grid.ny()
+    nx = model.spatial_discretization.grid.n_col()
+    ny = model.spatial_discretization.grid.n_row()
     nz = model.soil_model.number_of_layers()
 
     if len(lake_boundaries) == 0:
@@ -109,22 +109,22 @@ def calculate_lak_package_data(model: Model) -> LakPackageData | None:
                 raise TypeError("Expected GridCell but got {}".format(type(affected_cell)))
 
             for layer_idx in layer_indices:
-                lakarr[layer_idx, affected_cell.y, affected_cell.x] = lake_id + 1
+                lakarr[layer_idx, affected_cell.row, affected_cell.col] = lake_id + 1
 
                 bed_leakance = observation.bed_leakance.to_float()
-                bdlknc[layer_idx][affected_cell.y][affected_cell.x] = bed_leakance
-                if affected_cell.x > 0:
-                    bdlknc[layer_idx, affected_cell.y, affected_cell.x - 1] = bed_leakance
-                if affected_cell.x < nx - 1:
-                    bdlknc[layer_idx, affected_cell.y, affected_cell.x + 1] = bed_leakance
-                if affected_cell.y > 0:
-                    bdlknc[layer_idx, affected_cell.y - 1, affected_cell.x] = bed_leakance
-                if affected_cell.y < ny - 1:
-                    bdlknc[layer_idx, affected_cell.y + 1, affected_cell.x] = bed_leakance
+                bdlknc[layer_idx][affected_cell.row][affected_cell.col] = bed_leakance
+                if affected_cell.col > 0:
+                    bdlknc[layer_idx, affected_cell.row, affected_cell.col - 1] = bed_leakance
+                if affected_cell.col < nx - 1:
+                    bdlknc[layer_idx, affected_cell.row, affected_cell.col + 1] = bed_leakance
+                if affected_cell.row > 0:
+                    bdlknc[layer_idx, affected_cell.row - 1, affected_cell.col] = bed_leakance
+                if affected_cell.row < ny - 1:
+                    bdlknc[layer_idx, affected_cell.row + 1, affected_cell.col] = bed_leakance
                 if layer_idx > 0:
-                    bdlknc[layer_idx - 1, affected_cell.y, affected_cell.x] = bed_leakance
+                    bdlknc[layer_idx - 1, affected_cell.row, affected_cell.col] = bed_leakance
                 if layer_idx < nz - 1:
-                    bdlknc[layer_idx + 1, affected_cell.y, affected_cell.x] = bed_leakance
+                    bdlknc[layer_idx + 1, affected_cell.row, affected_cell.col] = bed_leakance
 
     lak_flux_data = calculate_stress_period_data(model)
 

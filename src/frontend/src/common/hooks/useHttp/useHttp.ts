@@ -1,6 +1,7 @@
-import {useMemo} from 'react';
-import axios, {AxiosError, AxiosHeaders, InternalAxiosRequestConfig} from 'axios';
 import {Err, Ok, Result} from 'ts-results';
+import axios, {AxiosError, AxiosHeaders, InternalAxiosRequestConfig} from 'axios';
+
+import {useMemo} from 'react';
 
 export interface IOAuthToken {
   access_token: string;

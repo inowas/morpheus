@@ -1,0 +1,74 @@
+@import "site.variables";
+
+body {
+  color: #4c4c4c;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  //  min-height: 100%;
+}
+
+// helpers
+.borderBottom {
+  border-bottom: 1px solid @ref-color-underline;
+  padding-bottom: 14px !important;
+}
+
+.gepReset {
+  gap: 0 !important;
+}
+
+.dateInputWrapper {
+
+  .divider {
+    display: flex;
+    align-items: center;
+  }
+
+  .dateIcon {
+    margin: 0 0 0 5px;
+    height: 100%;
+  }
+}
+
+.scrollWrapper-Y {
+  height: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+}
+
+
+.scrollWrapper-X {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  //width
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  // Track
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  // Handle
+  &::-webkit-scrollbar-thumb {
+    background: @blue;
+  }
+
+  // Handle on hover
+  &::-webkit-scrollbar-thumb:hover {
+    background: #0277CC;
+  }
+}

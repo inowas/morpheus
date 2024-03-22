@@ -59,7 +59,7 @@ def calculate_chd_boundary_stress_period_data(
                     continue
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
                                       values=[start_head.to_float(), end_head.to_float()], sum_up_values=False)
 
         if chd_boundary.number_of_observations() > 1:
@@ -85,18 +85,18 @@ def calculate_chd_boundary_stress_period_data(
 
             grid_cell_centers = spatial_discretization.grid.get_cell_centers()
             for cell in chd_boundary.affected_cells:
-                if spatial_discretization.affected_cells.is_active(cell.x, cell.y) is None:
+                if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
                     # if the cell is not part of the model
                     # we do not apply any data for this cell
                     continue
 
-                center = ShapelyPoint(grid_cell_centers[cell.x][cell.y].coordinates)
+                center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
                 xx_new = [line_string.project(center, normalized=True)]
                 yy_new_start_head = float(np.interp(xx_new, xx, yy_start_heads)[0])
                 yy_new_end_head = float(np.interp(xx_new, xx, yy_end_heads)[0])
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.y, column=cell.x,
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
                                       values=[yy_new_start_head, yy_new_end_head], sum_up_values=False)
 
     return sp_data

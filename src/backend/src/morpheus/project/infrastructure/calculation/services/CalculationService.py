@@ -46,6 +46,7 @@ class CalculationService:
                 model=self.calculation.model,
                 calculation_profile=self.calculation.calculation_profile
             )
+
             self.calculation.set_new_state(CalculationState.FINISHED)
             self.calculation.set_log(log)
             self.calculation.set_result(result)

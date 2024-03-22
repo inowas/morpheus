@@ -59,7 +59,7 @@ class StressPeriodData:
         sp_data = {}
         for item in self.data:
             sp_data.setdefault(item.time_step, [])
-            sp_data[item.time_step].append_document([item.layer, item.row, item.column, *item.values])
+            sp_data[item.time_step].append([item.layer, item.row, item.column] + item.values)
 
         return sp_data
 
