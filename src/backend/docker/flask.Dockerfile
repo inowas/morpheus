@@ -2,7 +2,6 @@ ARG DOCKERFILE_BUILD_BASE_STAGE=base
 ARG BACKEND_APP_ROOT_PATH=/app
 
 FROM node:20 as build_openapi_spec
-ARG BACKEND_APP_ROOT_PATH
 ADD src/backend/src /src
 RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle.yml /src/morpheus/openapi.yml
 

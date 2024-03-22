@@ -17,8 +17,14 @@ build-mfviz-frontend:dev:
       - src/frontend/dist/mfviz
     expire_in: 1 days
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/mfviz/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 publish-mfviz-frontend:dev:
   stage: publish
@@ -32,8 +38,14 @@ publish-mfviz-frontend:dev:
     - docker push $MFVIZ_IMAGE:$CI_COMMIT_SHA
     - docker push $MFVIZ_IMAGE:dev
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/mfviz/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 deploy-mfviz:dev:
   image: ubuntu:22.04
@@ -55,8 +67,14 @@ deploy-mfviz:dev:
     name: development
     url: https://dev.mfviz.inowas.hydro.tu-dresden.de
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/mfviz/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 build-mfviz-frontend:prod:
   image: node:20
@@ -72,7 +90,13 @@ build-mfviz-frontend:prod:
       - src/frontend/dist/mfviz
     expire_in: 1 days
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/mfviz/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
 publish-mfviz-frontend:prod:
   stage: publish
@@ -87,7 +111,14 @@ publish-mfviz-frontend:prod:
     - docker push $MFVIZ_IMAGE:$CI_COMMIT_TAG
     - docker push $MFVIZ_IMAGE:latest
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/mfviz/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
+
 
 deploy-mfviz:prod:
   image: ubuntu:22.04
@@ -109,4 +140,11 @@ deploy-mfviz:prod:
     name: development
     url: https://mfviz.inowas.hydro.tu-dresden.de
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/mfviz/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
+
