@@ -22,7 +22,7 @@ prepareBackendEnvFile
 set -a # automatically export all variables from .env file
 source $backendEnvFile
 set +a
-$backendRoot/docker/docker-entrypoint.sh
+source $backendRoot/.venv/bin/activate && cd $backendRoot/src && python init/mongodb.py
 exitWithErrorIfLastCommandFailed "Error running entrypoint script"
 
 outputSuccess "Dev environment started"

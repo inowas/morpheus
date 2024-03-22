@@ -6,15 +6,15 @@ from flask import Flask, json
 from flask_cors import cross_origin
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
-from morpheus.common.presentation.schema_validation.SchemaValidation import SchemaValidationException
+from morpheus.common.presentation.middleware.schema_validation import SchemaValidationException
 from morpheus.settings import settings
-from morpheus.modflow.bootstrap import bootstrap_modflow_module
-from morpheus.sensors.bootstrap import bootstrap_sensors_module
+from morpheus.project.bootstrap import bootstrap_project_module
+from morpheus.sensor.bootstrap import bootstrap_sensor_module
 
 
 def bootstrap(app: Flask):
-    bootstrap_modflow_module(app)
-    bootstrap_sensors_module(app)
+    bootstrap_project_module(app)
+    bootstrap_sensor_module(app)
 
     @app.route('/schema', methods=['GET'])
     @cross_origin()
@@ -26,12 +26,13 @@ def bootstrap(app: Flask):
             return yaml.load(file, Loader=yaml.FullLoader), 200
 
     @app.errorhandler(SchemaValidationException)
-    def handle_schema_validation_exception(exception):
+    def handle_schema_validation_exception(exception: SchemaValidationException):
         # todo: logging, sentry, ...
-        app.logger.exception(exception)
+        if not settings.is_production():
+            app.logger.exception(exception.get_previous_exception())
         response = Response(status=422)
         response.content_type = 'application/json'
-        response.data = json.dumps({'error': exception.get_errors()})
+        response.data = json.dumps({'errors': exception.get_errors()})
         return response
 
     @app.errorhandler(HTTPException)

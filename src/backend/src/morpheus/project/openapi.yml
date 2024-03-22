@@ -1,0 +1,424 @@
+openapi: 3.1.0
+info:
+  title: INOWAS API - Project Module
+  version: 2.0.0
+paths:
+  /projects:
+    get:
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: "Search for projects by name, description or tags."
+          required: false
+        - in: query
+          name: public
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: user_id
+          schema:
+            type: string
+          description: "The id of the user."
+          required: false
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number."
+          required: false
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: "The page size."
+          required: false
+      tags:
+        - Project
+      summary: Read list of projects with search parameters
+      description: Read list of projects with search parameters
+      responses:
+        200:
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectSummary'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+    post:
+      tags:
+        - Project
+      summary: Create a new project
+      description: Create a new project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        201:
+          description: Project was successfully created
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+
+  /projects/{project_id}:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    delete:
+      tags:
+        - Project
+      summary: Delete a project
+      description: Delete a projects
+      responses:
+        204:
+          description: Project was successfully deleted
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/model:
+    post:
+      tags:
+        - Project
+      summary: Create a new model for a project
+      description: Create a new model for a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModelRequest'
+      responses:
+        201:
+          description: Model model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/preview_image:
+#      get:
+#        --> Platzhalter wenn kein Preview Image vorhanden ist
+#        --> ohne Authentifizierung vorerst WICHTIG: Ticket erstellen
+
+      put:
+        tags:
+          - Project
+        summary: Upload a preview image for a project
+        description: Upload a preview image for a project
+        parameters:
+          - $ref: '#/components/parameters/ProjectId'
+        requestBody:
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  file: {}
+                required:
+                  - file
+              encoding:
+                file:
+                  contentType: "image/jpeg, image/png"
+        responses:
+          201:
+            description: Asset was successfully uploaded
+          401:
+            $ref: '#/components/responses/UnauthorizedError'
+          403:
+            $ref: '#/components/responses/ForbiddenError'
+          413:
+            $ref: '#/components/responses/UploadedFileTooLarge'
+          422:
+            $ref: '#/components/responses/UnprocessableEntity'
+          500:
+            $ref: '#/components/responses/InternalServerError'
+
+#      delete:
+#        ...
+
+#  /projects/{project_id}/assets:
+#    get:
+#      --> filter parameter: asset type, filename, description
+#    post:
+#      --> asset type automatisch erkennen
+#      --> description in body
+#      --> Rasterfiles nur TIFF (GeoTIFF) und Shapefiles (ZIP) erlaubt
+#      --> Response: 201 Created, Location Header auf /projects/{project_id}/assets/{asset_id}
+#
+#  /projects/{project_id}/assets/{asset_id}:
+#    get:
+#      --> get filename, asset_Type, description, size, ... , metadata (abhängig vom Typ)
+#          - metadata:
+#            - shapefile: type (line, polygon, point), bounding_box (aus geojson)
+#            - rasterfile: Anzahl Bänder, Zeile, Spalten (aus TIFF)
+#    put:
+#      --> update filename, description
+#    delete:
+#      --> delete asset
+#
+#  /projects/{project_id}/assets/{asset_id}/file:
+#    get:
+#      --> get the file
+#
+#  /projects/{project_id}/assets/{asset_id}/data:
+#    get:
+#      --> abhängig vom Typ des Assets:
+#          - shapefile: geojson
+#          - rasterfile: metadaten und 3 dimensionales array (Bänder)
+#      --> optional: filter parameter für shapefile (type, bounding_box) und rasterfile (band, bounding_box) (siehe metadata)
+
+components:
+  parameters:
+    ProjectId:
+      name: project_id
+      in: path
+      description: "The id of a project."
+      required: true
+      schema:
+        type: string
+        example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+  schemas:
+    CreateProjectRequest:
+      type: object
+      description: "The Request to create a new project."
+      properties:
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+      required:
+        - name
+        - description
+        - tags
+
+    CreateModelRequest:
+      type: object
+      description: "The Request to create a new model."
+      properties:
+        geometry:
+          type: object
+          description: "The geometry of the feature."
+          properties:
+            type:
+              type: string
+              enum: [ "Polygon" ]
+              example: "Polygon"
+            coordinates:
+              type: array
+              description: "The coordinates of the geometry."
+              example: [ [
+                [ 13.922514437551428, 50.964720483303836 ],
+                [ 13.925250781947113, 50.965228748412386 ],
+                [ 13.925036413951403, 50.96623732041704 ],
+                [ 13.92222441026388, 50.96609040370362 ],
+                [ 13.922514437551428, 50.964720483303836 ]
+              ] ]
+              items:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+                    minItems: 2
+                    maxItems: 2
+          required:
+            - type
+            - coordinates
+        grid_properties:
+          type: object
+          description: "The grid properties of the model."
+          properties:
+            x_coordinates:
+              type: array
+              description: "The distance along the x axis in percent."
+              example: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]
+              items:
+                type: number
+                minimum: 0
+                maximum: 1
+            y_coordinates:
+              type: array
+              description: "The distance along the y axis in percent."
+              example: [ 0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
+              items:
+                type: number
+                minimum: 0
+                maximum: 1
+            rotation:
+              type: number
+              description: "The grid rotation angle in deg of the model."
+              minimum: -90
+              maximum: 90
+              example: 0.0
+            length_unit:
+              type: string
+              enum: [ "meters", "centimeters", "feet", "unknown" ]
+              example: "meters"
+          required:
+            - x_coordinates
+            - y_coordinates
+            - rotation
+            - length_unit
+
+      required:
+        - geometry
+        - grid_properties
+
+    UpdateMetadataRequest:
+      type: object
+      description: "The Request to update the metadata of a project."
+      properties:
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+
+    UpdateTimeDiscretizationRequest:
+      $ref: '#/components/schemas/TimeDiscretization'
+
+    GetTimeDiscretizationResponse:
+      $ref: '#/components/schemas/TimeDiscretization'
+
+    ProjectId:
+      type: string
+      description: "The id of a project."
+      example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+
+    TimeDiscretization:
+      type: object
+      description: "The time discretization of a model or scenario."
+      properties:
+        start_date_time:
+          type: string
+          format: date-time
+          description: "The start date time of the model."
+          example: "2020-01-01T00:00:00Z"
+        end_date_time:
+          type: string
+          format: date-time
+          description: "The end date time of the model."
+          example: "2020-12-31T00:00:00Z"
+        stress_periods:
+          type: array
+          description: "The stress periods of the model."
+          items:
+            type: object
+            properties:
+              start_date_time:
+                type: string
+                format: date-time
+                description: "The start date time of the stress period."
+                example: "2020-01-01T00:00:00Z"
+              number_of_time_steps:
+                type: number
+                description: "The time step size of the stress period."
+                example: 1
+              time_step_multiplier:
+                type: number
+                description: "The time step multiplier of the stress period."
+                example: 1
+              steady_state:
+                type: boolean
+                description: "A flag to indicate if the stress period is steady state."
+                example: false
+          example:
+            - start_date_time: "2020-01-01T00:00:00Z"
+              number_of_time_steps: 1
+              time_step_multiplier: 1
+            - start_date_time: "2020-02-01T00:00:00Z"
+              number_of_time_steps: 1
+              time_step_multiplier: 1
+
+    ProjectSummary:
+      type: object
+      description: "A project."
+      properties:
+        project_id:
+          type: string
+          description: "The id of the project."
+          example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+        name:
+          type: string
+          description: "The name of the project."
+          example: "My first project"
+        description:
+          type: string
+          description: "The description of the project."
+          example: "This is my first project"
+        tags:
+          type: array
+          description: "The tags of the project."
+          items:
+            type: string
+          example: [ "tag1", "tag2" ]
+        owner_id:
+          type: string
+          description: "The id of the owner of the project."
+          example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+        is_public:
+          type: boolean
+          description: "A flag to indicate if the project is public."
+          example: false
+        created_at:
+          type: string
+          format: date-time
+          description: "The creation date time of the project."
+          example: "2020-01-01T00:00:00Z"
+  responses:
+    UnauthorizedError:
+      description: "The request lacks valid authentication"
+
+    ForbiddenError:
+      description: "Missing or insufficient permissions to perform the request"
+
+    NotFoundError:
+      description: "The requested resource could not be found"
+
+    UnprocessableEntity:
+      description: "The request body was not well formed or the content was invalid"
+
+    UploadedFileTooLarge:
+      description: "The uploaded file is too large"
+
+    InternalServerError:
+      description: "Internal Server Error"

@@ -2,9 +2,9 @@ ARG DOCKERFILE_BUILD_BASE_STAGE=base
 
 FROM python:3.12-bookworm as base
 
-# add files to image
 ARG BACKEND_APP_ROOT_PATH
 
+# add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
 
@@ -18,11 +18,6 @@ ENV PYTHONUNBUFFERED 1
 
 # create system user celery
 RUN addgroup --system celery && adduser --system --group celery
-
-# prepare mount points for user celery
-RUN mkdir -p /mnt/sensors
-RUN mkdir -p /mnt/modflow
-RUN chown -R celery:celery /mnt
 
 
 FROM base as local_base

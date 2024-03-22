@@ -21,7 +21,7 @@ class Uuid:
     def from_value(cls, value: str):
         return cls.from_str(value=value)
 
-    def to_str(self):
+    def to_str(self) -> str:
         return self.value
 
     def to_value(self):
