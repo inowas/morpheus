@@ -35,4 +35,4 @@ FROM ${DOCKERFILE_BUILD_BASE_STAGE} as celery_worker
 # start celery worker as user celery
 USER celery
 WORKDIR ${BACKEND_APP_ROOT_PATH}/src
-ENTRYPOINT ["celery", "-A", "task_queue", "worker", "--loglevel=INFO" ]
+CMD ["celery", "-A", "task_queue", "worker", "--loglevel=INFO" ]

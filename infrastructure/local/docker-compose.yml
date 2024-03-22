@@ -61,7 +61,7 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
-      celery_worker:
+      rabbitmq:
         condition: service_healthy
     env_file:
       - .env
@@ -260,9 +260,7 @@ services:
         - DOCKERFILE_BUILD_BASE_STAGE=local_base
     container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
     depends_on:
-      mongodb_backend:
-        condition: service_healthy
-      rabbitmq:
+      backend:
         condition: service_healthy
     env_file:
       - .env
