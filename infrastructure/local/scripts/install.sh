@@ -4,7 +4,8 @@
 source "$(dirname "$0")/util.inc.sh"
 
 localSensorDataMountpoint="$infrastructureRoot/data/morpheus/sensors"
-localModflowDataMountpoint="$infrastructureRoot/data/morpheus/modflow"
+localProjectAssetDataMountpoint="$infrastructureRoot/data/morpheus/project/assets"
+localProjectCalculationDataMountpoint="$infrastructureRoot/data/morpheus/project/calculations"
 
 
 outputHeadline "Preparing local .env file"
@@ -23,7 +24,8 @@ else
     && sed -i.bak -e "s!__replace_with__flask_group_id!$groupId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__project_root!$projectRoot!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__local_sensor_data_mountpoint!$localSensorDataMountpoint!g" -- "$envFile.tmp" \
-    && sed -i.bak -e "s!__replace_with__local_modflow_data_mountpoint!$localModflowDataMountpoint!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__local_project_asset_data_mountpoint!$localProjectAssetDataMountpoint!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__local_project_calculation_data_mountpoint!$localProjectCalculationDataMountpoint!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__celery_user_id!$userId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__celery_group_id!$groupId!g" -- "$envFile.tmp" \
     && mv "$envFile.tmp" "$envFile" \
@@ -35,6 +37,8 @@ fi
 
 outputHeadline "Preparing local mount points"
 
-mkdir -p "$localSensorDataMountpoint"
+mkdir -p "$localSensorDataMountpoint" && \
+mkdir -p "$localProjectAssetDataMountpoint" && \
+mkdir -p "$localProjectCalculationDataMountpoint"
 exitWithErrorIfLastCommandFailed "Error preparing local mount points"
 outputSuccess "Successfully prepared local mount points"

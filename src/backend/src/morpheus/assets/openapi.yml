@@ -1,0 +1,235 @@
+openapi: 3.1.0
+info:
+  title: INOWAS API - Assets Module
+  version: 2.0.0
+paths:
+  /assets:
+    get:
+      tags:
+        - Assets
+      summary: Read list of assets
+      description: Read a filtered and paginated list of assets
+      parameters:
+        - $ref: "#/components/parameters/FilterUserId"
+        - $ref: "#/components/parameters/PaginationPage"
+        - $ref: "#/components/parameters/PaginationPageSize"
+      responses:
+        200:
+          description: List of assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetListItem'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Assets
+      summary: Upload an asset
+      description: Upload a new asset
+      requestBody:
+        required: true
+        content:
+#          application/octet-stream: {}
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadAssetRequest'
+      responses:
+        201:
+          description: Asset was successfully uploaded
+          headers:
+            Location:
+              description: The location of the uploaded asset
+              schema:
+                type: string
+                example: 'https://api.inowas.com/assets/0e2c2369-1955-4867-9b24-60274b0a8f33'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        413:
+          description: "The uploaded file is too large"
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /assets/{asset_id}:
+    parameters:
+      - $ref: '#/components/parameters/AssetId'
+    get:
+      tags:
+        - Assets
+      summary: Read asset metadata
+      description: Read asset metadata
+      responses:
+        200:
+          description: AssetMetadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetMetadata'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          description: Internal Server Error
+    delete:
+      tags:
+        - Assets
+      summary: Delete an asset
+      description: Delete an asset
+      responses:
+        204:
+          description: Asset was successfully deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /assets/{asset_id}/file:
+    parameters:
+      - $ref: '#/components/parameters/AssetId'
+    get:
+      tags:
+        - Assets
+      summary: Download asset file
+      description: Download asset file
+      responses:
+        200:
+          description: Asset file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileContent'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          description: Internal Server Error
+
+
+components:
+  parameters:
+    FilterUserId:
+      name: user_id
+      in: query
+      description: "Filter by user id"
+      required: false
+      schema:
+        $ref: '#/components/schemas/UserId'
+    PaginationPage:
+      name: page
+      in: query
+      description: "Current page number of the paginated list"
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PaginationPageSize:
+      name: page_size
+      in: query
+      description: "Number of items per page of the paginated list."
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
+    AssetId:
+      name: asset_id
+      in: path
+      description: "The id of an asset"
+      required: true
+      schema:
+        $ref: '#/components/schemas/AssetId'
+
+  schemas:
+    UploadAssetRequest:
+      type: object
+      description: "Upload an asset"
+      properties:
+        type:
+          $ref: '#/components/schemas/AssetType'
+        file:
+          $ref: '#/components/schemas/FileContent'
+      required:
+        - type
+        - file
+
+    AssetId:
+      type: string
+      description: "The id of an asset"
+      example: "0e2c2369-1955-4867-9b24-60274b0a8f33"
+
+    UserId:
+      type: string
+      description: "The id of an user"
+      example: "b172647f-4467-4996-9d2d-9ef5e73062c2"
+
+    AssetType:
+      type: string
+      enum:
+        - "image"
+        - "rasterfile"
+        - "shapefile"
+
+    AssetListItem:
+      type: object
+      description: "A list item of a user"
+      properties:
+        asset_id:
+          $ref: '#/components/schemas/AssetId'
+      required:
+        - asset_id
+
+    AssetMetadata:
+        type: object
+        description: "Metadata of an asset"
+        properties:
+            asset_id:
+              $ref: '#/components/schemas/AssetId'
+            file:
+              type: string
+              format: uri
+              description: "The url to download the file"
+              example: "https://api.inowas.com/assets/0e2c2369-1955-4867-9b24-60274b0a8f33/file"
+
+    FileContent:
+      type: array
+      minItems: 1
+      items: {}
+
+  responses:
+    UnauthorizedError:
+      description: "The request lacks valid authentication"
+
+    ForbiddenError:
+      description: "Missing or insufficient permissions to perform the request"
+
+    NotFoundError:
+      description: "The requested resource could not be found"
+
+    UnprocessableEntity:
+      description: "The request body was not well formed"
+
+    InternalServerError:
+      description: "Internal Server Error"
+
+
