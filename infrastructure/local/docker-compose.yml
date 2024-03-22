@@ -62,7 +62,7 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
-      celery_worker:
+      rabbitmq:
         condition: service_healthy
     env_file:
       - .env
@@ -260,9 +260,7 @@ services:
         - BACKEND_APP_ROOT_PATH=${BACKEND_APP_ROOT_PATH}
     container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
     depends_on:
-      mongodb_backend:
-        condition: service_healthy
-      rabbitmq:
+      backend:
         condition: service_healthy
     env_file:
       - .env
