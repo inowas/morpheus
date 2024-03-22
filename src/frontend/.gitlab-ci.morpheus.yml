@@ -15,8 +15,14 @@ build-morpheus-frontend:dev:
       - src/frontend/dist/morpheus
     expire_in: 1 days
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/morpheus/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 publish-morpheus-frontend:dev:
   stage: publish
@@ -30,8 +36,14 @@ publish-morpheus-frontend:dev:
     - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_FRONTEND_IMAGE:dev
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/morpheus/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 build-morpheus-frontend:prod:
   image: node:20
@@ -47,7 +59,13 @@ build-morpheus-frontend:prod:
       - src/frontend/dist/morpheus
     expire_in: 1 days
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/morpheus/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
 publish-morpheus-frontend:prod:
   stage: publish
@@ -63,5 +81,11 @@ publish-morpheus-frontend:prod:
     - docker push $MORPHEUS_FRONTEND_IMAGE:$CI_COMMIT_TAG
     - docker push $MORPHEUS_FRONTEND_IMAGE:latest
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/morpheus/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
