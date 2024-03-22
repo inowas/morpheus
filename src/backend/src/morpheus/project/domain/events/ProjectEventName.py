@@ -15,6 +15,7 @@ class ProjectEventName(StrEnum):
     PROJECT_CREATED = 'Project Created'
     PROJECT_METADATA_UPDATED = 'Project Metadata Updated'
     PROJECT_PREVIEW_IMAGE_UPDATED = 'Project Preview Image Updated'
+    PROJECT_PREVIEW_IMAGE_DELETED = 'Project Preview Image Deleted'
     VERSION_ASSIGNED_TO_MODEL = 'Version Assigned to Model'
     VERSION_CREATED = 'Version Created'
     VERSION_DELETED = 'Version Deleted'

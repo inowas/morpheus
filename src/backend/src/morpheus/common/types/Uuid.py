@@ -18,6 +18,13 @@ class Uuid:
         return cls(value=value)
 
     @classmethod
+    def try_from_str(cls, value: str | None):
+        if value is None:
+            return None
+
+        return cls(value=value)
+
+    @classmethod
     def from_value(cls, value: str):
         return cls.from_str(value=value)
 

@@ -2,12 +2,13 @@ from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
-from .presentation.api.read.ReadProjectListRequestHandler import ReadProjectListRequestHandler
-from .presentation.api.write.ProjectRequestHandlers import CreateProjectRequestHandler, UpdateMetadataRequestHandler, UploadPreviewImageRequestHandler
+from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadPreviewImageRequestHandler
+from .presentation.api.write.ProjectWriteRequestHandlers import CreateProjectRequestHandler, UpdateMetadataRequestHandler, UploadPreviewImageRequestHandler, \
+    DeletePreviewImageRequestHandler
 from .presentation.api.write.PermissionRequestHandlers import AddMemberRequestHandler, UpdateMemberRoleRequestHandler, \
     RemoveMemberRequestHandler, UpdateVisibilityRequestHandler
 from .presentation.api.write.ModelRequestHandlers import UpdateTimeDiscretizationRequestHandler
-from ..common.presentation.middleware.schema_validation import validate_request
+from ..common.presentation.api.middleware.schema_validation import validate_request
 
 
 def register_routes(blueprint: Blueprint):
@@ -71,9 +72,24 @@ def register_routes(blueprint: Blueprint):
     def project_model_time_discretization_update(project_id: str):
         return UpdateTimeDiscretizationRequestHandler().handle(request, project_id)
 
+    @blueprint.route('/<project_id>/preview_image', methods=['GET'])
+    @cross_origin()
+    # for now without authentication (see https://redmine.junghanns.it/issues/2388)
+    # @authenticate()
+    @validate_request
+    def project_preview_image_fetch(project_id: str):
+        return ReadPreviewImageRequestHandler().handle(project_id)
+
     @blueprint.route('/<project_id>/preview_image', methods=['PUT'])
     @cross_origin()
     @authenticate()
     @validate_request
     def project_preview_image_upload(project_id: str):
         return UploadPreviewImageRequestHandler().handle(request, project_id)
+
+    @blueprint.route('/<project_id>/preview_image', methods=['DELETE'])
+    @cross_origin()
+    @authenticate()
+    @validate_request
+    def project_preview_image_deletion(project_id: str):
+        return DeletePreviewImageRequestHandler().handle(request, project_id)

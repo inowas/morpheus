@@ -2,17 +2,15 @@ import dataclasses
 
 from morpheus.common.infrastructure.files.FileService import FileService
 from morpheus.common.types import Uuid, DateTime
-from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from ..read.ProjectsReader import projects_reader
 from ...domain.AssetService import AssetService
-
-from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
-from ...infrastructure.assets.AssetFileStorage import asset_file_storage
+from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
+from ...infrastructure.assets.AssetHandlingService import asset_handling_service
 from ...infrastructure.assets.PreviewImageService import preview_image_service
 from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository
 from ...types.Asset import AssetId, Asset, AssetType
 from ...types.Project import ProjectId, Project, Description, Name, Tags
 from ...types.User import UserId
@@ -53,13 +51,8 @@ class UpdateMetadataCommand:
 class UpdateMetadataCommandHandler:
     @staticmethod
     def handle(command: UpdateMetadataCommand) -> None:
-        project_id = command.project_id
-        if not projects_reader.project_exists(project_id):
-            raise NotFoundException(f'Project with id {project_id.to_str()} does not exist')
-
-        # todo assert user has access to project
-
-        event = ProjectMetadataUpdatedEvent.from_props(project_id=project_id, name=command.name, description=command.description, tags=command.tags, occurred_at=DateTime.now())
+        event = ProjectMetadataUpdatedEvent.from_props(project_id=command.project_id, name=command.name,
+                                                       description=command.description, tags=command.tags, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)
@@ -77,25 +70,53 @@ class UpdatePreviewImageCommand:
 class UpdatePreviewImageCommandHandler:
     @staticmethod
     def handle(command: UpdatePreviewImageCommand) -> None:
-        if not projects_reader.project_exists(command.project_id):
-            raise NotFoundException(f'Project with id {command.project_id.to_str()} does not exist')
-
-        # todo assert user has access to project
-        # permissions = permissions_reader.get_permissions(command.project_id)
-        # read user with groups (from user module)
-        # pass permissions and user with groups to domain service that checks permission
-
+        # check if file can be used as preview image
         file = FileService.build_file_info(command.file_path, command.file_name)
         AssetService.assert_file_can_be_used_as_preview_image(file)
 
-        # resize image to preview image size
+        # prepare preview image asset
         preview_image_service.resize_as_preview_image(command.file_path)
-        asset = Asset(id=command.asset_id, project_id=command.project_id, type=AssetType.IMAGE, file=file)
+        metadata = preview_image_service.extract_asset_metadata(command.file_path)
+        asset = Asset(
+            id=command.asset_id,
+            project_id=command.project_id,
+            type=AssetType.IMAGE,
+            file=file,
+            metadata=metadata
+        )
 
-        # check if old preview image exists, if so delete it
+        # delete existing asset
+        existing_asset_id = preview_image_repository.get_preview_image(command.project_id)
+        if existing_asset_id is not None:
+            asset_handling_service.delete_asset(existing_asset_id)
 
-        # save asset to filesystem
-        asset_file_storage.save_asset(asset, command.file_path)
-        # persist asset in mongo db
+        # persist new asset
+        asset_handling_service.persist_asset(asset, command.file_path)
 
-        # event = ProjectPreviewImageUpdatedEvent.from_props(command.project_id, command.asset_id)
+        # set asset as preview image for project
+        event = ProjectPreviewImageUpdatedEvent.occurred_now(command.project_id, command.asset_id)
+        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
+        project_event_bus.record(EventEnvelope(event=event, metadata=event_metadata))
+
+
+@dataclasses.dataclass(frozen=True)
+class DeletePreviewImageCommand:
+    project_id: ProjectId
+    updated_by: UserId
+
+
+class DeletePreviewImageCommandHandler:
+    @staticmethod
+    def handle(command: DeletePreviewImageCommand) -> None:
+        existing_asset_id = preview_image_repository.get_preview_image(command.project_id)
+        if existing_asset_id is None:
+            return
+
+        # remove asset preview image for project
+        event = ProjectPreviewImageDeletedEvent.occurred_now(command.project_id)
+        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
+        project_event_bus.record(EventEnvelope(event=event, metadata=event_metadata))
+
+        # delete existing asset
+        if existing_asset_id is not None:
+            asset_handling_service.delete_asset(existing_asset_id)

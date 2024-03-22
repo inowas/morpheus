@@ -116,9 +116,31 @@ paths:
           description: Not found
 
   /projects/{project_id}/preview_image:
-#      get:
-#        --> Platzhalter wenn kein Preview Image vorhanden ist
-#        --> ohne Authentifizierung vorerst WICHTIG: Ticket erstellen
+      get:
+        tags:
+          - Project
+        summary: Get the preview image for a project
+        description: Get the preview image for a project
+        parameters:
+          - $ref: '#/components/parameters/ProjectId'
+        responses:
+          200:
+            description: The preview image
+            content:
+              image/jpeg:
+                schema:
+                  type: string
+                  format: binary
+              image/png:
+                schema:
+                  type: string
+                  format: binary
+          401:
+            $ref: '#/components/responses/UnauthorizedError'
+          403:
+            $ref: '#/components/responses/ForbiddenError'
+          404:
+            $ref: '#/components/responses/NotFoundError'
 
       put:
         tags:
@@ -140,8 +162,8 @@ paths:
                 file:
                   contentType: "image/jpeg, image/png"
         responses:
-          201:
-            description: Asset was successfully uploaded
+          204:
+            description: Preview image was successfully uploaded
           401:
             $ref: '#/components/responses/UnauthorizedError'
           403:
@@ -153,8 +175,22 @@ paths:
           500:
             $ref: '#/components/responses/InternalServerError'
 
-#      delete:
-#        ...
+      delete:
+        tags:
+          - Project
+        summary: Delete the preview image for a project
+        description: Delete the preview image for a project
+        parameters:
+          - $ref: '#/components/parameters/ProjectId'
+        responses:
+          204:
+            description: Preview image was successfully deleted
+          401:
+            $ref: '#/components/responses/UnauthorizedError'
+          403:
+            $ref: '#/components/responses/ForbiddenError'
+          500:
+            $ref: '#/components/responses/InternalServerError'
 
 #  /projects/{project_id}/assets:
 #    get:
@@ -170,7 +206,7 @@ paths:
 #      --> get filename, asset_Type, description, size, ... , metadata (abhängig vom Typ)
 #          - metadata:
 #            - shapefile: type (line, polygon, point), bounding_box (aus geojson)
-#            - rasterfile: Anzahl Bänder, Zeile, Spalten (aus TIFF)
+#            - gettiff: Anzahl Bänder, Zeile, Spalten (aus TIFF)
 #    put:
 #      --> update filename, description
 #    delete:
