@@ -13,8 +13,14 @@ publish-morpheus-backend-api:dev:
     - docker push $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_BACKEND_API_IMAGE:dev
   only:
-    - main
-    - tags
+    change:
+      - src/infrastructure/production/**/*.*
+      - src/backend/docker/**/*.*
+      - src/backend/src/**/*.*
+      - src/backend/requirements/**/*.*
+    refs:
+      - main
+      - tags
 
 publish-morpheus-backend-task-queue-worker:dev:
   stage: publish
@@ -26,8 +32,14 @@ publish-morpheus-backend-task-queue-worker:dev:
     - docker push $MORPHEUS_BACKEND_TASK_QUEUE_WORKER_IMAGE:$CI_COMMIT_SHA
     - docker push $MORPHEUS_BACKEND_TASK_QUEUE_WORKER_IMAGE:dev
   only:
-    - main
-    - tags
+    change:
+      - src/infrastructure/production/**/*.*
+      - src/backend/docker/**/*.*
+      - src/backend/src/**/*.*
+      - src/backend/requirements/**/*.*
+    refs:
+      - main
+      - tags
 
 publish-morpheus-backend-api:prod:
   stage: publish
@@ -40,7 +52,13 @@ publish-morpheus-backend-api:prod:
     - docker push $MORPHEUS_BACKEND_API_IMAGE:$CI_COMMIT_TAG
     - docker push $MORPHEUS_BACKEND_API_IMAGE:latest
   only:
-    - tags
+    change:
+      - src/infrastructure/production/**/*.*
+      - src/backend/docker/**/*.*
+      - src/backend/src/**/*.*
+      - src/backend/requirements/**/*.*
+    refs:
+      - tags
 
 publish-morpheus-backend-task-queue-worker:prod:
   stage: publish
@@ -53,4 +71,10 @@ publish-morpheus-backend-task-queue-worker:prod:
     - docker push $MORPHEUS_BACKEND_TASK_QUEUE_WORKER_IMAGE:$CI_COMMIT_TAG
     - docker push $MORPHEUS_BACKEND_TASK_QUEUE_WORKER_IMAGE:latest
   only:
-    - tags
+    change:
+      - src/infrastructure/production/**/*.*
+      - src/backend/docker/**/*.*
+      - src/backend/src/**/*.*
+      - src/backend/requirements/**/*.*
+    refs:
+      - tags
