@@ -1,4 +1,5 @@
 ARG DOCKERFILE_BUILD_BASE_STAGE=base
+ARG BACKEND_APP_ROOT_PATH=/app
 
 FROM node:20 as build_openapi_spec
 
@@ -8,8 +9,6 @@ RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle
 
 
 FROM python:3.12-bookworm as base
-
-ARG BACKEND_APP_ROOT_PATH
 
 # add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
@@ -42,8 +41,6 @@ RUN usermod -u ${FLASK_USER_ID} -g ${FLASK_GROUP_ID} flask
 
 
 FROM ${DOCKERFILE_BUILD_BASE_STAGE} as flask_app
-
-ARG BACKEND_APP_ROOT_PATH
 
 # start gunicorn as user flask
 USER flask
