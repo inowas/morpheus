@@ -3,8 +3,8 @@ import {Accordion, AccordionPanelProps} from 'semantic-ui-react';
 import TimeDiscretizationGeneralParameters from './GeneralParameters';
 import TimeDiscretizationStressPeriods from './StressPeriods';
 import {IStressPeriod, ITimeDiscretization} from '../../../types/TimeDiscretization.type';
-import {parseISO, isValid, addDays} from 'date-fns';
-import {Button, DataGrid, DataRow} from 'common/components';
+import {addDays, isValid, parseISO} from 'date-fns';
+import {Button, DataGrid, SectionTitle} from 'common/components';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
@@ -86,7 +86,7 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
 
   return (
     <DataGrid>
-      <DataRow title={'Time discretization'}/>
+      <SectionTitle title={'Time discretization'}/>
       <Accordion
         defaultActiveIndex={[0, 1]}
         panels={panels}

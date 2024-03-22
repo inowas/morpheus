@@ -2,7 +2,7 @@ import React from 'react';
 import {faArrowRight, faDownload} from '@fortawesome/free-solid-svg-icons';
 
 import {Accordion} from 'semantic-ui-react';
-import {Button, DataGrid, DataRow} from 'common/components';
+import {Button, DataGrid, SectionTitle} from 'common/components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import styles from './ProjectMetadataContent.module.less';
 
@@ -327,7 +327,7 @@ const ProjectMetadataContent = ({content}: IProps) => {
 
   return (
     <DataGrid>
-      <DataRow title={'Model metadata'}/>
+      <SectionTitle title={'Model metadata'}/>
       <Accordion
         defaultActiveIndex={defaultActiveIndex}
         panels={panels}

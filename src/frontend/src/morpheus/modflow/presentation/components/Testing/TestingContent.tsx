@@ -1,13 +1,8 @@
-import {Dropdown, Form, Icon, Radio, Tab, TabPane, TextArea} from 'semantic-ui-react';
 import React, {useState} from 'react';
-
-import {Button} from 'common/components';
-import DatePicker from 'react-datepicker';
-
-import UploadFile from 'common/components/UploadFile';
 import Slider from 'common/components/Slider/SimpleSlider';
-import {DataGrid, DataRow} from 'common/components/DataGrid';
-
+import {Button, DataGrid, DataRow, SectionTitle, UploadFile} from 'common/components';
+import {Dropdown, Form, Icon, Radio, Tab, TabPane, TextArea} from 'semantic-ui-react';
+import DatePicker from 'react-datepicker';
 import styles from './TestingContent.module.less';
 
 const options = [
@@ -79,7 +74,8 @@ const TestingContent: React.FC = () => {
       {/* Upload File (OLD STYLE) => */}
       <div className={styles.fullHeight}>
         <DataGrid columns={2} style={{alignItems: 'normal'}}>
-          <DataRow title={'Create model'}>
+          <DataRow>
+            <SectionTitle title={'Create model'}/>
             <Form.Field className={styles.field}>
               <label className={'h4'}>Model name<span className="required">*</span></label>
               <input type="text"/>
@@ -153,7 +149,8 @@ const TestingContent: React.FC = () => {
             </Form.Field>
             <Button primary={true}>Create model</Button>
           </DataRow>
-          <DataRow title={'Model geometry'}>
+          <DataRow>
+            <SectionTitle title={'Model geometry'}/>
             <div style={{
               display: 'flex',
               flexDirection: 'column',
@@ -170,8 +167,9 @@ const TestingContent: React.FC = () => {
       </div>
       {/* MODEL GRID SECTION (OLD STYLE) => */}
       <DataGrid>
-        <DataRow title={'Model Grid'}/>
-        <DataRow subTitle={'Grid resolution'}>
+        <SectionTitle title={'Model Grid'}/>
+        <DataRow>
+          <SectionTitle subTitle={'Grid resolution'}/>
           <DataGrid columns={2}>
             <div>
               <Radio
@@ -254,7 +252,8 @@ const TestingContent: React.FC = () => {
           </DataGrid>
         </DataRow>
         {/*// ButtonGroup*/}
-        <DataRow subTitle={'Edit active cells'}>
+        <DataRow>
+          <SectionTitle subTitle={'Edit active cells'}/>
           <div className={styles.buttonGroup} style={{display: 'flex', gap: '15px'}}>
             <Button
               primary={true} size={'small'}
@@ -269,7 +268,8 @@ const TestingContent: React.FC = () => {
           </div>
         </DataRow>
         {/*// SliderGroup*/}
-        <DataRow subTitle={'Grid rotation'}>
+        <DataRow>
+          <SectionTitle subTitle={'Grid rotation'}/>
           <div className="fieldGridSlider">
             <div className="field">
               <label className="labelSmall">
@@ -318,7 +318,8 @@ const TestingContent: React.FC = () => {
           </div>
         </DataRow>
         {/*// ButtonGroup*/}
-        <DataRow subTitle={'Grid refinement'} className="borderBottom">
+        <DataRow className="borderBottom">
+          <SectionTitle subTitle={'Grid refinement'}/>
           <div className={styles.buttonGroup}>
             <Button
               primary={true} size={'small'}
