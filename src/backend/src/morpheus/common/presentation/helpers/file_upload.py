@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from morpheus.common.types.File import FilePath, FileName
 
 
-def move_uploaded_file_to_tmp_dir(request_files_key: str, request: Request) -> {FileName, FilePath}:
+def move_uploaded_file_to_tmp_dir(request_files_key: str, request: Request) -> tuple[FileName, FilePath]:
     def raise_error(description: str, status_code: int):
         response = jsonify()
         response.status_code = status_code
@@ -16,10 +16,10 @@ def move_uploaded_file_to_tmp_dir(request_files_key: str, request: Request) -> {
         raise_error('No file uploaded', 400)
 
     file = request.files[request_files_key]
-    if file.filename == '':
-        raise_error('No file uploaded', 400)
+    filename = secure_filename(file.filename) if file.filename is not None else ''
+    if filename == '':
+        raise_error('Filename is empty or invalid', 400)
 
-    filename = secure_filename(file.filename)
     _, extension = os.path.splitext(filename)
 
     handle, full_path = tempfile.mkstemp(suffix=extension)
@@ -31,13 +31,3 @@ def move_uploaded_file_to_tmp_dir(request_files_key: str, request: Request) -> {
 
 def remove_uploaded_file(full_path: str):
     os.remove(full_path)
-
-
-
-
-
-
-
-
-
-

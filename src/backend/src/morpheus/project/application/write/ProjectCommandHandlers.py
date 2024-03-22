@@ -6,11 +6,10 @@ from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from ..read.PermissionsReader import permissions_reader
 from ..read.ProjectsReader import projects_reader
 from ...domain.AssetService import AssetService
 
-from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectPreviewImageUpdatedEvent
+from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
 from ...infrastructure.assets.AssetFileStorage import asset_file_storage
 from ...infrastructure.assets.PreviewImageService import preview_image_service
 from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
@@ -82,7 +81,7 @@ class UpdatePreviewImageCommandHandler:
             raise NotFoundException(f'Project with id {command.project_id.to_str()} does not exist')
 
         # todo assert user has access to project
-        permissions = permissions_reader.get_permissions(command.project_id)
+        # permissions = permissions_reader.get_permissions(command.project_id)
         # read user with groups (from user module)
         # pass permissions and user with groups to domain service that checks permission
 
@@ -99,7 +98,4 @@ class UpdatePreviewImageCommandHandler:
         asset_file_storage.save_asset(asset, command.file_path)
         # persist asset in mongo db
 
-        event = ProjectPreviewImageUpdatedEvent.from_props(command.project_id, command.asset_id)
-
-
-
+        # event = ProjectPreviewImageUpdatedEvent.from_props(command.project_id, command.asset_id)

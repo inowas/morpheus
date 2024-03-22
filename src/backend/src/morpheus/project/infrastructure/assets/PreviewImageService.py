@@ -1,5 +1,6 @@
 from morpheus.common.types.File import FilePath
-from PIL import Image, ImageOps
+from PIL import Image
+
 
 class PreviewImageService:
     def __init__(self, preview_image_dimensions: tuple[int, int]):

@@ -58,6 +58,7 @@ class ProjectMetadataUpdatedEvent(EventBase):
     def get_event_name(self) -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_METADATA_UPDATED.to_str())
 
+
 @dataclasses.dataclass(frozen=True)
 class ProjectPreviewImageUpdatedEvent(EventBase):
     @classmethod

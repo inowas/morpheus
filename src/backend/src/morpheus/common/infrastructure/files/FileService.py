@@ -1,6 +1,6 @@
 import magic
 import os
-from morpheus.common.types.File import FilePath, File, FileName, FileSize
+from morpheus.common.types.File import FilePath, File, FileName, FileSize, MimeType
 
 
 class FileService:
@@ -10,5 +10,4 @@ class FileService:
         size = os.path.getsize(file_path)
         mimetype = magic.from_file(file_path, mime=True)
 
-        return File(filename=FileName(filename), size=FileSize(size), mimetype=mimetype)
-
+        return File(filename=FileName(filename), size=FileSize(size), mimetype=MimeType(mimetype))

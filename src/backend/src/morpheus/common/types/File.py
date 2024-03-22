@@ -6,6 +6,7 @@ FilePath = NewType('FilePath', str)
 FileSize = NewType('FileSize', int)
 MimeType = NewType('MimeType', str)
 
+
 @dataclasses.dataclass(frozen=True)
 class File:
     filename: FileName

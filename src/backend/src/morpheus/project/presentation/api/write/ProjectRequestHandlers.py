@@ -60,6 +60,7 @@ class CreateProjectRequestHandler:
 
         return '', 201, {'location': f'projects/{command.project_id.to_str()}'}
 
+
 @dataclasses.dataclass
 class UpdateMetadataRequest:
     name: str | None
