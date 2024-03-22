@@ -1,10 +1,9 @@
-import Geoman from './Geoman';
 import GeomanControls from './GeomanControls';
 import Map from './Map';
+import MapExample from './MapExample';
 
 export {
   Map,
-  Geoman,
+  MapExample,
   GeomanControls,
-  GeomanControls as useGeomanControls,
 };

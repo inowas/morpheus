@@ -20,7 +20,7 @@ def calculate_rch_boundary_stress_period_data(
     rch_boundary: RechargeBoundary
 ) -> RchStressPeriodData:
     grid = spatial_discretization.grid
-    sp_data = RchStressPeriodData(nx=grid.nx(), ny=grid.ny())
+    sp_data = RchStressPeriodData(nx=grid.n_col(), ny=grid.n_row())
 
     # first we need to calculate the mean values for each observation point and each stress period
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
@@ -50,7 +50,7 @@ def calculate_rch_boundary_stress_period_data(
 
             for cell in rch_boundary.affected_cells:
                 # recharge rates will be replaced if already set
-                sp_data.set_value(time_step=stress_period_idx, row=cell.y, column=cell.x,
+                sp_data.set_value(time_step=stress_period_idx, row=cell.row, column=cell.col,
                                   values=[recharge_rate.to_float()], sum_up_values=False)
 
     return sp_data
@@ -58,7 +58,7 @@ def calculate_rch_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: ModflowModel) -> RchStressPeriodData | None:
     grid = model.spatial_discretization.grid
-    sp_data = RchStressPeriodData(nx=grid.nx(), ny=grid.ny())
+    sp_data = RchStressPeriodData(nx=grid.n_col(), ny=grid.n_row())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.recharge())
     for boundary in boundaries:
         if not isinstance(boundary, RechargeBoundary):

@@ -1,24 +1,39 @@
 @import '../site.variables';
 
-.sectionTitle {
-  z-index: 1;
-  position: relative;
-  opacity: 1;
-  color: #333333;
-  font-size: 22px;
-  font-weight: 600;
-  font-style: normal;
-  letter-spacing: 0px;
-  text-align: left;
-  line-height: 28px;
+
+.headline {
+  border-bottom: 1px solid @ref-color-underline;
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+  padding-right: 22px;
+
+  .faIcon,
+  .faButton {
+    background: transparent;
+    border: none;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .faButton {
+    cursor: pointer;
+    transition: color 300ms;
+
+    &:hover {
+      color: @blue;
+    }
+  }
+
+  .button {
+    white-space: nowrap;
+    min-width: 92px;
+    margin-left: auto;
+  }
 }
 
-.sectionTitleSmall {
-  font-size: 14px;
-  font-weight: 400;
-  text-transform: lowercase;
-
-  span {
-    font-weight: 700;
-  }
+.title,
+.subtitle {
+  margin: 0;
+  padding: 0;
 }

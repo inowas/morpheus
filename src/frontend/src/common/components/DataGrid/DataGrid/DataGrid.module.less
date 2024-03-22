@@ -8,8 +8,15 @@
   grid-row-gap: 25px;
   align-items: center;
 
-  @media (min-width: @breakpoint-tablet) {
+  @media (min-width: @breakpoint-mobile-horizontal) {
     grid-template-columns: minmax(360px, 1fr);
+  }
+}
+
+.dataGridMulti_4 {
+  @media (min-width: @breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 20px;
   }
 }
 
@@ -24,4 +31,4 @@
   .generateMultiColumns(@maxColumns - 1);
 }
 
-.generateMultiColumns(6); // Adjust the value based on your maximum columns
+.generateMultiColumns(12); // Adjust the value based on your maximum columns

@@ -1,6 +1,5 @@
 import {Accordion, Icon, MenuItem, TabPane} from 'semantic-ui-react';
-import {Button, InfoTitle, MovableAccordionList, Tab} from 'common/components';
-import {DataGrid, DataRow} from 'common/components/DataGrid';
+import {Button, DataGrid, InfoTitle, MovableAccordionList, SectionTitle, Tab} from 'common/components';
 import React, {useState} from 'react';
 
 const panelsPrimaryV3 = [
@@ -42,11 +41,7 @@ const panelSecondary = [
       <InfoTitle
         title='Upload shapefile'
         description='Shapefile description'
-        actionText='Add on map'
-        actionDescription='Action description'
-        onAction={() => {
-          console.log('Add on map action');
-        }}
+        actions={[{actionText: 'Add on map', actionDescription: 'Action Description', onAction: () => console.log('Add on map action\'')}]}
       />
       <Button size={'tiny'}>Choose file</Button>
       <InfoTitle
@@ -316,7 +311,7 @@ const ModelProperties: React.FC = () => {
 
   return <>
     <DataGrid>
-      <DataRow title={'Model Grid'}/>
+      <SectionTitle title={'Model Grid'}/>
       <Tab
         variant='primary'
         menu={{secondary: true, pointing: true}}

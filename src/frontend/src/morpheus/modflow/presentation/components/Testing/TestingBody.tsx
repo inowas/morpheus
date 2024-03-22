@@ -1,4 +1,4 @@
-import {Map} from 'common/components';
+import {MapExample} from 'common/components';
 import React from 'react';
 import type {FeatureCollection} from 'geojson';
 
@@ -47,7 +47,7 @@ interface IProps {
 
 const TestingBody = ({polygon, onChangePolygon}: IProps) => {
   return (
-    <Map
+    <MapExample
       editable={false}
       geojson={geoJsonPolygon}
       onChangeGeojson={(geojson) => ({})}

@@ -1,4 +1,4 @@
-import {Map} from 'common/components';
+import {MapExample} from 'common/components';
 import React from 'react';
 import type {FeatureCollection} from 'geojson';
 
@@ -41,7 +41,7 @@ const geoJsonPolygon: FeatureCollection = {
 
 const Body = () => {
   return (
-    <Map
+    <MapExample
       editable={true}
       geojson={geoJsonPolygon}
       onChangeGeojson={(geojson) => {

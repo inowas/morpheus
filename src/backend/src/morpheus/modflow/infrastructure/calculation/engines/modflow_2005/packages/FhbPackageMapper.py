@@ -187,7 +187,7 @@ def calculate_fhb_boundary_stress_period_data(model: ModflowModel) -> FhbStressP
 
                     for layer_idx in layer_indices:
                         fhb_stress_period_data.set_head_value(
-                            time_step=date_time_idx, layer=layer_idx, row=cell.y, column=cell.x, value=value
+                            time_step=date_time_idx, layer=layer_idx, row=cell.row, column=cell.col, value=value
                         )
 
             if fhb_boundary.number_of_observations() > 1:
@@ -215,18 +215,18 @@ def calculate_fhb_boundary_stress_period_data(model: ModflowModel) -> FhbStressP
 
                 grid_cell_centers = spatial_discretization.grid.get_cell_centers()
                 for cell in fhb_boundary.affected_cells:
-                    if spatial_discretization.affected_cells.is_active(cell.x, cell.y) is None:
+                    if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
                         # if the cell is not part of the model
                         # we do not apply any data for this cell
                         continue
 
-                    center = ShapelyPoint(grid_cell_centers[cell.x][cell.y].coordinates)
+                    center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
                     xx_new = [line_string.project(center, normalized=True)]
                     yy_new_value = float(np.interp(xx_new, xx, yy_values)[0])
 
                     for layer_idx in layer_indices:
                         fhb_stress_period_data.set_head_value(
-                            time_step=date_time_idx, layer=layer_idx, row=cell.y, column=cell.x, value=yy_new_value
+                            time_step=date_time_idx, layer=layer_idx, row=cell.row, column=cell.col, value=yy_new_value
                         )
 
         # calculate the mean flow data for each boundary
@@ -268,7 +268,7 @@ def calculate_fhb_boundary_stress_period_data(model: ModflowModel) -> FhbStressP
 
                     for layer_idx in layer_indices:
                         fhb_stress_period_data.set_flow_value(
-                            time_step=date_time_idx, layer=layer_idx, row=cell.y, column=cell.x, value=value
+                            time_step=date_time_idx, layer=layer_idx, row=cell.row, column=cell.col, value=value
                         )
 
             if fhb_boundary.number_of_observations() > 1:
@@ -297,18 +297,18 @@ def calculate_fhb_boundary_stress_period_data(model: ModflowModel) -> FhbStressP
 
                 grid_cell_centers = spatial_discretization.grid.get_cell_centers()
                 for cell in fhb_boundary.affected_cells:
-                    if spatial_discretization.affected_cells.is_active(cell.x, cell.y) is None:
+                    if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
                         # if the cell is not part of the model
                         # we do not apply any data for this cell
                         continue
 
-                    center = ShapelyPoint(grid_cell_centers[cell.x][cell.y].coordinates)
+                    center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
                     xx_new = [line_string.project(center, normalized=True)]
                     yy_new_value = float(np.interp(xx_new, xx, yy_values)[0])
 
                     for layer_idx in layer_indices:
                         fhb_stress_period_data.set_flow_value(
-                            time_step=date_time_idx, layer=layer_idx, row=cell.y, column=cell.x, value=yy_new_value
+                            time_step=date_time_idx, layer=layer_idx, row=cell.row, column=cell.col, value=yy_new_value
                         )
 
     return fhb_stress_period_data
