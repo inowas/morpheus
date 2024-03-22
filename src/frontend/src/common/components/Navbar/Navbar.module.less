@@ -197,8 +197,23 @@
     &.active {
       color: @ref-color-activeNav;
       font-weight: 600;
+
+      [data-icon="gear"] {
+        color: @ref-color-activeNav;
+        animation: rotate 300ms linear;
+      }
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(90deg);
+      }
     }
   }
+
 
   .dropdown {
     flex-direction: column;
@@ -271,6 +286,11 @@
 
   .dropdown.show {
     display: flex;
+  }
+
+  .menuItem:last-child > .dropdown {
+    right: 0;
+    left: auto;
   }
 
   .btnDropdown {
