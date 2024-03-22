@@ -17,8 +17,14 @@ build-simpletools:dev:
       - src/frontend/dist/simpletools
     expire_in: 1 days
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/simpletools/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 publish-simpletools:dev:
   stage: publish
@@ -32,8 +38,14 @@ publish-simpletools:dev:
     - docker push $SIMPLETOOLS_IMAGE:$CI_COMMIT_SHA
     - docker push $SIMPLETOOLS_IMAGE:dev
   only:
-    - main
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/simpletools/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
+      - tags
 
 deploy-simpletools:dev:
   image: ubuntu:22.04
@@ -55,7 +67,13 @@ deploy-simpletools:dev:
     name: development
     url: https://dev.tools.inowas.com
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/simpletools/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
 build-simpletools:prod:
   image: node:20
@@ -71,7 +89,13 @@ build-simpletools:prod:
       - src/frontend/dist/simpletools
     expire_in: 1 days
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/simpletools/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
 publish-simpletools:prod:
   stage: publish
@@ -87,7 +111,13 @@ publish-simpletools:prod:
     - docker push $SIMPLETOOLS_IMAGE:$CI_COMMIT_TAG
     - docker push $SIMPLETOOLS_IMAGE:latest
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/simpletools/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
 deploy-simpletools:prod:
   image: ubuntu:22.04
@@ -109,5 +139,11 @@ deploy-simpletools:prod:
     name: development
     url: https://tools.inowas.com
   only:
-    - tags
+    changes:
+      - src/frontend/src/common/**/*.*
+      - src/frontend/src/simpletools/**/*.*
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - tags
 
