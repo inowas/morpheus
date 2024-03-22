@@ -48,5 +48,6 @@ ARG BACKEND_APP_ROOT_PATH
 # start gunicorn as user flask
 USER flask
 WORKDIR ${BACKEND_APP_ROOT_PATH}/src
-ENTRYPOINT ["../docker/docker-entrypoint.sh", "gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
+ENTRYPOINT ["../docker/docker-entrypoint.sh"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
 EXPOSE 8000
