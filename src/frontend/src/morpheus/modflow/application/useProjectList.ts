@@ -106,7 +106,8 @@ const useProjectList = (): IUseProjectSummaries => {
       if (filter.tags && !filter.tags.every((keyword) => project.tags.includes(keyword))) {
         return false;
       }
-      return newListOfProjects;
+
+      return true;
     });
 
     if (0 < search.length) {
