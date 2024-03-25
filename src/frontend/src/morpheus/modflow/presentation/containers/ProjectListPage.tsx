@@ -8,7 +8,6 @@ import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {format} from 'date-fns';
-import CreateProjectModal from '../components/CreateProjectModal';
 import CreateProjectContainer from './CreateProjectContainer';
 
 

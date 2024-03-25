@@ -1,4 +1,4 @@
-import {Button, ContentWrapper, Modal, CreateProjectContainer} from 'common/components';
+import {Button, ContentWrapper} from 'common/components';
 import {Image, Input} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
@@ -33,27 +33,8 @@ const Navbar: React.FC<IProps> = ({
     setOpenMobileMenu((prevState) => !prevState);
   };
 
-  const [openPopup, setOpenPopup] = useState(false);
-
-  const onCreateButtonClick = () => {
-    setOpenPopup(!openPopup);
-  };
-
   return (
     <>
-      {/* Popup to create new model */}
-      {button && (
-        <Modal.Modal
-          onClose={() => setOpenPopup(false)}
-          onOpen={() => setOpenPopup(true)}
-          open={openPopup}
-          dimmer={'inverted'}
-        >
-          <CreateProjectContainer onClose={onCreateButtonClick}/>
-        </Modal.Modal>
-      )}
-      {/* End of popup to create new model */}
-
       {/* Navbar */}
       <div
         className={styles.navbar}

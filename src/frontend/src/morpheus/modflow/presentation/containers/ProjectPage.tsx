@@ -1,7 +1,7 @@
 import React from 'react';
 import Placeholder from 'common/components/Placeholder';
-import {ContentWrapper, Navbar} from '../../../../common/components';
-import {useLocation, useNavigate} from '../../../../common/hooks';
+import {ContentWrapper, Navbar} from 'common/components';
+import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer} from '../components';
 import {useNavbarItems} from '../../../application/application';
 
@@ -13,7 +13,7 @@ const ProjectPage = ({}: IProps) => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {navbarItems} = useNavbarItems();
 
 
   return (
@@ -22,8 +22,6 @@ const ProjectPage = ({}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-        showSearchWrapper={showSearchBar}
-        showCreateButton={showButton}
       />
       <ModflowContainer>
         <ContentWrapper>

@@ -4,7 +4,7 @@ import React, {useState} from 'react';
 import RandomImage from 'common/components/RandomImage';
 import styles from './CreateProjectModal.module.less';
 import Images from './images';
-import { Modal } from 'common/components';
+import {Modal} from 'common/components';
 import {IError} from '../../../../types';
 
 const options = [
@@ -28,18 +28,6 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const [projectDescription, setProjectDescription] = useState('');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
 
-  const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectName(event.target.value);
-  };
-
-  const handleProjectDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setProjectDescription(event.target.value);
-  };
-
-  const handleKeywordsChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
-    setSelectedKeywords(data.value as string[]);
-  };
-
   const formIsValid = () => {
     return 0 < projectName.trim().length;
   };
@@ -53,7 +41,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     clearForm();
-    if (onCancel) onCancel();
+    onCancel();
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -66,7 +54,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
 
   return (
     <Modal.Modal open={open} dimmer={'blurring'}>
-      <div className={`${styles.container}`} data-testid="ModelCreate-container">
+      <div className={`${styles.container}`} data-testid="create-project-modal">
         <div className={styles.image}>
           <RandomImage images={Images}/>
         </div>
