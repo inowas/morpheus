@@ -109,6 +109,7 @@ export function makeServer({environment = 'test'} = {}) {
 
       // ignore all /auth requests
       this.passthrough('https://identity.inowas.com/*');
+      this.passthrough('/fonts/icons.woff2');
 
       // ignore all /locales requests
       this.namespace = '/locales';
