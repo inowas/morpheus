@@ -2,7 +2,7 @@ import {Button, Grid, Header, Segment} from 'semantic-ui-react';
 import React from 'react';
 import useAuthentication from '../../application/useAuthentication';
 
-const SignIn = () => {
+const SignInPage = () => {
 
   const {isAuthenticated, isLoading, signIn, signOut, error} = useAuthentication();
 
@@ -56,4 +56,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInPage;

@@ -5,7 +5,7 @@ import {NotFound} from 'common/components';
 import AboutUsPage from './application/presentation/containers/AboutUsContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
 import {ProjectAssetsPage, ProjectBaseModelPage, ProjectPage, ProjectScenariosPage, ProjectsSettingsPage} from './modflow/presentation/containers';
-import SignInPage from './authentication/presentation/containers/AuthContainer';
+import SignInPage from './authentication/presentation/containers/SignInPage';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 import ProjectsPage from './modflow/presentation/containers/ProjectListPage';
 import AuthCallback from './authentication/presentation/containers/AuthCallbackPage';
