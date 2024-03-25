@@ -6,7 +6,7 @@ import {useProjectList, useTranslate} from '../../application';
 import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
-import SortDropdown from '../../../../common/components/CardGrid/SortDropdown';
+import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {format} from 'date-fns';
 
 

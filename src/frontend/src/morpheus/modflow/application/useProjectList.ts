@@ -9,7 +9,7 @@ interface IUseProjectSummaries {
   onFilterChange: (filter: IFilterParams) => void;
   order: IOrder;
   onOrderChange: (order: IOrder) => void;
-  orderOptions: ISortOption[];
+  orderOptions: IOrderOption[];
   search: string;
   onSearchChange: (search: string) => void;
   loading: boolean;
@@ -23,10 +23,9 @@ interface IFilterParams {
   is_public?: boolean;
   status?: string[];
   date_range?: {
-    start: string;
-    end: string;
+    start?: string;
+    end?: string;
   };
-  search?: string;
   number_of_grid_cells?: number;
   number_of_stress_periods?: number;
   number_of_layers?: number;
@@ -39,7 +38,7 @@ interface IFilterParams {
 }
 
 
-const orderOptions: ISortOption[] = [
+const orderOptions: IOrderOption[] = [
   {text: 'Most Recent', order: {created_at: 'desc'}},
   {text: 'Less Recent', order: {created_at: 'asc'}},
   {text: 'A-Z', order: {name: 'asc'}},
@@ -48,7 +47,7 @@ const orderOptions: ISortOption[] = [
 
 const defaultOrder: IOrder = {created_at: 'desc'};
 
-interface ISortOption {
+interface IOrderOption {
   text: string;
   order: IOrder;
 }
@@ -88,14 +87,20 @@ const useProjectList = (): IUseProjectSummaries => {
       }
       if (filter.date_range) {
         const projectDate = new Date(project.created_at);
-        const startDate = new Date(filter.date_range.start);
-        const endDate = new Date(filter.date_range.end);
-        if (projectDate < startDate || projectDate > endDate) {
+        const startDate = filter.date_range.start && new Date(filter.date_range.start);
+        const endDate = filter.date_range.end && new Date(filter.date_range.end);
+
+        if (!startDate && !endDate) {
           return false;
         }
-      }
-      if (filter.search && !project.name.toLowerCase().includes(filter.search.toLowerCase())) {
-        return false;
+
+        if (startDate && projectDate < startDate) {
+          return false;
+        }
+
+        if (endDate && projectDate > endDate) {
+          return false;
+        }
       }
 
       if (filter.tags && !filter.tags.every((keyword) => project.tags.includes(keyword))) {
