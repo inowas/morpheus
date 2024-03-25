@@ -1,12 +1,12 @@
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import * as L from 'leaflet';
-import {LatLngTuple} from 'leaflet';
+import {ControlPosition, LatLngTuple} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-smooth-wheel-zoom';
-import html2canvas from 'html2canvas';
+import {SimpleMapScreenshoter} from 'leaflet-simple-map-screenshoter';
 import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 interface IProps {
   center?: LatLngTuple;
@@ -39,6 +39,14 @@ const defaultZoom = 13;
 const Map = ({center, zoom, children}: IProps) => {
   const mapRef = useRef<null | L.Map>(null);
   const containerRef = useRef(null);
+  const [screenshoter, setScreenshoter] = useState<SimpleMapScreenshoter | null>(null);
+
+  const snapshotOptions = {
+    hideElementsWithSelectors: ['.leaflet-control-container'],
+    position: 'topright' as ControlPosition,
+    screenName: 'Map',
+    hidden: true,
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -46,12 +54,8 @@ const Map = ({center, zoom, children}: IProps) => {
     const resizeObserver = new ResizeObserver(() => {
       const map = mapRef.current;
       if (map) {
-        const snapshotOptions = {
-          hideElementsWithSelectors: ['.leaflet-control-container'],
-          position: 'topright',
-          screenName: 'Map',
-          hidden: true,
-        };
+        const simpleMapScreenshoter = new SimpleMapScreenshoter(snapshotOptions).addTo(map);
+        setScreenshoter(simpleMapScreenshoter);
         map.invalidateSize();
       }
     });
@@ -68,17 +72,14 @@ const Map = ({center, zoom, children}: IProps) => {
   }, []);
 
   const captureScreenshot = () => {
-    const container = containerRef.current;
-    if (container) {
-      html2canvas(container, {
-        useCORS: true, // Enable CORS
-      }).then(canvas => {
-        // Convert canvas to image and download
-        const link = document.createElement('a');
-        link.download = 'map_screenshot.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+    if (screenshoter) {
+      screenshoter.takeScreen('image', 'image/jpeg')
+        .then(image => {
+          console.log('Screenshot taken:', image);
+        })
+        .catch(e => {
+          console.error(e.toString());
+        });
     }
   };
 
