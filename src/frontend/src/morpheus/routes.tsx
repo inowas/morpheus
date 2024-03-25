@@ -32,7 +32,7 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/projects"/>}/>
+      <Route path="/" element={<Navigate replace={true} to="/projects"/>}/>
       <Route path="/auth" element={wrapPublicComponent(<SignInPage/>)}/>
       <Route path="/auth/callback" element={wrapPublicComponent(<AuthCallback redirectTo="/projects"/>)}/>
       <Route path="/projects" element={wrapPrivateComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>
