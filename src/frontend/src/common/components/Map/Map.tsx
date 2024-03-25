@@ -70,7 +70,9 @@ const Map = ({center, zoom, children}: IProps) => {
   const captureScreenshot = () => {
     const container = containerRef.current;
     if (container) {
-      html2canvas(container).then(canvas => {
+      html2canvas(container, {
+        useCORS: true, // Enable CORS
+      }).then(canvas => {
         // Convert canvas to image and download
         const link = document.createElement('a');
         link.download = 'map_screenshot.png';
@@ -79,6 +81,7 @@ const Map = ({center, zoom, children}: IProps) => {
       });
     }
   };
+
 
   return (
     <div ref={containerRef} style={{height: '100%', width: '100%'}}>
