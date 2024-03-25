@@ -3,10 +3,10 @@ import * as L from 'leaflet';
 import {LatLngTuple} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-smooth-wheel-zoom';
-import {SimpleMapScreenshoter} from 'leaflet-simple-map-screenshoter';
+import html2canvas from 'html2canvas';
 import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 interface IProps {
   center?: LatLngTuple;
@@ -39,7 +39,6 @@ const defaultZoom = 13;
 const Map = ({center, zoom, children}: IProps) => {
   const mapRef = useRef<null | L.Map>(null);
   const containerRef = useRef(null);
-  const [screenshoter, setScreenshoter] = useState<SimpleMapScreenshoter | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -53,8 +52,6 @@ const Map = ({center, zoom, children}: IProps) => {
           screenName: 'Map',
           hidden: true,
         };
-        const simpleMapScreenshoter = mapRef.current && new SimpleMapScreenshoter(snapshotOptions).addTo(mapRef.current);
-        setScreenshoter(simpleMapScreenshoter);
         map.invalidateSize();
       }
     });
@@ -71,17 +68,17 @@ const Map = ({center, zoom, children}: IProps) => {
   }, []);
 
   const captureScreenshot = () => {
-    if (screenshoter) {
-      screenshoter.takeScreen('image', 'image/jpeg')
-        .then(image => {
-          console.log('Screenshot taken:', image);
-        })
-        .catch(e => {
-          console.error(e.toString());
-        });
+    const container = containerRef.current;
+    if (container) {
+      html2canvas(container).then(canvas => {
+        // Convert canvas to image and download
+        const link = document.createElement('a');
+        link.download = 'map_screenshot.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
     }
   };
-
 
   return (
     <div ref={containerRef} style={{height: '100%', width: '100%'}}>
