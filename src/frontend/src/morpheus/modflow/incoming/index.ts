@@ -1,5 +1,6 @@
 import useApi, {IHttpError, IUseApi} from './useApi';
+import useAuthentication from './useAuthentication';
 
 export type {IHttpError, IUseApi};
-export {useApi};
+export {useApi, useAuthentication};
 

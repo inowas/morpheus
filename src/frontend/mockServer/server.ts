@@ -25,7 +25,7 @@ export function makeServer({environment = 'test'} = {}) {
               owner_id: p.permissions.owner_id,
               is_public: p.permissions.is_public,
               created_at: p.metadata.created_at,
-              status_color: 'green',
+              status: 'green',
               image: p.metadata.image,
             };
           });

@@ -7,6 +7,7 @@ import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
 import SortDropdown from '../../../../common/components/CardGrid/SortDropdown';
+import {format} from 'date-fns';
 
 
 const sortOptions: ISortOption[] = [
@@ -29,18 +30,6 @@ const ProjectListPage = ({basePath}: IProps) => {
   const {projects, loading, error} = useProjectList();
   const [cards, setCards] = useState<ICard[]>([]);
 
-  const formatDate = (inputDate: string): string => {
-    const parsedDate: Date = new Date(inputDate);
-    let day: number | string = parsedDate.getUTCDate();
-    let month: number | string = parsedDate.getUTCMonth() + 1; // Months are zero-indexed
-    const year: number = parsedDate.getUTCFullYear();
-    day = 10 > day ? '0' + day : day;
-    month = 10 > month ? '0' + month : month;
-    const formattedDate: string = `${day}.${month}.${year}`;
-    return formattedDate;
-  };
-
-
   useEffect(() => {
     setCards(projects.map((project) => {
       return {
@@ -49,7 +38,7 @@ const ProjectListPage = ({basePath}: IProps) => {
         description: project.description,
         image: project.image,
         status: 'green',
-        date_time: formatDate(project.created_at),
+        date_time: format(new Date(project.created_at), 'dd.MM.yyyy'),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
         onDeleteClick: () => console.log('Delete', project.project_id),
         onCopyClick: () => console.log('Copy', project.project_id),
