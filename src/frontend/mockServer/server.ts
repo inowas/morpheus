@@ -25,7 +25,7 @@ export function makeServer({environment = 'test'} = {}) {
               owner_id: p.permissions.owner_id,
               is_public: p.permissions.is_public,
               created_at: p.metadata.created_at,
-              status_color: 'green',
+              status: 'green',
               image: p.metadata.image,
             };
           });
@@ -38,6 +38,30 @@ export function makeServer({environment = 'test'} = {}) {
         const metadata = getProjectMetadata(id);
         return new Response(200, {}, metadata);
       });
+
+      this.get('projects/:projectId/model/spatial-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        return new Response(200, {}, project.model.spatial_discretization);
+      });
+
+      this.put('projects/:projectId/model/spatial-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        const spatialDiscretization = JSON.parse(request.requestBody);
+        console.log(spatialDiscretization);
+        schema.db.projects.update({project_id: projectId, model: {...project.model, spatial_discretization: spatialDiscretization}});
+        return new Response(204);
+      });
+
 
       this.get('projects/:projectId/model/time-discretization', (schema, request) => {
         const projectId = request.params.projectId;

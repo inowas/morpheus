@@ -9,6 +9,4 @@ test-frontend:
 
   only:
     changes:
-      - src/frontend/src/**/*.*
-      - src/frontend/package.json
-      - src/frontend/package-lock.json
+      - src/frontend/**/*.*

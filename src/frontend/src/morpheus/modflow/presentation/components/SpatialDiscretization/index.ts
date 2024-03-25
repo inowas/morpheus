@@ -1,7 +1,7 @@
-import Body from './Body';
+import SpatialDiscretizationMap from './Body';
 import SpatialDiscretizationContent from './Content';
 
 export {
-  Body,
+  SpatialDiscretizationMap,
   SpatialDiscretizationContent,
 };

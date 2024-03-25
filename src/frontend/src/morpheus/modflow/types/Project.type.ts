@@ -7,7 +7,7 @@ interface IProjectListItem {
   owner_id: string;
   is_public: boolean;
   created_at: string;
-  status_color: 'green' | 'yellow' | 'red' | 'grey';
+  status: 'green' | 'yellow' | 'red' | 'grey';
 }
 
 export type {IProjectListItem};

@@ -1,56 +1,59 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Polygon} from 'geojson';
-import {Body, SpatialDiscretizationContent} from '../components/SpatialDiscretization';
+import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/SpatialDiscretization';
+import {useParams} from 'react-router-dom';
+import {useSpatialDiscretization} from '../../application';
+import Error from 'common/components/Error';
 
-
-const geoJsonPolygon: Polygon = {
-  'type': 'Polygon',
-  'coordinates': [
-    [
-      [
-        13.737521,
-        51.05702,
-      ],
-      [
-        13.723092,
-        51.048919,
-      ],
-      [
-        13.736491,
-        51.037358,
-      ],
-      [
-        13.751779,
-        51.04773,
-      ],
-      [
-        13.737521,
-        51.05702,
-      ],
-    ],
-  ],
-};
 
 const SpatialDiscretizationContainer = () => {
 
   const [geometry, setGeometry] = useState<Polygon>();
   const [locked, setLocked] = useState<boolean>(false);
+  const [editDomain, setEditDomain] = useState<boolean>(false);
+
+  const {projectId} = useParams();
+  const {spatialDiscretization, loading, error, updateSpatialDiscretization} = useSpatialDiscretization(projectId);
+
+  useEffect(() => {
+    if (spatialDiscretization) {
+      setGeometry(spatialDiscretization.geometry);
+    }
+  }, [spatialDiscretization]);
+
+  if (!projectId) {
+    return null;
+  }
+
+  if (!spatialDiscretization) {
+    return null;
+  }
+
+  if (error) {
+    return <Error message={error.message}/>;
+  }
 
   return (
     <>
-      <SidebarContent maxWidth={700}>
+      <SidebarContent maxWidth={600}>
         <SpatialDiscretizationContent
+          spatialDiscretization={spatialDiscretization}
+          onEditDomainClick={() => setEditDomain(true)}
           locked={locked}
           onChangeLock={setLocked}
-          onChange={() => console.log('changed')}
+          onChange={updateSpatialDiscretization}
+          loading={loading}
         />
       </SidebarContent>
       <BodyContent>
-        <Body
+        <SpatialDiscretizationMap
           polygon={geometry}
-          onChange={setGeometry}
-          editable={!locked}
+          onChange={(polygon: Polygon) => {
+            setGeometry(polygon);
+            setEditDomain(false);
+          }}
+          editable={!locked && editDomain}
         />
       </BodyContent>
     </>

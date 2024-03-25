@@ -3,7 +3,7 @@ import React, {useMemo} from 'react';
 
 import {DataGrid} from 'common/components/DataGrid';
 import styles from './TimeDiscretizationGeneralParameters.module.less';
-import {ITimeDiscretization, ITimeUnit} from '../../../../types/TimeDiscretization.type';
+import {ITimeDiscretization, ITimeUnit} from '../../../../types';
 import {isValid, parseISO} from 'date-fns';
 
 interface IProps {
@@ -18,7 +18,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     if (!isValid(dateValue)) {
       return;
     }
-    onChange({...timeDiscretization, startDateTime: dateValue.toISOString()});
+    onChange({...timeDiscretization, start_date_time: dateValue.toISOString()});
   };
 
   const handleChangeEndDateTime = (value: string) => {
@@ -26,25 +26,25 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     if (!isValid(dateValue)) {
       return;
     }
-    onChange({...timeDiscretization, endDateTime: dateValue.toISOString()});
+    onChange({...timeDiscretization, end_date_time: dateValue.toISOString()});
   };
 
-  const handleChangeTimeUnit = (value: number) => {
-    onChange({...timeDiscretization, timeUnit: value});
+  const handleChangeTimeUnit = (value: ITimeUnit) => {
+    onChange({...timeDiscretization, time_unit: value});
   };
 
   const timeUnitOptions = [
-    {key: 0, text: 'Undefined', value: 0},
-    {key: 1, text: 'Seconds', value: 1},
-    {key: 2, text: 'Minutes', value: 2},
-    {key: 3, text: 'Hours', value: 3},
-    {key: 4, text: 'Days', value: 4},
-    {key: 5, text: 'Years', value: 5},
+    {key: ITimeUnit.UNDEFINED, text: 'Undefined', value: 0},
+    {key: ITimeUnit.SECONDS, text: 'Seconds', value: 1},
+    {key: ITimeUnit.MINUTES, text: 'Minutes', value: 2},
+    {key: ITimeUnit.HOURS, text: 'Hours', value: 3},
+    {key: ITimeUnit.DAYS, text: 'Days', value: 4},
+    {key: ITimeUnit.HOURS, text: 'Years', value: 5},
   ];
 
   const calculatedTotalTime = useMemo(() => {
-    const seconds = (parseISO(timeDiscretization.endDateTime).getTime() - parseISO(timeDiscretization.startDateTime).getTime()) / 1000;
-    switch (timeDiscretization.timeUnit) {
+    const seconds = (parseISO(timeDiscretization.end_date_time).getTime() - parseISO(timeDiscretization.start_date_time).getTime()) / 1000;
+    switch (timeDiscretization.time_unit) {
     case ITimeUnit.UNDEFINED:
       return 'undefined';
     case ITimeUnit.SECONDS:
@@ -60,7 +60,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     default:
       return 0;
     }
-  }, [timeDiscretization.startDateTime, timeDiscretization.endDateTime, timeDiscretization.timeUnit]);
+  }, [timeDiscretization.start_date_time, timeDiscretization.end_date_time, timeDiscretization.time_unit]);
 
   return (
     <Form className={styles.stressperiodParameters}>
@@ -76,7 +76,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               className={styles.inputField}
               type="date"
               name={'startDate'}
-              value={parseISO(timeDiscretization.startDateTime).toISOString().split('T')[0]}
+              value={parseISO(timeDiscretization.start_date_time).toISOString().split('T')[0]}
               onChange={(_, {value}) => handleChangeStartDateTime(value)}
             />
             <Icon className={'dateIcon'} name="calendar outline"/>
@@ -92,7 +92,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               className={styles.inputField}
               type="date"
               name={'endDate'}
-              value={parseISO(timeDiscretization.endDateTime).toISOString().split('T')[0]}
+              value={parseISO(timeDiscretization.end_date_time).toISOString().split('T')[0]}
               onChange={(_, {value}) => handleChangeEndDateTime(value)}
             />
             <Icon className={'dateIcon'} name="calendar outline"/>
@@ -107,9 +107,9 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
             className={styles.inputField}
             name="Time unit"
             options={timeUnitOptions}
-            value={timeDiscretization.timeUnit}
+            value={timeDiscretization.time_unit}
             disabled={true}
-            onChange={(e, {value}) => handleChangeTimeUnit(value as number)}
+            onChange={(e, {value}) => handleChangeTimeUnit(value as ITimeUnit)}
           />
         </Form.Field>
         <Form.Field>

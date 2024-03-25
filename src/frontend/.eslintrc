@@ -82,9 +82,14 @@
     }
   },
   "ignorePatterns": [
+    "babel.config.js",
+    "dist",
     "jest.config.ts",
-    "webpack.config.ts",
-    "dist"
+    "jest.e2e.config.ts",
+    "jest.puppeteer.config.ts",
+    "jest.setup.ts",
+
+    "webpack.config.ts"
   ],
   "overrides": [
     {

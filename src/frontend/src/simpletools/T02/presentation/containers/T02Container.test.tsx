@@ -4,9 +4,11 @@ import React from 'react';
 import T02Container from './T02Container';
 
 // Mock window.Plotly
+// @ts-ignore
 window.Plotly = {
   newPlot: jest.fn(),
 };
+
 jest.mock('../../application', () => ({
   useCalculateMounding: () => ({
     calculateHi: jest.fn().mockReturnValue(0.01),

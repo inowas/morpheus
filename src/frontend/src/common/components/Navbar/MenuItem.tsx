@@ -5,6 +5,8 @@ import Dropdown from './Dropdown';
 import {Menu} from 'semantic-ui-react';
 import styles from './Navbar.module.less';
 import useIsMobile from 'common/hooks/useIsMobile';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faGear} from '@fortawesome/free-solid-svg-icons';
 
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;
@@ -89,7 +91,9 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
             closeMobile();
             navigateTo(items.to);
           }}
-        >{items.label}</Menu.Item>
+        >
+          {'settings' === items.label.toLowerCase() ? <FontAwesomeIcon icon={faGear}/> : items.label}
+        </Menu.Item>
       )}
 
       {isDropdownItem(items) && (
@@ -104,7 +108,9 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
               closeMobile();
               navigateTo(items.basepath);
             }}
-          >{items.label}</Menu.Item>
+          >
+            {'settings' === items.label.toLowerCase() ? <FontAwesomeIcon icon={faGear}/> : items.label}
+          </Menu.Item>
           {isMobile && <button
             type="button"
             aria-label="Togle menu"
