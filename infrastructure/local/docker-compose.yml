@@ -57,18 +57,20 @@ services:
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
         - DOCKERFILE_BUILD_BASE_STAGE=local_base
-        - BACKEND_APP_ROOT_PATH=${BACKEND_APP_ROOT_PATH}
     container_name: ${COMPOSE_PROJECT_NAME}-backend
     depends_on:
       mongodb_backend:
         condition: service_healthy
-      celery_worker:
+      rabbitmq:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      - BACKEND_APP_ROOT_PATH=/app
     volumes:
-      - ${LOCAL_MODFLOW_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
-      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}
+      - ${LOCAL_PROJECT_ASSET_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_ASSET_DATA}:rw
+      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
+      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSOR_LOCAL_DATA}:rw
     tmpfs:
       - /tmp:mode=777,size=200m
     restart: always
@@ -256,18 +258,16 @@ services:
         - CELERY_USER_ID=${CELERY_USER_ID}
         - CELERY_GROUP_ID=${CELERY_GROUP_ID}
         - DOCKERFILE_BUILD_BASE_STAGE=local_base
-        - BACKEND_APP_ROOT_PATH=${BACKEND_APP_ROOT_PATH}
     container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
     depends_on:
-      mongodb_backend:
-        condition: service_healthy
-      rabbitmq:
+      backend:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      - BACKEND_APP_ROOT_PATH=/app
     volumes:
-      - ${LOCAL_MODFLOW_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_MODFLOW_LOCAL_DATA}:rw
-      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSORS_LOCAL_DATA}:rw
+      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
     tmpfs:
       - /tmp
     restart: always
@@ -279,7 +279,11 @@ services:
     extra_hosts:
       - rabbitmq.inowas.localhost:host-gateway
     healthcheck:
-      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping"]
+      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping" ]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
     profiles:
       - celery
 
@@ -291,10 +295,6 @@ volumes:
   postgres_backend_data:
     driver: local
   mongodb_backend_data:
-    driver: local
-  morpheus_modflow_data:
-    driver: local
-  morpheus_sensor_data:
     driver: local
   rabbitmq_data:
     driver: local

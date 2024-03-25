@@ -20,8 +20,8 @@ root_password = read_env_var('BACKEND_MONGO_INITDB_ROOT_PASSWORD')
 db_user = read_env_var('BACKEND_MONGO_USER')
 db_password = read_env_var('BACKEND_MONGO_PASSWORD')
 databases = [
+    read_env_var('BACKEND_MONGO_PROJECT_DATABASE'),
     read_env_var('BACKEND_MONGO_SENSOR_DATABASE'),
-    read_env_var('BACKEND_MONGO_MODFLOW_DATABASE')
 ]
 
 client = MongoClient(host=host, port=int(port), username=root_user, password=root_password)

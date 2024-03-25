@@ -1,6 +1,5 @@
 .pytest_cache
 .venv
-.python-version
 
 log
 sensor_data

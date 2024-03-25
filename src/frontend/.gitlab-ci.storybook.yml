@@ -12,7 +12,12 @@ build-storybook:
       - src/frontend/dist/storybook
     expire_in: 1 days
   only:
-    - main
+    changes:
+      - src/frontend/src/**/*.stories.tsx
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
 
 deploy-storybook:
   image: node:20
@@ -29,4 +34,9 @@ deploy-storybook:
   script:
     - rsync -r --delete-after --quiet -e ssh src/frontend/dist/storybook/ $USER_STORYBOOK_SERVER@$URL_STORYBOOK_SERVER:$URL_STORYBOOK_PATH
   only:
-    - main
+    changes:
+      - src/frontend/src/**/*.stories.tsx
+      - src/frontend/package.json
+      - src/frontend/package-lock.json
+    refs:
+      - main
