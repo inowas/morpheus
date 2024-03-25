@@ -9,6 +9,7 @@ test-frontend:
 
   only:
     changes:
+      - src/frontend/__mocks__/**/*.*
       - src/frontend/src/**/*.*
       - src/frontend/package.json
       - src/frontend/package-lock.json
