@@ -3,36 +3,36 @@ import {
   InfoTitle,
   MovableAccordionList,
   Tab,
-} from "common/components";
-import { Icon, MenuItem, TabPane } from "semantic-ui-react";
+} from 'common/components';
+import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Meta, StoryFn } from "@storybook/react";
-import React, { useState } from "react";
+import {Meta, StoryFn} from '@storybook/react';
+import React, {useState} from 'react';
 
 export default {
   /* 👇 The title prop is optional.
    * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
    * to learn how to generate automatic titles
    */
-  title: "MovableAccordionList",
+  title: 'MovableAccordionList',
   component: MovableAccordionList,
 } as Meta<typeof MovableAccordionList>;
 
 const wrapper: React.CSSProperties = {
-  padding: "50px",
-  backgroundColor: "#eeeeee",
+  padding: '50px',
+  backgroundColor: '#eeeeee',
 };
 
 const movableItems: any[] = [
   {
     key: 12312,
     title: {
-      content: "Top layer",
+      content: 'Top layer',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>Top layer</h2>
           <p>Tab 1 Content</p>
           <p>
@@ -60,12 +60,12 @@ const movableItems: any[] = [
   {
     key: 223213,
     title: {
-      content: "Some clay-silt lenses",
+      content: 'Some clay-silt lenses',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>Some clay-silt lenses</h2>
           <p>Tab 2 Content</p>
           <p>
@@ -80,12 +80,12 @@ const movableItems: any[] = [
   {
     key: 32131232,
     title: {
-      content: "New Content 3",
+      content: 'New Content 3',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 3</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -113,12 +113,12 @@ const movableItems: any[] = [
   {
     key: 123124,
     title: {
-      content: "New Content 4",
+      content: 'New Content 4',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 4</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -145,12 +145,12 @@ const movableItems: any[] = [
   {
     key: 123125,
     title: {
-      content: "New Content 5",
+      content: 'New Content 5',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 5</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -177,12 +177,12 @@ const movableItems: any[] = [
   {
     key: 123126,
     title: {
-      content: "New Content 6",
+      content: 'New Content 6',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 6</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
         </div>
@@ -192,12 +192,12 @@ const movableItems: any[] = [
   {
     key: 123135,
     title: {
-      content: "New Content 14",
+      content: 'New Content 14',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 14</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -225,95 +225,97 @@ const movableItems: any[] = [
 
 const tabPanelsPrimary = [
   {
-    menuItem: "Upload shapefile",
+    menuItem: 'Upload shapefile',
     render: () => <TabPane attached={false}>Upload shapefile</TabPane>,
   },
   {
-    menuItem: "Polygons",
+    menuItem: 'Polygons',
     render: () => <TabPane attached={false}>Polygons</TabPane>,
   },
 ];
 
 const tabPanelsSecondary = [
   {
-    menuItem: "Layer properties",
+    menuItem: 'Layer properties',
     render: () => <TabPane></TabPane>,
   },
   {
-    menuItem: "Confinement",
+    menuItem: 'Confinement',
     render: () => (
       <TabPane>
         <InfoTitle
           title="Upload shapefile"
           description="Shapefile description"
-          actionText="Add on map"
-          actionDescription="Action description"
-          onAction={() => {
-            console.log("Add on map action");
-          }}
+          actions={[
+            {
+              actionText: 'Active cells',
+              actionDescription: 'Action Description',
+              onClick: () => console.log('Action 2'),
+            },
+          ]}
         />
-        <Button size={"tiny"}>Choose file</Button>
-        <InfoTitle title="Upload raster" description="raster description" />
-        <Button size={"tiny"}>Choose file</Button>
+        <Button size={'tiny'}>Choose file</Button>
+        <InfoTitle title="Upload raster" description="raster description"/>
+        <Button size={'tiny'}>Choose file</Button>
       </TabPane>
     ),
   },
   {
-    menuItem: "Top elevation",
+    menuItem: 'Top elevation',
     render: () => (
       <TabPane>
         <Tab
           variant="primary"
-          menu={{ secondary: true, pointing: true }}
+          menu={{secondary: true, pointing: true}}
           panes={tabPanelsPrimary}
         />
       </TabPane>
     ),
   },
   {
-    menuItem: "Bottom elevation",
+    menuItem: 'Bottom elevation',
     render: () => <TabPane>Tab 3 Content</TabPane>,
   },
   {
-    menuItem: "Hydraulic conductivity along rows",
+    menuItem: 'Hydraulic conductivity along rows',
     render: () => <TabPane>Tab 4 Content</TabPane>,
   },
   {
-    menuItem: "Horizontal hydraulic anisotropy",
+    menuItem: 'Horizontal hydraulic anisotropy',
     render: () => <TabPane>Tab 5 Content</TabPane>,
   },
   {
-    menuItem: "Vertical hydraulic conductivity",
+    menuItem: 'Vertical hydraulic conductivity',
     render: () => <TabPane>Tab 6 Content</TabPane>,
   },
   {
-    menuItem: "Specific storage",
+    menuItem: 'Specific storage',
     render: () => <TabPane>Tab 7 Content</TabPane>,
   },
   {
-    menuItem: "Specific yield",
+    menuItem: 'Specific yield',
     render: () => <TabPane>Tab 8 Content</TabPane>,
   },
-  { menuItem: "Starting head", render: () => <TabPane>Tab 9 Content</TabPane> },
-  { menuItem: "iBound", render: () => <TabPane>Tab 10 Content</TabPane> },
+  {menuItem: 'Starting head', render: () => <TabPane>Tab 9 Content</TabPane>},
+  {menuItem: 'iBound', render: () => <TabPane>Tab 10 Content</TabPane>},
 ];
 
 const movableItemsWithTabs: any[] = [
   {
     key: 12312,
     title: {
-      content: "Tabs inside",
+      content: 'Tabs inside',
       icon: false,
     },
     content: {
       content: (
-        <div className={"scrollWrapper-Y"}>
+        <div className={'scrollWrapper-Y'}>
           <Tab
             variant="secondary"
             title={true}
             defaultActiveIndex={1}
-            grid={{ rows: 1, columns: 2 }}
-            menu={{ fluid: true, vertical: true, tabular: true }}
+            grid={{rows: 1, columns: 2}}
+            menu={{fluid: true, vertical: true, tabular: true}}
             panes={tabPanelsSecondary}
           />
         </div>
@@ -323,12 +325,12 @@ const movableItemsWithTabs: any[] = [
   {
     key: 223213,
     title: {
-      content: "Some clay-silt lenses",
+      content: 'Some clay-silt lenses',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>Some clay-silt lenses</h2>
           <p>Tab 2 Content</p>
           <p>
@@ -343,12 +345,12 @@ const movableItemsWithTabs: any[] = [
   {
     key: 32131232,
     title: {
-      content: "New Content 3",
+      content: 'New Content 3',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 3</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -376,12 +378,12 @@ const movableItemsWithTabs: any[] = [
   {
     key: 123124,
     title: {
-      content: "New Content 4",
+      content: 'New Content 4',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 4</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -408,12 +410,12 @@ const movableItemsWithTabs: any[] = [
   {
     key: 123125,
     title: {
-      content: "New Content 5",
+      content: 'New Content 5',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 5</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -440,12 +442,12 @@ const movableItemsWithTabs: any[] = [
   {
     key: 123126,
     title: {
-      content: "New Content 6",
+      content: 'New Content 6',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 6</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
         </div>
@@ -455,12 +457,12 @@ const movableItemsWithTabs: any[] = [
   {
     key: 123135,
     title: {
-      content: "New Content 14",
+      content: 'New Content 14',
       icon: false,
     },
     content: {
       content: (
-        <div style={{ padding: "20px" }}>
+        <div style={{padding: '20px'}}>
           <h2>New Content 14</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
@@ -527,7 +529,7 @@ export const MovableAccordionListInsideTab: StoryFn<
       menuItem: (
         <MenuItem key="validation" className="tabItemWithIcon">
           Validation
-          <Icon name="check circle" />
+          <Icon name="check circle"/>
         </MenuItem>
       ),
       render: () => (
@@ -550,7 +552,7 @@ export const MovableAccordionListInsideTab: StoryFn<
     <div style={wrapper}>
       <Tab
         variant="primary"
-        menu={{ secondary: true, pointing: true }}
+        menu={{secondary: true, pointing: true}}
         panes={panelsPrimary}
       />
     </div>
@@ -582,7 +584,7 @@ export const TabsInsideMovableAccordionList: StoryFn<
       menuItem: (
         <MenuItem key="validation" className="tabItemWithIcon">
           Validation
-          <Icon name="check circle" />
+          <Icon name="check circle"/>
         </MenuItem>
       ),
       render: () => (
@@ -605,7 +607,7 @@ export const TabsInsideMovableAccordionList: StoryFn<
     <div style={wrapper}>
       <Tab
         variant="primary"
-        menu={{ secondary: true, pointing: true }}
+        menu={{secondary: true, pointing: true}}
         panes={panelsPrimary}
       />
     </div>

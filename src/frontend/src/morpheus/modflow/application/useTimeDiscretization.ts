@@ -1,8 +1,6 @@
-import {IError} from '../types';
+import {IError, ITimeDiscretization} from '../types';
 import {useEffect, useRef, useState} from 'react';
-
 import {useApi} from '../incoming';
-import {ITimeDiscretization} from '../types/TimeDiscretization.type';
 
 interface IUseTimeDiscretization {
   timeDiscretization: ITimeDiscretization | null;
@@ -11,19 +9,8 @@ interface IUseTimeDiscretization {
   error: IError | null;
 }
 
-export interface ITimeDiscretizationApi {
-  start_date_time: string;
-  end_date_time: string;
-  time_unit: number;
-  stress_periods: IStressPeriodResponse[];
-}
-
-interface IStressPeriodResponse {
-  start_date_time: string;
-  number_of_time_steps: number;
-  time_step_multiplier: number;
-  steady_state: boolean;
-}
+type ITimeDiscretizationPutRequest = ITimeDiscretization;
+type ITimeDiscretizationGetResponse = ITimeDiscretization;
 
 const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretization => {
 
@@ -45,24 +32,14 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
       }
       setLoading(true);
       setError(null);
-      const result = await httpGet<ITimeDiscretizationApi>(`/projects/${projectId}/model/time-discretization`);
+      const result = await httpGet<ITimeDiscretizationGetResponse>(`/projects/${projectId}/model/time-discretization`);
 
       if (!isMounted.current) {
         return;
       }
 
       if (result.ok) {
-        setTimeDiscretization({
-          startDateTime: result.val.start_date_time,
-          endDateTime: result.val.end_date_time,
-          timeUnit: result.val.time_unit,
-          stressPeriods: result.val.stress_periods.map((sp) => ({
-            startDateTime: sp.start_date_time,
-            numberOfTimeSteps: sp.number_of_time_steps,
-            timeStepMultiplier: sp.time_step_multiplier,
-            steadyState: sp.steady_state,
-          })),
-        });
+        setTimeDiscretization(result.val);
       }
 
       if (result.err) {
@@ -85,7 +62,7 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
   }, [projectId]);
 
 
-  const updateTimeDiscretization = async (timeDiscretizationUdpate: ITimeDiscretization) => {
+  const updateTimeDiscretization = async (data: ITimeDiscretization) => {
 
     if (!isMounted.current) {
       return;
@@ -98,23 +75,11 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
     setLoading(true);
     setError(null);
 
-    const timeDiscretizationPutRequest: ITimeDiscretizationApi = {
-      start_date_time: timeDiscretizationUdpate.startDateTime,
-      end_date_time: timeDiscretizationUdpate.endDateTime,
-      time_unit: timeDiscretizationUdpate.timeUnit,
-      stress_periods: timeDiscretizationUdpate.stressPeriods.map((sp) => ({
-        start_date_time: sp.startDateTime,
-        number_of_time_steps: sp.numberOfTimeSteps,
-        time_step_multiplier: sp.timeStepMultiplier,
-        steady_state: sp.steadyState,
-      })),
-    };
 
-
-    const result = await httpPut<ITimeDiscretizationApi>(`/projects/${projectId}/model/time-discretization`, timeDiscretizationPutRequest);
+    const result = await httpPut<ITimeDiscretizationPutRequest>(`/projects/${projectId}/model/time-discretization`, data);
 
     if (result.ok) {
-      setTimeDiscretization(timeDiscretizationUdpate);
+      setTimeDiscretization(data);
     }
 
     if (result.err) {

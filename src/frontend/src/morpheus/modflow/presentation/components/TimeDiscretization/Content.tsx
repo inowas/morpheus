@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Accordion, AccordionPanelProps} from 'semantic-ui-react';
 import TimeDiscretizationGeneralParameters from './GeneralParameters';
 import TimeDiscretizationStressPeriods from './StressPeriods';
-import {IStressPeriod, ITimeDiscretization} from '../../../types/TimeDiscretization.type';
+import {IStressPeriod, ITimeDiscretization} from '../../../types';
 import {addDays, isValid, parseISO} from 'date-fns';
 import {Button, DataGrid, SectionTitle} from 'common/components';
 
@@ -14,9 +14,9 @@ interface IProps {
 
 const withSortedStressPeriods = (td: ITimeDiscretization): ITimeDiscretization => {
   return {
-    ...td, stressPeriods: td.stressPeriods.sort((a: IStressPeriod, b: IStressPeriod) => {
-      const dateA = parseISO(a.startDateTime);
-      const dateB = parseISO(b.startDateTime);
+    ...td, stress_periods: td.stress_periods.sort((a: IStressPeriod, b: IStressPeriod) => {
+      const dateA = parseISO(a.start_date_time);
+      const dateB = parseISO(b.start_date_time);
       if (!isValid(dateA)) return 1; // Move items with null dates to the end
       if (!isValid(dateB)) return -1; // Move items with null dates to the end
       return dateA.getTime() - dateB.getTime();
@@ -37,13 +37,13 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
 
   const handleTimeDiscretizationChange = (td: ITimeDiscretization) => {
     const newTimeDiscretization = withSortedStressPeriods(td);
-    const startDateTime = parseISO(newTimeDiscretization.stressPeriods[0].startDateTime);
-    newTimeDiscretization.startDateTime = startDateTime.toISOString();
+    const startDateTime = parseISO(newTimeDiscretization.stress_periods[0].start_date_time);
+    newTimeDiscretization.start_date_time = startDateTime.toISOString();
 
-    const endDateTime = addDays(parseISO(newTimeDiscretization.stressPeriods[newTimeDiscretization.stressPeriods.length - 1].startDateTime), 1);
-    const currentEndDateTime = parseISO(newTimeDiscretization.endDateTime);
+    const endDateTime = addDays(parseISO(newTimeDiscretization.stress_periods[newTimeDiscretization.stress_periods.length - 1].start_date_time), 1);
+    const currentEndDateTime = parseISO(newTimeDiscretization.end_date_time);
     if (currentEndDateTime.getTime() < endDateTime.getTime()) {
-      newTimeDiscretization.endDateTime = endDateTime.toISOString();
+      newTimeDiscretization.end_date_time = endDateTime.toISOString();
     }
     setTimeDiscretizationLocal(newTimeDiscretization);
   };

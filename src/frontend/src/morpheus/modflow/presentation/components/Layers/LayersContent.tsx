@@ -41,7 +41,7 @@ const panelSecondary = [
       <InfoTitle
         title='Upload shapefile'
         description='Shapefile description'
-        actions={[{actionText: 'Add on map', actionDescription: 'Action Description', onAction: () => console.log('Add on map action\'')}]}
+        actions={[{actionText: 'Add on map', actionDescription: 'Action Description', onClick: () => console.log('Add on map action\'')}]}
       />
       <Button size={'tiny'}>Choose file</Button>
       <InfoTitle

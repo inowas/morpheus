@@ -1,5 +1,5 @@
 // @ts-ignore
-import path from 'path'
+import path from 'path';
 import * as webpack from 'webpack';
 // @ts-ignore
 import * as webpackDevServer from 'webpack-dev-server';
@@ -10,10 +10,10 @@ import HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
-const host = process.env.HOST || 'localhost'
+const host = process.env.HOST || 'localhost';
 
 const child_process = require('child_process');
 
@@ -59,7 +59,7 @@ module.exports = (env: any, argv: any) => {
                 additionalData: (content: string) => {
                   const variables = fs.readFileSync('src/common/components/variables.less');
                   return variables + content;
-                }
+                },
               },
             },
           ],
@@ -72,15 +72,15 @@ module.exports = (env: any, argv: any) => {
           test: /\.(png|jpe?g|gif|svg)$/,
           type: 'asset/resource',
           generator: {
-            filename: 'images/[name][ext]'
-          }
+            filename: 'images/[name][ext]',
+          },
         },
         {
           test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
           type: 'asset/resource',
           generator: {
-            filename: 'fonts/[name][ext]'
-          }
+            filename: 'fonts/[name][ext]',
+          },
         },
         {
           test: /\.(ts|js)x?$/,
@@ -120,9 +120,9 @@ module.exports = (env: any, argv: any) => {
           globOptions: {
             ignore: [
               '**/index.html',
-            ]
-          }
-        }]
+            ],
+          },
+        }],
       }),
       new Dotenv(),
     ],
@@ -143,11 +143,11 @@ module.exports = (env: any, argv: any) => {
       path: path.resolve(__dirname, 'dist/mfviz'),
       publicPath: '/',
       filename: '[name].[fullhash:8].js',
-      chunkFilename: '[id].[fullhash:8].js'
-    }
-  }
+      chunkFilename: '[id].[fullhash:8].js',
+    },
+  };
 
-  if (argv.mode === 'development') {
+  if ('development' === argv.mode) {
     config.devtool = 'inline-source-map';
     config.mode = argv.mode;
     config.devServer = {
@@ -158,14 +158,14 @@ module.exports = (env: any, argv: any) => {
       },
       static: {
         directory: path.resolve(__dirname, 'public/mfviz'),
-        watch: true
+        watch: true,
       },
       compress: true,
       host: host,
       port: 4000,
-    }
+    };
   }
-  if (argv.mode === 'production') {
+  if ('production' === argv.mode) {
     config.mode = 'production';
     config.devtool = 'source-map';
     config.optimization = {
@@ -184,7 +184,7 @@ module.exports = (env: any, argv: any) => {
       splitChunks: {
         chunks: 'all',
       },
-    }
+    };
   }
   return config;
 };

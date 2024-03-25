@@ -1,19 +1,143 @@
 import {IError, IProjectListItem} from '../types';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
-import {useApi} from '../incoming';
+import {useApi, useAuthentication} from '../incoming';
 
 interface IUseProjectSummaries {
   projects: IProjectListItem[];
+  filter: IFilterParams;
+  onFilterChange: (filter: IFilterParams) => void;
+  order: IOrder;
+  onOrderChange: (order: IOrder) => void;
+  orderOptions: IOrderOption[];
+  search: string;
+  onSearchChange: (search: string) => void;
   loading: boolean;
   error: IError | null;
 }
 
+interface IFilterParams {
+  my_projects?: boolean;
+  my_groups?: boolean;
+  users?: string[];
+  is_public?: boolean;
+  status?: string[];
+  date_range?: {
+    start?: string;
+    end?: string;
+  };
+  number_of_grid_cells?: number;
+  number_of_stress_periods?: number;
+  number_of_layers?: number;
+  additional_features?: string[];
+  tags?: string[];
+  geolocation?: {
+    type: 'Rectangle';
+    coordinates: number[];
+  };
+}
+
+
+const orderOptions: IOrderOption[] = [
+  {text: 'Most Recent', order: {created_at: 'desc'}},
+  {text: 'Less Recent', order: {created_at: 'asc'}},
+  {text: 'A-Z', order: {name: 'asc'}},
+  {text: 'Z-A', order: {name: 'desc'}},
+];
+
+const defaultOrder: IOrder = {created_at: 'desc'};
+
+interface IOrderOption {
+  text: string;
+  order: IOrder;
+}
+
+interface IOrder {
+  [key: string]: 'asc' | 'desc';
+}
+
+
 const useProjectList = (): IUseProjectSummaries => {
   const isMounted = useRef(true);
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
+  const [filter, setFilter] = useState<IFilterParams>({});
+  const [order, setOrder] = useState<IOrder>(defaultOrder);
+  const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
+
+  const {userProfile} = useAuthentication();
+  const myUserId = userProfile?.sub || '';
+
+
+  const filteredProjects = useMemo(() => {
+
+    let newListOfProjects: IProjectListItem[] = projects.filter((project) => {
+      if (filter.my_projects && project.owner_id === myUserId) {
+        return false;
+      }
+      if (filter.users && !filter.users.includes(project.owner_id)) {
+        return false;
+      }
+      if (filter.is_public && !project.is_public) {
+        return false;
+      }
+      if (filter.status && !filter.status.includes(project.status)) {
+        return false;
+      }
+      if (filter.date_range) {
+        const projectDate = new Date(project.created_at);
+        const startDate = filter.date_range.start && new Date(filter.date_range.start);
+        const endDate = filter.date_range.end && new Date(filter.date_range.end);
+
+        if (!startDate && !endDate) {
+          return false;
+        }
+
+        if (startDate && projectDate < startDate) {
+          return false;
+        }
+
+        if (endDate && projectDate > endDate) {
+          return false;
+        }
+      }
+
+      if (filter.tags && !filter.tags.every((keyword) => project.tags.includes(keyword))) {
+        return false;
+      }
+
+      return true;
+    });
+
+    if (0 < search.length) {
+      newListOfProjects = newListOfProjects.filter((project) => {
+        return project.name.toLowerCase().includes(search.toLowerCase());
+      });
+    }
+
+    newListOfProjects.sort((a, b) => {
+      const key = Object.keys(order)[0];
+      const direction = 'asc' === order[key] ? 1 : -1;
+
+
+      // @ts-ignore
+      const valueA = a[key] as keyof IProjectListItem;
+      // @ts-ignore
+      const valueB = b[key] as keyof IProjectListItem;
+
+      if (valueA < valueB) {
+        return -1 * direction;
+      }
+      if (valueA > valueB) {
+        return 1 * direction;
+      }
+      return 0;
+    });
+
+    return newListOfProjects;
+
+  }, [projects, filter, search, order, myUserId]);
 
   const {httpGet} = useApi();
 
@@ -54,7 +178,14 @@ const useProjectList = (): IUseProjectSummaries => {
   }, []);
 
   return {
-    projects,
+    projects: filteredProjects,
+    filter: filter,
+    onFilterChange: setFilter,
+    order: order,
+    onOrderChange: setOrder,
+    orderOptions,
+    search: '',
+    onSearchChange: setSearch,
     loading,
     error,
   };
