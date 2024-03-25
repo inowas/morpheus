@@ -1,3 +1,3 @@
-import ModelCreate from './ModelCreate';
+import CreateProjectContainer from './CreateProjectContainer';
 
-export default ModelCreate;
+export default CreateProjectContainer;

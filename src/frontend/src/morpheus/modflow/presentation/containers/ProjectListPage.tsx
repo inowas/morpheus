@@ -1,4 +1,4 @@
-import {Button, CardGrid, ContentWrapper, ICard, ISortOption, Modal, ModelCreate, Navbar} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
@@ -8,6 +8,8 @@ import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {format} from 'date-fns';
+import CreateProjectModal from '../components/CreateProjectModal';
+import CreateProjectContainer from './CreateProjectContainer';
 
 
 const sortOptions: ISortOption[] = [
@@ -29,6 +31,8 @@ const ProjectListPage = ({basePath}: IProps) => {
   const {translate} = useTranslate();
   const {projects, loading, error} = useProjectList();
   const [cards, setCards] = useState<ICard[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   useEffect(() => {
     setCards(projects.map((project) => {
@@ -47,9 +51,6 @@ const ProjectListPage = ({basePath}: IProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
-
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [showCreateModel, setShowCreateModel] = useState<boolean>(false);
 
   if (loading) {
     return <Loading/>;
@@ -71,11 +72,11 @@ const ProjectListPage = ({basePath}: IProps) => {
         }}
         button={
           <Button
-            style={{marginRight: 20, padding: '10px 17px', minHeight: 44, whiteSpace: 'nowrap', borderRadius: 2}}
+            style={{whiteSpace: 'nowrap'}}
             primary={true}
-            onClick={() => setShowCreateModel(true)}
+            onClick={() => setShowCreateProjectModel(true)}
           >
-            Create new model
+            Create new project
           </Button>}
       />
       <ModflowContainer>
@@ -104,14 +105,8 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </ContentWrapper>
       </ModflowContainer>
-      {showCreateModel && (<Modal.Modal
-        onClose={() => setShowCreateModel(false)}
-        onOpen={() => setShowCreateModel(true)}
-        open={showCreateModel}
-        dimmer={'inverted'}
-      >
-        <ModelCreate onClose={() => setShowCreateModel(false)}/>
-      </Modal.Modal>)}
+
+      <CreateProjectContainer open={showCreateProjectModel} onClose={() => setShowCreateProjectModel(false)}/>
     </>
   );
 };

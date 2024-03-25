@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createServer, Response} from 'miragejs';
+import {v4 as uuidv4} from 'uuid';
 
 import config from '../src/config';
 import {generateRandomUsers, IUser} from './data/users';
@@ -31,6 +32,24 @@ export function makeServer({environment = 'test'} = {}) {
           });
 
         return new Response(200, {}, projectSummaries);
+      });
+
+      this.post('projects', (schema, request) => {
+        const attrs = JSON.parse(request.requestBody);
+        const newProject = generateRandomProjects(1, schema.db.users)[0];
+        newProject.project_id = uuidv4();
+        newProject.metadata = {
+          ...newProject.metadata,
+          name: attrs.name,
+          description: attrs.description,
+          tags: attrs.tags,
+        };
+
+        schema.db.projects.insert({...newProject});
+
+        return new Response(201, {
+          'location': `${config.baseApiUrl}/projects/${newProject.project_id}`,
+        });
       });
 
       this.get('projects/:id/metadata', (schema, request) => {

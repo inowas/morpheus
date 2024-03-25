@@ -1,11 +1,11 @@
 import {render, screen} from '@testing-library/react';
 
-import {ModelCreate} from '../index';
+import {CreateProjectContainer} from '../index';
 import React from 'react';
 
 describe('ModelCreate Tests', () => {
   test('It renders the component', async () => {
-    render(<ModelCreate/>);
+    render(<CreateProjectContainer/>);
     expect(screen.getByTestId('ModelCreate-container')).toBeInTheDocument();
   });
 });

@@ -1,11 +1,10 @@
 import {Button, Dropdown, Form, TextArea} from 'semantic-ui-react';
+import {Modal} from 'common/components';
 import React, {useState} from 'react';
 
+import Images from './Images';
 import RandomImage from 'common/components/RandomImage';
-import styles from './CreateProjectModal.module.less';
-import Images from './images';
-import { Modal } from 'common/components';
-import {IError} from '../../../../types';
+import styles from './ModelCreate.module.less';
 
 const options = [
   {key: '1', text: 'React', value: 'React'},
@@ -16,32 +15,16 @@ const options = [
 ];
 
 interface IProps {
-  open: boolean;
-  onCancel: () => void;
-  loading: boolean;
-  error?: IError;
-  onSubmit: (name: string, description: string, keywords: string[]) => void;
+  onClose: () => void;
 }
 
-const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) => {
+const CreateProjectContainer = ({onClose}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
 
-  const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectName(event.target.value);
-  };
-
-  const handleProjectDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setProjectDescription(event.target.value);
-  };
-
-  const handleKeywordsChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
-    setSelectedKeywords(data.value as string[]);
-  };
-
   const formIsValid = () => {
-    return 0 < projectName.trim().length;
+    return '' !== projectName.trim();
   };
 
   const clearForm = () => {
@@ -53,19 +36,27 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     clearForm();
-    if (onCancel) onCancel();
+    if (onClose) onClose();
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (formIsValid()) {
-      onSubmit(projectName, projectDescription, selectedKeywords);
-      clearForm();
+    // validate input
+    if (!formIsValid()) {
+      return;
     }
+
+    console.log('Form data submitted:', {
+      projectName,
+      projectDescription,
+      selectedKeywords,
+    });
+    clearForm();
+    if (onClose) onClose();
   };
 
   return (
-    <Modal.Modal open={open} dimmer={'blurring'}>
+    <Modal.Modal open={true} dimmer={'blurring'}>
       <div className={`${styles.container}`} data-testid="ModelCreate-container">
         <div className={styles.image}>
           <RandomImage images={Images}/>
@@ -101,7 +92,6 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
                 onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setSelectedKeywords(data.value as string[])}
               />
             </Form.Field>
-            {error && <div className={styles.error}>{error.message}</div>}
             <div className={styles.mandatory}>
               <span className="required">*</span>Mandatory field
             </div>
@@ -113,7 +103,6 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
                 primary={true}
                 disabled={!formIsValid()}
                 onClick={handleSubmit}
-                loading={loading}
               >
                 Create new project
               </Button>
@@ -125,4 +114,4 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   );
 };
 
-export default CreateProjectModal;
+export default CreateProjectContainer;
