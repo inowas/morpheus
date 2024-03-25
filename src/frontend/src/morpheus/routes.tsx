@@ -8,6 +8,7 @@ import {ProjectAssetsPage, ProjectBaseModelPage, ProjectPage, ProjectScenariosPa
 import SignInPage from './authentication/presentation/containers/AuthContainer';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 import ProjectsPage from './modflow/presentation/containers/ProjectListPage';
+import AuthCallback from './authentication/presentation/containers/AuthCallbackPage';
 
 
 const Router = () => {
@@ -31,9 +32,9 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate replace={true} to="/projects"/>}/>
+      <Route path="/" element={<Navigate to="/projects"/>}/>
       <Route path="/auth" element={wrapPublicComponent(<SignInPage/>)}/>
-
+      <Route path="/auth/callback" element={wrapPublicComponent(<AuthCallback redirectTo="/projects"/>)}/>
       <Route path="/projects" element={wrapPrivateComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>
       <Route path="/projects/:projectId" element={wrapPrivateComponent(<ProjectPage basePath={'/projects'}/>, true)}/>
       <Route

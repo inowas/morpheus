@@ -1,4 +1,4 @@
-import {CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, ISortOption, Modal, ModelCreate, Navbar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
@@ -25,7 +25,7 @@ const ProjectListPage = ({basePath}: IProps) => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
   const {projects, loading, error} = useProjectList();
   const [cards, setCards] = useState<ICard[]>([]);
@@ -48,6 +48,9 @@ const ProjectListPage = ({basePath}: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
 
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [showCreateModel, setShowCreateModel] = useState<boolean>(false);
+
   if (loading) {
     return <Loading/>;
   }
@@ -62,8 +65,18 @@ const ProjectListPage = ({basePath}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-        showSearchWrapper={showSearchBar}
-        showCreateButton={showButton}
+        search={{
+          value: searchValue,
+          onChange: setSearchValue,
+        }}
+        button={
+          <Button
+            style={{marginRight: 20, padding: '10px 17px', minHeight: 44, whiteSpace: 'nowrap', borderRadius: 2}}
+            primary={true}
+            onClick={() => setShowCreateModel(true)}
+          >
+            Create new model
+          </Button>}
       />
       <ModflowContainer>
         <SidebarContent maxWidth={350}>
@@ -91,6 +104,14 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </ContentWrapper>
       </ModflowContainer>
+      {showCreateModel && (<Modal.Modal
+        onClose={() => setShowCreateModel(false)}
+        onOpen={() => setShowCreateModel(true)}
+        open={showCreateModel}
+        dimmer={'inverted'}
+      >
+        <ModelCreate onClose={() => setShowCreateModel(false)}/>
+      </Modal.Modal>)}
     </>
   );
 };
