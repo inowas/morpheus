@@ -46,12 +46,6 @@ const Map = ({center, zoom, children}: IProps) => {
     const resizeObserver = new ResizeObserver(() => {
       const map = mapRef.current;
       if (map) {
-        const snapshotOptions = {
-          hideElementsWithSelectors: ['.leaflet-control-container'],
-          position: 'topright',
-          screenName: 'Map',
-          hidden: true,
-        };
         map.invalidateSize();
       }
     });
@@ -73,6 +67,7 @@ const Map = ({center, zoom, children}: IProps) => {
       html2canvas(container, {
         useCORS: true, // Enable CORS
       }).then(canvas => {
+        console.log(canvas);
         // Convert canvas to image and download
         const link = document.createElement('a');
         link.download = 'map_screenshot.png';
