@@ -13,10 +13,10 @@ interface IProps {
   section: 'model';
 }
 
-const ModflowBaseModelPage = ({basePath, section}: IProps) => {
+const ProjectModelPage = ({basePath, section}: IProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {navbarItems} = useNavbarItems();
 
   const {projectId, property = 'spatial-discretization'} = useParams<{
     projectId?: string;
@@ -63,8 +63,6 @@ const ModflowBaseModelPage = ({basePath, section}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigate}
-        showSearchWrapper={showSearchBar}
-        showCreateButton={showButton}
       />
       <ModflowContainer>
         <SidebarMenu menuItems={sidebarMenuItems}/>
@@ -75,4 +73,4 @@ const ModflowBaseModelPage = ({basePath, section}: IProps) => {
   );
 };
 
-export default ModflowBaseModelPage;
+export default ProjectModelPage;

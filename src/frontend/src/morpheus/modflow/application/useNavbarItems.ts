@@ -1,6 +1,6 @@
 import {INavbarItem} from 'common/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
-import {useParams} from 'react-router-dom';
+import {useParams, useLocation} from 'react-router-dom';
 
 const getProjectDashboardNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
   {
@@ -76,15 +76,45 @@ interface IUseNavbarItems {
 
 const useNavbarItems = (): IUseNavbarItems => {
   const {translate} = useTranslate();
-  const {
-    projectId,
-  } = useParams();
+  const params = useParams();
+  const location = useLocation();
 
-  const isDashboardPage = projectId === undefined;
-  const navbarItems: INavbarItem[] = isDashboardPage ? getProjectDashboardNavbarItems(translate) : getProjectNavbarItems(translate, projectId);
+  const isDashboardPage = location.pathname.includes('projects') && 0 === Object.keys(params).length;
+  const isProjectPage = location.pathname.includes('projects') && params.projectId !== undefined;
+
+  if (isDashboardPage) {
+    return ({
+      navbarItems: getProjectDashboardNavbarItems(translate),
+    });
+  }
+
+  if (isProjectPage) {
+    return ({
+      navbarItems: getProjectNavbarItems(translate, params.projectId),
+    });
+  }
 
   return ({
-    navbarItems,
+    navbarItems: [
+      {
+        name: 'projects',
+        label: translate('Projects'),
+        admin: false,
+        to: '/projects',
+      },
+      {
+        name: 'support',
+        label: translate('support'),
+        admin: false,
+        to: '/support',
+      },
+      {
+        name: 'news',
+        label: translate('news'),
+        admin: false,
+        to: '/news',
+      },
+    ],
   });
 };
 

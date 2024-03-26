@@ -1,7 +1,7 @@
 import {Footer, Header, IPageWidth} from 'common/components';
 import React, {ReactNode, useEffect, useState} from 'react';
-import {useNavbarItems, useTranslate} from '../../application';
-import {useLocation, useNavigate, useReleaseVersion} from 'common/hooks';
+import {useTranslate} from '../../application';
+import {useNavigate, useReleaseVersion} from 'common/hooks';
 import {ContentContainer} from '../components';
 
 interface IProps {
@@ -15,10 +15,8 @@ const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
 
   const {i18n} = useTranslate();
 
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
-  const location = useLocation();
   const {release} = useReleaseVersion();
 
   const pageSize: IPageWidth = 'auto';

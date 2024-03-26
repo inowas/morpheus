@@ -1,4 +1,4 @@
-import {Button, ContentWrapper, Modal, ModelCreate} from 'common/components';
+import {Button, ContentWrapper} from 'common/components';
 import {Image, Input} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
@@ -12,16 +12,19 @@ interface IProps {
   navbarItems: INavbarItem[];
   location: any;
   navigateTo: (path: string) => void;
-  showSearchWrapper?: boolean;
-  showCreateButton?: boolean;
+  search?: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  button?: React.ReactNode;
 }
 
 const Navbar: React.FC<IProps> = ({
   navbarItems,
   location,
   navigateTo,
-  showSearchWrapper = false,
-  showCreateButton = false,
+  search,
+  button,
 }) => {
   const {isMobile} = useIsMobile();
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -30,27 +33,8 @@ const Navbar: React.FC<IProps> = ({
     setOpenMobileMenu((prevState) => !prevState);
   };
 
-  const [openPopup, setOpenPopup] = useState(false);
-
-  const onCreateButtonClick = () => {
-    setOpenPopup(!openPopup);
-  };
-
   return (
     <>
-      {/* Popup to create new model */}
-      {showCreateButton && (
-        <Modal.Modal
-          onClose={() => setOpenPopup(false)}
-          onOpen={() => setOpenPopup(true)}
-          open={openPopup}
-          dimmer={'inverted'}
-        >
-          <ModelCreate onClose={onCreateButtonClick}/>
-        </Modal.Modal>
-      )}
-      {/* End of popup to create new model */}
-
       {/* Navbar */}
       <div
         className={styles.navbar}
@@ -80,12 +64,14 @@ const Navbar: React.FC<IProps> = ({
                 <span></span>
               </div>
             )}
-            {(showSearchWrapper && !isMobile) && (
+            {(search && !isMobile) && (
               <div className={styles.searchWrapper}>
                 <Input
                   action={true}
                   actionPosition="left"
                   className={`${styles.search}`}
+                  value={search.value}
+                  onChange={(e) => search.onChange(e.target.value)}
                 >
                   <Button primary={true}>Search</Button>
                   <input/>
@@ -108,22 +94,16 @@ const Navbar: React.FC<IProps> = ({
                     />;
                   })}
                 </ul>
-                {showCreateButton && (
-                  <Button
-                    className={styles.createButton}
-                    primary={true}
-                    onClick={onCreateButtonClick}
-                  >
-                    Create new model
-                  </Button>
-                )}
+                {button}
               </div>
-              {(showSearchWrapper && isMobile) && (
+              {(search && isMobile) && (
                 <div className={styles.searchWrapper}>
                   <Input
                     action={true}
                     actionPosition="left"
                     className={`${styles.search}`}
+                    value={search.value}
+                    onChange={(e) => search.onChange(e.target.value)}
                   >
                     <Button primary={true}>Search</Button>
                     <input/>

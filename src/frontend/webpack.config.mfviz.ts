@@ -28,7 +28,7 @@ function git(command: string) {
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
     entry: {
-      mfviz: './src/mfviz/index.tsx',
+      mfviz: './src/mfviz/index.ts',
     },
     module: {
       rules: [

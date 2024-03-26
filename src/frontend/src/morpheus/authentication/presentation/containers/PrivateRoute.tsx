@@ -7,7 +7,11 @@ interface IProps {
 }
 
 const PrivateRoute = ({children}: IProps) => {
-  const {isAuthenticated} = useAuthentication();
+  const {isAuthenticated, isLoading} = useAuthentication();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (isAuthenticated) {
     return <>{children}</>;
