@@ -20,8 +20,8 @@ const useAuthentication = (): IUseAuthentication => {
   };
 
   const signOut = async () => {
-    auth.removeUser();
     auth.signoutRedirect();
+    auth.removeUser();
   };
 
 

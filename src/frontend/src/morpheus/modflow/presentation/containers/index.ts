@@ -1,5 +1,5 @@
 import ProjectAssetsPage from './AssetsPage';
-import ProjectBaseModelPage from './ModflowBaseModelPage';
+import ProjectBaseModelPage from './ProjectModelPage';
 import ProjectPage from './ProjectPage';
 import ProjectScenariosPage from './ScenariosPage';
 import ProjectsSettingsPage from './SettingsPage';

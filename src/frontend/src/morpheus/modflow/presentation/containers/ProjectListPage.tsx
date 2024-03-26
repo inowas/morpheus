@@ -1,4 +1,4 @@
-import {CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
@@ -6,6 +6,7 @@ import {useProjectList, useTranslate} from '../../application';
 import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
+import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {format} from 'date-fns';
 
@@ -25,10 +26,12 @@ const ProjectListPage = ({basePath}: IProps) => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
   const {projects, loading, error} = useProjectList();
   const [cards, setCards] = useState<ICard[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   useEffect(() => {
     setCards(projects.map((project) => {
@@ -62,8 +65,18 @@ const ProjectListPage = ({basePath}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-        showSearchWrapper={showSearchBar}
-        showCreateButton={showButton}
+        search={{
+          value: searchValue,
+          onChange: setSearchValue,
+        }}
+        button={
+          <Button
+            style={{whiteSpace: 'nowrap'}}
+            primary={true}
+            onClick={() => setShowCreateProjectModel(true)}
+          >
+            Create new project
+          </Button>}
       />
       <ModflowContainer>
         <SidebarContent maxWidth={350}>
@@ -91,6 +104,8 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </ContentWrapper>
       </ModflowContainer>
+
+      <CreateProjectContainer open={showCreateProjectModel} onClose={() => setShowCreateProjectModel(false)}/>
     </>
   );
 };

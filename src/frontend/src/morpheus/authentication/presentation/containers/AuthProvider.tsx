@@ -5,14 +5,11 @@ import config from 'config';
 
 const oidcConfig: AuthProviderProps = {
   authority: `${config.keycloak.url}/realms/${config.keycloak.realm}`,
-  client_id: config.keycloak.clientId,
-  redirect_uri: window.location.origin,
-  userStore: new WebStorageStateStore({store: window.sessionStorage}),
   automaticSilentRenew: true,
-  post_logout_redirect_uri: `${window.location.origin}`,
-  onSigninCallback() {
-    window.history.replaceState({}, document.title, window.location.pathname);
-  },
+  client_id: config.keycloak.clientId,
+  post_logout_redirect_uri: `${window.location.origin}/auth`,
+  redirect_uri: `${window.location.origin}/auth/callback`,
+  userStore: new WebStorageStateStore({store: window.sessionStorage}),
 };
 
 interface IProps {
