@@ -12,7 +12,7 @@ interface IUseCreateProject {
 interface ICreateProject {
   name: string;
   description: string;
-  keywords: string[];
+  tags: string[];
 }
 
 type IProjectId = string;
@@ -25,7 +25,7 @@ const useCreateProject = (): IUseCreateProject => {
 
   const {httpPost} = useApi();
 
-  const createProject = async (createProject: ICreateProject): Promise<IProjectId | undefined> => {
+  const createProject = async (data: ICreateProject): Promise<IProjectId | undefined> => {
 
     if (!isMounted.current) {
       return;
@@ -35,7 +35,7 @@ const useCreateProject = (): IUseCreateProject => {
     setError(null);
 
 
-    const response = await httpPost<ICreateProject>('/projects', createProject);
+    const response = await httpPost<ICreateProject>('/projects', data);
 
     if (!isMounted.current) {
       return;

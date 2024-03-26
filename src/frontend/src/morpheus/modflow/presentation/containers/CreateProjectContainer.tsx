@@ -13,12 +13,11 @@ const CreateProjectContainer = ({open, onClose}: IProps) => {
   const {createProject, loading, error} = useCreateProject();
   const navigate = useNavigate();
 
-  const handleSubmit = async (name: string, description: string, keywords: string[]) => {
-    const projectId = await createProject({name, description, keywords});
-
+  const handleSubmit = async (name: string, description: string, tags: string[]) => {
+    const projectId  = await createProject({name, description, tags});
     if (projectId) {
-      onClose();
       navigate(`/projects/${projectId}`);
+      onClose();
     }
   };
 

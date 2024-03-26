@@ -24,6 +24,8 @@ class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
             project_tags=event.get_project().metadata.tags,
             owner_id=event.get_project().permissions.owner_id,
             visibility=event.get_project().permissions.visibility,
+            created_at=event.occurred_at,
+            updated_at=event.occurred_at,
         )
         self.repository.insert_or_update(summary=project_summary)
 
