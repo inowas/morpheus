@@ -158,6 +158,7 @@
   "scripts": {
     "analyze-morpheus": "source-map-explorer 'dist/morpheus/*.js'",
     "start-morpheus": "webpack serve --hot --config webpack.config.morpheus.ts --mode development --env mockserver --open",
+    "start-morpheus-integration-local": "webpack serve --hot --config webpack.config.morpheus.ts --mode development --env BASE_API_URL=http://localhost:5000 --env KEYCLOAK_URL=http://identity.inowas.localhost --env KEYCLOAK_REALM=inowas --env KEYCLOAK_CLIENT_ID=morpheus-frontend --open",
     "start-mfviz": "webpack serve --config webpack.config.mfviz.ts --hot --mode development --open",
     "start-simpletools": "webpack serve --config webpack.config.simpletools.ts --hot --mode development --open",
     "start-storybook": "storybook dev -p 6006",
