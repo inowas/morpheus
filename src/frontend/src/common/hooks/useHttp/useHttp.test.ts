@@ -7,17 +7,17 @@ import {renderHook} from '@testing-library/react-hooks';
 describe('Test the useHttp-Hook', () => {
   const mockAxios = new MockAdapter(axios);
   const apiBaseUrl = '/ultron/api/v1';
-  const token: IOAuthToken = {
+  const accessToken: IOAuthToken = {
     access_token: 'token-123',
     expires_in: 123,
     token_type: 'Bearer',
     scope: null,
     refresh_token: 'refresh-123',
-    user_id: 1,
+    user_id: '123',
   };
 
   const mockAuth = {
-    token,
+    accessToken,
     onRefreshToken: jest.fn(),
     onUnauthorized: jest.fn(),
   };
