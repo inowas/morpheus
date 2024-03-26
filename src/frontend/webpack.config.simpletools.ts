@@ -28,7 +28,7 @@ function git(command: string) {
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
     entry: {
-      simpletools: './src/simpletools/index.tsx',
+      simpletools: './src/simpletools/index.ts',
     },
     module: {
       rules: [
