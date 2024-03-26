@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import Uuid, String, DateTime
 from .Permissions import Permissions, Visibility
 from .calculation.CalculationProfile import CalculationProfile, CalculationProfileCollection
 from .Model import Model
@@ -143,6 +143,8 @@ class ProjectSummary:
     project_tags: Tags
     owner_id: UserId
     visibility: Visibility
+    created_at: DateTime
+    updated_at: DateTime
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -153,6 +155,8 @@ class ProjectSummary:
             project_tags=Tags.from_list(obj['project_tags']),
             owner_id=UserId.from_str(obj['owner_id']),
             visibility=Visibility.from_str(obj['visibility']),
+            created_at=DateTime.from_str(obj['created_at']),
+            updated_at=DateTime.from_str(obj['updated_at']),
         )
 
     def to_dict(self) -> dict:
@@ -163,6 +167,8 @@ class ProjectSummary:
             'project_tags': self.project_tags.to_list(),
             'owner_id': self.owner_id.to_str(),
             'visibility': self.visibility.to_str(),
+            'created_at': self.created_at.to_str(),
+            'updated_at': self.updated_at.to_str(),
         }
 
     def with_name(self, name: Name) -> 'ProjectSummary':

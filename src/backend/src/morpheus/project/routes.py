@@ -15,7 +15,7 @@ def register_routes(blueprint: Blueprint):
 
     @blueprint.route('', methods=['POST'])
     @blueprint.route('/', methods=['POST'])
-    @cross_origin()
+    @cross_origin(expose_headers='Location')
     @authenticate()
     @validate_request
     def create_project():
