@@ -34,6 +34,15 @@ make install
 make start-morpheus
 ```
 
+## Start Morpheus application development webserver against local Morpheus API and Identity Server
+
+Make sure you have the Morpheus API and Identity Server running locally.
+See the [README](../../README.md) for more information.
+
+```shell
+make start-morpheus-integration-local
+```
+
 ## Start Modflow Visualizer application development webserver with mocked api
 
 ```shell

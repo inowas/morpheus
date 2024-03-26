@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const AuthCallback = ({redirectTo}: IProps) => {
-  const {isAuthenticated, isLoading, signOut, error} = useAuthentication();
+  const {isAuthenticated, isLoading, signOutLocally, error} = useAuthentication();
   return (
     <Grid
       centered={true} verticalAlign="middle"
@@ -26,7 +26,7 @@ const AuthCallback = ({redirectTo}: IProps) => {
         {error &&
           <Header as="h2" textAlign="center">
             Error: {error.message}
-            <Button onClick={signOut}>Try again</Button>
+            <Button onClick={signOutLocally}>Try again</Button>
           </Header>
         }
 

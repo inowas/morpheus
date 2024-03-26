@@ -30,7 +30,7 @@ function git(command: string) {
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
     entry: {
-      morpheus: './src/morpheus/index.ts',
+      morpheus: './src/morpheus/index.tsx',
     },
     module: {
       rules: [
@@ -114,6 +114,10 @@ module.exports = (env: any, argv: any) => {
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
         GIT_RELEASE_DATE: git('log -1 --format=%aI'),
         MOCKSERVER_ENABLED: !!env.mockserver,
+        BASE_API_URL: env.BASE_API_URL,
+        KEYCLOAK_URL: env.KEYCLOAK_URL,
+        KEYCLOAK_REALM: env.KEYCLOAK_REALM,
+        KEYCLOAK_CLIENT_ID: env.KEYCLOAK_CLIENT_ID,
       }),
       new CopyPlugin({
         patterns: [{
