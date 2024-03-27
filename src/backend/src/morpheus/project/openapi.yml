@@ -116,42 +116,42 @@ paths:
           description: Not found
 
   /projects/{project_id}/preview_image:
-#      get:
-#        --> Platzhalter wenn kein Preview Image vorhanden ist
-#        --> ohne Authentifizierung vorerst WICHTIG: Ticket erstellen
+    #      get:
+    #        --> Platzhalter wenn kein Preview Image vorhanden ist
+    #        --> ohne Authentifizierung vorerst WICHTIG: Ticket erstellen
 
-      put:
-        tags:
-          - Project
-        summary: Upload a preview image for a project
-        description: Upload a preview image for a project
-        parameters:
-          - $ref: '#/components/parameters/ProjectId'
-        requestBody:
-          content:
-            multipart/form-data:
-              schema:
-                type: object
-                properties:
-                  file: {}
-                required:
-                  - file
-              encoding:
-                file:
-                  contentType: "image/jpeg, image/png"
-        responses:
-          201:
-            description: Asset was successfully uploaded
-          401:
-            $ref: '#/components/responses/UnauthorizedError'
-          403:
-            $ref: '#/components/responses/ForbiddenError'
-          413:
-            $ref: '#/components/responses/UploadedFileTooLarge'
-          422:
-            $ref: '#/components/responses/UnprocessableEntity'
-          500:
-            $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Project
+      summary: Upload a preview image for a project
+      description: Upload a preview image for a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { }
+              required:
+                - file
+            encoding:
+              file:
+                contentType: "image/jpeg, image/png"
+      responses:
+        201:
+          description: Asset was successfully uploaded
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        413:
+          $ref: '#/components/responses/UploadedFileTooLarge'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
 #      delete:
 #        ...
@@ -258,22 +258,16 @@ components:
           type: object
           description: "The grid properties of the model."
           properties:
-            x_coordinates:
-              type: array
-              description: "The distance along the x axis in percent."
-              example: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]
-              items:
-                type: number
-                minimum: 0
-                maximum: 1
-            y_coordinates:
-              type: array
-              description: "The distance along the y axis in percent."
-              example: [ 0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
-              items:
-                type: number
-                minimum: 0
-                maximum: 1
+            n_cols:
+              type: integer
+              description: "The number of columns of the grid."
+              example: 10
+              minimum: 1
+            n_rows:
+              type: integer
+              description: "The number of rows of the grid."
+              example: 10
+              minimum: 1
             rotation:
               type: number
               description: "The grid rotation angle in deg of the model."
@@ -285,8 +279,8 @@ components:
               enum: [ "meters", "centimeters", "feet", "unknown" ]
               example: "meters"
           required:
-            - x_coordinates
-            - y_coordinates
+            - n_cols
+            - n_rows
             - rotation
             - length_unit
 

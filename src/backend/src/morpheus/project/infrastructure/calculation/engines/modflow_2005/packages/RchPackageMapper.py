@@ -20,7 +20,7 @@ def calculate_rch_boundary_stress_period_data(
     rch_boundary: RechargeBoundary
 ) -> RchStressPeriodData:
     grid = spatial_discretization.grid
-    sp_data = RchStressPeriodData(nx=grid.n_col(), ny=grid.n_row())
+    sp_data = RchStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
 
     # first we need to calculate the mean values for each observation point and each stress period
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
@@ -58,7 +58,7 @@ def calculate_rch_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: Model) -> RchStressPeriodData | None:
     grid = model.spatial_discretization.grid
-    sp_data = RchStressPeriodData(nx=grid.n_col(), ny=grid.n_row())
+    sp_data = RchStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.recharge())
     for boundary in boundaries:
         if not isinstance(boundary, RechargeBoundary):
