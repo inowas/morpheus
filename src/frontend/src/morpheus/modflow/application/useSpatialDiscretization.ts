@@ -6,22 +6,15 @@ import {Polygon} from 'geojson';
 
 interface IUseSpatialDiscretization {
   spatialDiscretization: ISpatialDiscretization | null;
-  createSpatialDiscretization: (data: ISpatialDiscretizationPostRequest) => void;
   updateSpatialDiscretization: (data: ISpatialDiscretization) => void;
   loading: boolean;
   error: IError | null;
 }
 
-interface ICreateGrid {
+export interface ICreateGrid {
   n_cols: number;
   n_rows: number;
   rotation: number;
-  length_unit: ILengthUnit;
-}
-
-export interface ISpatialDiscretizationPostRequest {
-  geometry: Polygon;
-  grid: ICreateGrid;
   length_unit: ILengthUnit;
 }
 
@@ -35,14 +28,13 @@ type ISpatialDiscretizationGetResponse = ISpatialDiscretization;
 
 const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDiscretization => {
 
-  console.log('useSpatialDiscretization');
 
   const isMounted = useRef(true);
   const [spatialDiscretization, setSpatialDiscretization] = useState<ISpatialDiscretization | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
-  const {httpGet, httpPost, httpPut} = useApi();
+  const {httpGet, httpPut} = useApi();
 
   const fetchSpatialDiscretization = async () => {
     if (!isMounted.current) {
@@ -51,8 +43,6 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     setLoading(true);
     setError(null);
     const result = await httpGet<ISpatialDiscretizationGetResponse>(`/projects/${projectId}/model/spatial-discretization`);
-
-    console.log('result', result);
 
     if (!isMounted.current) {
       return;
@@ -67,32 +57,6 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     }
 
     if (result.err && 404 !== result.val.code) {
-      setError({
-        message: result.val.message,
-        code: result.val.code,
-      });
-    }
-
-    setLoading(false);
-  };
-
-  const createSpatialDiscretization = async (data: ISpatialDiscretizationPostRequest) => {
-    if (!isMounted.current) {
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    const result = await httpPost<ISpatialDiscretizationPostRequest>(`/projects/${projectId}/model/spatial-discretization`, data);
-
-    if (!isMounted.current) {
-      return;
-    }
-
-    if (result.ok) {
-      fetchSpatialDiscretization();
-    }
-
-    if (result.err) {
       setError({
         message: result.val.message,
         code: result.val.code,
@@ -147,7 +111,6 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
 
   return {
     spatialDiscretization,
-    createSpatialDiscretization,
     updateSpatialDiscretization,
     loading,
     error,
