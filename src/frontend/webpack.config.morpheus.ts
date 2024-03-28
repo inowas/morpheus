@@ -30,7 +30,7 @@ function git(command: string) {
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
     entry: {
-      morpheus: './src/morpheus/index.ts',
+      morpheus: './src/morpheus/index.tsx',
     },
     module: {
       rules: [

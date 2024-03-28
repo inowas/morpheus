@@ -8,7 +8,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  //  min-height: 100%;
 }
 
 // helpers
@@ -22,7 +21,6 @@ body {
 }
 
 .dateInputWrapper {
-
   .divider {
     display: flex;
     align-items: center;
@@ -31,6 +29,24 @@ body {
   .dateIcon {
     margin: 0 0 0 5px;
     height: 100%;
+  }
+
+  &.datePicker {
+
+    @media (min-width: @breakpoint-mobile-horizontal) {
+      .rowTwoColumns:first-child {
+        .react-datepicker-popper {
+          padding-left: 50px;
+        }
+      }
+
+      .rowTwoColumns:last-child {
+        .react-datepicker-popper {
+          padding-right: 50px;
+        }
+      }
+    }
+
   }
 }
 

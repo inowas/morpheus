@@ -16,25 +16,95 @@ interface IUseProjectSummaries {
   error: IError | null;
 }
 
-interface IFilterParams {
+export interface IFilterParams {
   my_projects?: boolean;
   my_groups?: boolean;
   users?: string[];
   is_public?: boolean;
   status?: string[];
   date_range?: {
+    timestamp?: string;
     start?: string;
     end?: string;
   };
   number_of_grid_cells?: number;
   number_of_stress_periods?: number;
   number_of_layers?: number;
+  boundary_conditions?: string[];
   additional_features?: string[];
   tags?: string[];
   geolocation?: {
     type: 'Rectangle';
     coordinates: number[];
   };
+}
+
+export interface IFilterOptions {
+  number_of_my_projects: number;
+  number_of_my_group_projects: number;
+  users: IUserSummary[];
+  by_status: {
+    green: number;
+    yellow: number;
+    red: number;
+  },
+  by_date: {
+    created_at: {
+      start_date: string
+      end_date: string
+    },
+    updated_at: {
+      start_date: string
+      end_date: string
+    },
+    model_date: {
+      start_date: string
+      end_date: string
+    }
+  },
+  boundary_conditions: {
+    CHD: number,
+    FHB: number,
+    WEL: number,
+    RCH: number,
+    RIV: number,
+    GHB: number,
+    EVT: number,
+    DRN: number,
+    NB: number,
+  }
+  additional_features: {
+    soluteTransportMT3DMS: number,
+    dualDensityFlowSEAWAT: number,
+    realTimeSensors: number,
+    modelsWithScenarios: number,
+  },
+  number_of_grid_cells: {
+    min: number,
+    max: number,
+    step: number,
+  }
+  number_of_stress_periods: {
+    min: number,
+    max: number,
+    step: number,
+  }
+  number_of_layers: {
+    min: number,
+    max: number,
+    step: number,
+  }
+  tags: ITags;
+}
+
+export interface IUserSummary {
+  user_id: string;
+  unsername: string;
+  count?: number
+}
+
+export interface ITags {
+  [tagName: string]: number;
 }
 
 
@@ -73,12 +143,15 @@ const useProjectList = (): IUseProjectSummaries => {
   const filteredProjects = useMemo(() => {
 
     let newListOfProjects: IProjectListItem[] = projects.filter((project) => {
-      if (filter.my_projects && project.owner_id === myUserId) {
+
+      if (filter.my_projects && project.owner_id !== myUserId) {
         return false;
       }
+
       if (filter.users && !filter.users.includes(project.owner_id)) {
         return false;
       }
+
       if (filter.is_public && !project.is_public) {
         return false;
       }

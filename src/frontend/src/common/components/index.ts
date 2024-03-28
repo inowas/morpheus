@@ -2,6 +2,7 @@ import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
 import {DataGrid, DataRow} from './DataGrid';
+import DatePicker from './DatePicker';
 import DotsMenu, {IAction} from './DotsMenu';
 import Icon, {IIconProps} from './Icon/Icon';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
@@ -42,7 +43,6 @@ import Notifications from './Notifications/Notifications';
 import Page from './PageContainer/Page';
 import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
-import ProjectsFilter from './ProjectsFilter';
 import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
@@ -64,6 +64,7 @@ export {
   Container,
   ContentWrapper,
   DataGrid,
+  DatePicker,
   DataRow,
   Divider,
   DotsMenu,
@@ -94,7 +95,6 @@ export {
   Pagination,
   Popup,
   Progress,
-  ProjectsFilter,
   RandomImage,
   SectionTitle,
   Segment,

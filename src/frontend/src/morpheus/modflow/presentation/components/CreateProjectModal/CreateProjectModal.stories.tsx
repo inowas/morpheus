@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Meta, StoryFn } from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 
 import CreateProjectModal from './CreateProjectModal';
 import React from 'react';
-import { Button } from '../../../../../common/components';
+import {Button} from '../../../../../common/components';
 
 export default {
   /* 👇 The title prop is optional.
@@ -24,9 +24,14 @@ export const CreateProjectModalExample: StoryFn<
   };
 
   return (
-    <div style={{ padding: 100 }}>
+    <div style={{padding: 100}}>
       <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
-      <CreateProjectModal isOpen={isOpen} onCancel={onClose} />
+      <CreateProjectModal
+        open={isOpen}
+        onCancel={onClose}
+        loading={false}
+        onSubmit={() => console.log('Submit')}
+      />
     </div>
   );
 };
