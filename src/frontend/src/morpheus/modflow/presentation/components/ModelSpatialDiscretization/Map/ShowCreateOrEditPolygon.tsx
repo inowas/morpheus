@@ -19,13 +19,24 @@ const ShowCreateOrEditPolygon = ({polygon, onChange, editable}: Props) => {
 
 
   const handleChange = () => {
-    const layer = ref.current.getLayers().find((l) => l instanceof L.Polygon);
+
+    const layers = ref.current.getLayers();
+    if (0 === layers.length) {
+      return;
+    }
+
+    if (1 < layers.length) {
+      throw new Error('More than one layer in FeatureGroup');
+    }
+
+    const featureGroup = layers[0] as L.FeatureGroup;
+    const layer = featureGroup.getLayers()[0];
     if (layer instanceof L.Polygon) {
       const feature = layer.toGeoJSON();
       if (feature.geometry && 'Polygon' === feature.geometry.type) {
+        console.log(feature.geometry as Polygon);
         onChange(feature.geometry as Polygon);
         map.fitBounds(layer.getBounds());
-        ref.current.clearLayers();
       }
     }
   };
@@ -60,15 +71,7 @@ const ShowCreateOrEditPolygon = ({polygon, onChange, editable}: Props) => {
         }}
         onMount={() => L.PM.setOptIn(false)}
         onUnmount={() => L.PM.setOptIn(false)}
-        eventDebugFn={console.log}
-        onCreate={handleChange}
-        onChange={handleChange}
         onUpdate={handleChange}
-        onEdit={handleChange}
-        onMapRemove={handleChange}
-        onMapCut={handleChange}
-        onDragEnd={handleChange}
-        onMarkerDragEnd={handleChange}
       />}
       {polygon && <GeoJSON data={polygon}/>}
     </FeatureGroup>

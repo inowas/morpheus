@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Accordion, AccordionPanelProps, Form, Icon, Input, Label, TabPane} from 'semantic-ui-react';
 import {Button, DataGrid, InfoTitle, SectionTitle, Tab} from 'common/components';
 import Slider from 'common/components/Slider/SimpleSlider';
@@ -10,37 +10,11 @@ interface IProps {
   grid: IGrid;
   onChange: (data: IGrid) => void;
   onEditDomainClick: () => void;
-  locked: boolean;
-  loading: boolean;
+  readOnly: boolean;
   onChangeLock: (locked: boolean) => void;
 }
 
-interface IGridProperties {
-  n_col: number;
-  n_row: number;
-  rotation: number;
-}
-
-const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked, onChangeLock, loading}: IProps) => {
-
-  const [gridProperties, setGridProperties] = useState<IGridProperties>({
-    n_col: grid.n_cols,
-    n_row: grid.n_rows,
-    rotation: grid.rotation,
-  });
-
-  useEffect(() => {
-    setGridProperties({
-      n_col: grid.n_cols,
-      n_row: grid.n_rows,
-      rotation: grid.rotation,
-    });
-  }, [grid]);
-
-  const handleRotationChange = (newValue: number | number[]) => {
-    const newRotation = Array.isArray(newValue) ? newValue[0] : newValue;
-    setGridProperties({...gridProperties, rotation: newRotation});
-  };
+const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, readOnly, onChangeLock}: IProps) => {
 
   const renderGridPropertiesTab = () => {
     return (
@@ -52,10 +26,10 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
               Rows
             </Label>
             <Input
-              disabled={locked}
+              disabled={readOnly}
               type="number"
-              defaultValue={gridProperties.n_row}
-              onChange={(e) => setGridProperties({...gridProperties, n_row: parseInt(e.target.value)})}
+              defaultValue={grid.n_rows}
+              onChange={(e) => onChange({...grid, n_rows: parseInt(e.target.value)})}
               step={0}
             />
           </Form.Field>
@@ -65,10 +39,10 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
               Columns
             </Label>
             <Input
-              disabled={locked}
+              disabled={readOnly}
               type="number"
-              defaultValue={gridProperties.n_col}
-              onChange={(e) => setGridProperties({...gridProperties, n_col: parseInt(e.target.value)})}
+              defaultValue={grid.n_cols}
+              onChange={(e) => onChange({...grid, n_cols: parseInt(e.target.value)})}
               step={0}
             />
           </Form.Field>
@@ -80,7 +54,7 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
             <Input
               disabled={true}
               type="number"
-              value={(grid.total_height / gridProperties.n_row).toFixed(1)}
+              value={(grid.total_height / grid.n_rows).toFixed(1)}
               step={0.1}
             />
           </Form.Field>
@@ -91,7 +65,7 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
             </Label>
             <Input
               disabled={true}
-              value={(grid.total_width / gridProperties.n_col).toFixed(1)}
+              value={(grid.total_width / grid.n_cols).toFixed(1)}
             />
           </Form.Field>
         </DataGrid>
@@ -103,22 +77,22 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
                 Rotation angle (°)
               </Label>
               <Input
-                disabled={locked}
+                disabled={readOnly}
                 name="rotationAngle"
                 type="number"
-                value={gridProperties.rotation}
-                onChange={(e) => handleRotationChange(parseInt(e.target.value))}
+                value={grid.rotation}
+                onChange={(e) => onChange({...grid, rotation: parseInt(e.target.value)})}
                 step={1}
               />
             </div>
             <Slider
-              disabled={locked}
+              disabled={readOnly}
               className="fieldSlider"
               min={-90}
               max={90}
               step={1}
-              value={gridProperties.rotation}
-              onChange={handleRotationChange}
+              value={grid.rotation}
+              onChange={(value) => onChange({...grid, rotation: value as number})}
             />
           </div>
         </DataGrid>
@@ -139,14 +113,14 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
           <InfoTitle
             title={'Upload file'}
             secondary={true}
-            isLocked={locked}
+            isLocked={readOnly}
             actions={[
               {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: onEditDomainClick},
               {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
             ]}
           />
           <Button
-            disabled={locked}
+            disabled={readOnly}
             size={'tiny'}
           >Choose file</Button>
         </>
@@ -175,11 +149,11 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
               menuItem: 'Upload file',
               render: () => <TabPane attached={false}>
                 <Button
-                  disabled={locked}
+                  disabled={readOnly}
                   size={'tiny'}
                 >Choose file</Button>
                 <Button
-                  disabled={locked}
+                  disabled={readOnly}
                   className='buttonLink'
                 >
                     Download template <FontAwesomeIcon icon={faDownload}/></Button>
@@ -190,48 +164,22 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked
       ),
     },
   }];
-
   return (
-    <>
-      <DataGrid>
-        <SectionTitle
-          title={'Model Geometry'}
-          faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-          faIconText={locked ? 'Locked' : 'Unlocked'}
-          faIconOnClick={() => {
-            onChangeLock(!locked);
-          }}
-        />
-        <Accordion
-          defaultActiveIndex={[0, 1]}
-          panels={panels}
-          exclusive={false}
-        />
-      </DataGrid>
-      <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
-        <Button
-          style={{marginLeft: 'auto'}}
-          size={'tiny'}
-          disabled={locked}
-          onClick={() => setGridProperties({
-            n_col: grid.n_cols,
-            n_row: grid.n_rows,
-            rotation: grid.rotation,
-          })}
-        >
-          {'Reset'}
-        </Button>
-        <Button
-          primary={true}
-          size={'tiny'}
-          disabled={locked || gridProperties.n_col === grid.n_cols && gridProperties.n_row === grid.n_rows && gridProperties.rotation === grid.rotation}
-          onClick={() => onChange({...grid, ...gridProperties})}
-          loading={loading}
-        >
-          {'Apply'}
-        </Button>
-      </DataGrid>
-    </>
+    <DataGrid>
+      <SectionTitle
+        title={'Model Geometry'}
+        faIcon={<FontAwesomeIcon icon={readOnly ? faLock : faUnlock}/>}
+        faIconText={readOnly ? 'Locked' : 'Unlocked'}
+        faIconOnClick={() => {
+          onChangeLock(!readOnly);
+        }}
+      />
+      <Accordion
+        defaultActiveIndex={[0, 1]}
+        panels={panels}
+        exclusive={false}
+      />
+    </DataGrid>
   );
 };
 
