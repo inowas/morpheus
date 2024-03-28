@@ -176,6 +176,17 @@ class Grid:
             'length_unit': self.length_unit.to_value(),
         }
 
+    def with_updated_geometry(self, polygon: Polygon, preserve_absolute_coordinates: bool = False):
+        if preserve_absolute_coordinates:
+            raise NotImplementedError('Resize Grid with Flag preserve_absolute_coordinates set to True is not implemented  yet!')
+
+        return Grid.from_polygon_with_relative_coordinates(
+            polygon=polygon,
+            rotation=self.rotation,
+            relative_col_coordinates=self.col_coordinates_relative(),
+            relative_row_coordinates=self.row_coordinates_relative()
+        )
+
     def n_cols(self):
         return len(self.col_widths)
 
@@ -188,11 +199,19 @@ class Grid:
             col_coordinates.append(col_coordinates[-1] + del_col_absolute)
         return col_coordinates
 
+    def col_coordinates_relative(self):
+        col_coordinates = self.col_coordinates()
+        return [col_coordinates[i] / self.total_width for i in range(len(col_coordinates))]
+
     def row_coordinates(self):
         row_coordinates: list[float] = [0.0]
         for del_row_absolute in self.row_heights:
             row_coordinates.append(row_coordinates[-1] + del_row_absolute)
         return row_coordinates
+
+    def row_coordinates_relative(self):
+        row_coordinates = self.row_coordinates()
+        return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
     def get_cell_centers(self) -> list[list[Point]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()

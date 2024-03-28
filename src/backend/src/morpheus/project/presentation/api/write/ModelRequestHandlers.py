@@ -1,8 +1,9 @@
 import dataclasses
-from typing import TypedDict, Literal, Sequence, NotRequired
+from typing import TypedDict, Literal, Sequence, Optional
 from flask import Request, abort, Response
 
-from ....application.write.ModelCommandHandlers import CreateModelCommand, CreateModelCommandHandler, UpdateModelTimeDiscretizationCommand, UpdateTimeDiscretizationCommandHandler
+from ....application.write.ModelCommandHandlers import CreateModelCommand, CreateModelCommandHandler, UpdateModelTimeDiscretizationCommand, \
+    UpdateTimeDiscretizationCommandHandler, UpdateModelGeometryCommand, UpdateModelGeometryCommandHandler, UpdateModelGridCommand, UpdateModelGridCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Model import ModelId
 from ....types.discretization import TimeDiscretization
@@ -67,16 +68,99 @@ class CreateModelRequestHandler:
         return Response(status=201, headers={'location': f'projects/{project_id}/model'})
 
 
-class UpdateGridDict(TypedDict):
+@dataclasses.dataclass
+class UpdateSpatialDiscretizationGeometryRequest:
+    geometry: PolygonDict
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            geometry=obj['geometry'],
+        )
+
+
+class UpdateSpatialDiscretizationGeometryRequestHandler:
+    @staticmethod
+    def handle(request: Request, project_id_parameter: str):
+        if not request.is_json:
+            abort(400, 'Request body must be JSON')
+
+        user_id = get_logged_in_user_id()
+        if user_id is None:
+            abort(401, 'Unauthorized')
+
+        project_id = ProjectId.from_str(project_id_parameter)
+        update_spatial_discretization_geometry_request = UpdateSpatialDiscretizationGeometryRequest.from_dict(obj=request.json)
+        geometry = Polygon.from_dict({
+            'type': update_spatial_discretization_geometry_request.geometry['type'],
+            'coordinates': update_spatial_discretization_geometry_request.geometry['coordinates']
+        })
+
+        command = UpdateModelGeometryCommand(
+            project_id=project_id,
+            geometry=geometry,
+            updated_by=UserId.from_value(user_id),
+        )
+
+        UpdateModelGeometryCommandHandler.handle(command=command)
+        return Response(status=204)
+
+
+@dataclasses.dataclass
+class UpdateSpatialDiscretizationGridRequest:
     n_cols: int
     n_rows: int
-    origin: Point
-    col_widths: NotRequired[list[float]]  # optional
-    total_width: NotRequired[float]  # optional
-    row_heights: NotRequired[list[float]]  # optional
-    total_height: NotRequired[float]  # optional
-    rotation: NotRequired[float]  # optional
-    length_unit: NotRequired[Literal["meters", "centimeters", "feet", "unknown"]]  # optional
+    origin: Optional[Point] = None  # optional
+    col_widths: Optional[list[float]] = None  # optional
+    total_width: Optional[float] = None  # optional
+    row_heights: Optional[list[float]] = None  # optional
+    total_height: Optional[float] = None  # optional
+    rotation: Optional[float] = None  # optional
+    length_unit: Optional[Literal["meters", "centimeters", "feet", "unknown"]] = None  # optional
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            n_cols=obj['n_cols'],
+            n_rows=obj['n_rows'],
+            origin=Point.from_dict(obj['origin']) if 'origin' in obj else None,
+            col_widths=obj.get('col_widths') if 'col_widths' in obj else None,
+            total_width=obj.get('total_width') if 'total_width' in obj else None,
+            row_heights=obj.get('row_heights') if 'row_heights' in obj else None,
+            total_height=obj.get('total_height') if 'total_height' in obj else None,
+            rotation=obj.get('rotation') if 'rotation' in obj else None,
+            length_unit=obj.get('length_unit') if 'length_unit' in obj else None
+        )
+
+
+class UpdateSpatialDiscretizationGridRequestHandler:
+    @staticmethod
+    def handle(request: Request, project_id_parameter: str):
+        if not request.is_json:
+            abort(400, 'Request body must be JSON')
+
+        user_id = get_logged_in_user_id()
+        if user_id is None:
+            abort(401, 'Unauthorized')
+
+        project_id = ProjectId.from_str(project_id_parameter)
+        update_spatial_discretization = UpdateSpatialDiscretizationGridRequest.from_dict(obj=request.json)
+        command = UpdateModelGridCommand(
+            project_id=project_id,
+            n_cols=update_spatial_discretization.n_cols,
+            n_rows=update_spatial_discretization.n_rows,
+            origin=update_spatial_discretization.origin,
+            col_widths=update_spatial_discretization.col_widths,
+            total_width=update_spatial_discretization.total_width,
+            row_heights=update_spatial_discretization.row_heights,
+            total_height=update_spatial_discretization.total_height,
+            rotation=update_spatial_discretization.rotation,
+            length_unit=update_spatial_discretization.length_unit,
+            updated_by=UserId.from_value(user_id),
+        )
+
+        UpdateModelGridCommandHandler.handle(command=command)
+        return Response(status=204)
 
 
 class StressPeriod(TypedDict, total=True):

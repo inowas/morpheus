@@ -1,5 +1,5 @@
 import dataclasses
-from typing import TypedDict, NotRequired, Literal
+from typing import TypedDict, Literal, Optional
 
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
@@ -9,7 +9,7 @@ from ..read.ModelReader import ModelReader
 from ..read.PermissionsReader import PermissionsReader
 from ...domain.events.ModelEvents import ModelAffectedCellsRecalculatedEvent, ModelAffectedCellsUpdatedEvent, ModelCreatedEvent, \
     ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDeletedEvent, \
-    VersionDescriptionUpdatedEvent
+    VersionDescriptionUpdatedEvent, ModelGridRecalculatedEvent
 from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from ...types.ModelVersion import ModelVersion, VersionTag, VersionDescription, VersionId
 from ...types.Project import ProjectId
@@ -103,7 +103,13 @@ class UpdateModelGeometryCommandHandler:
         model = model_reader.get_latest_model(project_id=project_id)
 
         new_geometry = command.geometry
-        new_affected_cells = ActiveCells.from_polygon(polygon=command.geometry, grid=model.spatial_discretization.grid)
+        new_grid = model.spatial_discretization.grid.with_updated_geometry(new_geometry)
+        new_affected_cells = ActiveCells.from_polygon(polygon=command.geometry, grid=new_grid)
+
+        event = ModelGridRecalculatedEvent.from_grid(project_id=project_id, grid=new_grid, occurred_at=DateTime.now())
+        event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
+        event_envelope = EventEnvelope(event=event, metadata=event_metadata)
+        project_event_bus.record(event_envelope=event_envelope)
 
         event = ModelGeometryUpdatedEvent.from_geometry(project_id=project_id, polygon=new_geometry, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(current_user_id.to_str()))
@@ -116,23 +122,19 @@ class UpdateModelGeometryCommandHandler:
         project_event_bus.record(event_envelope=event_envelope)
 
 
-class UpdateGridProperties(TypedDict):
-    n_cols: int
-    n_rows: int
-    origin: Point
-    col_widths: NotRequired[list[float]]  # optional
-    total_width: NotRequired[float]  # optional
-    row_heights: NotRequired[list[float]]  # optional
-    total_height: NotRequired[float]  # optional
-    rotation: NotRequired[float]  # optional
-    length_unit: NotRequired[Literal["meters", "centimeters", "feet", "unknown"]]  # optional
-
-
 @dataclasses.dataclass(frozen=True)
 class UpdateModelGridCommand:
     project_id: ProjectId
-    update_grid: UpdateGridProperties
     updated_by: UserId
+    n_cols: int
+    n_rows: int
+    origin: Optional[Point] = None
+    col_widths: Optional[list[float]] = None
+    total_width: Optional[float] = None
+    row_heights: Optional[list[float]] = None
+    total_height: Optional[float] = None
+    rotation: Optional[float] = None
+    length_unit: Optional[Literal["meters", "centimeters", "feet", "unknown"]] = None
 
 
 class UpdateModelGridCommandHandler:
@@ -149,10 +151,8 @@ class UpdateModelGridCommandHandler:
         if current_grid is None:
             raise ValueError('The grid must be created before it can be updated')
 
-        rotation = current_grid.rotation
-
-        n_cols = command.update_grid.get('n_cols')
-        n_rows = command.update_grid.get('n_rows')
+        n_cols = command.n_cols
+        n_rows = command.n_rows
 
         relative_col_coordinates = [1 / n_cols * i for i in range(n_cols)]
         relative_col_coordinates.append(1.0)
@@ -160,8 +160,8 @@ class UpdateModelGridCommandHandler:
         relative_row_coordinates = [1 / n_rows * i for i in range(n_rows)]
         relative_row_coordinates.append(1.0)
 
-        col_widths = command.update_grid.get('col_widths', None)
-        total_width = command.update_grid.get('total_width', None)
+        col_widths = command.col_widths
+        total_width = command.total_width
 
         if col_widths is not None:
             if len(col_widths) != n_cols:
@@ -174,8 +174,8 @@ class UpdateModelGridCommandHandler:
                 relative_col_coordinates = [sum(col_widths[:i]) / total_width for i in range(n_cols)]
                 relative_col_coordinates.append(1.0)
 
-        row_heights = command.update_grid.get('row_heights', None)
-        total_height = command.update_grid.get('total_height', None)
+        row_heights = command.row_heights
+        total_height = command.total_height
 
         if row_heights is not None:
             if len(row_heights) != n_rows:
@@ -187,6 +187,8 @@ class UpdateModelGridCommandHandler:
             if row_heights and total_height:
                 relative_row_coordinates = [sum(row_heights[:i]) / total_height for i in range(n_rows)]
                 relative_row_coordinates.append(1.0)
+
+        rotation = Rotation.from_float(command.rotation) if command.rotation is not None else current_grid.rotation
 
         if not permissions.member_can_edit(user_id=current_user_id):
             raise InsufficientPermissionsException(f'User {current_user_id.to_str()} does not have permission to update the grid of {project_id.to_str()}')

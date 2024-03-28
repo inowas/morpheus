@@ -6,8 +6,8 @@ class Rotation(float):
     value: float
 
     def __init__(self, value: float):
-        if value < 0 or value > 90:
-            raise ValueError('Rotation must be between 0 and 90')
+        if value < -90 or value > 90:
+            raise ValueError('Rotation must be between -90 and 90')
         self.value = value
 
     @classmethod

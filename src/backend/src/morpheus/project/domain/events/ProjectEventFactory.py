@@ -3,7 +3,8 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 from ...domain.events.ProjectEventName import ProjectEventName
 
 from ...domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDeletedEvent, VersionDescriptionUpdatedEvent, \
-    ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent
+    ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent, \
+    ModelGridRecalculatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
 from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
 
@@ -18,6 +19,8 @@ class ProjectEventFactory:
             return ModelCreatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_GEOMETRY_UPDATED:
             return ModelGeometryUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.MODEL_GRID_RECALCULATED:
+            return ModelGridRecalculatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_GRID_UPDATED:
             return ModelGridUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_TIME_DISCRETIZATION_UPDATED:
