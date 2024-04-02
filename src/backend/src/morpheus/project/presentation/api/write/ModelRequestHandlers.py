@@ -1,9 +1,8 @@
 import dataclasses
-from typing import TypedDict, Literal, Sequence
-from flask import Request, abort, jsonify
+from typing import TypedDict, Literal, Sequence, NotRequired
+from flask import Request, abort, Response
 
-from ....application.write.ModelCommandHandlers import CreateModelCommand, CreateModelCommandHandler, \
-    CreateGridDict, UpdateModelTimeDiscretizationCommand, UpdateTimeDiscretizationCommandHandler
+from ....application.write.ModelCommandHandlers import CreateModelCommand, CreateModelCommandHandler, UpdateModelTimeDiscretizationCommand, UpdateTimeDiscretizationCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Model import ModelId
 from ....types.discretization import TimeDiscretization
@@ -13,11 +12,19 @@ from ....types.Project import ProjectId
 from ....types.User import UserId
 from ....types.discretization.time.Stressperiods import StartDateTime, EndDateTime, StressPeriodCollection
 from ....types.discretization.time.TimeUnit import TimeUnit
+from ....types.geometry import Point
 
 
 class PolygonDict(TypedDict, total=True):
     type: str
     coordinates: list[list[list[float]]]
+
+
+class CreateGridDict(TypedDict, total=True):
+    n_cols: int
+    n_rows: int
+    rotation: float
+    length_unit: Literal["meters", "centimeters", "feet", "unknown"]
 
 
 @dataclasses.dataclass
@@ -44,7 +51,7 @@ class CreateModelRequestHandler:
             abort(401, 'Unauthorized')
 
         create_model_request = CreateModelRequest.from_dict(obj=request.json)
-        geometry = Polygon.from_dict(create_model_request.geometry.__dict__)
+        geometry = Polygon.from_dict(dict(create_model_request.geometry))
         grid_properties = create_model_request.grid_properties
 
         command = CreateModelCommand(
@@ -56,11 +63,20 @@ class CreateModelRequestHandler:
         )
 
         CreateModelCommandHandler.handle(command=command)
-        response = jsonify()
-        response.status_code = 201
-        response.headers['location'] = f'projects/{command.project_id.to_str()}/model'
 
-        return response
+        return Response(status=201, headers={'location': f'projects/{project_id}/model'})
+
+
+class UpdateGridDict(TypedDict):
+    n_cols: int
+    n_rows: int
+    origin: Point
+    col_widths: NotRequired[list[float]]  # optional
+    total_width: NotRequired[float]  # optional
+    row_heights: NotRequired[list[float]]  # optional
+    total_height: NotRequired[float]  # optional
+    rotation: NotRequired[float]  # optional
+    length_unit: NotRequired[Literal["meters", "centimeters", "feet", "unknown"]]  # optional
 
 
 class StressPeriod(TypedDict, total=True):

@@ -1,78 +1,206 @@
 import React from 'react';
 import {
-  faArrowUpRightFromSquare,
   faBarsStaggered,
   faBorderAll,
   faChartLine,
   faChartSimple,
   faCircle,
   faClock,
-  faCodeCompare,
   faCompress,
   faDatabase,
-  faDownLeftAndUpRightToCenter,
-  faDownload,
   faFlag,
   faFolder,
-  faFolderOpen,
-  faImage,
-  faInfo,
   faLayerGroup,
   faLocationCrosshairs,
   faMap,
-  faNoteSticky,
   faPenToSquare,
   faSliders,
   faSquareCheck,
-  faTimeline,
 } from '@fortawesome/free-solid-svg-icons';
-
-import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
 
 import LayersContainer from '../containers/LayersContainer';
 import ProjectMetadataContainer from '../containers/ProjectMetadataContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
-import TestingContainer from '../containers/TestingContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
+import ModelSetupContainer from '../containers/ModelSetupContainer';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 export interface IMenuItem {
-  icon: IconDefinition;
-  description: string;
+  icon: React.ReactNode;
+  name: string;
+  isTitle: boolean;
   slug: string;
-  title?: boolean;
-  active: boolean;
-  disabled?: boolean;
   component?: React.ReactNode;
 }
 
 const sidebarItems: IMenuItem[] = [
-  {icon: faPenToSquare, description: 'Setup', title: true, active: false, slug: 'setup'},
-  {icon: faBorderAll, description: 'Grid properties', active: true, slug: 'spatial-discretization', component: <SpatialDiscretizationContainer/>},
-  {icon: faClock, description: 'Stress periods', active: false, slug: 'time-discretization', component: <TimeDiscretizationContainer/>},
-  {icon: faLayerGroup, description: 'Model layers', active: false, slug: 'layers', component: <LayersContainer/>},
-  {icon: faFlag, description: 'Boundary conditions', active: false, slug: 'boundary-conditions'},
-  {icon: faLocationCrosshairs, description: 'Head observations', active: false, slug: 'head-observations'},
-  {icon: faCompress, description: 'Solute transport', active: false, slug: 'solute-transport'},
-  {icon: faBarsStaggered, description: 'Variable density flow', active: false, slug: 'variable-density-flow'},
-  {icon: faDatabase, description: 'Project Metadata', active: false, slug: 'meta-data', component: <ProjectMetadataContainer/>},
-  {icon: faInfo, description: 'Testing', active: false, slug: 'test', component: <TestingContainer/>},
-  {icon: faSliders, description: 'PACKAGES', title: true, active: false, slug: 'packages'},
-  {icon: faFolder, description: 'MODFLOW packages', active: false, slug: 'modflow-packages'},
-  {icon: faCompress, description: 'MT3DMS packages', disabled: true, active: false, slug: 'mt3dms-packages'},
-  {icon: faBarsStaggered, description: 'SEAWAT packages', disabled: true, active: false, slug: 'seawat-packages'},
-  {icon: faSquareCheck, description: 'RESULTS', title: true, active: false, slug: 'results'},
-  {icon: faMap, description: 'Groundwater heads', active: false, slug: 'groundwater-heads'},
-  {icon: faChartSimple, description: 'Budget', active: false, slug: 'budget'},
-  {icon: faCircle, description: 'Concentration', disabled: true, active: false, slug: 'concentration'},
-  {icon: faChartLine, description: 'Calibration statistics', active: false, slug: 'calibration-statistics'},
-  {icon: faFolderOpen, description: 'SCENARIOS', title: true, active: false, slug: 'scenarios'},
-  {icon: faCodeCompare, description: 'Scenarios comparison', active: false, slug: 'scenarios-comparison'},
-  {icon: faDownLeftAndUpRightToCenter, description: 'Scenarios difference', active: false, slug: 'scenarios-difference'},
-  {icon: faTimeline, description: 'Scenarios time series', active: false, slug: 'scenarios-time-series'},
-  {icon: faArrowUpRightFromSquare, description: 'EXPORT', title: true, active: false, slug: 'export'},
-  {icon: faNoteSticky, description: 'Export model (JSON)', active: false, slug: 'export-model-json'},
-  {icon: faImage, description: 'Export model results', active: false, slug: 'export-model-results'},
-  {icon: faDownload, description: 'Download MODFLOW files', active: false, slug: 'download-modflow-files'},
+  {
+    name: 'Setup',
+    slug: 'setup',
+    icon: <FontAwesomeIcon icon={faPenToSquare}/>,
+    isTitle: true,
+    component: <ModelSetupContainer/>,
+  },
+  {
+    name: 'Grid properties',
+    slug: 'spatial-discretization',
+    icon: <FontAwesomeIcon icon={faBorderAll}/>,
+    isTitle: false,
+    component: <SpatialDiscretizationContainer/>,
+  },
+  {
+    icon: <FontAwesomeIcon icon={faClock}/>,
+    name: 'Stress periods',
+    isTitle: false,
+    slug: 'time-discretization',
+    component: <TimeDiscretizationContainer/>,
+  },
+  {
+    icon: <FontAwesomeIcon icon={faLayerGroup}/>,
+    name: 'Model layers',
+    isTitle: false,
+    slug: 'layers',
+    component: <LayersContainer/>,
+  },
+  {
+    icon: <FontAwesomeIcon icon={faFlag}/>,
+    name: 'Boundary conditions',
+    isTitle: false,
+    slug: 'boundary-conditions',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faLocationCrosshairs}/>,
+    name: 'Head observations',
+    isTitle: false,
+    slug: 'head-observations',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faCompress}/>,
+    name: 'Solute transport',
+    isTitle: false,
+    slug: 'solute-transport',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faBarsStaggered}/>,
+    name: 'Variable density flow',
+    isTitle: false,
+    slug: 'variable-density-flow',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faDatabase}/>,
+    name: 'Project Metadata',
+    isTitle: false,
+    slug: 'meta-data',
+    component: <ProjectMetadataContainer/>,
+  },
+  // {
+  //   icon: <FontAwesomeIcon icon={faInfo}/>,
+  //   name: 'Testing',
+  //   isTitle: false,
+  //   slug: 'test',
+  //   component: <TestingContainer/>,
+  // },
+  {
+    icon: <FontAwesomeIcon icon={faSliders}/>,
+    name: 'PACKAGES',
+    isTitle: true,
+    slug: 'packages',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faFolder}/>,
+    name: 'MODFLOW packages',
+    isTitle: false,
+    slug: 'modflow-packages',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faCompress}/>,
+    name: 'MT3DMS packages',
+    isTitle: false,
+    slug: 'mt3dms-packages',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faBarsStaggered}/>,
+    name: 'SEAWAT packages',
+    isTitle: false,
+    slug: 'seawat-packages',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faSquareCheck}/>,
+    name: 'RESULTS',
+    isTitle: true,
+    slug: 'results',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faMap}/>,
+    name: 'Groundwater heads',
+    isTitle: false,
+    slug: 'groundwater-heads',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faChartSimple}/>,
+    name: 'Budget',
+    isTitle: false,
+    slug: 'budget',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faCircle}/>,
+    name: 'Concentration',
+    isTitle: false,
+    slug: 'concentration',
+  },
+  {
+    icon: <FontAwesomeIcon icon={faChartLine}/>,
+    name: 'Calibration statistics',
+    isTitle: false,
+    slug: 'calibration-statistics',
+  },
+  // {
+  //   icon: <FontAwesomeIcon icon={faFolderOpen}/>,
+  //   name: 'SCENARIOS',
+  //   isTitle: true,
+  //   slug: 'scenarios',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faCodeCompare}/>,
+  //   name: 'Scenarios comparison',
+  //   isTitle: false,
+  //   slug: 'scenarios-comparison',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter}/>,
+  //   name: 'Scenarios difference',
+  //   isTitle: false,
+  //   slug: 'scenarios-difference',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faTimeline}/>,
+  //   name: 'Scenarios time series',
+  //   isTitle: false,
+  //   slug: 'scenarios-time-series',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faArrowUpRightFromSquare}/>,
+  //   name: 'EXPORT',
+  //   isTitle: true, slug: 'export',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faNoteSticky}/>,
+  //   name: 'Export model (JSON)',
+  //   isTitle: false,
+  //   slug: 'export-model-json',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faImage}/>,
+  //   name: 'Export model results',
+  //   isTitle: false,
+  //   slug: 'export-model-results',
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faDownload}/>,
+  //   name: 'Download MODFLOW files',
+  //   isTitle: false,
+  //   slug: 'download-modflow-files',
+  // },
 ];
 
 export {sidebarItems};

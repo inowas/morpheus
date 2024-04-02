@@ -4,11 +4,11 @@ import {Button, DataGrid, InfoTitle, SectionTitle, Tab} from 'common/components'
 import Slider from 'common/components/Slider/SimpleSlider';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload, faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
-import {ISpatialDiscretization} from '../../../types';
+import {IGrid} from '../../../types';
 
 interface IProps {
-  spatialDiscretization: ISpatialDiscretization;
-  onChange: (data: ISpatialDiscretization) => void;
+  grid: IGrid;
+  onChange: (data: IGrid) => void;
   onEditDomainClick: () => void;
   locked: boolean;
   loading: boolean;
@@ -21,21 +21,21 @@ interface IGridProperties {
   rotation: number;
 }
 
-const SpatialDiscretizationContent = ({spatialDiscretization, onChange, onEditDomainClick, locked, onChangeLock, loading}: IProps) => {
+const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, locked, onChangeLock, loading}: IProps) => {
 
   const [gridProperties, setGridProperties] = useState<IGridProperties>({
-    n_col: spatialDiscretization.grid.n_col,
-    n_row: spatialDiscretization.grid.n_row,
-    rotation: spatialDiscretization.grid.rotation,
+    n_col: grid.n_cols,
+    n_row: grid.n_rows,
+    rotation: grid.rotation,
   });
 
   useEffect(() => {
     setGridProperties({
-      n_col: spatialDiscretization.grid.n_col,
-      n_row: spatialDiscretization.grid.n_row,
-      rotation: spatialDiscretization.grid.rotation,
+      n_col: grid.n_cols,
+      n_row: grid.n_rows,
+      rotation: grid.rotation,
     });
-  }, [spatialDiscretization]);
+  }, [grid]);
 
   const handleRotationChange = (newValue: number | number[]) => {
     const newRotation = Array.isArray(newValue) ? newValue[0] : newValue;
@@ -80,7 +80,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, onEditDo
             <Input
               disabled={true}
               type="number"
-              value={(spatialDiscretization.grid.total_height / gridProperties.n_row).toFixed(1)}
+              value={(grid.total_height / gridProperties.n_row).toFixed(1)}
               step={0.1}
             />
           </Form.Field>
@@ -91,7 +91,7 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, onEditDo
             </Label>
             <Input
               disabled={true}
-              value={(spatialDiscretization.grid.total_width / gridProperties.n_col).toFixed(1)}
+              value={(grid.total_width / gridProperties.n_col).toFixed(1)}
             />
           </Form.Field>
         </DataGrid>
@@ -214,9 +214,9 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, onEditDo
           size={'tiny'}
           disabled={locked}
           onClick={() => setGridProperties({
-            n_col: spatialDiscretization.grid.n_col,
-            n_row: spatialDiscretization.grid.n_row,
-            rotation: spatialDiscretization.grid.rotation,
+            n_col: grid.n_cols,
+            n_row: grid.n_rows,
+            rotation: grid.rotation,
           })}
         >
           {'Reset'}
@@ -224,8 +224,8 @@ const SpatialDiscretizationContent = ({spatialDiscretization, onChange, onEditDo
         <Button
           primary={true}
           size={'tiny'}
-          disabled={locked || gridProperties.n_col === spatialDiscretization.grid.n_col && gridProperties.n_row === spatialDiscretization.grid.n_row && gridProperties.rotation === spatialDiscretization.grid.rotation}
-          onClick={() => onChange({...spatialDiscretization, grid: {...spatialDiscretization.grid, ...gridProperties}})}
+          disabled={locked || gridProperties.n_col === grid.n_cols && gridProperties.n_row === grid.n_rows && gridProperties.rotation === grid.rotation}
+          onClick={() => onChange({...grid, ...gridProperties})}
           loading={loading}
         >
           {'Apply'}

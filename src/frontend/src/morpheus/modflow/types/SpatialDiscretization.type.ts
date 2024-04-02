@@ -21,8 +21,8 @@ interface IAffectedCellsAsSparse {
 }
 
 export interface IGrid {
-  n_col: number;
-  n_row: number;
+  n_cols: number;
+  n_rows: number;
 
   col_widths: number[]; // length of each column (sums up to del_col_total)
   total_width: number; // total length of all columns

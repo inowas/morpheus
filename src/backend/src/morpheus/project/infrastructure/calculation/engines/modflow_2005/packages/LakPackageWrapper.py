@@ -78,8 +78,8 @@ class LakPackageData:
 def calculate_lak_package_data(model: Model) -> LakPackageData | None:
     lake_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.lake())
 
-    nx = model.spatial_discretization.grid.n_col()
-    ny = model.spatial_discretization.grid.n_row()
+    nx = model.spatial_discretization.grid.n_cols()
+    ny = model.spatial_discretization.grid.n_rows()
     nz = model.soil_model.number_of_layers()
 
     if len(lake_boundaries) == 0:
