@@ -30,6 +30,23 @@ class ProjectCreatedEvent(EventBase):
 
 
 @dataclasses.dataclass(frozen=True)
+class ProjectDeletedEvent(EventBase):
+    @classmethod
+    def from_project_id(cls, project_id: ProjectId, occurred_at=DateTime.now()):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={}
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.PROJECT_DELETED.to_str())
+
+
+@dataclasses.dataclass(frozen=True)
 class ProjectMetadataUpdatedEvent(EventBase):
     @classmethod
     def from_props(cls, project_id: ProjectId, name: Name | None = None, description: Description | None = None, tags: Tags | None = None, occurred_at=DateTime.now()):

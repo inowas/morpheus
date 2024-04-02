@@ -1,9 +1,7 @@
 import dataclasses
 from typing import TypedDict, Literal, Sequence, Optional
 from flask import Request, abort, Response
-
-from ....application.write.ModelCommandHandlers import CreateModelCommand, CreateModelCommandHandler, UpdateModelTimeDiscretizationCommand, \
-    UpdateTimeDiscretizationCommandHandler, UpdateModelGeometryCommand, UpdateModelGeometryCommandHandler, UpdateModelGridCommand, UpdateModelGridCommandHandler
+from ....application.write import ModelCommands, ModelCommandHandlers
 from ....incoming import get_logged_in_user_id
 from ....types.Model import ModelId
 from ....types.discretization import TimeDiscretization
@@ -47,23 +45,26 @@ class CreateModelRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         create_model_request = CreateModelRequest.from_dict(obj=request.json)
         geometry = Polygon.from_dict(dict(create_model_request.geometry))
         grid_properties = create_model_request.grid_properties
 
-        command = CreateModelCommand(
-            model_id=ModelId.new(),
+        command = ModelCommands.CreateModelCommand.new(
             project_id=ProjectId.from_str(project_id),
             geometry=geometry,
-            grid_properties=grid_properties,
-            created_by=UserId.from_value(user_id)
+            model_id=ModelId.new(),
+            n_cols=grid_properties['n_cols'],
+            n_rows=grid_properties['n_rows'],
+            rotation=grid_properties['rotation'],
+            user_id=user_id,
         )
 
-        CreateModelCommandHandler.handle(command=command)
+        ModelCommandHandlers.CreateModelCommandHandler.handle(command=command)
 
         return Response(status=201, headers={'location': f'projects/{project_id}/model'})
 
@@ -85,9 +86,10 @@ class UpdateSpatialDiscretizationGeometryRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_parameter)
         update_spatial_discretization_geometry_request = UpdateSpatialDiscretizationGeometryRequest.from_dict(obj=request.json)
@@ -96,13 +98,13 @@ class UpdateSpatialDiscretizationGeometryRequestHandler:
             'coordinates': update_spatial_discretization_geometry_request.geometry['coordinates']
         })
 
-        command = UpdateModelGeometryCommand(
+        command = ModelCommands.UpdateModelGeometryCommand.new(
             project_id=project_id,
             geometry=geometry,
-            updated_by=UserId.from_value(user_id),
+            user_id=user_id
         )
 
-        UpdateModelGeometryCommandHandler.handle(command=command)
+        ModelCommandHandlers.UpdateModelGeometryCommandHandler.handle(command=command)
         return Response(status=204)
 
 
@@ -139,13 +141,14 @@ class UpdateSpatialDiscretizationGridRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_parameter)
         update_spatial_discretization = UpdateSpatialDiscretizationGridRequest.from_dict(obj=request.json)
-        command = UpdateModelGridCommand(
+        command = ModelCommands.UpdateModelGridCommand.new(
             project_id=project_id,
             n_cols=update_spatial_discretization.n_cols,
             n_rows=update_spatial_discretization.n_rows,
@@ -156,10 +159,10 @@ class UpdateSpatialDiscretizationGridRequestHandler:
             total_height=update_spatial_discretization.total_height,
             rotation=update_spatial_discretization.rotation,
             length_unit=update_spatial_discretization.length_unit,
-            updated_by=UserId.from_value(user_id),
+            user_id=user_id
         )
 
-        UpdateModelGridCommandHandler.handle(command=command)
+        ModelCommandHandlers.UpdateModelGridCommandHandler.handle(command=command)
         return Response(status=204)
 
 
@@ -193,9 +196,10 @@ class UpdateTimeDiscretizationRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_parameter)
 
@@ -213,11 +217,11 @@ class UpdateTimeDiscretizationRequestHandler:
             time_unit=time_unit,
         )
 
-        command = UpdateModelTimeDiscretizationCommand(
+        command = ModelCommands.UpdateModelTimeDiscretizationCommand.new(
             project_id=project_id,
             time_discretization=time_discretization,
-            updated_by=UserId.from_value(user_id)
+            user_id=user_id
         )
 
-        UpdateTimeDiscretizationCommandHandler.handle(command=command)
+        ModelCommandHandlers.UpdateTimeDiscretizationCommandHandler.handle(command=command)
         return None, 204

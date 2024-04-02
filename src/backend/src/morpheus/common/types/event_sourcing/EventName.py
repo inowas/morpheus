@@ -6,7 +6,7 @@ class EventName:
     name: str
 
     def __eq__(self, other):
-        return self.name == other.name
+        return self.name == other.command_name
 
     @classmethod
     def from_str(cls, name: str):

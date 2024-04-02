@@ -3,8 +3,7 @@ from typing import Literal, TypedDict
 
 from flask import Request, abort
 
-from ....application.write.PermissionsCommandHandlers import UpdateVisibilityCommand, UpdateVisibilityCommandHandler, AddMemberCommand, \
-    AddMemberCommandHandler, RemoveMemberCommand, RemoveMemberCommandHandler, UpdateMemberRoleCommand, UpdateMemberRoleCommandHandler
+from ....application.write import PermissionCommands, PermissionCommandHandlers
 from ....incoming import get_logged_in_user_id
 from ....types.Permissions import Visibility, Role
 from ....types.Project import ProjectId
@@ -22,9 +21,10 @@ class UpdateVisibilityRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        current_user_id = get_logged_in_user_id()
-        if current_user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_url_parameter)
         update_visibility_request: UpdateVisibilityRequest = request.json  # type: ignore
@@ -34,13 +34,13 @@ class UpdateVisibilityRequestHandler:
 
         visibility = Visibility.from_str(update_visibility_request['visibility'])
 
-        command = UpdateVisibilityCommand(
+        command = PermissionCommands.UpdateVisibilityCommand.new(
             project_id=project_id,
+            user_id=user_id,
             visibility=visibility,
-            current_user_id=UserId.from_str(current_user_id)
         )
 
-        UpdateVisibilityCommandHandler.handle(command=command)
+        PermissionCommandHandlers.UpdateVisibilityCommandHandler.handle(command=command)
         return None, 204
 
 
@@ -55,9 +55,10 @@ class AddMemberRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        current_user_id = get_logged_in_user_id()
-        if current_user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_url_parameter)
         add_member_request: AddMemberRequest = request.json  # type: ignore
@@ -71,14 +72,14 @@ class AddMemberRequestHandler:
         new_member_id = UserId.from_str(add_member_request['new_member_id'])
         new_member_role = Role.from_str(add_member_request['new_member_role'])
 
-        command = AddMemberCommand(
+        command = PermissionCommands.AddMemberCommand.new(
             project_id=project_id,
+            user_id=user_id,
             new_member_id=new_member_id,
-            current_user_id=UserId.from_str(current_user_id),
             new_member_role=new_member_role
         )
 
-        AddMemberCommandHandler.handle(command=command)
+        PermissionCommandHandlers.AddMemberCommandHandler.handle(command=command)
         return None, 204
 
 
@@ -88,20 +89,21 @@ class RemoveMemberRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        current_user_id = get_logged_in_user_id()
-        if current_user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_url_parameter)
         member_id = UserId.from_str(user_id_url_parameter)
 
-        command = RemoveMemberCommand(
+        command = PermissionCommands.RemoveMemberCommand.new(
             project_id=project_id,
+            user_id=user_id,
             member_id=member_id,
-            current_user_id=UserId.from_str(current_user_id)
         )
 
-        RemoveMemberCommandHandler.handle(command=command)
+        PermissionCommandHandlers.RemoveMemberCommandHandler.handle(command=command)
         return None, 204
 
 
@@ -115,9 +117,10 @@ class UpdateMemberRoleRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        current_user_id = get_logged_in_user_id()
-        if current_user_id is None:
+        user_id_str = get_logged_in_user_id()
+        if user_id_str is None:
             abort(401, 'Unauthorized')
+        user_id = UserId.from_str(user_id_str)
 
         project_id = ProjectId.from_str(project_id_url_parameter)
         member_id = UserId.from_str(user_id_url_parameter)
@@ -128,12 +131,12 @@ class UpdateMemberRoleRequestHandler:
 
         role = Role.from_str(update_member_request['role'])
 
-        command = UpdateMemberRoleCommand(
+        command = PermissionCommands.UpdateMemberRoleCommand.new(
             project_id=project_id,
             member_id=member_id,
-            role=role,
-            current_user_id=UserId.from_str(current_user_id)
+            new_role=role,
+            user_id=user_id,
         )
 
-        UpdateMemberRoleCommandHandler.handle(command=command)
+        PermissionCommandHandlers.UpdateMemberRoleCommandHandler.handle(command=command)
         return None, 204
