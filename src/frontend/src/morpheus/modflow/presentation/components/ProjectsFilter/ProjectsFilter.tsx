@@ -163,7 +163,6 @@ const ProjectsFilter = ({
                 }
                 dateFormat="dd.MM.yyyy"
                 onChange={(date) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, start: date}})}
-                className={filterParams.date_range?.start || 'dateInputUnselected'}
               />
               <Icon className={'dateIcon'} name="calendar outline"/>
             </div>
@@ -180,7 +179,6 @@ const ProjectsFilter = ({
                 }
                 dateFormat="dd.MM.yyyy"
                 onChange={(date) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, end: date}})}
-                className={filterParams.date_range?.end || 'dateInputUnselected'}
               />
               <Icon className={'dateIcon'} name="calendar outline"/>
             </div>
