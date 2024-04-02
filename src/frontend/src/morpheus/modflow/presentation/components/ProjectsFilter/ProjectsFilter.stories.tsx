@@ -1,10 +1,9 @@
 import ProjectsFilter from './ProjectsFilter';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import React, {useState} from 'react';
 import {IFilterOptions} from 'morpheus/modflow/application/useProjectList';
 import {formatISO, subYears} from 'date-fns';
-import {useProjectList} from '../../../application';
 
 
 const filterOptions: IFilterOptions = {
@@ -87,14 +86,15 @@ export default {
 } as Meta<typeof ProjectsFilter>;
 
 export const FormFilterExample: StoryFn<typeof ProjectsFilter> = () => {
-  const {projects, loading, error, filter, onFilterChange} = useProjectList();
+  const [filter, setFilter] = useState({});
+
 
   return (
     <div style={{paddingLeft: '1rem', backgroundColor: '#eeeeee'}}>
       <ProjectsFilter
         filterParams={filter}
         filterOptions={filterOptions}
-        onChangeFilterParams={onFilterChange}
+        onChangeFilterParams={setFilter}
       />
     </div>
   );
