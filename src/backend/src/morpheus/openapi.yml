@@ -23,6 +23,18 @@ paths:
   /projects/{project_id}/model:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model'
 
+  /projects/{project_id}/model/spatial-discretization:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization'
+
+  /projects/{project_id}/model/spatial-discretization/geometry:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1geometry'
+
+  /projects/{project_id}/model/spatial-discretization/grid:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1grid'
+
+  /projects/{project_id}/model/time-discretization:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1time-discretization'
+
   /projects/{project_id}/preview_image:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1preview_image'
 

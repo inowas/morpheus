@@ -1,12 +1,34 @@
-import {IError, ILengthUnit, ISpatialDiscretization} from '../types';
-import {useEffect, useRef, useState} from 'react';
+import {IError, IGrid, ILengthUnit, ISpatialDiscretization} from '../types';
+import {useRef, useState} from 'react';
 
 import {useApi} from '../incoming';
-import {Polygon} from 'geojson';
+import {Point, Polygon} from 'geojson';
+import {useDispatch, useSelector} from 'react-redux';
+import {IRootState} from '../../store';
+import {setSpatialDiscretization} from '../infrastructure/modelStore';
+
+interface IUpdateGeometry {
+  geometry: Polygon;
+}
+
+interface IUpdateGrid {
+  n_cols: number;
+  n_rows: number;
+  origin?: Point
+  col_widths?: number[];
+  total_width?: number;
+  row_heights?: number[];
+  total_height?: number;
+  rotation?: number;
+  length_unit: ILengthUnit;
+}
 
 interface IUseSpatialDiscretization {
   spatialDiscretization: ISpatialDiscretization | null;
-  updateSpatialDiscretization: (data: ISpatialDiscretization) => void;
+  geometry: Polygon | null;
+  grid: IGrid | null;
+  updateGeometry: (geometry: Polygon) => void;
+  updateGrid: (gridProps: IUpdateGrid) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -28,9 +50,10 @@ type ISpatialDiscretizationGetResponse = ISpatialDiscretization;
 
 const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDiscretization => {
 
+  const {model} = useSelector((state: IRootState) => state.project.model);
+  const dispatch = useDispatch();
 
   const isMounted = useRef(true);
-  const [spatialDiscretization, setSpatialDiscretization] = useState<ISpatialDiscretization | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
@@ -48,38 +71,10 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
       return;
     }
 
-    if (result.ok) {
-      setSpatialDiscretization({
-        geometry: result.val.geometry,
-        grid: result.val.grid,
-        affected_cells: result.val.affected_cells,
-      });
-    }
-
-    if (result.err && 404 !== result.val.code) {
-      setError({
-        message: result.val.message,
-        code: result.val.code,
-      });
-    }
-
     setLoading(false);
-  };
-
-  const updateSpatialDiscretization = async (data: ISpatialDiscretization) => {
-    if (!isMounted.current) {
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    const result = await httpPut<ISpatialDiscretization>(`/projects/${projectId}/model/spatial-discretization`, data);
-
-    if (!isMounted.current) {
-      return;
-    }
 
     if (result.ok) {
-      setSpatialDiscretization(data);
+      dispatch(setSpatialDiscretization(result.val));
     }
 
     if (result.err) {
@@ -88,30 +83,68 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
         code: result.val.code,
       });
     }
-
-    setLoading(false);
-
   };
 
-  useEffect(() => {
+  const updateGeometry = async (polygon: Polygon) => {
+    if (!isMounted.current) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const result = await httpPut<IUpdateGeometry>(`/projects/${projectId}/model/spatial-discretization/geometry`, {
+      geometry: polygon,
+    });
 
-    if (!projectId) {
+    if (!isMounted.current) {
       return;
     }
 
-    fetchSpatialDiscretization();
+    setLoading(false);
 
-    return (): void => {
-      isMounted.current = false;
-    };
+    if (result.ok) {
+      fetchSpatialDiscretization();
+    }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (result.err) {
+      setError({
+        message: result.val.message,
+        code: result.val.code,
+      });
+    }
+  };
 
+  const updateGrid = async (gridProps: IUpdateGrid) => {
+    if (!isMounted.current) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const result = await httpPut<IUpdateGrid>(`/projects/${projectId}/model/spatial-discretization/grid`, gridProps);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.ok) {
+      fetchSpatialDiscretization();
+    }
+
+    if (result.err) {
+      setError({
+        message: result.val.message,
+        code: result.val.code,
+      });
+    }
+  };
 
   return {
-    spatialDiscretization,
-    updateSpatialDiscretization,
+    spatialDiscretization: model?.spatial_discretization || null,
+    geometry: model?.spatial_discretization?.geometry || null,
+    grid: model?.spatial_discretization?.grid || null,
+    updateGeometry,
+    updateGrid,
     loading,
     error,
   };
