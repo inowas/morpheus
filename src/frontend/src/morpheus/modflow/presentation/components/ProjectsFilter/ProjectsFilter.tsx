@@ -65,6 +65,7 @@ const ProjectsFilter = ({
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
+
   return (
     <Form className={styles.projectsFilterForm} style={{...style}}>
       <div className={styles.titleWrapper}>
@@ -76,116 +77,6 @@ const ProjectsFilter = ({
           Clear Filters
         </Button>
       </div>
-
-      {/*// By Map*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
-          className={styles.checkboxLabel}
-          label="By location"
-          name="mapAccess"
-        />
-        <div className={`${styles.mapWrapper} map`}>
-          <MapContainer
-            className={styles.map}
-            center={[50.940474211933974, 6.960182189941407]}
-            zoom={1}
-            style={{width: '100%', height: '200px', zIndex: 0}}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-          </MapContainer>
-        </div>
-      </Form.Field>
-
-      {/*// By Date*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
-          className={styles.checkboxLabel}
-          label="By Date"
-          name="dateAccess"
-          checked={!!filterParams.date_range?.timestamp}
-          onChange={(_, {checked}) => {
-            if (checked) {
-              onChangeFilterParams({
-                ...filterParams, date_range: {
-                  ...filterParams.date_range,
-                  timestamp: 'created_at',
-                  start_date: filterOptions.by_date.created_at.start_date,
-                  end_date: filterOptions.by_date.created_at.end_date,
-                },
-              });
-
-            } else {
-              onChangeFilterParams({...filterParams, date_range: undefined});
-            }
-          }}
-        />
-        <div className={styles.radioWrapper}>
-          <Radio
-            disabled={!filterParams.date_range?.timestamp}
-            className={styles.radio}
-            label="Created Date"
-            name="dateType"
-            value="created_at"
-            checked={'created_at' === filterParams.date_range?.timestamp || false}
-            onChange={(_, {value}) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, timestamp: value as string}})}
-          />
-          <Radio
-            disabled={!filterParams.date_range?.timestamp}
-            className={styles.radio}
-            label="Modified Date"
-            name="dateType"
-            value="updated_at"
-            checked={'updated_at' === filterParams.date_range?.timestamp || false}
-            onChange={(_, {value}) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, timestamp: value as string}})}
-          />
-          <Radio
-            disabled={!filterParams.date_range?.timestamp}
-            className={styles.radio}
-            label="Model Date"
-            name="dateType"
-            value="model_date"
-            checked={'model_date' === filterParams.date_range?.timestamp || false}
-            onChange={(_, {value}) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, timestamp: value as string}})}
-          />
-        </div>
-        <div className={'dateInputWrapper datePicker fieldGrid'}>
-          <div className={'rowTwoColumns'}>
-            <label className="labelSmall">Date from</label>
-            <div className={'divider'}>
-              <DatePicker
-                disabled={!filterParams.date_range?.timestamp}
-                selected={
-                  filterParams.date_range?.timestamp
-                    ? filterParams.date_range.start || filterOptions.by_date[filterParams.date_range.timestamp].start_date
-                    : filterOptions.by_date.created_at.start_date
-                }
-                dateFormat="dd.MM.yyyy"
-                onChange={(date) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, start: date}})}
-              />
-              <Icon className={'dateIcon'} name="calendar outline"/>
-            </div>
-          </div>
-          <div className={'rowTwoColumns'}>
-            <label className="labelSmall">Date to</label>
-            <div className={'divider'}>
-              <DatePicker
-                disabled={!filterParams.date_range?.timestamp}
-                selected={
-                  filterParams.date_range?.timestamp
-                    ? filterParams.date_range.end || filterOptions.by_date[filterParams.date_range.timestamp].end_date
-                    : filterOptions.by_date.created_at.end_date
-                }
-                dateFormat="dd.MM.yyyy"
-                onChange={(date) => onChangeFilterParams({...filterParams, date_range: {...filterParams.date_range, end: date}})}
-              />
-              <Icon className={'dateIcon'} name="calendar outline"/>
-            </div>
-          </div>
-        </div>
-      </Form.Field>
-
 
       {/*// By ownership*/}
       <Form.Field className={styles.field}>
@@ -270,6 +161,137 @@ const ProjectsFilter = ({
           <span className={styles.count}>
             (<span>{filterOptions.by_status.red}</span>)
             <i className={styles.metaStatus} style={{background: '#C8C8C8'}}></i></span>
+        </div>
+      </Form.Field>
+
+      {/*// By Date*/}
+      <Form.Field className={styles.field}>
+        <Checkbox
+          className={styles.checkboxLabel}
+          label="By Date"
+          name="dateAccess"
+          checked={!!filterParams.date_range?.timestamp}
+          onChange={(_, {checked}) => {
+            if (checked) {
+              onChangeFilterParams({
+                ...filterParams, date_range: {
+                  ...filterParams.date_range,
+                  timestamp: 'created_at',
+                  start: filterOptions.by_date.created_at.start_date,
+                  end: filterOptions.by_date.created_at.end_date,
+                },
+              });
+
+            } else {
+              onChangeFilterParams({...filterParams, date_range: undefined});
+            }
+          }}
+        />
+        <div className={styles.radioWrapper}>
+          <Radio
+            disabled={!filterParams.date_range?.timestamp}
+            className={styles.radio}
+            label="Created Date"
+            name="dateType"
+            value="created_at"
+            checked={'created_at' === filterParams.date_range?.timestamp || false}
+            onChange={(_, {value}) => onChangeFilterParams({
+              ...filterParams, date_range: {
+                ...filterParams.date_range,
+                timestamp: value as string,
+                start: filterOptions.by_date.created_at.start_date,
+                end: filterOptions.by_date.created_at.end_date,
+              },
+            })}
+          />
+          <Radio
+            disabled={!filterParams.date_range?.timestamp}
+            className={styles.radio}
+            label="Modified Date"
+            name="dateType"
+            value="updated_at"
+            checked={'updated_at' === filterParams.date_range?.timestamp || false}
+            onChange={(_, {value}) => onChangeFilterParams({
+              ...filterParams, date_range: {
+                ...filterParams.date_range,
+                timestamp: value as string,
+                start: filterOptions.by_date.updated_at.start_date,
+                end: filterOptions.by_date.updated_at.end_date,
+              },
+            })}
+          />
+          <Radio
+            disabled={!filterParams.date_range?.timestamp}
+            className={styles.radio}
+            label="Model Date"
+            name="dateType"
+            value="model_date"
+            checked={'model_date' === filterParams.date_range?.timestamp || false}
+            onChange={(_, {value}) => onChangeFilterParams({
+              ...filterParams, date_range: {
+                ...filterParams.date_range,
+                timestamp: value as string,
+                start: filterOptions.by_date.model_date.start_date,
+                end: filterOptions.by_date.model_date.end_date,
+              },
+            })}
+          />
+        </div>
+        <div className={'dateInputWrapper datePicker fieldGrid'}>
+          <div className={'rowTwoColumns'}>
+            <label className="labelSmall">Date from</label>
+            <div className={'divider'}>
+              <DatePicker
+                disabled={!filterParams.date_range?.timestamp}
+                selected={
+                  filterParams.date_range?.timestamp
+                    ? new Date(filterParams.date_range.start
+                      || filterOptions.by_date[filterParams.date_range.timestamp as keyof typeof filterOptions.by_date]?.start_date)
+                    : new Date(filterOptions.by_date.created_at.start_date)
+                }
+                dateFormat="dd.MM.yyyy"
+                onChange={(date) => {
+                  onChangeFilterParams({
+                    ...filterParams,
+                    date_range: {
+                      ...filterParams.date_range,
+                      start: date ? date.toISOString() : undefined,
+                    },
+                  });
+                }}
+              />
+              <Icon className={'dateIcon'} name="calendar outline"/>
+            </div>
+          </div>
+          <div className={'rowTwoColumns'}>
+            <label className="labelSmall">Date to</label>
+            <div className={'divider'}>
+              <DatePicker
+                disabled={!filterParams.date_range?.timestamp}
+                selected={
+                  filterParams.date_range?.timestamp
+                    ? new Date(
+                      filterParams.date_range.end ||
+                      filterOptions.by_date[
+                        filterParams.date_range.timestamp as keyof typeof filterOptions.by_date
+                      ]?.end_date,
+                    )
+                    : new Date(filterOptions.by_date.created_at.end_date)
+                }
+                dateFormat="dd.MM.yyyy"
+                onChange={(date) => {
+                  onChangeFilterParams({
+                    ...filterParams,
+                    date_range: {
+                      ...filterParams.date_range,
+                      end: date ? date.toISOString() : undefined,
+                    },
+                  });
+                }}
+              />
+              <Icon className={'dateIcon'} name="calendar outline"/>
+            </div>
+          </div>
         </div>
       </Form.Field>
 
@@ -432,6 +454,27 @@ const ProjectsFilter = ({
           }}
         />
 
+      </Form.Field>
+
+      {/*// By Map*/}
+      <Form.Field className={styles.field}>
+        <Checkbox
+          className={styles.checkboxLabel}
+          label="By location"
+          name="mapAccess"
+        />
+        <div className={`${styles.mapWrapper} map`}>
+          <MapContainer
+            className={styles.map}
+            center={[50.940474211933974, 6.960182189941407]}
+            zoom={1}
+            style={{width: '100%', height: '200px', zIndex: 0}}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </MapContainer>
+        </div>
       </Form.Field>
 
     </Form>
