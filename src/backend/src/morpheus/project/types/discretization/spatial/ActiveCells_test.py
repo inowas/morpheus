@@ -5,13 +5,13 @@ def test_empty_grid_cells() -> None:
     nx = 10
     ny = 5
     shape = (ny, nx)
-    grid_cells = ActiveCells.empty_from_shape(n_col=nx, n_row=ny)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=nx, n_rows=ny)
     assert shape == grid_cells.shape
     assert len(grid_cells.data) == 0
 
 
 def test_grid_cells_to_sparse_dict() -> None:
-    grid_cells = ActiveCells.empty_from_shape(n_col=100, n_row=20)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=100, n_rows=20)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=1, row=1)
     assert grid_cells.to_dict(as_raster=False) == {
@@ -22,7 +22,7 @@ def test_grid_cells_to_sparse_dict() -> None:
 
 
 def test_grid_cells_to_raster_dict() -> None:
-    grid_cells = ActiveCells.empty_from_shape(n_col=2, n_row=4)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=2, n_rows=4)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=0, row=1)
     grid_cells.set_active(col=1, row=1)
@@ -35,7 +35,7 @@ def test_grid_cells_to_raster_dict() -> None:
 
 
 def test_grid_cells_to_sparse_inverse_dict() -> None:
-    grid_cells = ActiveCells.empty_from_shape(n_col=2, n_row=5)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=2, n_rows=5)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=0, row=1)
     grid_cells.set_active(col=0, row=2)
@@ -60,7 +60,7 @@ def test_grid_cells_to_sparse_inverse_dict() -> None:
 
 
 def test_grid_cells_from_dict() -> None:
-    grid_cells = ActiveCells.empty_from_shape(n_col=2, n_row=4)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=2, n_rows=4)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=1, row=1)
     assert ActiveCells.from_dict({
@@ -78,7 +78,7 @@ def test_grid_cells_from_dict() -> None:
 
 
 def test_grid_cells_convert_to_raster() -> None:
-    grid_cells = ActiveCells.empty_from_shape(n_col=15, n_row=5)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=15, n_rows=5)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=14, row=0)
     grid_cells.set_active(col=0, row=4)
@@ -100,7 +100,7 @@ def test_grid_cells_convert_to_raster() -> None:
 
 
 def test_grid_cells_autodetect() -> None:
-    grid_cells = ActiveCells.empty_from_shape(n_col=15, n_row=5)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=15, n_rows=5)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=14, row=0)
     grid_cells.set_active(col=0, row=4)
@@ -109,7 +109,7 @@ def test_grid_cells_autodetect() -> None:
 
     assert grid_cells.to_dict(auto_detect=True)['type'] == 'sparse'
 
-    grid_cells = ActiveCells.empty_from_shape(n_col=2, n_row=3)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=2, n_rows=3)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=1, row=1)
     grid_cells.set_active(col=0, row=2)
@@ -117,7 +117,7 @@ def test_grid_cells_autodetect() -> None:
 
     assert grid_cells.to_dict(auto_detect=True)['type'] == 'raster'
 
-    grid_cells = ActiveCells.empty_from_shape(n_col=2, n_row=5)
+    grid_cells = ActiveCells.empty_from_shape(n_cols=2, n_rows=5)
     grid_cells.set_active(col=0, row=0)
     grid_cells.set_active(col=0, row=1)
     grid_cells.set_active(col=0, row=2)
@@ -132,14 +132,14 @@ def test_grid_cells_autodetect() -> None:
 
 
 def test_grid_cells_filter() -> None:
-    boundary_cells = ActiveCells.empty_from_shape(n_col=15, n_row=5)
+    boundary_cells = ActiveCells.empty_from_shape(n_cols=15, n_rows=5)
     boundary_cells.set_active(col=0, row=0)
     boundary_cells.set_active(col=0, row=1)
     boundary_cells.set_active(col=0, row=2)
     boundary_cells.set_active(col=0, row=3)
     boundary_cells.set_active(col=0, row=4)
 
-    model_cells = ActiveCells.empty_from_shape(n_col=15, n_row=5)
+    model_cells = ActiveCells.empty_from_shape(n_cols=15, n_rows=5)
     model_cells.set_active(col=0, row=1)
     model_cells.set_active(col=0, row=2)
     model_cells.set_active(col=0, row=3)

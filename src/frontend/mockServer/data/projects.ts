@@ -94,8 +94,8 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
           ],
         },
         grid: {
-          n_col: 10,
-          n_row: 10,
+          n_cols: 10,
+          n_rows: 10,
           col_widths: new Array(10).fill(10),
           total_width: 1000,
           row_heights: new Array(10).fill(10),

@@ -1,4 +1,5 @@
 import dataclasses
+from typing import TypedDict, NotRequired, Literal
 
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
@@ -17,7 +18,14 @@ from ...types.Model import Model, ModelId
 from ...types.discretization import TimeDiscretization
 from ...types.discretization.spatial import ActiveCells
 from ...types.discretization.spatial.SpatialDiscretization import Polygon, SpatialDiscretization, Rotation
-from ...types.discretization.spatial.Grid import CreateGridDict, Grid, UpdateGridDict
+from ...types.discretization.spatial.Grid import Grid
+from ...types.geometry import Point
+
+
+class CreateGridProperties(TypedDict, total=True):
+    n_cols: int
+    n_rows: int
+    rotation: float
 
 
 @dataclasses.dataclass(frozen=True)
@@ -25,7 +33,7 @@ class CreateModelCommand:
     model_id: ModelId
     project_id: ProjectId
     geometry: Polygon
-    grid_properties: CreateGridDict
+    grid_properties: CreateGridProperties
     created_by: UserId
 
 
@@ -40,8 +48,8 @@ class CreateModelCommandHandler:
         grid = Grid.cartesian_from_polygon(
             polygon=command.geometry,
             rotation=Rotation.from_float(command.grid_properties['rotation']),
-            n_col=command.grid_properties['n_col'],
-            n_row=command.grid_properties['n_row'],
+            n_cols=command.grid_properties['n_cols'],
+            n_rows=command.grid_properties['n_rows'],
         )
         cells = ActiveCells.from_polygon(polygon=command.geometry, grid=grid)
         spatial_discretization = SpatialDiscretization(
@@ -108,10 +116,22 @@ class UpdateModelGeometryCommandHandler:
         project_event_bus.record(event_envelope=event_envelope)
 
 
+class UpdateGridProperties(TypedDict):
+    n_cols: int
+    n_rows: int
+    origin: Point
+    col_widths: NotRequired[list[float]]  # optional
+    total_width: NotRequired[float]  # optional
+    row_heights: NotRequired[list[float]]  # optional
+    total_height: NotRequired[float]  # optional
+    rotation: NotRequired[float]  # optional
+    length_unit: NotRequired[Literal["meters", "centimeters", "feet", "unknown"]]  # optional
+
+
 @dataclasses.dataclass(frozen=True)
 class UpdateModelGridCommand:
     project_id: ProjectId
-    update_grid: UpdateGridDict
+    update_grid: UpdateGridProperties
     updated_by: UserId
 
 
@@ -131,41 +151,41 @@ class UpdateModelGridCommandHandler:
 
         rotation = current_grid.rotation
 
-        n_col = command.update_grid.get('n_col')
-        n_row = command.update_grid.get('n_row')
+        n_cols = command.update_grid.get('n_cols')
+        n_rows = command.update_grid.get('n_rows')
 
-        relative_col_coordinates = [1 / n_col * i for i in range(n_col)]
+        relative_col_coordinates = [1 / n_cols * i for i in range(n_cols)]
         relative_col_coordinates.append(1.0)
 
-        relative_row_coordinates = [1 / n_row * i for i in range(n_row)]
+        relative_row_coordinates = [1 / n_rows * i for i in range(n_rows)]
         relative_row_coordinates.append(1.0)
 
         col_widths = command.update_grid.get('col_widths', None)
         total_width = command.update_grid.get('total_width', None)
 
         if col_widths is not None:
-            if len(col_widths) != n_col:
+            if len(col_widths) != n_cols:
                 raise ValueError('The number of column widths must match the number of columns')
 
             if sum(col_widths) != total_width:
                 raise ValueError('The sum of the column widths must match the total width')
 
             if col_widths and total_width:
-                relative_col_coordinates = [sum(col_widths[:i]) / total_width for i in range(n_col)]
+                relative_col_coordinates = [sum(col_widths[:i]) / total_width for i in range(n_cols)]
                 relative_col_coordinates.append(1.0)
 
         row_heights = command.update_grid.get('row_heights', None)
         total_height = command.update_grid.get('total_height', None)
 
         if row_heights is not None:
-            if len(row_heights) != n_row:
+            if len(row_heights) != n_rows:
                 raise ValueError('The number of row heights must match the number of rows')
 
             if sum(row_heights) != total_height:
                 raise ValueError('The sum of the row heights must match the total height')
 
             if row_heights and total_height:
-                relative_row_coordinates = [sum(row_heights[:i]) / total_height for i in range(n_row)]
+                relative_row_coordinates = [sum(row_heights[:i]) / total_height for i in range(n_rows)]
                 relative_row_coordinates.append(1.0)
 
         if not permissions.member_can_edit(user_id=current_user_id):

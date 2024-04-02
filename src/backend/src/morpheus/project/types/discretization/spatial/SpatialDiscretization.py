@@ -28,7 +28,7 @@ class SpatialDiscretization:
         polygon = Polygon(coordinates=[[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]])
         return cls(
             geometry=polygon,
-            affected_cells=ActiveCells.empty_from_shape(n_col=1, n_row=1),
+            affected_cells=ActiveCells.empty_from_shape(n_cols=1, n_rows=1),
             grid=Grid.from_polygon_with_relative_coordinates(polygon=polygon, rotation=Rotation.from_float(0), relative_col_coordinates=[0, 1], relative_row_coordinates=[0, 1]),
         )
 

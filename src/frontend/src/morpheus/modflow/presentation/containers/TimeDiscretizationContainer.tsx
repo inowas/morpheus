@@ -1,6 +1,6 @@
 import React from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import {TimeDiscretizationBody, TimeDiscretizationContent} from '../components/TimeDiscretization';
+import {TimeDiscretizationBody, TimeDiscretizationContent} from '../components/ModelTimeDiscretization';
 import useTimeDiscretization from '../../application/useTimeDiscretization';
 import {useParams} from 'react-router-dom';
 import Error from 'common/components/Error';

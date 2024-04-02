@@ -1,6 +1,4 @@
 import dataclasses
-from typing import Literal, TypedDict, NotRequired
-
 import numpy as np
 import pyproj
 
@@ -11,24 +9,6 @@ from .LengthUnit import LengthUnit
 from .Rotation import Rotation
 from .Crs import Crs
 from ...geometry import Point, Polygon
-
-
-class CreateGridDict(TypedDict, total=True):
-    n_col: int
-    n_row: int
-    rotation: float
-    length_unit: Literal["meters", "centimeters", "feet", "unknown"]
-
-
-class UpdateGridDict(TypedDict):
-    n_col: int
-    n_row: int
-    col_widths: NotRequired[list[float]]  # optional
-    total_width: NotRequired[float]  # optional
-    row_heights: NotRequired[list[float]]  # optional
-    total_height: NotRequired[float]  # optional
-    rotation: NotRequired[float]  # optional
-    length_unit: NotRequired[Literal["meters", "centimeters", "feet", "unknown"]]  # optional
 
 
 @dataclasses.dataclass(frozen=True)
@@ -67,13 +47,13 @@ class Grid:
 
     Methods
     -------
-    from_polygon_with_relative_coordinates(polygon: Polygon, rotation: Rotation, length_unit: LengthUnit,
-                                            x_coordinates: list[float], y_coordinates: list[float])
-        Creates a grid from a polygon and relative coordinates (values between 0 and 1)
-        Rotation and length_unit are optional
-    n_col()
+    cartesian_from_polygon(polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> Grid
+        Creates a non-uniform 2D grid from a polygon with n_cols columns and n_rows rows
+    from_polygon_with_relative_coordinates(polygon: Polygon, rotation: Rotation, relative_col_coordinates: list[float], relative_row_coordinates: list[float]) -> Grid
+        Creates a non-uniform rectilinear 2D grid from a polygon with relative column and row coordinates
+    n_cols()
         Returns the number of columns
-    n_row()
+    n_rows()
         Returns the number of rows
     col_coordinates()
         Returns the coordinates of the columns along the x-axis, starting with 0 from the left
@@ -101,15 +81,15 @@ class Grid:
     crs = Crs.from_str('EPSG:3857')
 
     @classmethod
-    def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_col: int, n_row: int) -> "Grid":
+    def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> "Grid":
         relative_col_coordinates = []
         relative_row_coordinates = []
-        for col in range(n_col):
-            relative_col_coordinates.append(round(1 / n_col + relative_col_coordinates[-1] if col > 0 else 0, 5))
+        for col in range(n_cols):
+            relative_col_coordinates.append(round(1 / n_cols + relative_col_coordinates[-1] if col > 0 else 0, 5))
         relative_col_coordinates.append(1)
 
-        for row in range(n_row):
-            relative_row_coordinates.append(round(1 / n_row + relative_row_coordinates[-1] if row > 0 else 0, 5))
+        for row in range(n_rows):
+            relative_row_coordinates.append(round(1 / n_rows + relative_row_coordinates[-1] if row > 0 else 0, 5))
         relative_row_coordinates.append(1)
 
         return cls.from_polygon_with_relative_coordinates(
@@ -185,6 +165,8 @@ class Grid:
 
     def to_dict(self):
         return {
+            'n_cols': self.n_cols(),
+            'n_rows': self.n_rows(),
             'col_widths': self.col_widths,
             'total_width': self.total_width,
             'row_heights': self.row_heights,
@@ -194,10 +176,10 @@ class Grid:
             'length_unit': self.length_unit.to_value(),
         }
 
-    def n_col(self):
+    def n_cols(self):
         return len(self.col_widths)
 
-    def n_row(self):
+    def n_rows(self):
         return len(self.row_heights)
 
     def col_coordinates(self):
@@ -214,13 +196,13 @@ class Grid:
 
     def get_cell_centers(self) -> list[list[Point]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
-        n_col, n_row = self.n_col(), self.n_row()
-        centers = np.empty((n_col, n_row), dtype=Point)
+        n_cols, n_rows = self.n_cols(), self.n_rows()
+        centers = np.empty((n_cols, n_rows), dtype=Point)
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         origin_3857 = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-        for col in range(self.n_col()):
-            for row in range(self.n_row()):
+        for col in range(self.n_cols()):
+            for row in range(self.n_rows()):
                 point_3857 = ShapelyPoint((
                     origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2,
                     origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
@@ -234,14 +216,14 @@ class Grid:
 
     def get_cell_geometries(self) -> list[list[Polygon]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
-        n_col, n_row = self.n_col(), self.n_row()
-        geometries = np.empty((n_col, n_row), dtype=Polygon)
+        n_cols, n_rows = self.n_cols(), self.n_rows()
+        geometries = np.empty((n_cols, n_rows), dtype=Polygon)
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
-        for col in range(n_col):
-            for row in range(n_row):
+        for col in range(n_cols):
+            for row in range(n_rows):
                 polygon_3857 = ShapelyPolygon((
                     (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
                     (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[row]),

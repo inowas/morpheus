@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Polygon} from 'geojson';
-import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/SpatialDiscretization';
+import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/ModelSpatialDiscretization';
 import {useParams} from 'react-router-dom';
 import {useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
+import {IGrid} from '../../types';
 
 
 const SpatialDiscretizationContainer = () => {
 
-  const [geometry, setGeometry] = useState<Polygon>();
+  const [geometry, setGeometry] = useState<Polygon | undefined>();
   const [locked, setLocked] = useState<boolean>(false);
   const [editDomain, setEditDomain] = useState<boolean>(false);
 
@@ -38,11 +39,11 @@ const SpatialDiscretizationContainer = () => {
     <>
       <SidebarContent maxWidth={600}>
         <SpatialDiscretizationContent
-          spatialDiscretization={spatialDiscretization}
+          grid={spatialDiscretization.grid}
           onEditDomainClick={() => setEditDomain(true)}
           locked={locked}
           onChangeLock={setLocked}
-          onChange={updateSpatialDiscretization}
+          onChange={(grid: IGrid) => updateSpatialDiscretization({...spatialDiscretization, grid})}
           loading={loading}
         />
       </SidebarContent>
