@@ -6,6 +6,7 @@ class ProjectEventName(StrEnum):
     MODEL_AFFECTED_CELLS_UPDATED = 'Model Affected Cells Updated'
     MODEL_CREATED = 'Model Created'
     MODEL_GEOMETRY_UPDATED = 'Model Geometry Updated'
+    MODEL_GRID_RECALCULATED = 'Model Grid Recalculated'
     MODEL_GRID_UPDATED = 'Model Grid Updated'
     MODEL_TIME_DISCRETIZATION_UPDATED = 'Model Time Discretization Updated'
     MEMBER_ADDED = 'Member Added'

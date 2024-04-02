@@ -9,7 +9,8 @@ from .presentation.api.read.ReadProjectListRequestHandler import ReadProjectList
 from .presentation.api.write.ProjectRequestHandlers import CreateProjectRequestHandler, UpdateMetadataRequestHandler, UploadPreviewImageRequestHandler
 from .presentation.api.write.PermissionRequestHandlers import AddMemberRequestHandler, UpdateMemberRoleRequestHandler, \
     RemoveMemberRequestHandler, UpdateVisibilityRequestHandler
-from .presentation.api.write.ModelRequestHandlers import UpdateTimeDiscretizationRequestHandler, CreateModelRequestHandler
+from .presentation.api.write.ModelRequestHandlers import UpdateTimeDiscretizationRequestHandler, CreateModelRequestHandler, UpdateSpatialDiscretizationGeometryRequestHandler, \
+    UpdateSpatialDiscretizationGridRequestHandler
 from .types.Project import ProjectId
 from ..common.presentation.middleware.schema_validation import validate_request
 
@@ -29,7 +30,6 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def list_projects():
         return ReadProjectListRequestHandler().handle()
 
@@ -86,6 +86,18 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_get_spatial_discretization(project_id: str):
         return ReadModelSpatialDiscretizationRequestHandler().handle(ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/model/spatial-discretization/geometry', methods=['PUT'])
+    @cross_origin()
+    @authenticate()
+    def project_model_put_spatial_discretization_geometry(project_id: str):
+        return UpdateSpatialDiscretizationGeometryRequestHandler().handle(request, project_id)
+
+    @blueprint.route('/<project_id>/model/spatial-discretization/grid', methods=['PUT'])
+    @cross_origin()
+    @authenticate()
+    def project_model_put_spatial_discretization_grid(project_id: str):
+        return UpdateSpatialDiscretizationGridRequestHandler().handle(request, project_id)
 
     @blueprint.route('/<project_id>/model/time-discretization', methods=['GET'])
     @cross_origin()
