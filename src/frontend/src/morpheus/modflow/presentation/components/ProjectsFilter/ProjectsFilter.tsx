@@ -169,7 +169,7 @@ const ProjectsFilter = ({
         <Checkbox
           className={styles.checkboxLabel}
           label="By Date"
-          name="dateAccess"
+          name="date_access"
           checked={!!filterParams.date_range?.timestamp}
           onChange={(_, {checked}) => {
             if (checked) {
@@ -237,7 +237,12 @@ const ProjectsFilter = ({
             })}
           />
         </div>
-        <div className={'dateInputWrapper datePicker fieldGrid'}>
+        <div
+          className={'dateInputWrapper datePicker fieldGrid'}
+          style={{
+            display: filterParams.date_range?.timestamp ? 'flex' : 'none',
+          }}
+        >
           <div className={'rowTwoColumns'}>
             <label className="labelSmall">Date from</label>
             <div className={'divider'}>
@@ -328,8 +333,26 @@ const ProjectsFilter = ({
 
       {/*// By Number of Grid Cells*/}
       <Form.Field className={styles.field}>
-        <label className={styles.label}>By number of grid cells</label>
-        <div className={styles.sliderWrapper}>
+        <Checkbox
+          className={styles.checkboxLabel}
+          label="By number of grid cells"
+          name="number_of_grid_cells_access"
+          checked={filterParams.number_of_grid_cells !== undefined && 0 <= filterParams.number_of_grid_cells}
+          onChange={(_, {checked}) => {
+            if (checked) {
+              onChangeFilterParams({
+                ...filterParams,
+                number_of_grid_cells: 0,
+              });
+            } else {
+              onChangeFilterParams({...filterParams, number_of_grid_cells: undefined});
+            }
+          }}
+        />
+        <div
+          className={styles.sliderWrapper}
+          style={{display: filterParams.number_of_grid_cells !== undefined ? 'flex' : 'none'}}
+        >
           <Slider
             className={styles.slider}
             min={filterOptions.number_of_grid_cells.min}
@@ -351,8 +374,26 @@ const ProjectsFilter = ({
 
       {/*// By Number of Stress Periods*/}
       <Form.Field className={styles.field}>
-        <label className={styles.label}>By number of stress periods</label>
-        <div className={styles.sliderWrapper}>
+        <Checkbox
+          className={styles.checkboxLabel}
+          label="By number of stress periods"
+          name="number_of_stress_periods_access"
+          checked={filterParams.number_of_stress_periods !== undefined && 0 <= filterParams.number_of_stress_periods}
+          onChange={(_, {checked}) => {
+            if (checked) {
+              onChangeFilterParams({
+                ...filterParams,
+                number_of_stress_periods: 0,
+              });
+            } else {
+              onChangeFilterParams({...filterParams, number_of_stress_periods: undefined});
+            }
+          }}
+        />
+        <div
+          className={styles.sliderWrapper}
+          style={{display: filterParams.number_of_stress_periods !== undefined ? 'flex' : 'none'}}
+        >
           <Slider
             className={styles.slider}
             min={filterOptions.number_of_stress_periods.min}
@@ -374,8 +415,26 @@ const ProjectsFilter = ({
 
       {/*// By Number of Layers*/}
       <Form.Field className={styles.field}>
-        <label className={styles.label}>By number of layers</label>
-        <div className={styles.sliderWrapper}>
+        <Checkbox
+          className={styles.checkboxLabel}
+          label="By number of layers"
+          name="number_of_layers_access"
+          checked={filterParams.number_of_layers !== undefined && 0 <= filterParams.number_of_layers}
+          onChange={(_, {checked}) => {
+            if (checked) {
+              onChangeFilterParams({
+                ...filterParams,
+                number_of_layers: 0,
+              });
+            } else {
+              onChangeFilterParams({...filterParams, number_of_layers: undefined});
+            }
+          }}
+        />
+        <div
+          className={styles.sliderWrapper}
+          style={{display: filterParams.number_of_layers !== undefined ? 'flex' : 'none'}}
+        >
           <Slider
             className={styles.slider}
             min={filterOptions.number_of_layers.min}
@@ -461,7 +520,7 @@ const ProjectsFilter = ({
         <Checkbox
           className={styles.checkboxLabel}
           label="By location"
-          name="mapAccess"
+          name="map_access"
         />
         <div className={`${styles.mapWrapper} map`}>
           <MapContainer

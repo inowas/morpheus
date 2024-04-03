@@ -20,7 +20,11 @@ body {
   gap: 0 !important;
 }
 
+
 .dateInputWrapper {
+  transition: all 0.3s;
+  overflow: hidden;
+
   .divider {
     display: flex;
     align-items: center;
@@ -50,6 +54,10 @@ body {
   }
 }
 
+.hidden {
+  display: none;
+}
+
 .scrollWrapper-Y {
   height: 100%;
   overflow-y: hidden;
@@ -61,7 +69,6 @@ body {
     display: none; /* Safari and Chrome */
   }
 }
-
 
 .scrollWrapper-X {
   height: 100%;
