@@ -3,7 +3,7 @@ from ....infrastructure.persistence.ModelRepository import ModelNotFoundExceptio
 from ....types.Project import ProjectId
 
 
-class ReadModelRequestHandler:
+class ReadModelBoundariesRequestHandler:
     def handle(self, project_id: ProjectId):
         model_reader = ModelReader()
 
@@ -12,8 +12,9 @@ class ReadModelRequestHandler:
         except ModelNotFoundException:
             return {'message': 'Model not found'}, 404
 
-        response = {
-            'model_id': model.model_id.to_str(),
-        }
+        boundaries = model.boundaries
 
-        return response, 200
+        if boundaries is None:
+            return {'message': 'Boundaries not found'}, 404
+
+        return boundaries.to_dict(), 200

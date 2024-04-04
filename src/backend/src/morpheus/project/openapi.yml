@@ -97,24 +97,8 @@ paths:
           description: Forbidden
         404:
           description: Not found
-
-  /projects/{project_id}:
-    parameters:
-      - $ref: '#/components/parameters/ProjectId'
-    delete:
-      tags:
-        - Project
-      summary: Delete a project
-      description: Delete a projects
-      responses:
-        204:
-          description: Project was successfully deleted
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
+        500:
+          description: Internal Server Error
 
   /projects/{project_id}/model:
     get:
@@ -131,28 +115,11 @@ paths:
             application/json:
               schema:
                 type: object
-                # todo: add model schema
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
-    post:
-      tags:
-        - Project
-      summary: Create a new model for a project
-      description: Create a new model for a project
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateModelRequest'
-      responses:
-        201:
-          description: Model model was successfully created
+                properties:
+                  model_id:
+                    type: string
+                    description: "The id of the model."
+                    example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
         401:
           description: Unauthorized
         403:
@@ -163,7 +130,6 @@ paths:
   /projects/{project_id}/model/spatial-discretization:
     get:
       tags:
-        - Project
         - Model
       summary: Read the spatial discretization of a model
       description: Read the spatial discretization of a model
@@ -206,28 +172,6 @@ paths:
           description: Forbidden
         404:
           description: Not found
-    put:
-      tags:
-        - Project
-        - Model
-      summary: Update the geometry of the spatial discretization
-      description: Update the geometry of the spatial discretization
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateSpatialDiscretizationGeometryRequest'
-      responses:
-        204:
-          description: Geometry of the spatial discretization was successfully updated
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
 
   /projects/{project_id}/model/spatial-discretization/grid:
     get:
@@ -245,22 +189,6 @@ paths:
             application/json:
               schema:
                 type: object
-    put:
-      tags:
-        - Project
-        - Model
-      summary: Update the grid of the spatial discretization
-      description: Update the grid of the spatial discretization
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateSpatialDiscretizationGridRequest'
-      responses:
-        204:
-          description: Grid of the spatial discretization was successfully updated
         401:
           description: Unauthorized
         403:
@@ -290,22 +218,25 @@ paths:
           description: Forbidden
         404:
           description: Not found
-    put:
+
+  /projects/{project_id}/model/layers:
+    get:
       tags:
         - Project
         - Model
-      summary: Update the time discretization of a model
-      description: Update the time discretization of a model
+      summary: Read the layers of a model
+      description: Read the layers of a model
       parameters:
         - $ref: '#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateTimeDiscretizationRequest'
       responses:
-        204:
-          description: Time discretization of the model was successfully updated
+        200:
+          description: Layers of the model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
         401:
           description: Unauthorized
         403:
@@ -313,7 +244,30 @@ paths:
         404:
           description: Not found
 
-
+  /projects/{project_id}/model/boundaries:
+    get:
+      tags:
+        - Project
+        - Model
+      summary: Read the boundaries of a model
+      description: Read the boundaries of a model
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: boundaries of the model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
 
   /projects/{project_id}/preview_image:
     #      get:
