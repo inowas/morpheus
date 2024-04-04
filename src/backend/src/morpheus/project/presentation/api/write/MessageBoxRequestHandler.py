@@ -1,6 +1,6 @@
 from flask import Request, abort, Response
 
-from ....application.write.CommandBus import CommandBus
+from ....application.write import project_command_bus
 from ....application.write.CommandFactory import CommandFactory
 from ....application.write.Model import CreateModelCommand, CreateVersionCommand, CreateLayerCommand
 from ....application.write.Project import CreateProjectCommand
@@ -32,8 +32,7 @@ class MessageBoxRequestHandler:
             abort(400, str(e))
 
         try:
-            command_bus = CommandBus()
-            command_bus.dispatch(command)
+            project_command_bus.dispatch(command)
 
             if isinstance(command, CreateProjectCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}'})
