@@ -40,6 +40,6 @@ class ReadSensorListQueryHandler:
         if query.projects is not None:
             items = [item for item in items if item.project in query.projects]
 
-        items.sort(key=lambda x: x.command_name)
+        items.sort(key=lambda x: x.name)
 
         return ReadSensorListQueryResult(SensorList(items=items))

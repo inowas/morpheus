@@ -43,7 +43,7 @@ def bootstrap(app: Flask):
 
         response.data = json.dumps({
             'code': exception.code,
-            'name': exception.command_name,
+            'name': exception.name,
             'description': exception.description,
         })
         response.content_type = 'application/json'
