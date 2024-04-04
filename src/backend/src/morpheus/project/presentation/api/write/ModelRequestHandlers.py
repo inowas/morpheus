@@ -1,10 +1,16 @@
 import dataclasses
 from typing import TypedDict, Literal, Sequence, Optional
 from flask import Request, abort, Response
-from ....application.write import ModelCommands, ModelCommandHandlers
+
+from ....application.write.Model import UpdateModelGeometryCommand, UpdateModelGridCommand, UpdateModelTimeDiscretizationCommand
+from ....application.write.Model.CreateModel import CreateModelCommandHandler, CreateModelCommand
+from ....application.write.Model.UpdateModelGrid import UpdateModelGridCommandHandler
+from ....application.write.Model.UpdateModelGeometry import UpdateModelGeometryCommandHandler
+from ....application.write.Model.UpdateModelTimeDiscretization import UpdateModelTimeDiscretizationCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Model import ModelId
 from ....types.discretization import TimeDiscretization
+from ....types.discretization.spatial import Rotation
 
 from ....types.discretization.spatial.SpatialDiscretization import Polygon
 from ....types.Project import ProjectId
@@ -53,18 +59,19 @@ class CreateModelRequestHandler:
         create_model_request = CreateModelRequest.from_dict(obj=request.json)
         geometry = Polygon.from_dict(dict(create_model_request.geometry))
         grid_properties = create_model_request.grid_properties
+        rotation = Rotation.from_float(grid_properties['rotation'])
 
-        command = ModelCommands.CreateModelCommand.new(
+        command = CreateModelCommand(
             project_id=ProjectId.from_str(project_id),
             geometry=geometry,
             model_id=ModelId.new(),
             n_cols=grid_properties['n_cols'],
             n_rows=grid_properties['n_rows'],
-            rotation=grid_properties['rotation'],
+            rotation=rotation,
             user_id=user_id,
         )
 
-        ModelCommandHandlers.CreateModelCommandHandler.handle(command=command)
+        CreateModelCommandHandler.handle(command=command)
 
         return Response(status=201, headers={'location': f'projects/{project_id}/model'})
 
@@ -98,13 +105,13 @@ class UpdateSpatialDiscretizationGeometryRequestHandler:
             'coordinates': update_spatial_discretization_geometry_request.geometry['coordinates']
         })
 
-        command = ModelCommands.UpdateModelGeometryCommand.new(
+        command = UpdateModelGeometryCommand(
             project_id=project_id,
             geometry=geometry,
             user_id=user_id
         )
 
-        ModelCommandHandlers.UpdateModelGeometryCommandHandler.handle(command=command)
+        UpdateModelGeometryCommandHandler.handle(command=command)
         return Response(status=204)
 
 
@@ -148,7 +155,7 @@ class UpdateSpatialDiscretizationGridRequestHandler:
 
         project_id = ProjectId.from_str(project_id_parameter)
         update_spatial_discretization = UpdateSpatialDiscretizationGridRequest.from_dict(obj=request.json)
-        command = ModelCommands.UpdateModelGridCommand.new(
+        command = UpdateModelGridCommand(
             project_id=project_id,
             n_cols=update_spatial_discretization.n_cols,
             n_rows=update_spatial_discretization.n_rows,
@@ -162,7 +169,7 @@ class UpdateSpatialDiscretizationGridRequestHandler:
             user_id=user_id
         )
 
-        ModelCommandHandlers.UpdateModelGridCommandHandler.handle(command=command)
+        UpdateModelGridCommandHandler.handle(command=command)
         return Response(status=204)
 
 
@@ -204,7 +211,6 @@ class UpdateTimeDiscretizationRequestHandler:
         project_id = ProjectId.from_str(project_id_parameter)
 
         update_time_discretization = UpdateTimeDiscretizationRequest.from_dict(obj=request.json)
-
         start_date_time = StartDateTime.from_str(update_time_discretization.start_date_time)
         end_date_time = EndDateTime.from_str(update_time_discretization.end_datetime)
         stress_periods = StressPeriodCollection.from_list(list(update_time_discretization.stress_periods))
@@ -217,11 +223,11 @@ class UpdateTimeDiscretizationRequestHandler:
             time_unit=time_unit,
         )
 
-        command = ModelCommands.UpdateModelTimeDiscretizationCommand.new(
+        command = UpdateModelTimeDiscretizationCommand(
             project_id=project_id,
             time_discretization=time_discretization,
             user_id=user_id
         )
 
-        ModelCommandHandlers.UpdateTimeDiscretizationCommandHandler.handle(command=command)
+        UpdateModelTimeDiscretizationCommandHandler.handle(command=command)
         return None, 204

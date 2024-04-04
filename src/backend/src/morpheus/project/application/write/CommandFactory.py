@@ -1,63 +1,37 @@
-from morpheus.project.application.write.CommandName import CommandName
-from morpheus.project.application.write import ModelCommands, ProjectCommands, PermissionCommands
+from typing import Type
+
+from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.Model import model_command_handler_map
+from morpheus.project.application.write.Project import project_command_handler_map
 from morpheus.project.types.User import UserId
 
 
 class CommandFactory:
     user_id: UserId
+    registry = {}
 
     def __init__(self, user_id: UserId):
         self.user_id = user_id
+        for command in model_command_handler_map.keys():
+            self.register(command)
+        for command in project_command_handler_map.keys():
+            self.register(command)
 
-    def create_from_payload(self, payload: dict):
-        command_name = CommandName(payload['name'])
+    def register(self, command: Type[CommandBase]):
+        if command.command_name() in self.registry:
+            raise ValueError(f'Command name {command.command_name()} already registered')
+        self.registry[command.command_name()] = command
 
-        if command_name == CommandName.CREATE_PROJECT:
-            return ProjectCommands.CreateProjectCommand.from_payload(self.user_id, payload)
+    def create_from_request_body(self, body):
+        command_name = body.get('command_name', None)
+        if command_name is None:
+            raise ValueError('Missing command field in request body')
 
-        if command_name == CommandName.DELETE_PROJECT:
-            return ProjectCommands.DeleteProjectCommand.from_dict(self.user_id, payload)
+        payload = body.get('payload', None)
+        if payload is None:
+            raise ValueError('Missing payload field in request body')
 
-        if command_name == CommandName.UPDATE_PROJECT_METADATA:
-            return ProjectCommands.UpdateProjectMetadataCommand.from_payload(self.user_id, payload)
+        if command_name not in self.registry:
+            raise ValueError(f'Command name {command_name} not recognized')
 
-        if command_name == CommandName.UPDATE_PROJECT_PREVIEW_IMAGE:
-            return ProjectCommands.UpdateProjectPreviewImageCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.CREATE_MODEL:
-            return ModelCommands.CreateModelCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_MODEL_AFFECTED_CELLS:
-            return ModelCommands.UpdateModelAffectedCellsCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_MODEL_GEOMETRY:
-            return ModelCommands.UpdateModelGeometryCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_MODEL_GRID:
-            return ModelCommands.UpdateModelGridCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_MODEL_TIME_DISCRETIZATION:
-            return ModelCommands.UpdateModelTimeDiscretizationCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.CREATE_VERSION:
-            return ModelCommands.CreateVersionCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.DELETE_VERSION:
-            return ModelCommands.DeleteVersionCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_VERSION_DESCRIPTION:
-            return ModelCommands.UpdateVersionDescriptionCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.ADD_MEMBER:
-            return PermissionCommands.AddMemberCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.REMOVE_MEMBER:
-            return PermissionCommands.RemoveMemberCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_MEMBER_ROLE:
-            return PermissionCommands.UpdateMemberRoleCommand.from_payload(self.user_id, payload)
-
-        if command_name == CommandName.UPDATE_VISIBILITY:
-            return PermissionCommands.UpdateVisibilityCommand.from_payload(self.user_id, payload)
-
-        raise ValueError(f'Command name {command_name} not recognized')
+        return self.registry[command_name].from_payload(user_id=self.user_id, payload=payload)

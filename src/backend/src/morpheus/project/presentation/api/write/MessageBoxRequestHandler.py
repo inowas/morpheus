@@ -1,7 +1,9 @@
 from flask import Request, abort, Response
 
+from ....application.write.CommandBus import CommandBus
 from ....application.write.CommandFactory import CommandFactory
-from ....application.write import ProjectCommands, ProjectCommandHandlers, PermissionCommands, PermissionCommandHandlers, ModelCommands, ModelCommandHandlers
+from ....application.write.Model import CreateModelCommand, CreateVersionCommand, CreateLayerCommand
+from ....application.write.Project import CreateProjectCommand
 from ....incoming import get_logged_in_user_id
 from ....types.User import UserId
 
@@ -19,50 +21,31 @@ class MessageBoxRequestHandler:
 
         # for the sake of simplicity, we make the mapping between the request path and the command explicit here
 
-        payload = request.json
-        command_factory = CommandFactory(user_id=user_id)
-        command = command_factory.create_from_payload(payload=payload)  # type: ignore
+        body = request.json
+        if body is None:
+            abort(400, 'Missing body')
 
         try:
-            if isinstance(command, ProjectCommands.CreateProjectCommand):
-                ProjectCommandHandlers.CreateProjectCommandHandler.handle(command)
-                return Response(status=201, headers={'Location': f'/projects/{command.project_id.to_str()}'})
+            command_factory = CommandFactory(user_id=user_id)
+            command = command_factory.create_from_request_body(body)  # type: ignore
+        except ValueError as e:
+            abort(400, str(e))
 
-            if isinstance(command, ProjectCommands.DeleteProjectCommand):
-                ProjectCommandHandlers.DeleteProjectCommandHandler.handle(command)
+        try:
+            command_bus = CommandBus()
+            command_bus.dispatch(command)
 
-            if isinstance(command, ProjectCommands.UpdateProjectMetadataCommand):
-                ProjectCommandHandlers.UpdateProjectMetadataCommandHandler.handle(command)
+            if isinstance(command, CreateProjectCommand):
+                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}'})
 
-            if isinstance(command, ProjectCommands.UpdateProjectPreviewImageCommand):
-                ProjectCommandHandlers.UpdatePreviewImageCommandHandler.handle(command)
+            if isinstance(command, CreateModelCommand):
+                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model'})
 
-            if isinstance(command, ModelCommands.CreateModelCommand):
-                ModelCommandHandlers.CreateModelCommandHandler.handle(command)
+            if isinstance(command, CreateVersionCommand):
+                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/versions/{command.version_tag.to_str()}'})
 
-            if isinstance(command, ModelCommands.UpdateModelAffectedCellsCommand):
-                ModelCommandHandlers.UpdateModelAffectedCellsCommandHandler.handle(command)
-
-            if isinstance(command, ModelCommands.UpdateModelGeometryCommand):
-                ModelCommandHandlers.UpdateModelGeometryCommandHandler.handle(command)
-
-            if isinstance(command, ModelCommands.UpdateModelGridCommand):
-                ModelCommandHandlers.UpdateModelGridCommandHandler.handle(command)
-
-            if isinstance(command, ModelCommands.UpdateModelTimeDiscretizationCommand):
-                ModelCommandHandlers.UpdateTimeDiscretizationCommandHandler.handle(command)
-
-            if isinstance(command, PermissionCommands.AddMemberCommand):
-                PermissionCommandHandlers.AddMemberCommandHandler.handle(command)
-
-            if isinstance(command, PermissionCommands.RemoveMemberCommand):
-                PermissionCommandHandlers.RemoveMemberCommandHandler.handle(command)
-
-            if isinstance(command, PermissionCommands.UpdateMemberRoleCommand):
-                PermissionCommandHandlers.UpdateMemberRoleCommandHandler.handle(command)
-
-            if isinstance(command, PermissionCommands.UpdateVisibilityCommand):
-                PermissionCommandHandlers.UpdateVisibilityCommandHandler.handle(command)
+            if isinstance(command, CreateLayerCommand):
+                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/layers/{command.layer_id.to_str()}'})
 
             return Response(status=204)
 

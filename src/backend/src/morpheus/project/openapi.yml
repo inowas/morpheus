@@ -74,58 +74,17 @@ paths:
         404:
           $ref: '#/components/responses/NotFoundError'
 
-  /projects/{project_id}:
-    parameters:
-      - $ref: '#/components/parameters/ProjectId'
-    delete:
-      tags:
-        - Project
-      summary: Delete a project
-      description: Delete a projects
-      responses:
-        204:
-          description: Project was successfully deleted
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
-
-  /projects/{project_id}/model:
-    get:
-      tags:
-        - Project
-      summary: Read the model of a project
-      description: Read the model of a project
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-      responses:
-        200:
-          description: Model of the project
-          content:
-            application/json:
-              schema:
-                type: object
-                # todo: add model schema
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
+  /projects/messagebox:
     post:
       tags:
         - Project
-      summary: Create a new model for a project
-      description: Create a new model for a project
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
+      summary: The command endpoint to send a command to the project module
+      description: The command endpoint to send a command to the project module
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateModelRequest'
+              $ref: './application/write/Model/openapi.yml#/components/schemas/ModelCommands'
       responses:
         201:
           description: Model model was successfully created

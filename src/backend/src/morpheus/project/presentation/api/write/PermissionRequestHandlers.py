@@ -3,7 +3,11 @@ from typing import Literal, TypedDict
 
 from flask import Request, abort
 
-from ....application.write import PermissionCommands, PermissionCommandHandlers
+from ....application.write.Project import UpdateProjectVisibilityCommand, AddProjectMemberCommand, RemoveProjectMemberCommand, UpdateProjectMemberRoleCommand
+from ....application.write.Project.AddProjectMember import AddProjectMemberCommandHandler
+from ....application.write.Project.RemoveProjectMember import RemoveProjectMemberCommandHandler
+from ....application.write.Project.UpdateProjectMemberRole import UpdateProjectMemberRoleCommandHandler
+from ....application.write.Project.UpdateProjectVisibiliy import UpdateProjectVisibilityCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Permissions import Visibility, Role
 from ....types.Project import ProjectId
@@ -34,13 +38,13 @@ class UpdateVisibilityRequestHandler:
 
         visibility = Visibility.from_str(update_visibility_request['visibility'])
 
-        command = PermissionCommands.UpdateVisibilityCommand.new(
+        command = UpdateProjectVisibilityCommand(
             project_id=project_id,
             user_id=user_id,
             visibility=visibility,
         )
 
-        PermissionCommandHandlers.UpdateVisibilityCommandHandler.handle(command=command)
+        UpdateProjectVisibilityCommandHandler.handle(command=command)
         return None, 204
 
 
@@ -72,14 +76,14 @@ class AddMemberRequestHandler:
         new_member_id = UserId.from_str(add_member_request['new_member_id'])
         new_member_role = Role.from_str(add_member_request['new_member_role'])
 
-        command = PermissionCommands.AddMemberCommand.new(
+        command = AddProjectMemberCommand(
             project_id=project_id,
             user_id=user_id,
             new_member_id=new_member_id,
             new_member_role=new_member_role
         )
 
-        PermissionCommandHandlers.AddMemberCommandHandler.handle(command=command)
+        AddProjectMemberCommandHandler.handle(command=command)
         return None, 204
 
 
@@ -97,13 +101,13 @@ class RemoveMemberRequestHandler:
         project_id = ProjectId.from_str(project_id_url_parameter)
         member_id = UserId.from_str(user_id_url_parameter)
 
-        command = PermissionCommands.RemoveMemberCommand.new(
+        command = RemoveProjectMemberCommand(
             project_id=project_id,
             user_id=user_id,
             member_id=member_id,
         )
 
-        PermissionCommandHandlers.RemoveMemberCommandHandler.handle(command=command)
+        RemoveProjectMemberCommandHandler.handle(command=command)
         return None, 204
 
 
@@ -131,12 +135,12 @@ class UpdateMemberRoleRequestHandler:
 
         role = Role.from_str(update_member_request['role'])
 
-        command = PermissionCommands.UpdateMemberRoleCommand.new(
+        command = UpdateProjectMemberRoleCommand(
             project_id=project_id,
             member_id=member_id,
             new_role=role,
             user_id=user_id,
         )
 
-        PermissionCommandHandlers.UpdateMemberRoleCommandHandler.handle(command=command)
+        UpdateProjectMemberRoleCommandHandler.handle(command=command)
         return None, 204

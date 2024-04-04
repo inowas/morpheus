@@ -4,7 +4,10 @@ from flask import Request, Response, abort
 
 from morpheus.common.presentation.helpers.file_upload import remove_uploaded_file, move_uploaded_file_to_tmp_dir
 from morpheus.common.types.Exceptions import NotFoundException
-from ....application.write import ProjectCommands, ProjectCommandHandlers
+from ....application.write.Project import CreateProjectCommand, UpdateProjectMetadataCommand, UpdateProjectPreviewImageCommand
+from ....application.write.Project.CreateProject import CreateProjectCommandHandler
+from ....application.write.Project.UpdatePreviewImage import UpdateProjectPreviewImageCommandHandler
+from ....application.write.Project.UpdateProjectMetadata import UpdateProjectMetadataCommandHandler
 from ....incoming import get_logged_in_user_id
 from ....types.Asset import AssetId
 from ....types.Exceptions import InvalidMimeTypeException
@@ -48,7 +51,7 @@ class CreateProjectRequestHandler:
         description = Description.from_str(create_model_request.description)
         tags = Tags.from_list(create_model_request.tags)
 
-        command = ProjectCommands.CreateProjectCommand.new(
+        command = CreateProjectCommand(
             project_id=ProjectId.new(),
             name=name,
             description=description,
@@ -56,7 +59,7 @@ class CreateProjectRequestHandler:
             user_id=user_id,
         )
 
-        ProjectCommandHandlers.CreateProjectCommandHandler.handle(command=command)
+        CreateProjectCommandHandler.handle(command=command)
 
         return Response(status=201, headers={'Location': f'/projects/{command.project_id.to_str()}'})
 
@@ -102,7 +105,7 @@ class UpdateMetadataRequestHandler:
         if update_model_metadata.tags is not None:
             tags = Tags.from_list(update_model_metadata.tags)
 
-        command = ProjectCommands.UpdateProjectMetadataCommand.new(
+        command = UpdateProjectMetadataCommand(
             project_id=project_id,
             name=name,
             description=description,
@@ -110,7 +113,7 @@ class UpdateMetadataRequestHandler:
             user_id=user_id,
         )
 
-        ProjectCommandHandlers.UpdateProjectMetadataCommandHandler.handle(command=command)
+        UpdateProjectMetadataCommandHandler.handle(command=command)
         return Response(status=204)
 
 
@@ -126,7 +129,7 @@ class UploadPreviewImageRequestHandler:
         file_name, file_path = move_uploaded_file_to_tmp_dir('file', request)
 
         try:
-            command = ProjectCommands.UpdateProjectPreviewImageCommand.new(
+            command = UpdateProjectPreviewImageCommand(
                 project_id=ProjectId.from_str(project_id),
                 asset_id=AssetId.new(),
                 file_name=file_name,
@@ -134,7 +137,7 @@ class UploadPreviewImageRequestHandler:
                 user_id=user_id,
             )
 
-            ProjectCommandHandlers.UpdatePreviewImageCommandHandler.handle(command)
+            UpdateProjectPreviewImageCommandHandler.handle(command)
         except NotFoundException as e:
             abort(404, str(e))
         except InvalidMimeTypeException as e:
