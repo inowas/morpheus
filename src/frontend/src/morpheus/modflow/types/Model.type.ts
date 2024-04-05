@@ -3,8 +3,8 @@ import {ITimeDiscretization} from './TimeDiscretization.type';
 
 interface IModel {
   model_id: string;
-  spatial_discretization: ISpatialDiscretization
-  time_discretization: ITimeDiscretization
+  spatial_discretization: ISpatialDiscretization | undefined;
+  time_discretization: ITimeDiscretization | undefined;
   boundaries: any
   observations: any
   soil_model: any

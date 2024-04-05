@@ -144,6 +144,9 @@ class ModelRepository(RepositoryBase):
         new_document = latest_document.with_updated_model(model=model, changed_at=updated_at, changed_by=updated_by)
         self.append_document(new_document)
 
+    def delete_model(self, project_id: ProjectId) -> None:
+        self.collection.delete_many(filter={'project_id': project_id.to_str()})
+
     def assign_version_to_latest_model(self, project_id: ProjectId, version: ModelVersion, changed_by: UserId, changed_at: DateTime) -> None:
         # we assign a version to the latest document and delete all intermediate documents with number_of_changes > 0
         document = self.get_latest_document(project_id=project_id)

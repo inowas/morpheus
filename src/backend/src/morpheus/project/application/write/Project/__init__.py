@@ -1,0 +1,19 @@
+from .AddProjectMember import AddProjectMemberCommand, AddProjectMemberCommandHandler
+from .CreateProject import CreateProjectCommand, CreateProjectCommandHandler
+from .DeleteProject import DeleteProjectCommand, DeleteProjectCommandHandler
+from .RemoveProjectMember import RemoveProjectMemberCommand, RemoveProjectMemberCommandHandler
+from .UpdatePreviewImage import UpdateProjectPreviewImageCommand, UpdateProjectPreviewImageCommandHandler
+from .UpdateProjectMemberRole import UpdateProjectMemberRoleCommand, UpdateProjectMemberRoleCommandHandler
+from .UpdateProjectMetadata import UpdateProjectMetadataCommand, UpdateProjectMetadataCommandHandler
+from .UpdateProjectVisibiliy import UpdateProjectVisibilityCommand, UpdateProjectVisibilityCommandHandler
+
+project_command_handler_map = {
+    AddProjectMemberCommand: AddProjectMemberCommandHandler,
+    CreateProjectCommand: CreateProjectCommandHandler,
+    DeleteProjectCommand: DeleteProjectCommandHandler,
+    RemoveProjectMemberCommand: RemoveProjectMemberCommandHandler,
+    UpdateProjectMetadataCommand: UpdateProjectMetadataCommandHandler,
+    UpdateProjectPreviewImageCommand: UpdateProjectPreviewImageCommandHandler,
+    UpdateProjectMemberRoleCommand: UpdateProjectMemberRoleCommandHandler,
+    UpdateProjectVisibilityCommand: UpdateProjectVisibilityCommandHandler,
+}

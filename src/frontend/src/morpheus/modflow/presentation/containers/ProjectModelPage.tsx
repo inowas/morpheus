@@ -24,7 +24,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     propertyId?: string;
   }>();
 
-  const {error, state} = useModel(projectId);
+  const {error, state, model} = useModel(projectId);
 
   const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => sidebarItems.map((item) => ({
     ...item,
@@ -71,6 +71,10 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
 
   if (!property) {
     return redirectToSpatialDiscretization();
+  }
+
+  if (!model && 'setup' !== state) {
+    return null;
   }
 
   return (

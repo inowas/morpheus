@@ -1,7 +1,7 @@
 from morpheus.common.application.Projector import ProjectorBase
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent
 from morpheus.project.domain.events.PermissionEvents import OwnershipUpdatedEvent, VisibilityUpdatedEvent
 from morpheus.project.infrastructure.persistence.ProjectSummaryRepository import ProjectSummaryRepository, project_summary_repository
 from morpheus.project.types.Project import ProjectSummary
@@ -28,6 +28,11 @@ class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
             updated_at=event.occurred_at,
         )
         self.repository.insert_or_update(summary=project_summary)
+
+    @listen_to(ProjectDeletedEvent)
+    def on_project_deleted(self, event: ProjectDeletedEvent, metadata: EventMetadata):
+        project_id = event.get_project_id()
+        self.repository.delete(project_id=project_id)
 
     @listen_to(ProjectMetadataUpdatedEvent)
     def on_project_metadata_updated(self, event: ProjectMetadataUpdatedEvent, metadata: EventMetadata):

@@ -12,4 +12,8 @@ class ReadModelRequestHandler:
         except ModelNotFoundException:
             return {'message': 'Model not found'}, 404
 
-        return model.to_dict(), 200
+        response = {
+            'model_id': model.model_id.to_str(),
+        }
+
+        return response, 200
