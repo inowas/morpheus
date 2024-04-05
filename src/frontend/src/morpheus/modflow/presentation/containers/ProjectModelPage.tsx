@@ -4,7 +4,7 @@ import {ISidebarMenuItem, SidebarMenu} from 'common/components/SidebarMenu';
 import {sidebarItems} from '../helpers/sidebarMenu';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer} from '../components';
-import {Navbar} from '../../../../common/components';
+import {Navbar} from 'common/components';
 import {useNavbarItems} from '../../../application/application';
 import {useModel} from '../../application';
 
@@ -24,7 +24,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     propertyId?: string;
   }>();
 
-  const {error, state, model} = useModel(projectId);
+  const {error, state} = useModel(projectId);
 
   const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => sidebarItems.map((item) => ({
     ...item,
@@ -34,7 +34,6 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     // eslint-disable-next-line
   })), [sidebarItems, projectId, property]);
 
-  const redirectToSetup = () => <Navigate to={`${basePath}/${projectId}/model/setup`}/>;
   const redirectToSpatialDiscretization = () => <Navigate to={`${basePath}/${projectId}/model/spatial-discretization`}/>;
 
   const renderContent = (slug: string | undefined) => {
@@ -61,20 +60,28 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     return (<pre>Error: {error.message}</pre>);
   }
 
-  if ('setup' != property && 'setup' === state) {
-    return redirectToSetup();
+  if ('initializing' === state || 'loading' === state) {
+    return <pre>Loading...</pre>;
   }
 
-  if ('setup' === property && 'loaded' === state) {
-    return redirectToSpatialDiscretization();
+  if ('setup' === state) {
+    return (
+      <>
+        <Navbar
+          location={location}
+          navbarItems={navbarItems}
+          navigateTo={navigate}
+        />
+        <ModflowContainer>
+          <SidebarMenu menuItems={sidebarMenuItems.slice(0, 1)}/>
+          {renderContent('setup')}
+        </ModflowContainer>
+      </>
+    );
   }
 
   if (!property) {
     return redirectToSpatialDiscretization();
-  }
-
-  if (!model && 'setup' !== state) {
-    return null;
   }
 
   return (
@@ -85,7 +92,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
         navigateTo={navigate}
       />
       <ModflowContainer>
-        <SidebarMenu menuItems={'setup' == property ? sidebarMenuItems.slice(0, 1) : sidebarMenuItems}/>
+        <SidebarMenu menuItems={sidebarMenuItems}/>
         {renderContent(property)}
       </ModflowContainer>
     </>
