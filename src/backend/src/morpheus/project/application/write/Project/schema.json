@@ -79,10 +79,6 @@
         "payload": {
           "type": "object",
           "properties": {
-            "project_id": {
-              "type": "string",
-              "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
-            },
             "name": {
               "type": "string",
               "example": "My Project"
@@ -99,7 +95,6 @@
             }
           },
           "required": [
-            "project_id",
             "name",
             "description",
             "tags"

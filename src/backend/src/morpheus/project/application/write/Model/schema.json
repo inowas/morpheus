@@ -247,7 +247,6 @@
       },
       "UpdateLayerCommand": {
         "properties": {
-          "type": "object",
           "command_name": {
             "type": "string",
             "enum": [
@@ -369,7 +368,11 @@
               "geometry"
             ]
           }
-        }
+        },
+        "required": [
+          "command_name",
+          "payload"
+        ]
       },
       "UpdateModelGridCommand": {
         "properties": {
@@ -442,12 +445,13 @@
       },
       "UpdateModelTimeDiscretizationCommand": {
         "properties": {
-          "command_name": null,
-          "type": "string",
-          "enum": [
-            "update_model_time_discretization_command"
-          ],
-          "example": "update_model_time_discretization_command",
+          "command_name": {
+            "type": "string",
+            "enum": [
+              "update_model_time_discretization_command"
+            ],
+            "example": "update_model_time_discretization_command"
+          },
           "payload": {
             "properties": {
               "project_id": {

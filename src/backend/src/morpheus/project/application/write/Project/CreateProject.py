@@ -13,7 +13,6 @@ from morpheus.project.types.User import UserId
 
 
 class CreateProjectPayload(TypedDict):
-    project_id: str
     name: str
     description: str
     tags: List[str]
@@ -30,7 +29,7 @@ class CreateProjectCommand(CommandBase):
     def from_payload(cls, user_id: UserId, payload: CreateProjectPayload):
         return cls(
             user_id=user_id,
-            project_id=ProjectId.from_str(payload['project_id']),
+            project_id=ProjectId.new(),
             name=Name.from_str(payload['name']),
             description=Description.from_str(payload['description']),
             tags=Tags.from_list(payload['tags']),

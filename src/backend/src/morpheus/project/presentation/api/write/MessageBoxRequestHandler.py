@@ -1,7 +1,7 @@
 from flask import Request, abort, Response
 
 from ....application.write import project_command_bus
-from ....application.write.CommandFactory import CommandFactory
+from ....application.write.CommandFactory import command_factory
 from ....application.write.Model import CreateModelCommand, CreateVersionCommand, CreateLayerCommand
 from ....application.write.Project import CreateProjectCommand
 from ....incoming import get_logged_in_user_id
@@ -20,14 +20,12 @@ class MessageBoxRequestHandler:
         user_id = UserId.from_str(user_id_str)
 
         # for the sake of simplicity, we make the mapping between the request path and the command explicit here
-
         body = request.json
         if body is None:
             abort(400, 'Missing body')
 
         try:
-            command_factory = CommandFactory(user_id=user_id)
-            command = command_factory.create_from_request_body(body)  # type: ignore
+            command = command_factory.create_from_request_body(user_id=user_id, body=body)  # type: ignore
         except ValueError as e:
             abort(400, str(e))
 

@@ -61,7 +61,7 @@ class CreateModelCommandHandler(CommandHandlerBase):
             polygon=command.geometry,
             n_cols=command.n_cols,
             n_rows=command.n_rows,
-            rotation=Rotation.from_float(command.rotation),
+            rotation=command.rotation,
         )
 
         cells = ActiveCells.from_polygon(polygon=command.geometry, grid=grid)
