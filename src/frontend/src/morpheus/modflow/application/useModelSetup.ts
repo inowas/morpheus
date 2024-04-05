@@ -1,4 +1,4 @@
-import {IError, ILengthUnit} from '../types';
+import {ICreateModelCommand, IError, ILengthUnit} from '../types';
 
 import {useApi} from '../incoming';
 import {useDispatch, useSelector} from 'react-redux';
@@ -36,10 +36,25 @@ const useModelSetup = (projectId: string | undefined): IUseModelSetup => {
 
   const createModel = async (data: ICreateModel) => {
 
+    if (!projectId) {
+      return;
+    }
+
     dispatch(setLoading(true));
     dispatch(setError(null));
 
-    const createModelResult = await httpPost<ICreateModel>(`/projects/${projectId}/model`, data);
+    const createModelCommand: ICreateModelCommand = {
+      command_name: 'create_model_command',
+      payload: {
+        project_id: projectId,
+        geometry: data.geometry,
+        n_cols: data.grid_properties.n_cols,
+        n_rows: data.grid_properties.n_rows,
+        rotation: data.grid_properties.rotation,
+      },
+    };
+
+    const createModelResult = await httpPost<ICreateModelCommand>('/projects/messagebox', createModelCommand);
     dispatch(setLoading(false));
 
     if (createModelResult.err) {

@@ -14,7 +14,7 @@ const CreateProjectContainer = ({open, onClose}: IProps) => {
   const navigate = useNavigate();
 
   const handleSubmit = async (name: string, description: string, tags: string[]) => {
-    const projectId  = await createProject({name, description, tags});
+    const projectId = await createProject(name, description, tags);
     if (projectId) {
       navigate(`/projects/${projectId}`);
       onClose();

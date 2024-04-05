@@ -6,7 +6,7 @@ from ...domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToMod
     ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent, \
     ModelGridRecalculatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
-from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
+from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent
 
 
 class ProjectEventFactory:
@@ -25,16 +25,18 @@ class ProjectEventFactory:
             return ModelGridUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_TIME_DISCRETIZATION_UPDATED:
             return ModelTimeDiscretizationUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.MEMBER_ADDED:
+        if event_name.to_str() == ProjectEventName.PROJECT_MEMBER_ADDED:
             return MemberAddedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.MEMBER_REMOVED:
+        if event_name.to_str() == ProjectEventName.PROJECT_MEMBER_REMOVED:
             return MemberRemovedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.MEMBER_ROLE_UPDATED:
+        if event_name.to_str() == ProjectEventName.PROJECT_MEMBER_ROLE_UPDATED:
             return MemberRoleUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.OWNERSHIP_UPDATED:
+        if event_name.to_str() == ProjectEventName.PROJECT_OWNERSHIP_UPDATED:
             return OwnershipUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.PROJECT_CREATED:
             return ProjectCreatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.PROJECT_DELETED:
+            return ProjectDeletedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.PROJECT_METADATA_UPDATED:
             return ProjectMetadataUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.VERSION_ASSIGNED_TO_MODEL:

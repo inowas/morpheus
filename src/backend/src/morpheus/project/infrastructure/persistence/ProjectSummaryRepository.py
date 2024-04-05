@@ -71,6 +71,9 @@ class ProjectSummaryRepository(RepositoryBase):
 
         self.collection.insert_one(document.to_dict())
 
+    def delete(self, project_id: ProjectId) -> None:
+        self.collection.delete_one({'project_id': project_id.to_str()})
+
     def update_owner_id(self, project_id: ProjectId, owner_id: UserId) -> None:
         self.collection.update_one(
             filter={'project_id': project_id.to_str()},

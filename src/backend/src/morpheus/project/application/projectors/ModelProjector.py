@@ -3,7 +3,7 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDescriptionUpdatedEvent, \
     VersionDeletedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelAffectedCellsUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, \
     ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent
+from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
 from morpheus.project.types.User import UserId
@@ -27,6 +27,11 @@ class ModelProjector(EventListenerBase):
         created_at = event.get_occurred_at()
 
         self.model_repo.save_model(project_id=project_id, model=model, created_at=created_at, created_by=created_by)
+
+    @listen_to(ProjectDeletedEvent)
+    def on_project_deleted(self, event: ProjectDeletedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        self.model_repo.delete_model(project_id=project_id)
 
     @listen_to(ModelAffectedCellsRecalculatedEvent)
     def on_model_affected_cells_recalculated(self, event: ModelAffectedCellsRecalculatedEvent, metadata: EventMetadata) -> None:

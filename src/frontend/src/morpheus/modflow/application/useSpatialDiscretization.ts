@@ -1,5 +1,5 @@
 import {IError, IGrid, ILengthUnit, ISpatialDiscretization} from '../types';
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 import {useApi} from '../incoming';
 import {Point, Polygon} from 'geojson';
@@ -84,6 +84,11 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
       });
     }
   };
+
+  useEffect(() => {
+    fetchSpatialDiscretization();
+  }, []);
+
 
   const updateGeometry = async (polygon: Polygon) => {
     if (!isMounted.current) {
