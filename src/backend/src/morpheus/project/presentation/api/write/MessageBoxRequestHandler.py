@@ -1,5 +1,6 @@
 from flask import Request, abort, Response
 
+from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
 from ....application.write import project_command_bus
 from ....application.write.CommandFactory import command_factory
 from ....application.write.Model import CreateModelCommand, CreateVersionCommand, CreateLayerCommand
@@ -46,5 +47,9 @@ class MessageBoxRequestHandler:
 
             return Response(status=204)
 
+        except NotFoundException as e:
+            abort(404, str(e))
+        except InsufficientPermissionsException as e:
+            abort(403, str(e))
         except Exception as e:
             abort(500, str(e))
