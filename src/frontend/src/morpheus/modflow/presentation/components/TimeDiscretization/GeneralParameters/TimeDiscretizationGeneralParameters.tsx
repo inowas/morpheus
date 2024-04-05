@@ -39,9 +39,9 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     {key: ITimeUnit.MINUTES, text: 'Minutes', value: 2},
     {key: ITimeUnit.HOURS, text: 'Hours', value: 3},
     {key: ITimeUnit.DAYS, text: 'Days', value: 4},
-    {key: ITimeUnit.HOURS, text: 'Years', value: 5},
+    {key: ITimeUnit.YEARS, text: 'Years', value: 5},
   ];
-
+  
   const calculatedTotalTime = useMemo(() => {
     const seconds = (parseISO(timeDiscretization.end_date_time).getTime() - parseISO(timeDiscretization.start_date_time).getTime()) / 1000;
     switch (timeDiscretization.time_unit) {

@@ -5,6 +5,8 @@ import TimeDiscretizationStressPeriods from './StressPeriods';
 import {IStressPeriod, ITimeDiscretization} from '../../../types';
 import {addDays, isValid, parseISO} from 'date-fns';
 import {Button, DataGrid, SectionTitle} from 'common/components';
+// import {StressperiodsUpload} from './StressperiodsUpload';
+import {StressperiodsUpload} from './StressperiodsUpload';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
@@ -27,9 +29,14 @@ const withSortedStressPeriods = (td: ITimeDiscretization): ITimeDiscretization =
 
 const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IProps) => {
 
+  const [uploadedData, setUploadedData] = useState<any>(null);
   const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(
     withSortedStressPeriods(timeDiscretization),
   );
+
+  useEffect(() => {
+    console.log(uploadedData);
+  }, [uploadedData]);
 
   useEffect(() => {
     setTimeDiscretizationLocal(withSortedStressPeriods(timeDiscretization));
@@ -75,11 +82,28 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
     },
     content: {
       content: (
-        <TimeDiscretizationStressPeriods
-          timeDiscretization={timeDiscretizationLocal}
-          onChange={handleTimeDiscretizationChange}
-          readOnly={false}
-        />
+        <>
+          <StressperiodsUpload
+            handleUpload={setUploadedData}
+          />
+          {/*<UploadCSVFile*/}
+          {/*  onCancel={() => {*/}
+          {/*  }}*/}
+          {/*  onSave={() => {*/}
+          {/*  }}*/}
+          {/*  columns={[*/}
+          {/*    {key: 0, value: 'start_date_time', text: 'Start date', type: ECsvColumnType.DATE_TIME},*/}
+          {/*    {key: 1, value: 'nstp', text: 'Time steps'},*/}
+          {/*    {key: 2, value: 'tsmult', text: 'Multiplier'},*/}
+          {/*    {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},*/}
+          {/*  ]}*/}
+          {/*/>*/}
+          <TimeDiscretizationStressPeriods
+            timeDiscretization={timeDiscretizationLocal}
+            onChange={handleTimeDiscretizationChange}
+            readOnly={false}
+          />
+        </>
       ),
     },
   }];
