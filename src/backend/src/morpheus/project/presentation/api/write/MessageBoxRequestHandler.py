@@ -3,7 +3,9 @@ from flask import Request, abort, Response
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
 from ....application.write import project_command_bus
 from ....application.write.CommandFactory import command_factory
-from ....application.write.Model import CreateModelCommand, CreateVersionCommand, CreateLayerCommand
+from ....application.write.Model.CreateModel import CreateModelCommand
+from ....application.write.Model.CreateModelLayer import CreateModelLayerCommand
+from ....application.write.Model.CreateModelVersion import CreateModelVersionCommand
 from ....application.write.Project import CreateProjectCommand
 from ....incoming import get_logged_in_user_id
 from ....types.User import UserId
@@ -39,10 +41,10 @@ class MessageBoxRequestHandler:
             if isinstance(command, CreateModelCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model'})
 
-            if isinstance(command, CreateVersionCommand):
+            if isinstance(command, CreateModelVersionCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/versions/{command.version_tag.to_str()}'})
 
-            if isinstance(command, CreateLayerCommand):
+            if isinstance(command, CreateModelLayerCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/layers/{command.layer_id.to_str()}'})
 
             return Response(status=204)

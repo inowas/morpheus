@@ -9,7 +9,7 @@ from morpheus.project.types.User import UserId
 from morpheus.project.types.soil_model.Layer import LayerName, LayerDescription, LayerType, LayerId
 
 
-class UpdateLayerCommandPayload(TypedDict):
+class UpdateModelLayerCommandPayload(TypedDict):
     project_id: str
     model_id: str
     layer_id: str
@@ -27,7 +27,7 @@ class UpdateLayerCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class UpdateLayerCommand(CommandBase):
+class UpdateModelLayerCommand(CommandBase):
     project_id: ProjectId
     model_id: ModelId
     layer_id: LayerId
@@ -44,7 +44,7 @@ class UpdateLayerCommand(CommandBase):
     bottom: Optional[float | list[list[float]]]
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: UpdateLayerCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: UpdateModelLayerCommandPayload):
         layer_type_string = payload['type']
         layer_type = LayerType.from_str(layer_type_string) if layer_type_string else None
         return cls(
@@ -66,7 +66,7 @@ class UpdateLayerCommand(CommandBase):
         )
 
 
-class UpdateLayerCommandHandler(CommandHandlerBase):
+class UpdateModelLayerCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: UpdateLayerCommand):
+    def handle(command: UpdateModelLayerCommand):
         raise Exception('Not implemented yet')

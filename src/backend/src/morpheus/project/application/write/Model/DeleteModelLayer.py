@@ -9,20 +9,20 @@ from morpheus.project.types.User import UserId
 from morpheus.project.types.soil_model.Layer import LayerId
 
 
-class DeleteLayerCommandPayload(TypedDict):
+class DeleteModelLayerCommandPayload(TypedDict):
     project_id: str
     model_id: str
     layer_id: str
 
 
 @dataclasses.dataclass(frozen=True)
-class DeleteLayerCommand(CommandBase):
+class DeleteModelLayerCommand(CommandBase):
     project_id: ProjectId
     model_id: ModelId
     layer_id: LayerId
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: DeleteLayerCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: DeleteModelLayerCommandPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
@@ -31,7 +31,7 @@ class DeleteLayerCommand(CommandBase):
         )
 
 
-class DeleteLayerCommandHandler(CommandHandlerBase):
+class DeleteModelLayerCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: DeleteLayerCommand):
+    def handle(command: DeleteModelLayerCommand):
         raise Exception('Not implemented yet')
