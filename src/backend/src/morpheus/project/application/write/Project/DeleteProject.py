@@ -7,6 +7,7 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
+from morpheus.project.infrastructure.assets.AssetHandlingService import asset_handling_service
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents import ProjectDeletedEvent
 from morpheus.project.types.Project import ProjectId
@@ -38,6 +39,9 @@ class DeleteProjectCommandHandler(CommandHandlerBase):
 
         # delete project from filesystem
         # delete project from mongo db
+
+        # delete all assets for project
+        asset_handling_service.delete_all_assets_for_project(command.project_id)
 
         event = ProjectDeletedEvent.from_project_id(project_id=command.project_id, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))

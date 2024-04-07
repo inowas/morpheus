@@ -102,6 +102,9 @@ class AssetRepository(RepositoryBase):
     def delete_asset(self, asset_id: AssetId) -> None:
         self.collection.delete_one({'asset_id': asset_id.to_str()})
 
+    def delete_all_assets_for_project(self, project_id: ProjectId) -> None:
+        self.collection.delete_many({'project_id': project_id.to_str()})
+
     def update_asset(self, asset_id: AssetId, file_name: FileName | None, description: AssetDescription | None) -> None:
         properties_to_update = {}
         if file_name is not None:
