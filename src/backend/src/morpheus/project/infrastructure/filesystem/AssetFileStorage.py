@@ -14,7 +14,7 @@ class AssetFileStorage:
         return os.path.join(self._base_path, asset.project_id.to_str())
 
     def _build_filename(self, asset: Asset) -> str:
-        _, extension = os.path.splitext(asset.file.filename)
+        _, extension = os.path.splitext(asset.file.file_name)
         return asset.id.to_str() + extension
 
     def get_full_path_to_asset(self, asset: Asset) -> FilePath:
@@ -30,7 +30,8 @@ class AssetFileStorage:
 
     def delete_asset(self, asset: Asset):
         full_path = os.path.join(self._build_project_path(asset), self._build_filename(asset))
-        os.remove(full_path)
+        if os.path.exists(full_path):
+            os.remove(full_path)
 
 
 asset_file_storage = AssetFileStorage(base_path=settings.MORPHEUS_PROJECT_ASSET_DATA)

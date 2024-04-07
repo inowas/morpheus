@@ -13,7 +13,11 @@ class AssetHandlingService:
         self._file_storage.save_asset(asset, source_file)
         self._repository.add_asset(asset)
 
-    def delete_asset(self, asset_id: AssetId):
+    def delete_asset(self, asset: Asset):
+        self._file_storage.delete_asset(asset)
+        self._repository.delete_asset(asset.id)
+
+    def delete_asset_by_id(self, asset_id: AssetId):
         asset = self._repository.get_asset(asset_id)
         if asset is None:
             return

@@ -1,9 +1,11 @@
 import dataclasses
+import re
 from typing import Mapping, Any
+
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.common.types.File import File
+from morpheus.common.types.File import File, FileName
 from morpheus.settings import settings as app_settings
-from ...types.Asset import AssetId, AssetType, Asset, Metadata
+from ...types.Asset import AssetId, AssetType, Asset, Metadata, AssetFilter, AssetDescription
 from ...types.Project import ProjectId
 
 
@@ -14,6 +16,7 @@ class AssetRepositoryDocument:
     type: str
     file: dict
     metadata: dict
+    description: str | None = None
 
     @classmethod
     def from_asset(cls, asset: Asset):
@@ -23,6 +26,7 @@ class AssetRepositoryDocument:
             type=asset.type.value,
             file=asset.file.to_dict(),
             metadata=asset.metadata.to_dict(),
+            description=asset.description.to_str() if asset.description is not None else None,
         )
 
     @classmethod
@@ -33,6 +37,7 @@ class AssetRepositoryDocument:
             type=raw_document['type'],
             file=raw_document['file'],
             metadata=raw_document['metadata'],
+            description=raw_document['description'],
         )
 
     def to_dict(self):
@@ -44,7 +49,8 @@ class AssetRepositoryDocument:
             project_id=ProjectId.from_str(self.project_id),
             type=AssetType(self.type),
             file=File.from_dict(self.file),
-            metadata=Metadata.from_dict_and_type(self.metadata, AssetType(self.type))
+            metadata=Metadata.from_dict_and_type(self.metadata, AssetType(self.type)),
+            description=AssetDescription.try_from_str(self.description),
         )
 
 
@@ -59,6 +65,34 @@ class AssetRepository(RepositoryBase):
 
         return AssetRepositoryDocument.from_raw_document(raw_document).get_asset()
 
+    def get_count_assets(self, filter: AssetFilter | None) -> int:
+        return self.collection.count_documents(filter=self._build_raw_filter(filter))
+
+    def get_assets(self, filter: AssetFilter | None, skip: int | None = None, limit: int | None = None) -> list[Asset]:
+        raw_documents = self.collection.find(self._build_raw_filter(filter))
+        if skip is not None:
+            raw_documents = raw_documents.skip(skip)
+        if limit is not None:
+            raw_documents = raw_documents.limit(limit)
+
+        return [AssetRepositoryDocument.from_raw_document(raw_document).get_asset() for raw_document in raw_documents]
+
+    def _build_raw_filter(self, filter: AssetFilter | None) -> dict:
+        raw_filter = {}
+        if filter is None:
+            return raw_filter
+
+        if filter.project_id is not None:
+            raw_filter['project_id'] = filter.project_id.to_str()
+        if filter.asset_type is not None:
+            raw_filter['type'] = {'$in': [asset_type.value for asset_type in filter.asset_type]}
+        if filter.file_name is not None:
+            raw_filter['file.file_name'] = re.compile(re.escape(filter.file_name), re.IGNORECASE)
+        if filter.description is not None:
+            raw_filter['description'] = re.compile(re.escape(filter.description.to_str()), re.IGNORECASE)
+
+        return raw_filter
+
     def add_asset(self, asset: Asset) -> None:
         if self.has_asset(asset.id):
             raise Exception(f'Asset with id {asset.id.to_str()} already exists')
@@ -67,6 +101,15 @@ class AssetRepository(RepositoryBase):
 
     def delete_asset(self, asset_id: AssetId) -> None:
         self.collection.delete_one({'asset_id': asset_id.to_str()})
+
+    def update_asset(self, asset_id: AssetId, file_name: FileName | None, description: AssetDescription | None) -> None:
+        properties_to_update = {}
+        if file_name is not None:
+            properties_to_update['file.file_name'] = file_name
+        if description is not None:
+            properties_to_update['description'] = description.to_str()
+
+        self.collection.update_one({'asset_id': asset_id.to_str()}, {'$set': properties_to_update})
 
 
 asset_repository = AssetRepository(

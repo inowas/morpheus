@@ -1,32 +1,33 @@
 import os
 import tempfile
-from flask import Request, Response, jsonify
-from werkzeug.exceptions import HTTPException
+from flask import abort, request
 from werkzeug.utils import secure_filename
 from morpheus.common.types.File import FilePath, FileName
 
 
-def move_uploaded_file_to_tmp_dir(request_files_key: str, request: Request) -> tuple[FileName, FilePath]:
-    def raise_error(description: str, status_code: int):
-        response = jsonify()
-        response.status_code = status_code
-        raise HTTPException(description=description, response=Response(status=400))
-
+def move_uploaded_files_to_tmp_dir(request_files_key: str, max_allowed_number_of_files: int | None = None) -> list[tuple[FileName, FilePath]]:
     if request_files_key not in request.files:
-        raise_error('No file uploaded', 400)
+        abort(400, 'No file uploaded')
 
-    file = request.files[request_files_key]
-    filename = secure_filename(file.filename) if file.filename is not None else ''
-    if filename == '':
-        raise_error('Filename is empty or invalid', 400)
+    files = request.files.getlist(request_files_key)
+    if max_allowed_number_of_files is not None and len(files) != max_allowed_number_of_files:
+        abort(400, f'Only {max_allowed_number_of_files} files are allowed, but {len(files)} were uploaded')
 
-    _, extension = os.path.splitext(filename)
+    list_of_files = []
+    for file in files:
+        filename = secure_filename(file.filename) if file.filename is not None else ''
+        if filename == '':
+            abort(400, 'Filename is empty or invalid')
 
-    handle, full_path = tempfile.mkstemp(suffix=extension)
-    os.close(handle)
-    file.save(full_path)
+        _, extension = os.path.splitext(filename)
 
-    return FileName(filename), FilePath(full_path)
+        handle, full_path = tempfile.mkstemp(suffix=extension)
+        os.close(handle)
+        file.save(full_path)
+
+        list_of_files.append((FileName(filename), FilePath(full_path)))
+
+    return list_of_files
 
 
 def remove_uploaded_file(full_path: str):

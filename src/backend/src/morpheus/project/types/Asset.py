@@ -1,8 +1,11 @@
 import dataclasses
 from enum import StrEnum
-from morpheus.common.types.File import File
-from morpheus.common.types import Uuid
+from typing import Literal, Any
+
+from morpheus.common.types.File import File, FileName
+from morpheus.common.types import Uuid, String
 from morpheus.project.types.Project import ProjectId
+from morpheus.project.types.geometry.BoundingBox import BoundingBox
 
 
 class AssetId(Uuid):
@@ -53,30 +56,53 @@ class ImageMetadata(Metadata):
 
 @dataclasses.dataclass(frozen=True)
 class GeoTiffMetadata(Metadata):
-    band_count: int
+    n_col: int
+    n_row: int
+    n_band: int
+    wgs_84_bounding_box: BoundingBox
 
     def to_dict(self):
-        return dataclasses.asdict(self)
+        return {
+            'n_col': self.n_col,
+            'n_row': self.n_row,
+            'n_band': self.n_band,
+            'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
+        }
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            band_count=obj['band_count'],
+            n_col=obj['n_col'],
+            n_row=obj['n_row'],
+            n_band=obj['n_band'],
+            wgs_84_bounding_box=BoundingBox.from_dict(obj['wgs_84_bounding_box']),
         )
 
 
 @dataclasses.dataclass(frozen=True)
 class ShapefileMetadata(Metadata):
-    type: str
+    geometry_type: Literal['Polygon'] | Literal['LineString'] | Literal['Point']
+    n_geometries: int
+    wgs_84_bounding_box: BoundingBox
 
     def to_dict(self):
-        return dataclasses.asdict(self)
+        return {
+            'geometry_type': self.geometry_type,
+            'n_geometries': self.n_geometries,
+            'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
+        }
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            type=obj['type'],
+            geometry_type=obj['geometry_type'],
+            n_geometries=obj['n_geometries'],
+            wgs_84_bounding_box=BoundingBox.from_dict(obj['wgs_84_bounding_box']),
         )
+
+
+class AssetDescription(String):
+    pass
 
 
 @dataclasses.dataclass(frozen=True)
@@ -86,6 +112,7 @@ class Asset:
     type: AssetType
     file: File
     metadata: Metadata
+    description: AssetDescription | None = None
 
     def to_dict(self):
         return {
@@ -94,6 +121,7 @@ class Asset:
             'type': self.type.value,
             'file': self.file.to_dict(),
             'metadata': self.metadata.to_dict(),
+            'description': self.description.to_str() if self.description is not None else None,
         }
 
     @classmethod
@@ -106,4 +134,46 @@ class Asset:
             type=asset_type,
             file=File.from_dict(obj['file']),
             metadata=Metadata.from_dict_and_type(obj['metadata'], asset_type),
+            description=AssetDescription.try_from_str(obj['description']),
         )
+
+
+@dataclasses.dataclass(frozen=True)
+class AssetFilter:
+    project_id: ProjectId | None = None
+    asset_type: list[AssetType] | None = None
+    file_name: FileName | None = None
+    description: AssetDescription | None = None
+
+
+class AssetData:
+    def to_dict(self):
+        raise NotImplementedError
+
+
+@dataclasses.dataclass(frozen=True)
+class GeoTiffAssetData(AssetData):
+    n_col: int
+    n_row: int
+    n_band: int
+    wgs_84_bounding_box: BoundingBox
+    wgs_84_coords: Any
+
+    def to_dict(self):
+        return {
+            'n_col': self.n_col,
+            'n_row': self.n_row,
+            'n_band': self.n_band,
+            'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
+            'wgs_84_coords': self.wgs_84_coords,
+        }
+
+
+@dataclasses.dataclass(frozen=True)
+class ShapefileAssetData(AssetData):
+    geo_json: dict
+
+    def to_dict(self):
+        return {
+            'geo_json': self.geo_json
+        }
