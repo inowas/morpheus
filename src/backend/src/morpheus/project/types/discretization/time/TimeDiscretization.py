@@ -31,28 +31,28 @@ class TimeDiscretization:
 
     @classmethod
     def new(cls):
-        start_datetime = StartDateTime.from_str('2020-01-01T00:00:00+00:00')
-        end_datetime = EndDateTime.from_str('2020-01-02T00:00:00+00:00')
+        start_date_time = StartDateTime.from_str('2020-01-01T00:00:00+00:00')
+        end_date_time = EndDateTime.from_str('2020-01-02T00:00:00+00:00')
         return TimeDiscretization(
-            start_date_time=start_datetime,
-            end_date_time=end_datetime,
-            stress_periods=StressPeriodCollection.new(start_date=start_datetime),
+            start_date_time=start_date_time,
+            end_date_time=end_date_time,
+            stress_periods=StressPeriodCollection.new(start_date=start_date_time),
             time_unit=TimeUnit.days()
         )
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            start_date_time=StartDateTime.from_value(obj['start_datetime']),
-            end_date_time=EndDateTime.from_value(obj['end_datetime']),
+            start_date_time=StartDateTime.from_value(obj['start_date_time']),
+            end_date_time=EndDateTime.from_value(obj['end_date_time']),
             stress_periods=StressPeriodCollection.from_value(obj['stress_periods']),
             time_unit=TimeUnit.from_value(obj['time_unit'])
         )
 
     def to_dict(self):
         return {
-            'start_datetime': self.start_date_time.to_value(),
-            'end_datetime': self.end_date_time.to_value(),
+            'start_date_time': self.start_date_time.to_value(),
+            'end_date_time': self.end_date_time.to_value(),
             'stress_periods': self.stress_periods.to_value(),
             'time_unit': self.time_unit.to_value()
         }

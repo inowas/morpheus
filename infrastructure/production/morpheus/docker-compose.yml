@@ -29,10 +29,12 @@ services:
     depends_on:
       mongodb_backend:
         condition: service_healthy
-      celery_worker:
+      rabbitmq:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      - MPLCONFIGDIR=/tmp
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/healthcheck" ]
       interval: 40s
@@ -59,6 +61,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:mode=777,size=200m
+      - /var/cache:mode=777,size=200m
     restart: always
     user: flask
     volumes:
@@ -134,16 +137,14 @@ services:
     image: inowas/morpheus-backend-task-queue-worker:${BACKEND_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
     depends_on:
-      mongodb_backend:
-        condition: service_healthy
-      rabbitmq:
+      backend:
         condition: service_healthy
     env_file:
       - .env
     volumes:
       - morpheus_project_calculation_data:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
     tmpfs:
-      - /tmp
+      - /tmp:mode=777,size=200m
     restart: always
     user: celery
     read_only: true
@@ -151,7 +152,7 @@ services:
       - backend
       - celery
     healthcheck:
-      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping"]
+      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping" ]
       interval: 5s
       timeout: 5s
       start_period: 30s

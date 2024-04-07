@@ -2,7 +2,7 @@ import {IError, IUser} from '../types';
 import {setError, setLoading, setUsers} from '../infrastructure/store';
 import {useDispatch, useSelector} from 'react-redux';
 
-import type {RootState} from 'morpheus/store';
+import type {IRootState} from 'morpheus/store';
 import {useApi} from '../incoming';
 import {useEffect} from 'react';
 
@@ -26,9 +26,9 @@ const useUsers = (): IUseUsers => {
 
   const {httpGet} = useApi();
 
-  const users = useSelector((state: RootState) => state.user.users);
-  const loading = useSelector((state: RootState) => state.user.loading);
-  const error = useSelector((state: RootState) => state.user.error);
+  const users = useSelector((state: IRootState) => state.user.users);
+  const loading = useSelector((state: IRootState) => state.user.loading);
+  const error = useSelector((state: IRootState) => state.user.error);
 
   const dispatch = useDispatch();
 

@@ -1,5 +1,5 @@
-import {IUser} from '../../types';
 import React from 'react';
+import {IUser} from '../../types';
 import {useUsers} from '../../application';
 
 const UserListContainer = () => {

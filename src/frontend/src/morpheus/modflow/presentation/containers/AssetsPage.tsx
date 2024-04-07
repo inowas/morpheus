@@ -1,8 +1,8 @@
 import React from 'react';
 import Placeholder from 'common/components/Placeholder';
-import {ContentWrapper, Navbar} from '../../../../common/components';
+import {ContentWrapper, Navbar} from 'common/components';
 import {ModflowContainer} from '../components';
-import {useLocation, useNavigate} from '../../../../common/hooks';
+import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
 
 interface IProps {
@@ -12,7 +12,7 @@ interface IProps {
 const AssetsPage = ({}: IProps) => {
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {navbarItems} = useNavbarItems();
 
 
   return (
@@ -21,8 +21,6 @@ const AssetsPage = ({}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-        showSearchWrapper={showSearchBar}
-        showCreateButton={showButton}
       />
       <ModflowContainer>
         <ContentWrapper>

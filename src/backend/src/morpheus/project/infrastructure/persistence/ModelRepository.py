@@ -9,6 +9,10 @@ from morpheus.project.types.ModelVersion import ModelVersion, VersionId
 from morpheus.settings import settings as app_settings
 
 
+class ModelNotFoundException(Exception):
+    pass
+
+
 @dataclasses.dataclass(frozen=True)
 class ModelRepositoryDocument:
     project_id: str
@@ -84,7 +88,7 @@ class ModelRepository(RepositoryBase):
             data = self.collection.find_one({'project_id': project_id.to_str(), 'last_change_by': user_id.to_str()}, {'_id': 1}, sort=[('last_change_at', -1)])
 
         if data is None:
-            raise Exception(f'Latest model for project with id {project_id} does not exist')
+            raise ModelNotFoundException(f'Latest model for project with id {project_id} does not exist')
 
         object_id = data['_id']
 
@@ -102,21 +106,21 @@ class ModelRepository(RepositoryBase):
     def get_latest_model(self, project_id: ProjectId) -> Model:
         document = self.get_latest_document(project_id)
         if document is None:
-            raise Exception(f'Model for project with id {project_id} does not exist')
+            raise ModelNotFoundException(f'Model for project with id {project_id} does not exist')
 
         return document.get_model()
 
     def get_latest_model_from_user(self, project_id: ProjectId, user_id: UserId) -> Model:
         document = self.get_latest_document(project_id, user_id)
         if document is None:
-            raise Exception(f'Model for project with id {project_id} does not exist')
+            raise ModelNotFoundException(f'Model for project with id {project_id} does not exist')
 
         return document.get_model()
 
     def save_model(self, project_id: ProjectId, model: Model, created_at: DateTime, created_by: UserId) -> None:
         document = self.get_latest_document(project_id)
         if document is not None:
-            raise Exception(f'Model for project with id {project_id} already exists')
+            raise ModelNotFoundException(f'Model for project with id {project_id} already exists')
 
         document = ModelRepositoryDocument(
             project_id=project_id.to_str(),
@@ -135,16 +139,19 @@ class ModelRepository(RepositoryBase):
         # we write a new document with the updated model for each change
         latest_document = self.get_latest_document(project_id=project_id)
         if latest_document is None:
-            raise Exception(f'Latest model for project with id {project_id} does not exist')
+            raise ModelNotFoundException(f'Latest model for project with id {project_id} does not exist')
 
         new_document = latest_document.with_updated_model(model=model, changed_at=updated_at, changed_by=updated_by)
         self.append_document(new_document)
+
+    def delete_model(self, project_id: ProjectId) -> None:
+        self.collection.delete_many(filter={'project_id': project_id.to_str()})
 
     def assign_version_to_latest_model(self, project_id: ProjectId, version: ModelVersion, changed_by: UserId, changed_at: DateTime) -> None:
         # we assign a version to the latest document and delete all intermediate documents with number_of_changes > 0
         document = self.get_latest_document(project_id=project_id)
         if document is None:
-            raise Exception(f'Latest model for project with id {project_id} does not exist')
+            raise ModelNotFoundException(f'Latest model for project with id {project_id} does not exist')
 
         # do nothing if already tagged with the same version
         if document.version_id == version.version_id.to_str() and document.number_of_changes == 0:
@@ -166,14 +173,14 @@ class ModelRepository(RepositoryBase):
     def get_latest_model_hash(self, project_id: ProjectId) -> Sha1Hash:
         document = self.get_latest_document(project_id=project_id)
         if document is None:
-            raise Exception(f'Model for project with id {project_id} does not exist')
+            raise ModelNotFoundException(f'Model for project with id {project_id} does not exist')
 
         return document.get_sha1_hash()
 
     def switch_to_version(self, project_id: ProjectId, version: ModelVersion, changed_by: UserId, changed_at: DateTime) -> None:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'version_id': version.version_id.to_str(), 'number_of_changes': 0})
         if data is None:
-            raise Exception(f'Model with version {version} does not exist')
+            raise ModelNotFoundException(f'Model with version {version} does not exist')
 
         object_id = data['_id']
         document = ModelRepositoryDocument.from_dict(dict(data)).with_updated_datetime(changed_at=changed_at, changed_by=changed_by)
@@ -185,7 +192,7 @@ class ModelRepository(RepositoryBase):
     def delete_version(self, project_id: ProjectId, version_id: VersionId) -> None:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'version_id': version_id.to_str(), 'number_of_changes': 0})
         if data is None:
-            raise Exception(f'Model with version {version_id} does not exist')
+            raise ModelNotFoundException(f'Model with version {version_id} does not exist')
 
         self.collection.delete_one(
             filter={'project_id': project_id.to_str(), 'version_id': version_id.to_str(), 'number_of_changes': 0},

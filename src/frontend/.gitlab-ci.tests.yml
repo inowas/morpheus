@@ -6,3 +6,7 @@ test-frontend:
     - cd src/frontend
     - make install-ci
     - make test-ci
+
+  only:
+    changes:
+      - src/frontend/**/*.*

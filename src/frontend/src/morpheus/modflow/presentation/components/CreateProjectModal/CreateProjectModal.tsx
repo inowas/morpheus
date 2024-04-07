@@ -1,80 +1,55 @@
-import {Button, Dropdown, Form, TextArea, Modal} from 'semantic-ui-react';
+import {Button, Dropdown, Form, TextArea} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
-import images from './images';
 import RandomImage from 'common/components/RandomImage';
 import styles from './CreateProjectModal.module.less';
-
-const options = [
-  {key: '1', text: 'React', value: 'React'},
-  {key: '2', text: 'Python', value: 'Python'},
-  {key: '3', text: 'Ezousa', value: 'Ezousa'},
-  {key: '4', text: 'Simulation', value: 'Simulation'},
-  {key: '5', text: 'Data', value: 'Data'},
-];
+import Images from './images';
+import {Modal} from 'common/components';
+import {IError} from '../../../../types';
 
 interface IProps {
-  isOpen: boolean;
-  onClose?: () => void;
+  open: boolean;
+  onCancel: () => void;
+  loading: boolean;
+  error?: IError;
+  onSubmit: (name: string, description: string, keywords: string[]) => void;
 }
 
-const CreateProjectModal = ({onClose, isOpen}: IProps) => {
+const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
-  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [options, setOptions] = useState([{key: '0', text: 'Modflow', value: 'modflow'}]);
 
-  const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectName(event.target.value);
+  const formIsValid = () => {
+    return 0 < projectName.trim().length;
   };
-
-  const handleProjectDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setProjectDescription(event.target.value);
-  };
-
-  const handleKeywordsChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
-    setSelectedKeywords(data.value as string[]);
-  };
-
-  const isFormValid = '' !== projectName.trim();
 
   const clearForm = () => {
     setProjectName('');
     setProjectDescription('');
-    setSelectedKeywords([]);
+    setTags([]);
   };
 
   const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     clearForm();
-    if (onClose) onClose();
+    onCancel();
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (isFormValid) {
-      console.log('Form data submitted:', {
-        projectName,
-        projectDescription,
-        selectedKeywords,
-      });
+    if (formIsValid()) {
+      onSubmit(projectName, projectDescription, tags);
       clearForm();
-      if (onClose) onClose();
     }
   };
 
-
   return (
-    <Modal
-      open={isOpen}
-      onClose={onClose}
-      closeIcon={true}
-      closeOnDimmerClick={false}
-      closeOnEscape={false}
-      dimmer={'blurring'}
-    >
-      <div data-testid="create-project-modal">
+    <Modal.Modal open={open} dimmer={'blurring'}>
+      <div className={`${styles.container}`} data-testid="create-project-modal">
         <div className={styles.image}>
-          <RandomImage images={images}/>
+          <RandomImage images={Images}/>
         </div>
         <div className={styles.form}>
           <h1 className={styles.title}>
@@ -85,41 +60,52 @@ const CreateProjectModal = ({onClose, isOpen}: IProps) => {
               <label className={`${styles.label} h4`}>Project name<span className="required">*</span></label>
               <input
                 type="text" value={projectName}
-                onChange={handleProjectNameChange}
+                onChange={(event) => setProjectName(event.target.value)}
               />
             </Form.Field>
             <Form.Field className={styles.field}>
               <label className={`${styles.label} h4`}>Project description</label>
-              <TextArea value={projectDescription} onChange={handleProjectDescriptionChange}/>
+              <TextArea
+                value={projectDescription}
+                onChange={(event) => setProjectDescription(event.target.value)}
+              />
             </Form.Field>
             <Form.Field className={styles.field}>
               <label className={`${styles.label} h4`}>Project keywords</label>
               <Dropdown
+                allowAdditions={true}
                 name="selectedKeywords"
                 fluid={true}
                 multiple={true}
-                selection={true}
+                onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setOptions([...options, {key: data.value, text: data.value, value: data.value}])}
+                onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTags(data.value as string[])}
                 options={options}
-                value={selectedKeywords}
-                onChange={handleKeywordsChange}
+                search={true}
+                selection={true}
+                value={tags}
               />
             </Form.Field>
+            {error && <div className={styles.error}>{error.message}</div>}
             <div className={styles.mandatory}>
               <span className="required">*</span>Mandatory field
             </div>
             <div className={styles.buttons}>
-              <Button onClick={handleCancel} content={'Cancel'}/>
+              <Button onClick={handleCancel}>
+                Cancel
+              </Button>
               <Button
                 primary={true}
-                disabled={!isFormValid}
+                disabled={!formIsValid()}
                 onClick={handleSubmit}
-                content={'Create new project'}
-              />
+                loading={loading}
+              >
+                Create new project
+              </Button>
             </div>
           </Form>
         </div>
       </div>
-    </Modal>
+    </Modal.Modal>
   );
 };
 

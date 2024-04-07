@@ -12,7 +12,6 @@ interface ICardGrid {
 const CardGrid: React.FC<ICardGrid> = ({
   title,
   cards,
-
 }) => (
   <div data-testid="model-grid" className={styles.modelGridWrapper}>
     <div className={styles.modelGridHeader}>

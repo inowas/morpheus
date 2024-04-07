@@ -1,8 +1,8 @@
 import {v4} from 'uuid';
 import {IUser} from './users';
-import {ITimeDiscretizationApi} from 'morpheus/modflow/application/useTimeDiscretization';
 import fixedUuids from './fixedUuids';
-import {ITimeUnit} from 'morpheus/modflow/types/TimeDiscretization.type';
+import {ITimeDiscretization, ITimeUnit} from 'morpheus/modflow/types/TimeDiscretization.type';
+import {ILengthUnit, ISpatialDiscretization} from '../../src/morpheus/modflow/types';
 
 interface IProject {
   project_id: string;
@@ -10,7 +10,8 @@ interface IProject {
   permissions: IPermissions;
   model: {
     model_id: string;
-    time_discretization: ITimeDiscretizationApi;
+    spatial_discretization: ISpatialDiscretization;
+    time_discretization: ITimeDiscretization;
   };
   calculation_profile: object;
   scenarios: object[];
@@ -64,6 +65,49 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
     },
     model: {
       model_id: v4().toString(),
+      spatial_discretization: {
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [
+                13.737521,
+                51.05702,
+              ],
+              [
+                13.723092,
+                51.048919,
+              ],
+              [
+                13.736491,
+                51.037358,
+              ],
+              [
+                13.751779,
+                51.04773,
+              ],
+              [
+                13.737521,
+                51.05702,
+              ],
+            ],
+          ],
+        },
+        grid: {
+          n_cols: 10,
+          n_rows: 10,
+          col_widths: new Array(10).fill(10),
+          total_width: 1000,
+          row_heights: new Array(10).fill(10),
+          total_height: 1000,
+          origin: {
+            type: 'Point',
+            coordinates: [13.737521, 51.05702],
+          },
+          rotation: 0,
+          length_unit: ILengthUnit.METERS,
+        },
+      },
       time_discretization: {
         start_date_time: new Date('2010-01-01').toISOString(),
         end_date_time: new Date('2015-12-31').toISOString(),
@@ -76,10 +120,13 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
         }],
       },
     },
-    calculation_profile: {},
+    calculation_profile:
+        {}
+    ,
     scenarios: [],
   };
-};
+}
+;
 
 const generateRandomProjects = (count: number, users: IUser[]): IProject[] => {
   const projects: IProject[] = [];

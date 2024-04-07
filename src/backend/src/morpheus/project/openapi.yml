@@ -74,17 +74,52 @@ paths:
         404:
           $ref: '#/components/responses/NotFoundError'
 
-  /projects/{project_id}:
-    parameters:
-      - $ref: '#/components/parameters/ProjectId'
-    delete:
+  /projects/messagebox:
+    post:
       tags:
         - Project
-      summary: Delete a project
-      description: Delete a projects
+      summary: The command endpoint to send a command to the project module
+      description: The command endpoint to send a command to the project module
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: './application/write/Model/schema.json#/definitions/ModelCommands'
+                - $ref: './application/write/Project/schema.json#/definitions/ProjectCommands'
+
       responses:
-        204:
-          description: Project was successfully deleted
+        201:
+          description: Model model was successfully created
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+        500:
+          description: Internal Server Error
+
+  /projects/{project_id}/model:
+    get:
+      tags:
+        - Project
+      summary: Read the model of a project
+      description: Read the model of a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: Model of the project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  model_id:
+                    type: string
+                    description: "The id of the model."
+                    example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
         401:
           description: Unauthorized
         403:
@@ -92,22 +127,141 @@ paths:
         404:
           description: Not found
 
-  /projects/{project_id}/model:
-    post:
+  /projects/{project_id}/model/spatial-discretization:
+    get:
       tags:
-        - Project
-      summary: Create a new model for a project
-      description: Create a new model for a project
+        - Model
+      summary: Read the spatial discretization of a model
+      description: Read the spatial discretization of a model
       parameters:
         - $ref: '#/components/parameters/ProjectId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateModelRequest'
       responses:
-        201:
-          description: Model model was successfully created
+        200:
+          description: Spatial discretization of the model
+          content:
+            application/json:
+              schema:
+                type: object
+                # todo: add spatial discretization schema
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/model/spatial-discretization/geometry:
+    get:
+      tags:
+        - Project
+        - Model
+      summary: Read the geometry of the spatial discretization
+      description: Read the geometry of the spatial discretization
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: Geometry of the spatial discretization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polygon'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/model/spatial-discretization/grid:
+    get:
+      tags:
+        - Project
+        - Model
+      summary: Read the grid of the spatial discretization
+      description: Read the grid of the spatial discretization
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: Grid of the spatial discretization
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/model/time-discretization:
+    get:
+      tags:
+        - Project
+        - Model
+      summary: Read the time discretization of a model
+      description: Read the time discretization of a model
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: Time discretization of the model
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchTimeDiscretizationResponse'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/model/layers:
+    get:
+      tags:
+        - Project
+        - Model
+      summary: Read the layers of a model
+      description: Read the layers of a model
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: Layers of the model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/model/boundaries:
+    get:
+      tags:
+        - Project
+        - Model
+      summary: Read the boundaries of a model
+      description: Read the boundaries of a model
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: boundaries of the model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
         401:
           description: Unauthorized
         403:
@@ -489,54 +643,21 @@ components:
       description: "The Request to create a new model."
       properties:
         geometry:
-          type: object
-          description: "The geometry of the feature."
-          properties:
-            type:
-              type: string
-              enum: [ "Polygon" ]
-              example: "Polygon"
-            coordinates:
-              type: array
-              description: "The coordinates of the geometry."
-              example: [ [
-                [ 13.922514437551428, 50.964720483303836 ],
-                [ 13.925250781947113, 50.965228748412386 ],
-                [ 13.925036413951403, 50.96623732041704 ],
-                [ 13.92222441026388, 50.96609040370362 ],
-                [ 13.922514437551428, 50.964720483303836 ]
-              ] ]
-              items:
-                type: array
-                items:
-                  type: array
-                  items:
-                    type: number
-                    minItems: 2
-                    maxItems: 2
-          required:
-            - type
-            - coordinates
+          $ref: '#/components/schemas/Polygon'
         grid_properties:
           type: object
           description: "The grid properties of the model."
           properties:
-            x_coordinates:
-              type: array
-              description: "The distance along the x axis in percent."
-              example: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]
-              items:
-                type: number
-                minimum: 0
-                maximum: 1
-            y_coordinates:
-              type: array
-              description: "The distance along the y axis in percent."
-              example: [ 0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
-              items:
-                type: number
-                minimum: 0
-                maximum: 1
+            n_cols:
+              type: integer
+              description: "The number of columns of the grid."
+              example: 10
+              minimum: 1
+            n_rows:
+              type: integer
+              description: "The number of rows of the grid."
+              example: 10
+              minimum: 1
             rotation:
               type: number
               description: "The grid rotation angle in deg of the model."
@@ -548,8 +669,8 @@ components:
               enum: [ "meters", "centimeters", "feet", "unknown" ]
               example: "meters"
           required:
-            - x_coordinates
-            - y_coordinates
+            - n_cols
+            - n_rows
             - rotation
             - length_unit
 
@@ -576,10 +697,67 @@ components:
             type: string
           example: [ "tag1", "tag2" ]
 
+    UpdateSpatialDiscretizationGeometryRequest:
+      type: object
+      description: "The Request to update the geometry of the spatial discretization."
+      properties:
+        geometry:
+          $ref: '#/components/schemas/Polygon'
+
+    UpdateSpatialDiscretizationGridRequest:
+      type: object
+      description: "The Request to update the grid of the spatial discretization."
+      properties:
+        n_cols:
+          type: integer
+          description: "The number of columns of the grid."
+          example: 10
+          minimum: 1
+        n_rows:
+          type: integer
+          description: "The number of rows of the grid."
+          example: 10
+          minimum: 1
+        origin:
+          $ref: '#/components/schemas/Point'
+        col_widths:
+          type: array
+          description: "The column widths of the grid."
+          items:
+            type: number
+          example: [ 10.0, 10.0, 10.0 ]
+        total_width:
+          type: number
+          description: "The total width of the grid."
+          example: 100.0
+        row_heights:
+          type: array
+          description: "The row heights of the grid."
+          items:
+            type: number
+          example: [ 10.0, 10.0, 10.0 ]
+        total_height:
+          type: number
+          description: "The total height of the grid."
+          example: 100.0
+        rotation:
+          type: number
+          description: "The grid rotation angle in deg of the model."
+          minimum: -90
+          maximum: 90
+          example: 0.0
+        length_unit:
+          type: string
+          enum: [ "meters", "centimeters", "feet", "unknown" ]
+          example: "meters"
+      required:
+        - n_cols
+        - n_rows
+
     UpdateTimeDiscretizationRequest:
       $ref: '#/components/schemas/TimeDiscretization'
 
-    GetTimeDiscretizationResponse:
+    FetchTimeDiscretizationResponse:
       $ref: '#/components/schemas/TimeDiscretization'
 
     ProjectId:
@@ -667,6 +845,81 @@ components:
           format: date-time
           description: "The creation date time of the project."
           example: "2020-01-01T00:00:00Z"
+
+    LineString:
+      type: object
+      description: "The geometry of the feature."
+      properties:
+        type:
+          type: string
+          enum: [ "LineString" ]
+          example: "LineString"
+        coordinates:
+          type: array
+          description: "The coordinates of the geometry."
+          example: [ [ 13.922514437551428, 50.964720483303836 ], [ 13.925250781947113, 50.965228748412386 ] ]
+          items:
+            type: array
+            items:
+              type: number
+              minItems: 2
+              maxItems: 2
+      required:
+        - type
+        - coordinates
+
+    Point:
+      type: object
+      description: "The geometry of the feature."
+      properties:
+        type:
+          type: string
+          enum: [ "Point" ]
+          example: "Point"
+        coordinates:
+          type: array
+          description: "The coordinates of the geometry."
+          example: [ 13.922514437551428, 50.964720483303836 ]
+          items:
+            type: number
+            minItems: 2
+            maxItems: 2
+
+      required:
+        - type
+        - coordinates
+
+    Polygon:
+      type: object
+      description: "The geometry of the feature."
+      properties:
+        type:
+          type: string
+          enum: [ "Polygon" ]
+          example: "Polygon"
+        coordinates:
+          type: array
+          description: "The coordinates of the geometry."
+          example: [ [
+            [ 13.922514437551428, 50.964720483303836 ],
+            [ 13.925250781947113, 50.965228748412386 ],
+            [ 13.925036413951403, 50.96623732041704 ],
+            [ 13.92222441026388, 50.96609040370362 ],
+            [ 13.922514437551428, 50.964720483303836 ]
+          ] ]
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                minItems: 2
+                maxItems: 2
+      required:
+        - type
+        - coordinates
+
+
     Asset:
       type: object
       description: "A project asset"

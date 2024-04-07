@@ -1,4 +1,4 @@
-import {CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, SidebarContent} from '../components';
@@ -6,7 +6,9 @@ import {useProjectList, useTranslate} from '../../application';
 import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
-import SortDropdown from '../../../../common/components/CardGrid/SortDropdown';
+import CreateProjectContainer from './CreateProjectContainer';
+import SortDropdown from 'common/components/CardGrid/SortDropdown';
+import {format} from 'date-fns';
 
 
 const sortOptions: ISortOption[] = [
@@ -24,22 +26,12 @@ const ProjectListPage = ({basePath}: IProps) => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems, showSearchBar, showButton} = useNavbarItems();
+  const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
   const {projects, loading, error} = useProjectList();
   const [cards, setCards] = useState<ICard[]>([]);
-
-  const formatDate = (inputDate: string): string => {
-    const parsedDate: Date = new Date(inputDate);
-    let day: number | string = parsedDate.getUTCDate();
-    let month: number | string = parsedDate.getUTCMonth() + 1; // Months are zero-indexed
-    const year: number = parsedDate.getUTCFullYear();
-    day = 10 > day ? '0' + day : day;
-    month = 10 > month ? '0' + month : month;
-    const formattedDate: string = `${day}.${month}.${year}`;
-    return formattedDate;
-  };
-
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   useEffect(() => {
     setCards(projects.map((project) => {
@@ -49,7 +41,7 @@ const ProjectListPage = ({basePath}: IProps) => {
         description: project.description,
         image: project.image,
         status: 'green',
-        date_time: formatDate(project.created_at),
+        date_time: format(new Date(project.created_at), 'dd.MM.yyyy'),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
         onDeleteClick: () => console.log('Delete', project.project_id),
         onCopyClick: () => console.log('Copy', project.project_id),
@@ -73,8 +65,18 @@ const ProjectListPage = ({basePath}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-        showSearchWrapper={showSearchBar}
-        showCreateButton={showButton}
+        search={{
+          value: searchValue,
+          onChange: setSearchValue,
+        }}
+        button={
+          <Button
+            style={{whiteSpace: 'nowrap'}}
+            primary={true}
+            onClick={() => setShowCreateProjectModel(true)}
+          >
+            Create new project
+          </Button>}
       />
       <ModflowContainer>
         <SidebarContent maxWidth={350}>
@@ -102,6 +104,8 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </ContentWrapper>
       </ModflowContainer>
+
+      <CreateProjectContainer open={showCreateProjectModel} onClose={() => setShowCreateProjectModel(false)}/>
     </>
   );
 };

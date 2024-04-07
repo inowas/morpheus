@@ -1,11 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createServer, Response} from 'miragejs';
+import {v4 as uuidv4} from 'uuid';
 
 import config from '../src/config';
 import {generateRandomUsers, IUser} from './data/users';
 import {generateRandomProjects, IProject} from './data/projects';
 import {IProjectListItem} from 'morpheus/modflow/types/Project.type';
-import {getProjectMetadata} from './data/projectMetadata';
+import {getProjectMetadata, createModel} from './data/projectMetadata';
 
 export function makeServer({environment = 'test'} = {}) {
   return createServer({
@@ -25,7 +26,7 @@ export function makeServer({environment = 'test'} = {}) {
               owner_id: p.permissions.owner_id,
               is_public: p.permissions.is_public,
               created_at: p.metadata.created_at,
-              status_color: 'green',
+              status: 'green',
               image: p.metadata.image,
             };
           });
@@ -33,11 +34,64 @@ export function makeServer({environment = 'test'} = {}) {
         return new Response(200, {}, projectSummaries);
       });
 
+      this.post('projects', (schema, request) => {
+        const attrs = JSON.parse(request.requestBody);
+        const newProject = generateRandomProjects(1, schema.db.users)[0];
+        newProject.project_id = uuidv4();
+        newProject.metadata = {
+          ...newProject.metadata,
+          name: attrs.name,
+          description: attrs.description,
+          tags: attrs.tags,
+        };
+
+        schema.db.projects.insert({...newProject});
+
+        return new Response(201, {
+          'location': `${config.baseApiUrl}/projects/${newProject.project_id}`,
+        });
+      });
+
       this.get('projects/:id/metadata', (schema, request) => {
         const id = request.params.id;
         const metadata = getProjectMetadata(id);
         return new Response(200, {}, metadata);
       });
+
+      this.post('projects/:projectId/model', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        schema.db.projects.update({project_id: projectId, model: createModel(uuidv4())});
+        return new Response(201, {'Location': `${config.baseApiUrl}/projects/${projectId}/model`});
+      });
+
+      this.get('projects/:projectId/model/spatial-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        return new Response(200, {}, project.model.spatial_discretization);
+      });
+
+      this.put('projects/:projectId/model/spatial-discretization', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        const spatialDiscretization = JSON.parse(request.requestBody);
+        console.log(spatialDiscretization);
+        schema.db.projects.update({project_id: projectId, model: {...project.model, spatial_discretization: spatialDiscretization}});
+        return new Response(204);
+      });
+
 
       this.get('projects/:projectId/model/time-discretization', (schema, request) => {
         const projectId = request.params.projectId;
@@ -109,6 +163,10 @@ export function makeServer({environment = 'test'} = {}) {
 
       // ignore all /auth requests
       this.passthrough('https://identity.inowas.com/*');
+
+      // ignore all /fonts requests
+      this.namespace = '/fonts';
+      this.passthrough();
 
       // ignore all /locales requests
       this.namespace = '/locales';

@@ -2,8 +2,8 @@ from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDescriptionUpdatedEvent, \
     VersionDeletedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelAffectedCellsUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, \
-    ModelAffectedCellsRecalculatedEvent
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent
+    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent
+from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
 from morpheus.project.types.User import UserId
@@ -27,6 +27,11 @@ class ModelProjector(EventListenerBase):
         created_at = event.get_occurred_at()
 
         self.model_repo.save_model(project_id=project_id, model=model, created_at=created_at, created_by=created_by)
+
+    @listen_to(ProjectDeletedEvent)
+    def on_project_deleted(self, event: ProjectDeletedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        self.model_repo.delete_model(project_id=project_id)
 
     @listen_to(ModelAffectedCellsRecalculatedEvent)
     def on_model_affected_cells_recalculated(self, event: ModelAffectedCellsRecalculatedEvent, metadata: EventMetadata) -> None:
@@ -72,6 +77,18 @@ class ModelProjector(EventListenerBase):
 
         latest = self.model_repo.get_latest_model(project_id=project_id)
         latest = latest.with_updated_spatial_discretization(spatial_discretization=latest.spatial_discretization.with_updated_geometry(geometry=geometry))
+        self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelGridRecalculatedEvent)
+    def on_model_grid_recalculated(self, event: ModelGridUpdatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        grid = event.get_grid()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest = self.model_repo.get_latest_model(project_id=project_id)
+        latest = latest.with_updated_spatial_discretization(spatial_discretization=latest.spatial_discretization.with_updated_grid(grid=grid))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
 
     @listen_to(ModelGridUpdatedEvent)
