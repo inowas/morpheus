@@ -1,10 +1,10 @@
-from ....application.read.ProjectsReader import ProjectsReader
+from morpheus.project.application.read.ProjectReader import project_reader
 
 
 class ReadProjectListRequestHandler:
-    def handle(self):
-        projects_reader = ProjectsReader()
-        project_summaries = projects_reader.get_project_summaries()
+    @staticmethod
+    def handle():
+        project_summaries = project_reader.get_project_summaries()
 
         result = []
         for project_summary in project_summaries:

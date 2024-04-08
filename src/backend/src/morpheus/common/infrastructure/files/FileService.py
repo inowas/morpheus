@@ -10,4 +10,4 @@ class FileService:
         size = os.path.getsize(file_path)
         mimetype = magic.from_file(file_path, mime=True)
 
-        return File(filename=FileName(filename), size=FileSize(size), mimetype=MimeType(mimetype))
+        return File(file_name=FileName(filename), size_in_bytes=FileSize(size), mime_type=MimeType(mimetype))

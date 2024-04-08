@@ -6,7 +6,7 @@ from ...domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToMod
     ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent, \
     ModelGridRecalculatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
-from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent
+from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent, ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
 
 
 class ProjectEventFactory:
@@ -39,6 +39,10 @@ class ProjectEventFactory:
             return ProjectDeletedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.PROJECT_METADATA_UPDATED:
             return ProjectMetadataUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.PROJECT_PREVIEW_IMAGE_UPDATED:
+            return ProjectPreviewImageUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.PROJECT_PREVIEW_IMAGE_DELETED:
+            return ProjectPreviewImageDeletedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.VERSION_ASSIGNED_TO_MODEL:
             return VersionAssignedToModelEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.VERSION_CREATED:
