@@ -8,13 +8,13 @@
           "$ref": "#/definitions/commands/CreateModelCommand"
         },
         {
-          "$ref": "#/definitions/commands/CreateLayerCommand"
+          "$ref": "#/definitions/commands/CreateModelLayerCommand"
         },
         {
-          "$ref": "#/definitions/commands/UpdateLayerCommand"
+          "$ref": "#/definitions/commands/UpdateModelLayerCommand"
         },
         {
-          "$ref": "#/definitions/commands/DeleteLayerCommand"
+          "$ref": "#/definitions/commands/DeleteModelLayerCommand"
         },
         {
           "$ref": "#/definitions/commands/UpdateModelGeometryCommand"
@@ -29,35 +29,31 @@
           "$ref": "#/definitions/commands/UpdateModelAffectedCellsCommand"
         },
         {
-          "$ref": "#/definitions/commands/CreateVersionCommand"
+          "$ref": "#/definitions/commands/CreateModelVersionCommand"
         },
         {
-          "$ref": "#/definitions/commands/DeleteVersionCommand"
+          "$ref": "#/definitions/commands/DeleteModelVersionCommand"
         },
         {
-          "$ref": "#/definitions/commands/UpdateVersionDescriptionCommand"
+          "$ref": "#/definitions/commands/UpdateModelVersionDescriptionCommand"
         }
       ]
     },
     "commands": {
-      "CreateLayerCommand": {
+      "CreateModelLayerCommand": {
         "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
             "enum": [
-              "CreateLayerCommand"
+              "create_model_layer_command"
             ],
-            "example": "CreateLayerCommand"
+            "example": "create_model_layer_command"
           },
           "payload": {
             "type": "object",
             "properties": {
               "project_id": {
-                "type": "string",
-                "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
-              },
-              "model_id": {
                 "type": "string",
                 "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
               },
@@ -158,14 +154,14 @@
           }
         }
       },
-      "CreateVersionCommand": {
+      "CreateModelVersionCommand": {
         "properties": {
           "command_name": {
             "type": "string",
             "enum": [
-              "create_version_command"
+              "create_model_version_command"
             ],
-            "example": "create_version_command"
+            "example": "create_model_version_command"
           },
           "payload": {
             "properties": {
@@ -190,22 +186,18 @@
           }
         }
       },
-      "DeleteLayerCommand": {
+      "DeleteModelLayerCommand": {
         "properties": {
           "command_name": {
             "type": "string",
             "enum": [
-              "delete_layer_command"
+              "delete_model_layer_command"
             ],
-            "example": "delete_layer_command"
+            "example": "delete_model_layer_command"
           },
           "payload": {
             "properties": {
               "project_id": {
-                "type": "string",
-                "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
-              },
-              "model_id": {
                 "type": "string",
                 "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
               },
@@ -222,14 +214,14 @@
           }
         }
       },
-      "DeleteVersionCommand": {
+      "DeleteModelVersionCommand": {
         "properties": {
           "command_name": {
             "type": "string",
             "enum": [
-              "delete_version_command"
+              "delete_model_version_command"
             ],
-            "example": "delete_version_command"
+            "example": "delete_model_version_command"
           },
           "payload": {
             "properties": {
@@ -245,23 +237,19 @@
           }
         }
       },
-      "UpdateLayerCommand": {
+      "UpdateModelLayerCommand": {
         "properties": {
           "command_name": {
             "type": "string",
             "enum": [
-              "update_layer_command"
+              "update_model_layer_command"
             ],
-            "example": "update_layer_command"
+            "example": "update_model_layer_command"
           },
           "payload": {
             "type": "object",
             "properties": {
               "project_id": {
-                "type": "string",
-                "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
-              },
-              "model_id": {
                 "type": "string",
                 "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
               },
@@ -428,9 +416,9 @@
               "length_unit": {
                 "type": "string",
                 "enum": [
-                  "meterns",
+                  "meters",
                   "centimeters",
-                  "feed",
+                  "feet",
                   "unknown"
                 ]
               }
@@ -512,14 +500,14 @@
           }
         }
       },
-      "UpdateVersionDescriptionCommand": {
+      "UpdateModelVersionDescriptionCommand": {
         "properties": {
           "command_name": {
             "type": "string",
             "enum": [
-              "update_version_description_command"
+              "update_model_version_description_command"
             ],
-            "example": "update_version_description_command"
+            "example": "update_model_version_description_command"
           },
           "payload": {
             "properties": {
