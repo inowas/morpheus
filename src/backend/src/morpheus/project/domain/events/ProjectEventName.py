@@ -6,6 +6,7 @@ class ProjectEventName(StrEnum):
     PROJECT_DELETED = 'Project Deleted'
     PROJECT_METADATA_UPDATED = 'Project Metadata Updated'
     PROJECT_PREVIEW_IMAGE_UPDATED = 'Project Preview Image Updated'
+    PROJECT_PREVIEW_IMAGE_DELETED = 'Project Preview Image Deleted'
 
     PROJECT_MEMBER_ADDED = 'Project Member Added'
     PROJECT_MEMBER_REMOVED = 'Project Member Removed'

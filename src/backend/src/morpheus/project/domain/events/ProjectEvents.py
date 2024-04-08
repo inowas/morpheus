@@ -79,10 +79,10 @@ class ProjectMetadataUpdatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class ProjectPreviewImageUpdatedEvent(EventBase):
     @classmethod
-    def from_props(cls, project_id: ProjectId, asset_id: AssetId, occurred_at=DateTime.now()):
+    def occurred_now(cls, project_id: ProjectId, asset_id: AssetId):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
+            occurred_at=DateTime.now(),
             payload={
                 'asset_id': asset_id.to_str(),
             }
@@ -96,3 +96,20 @@ class ProjectPreviewImageUpdatedEvent(EventBase):
 
     def get_event_name(self) -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_PREVIEW_IMAGE_UPDATED.to_str())
+
+
+@dataclasses.dataclass(frozen=True)
+class ProjectPreviewImageDeletedEvent(EventBase):
+    @classmethod
+    def occurred_now(cls, project_id: ProjectId):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=DateTime.now(),
+            payload={}
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.PROJECT_PREVIEW_IMAGE_DELETED.to_str())
