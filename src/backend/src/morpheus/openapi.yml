@@ -38,6 +38,18 @@ paths:
   /projects/{project_id}/preview_image:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1preview_image'
 
+  /projects/{project_id}/assets:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets'
+
+  /projects/{project_id}/assets/{asset_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets~1{asset_id}'
+
+  /projects/{project_id}/assets/{asset_id}/file:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets~1{asset_id}~1file'
+
+  /projects/{project_id}/assets/{asset_id}/data:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets~1{asset_id}~1data'
+
   /sensors:
     $ref: './sensor/openapi.yml#/paths/~1sensors'
 

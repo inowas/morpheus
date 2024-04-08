@@ -5,7 +5,7 @@ from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.application.read.ProjectsReader import projects_reader
+from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
@@ -50,7 +50,7 @@ class UpdateProjectMetadataCommandHandler(CommandHandlerBase):
     @staticmethod
     def handle(command: UpdateProjectMetadataCommand) -> None:
         project_id = command.project_id
-        if not projects_reader.project_exists(project_id):
+        if not project_reader.project_exists(project_id):
             raise NotFoundException(f'Project with id {project_id.to_str()} does not exist')
 
         # todo assert user has access to project
