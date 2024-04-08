@@ -1,4 +1,4 @@
-import {IError, IGrid, ILengthUnit, ISpatialDiscretization} from '../types';
+import {IAffectedCells, IError, IGrid, ILengthUnit, ISpatialDiscretization} from '../types';
 import {useEffect, useRef, useState} from 'react';
 
 import {useApi} from '../incoming';
@@ -6,10 +6,7 @@ import {Point, Polygon} from 'geojson';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
 import {setSpatialDiscretization} from '../infrastructure/modelStore';
-
-interface IUpdateGeometry {
-  geometry: Polygon;
-}
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface IUpdateGrid {
   n_cols: number;
@@ -20,35 +17,23 @@ interface IUpdateGrid {
   row_heights?: number[];
   total_height?: number;
   rotation?: number;
-  length_unit: ILengthUnit;
+  length_unit?: ILengthUnit;
 }
 
 interface IUseSpatialDiscretization {
   spatialDiscretization: ISpatialDiscretization | null;
   geometry: Polygon | null;
   grid: IGrid | null;
+  updateAffectedCells: (affectedCells: IAffectedCells) => void;
   updateGeometry: (geometry: Polygon) => void;
   updateGrid: (gridProps: IUpdateGrid) => void;
   loading: boolean;
   error: IError | null;
 }
 
-export interface ICreateGrid {
-  n_cols: number;
-  n_rows: number;
-  rotation: number;
-  length_unit: ILengthUnit;
-}
-
-export interface ISpatialDiscretizationPutRequest {
-  geometry: Polygon;
-  grid: ICreateGrid;
-  length_unit: ILengthUnit;
-}
-
 type ISpatialDiscretizationGetResponse = ISpatialDiscretization;
 
-const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDiscretization => {
+const useSpatialDiscretization = (projectId: string): IUseSpatialDiscretization => {
 
   const {model} = useSelector((state: IRootState) => state.project.model);
   const dispatch = useDispatch();
@@ -57,7 +42,8 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
-  const {httpGet, httpPut} = useApi();
+  const {httpGet} = useApi();
+  const {sendCommand} = useProjectCommandBus();
 
   const fetchSpatialDiscretization = async () => {
     if (!isMounted.current) {
@@ -87,6 +73,7 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
 
   useEffect(() => {
     fetchSpatialDiscretization();
+    // eslint-disable-next-line
   }, []);
 
 
@@ -96,8 +83,12 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     }
     setLoading(true);
     setError(null);
-    const result = await httpPut<IUpdateGeometry>(`/projects/${projectId}/model/spatial-discretization/geometry`, {
-      geometry: polygon,
+    const result = await sendCommand<Commands.IUpdateModelGeometryCommand>({
+      command_name: 'update_model_geometry_command',
+      payload: {
+        project_id: projectId,
+        geometry: polygon,
+      },
     });
 
     if (!isMounted.current) {
@@ -111,10 +102,7 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     }
 
     if (result.err) {
-      setError({
-        message: result.val.message,
-        code: result.val.code,
-      });
+      setError(result.val);
     }
   };
 
@@ -124,7 +112,22 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     }
     setLoading(true);
     setError(null);
-    const result = await httpPut<IUpdateGrid>(`/projects/${projectId}/model/spatial-discretization/grid`, gridProps);
+
+    const result = await sendCommand<Commands.IUpdateModelGridCommand>({
+      command_name: 'update_model_grid_command',
+      payload: {
+        project_id: projectId,
+        n_cols: gridProps.n_cols,
+        n_rows: gridProps.n_rows,
+        origin: gridProps.origin,
+        col_widths: gridProps.col_widths,
+        total_width: gridProps.total_width,
+        row_heights: gridProps.row_heights,
+        total_height: gridProps.total_height,
+        rotation: gridProps.rotation,
+        length_unit: gridProps.length_unit as ILengthUnit | undefined,
+      },
+    });
 
     if (!isMounted.current) {
       return;
@@ -137,10 +140,37 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     }
 
     if (result.err) {
-      setError({
-        message: result.val.message,
-        code: result.val.code,
-      });
+      setError(result.val);
+    }
+  };
+
+  const updateAffectedCells = async (affectedCells: IAffectedCells) => {
+    if (!isMounted.current) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    const result = await sendCommand<Commands.IUpdateModelAffectedCellsCommand>({
+      command_name: 'update_model_affected_cells_command',
+      payload: {
+        project_id: projectId,
+        affected_cells: affectedCells,
+      },
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.ok) {
+      fetchSpatialDiscretization();
+    }
+
+    if (result.err) {
+      setError(result.val);
     }
   };
 
@@ -148,6 +178,7 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
     spatialDiscretization: model?.spatial_discretization || null,
     geometry: model?.spatial_discretization?.geometry || null,
     grid: model?.spatial_discretization?.grid || null,
+    updateAffectedCells,
     updateGeometry,
     updateGrid,
     loading,
@@ -156,3 +187,4 @@ const useSpatialDiscretization = (projectId: string | undefined): IUseSpatialDis
 };
 
 export default useSpatialDiscretization;
+export type {IUseSpatialDiscretization};

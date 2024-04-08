@@ -27,7 +27,7 @@ const ModelSetupContainer = () => {
   const [gridProperties, setGridProperties] = useState<ICreateGrid>(defaultGrid);
   const [geometry, setGeometry] = useState<Polygon | undefined>();
   const [editDomain, setEditDomain] = useState<boolean>(true);
-  const {loading, error, createModel} = useModelSetup(projectId);
+  const {loading, error, createModel} = useModelSetup(projectId as string);
 
   const handleCreateModel = async () => {
     if (!geometry) {

@@ -1,5 +1,5 @@
 import {Point, Polygon} from 'geojson';
-import {IAffectedCells, ITimeDiscretization} from '../modflow/types';
+import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 
 export interface ICreateProjectCommand {
   command_name: 'create_project_command';
@@ -65,8 +65,8 @@ export interface IUpdateModelGridCommand {
     total_width?: number;
     row_heights?: number[];
     total_height?: number;
-    rotation: number;
-    length_unit: 'meters' | 'centimeters' | 'feet';
+    rotation?: number;
+    length_unit?: ILengthUnit;
   }
 }
 
@@ -82,8 +82,8 @@ export interface IUpdateModelTimeDiscretizationCommand {
   command_name: 'update_model_time_discretization_command';
   payload: {
     project_id: string;
-    start_data_time: ITimeDiscretization['start_date_time'];
-    end_data_time: ITimeDiscretization['end_date_time'];
+    start_date_time: ITimeDiscretization['start_date_time'];
+    end_date_time: ITimeDiscretization['end_date_time'];
     stress_periods: ITimeDiscretization['stress_periods'];
     time_unit: ITimeDiscretization['time_unit'];
   }
@@ -186,3 +186,23 @@ export interface IUpdateProjectMemberRoleCommand {
     new_role: 'viewer' | 'editor' | 'admin' | 'owner';
   }
 }
+
+export type ICommand =
+  ICreateProjectCommand
+  | IDeleteProjectCommand
+  | IUpdateProjectMetadataCommand
+  | IUpdateProjectVisibilityCommand
+  | ICreateModelCommand
+  | IUpdateModelGeometryCommand
+  | IUpdateModelGridCommand
+  | IUpdateModelAffectedCellsCommand
+  | IUpdateModelTimeDiscretizationCommand
+  | ICreateModelLayerCommand
+  | IDeleteModelLayerCommand
+  | IUpdateModelLayerCommand
+  | ICreateModelVersionCommand
+  | IDeleteModelVersionCommand
+  | IUpdateModelVersionDescriptionCommand
+  | IAddProjectMemberCommand
+  | IRemoveProjectMemberCommand
+  | IUpdateProjectMemberRoleCommand;
