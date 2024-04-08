@@ -15,7 +15,7 @@ const CardGrid: React.FC<ICardGrid> = ({
 }) => (
   <div data-testid="model-grid" className={styles.modelGridWrapper}>
     <div className={styles.modelGridHeader}>
-      {title && <SectionTitle title={title}/>}
+      {title && <SectionTitle title={title} secondary={true}/>}
     </div>
     <div
       className="scrollWrapper-X"
