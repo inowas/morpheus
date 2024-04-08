@@ -5,7 +5,6 @@ import React, {useState} from 'react';
 import {IFilterOptions} from 'morpheus/modflow/application/useProjectList';
 import {formatISO, subYears} from 'date-fns';
 
-
 const filterOptions: IFilterOptions = {
   number_of_my_projects: 10,
   number_of_my_group_projects: 12,
