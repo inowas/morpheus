@@ -1,4 +1,4 @@
-import {ICreateModelCommand, IError, ILengthUnit} from '../types';
+import {IError, ILengthUnit} from '../types';
 
 import {useApi} from '../incoming';
 import {useDispatch, useSelector} from 'react-redux';
@@ -6,6 +6,7 @@ import {IRootState} from '../../store';
 import {setError, setLoading, setModel} from '../infrastructure/modelStore';
 import {IModel} from '../types/Model.type';
 import {Polygon} from 'geojson';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface ICreateGrid {
   n_cols: number;
@@ -27,23 +28,20 @@ interface IUseModelSetup {
   error: IError | null;
 }
 
-const useModelSetup = (projectId: string | undefined): IUseModelSetup => {
+const useModelSetup = (projectId: string): IUseModelSetup => {
 
   const {model, loading, error} = useSelector((state: IRootState) => state.project.model);
   const dispatch = useDispatch();
-  const {httpGet, httpPost} = useApi();
+  const {httpGet} = useApi();
+  const {sendCommand} = useProjectCommandBus();
 
 
   const createModel = async (data: ICreateModel) => {
 
-    if (!projectId) {
-      return;
-    }
-
     dispatch(setLoading(true));
     dispatch(setError(null));
 
-    const createModelCommand: ICreateModelCommand = {
+    const createModelCommand: Commands.ICreateModelCommand = {
       command_name: 'create_model_command',
       payload: {
         project_id: projectId,
@@ -54,7 +52,8 @@ const useModelSetup = (projectId: string | undefined): IUseModelSetup => {
       },
     };
 
-    const createModelResult = await httpPost<ICreateModelCommand>('/projects/messagebox', createModelCommand);
+
+    const createModelResult = await sendCommand(createModelCommand);
     dispatch(setLoading(false));
 
     if (createModelResult.err) {
