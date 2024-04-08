@@ -3,9 +3,10 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 from ...domain.events.ProjectEventName import ProjectEventName
 
 from ...domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDeletedEvent, VersionDescriptionUpdatedEvent, \
-    ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent
+    ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent, \
+    ModelGridRecalculatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
-from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent
+from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent, ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
 
 
 class ProjectEventFactory:
@@ -18,22 +19,30 @@ class ProjectEventFactory:
             return ModelCreatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_GEOMETRY_UPDATED:
             return ModelGeometryUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.MODEL_GRID_RECALCULATED:
+            return ModelGridRecalculatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_GRID_UPDATED:
             return ModelGridUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_TIME_DISCRETIZATION_UPDATED:
             return ModelTimeDiscretizationUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.MEMBER_ADDED:
+        if event_name.to_str() == ProjectEventName.PROJECT_MEMBER_ADDED:
             return MemberAddedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.MEMBER_REMOVED:
+        if event_name.to_str() == ProjectEventName.PROJECT_MEMBER_REMOVED:
             return MemberRemovedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.MEMBER_ROLE_UPDATED:
+        if event_name.to_str() == ProjectEventName.PROJECT_MEMBER_ROLE_UPDATED:
             return MemberRoleUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
-        if event_name.to_str() == ProjectEventName.OWNERSHIP_UPDATED:
+        if event_name.to_str() == ProjectEventName.PROJECT_OWNERSHIP_UPDATED:
             return OwnershipUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.PROJECT_CREATED:
             return ProjectCreatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.PROJECT_DELETED:
+            return ProjectDeletedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.PROJECT_METADATA_UPDATED:
             return ProjectMetadataUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.PROJECT_PREVIEW_IMAGE_UPDATED:
+            return ProjectPreviewImageUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.PROJECT_PREVIEW_IMAGE_DELETED:
+            return ProjectPreviewImageDeletedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.VERSION_ASSIGNED_TO_MODEL:
             return VersionAssignedToModelEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.VERSION_CREATED:

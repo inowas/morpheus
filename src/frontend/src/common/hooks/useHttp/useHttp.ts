@@ -9,7 +9,7 @@ export interface IOAuthToken {
   token_type: string;
   scope: string | null;
   refresh_token: string;
-  user_id: number;
+  user_id: string;
 }
 
 export interface IHttpError {
@@ -35,8 +35,8 @@ interface IAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const useHttp = (apiBaseUrl: string, auth?: {
-  token: IOAuthToken,
-  onRefreshToken: (token: IOAuthToken) => Promise<IOAuthToken>,
+  accessToken: IOAuthToken,
+  onRefreshToken?: (token: IOAuthToken) => Promise<IOAuthToken>,
   onUnauthorized: () => void,
 }): IUseHttp => {
 
@@ -58,7 +58,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
       }
 
       if (auth) {
-        config.headers.Authorization = `Bearer ${auth.token.access_token}`;
+        config.headers.Authorization = `Bearer ${auth.accessToken.access_token}`;
       }
 
       if (config.url && config.url.startsWith(config.baseURL)) {
@@ -68,13 +68,18 @@ const useHttp = (apiBaseUrl: string, auth?: {
       return config;
     });
 
-    if (auth) {
+    if (auth && auth.onRefreshToken) {
       instance.interceptors.response.use(
         (response) => response,
         async (error) => {
           const originalRequest = error.config;
+
+          if (!auth.onRefreshToken) {
+            return Promise.reject(error);
+          }
+
           if (401 === error.response.status && !originalRequest._retry) {
-            const newToken = await auth?.onRefreshToken(auth?.token);
+            const newToken = await auth?.onRefreshToken(auth?.accessToken);
             originalRequest.headers.Authorization = 'Bearer ' + newToken.access_token;
             originalRequest._retry = true;
             return instance(originalRequest);
@@ -90,7 +95,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
 
     return instance;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiBaseUrl, auth?.token]);
+  }, [apiBaseUrl, auth?.accessToken]);
 
   const httpGet = async <T>(url: string): Promise<Result<T, IHttpError>> => {
     try {

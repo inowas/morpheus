@@ -96,6 +96,27 @@ class ModelGeometryUpdatedEvent(EventBase):
         return EventName.from_str(ProjectEventName.MODEL_GEOMETRY_UPDATED.to_str())
 
 
+class ModelGridRecalculatedEvent(EventBase):
+    @classmethod
+    def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime = DateTime.now()):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'grid': grid.to_dict()
+            }
+        )
+
+    def get_grid(self) -> Grid:
+        return Grid.from_dict(self.payload['grid'])
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_GRID_RECALCULATED.to_str())
+
+
 class ModelGridUpdatedEvent(EventBase):
     @classmethod
     def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime = DateTime.now()):

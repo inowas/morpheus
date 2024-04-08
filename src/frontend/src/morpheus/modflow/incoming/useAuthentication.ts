@@ -1,10 +1,24 @@
-import {useAuthentication as incomingUseAuthenticationHook} from 'morpheus/authentication/outgoing';
+import {useAuthentication as useAuthenticationHook, IUseAuthentication as IUseAuthenticationHook} from 'morpheus/authentication/outgoing';
 
-export interface IUseAuthentication {
-  token: string;
+
+interface IUseAuthentication {
+  accessToken: IUseAuthenticationHook['accessToken'] | null;
   onUnauthorized: () => void;
+  userProfile: {
+    email: string;
+    name: string;
+  };
 }
 
-const useAuthenticationHook = () => ({...incomingUseAuthenticationHook()});
+const useAuthentication = () => {
+  const {accessToken, signOutLocally, userProfile} = useAuthenticationHook();
 
-export default useAuthenticationHook;
+  return {
+    accessToken,
+    onUnauthorized: signOutLocally,
+    userProfile,
+  };
+};
+
+export default useAuthentication;
+export type {IUseAuthentication};

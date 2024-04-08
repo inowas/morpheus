@@ -114,6 +114,10 @@ module.exports = (env: any, argv: any) => {
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
         GIT_RELEASE_DATE: git('log -1 --format=%aI'),
         MOCKSERVER_ENABLED: !!env.mockserver,
+        BASE_API_URL: env.BASE_API_URL || undefined,
+        KEYCLOAK_URL: env.KEYCLOAK_URL || undefined,
+        KEYCLOAK_REALM: env.KEYCLOAK_REALM || undefined,
+        KEYCLOAK_CLIENT_ID: env.KEYCLOAK_CLIENT_ID || undefined,
       }),
       new CopyPlugin({
         patterns: [{

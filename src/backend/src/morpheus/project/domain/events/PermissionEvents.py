@@ -30,7 +30,7 @@ class MemberAddedEvent(EventBase):
         return Role.from_str(self.payload['role'])
 
     def get_event_name(self) -> EventName:
-        return EventName.from_str(ProjectEventName.MEMBER_ADDED.to_str())
+        return EventName.from_str(ProjectEventName.PROJECT_MEMBER_ADDED.to_str())
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -52,7 +52,7 @@ class MemberRemovedEvent(EventBase):
         return UserId.from_str(self.payload['user_id'])
 
     def get_event_name(self) -> EventName:
-        return EventName.from_str(ProjectEventName.MEMBER_REMOVED.to_str())
+        return EventName.from_str(ProjectEventName.PROJECT_MEMBER_REMOVED.to_str())
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -61,13 +61,13 @@ class MemberRemovedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class MemberRoleUpdatedEvent(EventBase):
     @classmethod
-    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role, occurred_at=DateTime.now()):
+    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, new_role: Role, occurred_at=DateTime.now()):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
-                'role': role.to_str()
+                'role': new_role.to_str()
             }
         )
 
@@ -78,7 +78,7 @@ class MemberRoleUpdatedEvent(EventBase):
         return Role.from_str(self.payload['role'])
 
     def get_event_name(self) -> EventName:
-        return EventName.from_str(ProjectEventName.MEMBER_ROLE_UPDATED.to_str())
+        return EventName.from_str(ProjectEventName.PROJECT_MEMBER_ROLE_UPDATED.to_str())
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -122,7 +122,7 @@ class OwnershipUpdatedEvent(EventBase):
         return UserId.from_str(self.payload['owner_id'])
 
     def get_event_name(self) -> EventName:
-        return EventName.from_str(ProjectEventName.OWNERSHIP_UPDATED.to_str())
+        return EventName.from_str(ProjectEventName.PROJECT_OWNERSHIP_UPDATED.to_str())
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())

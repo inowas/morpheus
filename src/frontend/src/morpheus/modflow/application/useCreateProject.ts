@@ -1,19 +1,14 @@
 import {IError} from '../types';
 import {useRef, useState} from 'react';
 
-import {useApi} from '../incoming';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface IUseCreateProject {
-  createProject: (createProject: ICreateProject) => Promise<IProjectId | undefined>;
+  createProject: (name: string, description: string, tags: string[]) => Promise<string | undefined>;
   loading: boolean;
   error?: IError;
 }
 
-interface ICreateProject {
-  name: string;
-  description: string;
-  keywords: string[];
-}
 
 type IProjectId = string;
 
@@ -23,9 +18,9 @@ const useCreateProject = (): IUseCreateProject => {
   const [error, setError] = useState<IError | null>(null);
 
 
-  const {httpPost} = useApi();
+  const {sendCommand} = useProjectCommandBus();
 
-  const createProject = async (createProject: ICreateProject): Promise<IProjectId | undefined> => {
+  const createProject = async (name: string, description: string, tags: string[]): Promise<IProjectId | undefined> => {
 
     if (!isMounted.current) {
       return;
@@ -34,8 +29,13 @@ const useCreateProject = (): IUseCreateProject => {
     setLoading(true);
     setError(null);
 
+    const createProjectCommand: Commands.ICreateProjectCommand = {
+      command_name: 'create_project_command',
+      payload: {name, description, tags},
+    };
 
-    const response = await httpPost<ICreateProject>('/projects', createProject);
+
+    const response = await sendCommand(createProjectCommand);
 
     if (!isMounted.current) {
       return;
@@ -49,10 +49,9 @@ const useCreateProject = (): IUseCreateProject => {
     }
 
     if (response.ok) {
-      return response.val.location?.split('/').pop();
+      return response.val?.split('/').pop();
     }
   };
-
 
   return {
     createProject,

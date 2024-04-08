@@ -9,7 +9,7 @@ interface IUseProjectMetadata {
   error: IError | null;
 }
 
-const useProjectMetadata = (projectId: string | undefined): IUseProjectMetadata => {
+const useProjectMetadata = (projectId: string): IUseProjectMetadata => {
   const isMounted = useRef(true);
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);

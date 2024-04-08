@@ -53,16 +53,16 @@ class ActiveCells:
         return self.to_dict(as_raster=True) == other.to_dict(as_raster=True)
 
     @classmethod
-    def empty_from_shape(cls, n_col: int, n_row: int):
+    def empty_from_shape(cls, n_cols: int, n_rows: int):
         return cls(
-            shape=(n_row, n_col),
+            shape=(n_rows, n_cols),
             data=[]
         )
 
     @classmethod
     def empty_from_grid(cls, grid: Grid):
         return cls(
-            shape=(grid.n_row(), grid.n_col()),
+            shape=(grid.n_rows(), grid.n_cols()),
             data=[]
         )
 
@@ -77,12 +77,12 @@ class ActiveCells:
 
     @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
-        cells = ActiveCells.empty_from_shape(n_col=grid.n_col(), n_row=grid.n_row())
+        cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         geometries = grid.get_cell_geometries()
         linestring = ShapelyLineString(linestring.coordinates)
 
-        for col in range(grid.n_col()):
-            for row in range(grid.n_row()):
+        for col in range(grid.n_cols()):
+            for row in range(grid.n_rows()):
                 grid_cell_geometry = ShapelyPolygon(geometries[col][row].coordinates[0])
                 if grid_cell_geometry.intersects(linestring):
                     cells.set_active(col=col, row=row)
@@ -91,11 +91,11 @@ class ActiveCells:
 
     @classmethod
     def from_polygon(cls, polygon: Polygon, grid: Grid):
-        cells = cls.empty_from_shape(n_col=grid.n_col(), n_row=grid.n_row())
+        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         area = ShapelyPolygon(polygon.coordinates[0])
         grid_cell_centers = grid.get_cell_centers()
-        for col in range(grid.n_col()):
-            for row in range(grid.n_row()):
+        for col in range(grid.n_cols()):
+            for row in range(grid.n_rows()):
                 center = ShapelyPoint(grid_cell_centers[col][row].coordinates)
                 if area.contains(center):
                     cells.set_active(col=col, row=row)
@@ -104,11 +104,11 @@ class ActiveCells:
 
     @classmethod
     def from_point(cls, point: Point, grid: Grid):
-        cells = ActiveCells.empty_from_shape(n_col=grid.n_col(), n_row=grid.n_row())
+        cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         point = ShapelyPoint(point.coordinates)
         grid_cell_geometries = grid.get_cell_geometries()
-        for col in range(grid.n_col()):
-            for row in range(grid.n_row()):
+        for col in range(grid.n_cols()):
+            for row in range(grid.n_rows()):
                 grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[col][row].coordinates[0])
                 if grid_cell_geometry.contains(point):
                     cells.set_active(col=col, row=row)
@@ -245,8 +245,8 @@ class ActiveCells:
     def as_geojson(self, grid: Grid):
         cells_geometries = grid.get_cell_geometries()
         cell_geometries = []
-        for col in range(grid.n_col()):
-            for row in range(grid.n_row()):
+        for col in range(grid.n_cols()):
+            for row in range(grid.n_rows()):
                 if self.is_active(col=col, row=row):
                     cell_geometries.append(cells_geometries[col][row])
 
