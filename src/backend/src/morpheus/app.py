@@ -1,8 +1,8 @@
 import os
+import json
 import traceback
 
-import yaml
-from flask import Flask, json
+from flask import Flask, jsonify
 from flask_cors import cross_origin
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
@@ -23,7 +23,8 @@ def bootstrap(app: Flask):
             return json.dumps({'error': 'No schema available, Please run "make build-openapi-spec" first.'}), 404
 
         with open(settings.OPENAPI_BUNDLED_SPEC_FILE) as file:
-            return yaml.load(file, Loader=yaml.FullLoader), 200
+            data = json.load(file)
+            return jsonify(data), 200
 
     @app.errorhandler(SchemaValidationException)
     def handle_schema_validation_exception(exception: SchemaValidationException):

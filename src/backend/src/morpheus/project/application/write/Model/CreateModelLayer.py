@@ -9,7 +9,7 @@ from morpheus.project.types.User import UserId
 from morpheus.project.types.soil_model.Layer import LayerName, LayerDescription, LayerType, LayerData, LayerId
 
 
-class CreateLayerCommandPayload(TypedDict):
+class CreateModelLayerCommandPayload(TypedDict):
     project_id: str
     model_id: str
     name: str
@@ -26,7 +26,7 @@ class CreateLayerCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class CreateLayerCommand(CommandBase):
+class CreateModelLayerCommand(CommandBase):
     project_id: ProjectId
     model_id: ModelId
     layer_id: LayerId
@@ -36,7 +36,7 @@ class CreateLayerCommand(CommandBase):
     data: LayerData
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: CreateLayerCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: CreateModelLayerCommandPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
@@ -58,7 +58,7 @@ class CreateLayerCommand(CommandBase):
         )
 
 
-class CreateLayerCommandHandler(CommandHandlerBase):
+class CreateModelLayerCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: CreateLayerCommand):
+    def handle(command: CreateModelLayerCommand):
         raise Exception('Not implemented yet')

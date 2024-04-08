@@ -28,7 +28,7 @@ class Settings:
         self.MORPHEUS_SENSORS_UIT_FTP_PASSWORD: str = values.MORPHEUS_SENSORS_UIT_FTP_PASSWORD
         self.MORPHEUS_SENSORS_UIT_FTP_PATH: str = values.MORPHEUS_SENSORS_UIT_FTP_PATH
         self.MORPHEUS_SENSOR_LOCAL_DATA: str = values.MORPHEUS_SENSOR_LOCAL_DATA
-        self.OPENAPI_BUNDLED_SPEC_FILE: str = os.path.abspath(os.path.join(os.path.dirname(__file__), 'openapi.bundle.yml'))
+        self.OPENAPI_BUNDLED_SPEC_FILE: str = os.path.abspath(os.path.join(os.path.dirname(__file__), 'openapi.bundle.json'))
         self.CELERY_BROKER = values.CELERY_BROKER
         self.CELERY_RESULT_BACKEND = values.CELERY_RESULT_BACKEND
         self.CELERY_INCLUDE_TASK_MODULES = ['morpheus.project.tasks']
