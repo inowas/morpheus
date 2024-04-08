@@ -35,6 +35,31 @@
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
+.ui.checkbox + .map {
+  position: relative;
+
+  &:after {
+    transition: opacity 300ms linear;
+    content: '';
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: all;
+    opacity: 0.2;
+    background-color: @black;
+  }
+}
+
+.ui.checked.checkbox + .map {
+  &:after {
+    pointer-events: none;
+    opacity: 0;
+  }
+}
+
 /*  UTF Reference
 .check:before { content: '\e800'; }
 .dash:before  { content: '\e801'; }

@@ -1,7 +1,7 @@
-import {Button, CardGrid, ContentWrapper, ICard, ISortOption, Navbar} from 'common/components';
-import React, {useEffect, useState} from 'react';
+import {Button, CardGrid, ContentWrapper, ICard, Navbar} from 'common/components';
+import React, {useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
-import {ModflowContainer, SidebarContent} from '../components';
+import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
 import {useProjectList, useTranslate} from '../../application';
 import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
@@ -9,14 +9,6 @@ import {useNavbarItems} from '../../../application/application';
 import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {format} from 'date-fns';
-
-
-const sortOptions: ISortOption[] = [
-  {text: 'Most Recent', value: 'mostRecent'},
-  {text: 'Less Recent', value: 'lessRecent'},
-  {text: 'A-Z', value: 'aToZ'},
-  {text: 'Z-A', value: 'zToA'},
-];
 
 interface IProps {
   basePath: string;
@@ -28,13 +20,11 @@ const ProjectListPage = ({basePath}: IProps) => {
   const location = useLocation();
   const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
-  const {projects, loading, error} = useProjectList();
-  const [cards, setCards] = useState<ICard[]>([]);
-  const [searchValue, setSearchValue] = useState<string>('');
+  const {projects, loading, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
-  useEffect(() => {
-    setCards(projects.map((project) => {
+  const cards = useMemo(() => {
+    return projects.map((project) => {
       return {
         key: project.project_id,
         title: project.name,
@@ -46,8 +36,7 @@ const ProjectListPage = ({basePath}: IProps) => {
         onDeleteClick: () => console.log('Delete', project.project_id),
         onCopyClick: () => console.log('Copy', project.project_id),
       } as ICard;
-    }));
-
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
 
@@ -66,8 +55,8 @@ const ProjectListPage = ({basePath}: IProps) => {
         navbarItems={navbarItems}
         navigateTo={navigateTo}
         search={{
-          value: searchValue,
-          onChange: setSearchValue,
+          value: search,
+          onChange: onSearchChange,
         }}
         button={
           <Button
@@ -79,18 +68,18 @@ const ProjectListPage = ({basePath}: IProps) => {
           </Button>}
       />
       <ModflowContainer>
-        <SidebarContent maxWidth={350}>
-          <div style={{padding: 20}}>
-            <h3>{translate('Projects filter')}</h3>
-          </div>
-          {/*<ProjectsFilter data={modelData} updateModelData={updateModelData}/>*/}
+        <SidebarContent maxWidth={400}>
+          <ProjectsFilter
+            filterParams={filter}
+            filterOptions={filterOptions}
+            onChangeFilterParams={onFilterChange}
+          />
         </SidebarContent>
         <ContentWrapper style={{position: 'relative'}}>
           <SortDropdown
             placeholder="Order By"
-            setModelData={setCards}
-            sortOptions={sortOptions}
-            data={cards}
+            sortOptions={orderOptions}
+            onChangeSortOption={onOrderChange}
             style={{
               position: 'absolute',
               top: 20,

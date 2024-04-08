@@ -8,12 +8,12 @@ interface IProps {
   subTitle?: string;
   btnTitle?: string;
   onClick?: () => void;
-  children?: ReactNode;
   style?: React.CSSProperties;
   className?: string;
   faIcon?: ReactNode;
   faIconText?: string;
   faIconOnClick?: () => void;
+  secondary?: boolean;
 }
 
 const SectionTitle = ({
@@ -26,6 +26,7 @@ const SectionTitle = ({
   faIcon,
   faIconText,
   faIconOnClick,
+  secondary,
 }: IProps) => {
 
   if (!title && !subTitle && !btnTitle) {
@@ -54,7 +55,7 @@ const SectionTitle = ({
   return (
     <div
       data-testid="section-title"
-      className={`${className ? className : null}`}
+      className={(secondary || className) && `${secondary ? styles.secondary : ''} ${className || ''}`}
       style={style}
     >
       {title && (

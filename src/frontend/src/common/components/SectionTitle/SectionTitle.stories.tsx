@@ -21,6 +21,10 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
       <SectionTitle
+        secondary={true}
+        title={<><span>10</span> Model Geometry</>}
+      />
+      <SectionTitle
         title={'Model Geometry'}
       />
       <SectionTitle
