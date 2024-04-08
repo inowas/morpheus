@@ -17,7 +17,7 @@ const SpatialDiscretizationContainer = () => {
   const [editDomain, setEditDomain] = useState<boolean>(false);
 
   const {projectId} = useParams();
-  const {spatialDiscretization, loading, error, updateGeometry, updateGrid} = useSpatialDiscretization(projectId);
+  const {spatialDiscretization, loading, error, updateGeometry, updateGrid} = useSpatialDiscretization(projectId as string);
 
   useEffect(() => {
     if (spatialDiscretization?.geometry) {
