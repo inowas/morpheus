@@ -5,6 +5,7 @@ info:
 paths:
   /projects:
     get:
+      operationId: readProjects
       parameters:
         - in: query
           name: search
@@ -57,6 +58,7 @@ paths:
 
   /projects/messagebox:
     post:
+      operationId: sendMessage
       tags:
         - Project
       summary: The command endpoint to send a command to the project module
@@ -423,48 +425,6 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         404:
           $ref: '#/components/responses/NotFoundError'
-        500:
-          $ref: '#/components/responses/InternalServerError'
-    patch:
-      tags:
-        - Project
-      summary: Update file name or description of an asset
-      description: Update file name or description of an asset. The new file name must have the same extension as the old file name and must only contain alphanumeric characters,
-                   underscores and hyphens (and a dot for the extension). E.g. "my_new_file_name-2024-01-01.tif" is valid, "my.new.file.name.tif" is not.
-      parameters:
-          - $ref: '#/components/parameters/ProjectId'
-          - $ref: '#/components/parameters/AssetId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              anyOf:
-                - type: object
-                  properties:
-                    file_name:
-                      $ref: '#/components/schemas/FileName'
-                  required:
-                    - file_name
-                - type: object
-                  properties:
-                    description:
-                      $ref: '#/components/schemas/AssetDescription'
-                  required:
-                    - description
-      responses:
-        204:
-          description: Asset was successfully updated
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        403:
-          $ref: '#/components/responses/ForbiddenError'
-        404:
-          $ref: '#/components/responses/NotFoundError'
-        415:
-          $ref: '#/components/responses/UnsupportedMediaType'
-        422:
-          $ref: '#/components/responses/UnprocessableEntity'
         500:
           $ref: '#/components/responses/InternalServerError'
     delete:
