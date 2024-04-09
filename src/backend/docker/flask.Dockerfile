@@ -14,7 +14,7 @@ ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
 ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
 ADD src/backend/docker/docker-entrypoint.d ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d
-COPY --from=build_openapi_spec /src/morpheus/openapi.bundle.yml ${BACKEND_APP_ROOT_PATH}/src/morpheus/openapi.bundle.yml
+COPY --from=build_openapi_spec /src/morpheus/openapi.bundle.json ${BACKEND_APP_ROOT_PATH}/src/morpheus/openapi.bundle.yml
 
 # install python dependencies
 RUN pip install --upgrade pip
