@@ -95,7 +95,6 @@
             },
             "required": [
               "project_id",
-              "model_id",
               "name",
               "type",
               "kx",
@@ -210,7 +209,6 @@
             },
             "required": [
               "project_id",
-              "model_id",
               "layer_id"
             ]
           }
@@ -299,7 +297,6 @@
             },
             "required": [
               "project_id",
-              "model_id",
               "layer_id"
             ]
           }
@@ -321,10 +318,6 @@
                 "type": "string",
                 "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
               },
-              "model_id": {
-                "type": "string",
-                "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
-              },
               "affected_cells": {
                 "$ref": "#/definitions/components/AffectedCells"
               }
@@ -332,7 +325,6 @@
           },
           "required": [
             "project_id",
-            "model_id",
             "affected_cells"
           ]
         }
