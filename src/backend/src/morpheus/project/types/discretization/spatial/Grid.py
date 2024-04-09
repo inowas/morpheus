@@ -9,6 +9,8 @@ from .LengthUnit import LengthUnit
 from .Rotation import Rotation
 from .Crs import Crs
 from ...geometry import Point, Polygon
+from ...geometry.Feature import Feature
+from ...geometry.FeatureCollection import FeatureCollection
 
 
 @dataclasses.dataclass(frozen=True)
@@ -176,6 +178,12 @@ class Grid:
             'length_unit': self.length_unit.to_value(),
         }
 
+    def to_geojson(self) -> FeatureCollection:
+        features = [self.bounding_box_geometry()]
+        features += self.column_geometries()
+        features += self.row_geometries()
+        return FeatureCollection(features=features)
+
     def with_updated_geometry(self, polygon: Polygon, preserve_absolute_coordinates: bool = False):
         if preserve_absolute_coordinates:
             raise NotImplementedError('Resize Grid with Flag preserve_absolute_coordinates set to True is not implemented  yet!')
@@ -251,13 +259,58 @@ class Grid:
                     (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
                 ))
 
-                rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(),
-                                              origin=(origin_3857_x, origin_3857_y))  # type: ignore
+                rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
                 geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
                 geometries[col][row] = Polygon(coordinates=[geometry_4326])
         return geometries.tolist()
 
-    def as_geojson(self):
+    def row_geometries(self) -> list[Feature]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_cols, n_rows = self.n_cols(), self.n_rows()
+        features = np.empty(n_rows, dtype=Polygon)
+        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
+        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+
+        for row in range(n_rows):
+            polygon_3857 = ShapelyPolygon((
+                (origin_3857_x, origin_3857_y - row_coordinates[row]),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row]),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row + 1]),
+                (origin_3857_x, origin_3857_y - row_coordinates[row + 1]),
+                (origin_3857_x, origin_3857_y - row_coordinates[row]),
+            ))
+
+            rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+            geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+            features[row] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'row': row, 'type': 'row'})
+
+        return features.tolist()
+
+    def column_geometries(self) -> list[Feature]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_cols, n_rows = self.n_cols(), self.n_rows()
+        features = np.empty(n_cols, dtype=Polygon)
+        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
+        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+
+        for col in range(n_cols):
+            polygon_3857 = ShapelyPolygon((
+                (origin_3857_x + col_coordinates[col], origin_3857_y),
+                (origin_3857_x + col_coordinates[col + 1], origin_3857_y),
+                (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x + col_coordinates[col], origin_3857_y),
+            ))
+
+            rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+            features[col] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'col': col, 'type': 'col'})
+
+        return features.tolist()
+
+    def bounding_box_geometry(self) -> Feature:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
@@ -271,8 +324,6 @@ class Grid:
             (origin_3857_x, origin_3857_y),
         ))
 
-        rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(),
-                                      origin=(origin_3857_x, origin_3857_y))  # type: ignore
-        geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in
-                         list(rotated_polygon_3857.exterior.coords)]
-        return Polygon(coordinates=[geometry_4326])
+        rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+        geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+        return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box', **self.to_dict()})

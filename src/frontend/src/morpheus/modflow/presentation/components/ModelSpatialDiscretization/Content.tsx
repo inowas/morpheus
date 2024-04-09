@@ -9,12 +9,13 @@ import {IGrid} from '../../../types';
 interface IProps {
   grid: IGrid;
   onChange: (data: IGrid) => void;
-  onEditDomainClick: () => void;
+  onEditAffectedCellsClick: () => void;
+  onEditModelGeometryClick: () => void;
   readOnly: boolean;
   onChangeLock: (locked: boolean) => void;
 }
 
-const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, readOnly, onChangeLock}: IProps) => {
+const SpatialDiscretizationContent = ({grid, onChange, onEditAffectedCellsClick, onEditModelGeometryClick, readOnly, onChangeLock}: IProps) => {
 
   const renderGridPropertiesTab = () => {
     return (
@@ -115,8 +116,8 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditDomainClick, readOn
             secondary={true}
             isLocked={readOnly}
             actions={[
-              {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: onEditDomainClick},
-              {actionText: 'Active cells', actionDescription: 'Action Description', onClick: () => console.log('Action 2')},
+              {actionText: 'Edit domain', actionDescription: 'Action Description', onClick: onEditModelGeometryClick},
+              {actionText: 'Affected cells', actionDescription: 'Action Description', onClick: onEditAffectedCellsClick},
             ]}
           />
           <Button

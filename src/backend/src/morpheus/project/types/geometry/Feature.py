@@ -3,13 +3,14 @@ from typing import Literal, Any
 
 from .GeometryFactory import GeometryFactory
 from .LineString import LineString
+from .MultiPolygon import MultiPolygon
 from .Point import Point
 from .Polygon import Polygon
 
 
 @dataclasses.dataclass
 class Feature:
-    geometry: Polygon | LineString | Point
+    geometry: MultiPolygon | Polygon | LineString | Point
     properties: dict[str, Any] = dataclasses.field(default_factory=dict)
     type: Literal['Feature'] = 'Feature'
 
@@ -17,6 +18,7 @@ class Feature:
         return {
             'type': self.type,
             'geometry': self.geometry.__geo_interface__() if self.geometry is not None else None,
+            'properties': self.properties if self.properties is not None else None
         }
 
     @classmethod

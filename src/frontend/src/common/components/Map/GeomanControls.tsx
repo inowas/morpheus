@@ -15,13 +15,14 @@ const GeomanControls = ({
   eventDebugFn,
   onMount,
   onUnmount,
+  map,
   ...handlers
 }: GeomanProps): null => {
   const [mounted, setMounted] = useState(false);
   const [handlersRef, setHandlersRef] = useState<Record<string, Function>>(
     'development' === process.env.NODE_ENV ? handlers : {},
   );
-  const {map, layerContainer} = useLeafletContext();
+  const {layerContainer} = useLeafletContext();
   const container = (layerContainer as LayerGroup) || map;
 
   useEffect(() => {
@@ -35,20 +36,50 @@ const GeomanControls = ({
     }
 
     return () => {
-      map.pm.disableDraw ? map.pm.disableDraw() : null;
-      map.pm.disableGlobalEditMode ? map.pm.disableGlobalEditMode() : null;
-      map.pm.disableGlobalRemovalMode ? map.pm.disableGlobalRemovalMode() : null;
-      map.pm.disableGlobalDragMode ? map.pm.disableGlobalDragMode() : null;
-      map.pm.disableGlobalCutMode ? map.pm.disableGlobalCutMode() : null;
-      map.pm.disableGlobalRotateMode ? map.pm.disableGlobalRotateMode() : null;
-      map.pm.disableGlobalDragMode ? map.pm.disableGlobalDragMode() : null;
-      map.pm.disableGlobalCutMode ? map.pm.disableGlobalCutMode() : null;
+      if (!map.pm) {
+        return;
+      }
+
+      if (map.pm.disableDraw) {
+        map.pm.disableDraw();
+      }
+
+      if (map.pm.disableGlobalEditMode) {
+        map.pm.disableGlobalEditMode();
+      }
+
+      if (map.pm.disableGlobalRemovalMode) {
+        map.pm.disableGlobalRemovalMode();
+      }
+
+      if (map.pm.disableGlobalDragMode) {
+        map.pm.disableGlobalDragMode();
+      }
+
+      if (map.pm.disableGlobalCutMode) {
+        map.pm.disableGlobalCutMode();
+      }
+
+      if (map.pm.disableGlobalRotateMode) {
+        map.pm.disableGlobalRotateMode();
+      }
+
+      if (map.pm.disableGlobalDragMode) {
+        map.pm.disableGlobalDragMode();
+      }
+
+      if (map.pm.disableGlobalCutMode) {
+        map.pm.disableGlobalCutMode();
+      }
+
+      if (map.pm.removeControls) {
+        map.pm.removeControls();
+      }
 
       if (onUnmount) {
         onUnmount();
       }
 
-      map.pm.removeControls ? map.pm.removeControls() : null;
       setMounted(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

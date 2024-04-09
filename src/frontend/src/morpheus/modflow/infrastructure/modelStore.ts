@@ -30,7 +30,6 @@ export const modelSlice = createSlice({
       state.modelState = 'loaded';
     },
     setSpatialDiscretization: (state, action: PayloadAction<ISpatialDiscretization>) => {
-      console.log(state.model);
       if (state.model) {
         state.model.spatial_discretization = action.payload;
       }

@@ -2,7 +2,7 @@ import {IAffectedCells, IError, IGrid, ILengthUnit, ISpatialDiscretization} from
 import {useEffect, useRef, useState} from 'react';
 
 import {useApi} from '../incoming';
-import {Point, Polygon} from 'geojson';
+import {Feature, FeatureCollection, MultiPolygon, Point, Polygon} from 'geojson';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
 import {setSpatialDiscretization} from '../infrastructure/modelStore';
@@ -24,6 +24,8 @@ interface IUseSpatialDiscretization {
   spatialDiscretization: ISpatialDiscretization | null;
   geometry: Polygon | null;
   grid: IGrid | null;
+  fetchAffectedCellsGeometry: () => Promise<Feature<Polygon | MultiPolygon> | null>;
+  fetchGridGeometry: () => Promise<FeatureCollection | null>;
   updateAffectedCells: (affectedCells: IAffectedCells) => void;
   updateGeometry: (geometry: Polygon) => void;
   updateGrid: (gridProps: IUpdateGrid) => void;
@@ -76,6 +78,26 @@ const useSpatialDiscretization = (projectId: string): IUseSpatialDiscretization 
     // eslint-disable-next-line
   }, []);
 
+  const fetchGridGeometry = async (): Promise<FeatureCollection | null> => {
+    const result = await httpGet<FeatureCollection>(`/projects/${projectId}/model/spatial-discretization/grid?format=geojson`);
+
+    if (result.ok) {
+      console.log(result.val);
+      return result.val;
+    }
+
+    return null;
+  };
+
+  const fetchAffectedCellsGeometry = async (): Promise<Feature<Polygon | MultiPolygon> | null> => {
+    const result = await httpGet<Feature<Polygon | MultiPolygon>>(`/projects/${projectId}/model/spatial-discretization/affected-cells?format=geojson_outline`);
+
+    if (result.ok) {
+      return result.val;
+    }
+
+    return null;
+  };
 
   const updateGeometry = async (polygon: Polygon) => {
     if (!isMounted.current) {
@@ -178,6 +200,8 @@ const useSpatialDiscretization = (projectId: string): IUseSpatialDiscretization 
     spatialDiscretization: model?.spatial_discretization || null,
     geometry: model?.spatial_discretization?.geometry || null,
     grid: model?.spatial_discretization?.grid || null,
+    fetchAffectedCellsGeometry,
+    fetchGridGeometry,
     updateAffectedCells,
     updateGeometry,
     updateGrid,

@@ -1,10 +1,12 @@
 import dataclasses
 
 import numpy as np
-from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon
+from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
 from shapely.ops import unary_union
 from morpheus.project.types.discretization.spatial import Grid
 from morpheus.project.types.geometry import GeometryCollection, Polygon, Point, LineString
+from morpheus.project.types.geometry.Feature import Feature
+from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
 
 
 @dataclasses.dataclass
@@ -127,7 +129,7 @@ class ActiveCells:
             if raster_data.shape != tuple(obj['shape']):
                 raise ValueError(f'Grid cells shape {obj["shape"]} does not match raster data shape {raster_data.shape}')
 
-            empty_value = obj['empty_value']
+            empty_value = obj['empty_value'] if 'empty_value' in obj else False
             grid_cells = []
             for row in range(obj['shape'][0]):
                 for col in range(obj['shape'][1]):
@@ -242,7 +244,7 @@ class ActiveCells:
 
         self.data.append(ActiveCell(col=col, row=row))
 
-    def as_geojson(self, grid: Grid):
+    def to_geojson(self, grid: Grid) -> GeometryCollection:
         cells_geometries = grid.get_cell_geometries()
         cell_geometries = []
         for col in range(grid.n_cols()):
@@ -252,12 +254,18 @@ class ActiveCells:
 
         return GeometryCollection(geometries=cell_geometries)
 
-    def as_geojson_outline(self, grid: Grid) -> Polygon:
-        geometries = self.as_geojson(grid).geometries
+    def outline_to_geojson(self, grid: Grid) -> Feature:
+        geometries = self.to_geojson(grid).geometries
         geometries = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]
         geometry = unary_union(geometries)
         if isinstance(geometry, ShapelyPolygon):
             geometry_dict = geometry.__geo_interface__
-            return Polygon(coordinates=geometry_dict['coordinates'])
+            feature = Feature(geometry=Polygon(coordinates=geometry_dict['coordinates']))
+            return feature
 
-        raise Exception(f'Merged cells geometry is not a polygon, but a {type(geometry)}')
+        if isinstance(geometry, ShapelyMultiPolygon):
+            geometry_dict = geometry.__geo_interface__
+            feature = Feature(geometry=MultiPolygon(coordinates=geometry_dict['coordinates']))
+            return feature
+
+        raise Exception(f'Merged cells geometry is not a polygon nor multipolygon: {geometry}')
