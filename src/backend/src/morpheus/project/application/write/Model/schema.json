@@ -155,6 +155,7 @@
         }
       },
       "CreateModelVersionCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -187,6 +188,7 @@
         }
       },
       "DeleteModelLayerCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -215,6 +217,7 @@
         }
       },
       "DeleteModelVersionCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -238,6 +241,7 @@
         }
       },
       "UpdateModelLayerCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -302,6 +306,7 @@
         }
       },
       "UpdateModelAffectedCellsCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -333,6 +338,7 @@
         }
       },
       "UpdateModelGeometryCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -363,6 +369,7 @@
         ]
       },
       "UpdateModelGridCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -432,6 +439,7 @@
         }
       },
       "UpdateModelTimeDiscretizationCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -501,6 +509,7 @@
         }
       },
       "UpdateModelVersionDescriptionCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
