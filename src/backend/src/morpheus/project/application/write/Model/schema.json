@@ -95,7 +95,6 @@
             },
             "required": [
               "project_id",
-              "model_id",
               "name",
               "type",
               "kx",
@@ -155,6 +154,7 @@
         }
       },
       "CreateModelVersionCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -187,6 +187,7 @@
         }
       },
       "DeleteModelLayerCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -208,13 +209,13 @@
             },
             "required": [
               "project_id",
-              "model_id",
               "layer_id"
             ]
           }
         }
       },
       "DeleteModelVersionCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -238,6 +239,7 @@
         }
       },
       "UpdateModelLayerCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -295,13 +297,13 @@
             },
             "required": [
               "project_id",
-              "model_id",
               "layer_id"
             ]
           }
         }
       },
       "UpdateModelAffectedCellsCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -316,10 +318,6 @@
                 "type": "string",
                 "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
               },
-              "model_id": {
-                "type": "string",
-                "example": "e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"
-              },
               "affected_cells": {
                 "$ref": "#/definitions/components/AffectedCells"
               }
@@ -327,12 +325,12 @@
           },
           "required": [
             "project_id",
-            "model_id",
             "affected_cells"
           ]
         }
       },
       "UpdateModelGeometryCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -363,6 +361,7 @@
         ]
       },
       "UpdateModelGridCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -432,6 +431,7 @@
         }
       },
       "UpdateModelTimeDiscretizationCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
@@ -501,6 +501,7 @@
         }
       },
       "UpdateModelVersionDescriptionCommand": {
+        "type": "object",
         "properties": {
           "command_name": {
             "type": "string",
