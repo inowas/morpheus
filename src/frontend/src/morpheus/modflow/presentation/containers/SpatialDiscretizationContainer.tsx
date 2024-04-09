@@ -1,41 +1,74 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import type {Polygon} from 'geojson';
+import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/ModelSpatialDiscretization';
 import {useParams} from 'react-router-dom';
 import {useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
-import {IGrid} from '../../types';
+import {AffectedCells, IAffectedCells, IGrid} from '../../types';
 import {Button, DataGrid} from 'common/components';
 
 
 const SpatialDiscretizationContainer = () => {
 
-  const [geometry, setGeometry] = useState<Polygon | undefined>();
+  const [affectedCellsGeometry, setAffectedCellsGeometry] = useState<Feature<Polygon | MultiPolygon> | null>();
+  const [gridGeometry, setGridGeometry] = useState<FeatureCollection | null>();
+  const [modelGeometry, setModelGeometry] = useState<Polygon | undefined>();
+  const [affectedCells, setAffectedCells] = useState<IAffectedCells | undefined>();
   const [grid, setGrid] = useState<IGrid | undefined>();
   const [locked, setLocked] = useState<boolean>(false);
-  const [editDomain, setEditDomain] = useState<boolean>(false);
+  const [editModelGeometry, setEditModelGeometry] = useState<boolean>(false);
+  const [editAffectedCells, setEditAffectedCells] = useState<boolean>(false);
 
   const {projectId} = useParams();
-  const {spatialDiscretization, loading, error, updateGeometry, updateGrid} = useSpatialDiscretization(projectId as string);
+  const {
+    spatialDiscretization,
+    loading,
+    error,
+    updateAffectedCells,
+    updateGeometry,
+    updateGrid,
+    fetchAffectedCellsGeometry,
+    fetchGridGeometry,
+  } = useSpatialDiscretization(projectId as string);
+
+  useEffect(() => {
+    if (spatialDiscretization?.affected_cells) {
+      setAffectedCells(spatialDiscretization.affected_cells);
+    }
+  }, [spatialDiscretization?.affected_cells]);
 
   useEffect(() => {
     if (spatialDiscretization?.geometry) {
-      setGeometry(spatialDiscretization.geometry);
+      setModelGeometry(spatialDiscretization.geometry);
     }
   }, [spatialDiscretization?.geometry]);
 
   useEffect(() => {
     if (spatialDiscretization?.grid) {
       setGrid(spatialDiscretization.grid);
+      fetchGridGeometry().then(setGridGeometry);
     }
   }, [spatialDiscretization?.grid]);
 
+  useEffect(() => {
+    if (spatialDiscretization?.affected_cells) {
+      fetchAffectedCellsGeometry().then(setAffectedCellsGeometry);
+    }
+  }, [spatialDiscretization?.affected_cells]);
+
   const handleSubmit = async () => {
-    if (projectId && geometry && grid) {
-      if (spatialDiscretization?.geometry !== geometry) {
-        updateGeometry(geometry);
+    if (projectId && modelGeometry && grid) {
+      if (spatialDiscretization?.geometry !== modelGeometry) {
+        updateGeometry(modelGeometry);
       }
+      setEditModelGeometry(false);
+
+      if (affectedCells && spatialDiscretization?.affected_cells !== affectedCells) {
+        updateAffectedCells(affectedCells);
+      }
+
+      setEditAffectedCells(false);
 
       if (grid.n_cols === spatialDiscretization?.grid.n_cols && grid.n_rows === spatialDiscretization?.grid.n_rows && grid.rotation === spatialDiscretization?.grid.rotation && grid.length_unit === spatialDiscretization?.grid.length_unit) {
         return;
@@ -53,7 +86,7 @@ const SpatialDiscretizationContainer = () => {
     return null;
   }
 
-  if (!geometry || !grid || !spatialDiscretization) {
+  if (!modelGeometry || !grid || !spatialDiscretization) {
     return null;
   }
 
@@ -66,7 +99,8 @@ const SpatialDiscretizationContainer = () => {
       <SidebarContent maxWidth={600}>
         <SpatialDiscretizationContent
           grid={grid}
-          onEditDomainClick={() => setEditDomain(true)}
+          onEditAffectedCellsClick={() => setEditAffectedCells(true)}
+          onEditModelGeometryClick={() => setEditModelGeometry(true)}
           readOnly={locked}
           onChangeLock={setLocked}
           onChange={setGrid}
@@ -77,7 +111,7 @@ const SpatialDiscretizationContainer = () => {
             size={'tiny'}
             disabled={locked}
             onClick={() => {
-              setGeometry(spatialDiscretization.geometry);
+              setModelGeometry(spatialDiscretization.geometry);
               setGrid(spatialDiscretization.grid);
             }}
           >
@@ -96,13 +130,23 @@ const SpatialDiscretizationContainer = () => {
       </SidebarContent>
       <BodyContent>
         <SpatialDiscretizationMap
-          polygon={geometry}
-          onChange={(polygon: Polygon) => {
-            console.log(polygon);
-            setGeometry(polygon);
-            setEditDomain(false);
+          editAffectedCells={editAffectedCells}
+          affectedCellsGeometry={affectedCellsGeometry || undefined}
+          onChangeAffectedCell={(row: number, col: number, active: boolean) => {
+            if (!affectedCells) {
+              return;
+            }
+            const newAffectedCells = AffectedCells.fromObject(affectedCells);
+            newAffectedCells.setActive(row, col, active);
+            setAffectedCells(newAffectedCells.toObject() as IAffectedCells);
           }}
-          editable={!locked && editDomain}
+          modelGeometry={modelGeometry}
+          grid={gridGeometry || undefined}
+          onChangeModelGeometry={(polygon: Polygon) => {
+            setModelGeometry(polygon);
+            setEditModelGeometry(false);
+          }}
+          editModelGeometry={!locked && editModelGeometry}
         />
       </BodyContent>
     </>

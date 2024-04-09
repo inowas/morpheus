@@ -1,3 +1,3 @@
-import ShowCreateOrEditPolygon from './ShowCreateOrEditPolygon';
+import SpatialDiscretizationMap from './SpatialDiscretizationMap';
 
-export default ShowCreateOrEditPolygon;
+export default SpatialDiscretizationMap;
