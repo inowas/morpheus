@@ -1,20 +1,29 @@
 import React from 'react';
-import type {Polygon} from 'geojson';
+import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 import {Map} from 'common/components/Map';
-import ShowCreateOrEditPolygon from './Map';
+import SpatialDiscretizationMap from './Map';
+import {IAffectedCells} from '../../../types';
 
 interface IProps {
-  polygon?: Polygon;
-  onChange: (polygon: Polygon) => void;
-  editable: boolean;
+  editAffectedCells?: boolean;
+  affectedCellsGeometry?: Feature<Polygon | MultiPolygon>;
+  onChangeAffectedCell?: (row: number, col: number, active: boolean) => void;
+  modelGeometry?: Polygon;
+  grid?: FeatureCollection;
+  onChangeModelGeometry: (polygon: Polygon) => void;
+  editModelGeometry: boolean;
 }
 
-const Body = ({polygon, onChange, editable}: IProps) => (
+const Body = ({affectedCellsGeometry, editAffectedCells, modelGeometry, grid, onChangeModelGeometry, editModelGeometry, onChangeAffectedCell}: IProps) => (
   <Map>
-    <ShowCreateOrEditPolygon
-      polygon={polygon}
-      onChange={onChange}
-      editable={editable}
+    <SpatialDiscretizationMap
+      gridGeometry={grid}
+      editAffectedCells={editAffectedCells}
+      affectedCellsGeometry={affectedCellsGeometry}
+      editModelGeometry={editModelGeometry}
+      modelGeometry={modelGeometry}
+      onChangeAffectedCell={onChangeAffectedCell}
+      onChangeModelGeometry={onChangeModelGeometry}
     />
   </Map>
 );

@@ -123,7 +123,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
         method: 'POST',
         url: url,
         withCredentials: false,
-        validateStatus: (status) => 201 === status,
+        validateStatus: (status) => 201 === status || 202 === status || 204 === status,
         data: data,
       });
       return Ok({

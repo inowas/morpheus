@@ -2,6 +2,8 @@ from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
+from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
+from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
@@ -43,6 +45,22 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_get_spatial_discretization(project_id: str):
         return ReadModelSpatialDiscretizationRequestHandler().handle(ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/model/spatial-discretization/affected-cells', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_spatial_discretization_get_affected_cells(project_id: str):
+        format = request.args.get('format', 'json')  # default to json
+        return ReadModelAffectedCellsRequestHandler().handle(ProjectId.from_str(project_id), format=format)
+
+    @blueprint.route('/<project_id>/model/spatial-discretization/grid', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_spatial_discretization_get_grid(project_id: str):
+        output_format = request.args.get('format', 'json')
+        if output_format not in ['json', 'geojson']:
+            output_format = 'json'
+        return ReadModelGridRequestHandler().handle(ProjectId.from_str(project_id), format=output_format)
 
     @blueprint.route('/<project_id>/model/time-discretization', methods=['GET'])
     @cross_origin()

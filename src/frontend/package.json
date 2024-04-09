@@ -11,6 +11,7 @@
     "@sentry/react": "^7.107.0",
     "@sentry/tracing": "^7.107.0",
     "@storybook/test": "^8.0.4",
+    "@turf/turf": "^6.5.0",
     "axios": "^1.6.8",
     "browserslist": "^4.23.0",
     "date-fns": "^3.6.0",
