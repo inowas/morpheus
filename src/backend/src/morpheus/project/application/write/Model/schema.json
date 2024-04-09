@@ -321,12 +321,12 @@
               "affected_cells": {
                 "$ref": "#/definitions/components/AffectedCells"
               }
-            }
-          },
-          "required": [
-            "project_id",
-            "affected_cells"
-          ]
+            },
+            "required": [
+              "project_id",
+              "affected_cells"
+            ]
+          }
         }
       },
       "UpdateModelGeometryCommand": {
