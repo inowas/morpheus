@@ -129,77 +129,6 @@ interface IOrder {
   [key: string]: 'asc' | 'desc';
 }
 
-const filterOptions: IFilterOptions = {
-  number_of_my_projects: 10,
-  number_of_my_group_projects: 12,
-  users: [{
-    user_id: 'Dmytro',
-    unsername: 'Dmytro',
-    count: 10,
-  },
-  {
-    user_id: 'Ralf',
-    unsername: 'Ralf',
-    count: 2,
-  }],
-  by_status: {
-    green: 100,
-    yellow: 100,
-    red: 100,
-  },
-  by_date: {
-    created_at: {
-      start_date: formatISO(subYears(new Date(), 8)),
-      end_date: formatISO(new Date()),
-    },
-    updated_at: {
-      start_date: formatISO(subYears(new Date(), 2)),
-      end_date: formatISO(new Date()),
-    },
-    model_date: {
-      start_date: formatISO(subYears(new Date(), 6)),
-      end_date: formatISO(new Date()),
-    },
-  },
-  boundary_conditions: {
-    CHD: 10,
-    FHB: 11,
-    WEL: 12,
-    RCH: 13,
-    RIV: 14,
-    GHB: 15,
-    EVT: 12,
-    DRN: 12,
-    NB: 0,
-  },
-  additional_features: {
-    soluteTransportMT3DMS: 12,
-    dualDensityFlowSEAWAT: 1,
-    realTimeSensors: 13,
-    modelsWithScenarios: 1,
-  },
-  number_of_grid_cells: {
-    min: 0,
-    max: 240000,
-    step: 100,
-  },
-  number_of_stress_periods: {
-    min: 0,
-    max: 50,
-    step: 1,
-  },
-  number_of_layers: {
-    min: 110,
-    max: 300,
-    step: 10,
-  },
-  tags: {
-    groundwater: 46,
-    recharge: 12,
-  },
-};
-
-
 const useProjectList = (): IUseProjectList => {
   const isMounted = useRef(true);
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
@@ -213,6 +142,79 @@ const useProjectList = (): IUseProjectList => {
 
   const {userProfile} = useAuthentication();
   const myUserId = userProfile?.sub || '';
+
+  const filterOptions: IFilterOptions = useMemo(() => {
+    return {
+      number_of_my_projects: projects.filter((project) => project.owner_id === myUserId).length,
+      number_of_my_group_projects: projects.filter((project) => project.owner_id !== myUserId).length,
+      users: [{
+        user_id: 'Dmytro',
+        unsername: 'Dmytro',
+        count: 10,
+      },
+      {
+        user_id: 'Ralf',
+        unsername: 'Ralf',
+        count: 2,
+      }],
+      by_status: {
+        green: 100,
+        yellow: 100,
+        red: 100,
+      },
+      by_date: {
+        created_at: {
+          start_date: formatISO(subYears(new Date(), 8)),
+          end_date: formatISO(new Date()),
+        },
+        updated_at: {
+          start_date: formatISO(subYears(new Date(), 2)),
+          end_date: formatISO(new Date()),
+        },
+        model_date: {
+          start_date: formatISO(subYears(new Date(), 6)),
+          end_date: formatISO(new Date()),
+        },
+      },
+      boundary_conditions: {
+        CHD: 10,
+        FHB: 11,
+        WEL: 12,
+        RCH: 13,
+        RIV: 14,
+        GHB: 15,
+        EVT: 12,
+        DRN: 12,
+        NB: 0,
+      },
+      additional_features: {
+        soluteTransportMT3DMS: 12,
+        dualDensityFlowSEAWAT: 1,
+        realTimeSensors: 13,
+        modelsWithScenarios: 1,
+      },
+      number_of_grid_cells: {
+        min: 0,
+        max: 240000,
+        step: 100,
+      },
+      number_of_stress_periods: {
+        min: 0,
+        max: 50,
+        step: 1,
+      },
+      number_of_layers: {
+        min: 110,
+        max: 300,
+        step: 10,
+      },
+      tags: {
+        groundwater: 46,
+        recharge: 12,
+      },
+    };
+  }, [myUserId, projects]);
+
 
   const filteredProjects = useMemo(() => {
 

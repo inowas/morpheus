@@ -33,6 +33,8 @@ const ModelCard: React.FC<ICard> = ({
   ...props
 }) => {
 
+  console.log('ModelCard', title, description, image, author, date_time, status, onViewClick, onCopyClick, onDeleteClick, props);
+
   const renderDescription = (descr: string | undefined = '') => {
     const maxLength = 40;
     if (maxLength >= descr.length) {

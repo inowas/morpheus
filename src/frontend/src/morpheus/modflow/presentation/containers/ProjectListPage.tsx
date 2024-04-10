@@ -8,6 +8,7 @@ import {useNavbarItems} from '../../../application/application';
 import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {format} from 'date-fns';
+import {useAuthentication} from '../../incoming';
 
 interface IProps {
   basePath: string;
@@ -22,8 +23,15 @@ const ProjectListPage = ({basePath}: IProps) => {
   const {projects, loading, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
+  const {userProfile} = useAuthentication();
+  const myUserId = userProfile?.sub || '';
+
   const cards = useMemo(() => {
     return projects.map((project) => {
+
+      const canBeCopied = true;
+      const canBeDeleted = myUserId === project.owner_id;
+
       return {
         key: project.project_id,
         title: project.name,
@@ -32,8 +40,8 @@ const ProjectListPage = ({basePath}: IProps) => {
         status: 'green',
         date_time: format(new Date(project.created_at), 'dd.MM.yyyy'),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
-        onDeleteClick: () => onDeleteClick(project.project_id),
-        onCopyClick: () => console.log('Copy', project.project_id),
+        onDeleteClick: canBeDeleted ? () => onDeleteClick(project.project_id) : undefined,
+        onCopyClick: canBeCopied ? () => console.log('Copy project') : undefined,
       } as ICard;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
