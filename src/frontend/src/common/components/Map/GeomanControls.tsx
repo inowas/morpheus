@@ -26,6 +26,12 @@ const GeomanControls = ({
   const container = (layerContainer as LayerGroup) || map;
 
   useEffect(() => {
+
+    if (!map || !map.pm) {
+      console.warn('[GEOMAN-CONTROLS] No map instance found');
+      return;
+    }
+
     // add controls
     if (!map.pm.controlsVisible()) {
       map.pm.addControls(options);
