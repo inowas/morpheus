@@ -11,6 +11,10 @@ servers:
     description: Local Development API
   - url: http://api.morpheus.inowas.localhost
     description: Local API
+  - url: http://api.morpheus.inowas.com
+    description: Deveoplment API
+  - url: http://api.dev.morpheus.inowas.com
+    description: Production API
   - url: https://api.morpheus.inowas.com
     description: Production API
 
