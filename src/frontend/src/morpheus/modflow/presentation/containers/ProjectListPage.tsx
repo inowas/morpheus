@@ -3,7 +3,6 @@ import React, {useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
 import {useProjectList, useTranslate} from '../../application';
-import Loading from 'common/components/Loading';
 import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
 import CreateProjectContainer from './CreateProjectContainer';
@@ -20,7 +19,7 @@ const ProjectListPage = ({basePath}: IProps) => {
   const location = useLocation();
   const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
-  const {projects, loading, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange} = useProjectList();
+  const {projects, loading, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   const cards = useMemo(() => {
@@ -33,16 +32,12 @@ const ProjectListPage = ({basePath}: IProps) => {
         status: 'green',
         date_time: format(new Date(project.created_at), 'dd.MM.yyyy'),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
-        onDeleteClick: () => console.log('Delete', project.project_id),
+        onDeleteClick: () => onDeleteClick(project.project_id),
         onCopyClick: () => console.log('Copy', project.project_id),
       } as ICard;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
-
-  if (loading) {
-    return <Loading/>;
-  }
 
   if (error) {
     return <Error message={error.message}/>;

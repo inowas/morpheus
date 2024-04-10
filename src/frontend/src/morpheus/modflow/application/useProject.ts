@@ -3,16 +3,15 @@ import {useRef, useState} from 'react';
 
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
-interface IUseCreateProject {
+interface IUseProject {
   createProject: (name: string, description: string, tags: string[]) => Promise<string | undefined>;
+  deleteProject: (projectId: string) => Promise<boolean>;
   loading: boolean;
   error?: IError;
 }
 
 
-type IProjectId = string;
-
-const useCreateProject = (): IUseCreateProject => {
+const useProject = (): IUseProject => {
   const isMounted = useRef(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
@@ -20,7 +19,7 @@ const useCreateProject = (): IUseCreateProject => {
 
   const {sendCommand} = useProjectCommandBus();
 
-  const createProject = async (name: string, description: string, tags: string[]): Promise<IProjectId | undefined> => {
+  const createProject = async (name: string, description: string, tags: string[]): Promise<string | undefined> => {
 
     if (!isMounted.current) {
       return;
@@ -53,11 +52,44 @@ const useCreateProject = (): IUseCreateProject => {
     }
   };
 
+  const deleteProject = async (projectId: string): Promise<boolean> => {
+    if (!isMounted.current) {
+      return false;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const deleteProjectCommand: Commands.IDeleteProjectCommand = {
+      command_name: 'delete_project_command',
+      payload: {
+        project_id: projectId,
+      },
+    };
+
+    const response = await sendCommand(deleteProjectCommand);
+
+    if (!isMounted.current) {
+      return false;
+    }
+
+    setLoading(false);
+
+    if (response.err) {
+      setError(response.val);
+      return false;
+    }
+
+    return response.ok;
+  };
+
   return {
     createProject,
+    deleteProject,
     loading,
     error: error ? error : undefined,
   };
 };
 
-export default useCreateProject;
+export default useProject;
+export type {IUseProject};

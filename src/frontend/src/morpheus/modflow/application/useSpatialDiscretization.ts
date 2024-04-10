@@ -82,7 +82,6 @@ const useSpatialDiscretization = (projectId: string): IUseSpatialDiscretization 
     const result = await httpGet<FeatureCollection>(`/projects/${projectId}/model/spatial-discretization/grid?format=geojson`);
 
     if (result.ok) {
-      console.log(result.val);
       return result.val;
     }
 
