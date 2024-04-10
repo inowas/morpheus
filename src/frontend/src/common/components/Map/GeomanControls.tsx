@@ -15,14 +15,13 @@ const GeomanControls = ({
   eventDebugFn,
   onMount,
   onUnmount,
-  map,
   ...handlers
 }: GeomanProps): null => {
   const [mounted, setMounted] = useState(false);
-  const [handlersRef, setHandlersRef] = useState<Record<string, Function>>(
-    'development' === process.env.NODE_ENV ? handlers : {},
-  );
-  const {layerContainer} = useLeafletContext();
+  // const [handlersRef, setHandlersRef] = useState<Record<string, Function>>(
+  //   'development' === process.env.NODE_ENV ? handlers : {},
+  // );
+  const {map, layerContainer} = useLeafletContext();
   const container = (layerContainer as LayerGroup) || map;
 
   useEffect(() => {
@@ -126,7 +125,7 @@ const GeomanControls = ({
         globalEvents(map, withDebug, 'off');
         mapEvents(map, withDebug, 'off');
         layers.forEach((layer) => layerEvents(layer, withDebug, 'off'));
-        setHandlersRef(handlers);
+        // setHandlersRef(handlers);
       };
     }
   }, [mounted]);
