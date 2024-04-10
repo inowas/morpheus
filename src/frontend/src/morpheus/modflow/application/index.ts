@@ -1,4 +1,4 @@
-import useCreateProject from './useCreateProject';
+import useProject from './useProject';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useNavbarItems from './useNavbarItems';
@@ -10,7 +10,7 @@ import useTimeDiscretization from './useTimeDiscretization';
 import useTranslate from './useTranslate';
 
 export {
-  useCreateProject,
+  useProject,
   useModel,
   useModelSetup,
   useNavbarItems,

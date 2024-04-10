@@ -68,8 +68,6 @@ const SpatialDiscretizationMap = ({
       });
     }
 
-    console.log({boundingBox, affectedCellsGeometry, feature, gridGeometry});
-
     return feature;
 
   }, [affectedCellsGeometry, gridGeometry]);
@@ -208,8 +206,6 @@ const SpatialDiscretizationMap = ({
       }
     }
   };
-
-  console.log(affectedCellsLayerGeometry?.geometry.coordinates);
 
   return (
     <>

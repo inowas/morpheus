@@ -3,6 +3,7 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {useApi, useAuthentication} from '../incoming';
 import {formatISO, subYears} from 'date-fns';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface IUseProjectList {
   projects: IProjectListItem[];
@@ -14,6 +15,7 @@ interface IUseProjectList {
   orderOptions: IOrderOption[];
   search: string;
   onSearchChange: (search: string) => void;
+  onDeleteClick: (projectId: string) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -207,9 +209,10 @@ const useProjectList = (): IUseProjectList => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
+  const {sendCommand} = useProjectCommandBus();
+
   const {userProfile} = useAuthentication();
   const myUserId = userProfile?.sub || '';
-
 
   const filteredProjects = useMemo(() => {
 
@@ -284,6 +287,37 @@ const useProjectList = (): IUseProjectList => {
 
   }, [projects, filter, search, orderOption, myUserId]);
 
+  const onDeleteClick = async (projectId: string): Promise<void> => {
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const deleteProjectCommand: Commands.IDeleteProjectCommand = {
+      command_name: 'delete_project_command',
+      payload: {
+        project_id: projectId,
+      },
+    };
+
+    const response = await sendCommand(deleteProjectCommand);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (response.err) {
+      setError(response.val);
+      return;
+    }
+
+    setProjects(projects.filter((project) => project.project_id !== projectId));
+  };
+
   const {httpGet} = useApi();
 
   useEffect(() => {
@@ -332,6 +366,7 @@ const useProjectList = (): IUseProjectList => {
     orderOptions,
     search: '',
     onSearchChange: setSearch,
+    onDeleteClick,
     loading,
     error,
   };
