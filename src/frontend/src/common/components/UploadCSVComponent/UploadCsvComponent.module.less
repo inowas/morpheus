@@ -1,0 +1,54 @@
+@import '../site.variables';
+
+.updateCSV {
+  //position: relative;
+  //display: flex;
+  //align-items: center;
+  //justify-content: space-between;
+  //gap: 20px;
+  //flex-wrap: wrap;
+
+  input {
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  label {
+    min-width: 110px;
+    text-align: center;
+
+    position: relative;
+    cursor: pointer;
+    padding: 10px;
+    background-color: @ref-color-lightBlue;
+    color: #FFFFFF;
+    font-family: "Open Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+
+    &:hover {
+      background-color: @ref-color-underline;
+      text-decoration: underline;
+    }
+  }
+
+  span {
+    margin-left: 10px;
+    opacity: 1;
+    color: @ref-color-blackLight;
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    line-height: 19px;
+  }
+}
+
+

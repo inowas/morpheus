@@ -49,6 +49,7 @@ import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import Tab from 'common/components/Tabs';
 import Toggle from './Toggle/Toggle';
+import UploadCsvComponent from './UploadCSVComponent';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 
@@ -103,6 +104,7 @@ export {
   SortDropdown,
   Tab,
   Toggle,
+  UploadCsvComponent,
   UploadCSVFile,
   UploadFile,
 };

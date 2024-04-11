@@ -1,29 +1,65 @@
-import React, {useEffect, useState} from 'react';
-import {ECsvColumnType, StressperiodsUploadModal, UploadCsvComponent} from './index';
-import {Modal} from 'common/components';
+import React, {useState} from 'react';
+import {ECsvColumnType, StressperiodsUploadModal} from './index';
+import {Button, Modal, UploadCsvComponent} from 'common/components';
+import {Container} from 'semantic-ui-react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faDownload} from '@fortawesome/free-solid-svg-icons';
+import {format} from 'date-fns';
 
 interface IProps {
-  handleUpload: (data: any) => void;
+  onSave: (data: any) => void;
 }
 
-const StressperiodsUpload = ({handleUpload}: IProps) => {
+const StressperiodsUpload = ({onSave}: IProps) => {
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadedData, setUploadedData] = useState<any>(null);
 
-  useEffect(() => {
+  const handleDownloadTemplate = () => {
+    console.log('Download template');
+    const filename = 'stressperiods_template.csv';
+    const todayDate = format(new Date(), 'dd.MM.yyyy');
+    const templateText = `start_date_time;nstp;tsmult;steady\n${todayDate};1;1;1\n`;
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(templateText));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+  const handleSubmit = (processedData: any[][] | null) => {
     setFileName(uploadedData?.name);
-  }, [uploadedData]);
+    onSave(processedData);
+  };
+  const handleCancel = () => {
+    setUploadedData(null);
+  };
+
 
   return (
-    <>
+    <Container style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '20px',
+      flexWrap: 'wrap',
+    }}
+    >
       <UploadCsvComponent
         fileName={fileName}
         onUpload={setUploadedData}
       />
+      <Button
+        className='buttonLink'
+        onClick={handleDownloadTemplate}
+      >
+        Download template
+        <FontAwesomeIcon icon={faDownload}/>
+      </Button>
       <Modal.Modal
         open={!!uploadedData}
-        onClose={() => setUploadedData(null)}
+        onClose={handleCancel}
         dimmer={'inverted'}
       >
         <Modal.Content>
@@ -35,34 +71,12 @@ const StressperiodsUpload = ({handleUpload}: IProps) => {
               {key: 2, value: 'tsmult', text: 'Multiplier'},
               {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},
             ]}
-            onSave={setUploadedData}
-            onCancel={() => {
-              setFileName(null);
-              setUploadedData(null);
-            }}
+            onSave={handleSubmit}
+            onCancel={handleCancel}
           />
         </Modal.Content>
       </Modal.Modal>
-      {/*<Modal.Modal*/}
-      {/*  open={openConfirmationModal}*/}
-      {/*  onOpen={() => setOpenConfirmationModal(true)}*/}
-      {/*  onClose={() => setOpenConfirmationModal(false)}*/}
-      {/*  dimmer={'inverted'}*/}
-      {/*>*/}
-      {/*  <Modal.Content>*/}
-      {/*    <StressperiodsConfirmModal*/}
-      {/*      title={'Warning: Data already exists. Overwrite?'}*/}
-      {/*      isOpen={false}*/}
-      {/*      onClose={() => {*/}
-      {/*      }}*/}
-      {/*      onSubmit={() => {*/}
-      {/*      }}*/}
-      {/*      onCansel={() => {*/}
-      {/*      }}*/}
-      {/*    />*/}
-      {/*  </Modal.Content>*/}
-      {/*</Modal.Modal>*/}
-    </>
+    </Container>
   );
 };
 

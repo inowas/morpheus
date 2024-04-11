@@ -2,17 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {Accordion, AccordionPanelProps} from 'semantic-ui-react';
 import TimeDiscretizationGeneralParameters from './GeneralParameters';
 import TimeDiscretizationStressPeriods from './StressPeriods';
+import {StressperiodsUpload} from './StressperiodsUpload';
 import {IStressPeriod, ITimeDiscretization} from '../../../types';
 import {addDays, isValid, parseISO} from 'date-fns';
 import {Button, DataGrid, SectionTitle} from 'common/components';
-// import {StressperiodsUpload} from './StressperiodsUpload';
-import {StressperiodsUpload} from './StressperiodsUpload';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (data: ITimeDiscretization) => void;
   loading: boolean;
 }
+
 
 const withSortedStressPeriods = (td: ITimeDiscretization): ITimeDiscretization => {
   return {
@@ -28,14 +28,62 @@ const withSortedStressPeriods = (td: ITimeDiscretization): ITimeDiscretization =
 
 
 const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IProps) => {
-
-  const [uploadedData, setUploadedData] = useState<any>(null);
+  const [uploadedData, setUploadedData] = useState<IStressPeriod[][] | null>(null);
   const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(
     withSortedStressPeriods(timeDiscretization),
   );
 
+  const transformData = (processedData: IStressPeriod[][]): ITimeDiscretization | null => {
+    if (!processedData) {
+      return null;
+    }
+    const stressPeriods: IStressPeriod[] = processedData.map((period: any[]) => {
+      const [
+        startDateTime,
+        nstp,
+        tsmult,
+        steady,
+      ] = period;
+      return {
+        start_date_time: startDateTime,
+        number_of_time_steps: nstp,
+        time_step_multiplier: tsmult,
+        steady_state: steady,
+      };
+    });
+
+    let earliestDate = isValid(new Date(stressPeriods[0].start_date_time))
+      ? new Date(stressPeriods[0].start_date_time)
+      : new Date();
+    let latestDate = earliestDate;
+
+    stressPeriods.forEach(period => {
+      if (!isValid(new Date(period.start_date_time))) {
+        return;
+      }
+      const startDate = new Date(period.start_date_time);
+      if (startDate < earliestDate) {
+        earliestDate = startDate;
+      }
+      if (startDate > latestDate) {
+        latestDate = startDate;
+      }
+    });
+
+
+    return {
+      start_date_time: earliestDate.toISOString(),
+      end_date_time: latestDate.toISOString(),
+      time_unit: timeDiscretizationLocal.time_unit,
+      stress_periods: stressPeriods,
+    };
+  };
+
+
   useEffect(() => {
-    console.log(uploadedData);
+    if (!uploadedData) return;
+    const updatedTimeDiscretization = transformData(uploadedData) ?? timeDiscretizationLocal;
+    setTimeDiscretizationLocal(withSortedStressPeriods(updatedTimeDiscretization));
   }, [uploadedData]);
 
   useEffect(() => {
@@ -84,20 +132,8 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
       content: (
         <>
           <StressperiodsUpload
-            handleUpload={setUploadedData}
+            onSave={setUploadedData}
           />
-          {/*<UploadCSVFile*/}
-          {/*  onCancel={() => {*/}
-          {/*  }}*/}
-          {/*  onSave={() => {*/}
-          {/*  }}*/}
-          {/*  columns={[*/}
-          {/*    {key: 0, value: 'start_date_time', text: 'Start date', type: ECsvColumnType.DATE_TIME},*/}
-          {/*    {key: 1, value: 'nstp', text: 'Time steps'},*/}
-          {/*    {key: 2, value: 'tsmult', text: 'Multiplier'},*/}
-          {/*    {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},*/}
-          {/*  ]}*/}
-          {/*/>*/}
           <TimeDiscretizationStressPeriods
             timeDiscretization={timeDiscretizationLocal}
             onChange={handleTimeDiscretizationChange}
@@ -128,3 +164,4 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
 };
 
 export default TimeDiscretizationContent;
+

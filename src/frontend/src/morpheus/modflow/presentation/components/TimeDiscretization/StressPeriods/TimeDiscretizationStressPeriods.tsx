@@ -1,8 +1,8 @@
 import {Checkbox, CheckboxProps, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 
-import {Button} from 'common/components';
+import {Button, Notification} from 'common/components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './TimeDiscretizationStressPeriods.module.less';
@@ -17,6 +17,7 @@ interface IProps {
 
 const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, onChange, readOnly}) => {
 
+  const [showNotification, setShowNotification] = useState(false);
   const toCsv = () => {
     let text = 'start_date_time;nstp;tsmult;steady\n';
     timeDiscretization.stress_periods.forEach((sp: IStressPeriod) => {
@@ -37,6 +38,12 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
 
   const handleAddNewStressPeriod = () => {
     const lastStressPeriod = timeDiscretization.stress_periods[timeDiscretization.stress_periods.length - 1];
+
+    if (!isValid(new Date(lastStressPeriod.start_date_time))) {
+      setShowNotification(true);
+      return;
+    }
+    setShowNotification(false);
     const newStressPeriod: IStressPeriod = {
       ...lastStressPeriod,
       start_date_time: addDays(parseISO(lastStressPeriod.start_date_time), 1).toISOString(),
@@ -115,7 +122,11 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
                 name={'start_date_time'}
                 idx={idx}
                 style={{width: '100%'}}
-                value={parseISO(sp.start_date_time).toISOString().split('T')[0]}
+                value={
+                  isValid(new Date(sp.start_date_time))
+                    ? parseISO(sp.start_date_time).toISOString().split('T')[0]
+                    : ''
+                }
                 onChange={(e: ChangeEvent<HTMLInputElement>, {value}: InputOnChangeData) => {
                   const dateValue = parseISO(`${value}T00:00:00Z`);
                   if (!isValid(dateValue)) {
@@ -184,12 +195,15 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
         </Table>
       </div>
       <div className={styles.buttonsGroup}>
-        <Button className='buttonLink' onClick={handleAddNewStressPeriod}>
+        <Button
+          className='buttonLink'
+          onClick={handleAddNewStressPeriod}
+        >
           Add new <Icon name="add"/>
         </Button>
         <Button
           className='buttonLink'
-          disabled={0 === timeDiscretization.stress_periods.length}
+          disabled={1 === timeDiscretization.stress_periods.length}
           onClick={handleDeleteAllStressPeriods}
         >
           Delete all <FontAwesomeIcon icon={faTrashCan}/>
@@ -201,6 +215,11 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
         >
           Download all <FontAwesomeIcon icon={faDownload}/></Button>
       </div>
+      {showNotification && (
+        <Notification warning={true}>
+          Please check the last stress period
+        </Notification>
+      )}
     </div>
   );
 };

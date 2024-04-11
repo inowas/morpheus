@@ -4,8 +4,7 @@ import {ECsvColumnType, TColumns} from './types/StressperiodsUpload.type';
 import {Button, SectionTitle} from 'common/components';
 import {Checkbox, Dimmer, DropdownProps, Form, Icon, List, Loader, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';
-import moment from 'moment';
-import {v4 as uuidv4} from 'uuid';
+import {format, parseISO} from 'date-fns';
 import * as Papa from 'papaparse';
 import {ParseResult} from 'papaparse';
 
@@ -17,21 +16,21 @@ interface IProps {
 }
 
 
+function formatDateFormat(date: string): string { // Function to replace 'm' with 'M' in date format for correct parsing
+  return date.replace(/m/g, 'M');
+}
+
+
 const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns}: IProps) => {
   const [columns, setColumns] = useState<TColumns>(propsColumns);
   const [metadata, setMetadata] = useState<ParseResult<any> | null>(null);
-  const [dateTimeFormat, setDateTimeFormat] = useState<string>('YYYY.MM.DD');
+  const [dateTimeFormat, setDateTimeFormat] = useState<string>('yyyy.MM.dd');
   const [firstRowIsHeader, setFirstRowIsHeader] = useState<boolean>(true);
   const [parameterColumns, setParameterColumns] = useState<{ [name: string]: number } | null>(null);
   const [parsingData, setParsingData] = useState<boolean>(false);
   const [fileToParse, setFileToParse] = useState<File | null>(null);
   const [processedData, setProcessedData] = useState<any[][] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  // const [openUploadPopup, setOpenUploadPopup] = useState(false);
-  // const [reservedData, setReservedData] = useState<string | null>(null);
-  // const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
-  // const [resetDataFoo, setResetDataFoo] = useState<any>(() => {
-  // });
 
   useEffect(() => {
     setFileToParse(data);
@@ -41,7 +40,7 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
   const resetFileState = () => {
     setColumns(propsColumns);
     setMetadata(null);
-    setDateTimeFormat('YYYY.MM.DD');
+    setDateTimeFormat('yyyy.MM.dd');
     setFirstRowIsHeader(true);
     setParameterColumns(null);
     setParsingData(false);
@@ -61,13 +60,23 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
     const nData: any[][] = [];
     parseResult.forEach((r, rKey) => {
       if (!firstRowIsHeader || (firstRowIsHeader && 0 < rKey)) {
+
         const row = columns.map((c) => {
           if (c.type === ECsvColumnType.DATE_TIME) {
-            return moment.utc(r[parameterColumns[c.value]], dateTimeFormat);
+            const value = r[parameterColumns[c.value]];
+            if (!isNaN(value)) {
+              return 'Invalid Date';
+            }
+            const parsedDate = parseISO(value);
+            const result =
+              isNaN(parsedDate.getTime())
+                ? 'Invalid Date'
+                : `${value}T00:00:00Z`;
+            return result;
           }
           if (c.type === ECsvColumnType.BOOLEAN) {
-            return 1 === r[parameterColumns[c.value]] || true === r[parameterColumns[c.value]] ||
-              'true' === r[parameterColumns[c.value]];
+            const value = r[parameterColumns[c.value]];
+            return 'boolean' === typeof value ? value : 'true' === value;
           }
           return r[parameterColumns[c.value]] || 0;
         });
@@ -128,42 +137,21 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
     }
   };
 
-  const transformData = (inputData: any[][] | []): any[] | [] => {
-    if (!inputData) {
-      return [];
-    }
-    const transformedData = inputData.map((row) => {
-      const [startDateTime, nstp, tsmult, steady] = row;
-
-      return {
-        key: uuidv4(),
-        start_date_time: startDateTime,
-        nstp,
-        tsmult,
-        steady,
-      };
-    });
-    return transformedData;
-  };
   const handleSave = () => {
     if (processedData) {
-      let result = transformData(processedData);
-      onSave(result);
+      onSave(processedData);
       onCancel();
-      console.log(JSON.stringify(transformData(processedData), null, 2));
     }
   };
 
   const handleCansel = () => {
     resetFileState();
-    console.log('onCancel');
     onCancel();
-    // setFileName(reservedData);
   };
 
   const handleChange = (f: (v: any) => void) => (e: any, d: any) => {
     if ('value' in d) {
-      f(d.value);
+      f(d.value.toLowerCase());
     }
 
     if ('checked' in d) {
@@ -185,12 +173,11 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
     if ('number' === typeof value) {
       return value.toFixed(3);
     }
-    if (moment.isMoment(value)) {
-      return value.format(dateTimeFormat);
+    if (!isNaN(new Date(value).getTime())) {
+      return 0 < dateTimeFormat.length && format(new Date(value), formatDateFormat(dateTimeFormat));
     }
     return value;
   };
-
 
   const renderHeader = () => (
     <Table.Row>
@@ -266,7 +253,7 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
                       onBlur={handleBlurDateTimeFormat}
                       onChange={handleChange(setDateTimeFormat)}
                       name={'datetimeField'}
-                      value={dateTimeFormat}
+                      value={dateTimeFormat.toUpperCase()}
                     />
                   </Form.Field>
                   <Form.Field>
@@ -343,7 +330,7 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
             textTransform: 'capitalize',
           }}
           primary={!!processedData}
-          disabled={!processedData}
+          disabled={!(null !== processedData && 0 < processedData.length)}
           onClick={handleSave}
         >
           Apply
