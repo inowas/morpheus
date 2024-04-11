@@ -1,21 +1,24 @@
-import React from 'react';
+import React, {createRef, useState} from 'react';
 import {Accordion, AccordionPanelProps, Form, Icon, Input, Label, TabPane} from 'semantic-ui-react';
 import {Button, DataGrid, InfoTitle, SectionTitle, Tab} from 'common/components';
 import Slider from 'common/components/Slider/SimpleSlider';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload, faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {IGrid} from '../../../types';
+import JSZip from 'jszip';
+import ShapeFileInput from "common/components/ShapeFileInput";
 
 interface IProps {
   grid: IGrid;
   onChange: (data: IGrid) => void;
   onEditAffectedCellsClick: () => void;
   onEditModelGeometryClick: () => void;
+  onShapeFileInputChange: (zipFile: File) => void;
   readOnly: boolean;
   onChangeLock: (locked: boolean) => void;
 }
 
-const SpatialDiscretizationContent = ({grid, onChange, onEditAffectedCellsClick, onEditModelGeometryClick, readOnly, onChangeLock}: IProps) => {
+const SpatialDiscretizationContent = ({grid, onChange, onEditAffectedCellsClick, onEditModelGeometryClick, onShapeFileInputChange, readOnly, onChangeLock}: IProps) => {
 
   const renderGridPropertiesTab = () => {
     return (
@@ -100,8 +103,6 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditAffectedCellsClick,
       </>
     );
   };
-
-
   const panels: AccordionPanelProps[] = [{
     key: 1,
     title: {
@@ -120,51 +121,49 @@ const SpatialDiscretizationContent = ({grid, onChange, onEditAffectedCellsClick,
               {actionText: 'Affected cells', actionDescription: 'Action Description', onClick: onEditAffectedCellsClick},
             ]}
           />
-          <Button
-            disabled={readOnly}
-            size={'tiny'}
-          >Choose file</Button>
+          <ShapeFileInput onChangeFile={onShapeFileInputChange}/>
         </>
       ),
     },
   },
-  {
-    key: 2,
-    title: {
-      content: 'Model grid',
-      icon: false,
-    },
-    content: {
-      content: (
-        <Tab
-          variant='primary'
-          menu={{pointing: true}}
-          panes={[
-            {
-              menuItem: 'Grid Properties',
-              render: () => <TabPane attached={false}>
-                {renderGridPropertiesTab()}
-              </TabPane>,
-            },
-            {
-              menuItem: 'Upload file',
-              render: () => <TabPane attached={false}>
-                <Button
-                  disabled={readOnly}
-                  size={'tiny'}
-                >Choose file</Button>
-                <Button
-                  disabled={readOnly}
-                  className='buttonLink'
-                >
+    {
+      key: 2,
+      title: {
+        content: 'Model grid',
+        icon: false,
+      },
+      content: {
+        content: (
+          <Tab
+            variant='primary'
+            menu={{pointing: true}}
+            panes={[
+              {
+                menuItem: 'Grid Properties',
+                render: () => <TabPane attached={false}>
+                  {renderGridPropertiesTab()}
+                </TabPane>,
+              },
+              {
+                menuItem: 'Upload file',
+                render: () => <TabPane attached={false}>
+                  <Button
+                    disabled={readOnly}
+                    size={'tiny'}
+                  >Choose file</Button>
+                  <Button
+                    disabled={readOnly}
+                    className='buttonLink'
+                  >
                     Download template <FontAwesomeIcon icon={faDownload}/></Button>
-              </TabPane>,
-            },
-          ]}
-        />
-      ),
-    },
-  }];
+                </TabPane>,
+              },
+            ]}
+          />
+        ),
+      },
+    }];
+
   return (
     <DataGrid>
       <SectionTitle

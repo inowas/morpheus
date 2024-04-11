@@ -21,7 +21,7 @@ class AssetRepositoryDocument:
     @classmethod
     def from_asset(cls, asset: Asset):
         return cls(
-            asset_id=asset.id.to_str(),
+            asset_id=asset.asset_id.to_str(),
             project_id=asset.project_id.to_str(),
             type=asset.type.value,
             file=asset.file.to_dict(),
@@ -45,7 +45,7 @@ class AssetRepositoryDocument:
 
     def get_asset(self) -> Asset:
         return Asset(
-            id=AssetId.from_str(self.asset_id),
+            asset_id=AssetId.from_str(self.asset_id),
             project_id=ProjectId.from_str(self.project_id),
             type=AssetType(self.type),
             file=File.from_dict(self.file),
@@ -94,8 +94,8 @@ class AssetRepository(RepositoryBase):
         return raw_filter
 
     def add_asset(self, asset: Asset) -> None:
-        if self.has_asset(asset.id):
-            raise Exception(f'Asset with id {asset.id.to_str()} already exists')
+        if self.has_asset(asset.asset_id):
+            raise Exception(f'Asset with id {asset.asset_id.to_str()} already exists')
 
         self.collection.insert_one(AssetRepositoryDocument.from_asset(asset).to_dict())
 

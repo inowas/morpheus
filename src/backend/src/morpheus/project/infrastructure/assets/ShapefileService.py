@@ -26,12 +26,12 @@ class ShapefileService:
         geo_data_frame = self._read_wgs_84_geo_data_frame(file)
 
         return ShapefileAssetData(
-            geo_json=geo_data_frame.__geo_interface__,
+            data=geo_data_frame.__geo_interface__,
         )
 
     def _read_wgs_84_geo_data_frame(self, file: FilePath) -> geopandas.GeoDataFrame:
         try:
-            return geopandas.read_file(file).to_crs(epsg=EpsgCode.WGS_84)
+            return geopandas.read_file(file).to_crs(EpsgCode.WGS_84)
         except Exception as e:
             raise InvalidShapefileException(f'Failed to read geo data frame: {e}')
 

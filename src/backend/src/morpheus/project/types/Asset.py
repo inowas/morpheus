@@ -56,25 +56,25 @@ class ImageMetadata(Metadata):
 
 @dataclasses.dataclass(frozen=True)
 class GeoTiffMetadata(Metadata):
-    n_col: int
-    n_row: int
-    n_band: int
+    n_cols: int
+    n_rows: int
+    n_bands: int
     wgs_84_bounding_box: BoundingBox
 
     def to_dict(self):
         return {
-            'n_col': self.n_col,
-            'n_row': self.n_row,
-            'n_band': self.n_band,
+            'n_cols': self.n_cols,
+            'n_rows': self.n_rows,
+            'n_bands': self.n_bands,
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
         }
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            n_col=obj['n_col'],
-            n_row=obj['n_row'],
-            n_band=obj['n_band'],
+            n_cols=obj['n_cols'],
+            n_rows=obj['n_rows'],
+            n_bands=obj['n_bands'],
             wgs_84_bounding_box=BoundingBox.from_dict(obj['wgs_84_bounding_box']),
         )
 
@@ -107,7 +107,7 @@ class AssetDescription(String):
 
 @dataclasses.dataclass(frozen=True)
 class Asset:
-    id: AssetId
+    asset_id: AssetId
     project_id: ProjectId
     type: AssetType
     file: File
@@ -116,7 +116,7 @@ class Asset:
 
     def to_dict(self):
         return {
-            'id': self.id.to_str(),
+            'asset_id': self.asset_id.to_str(),
             'project_id': self.project_id.to_str(),
             'type': self.type.value,
             'file': self.file.to_dict(),
@@ -129,7 +129,7 @@ class Asset:
         asset_type = AssetType(obj['type'])
 
         return cls(
-            id=AssetId.from_str(obj['id']),
+            asset_id=AssetId.from_str(obj['asset_id']),
             project_id=ProjectId.from_str(obj['project_id']),
             type=asset_type,
             file=File.from_dict(obj['file']),
@@ -153,17 +153,17 @@ class AssetData:
 
 @dataclasses.dataclass(frozen=True)
 class GeoTiffAssetData(AssetData):
-    n_col: int
-    n_row: int
-    n_band: int
+    n_cols: int
+    n_rows: int
+    n_bands: int
     wgs_84_bounding_box: BoundingBox
     wgs_84_coords: Any
 
     def to_dict(self):
         return {
-            'n_col': self.n_col,
-            'n_row': self.n_row,
-            'n_band': self.n_band,
+            'n_cols': self.n_cols,
+            'n_rows': self.n_rows,
+            'n_bands': self.n_bands,
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
             'wgs_84_coords': self.wgs_84_coords,
         }
@@ -171,9 +171,7 @@ class GeoTiffAssetData(AssetData):
 
 @dataclasses.dataclass(frozen=True)
 class ShapefileAssetData(AssetData):
-    geo_json: dict
+    data: dict
 
     def to_dict(self):
-        return {
-            'geo_json': self.geo_json
-        }
+        return self.data

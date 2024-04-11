@@ -16,7 +16,7 @@ class AssetHandlingService:
 
     def delete_asset(self, asset: Asset):
         self._file_storage.delete_asset(asset)
-        self._repository.delete_asset(asset.id)
+        self._repository.delete_asset(asset.asset_id)
 
     def delete_asset_by_id(self, asset_id: AssetId):
         asset = self._repository.get_asset(asset_id)
@@ -24,7 +24,7 @@ class AssetHandlingService:
             return
 
         self._file_storage.delete_asset(asset)
-        self._repository.delete_asset(asset.id)
+        self._repository.delete_asset(asset.asset_id)
 
     def delete_all_assets_for_project(self, project_id: ProjectId):
         self._repository.delete_all_assets_for_project(project_id=project_id)
