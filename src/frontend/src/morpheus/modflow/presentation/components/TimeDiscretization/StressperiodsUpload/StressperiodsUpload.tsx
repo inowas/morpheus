@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {ECsvColumnType, StressperiodsUploadModal} from './index';
-import {Button, Modal, UploadCsvComponent} from 'common/components';
+import {Button, UploadCsvComponent} from 'common/components';
 import {Container} from 'semantic-ui-react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
@@ -57,25 +57,18 @@ const StressperiodsUpload = ({onSave}: IProps) => {
         Download template
         <FontAwesomeIcon icon={faDownload}/>
       </Button>
-      <Modal.Modal
+      <StressperiodsUploadModal
+        data={uploadedData}
+        columns={[
+          {key: 0, value: 'start_date_time', text: 'Start date', type: ECsvColumnType.DATE_TIME},
+          {key: 1, value: 'nstp', text: 'Time steps'},
+          {key: 2, value: 'tsmult', text: 'Multiplier'},
+          {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},
+        ]}
         open={!!uploadedData}
-        onClose={handleCancel}
-        dimmer={'inverted'}
-      >
-        <Modal.Content>
-          <StressperiodsUploadModal
-            data={uploadedData}
-            columns={[
-              {key: 0, value: 'start_date_time', text: 'Start date', type: ECsvColumnType.DATE_TIME},
-              {key: 1, value: 'nstp', text: 'Time steps'},
-              {key: 2, value: 'tsmult', text: 'Multiplier'},
-              {key: 3, value: 'steady', text: 'Steady state', type: ECsvColumnType.BOOLEAN},
-            ]}
-            onSave={handleSubmit}
-            onCancel={handleCancel}
-          />
-        </Modal.Content>
-      </Modal.Modal>
+        onSave={handleSubmit}
+        onCancel={handleCancel}
+      />
     </Container>
   );
 };

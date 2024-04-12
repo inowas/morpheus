@@ -1,5 +1,5 @@
 import {Checkbox, CheckboxProps, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useRef, useState} from 'react';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 
 import {Button, Notification} from 'common/components';
@@ -16,6 +16,7 @@ interface IProps {
 }
 
 const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, onChange, readOnly}) => {
+  const tableRef = useRef<HTMLTableSectionElement>(null);
 
   const [showNotification, setShowNotification] = useState(false);
   const toCsv = () => {
@@ -38,6 +39,16 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
 
   const handleAddNewStressPeriod = () => {
     const lastStressPeriod = timeDiscretization.stress_periods[timeDiscretization.stress_periods.length - 1];
+
+    if (tableRef.current) {
+      const scrollHeight = tableRef.current.scrollHeight;
+      const offsetHeight = tableRef.current.offsetHeight;
+      const maxScrollTop = scrollHeight - offsetHeight;
+      tableRef.current.scrollTo({
+        top: maxScrollTop,
+        behavior: 'smooth',
+      });
+    }
 
     if (!isValid(new Date(lastStressPeriod.start_date_time))) {
       setShowNotification(true);
@@ -111,7 +122,10 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
 
   const renderBody = () => {
     return (
-      <Table.Body className={styles.tableBody}>
+      <tbody
+        className={styles.tableBody}
+        ref={tableRef}
+      >
         {timeDiscretization.stress_periods.map((sp: IStressPeriod, idx: number) => (
           <Table.Row className={styles.tableRow} key={idx}>
             <Table.Cell><span>{idx + 1}</span></Table.Cell>
@@ -182,14 +196,19 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
             </Table.Cell>
           </Table.Row>
         ))}
-      </Table.Body>
+      </tbody>
     );
   };
 
   return (
     <div className={styles.stressPeriod}>
-      <div className={styles.tableWrapper}>
-        <Table className={styles.table} unstackable={true}>
+      <div
+        className={styles.tableWrapper}
+      >
+        <Table
+          className={styles.table}
+          unstackable={true}
+        >
           {renderHeader()}
           {renderBody()}
         </Table>

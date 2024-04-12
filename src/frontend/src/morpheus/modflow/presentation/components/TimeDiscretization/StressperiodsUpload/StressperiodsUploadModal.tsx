@@ -1,7 +1,7 @@
 import React, {SyntheticEvent, useEffect, useState} from 'react';
 import styles from './StressperiodsUpload.module.less';
 import {ECsvColumnType, TColumns} from './types/StressperiodsUpload.type';
-import {Button, SectionTitle} from 'common/components';
+import {Button, Modal, Notification, SectionTitle} from 'common/components';
 import {Checkbox, Dimmer, DropdownProps, Form, Icon, List, Loader, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';
 import {format, parseISO} from 'date-fns';
@@ -9,6 +9,7 @@ import * as Papa from 'papaparse';
 import {ParseResult} from 'papaparse';
 
 interface IProps {
+  open: boolean;
   data: File;
   onSave: (data: any) => void
   onCancel: () => void;
@@ -21,7 +22,7 @@ function formatDateFormat(date: string): string { // Function to replace 'm' wit
 }
 
 
-const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns}: IProps) => {
+const StressperiodsUploadModal = ({open, data, onSave, onCancel, columns: propsColumns}: IProps) => {
   const [columns, setColumns] = useState<TColumns>(propsColumns);
   const [metadata, setMetadata] = useState<ParseResult<any> | null>(null);
   const [dateTimeFormat, setDateTimeFormat] = useState<string>('yyyy.MM.dd');
@@ -144,7 +145,7 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
     }
   };
 
-  const handleCansel = () => {
+  const handleCancel = () => {
     resetFileState();
     onCancel();
   };
@@ -219,7 +220,11 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
   const renderContent = () => {
     return (<>
       {(parsingData || isFetching) &&
-        <Dimmer active={true} inverted={true}>
+        <Dimmer
+          active={true}
+          inverted={true}
+          style={{backgroundColor: '#EEEEEE', padding: '100px 0'}}
+        >
           <Loader inverted={true}>Loading</Loader>
         </Dimmer>
       }
@@ -290,6 +295,9 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
                 ))}
               </DataGrid>
               <DataRow>
+                {processedData && 0 === processedData.length && <Notification warning={true}>
+                  The CSV file cannot be empty
+                </Notification>}
                 <div className={styles.scrollContainer}>
                   <Table
                     celled={true} structured={true}
@@ -299,7 +307,6 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
                       {renderHeader()}
                     </Table.Header>
                     <Table.Body>
-
                       {processedData && renderProcessedData()}
                       {processedData && 0 === processedData.length && renderEmptyTable()}
                     </Table.Body>
@@ -314,29 +321,38 @@ const StressperiodsUploadModal = ({data, onSave, onCancel, columns: propsColumns
   };
 
   return (
-    <DataGrid>
-      {renderContent()}
-      <div className={styles.buttonGroup}>
-        <Button
-          style={{
-            fontSize: '17px',
-            textTransform: 'capitalize',
-          }}
-          onClick={handleCansel}
-        >Cancel</Button>
-        <Button
-          style={{
-            fontSize: '17px',
-            textTransform: 'capitalize',
-          }}
-          primary={!!processedData}
-          disabled={!(null !== processedData && 0 < processedData.length)}
-          onClick={handleSave}
-        >
-          Apply
-        </Button>
-      </div>
-    </DataGrid>
+    <Modal.Modal
+      open={open}
+      onClose={handleCancel}
+      dimmer={'inverted'}
+    >
+      <Modal.Content>
+        <DataGrid>
+          {renderContent()}
+          <div className={styles.buttonGroup}>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              onClick={handleCancel}
+            >Cancel</Button>
+            <Button
+              style={{
+                fontSize: '17px',
+                textTransform: 'capitalize',
+              }}
+              primary={!!processedData}
+              disabled={!(null !== processedData && 0 < processedData.length)}
+              onClick={handleSave}
+            >
+              Apply
+            </Button>
+          </div>
+        </DataGrid>
+      </Modal.Content>
+    </Modal.Modal>
+
   );
 };
 
