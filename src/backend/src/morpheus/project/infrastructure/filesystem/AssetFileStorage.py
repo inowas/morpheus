@@ -17,7 +17,7 @@ class AssetFileStorage:
 
     def _build_filename(self, asset: Asset) -> str:
         _, extension = os.path.splitext(asset.file.file_name)
-        return asset.id.to_str() + extension
+        return asset.asset_id.to_str() + extension
 
     def get_full_path_to_asset(self, asset: Asset) -> FilePath:
         return FilePath(os.path.join(self._build_project_path(asset.project_id), self._build_filename(asset)))

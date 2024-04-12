@@ -98,7 +98,7 @@ def register_routes(blueprint: Blueprint):
         return ReadAssetListRequestHandler().handle(project_id)
 
     @blueprint.route('/<project_id>/assets', methods=['POST'])
-    @cross_origin()
+    @cross_origin(expose_headers='Location')
     @authenticate()
     @validate_request
     def upload_project_asset(project_id: str):

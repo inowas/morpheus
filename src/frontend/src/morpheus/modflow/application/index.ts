@@ -1,7 +1,8 @@
-import useProject from './useProject';
+import useAssets, {IAssetId} from "./useAssets";
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useNavbarItems from './useNavbarItems';
+import useProject from './useProject';
 import useProjectList from './useProjectList';
 import useProjectCommandBus from './useProjectCommandBus';
 import useProjectMetadata from './useProjectMetadata';
@@ -10,10 +11,11 @@ import useTimeDiscretization from './useTimeDiscretization';
 import useTranslate from './useTranslate';
 
 export {
-  useProject,
+  useAssets,
   useModel,
   useModelSetup,
   useNavbarItems,
+  useProject,
   useProjectCommandBus,
   useProjectList,
   useProjectMetadata,
@@ -21,3 +23,5 @@ export {
   useTimeDiscretization,
   useTranslate,
 };
+
+export type {IAssetId};

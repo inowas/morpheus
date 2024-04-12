@@ -1,4 +1,4 @@
-from flask import abort, request
+from flask import abort, request, Response
 from morpheus.common.presentation.api.helpers.file_upload import remove_uploaded_file, move_uploaded_files_to_tmp_dir
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
 from morpheus.common.types.File import FileName
@@ -87,6 +87,9 @@ class UploadAssetRequestHandler:
                 updated_by=user_id
             )
             UploadAssetCommandHandler.handle(command)
+
+            return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/assets/{command.asset_id.to_str()}'})
+
         except (InvalidMimeTypeException, InvalidGeoTiffException, InvalidShapefileException) as e:
             abort(422, str(e))
         except NotFoundException as e:
@@ -95,8 +98,6 @@ class UploadAssetRequestHandler:
             abort(403, str(e))
         finally:
             remove_uploaded_file(file_path)
-
-        return '', 201, {'location': f'projects/{command.project_id.to_str()}/assets/{command.asset_id.to_str()}'}
 
 
 class DeleteAssetRequestHandler:

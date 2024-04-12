@@ -20,9 +20,9 @@ class GeoTiffService:
         wgs_84_coords = 'todo'
 
         return GeoTiffAssetData(
-            n_col=metadata.n_col,
-            n_row=metadata.n_row,
-            n_band=metadata.n_band,
+            n_cols=metadata.n_cols,
+            n_rows=metadata.n_rows,
+            n_bands=metadata.n_bands,
             wgs_84_bounding_box=metadata.wgs_84_bounding_box,
             wgs_84_coords=wgs_84_coords
         )
@@ -49,9 +49,9 @@ class GeoTiffService:
         wgs_84_bounding_box = BoundingBox.from_tuple_of_points(geo_tiff.tif_bBox_wgs_84)
 
         return GeoTiffMetadata(
-            n_col=n_col,
-            n_row=n_row,
-            n_band=n_band,
+            n_cols=n_col,
+            n_rows=n_row,
+            n_bands=n_band,
             wgs_84_bounding_box=wgs_84_bounding_box
         )
 

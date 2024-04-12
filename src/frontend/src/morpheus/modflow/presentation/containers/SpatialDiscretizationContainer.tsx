@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
+import type {Feature, FeatureCollection, GeoJSON, MultiPolygon, Polygon} from 'geojson';
 import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/ModelSpatialDiscretization';
 import {useParams} from 'react-router-dom';
-import {useSpatialDiscretization} from '../../application';
+import {IAssetId, useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {AffectedCells, IAffectedCells, IGrid} from '../../types';
 import {Button, DataGrid} from 'common/components';
@@ -20,6 +20,8 @@ const SpatialDiscretizationContainer = () => {
   const [editModelGeometry, setEditModelGeometry] = useState<boolean>(false);
   const [editAffectedCells, setEditAffectedCells] = useState<boolean>(false);
 
+  const [shapeFileGeoJson, setShapeFileGeoJson] = useState<GeoJSON | undefined>();
+
   const {projectId} = useParams();
   const {
     spatialDiscretization,
@@ -31,6 +33,8 @@ const SpatialDiscretizationContainer = () => {
     fetchAffectedCellsGeometry,
     fetchGridGeometry,
   } = useSpatialDiscretization(projectId as string);
+
+  const {uploadAsset, fetchAssetData} = useAssets(projectId as string);
 
   useEffect(() => {
     if (spatialDiscretization?.affected_cells) {
@@ -94,6 +98,28 @@ const SpatialDiscretizationContainer = () => {
     return <Error message={error.message}/>;
   }
 
+  const handleShapeFileInputChange = async (file: File) => {
+    // upload shape file to server
+    // when successfully uploaded, get shape file metadata from server
+    // load shapefile data from server as geojson and show in a modal
+    // select polygon geometry in the model and return it as model geometry
+    // put this logic in a child component
+    const assetId = await uploadAsset(file, 'shapefile');
+
+    if (!assetId) {
+      return;
+    }
+
+    const geojson = await fetchAssetData(assetId) as unknown as GeoJSON | undefined;
+    if (!geojson) {
+      return;
+    }
+
+    console.log(geojson);
+
+    setShapeFileGeoJson(geojson);
+  }
+
   return (
     <>
       <SidebarContent maxWidth={600}>
@@ -104,6 +130,7 @@ const SpatialDiscretizationContainer = () => {
           readOnly={locked}
           onChangeLock={setLocked}
           onChange={setGrid}
+          onShapeFileInputChange={handleShapeFileInputChange}
         />
         <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
           <Button

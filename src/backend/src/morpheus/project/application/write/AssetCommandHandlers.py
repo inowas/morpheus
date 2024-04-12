@@ -48,7 +48,7 @@ class UpdatePreviewImageCommandHandler:
         preview_image_service.resize_as_preview_image(command.file_path)
         metadata = preview_image_service.extract_asset_metadata(command.file_path)
         asset = Asset(
-            id=command.asset_id,
+            asset_id=command.asset_id,
             project_id=command.project_id,
             type=AssetType.IMAGE,
             file=file,
@@ -124,7 +124,7 @@ class UploadAssetCommandHandler:
             raise ValueError(f'Invalid asset type: {asset_type}')
 
         asset = Asset(
-            id=command.asset_id,
+            asset_id=command.asset_id,
             project_id=command.project_id,
             type=asset_type,
             file=file,
@@ -185,7 +185,7 @@ class UpdateAssetCommandHandler:
             AssetService.assert_filename_can_be_changed_for_asset(asset, new_file_name)
 
         asset_repository.update_asset(
-            asset.id,
+            asset.asset_id,
             file_name=command.file_name,
             description=command.description,
         )

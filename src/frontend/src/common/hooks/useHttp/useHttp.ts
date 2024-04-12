@@ -48,6 +48,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
       }
 
       config.baseURL = apiBaseUrl;
+
       config.headers = new AxiosHeaders({
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -55,6 +56,13 @@ const useHttp = (apiBaseUrl: string, auth?: {
 
       if (!config.data) {
         config.data = {};
+      }
+
+      if (config.data instanceof FormData) {
+        config.headers = new AxiosHeaders({
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        });
       }
 
       if (auth) {
@@ -119,12 +127,13 @@ const useHttp = (apiBaseUrl: string, auth?: {
 
   const httpPost = async <T>(url: string, data: T): Promise<Result<IHttpPostResponse, IHttpError>> => {
     try {
+
       const response = await axiosInstance({
         method: 'POST',
         url: url,
         withCredentials: false,
         validateStatus: (status) => 201 === status || 202 === status || 204 === status,
-        data: data,
+        data: data
       });
       return Ok({
         location: response?.headers?.location,
