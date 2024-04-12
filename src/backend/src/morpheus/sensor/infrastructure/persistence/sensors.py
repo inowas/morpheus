@@ -69,7 +69,7 @@ def find_latest_record(sensor_name: str):
                     1000
                 ]
             },
-            "datetime": {
+            "date_time": {
                 "$dateToString": {
                     "format": "%Y-%m-%dT%H:%M:%S.000Z",
                     "date": "$timestamp"
@@ -82,8 +82,7 @@ def find_latest_record(sensor_name: str):
     ]))[0]
 
 
-def read_timeseries(sensor_name: str, parameter: str,
-                    start_timestamp: int | None = 0, end_timestamp: int | None = None):
+def read_timeseries(sensor_name: str, parameter: str, start_timestamp: int | None = 0, end_timestamp: int | None = None):
 
     collection = get_sensor_collection(sensor_name)
     start_date = datetime.fromtimestamp(0 if start_timestamp is None else start_timestamp)
@@ -106,7 +105,7 @@ def read_timeseries(sensor_name: str, parameter: str,
                     ]},
                 ]
             },
-            "datetime": {
+            "date_time": {
                 "$dateToString": {
                     "format": "%Y-%m-%dT%H:%M:%S.000Z",
                     "date": "$timestamp"
@@ -115,7 +114,7 @@ def read_timeseries(sensor_name: str, parameter: str,
         }},
         {"$project": {
             "_id": 0,
-            "datetime": 1,
+            "date_time": 1,
             "timestamp": 1,
             parameter: 1,
         }},

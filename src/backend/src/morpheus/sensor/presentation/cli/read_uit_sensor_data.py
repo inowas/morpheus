@@ -6,8 +6,7 @@ import fnmatch
 
 from morpheus.common.infrastructure.cli.io import write_success, write_error
 from morpheus.sensor.application.write.sensors import has_sensor, add_sensor, insert_records, is_already_recorded
-from morpheus.sensor.infrastructure.filereaders.UitCsvFileReader import UitCsvFileReader, EmptyCsvFileException, \
-    ParsingHeaderErrorException
+from morpheus.sensor.infrastructure.filereaders.UitCsvFileReader import UitCsvFileReader, EmptyCsvFileException, ParsingHeaderErrorException, ParsingCsvErrorException
 from morpheus.settings import settings
 
 
@@ -105,10 +104,16 @@ def read_uit_sensor_data_from_csv_files_cli_command():
                 file_empty_count += 1
                 write_error(f"File {filename} is empty. ({file_count}/{len(files_to_parse)})")
 
+            except ParsingCsvErrorException:
+                os.rename(filepath, os.path.join(error_path, filename))
+                file_error_count += 1
+                write_error(f"Could not parse csv of file {filename}. ({file_count}/{len(files_to_parse)})")
+
             except ParsingHeaderErrorException:
                 os.rename(filepath, os.path.join(error_path, filename))
                 file_error_count += 1
                 write_error(f"Could not parse header of file {filename}. ({file_count}/{len(files_to_parse)})")
+
         except Exception as e:
             raise e
 
