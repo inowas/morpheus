@@ -30,8 +30,11 @@ def validate_request(f):
         openapi_request = FlaskOpenAPIRequest(flask.request)
         openapi = OpenAPI.from_file_path(settings.OPENAPI_BUNDLED_SPEC_FILE)
 
-        openapi.validate_request(openapi_request)
-        
+        try:
+            openapi.validate_request(openapi_request)
+        except OpenAPIError as open_api_error:
+            raise SchemaValidationException('Schema Validation Error:', [str(open_api_error)], open_api_error)
+
         return f(*args, **kwargs)
 
     return decorated_function
