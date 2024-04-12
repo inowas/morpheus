@@ -27,6 +27,10 @@ ENV FLASK_ENV production
 # create system user flask
 RUN addgroup --system flask && adduser --system --group flask
 
+# prepare mount points for user flask
+RUN mkdir -p /mnt/sensors
+RUN chown -R flask:flask /mnt
+
 
 FROM base as local_base
 
