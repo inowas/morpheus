@@ -1,15 +1,13 @@
 from flask import Blueprint
 
-from morpheus.project.presentation.cli.ProjectionCliCommands import ReprojectProjectSummariesCliCommand
+from morpheus.project.presentation.cli.ProjectionCliCommands import ReprojectProjectSummariesCliCommand, ReprojectPreviewImagesCliCommand
 
 
 def register_cli_commands(blueprint: Blueprint):
-    @blueprint.cli.command('list-models')
-    def read_models():
-        """List all models"""
-        print('list-models')
-
     @blueprint.cli.command('reproject-project-summaries')
     def reproject_project_summaries():
-        """Reproject project summaries"""
         ReprojectProjectSummariesCliCommand.run()
+
+    @blueprint.cli.command('reproject-preview-images')
+    def reproject_preview_images():
+        ReprojectPreviewImagesCliCommand.run()

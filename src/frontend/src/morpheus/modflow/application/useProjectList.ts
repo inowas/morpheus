@@ -2,16 +2,20 @@ import {IError, IProjectListItem} from '../types';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {useApi, useAuthentication} from '../incoming';
+import {formatISO, subYears} from 'date-fns';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
-interface IUseProjectSummaries {
+interface IUseProjectList {
   projects: IProjectListItem[];
+  filterOptions: IFilterOptions;
   filter: IFilterParams;
   onFilterChange: (filter: IFilterParams) => void;
-  order: IOrder;
-  onOrderChange: (order: IOrder) => void;
+  order: IOrderOption;
+  onOrderChange: (order: IOrderOption) => void;
   orderOptions: IOrderOption[];
   search: string;
   onSearchChange: (search: string) => void;
+  onDeleteClick: (projectId: string) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -109,16 +113,15 @@ export interface ITags {
 
 
 const orderOptions: IOrderOption[] = [
-  {text: 'Most Recent', order: {created_at: 'desc'}},
-  {text: 'Less Recent', order: {created_at: 'asc'}},
-  {text: 'A-Z', order: {name: 'asc'}},
-  {text: 'Z-A', order: {name: 'desc'}},
+  {text: 'Most Recent', order: {created_at: 'desc'}, value: 'created_at_desc'},
+  {text: 'Less Recent', order: {created_at: 'asc'}, value: 'created_at_asc'},
+  {text: 'A-Z', order: {name: 'asc'}, value: 'name_asc'},
+  {text: 'Z-A', order: {name: 'desc'}, value: 'name_desc'},
 ];
-
-const defaultOrder: IOrder = {created_at: 'desc'};
 
 interface IOrderOption {
   text: string;
+  value: string;
   order: IOrder;
 }
 
@@ -126,18 +129,91 @@ interface IOrder {
   [key: string]: 'asc' | 'desc';
 }
 
-
-const useProjectList = (): IUseProjectSummaries => {
+const useProjectList = (): IUseProjectList => {
   const isMounted = useRef(true);
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
   const [filter, setFilter] = useState<IFilterParams>({});
-  const [order, setOrder] = useState<IOrder>(defaultOrder);
+  const [orderOption, setOrderOption] = useState<IOrderOption>(orderOptions[0]);
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
+  const {sendCommand} = useProjectCommandBus();
+
   const {userProfile} = useAuthentication();
   const myUserId = userProfile?.sub || '';
+
+  const filterOptions: IFilterOptions = useMemo(() => {
+    return {
+      number_of_my_projects: projects.filter((project) => project.owner_id === myUserId).length,
+      number_of_my_group_projects: projects.filter((project) => project.owner_id !== myUserId).length,
+      users: [{
+        user_id: 'Dmytro',
+        unsername: 'Dmytro',
+        count: 10,
+      },
+      {
+        user_id: 'Ralf',
+        unsername: 'Ralf',
+        count: 2,
+      }],
+      by_status: {
+        green: 100,
+        yellow: 100,
+        red: 100,
+      },
+      by_date: {
+        created_at: {
+          start_date: formatISO(subYears(new Date(), 8)),
+          end_date: formatISO(new Date()),
+        },
+        updated_at: {
+          start_date: formatISO(subYears(new Date(), 2)),
+          end_date: formatISO(new Date()),
+        },
+        model_date: {
+          start_date: formatISO(subYears(new Date(), 6)),
+          end_date: formatISO(new Date()),
+        },
+      },
+      boundary_conditions: {
+        CHD: 10,
+        FHB: 11,
+        WEL: 12,
+        RCH: 13,
+        RIV: 14,
+        GHB: 15,
+        EVT: 12,
+        DRN: 12,
+        NB: 0,
+      },
+      additional_features: {
+        soluteTransportMT3DMS: 12,
+        dualDensityFlowSEAWAT: 1,
+        realTimeSensors: 13,
+        modelsWithScenarios: 1,
+      },
+      number_of_grid_cells: {
+        min: 0,
+        max: 240000,
+        step: 100,
+      },
+      number_of_stress_periods: {
+        min: 0,
+        max: 50,
+        step: 1,
+      },
+      number_of_layers: {
+        min: 110,
+        max: 300,
+        step: 10,
+      },
+      tags: {
+        groundwater: 46,
+        recharge: 12,
+      },
+    };
+  }, [myUserId, projects]);
 
 
   const filteredProjects = useMemo(() => {
@@ -190,8 +266,9 @@ const useProjectList = (): IUseProjectSummaries => {
     }
 
     newListOfProjects.sort((a, b) => {
-      const key = Object.keys(order)[0];
-      const direction = 'asc' === order[key] ? 1 : -1;
+
+      const key = Object.keys(orderOption.order)[0];
+      const direction = 'asc' === orderOption.order[key] ? 1 : -1;
 
 
       // @ts-ignore
@@ -210,7 +287,38 @@ const useProjectList = (): IUseProjectSummaries => {
 
     return newListOfProjects;
 
-  }, [projects, filter, search, order, myUserId]);
+  }, [projects, filter, search, orderOption, myUserId]);
+
+  const onDeleteClick = async (projectId: string): Promise<void> => {
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const deleteProjectCommand: Commands.IDeleteProjectCommand = {
+      command_name: 'delete_project_command',
+      payload: {
+        project_id: projectId,
+      },
+    };
+
+    const response = await sendCommand(deleteProjectCommand);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (response.err) {
+      setError(response.val);
+      return;
+    }
+
+    setProjects(projects.filter((project) => project.project_id !== projectId));
+  };
 
   const {httpGet} = useApi();
 
@@ -252,13 +360,15 @@ const useProjectList = (): IUseProjectSummaries => {
 
   return {
     projects: filteredProjects,
+    filterOptions,
     filter: filter,
     onFilterChange: setFilter,
-    order: order,
-    onOrderChange: setOrder,
+    order: orderOption,
+    onOrderChange: setOrderOption,
     orderOptions,
     search: '',
     onSearchChange: setSearch,
+    onDeleteClick,
     loading,
     error,
   };

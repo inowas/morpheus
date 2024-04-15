@@ -1,6 +1,7 @@
 import dataclasses
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.types import DateTime
 from morpheus.settings import settings as app_settings
 from ...types.Permissions import Visibility
 
@@ -16,6 +17,8 @@ class ProjectSummaryRepositoryDocument:
     project_tags: list[str]
     owner_id: str
     is_public: bool
+    created_at: str
+    updated_at: str
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -26,6 +29,8 @@ class ProjectSummaryRepositoryDocument:
             project_tags=obj['project_tags'],
             owner_id=obj['owner_id'],
             is_public=obj['is_public'],
+            created_at=obj.get('created_at', DateTime.now().to_str()),
+            updated_at=obj.get('updated_at', DateTime.now().to_str()),
         )
 
     def to_dict(self):
@@ -39,6 +44,8 @@ class ProjectSummaryRepositoryDocument:
             project_tags=Tags.from_list(self.project_tags),
             owner_id=UserId.from_str(self.owner_id),
             visibility=Visibility.PUBLIC if self.is_public else Visibility.PRIVATE,
+            created_at=DateTime.from_str(self.created_at),
+            updated_at=DateTime.from_str(self.updated_at),
         )
 
 
@@ -51,6 +58,8 @@ class ProjectSummaryRepository(RepositoryBase):
             project_tags=summary.project_tags.to_list(),
             owner_id=summary.owner_id.to_str(),
             is_public=summary.visibility == Visibility.PUBLIC,
+            created_at=summary.created_at.to_str(),
+            updated_at=summary.updated_at.to_str(),
         )
 
         if self.collection.find_one({'project_id': document.project_id}):
@@ -61,6 +70,9 @@ class ProjectSummaryRepository(RepositoryBase):
             return
 
         self.collection.insert_one(document.to_dict())
+
+    def delete(self, project_id: ProjectId) -> None:
+        self.collection.delete_one({'project_id': project_id.to_str()})
 
     def update_owner_id(self, project_id: ProjectId, owner_id: UserId) -> None:
         self.collection.update_one(

@@ -1,3 +1,5 @@
+import * as process from 'process';
+
 const config = {
   baseApiUrl: process.env.BASE_API_URL || 'http://localhost:4000/api/v1',
   modflowApiUrl: process.env.MODFLOW_API_URL || 'https://modflow.inowas.com',

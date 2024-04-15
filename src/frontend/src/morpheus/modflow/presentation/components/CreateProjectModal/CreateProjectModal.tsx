@@ -7,14 +7,6 @@ import Images from './images';
 import {Modal} from 'common/components';
 import {IError} from '../../../../types';
 
-const options = [
-  {key: '1', text: 'React', value: 'React'},
-  {key: '2', text: 'Python', value: 'Python'},
-  {key: '3', text: 'Ezousa', value: 'Ezousa'},
-  {key: '4', text: 'Simulation', value: 'Simulation'},
-  {key: '5', text: 'Data', value: 'Data'},
-];
-
 interface IProps {
   open: boolean;
   onCancel: () => void;
@@ -26,7 +18,8 @@ interface IProps {
 const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
-  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [options, setOptions] = useState([{key: '0', text: 'Modflow', value: 'modflow'}]);
 
   const formIsValid = () => {
     return 0 < projectName.trim().length;
@@ -35,7 +28,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const clearForm = () => {
     setProjectName('');
     setProjectDescription('');
-    setSelectedKeywords([]);
+    setTags([]);
   };
 
   const handleCancel = (event: React.FormEvent) => {
@@ -47,7 +40,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (formIsValid()) {
-      onSubmit(projectName, projectDescription, selectedKeywords);
+      onSubmit(projectName, projectDescription, tags);
       clearForm();
     }
   };
@@ -80,13 +73,16 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
             <Form.Field className={styles.field}>
               <label className={`${styles.label} h4`}>Project keywords</label>
               <Dropdown
+                allowAdditions={true}
                 name="selectedKeywords"
                 fluid={true}
                 multiple={true}
-                selection={true}
+                onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setOptions([...options, {key: data.value, text: data.value, value: data.value}])}
+                onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTags(data.value as string[])}
                 options={options}
-                value={selectedKeywords}
-                onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setSelectedKeywords(data.value as string[])}
+                search={true}
+                selection={true}
+                value={tags}
               />
             </Form.Field>
             {error && <div className={styles.error}>{error.message}</div>}

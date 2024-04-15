@@ -1,6 +1,6 @@
 import React from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import {LayersBody, LayersContent} from '../components/Layers';
+import {LayersBody, LayersContent} from '../components/ModelLayers';
 
 
 const LayersContainer = () => {

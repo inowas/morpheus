@@ -6,14 +6,14 @@ import config from '../src/config';
 import {generateRandomUsers, IUser} from './data/users';
 import {generateRandomProjects, IProject} from './data/projects';
 import {IProjectListItem} from 'morpheus/modflow/types/Project.type';
-import {getProjectMetadata} from './data/projectMetadata';
+import {getProjectMetadata, createModel} from './data/projectMetadata';
 
 export function makeServer({environment = 'test'} = {}) {
   return createServer({
     environment,
     routes() {
       this.timing = 100;
-      this.namespace = 'api/v1';
+      this.namespace = '';
 
       this.get('projects', (schema) => {
         const projectSummaries: IProjectListItem[] = schema.db.projects.map(
@@ -52,10 +52,35 @@ export function makeServer({environment = 'test'} = {}) {
         });
       });
 
-      this.get('projects/:id/metadata', (schema, request) => {
-        const id = request.params.id;
-        const metadata = getProjectMetadata(id);
+      this.post('projects/messagebox', (schema, request) => {
+        return new Response(204);
+      });
+
+      this.get('projects/:projectId/metadata', (schema, request) => {
+        const projectId = request.params.projectId;
+        const metadata = getProjectMetadata(projectId);
         return new Response(200, {}, metadata);
+      });
+
+      this.get('projects/:projectId/model', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        return new Response(200, {}, project.model);
+      });
+
+      this.post('projects/:projectId/model', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        schema.db.projects.update({project_id: projectId, model: createModel(uuidv4())});
+        return new Response(201, {'Location': `${config.baseApiUrl}/projects/${projectId}/model`});
       });
 
       this.get('projects/:projectId/model/spatial-discretization', (schema, request) => {

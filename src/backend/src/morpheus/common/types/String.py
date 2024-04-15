@@ -9,6 +9,13 @@ class String:
         return self.value == other.value
 
     @classmethod
+    def try_from_str(cls, value: str | None):
+        if value is None:
+            return None
+
+        return cls.from_str(value=value)
+
+    @classmethod
     def from_str(cls, value: str):
         return cls(value=value)
 

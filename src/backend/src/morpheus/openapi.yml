@@ -2,6 +2,7 @@ openapi: 3.1.0
 info:
   title: INOWAS API
   version: 2.0.0
+  description: INOWAS API
 
 servers:
   - url: http://127.0.0.1:5000
@@ -10,6 +11,10 @@ servers:
     description: Local Development API
   - url: http://api.morpheus.inowas.localhost
     description: Local API
+  - url: http://api.morpheus.inowas.com
+    description: Deveoplment API
+  - url: http://api.dev.morpheus.inowas.com
+    description: Production API
   - url: https://api.morpheus.inowas.com
     description: Production API
 
@@ -17,14 +22,38 @@ paths:
   /projects:
     $ref: './project/openapi.yml#/paths/~1projects'
 
-  /projects/{project_id}:
-    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}'
+  /projects/messagebox:
+    $ref: './project/openapi.yml#/paths/~1projects~1messagebox'
 
   /projects/{project_id}/model:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model'
 
+  /projects/{project_id}/model/spatial-discretization:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization'
+
+  /projects/{project_id}/model/spatial-discretization/geometry:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1geometry'
+
+  /projects/{project_id}/model/spatial-discretization/grid:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1grid'
+
+  /projects/{project_id}/model/time-discretization:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1time-discretization'
+
   /projects/{project_id}/preview_image:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1preview_image'
+
+  /projects/{project_id}/assets:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets'
+
+  /projects/{project_id}/assets/{asset_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets~1{asset_id}'
+
+  /projects/{project_id}/assets/{asset_id}/file:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets~1{asset_id}~1file'
+
+  /projects/{project_id}/assets/{asset_id}/data:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1assets~1{asset_id}~1data'
 
   /sensors:
     $ref: './sensor/openapi.yml#/paths/~1sensors'

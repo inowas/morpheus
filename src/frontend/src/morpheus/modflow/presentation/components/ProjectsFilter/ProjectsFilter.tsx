@@ -86,8 +86,8 @@ const ProjectsFilter = ({
             className={styles.checkbox}
             label="My models"
             name="myModels"
-            checked={!!filterParams.my_groups}
-            onChange={(_, {checked}) => onChangeFilterParams({...filterParams, my_groups: checked || undefined})}
+            checked={!!filterParams.my_projects}
+            onChange={(_, {checked}) => onChangeFilterParams({...filterParams, my_projects: checked || undefined})}
           />
           <span className={styles.count}>(<span>{filterOptions.number_of_my_projects}</span>)</span>
         </div>
@@ -96,8 +96,8 @@ const ProjectsFilter = ({
             className={styles.checkbox}
             label="Models from my groups"
             name="modelsFromGroups"
-            checked={!!filterParams.my_projects}
-            onChange={(_, {checked}) => onChangeFilterParams({...filterParams, my_projects: checked || undefined})}
+            checked={!!filterParams.my_groups}
+            onChange={(_, {checked}) => onChangeFilterParams({...filterParams, my_groups: checked || undefined})}
           />
           <span className={styles.count}>(<span>{filterOptions.number_of_my_group_projects}</span>)</span>
         </div>

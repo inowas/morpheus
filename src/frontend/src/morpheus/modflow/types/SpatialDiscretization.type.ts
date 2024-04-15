@@ -1,4 +1,5 @@
 import {Point, Polygon} from 'geojson';
+import cloneDeep from 'lodash.clonedeep';
 
 export interface ISpatialDiscretization {
   geometry: Polygon;
@@ -11,18 +12,18 @@ export type IAffectedCells = IAffectedCellsAsRaster | IAffectedCellsAsSparse;
 interface IAffectedCellsAsRaster {
   type: 'raster';
   shape: [number, number];
-  data: number[][];
+  data: boolean[][]; // [row][col]
 }
 
 interface IAffectedCellsAsSparse {
   type: 'sparse' | 'sparse_inverse';
   shape: [number, number];
-  data: Array<[number, number]>; // [x, y]
+  data: Array<[number, number]>; // [row, col]
 }
 
 export interface IGrid {
-  n_col: number;
-  n_row: number;
+  n_cols: number;
+  n_rows: number;
 
   col_widths: number[]; // length of each column (sums up to del_col_total)
   total_width: number; // total length of all columns
@@ -41,4 +42,81 @@ export enum ILengthUnit {
   FEET = 'feet',
   METERS = 'meters',
   CENTIMETERS = 'centimeters',
+}
+
+
+export class AffectedCells {
+
+  private readonly _type: 'raster' | 'sparse' | 'sparse_inverse';
+
+  private _data: boolean[][] | Array<[number, number]>;
+
+  private readonly _shape: [number, number];
+
+  get data() {
+    return this._data;
+  }
+
+  set data(data: boolean[][] | Array<[number, number]>) {
+    this._data = data;
+  }
+
+  get shape() {
+    return this._shape;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+
+  private constructor(cells: IAffectedCells) {
+    this._type = cells.type;
+    this._data = cells.data;
+    this._shape = cells.shape;
+  }
+
+  public static fromObject(obj: IAffectedCells): AffectedCells {
+    return new AffectedCells(obj);
+  }
+
+  public setActive(row: number, col: number, active: boolean) {
+
+
+    if (0 > row || row >= this.shape[0] || 0 > col || col >= this.shape[1]) {
+      return;
+    }
+
+    if ('raster' === this.type) {
+      let rasterData = cloneDeep(this.data as boolean[][]);
+      rasterData[row][col] = active;
+      this.data = rasterData;
+    }
+
+    if ('sparse' === this.type) {
+      let sparseData = cloneDeep(this.data as Array<[number, number]>);
+      sparseData = sparseData.filter((c) => c[0] !== row && c[1] !== col);
+      if (active) {
+        sparseData.push([row, col]);
+      }
+      this.data = sparseData;
+    }
+
+    if ('sparse_inverse' === this.type) {
+      let sparseInverseData = cloneDeep(this.data as Array<[number, number]>);
+      sparseInverseData = sparseInverseData.filter((c) => c[0] !== row && c[1] !== col);
+      if (!active) {
+        sparseInverseData.push([row, col]);
+      }
+      this.data = sparseInverseData;
+    }
+  }
+
+  public toObject() {
+    return {
+      type: this.type,
+      data: this.data,
+      shape: this.shape,
+    };
+  }
 }

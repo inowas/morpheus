@@ -1,0 +1,25 @@
+from .CreateModel import CreateModelCommand, CreateModelCommandHandler
+from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
+from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
+from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
+from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
+from .UpdateModelLayer import UpdateModelLayerCommand, UpdateModelLayerCommandHandler
+from .UpdateModelAffectedCells import UpdateModelAffectedCellsCommand, UpdateModelAffectedCellsCommandHandler
+from .UpdateModelGeometry import UpdateModelGeometryCommand, UpdateModelGeometryCommandHandler
+from .UpdateModelGrid import UpdateModelGridCommand, UpdateModelGridCommandHandler
+from .UpdateModelTimeDiscretization import UpdateModelTimeDiscretizationCommand, UpdateModelTimeDiscretizationCommandHandler
+from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand, UpdateModelVersionDescriptionCommandHandler
+
+model_command_handler_map = {
+    CreateModelCommand: CreateModelCommandHandler,
+    CreateModelLayerCommand: CreateModelLayerCommandHandler,
+    CreateModelVersionCommand: CreateModelVersionCommandHandler,
+    DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
+    DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
+    UpdateModelLayerCommand: UpdateModelLayerCommandHandler,
+    UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
+    UpdateModelGeometryCommand: UpdateModelGeometryCommandHandler,
+    UpdateModelGridCommand: UpdateModelGridCommandHandler,
+    UpdateModelTimeDiscretizationCommand: UpdateModelTimeDiscretizationCommandHandler,
+    UpdateModelVersionDescriptionCommand: UpdateModelVersionDescriptionCommandHandler,
+}

@@ -35,6 +35,10 @@ start:
 start-morpheus:
 	npm run start-morpheus
 
+## Start the morpheus application against the local development server
+start-morpheus-integration-local:
+	npm run start-morpheus-integration-local
+
 ## Start the modflow visualizer in development mode
 start-mfviz:
 	npm run start-mfviz

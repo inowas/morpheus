@@ -72,8 +72,7 @@ class ReadSensorDataQueryHandler:
         if not collection_exists(sensor_name):
             raise SensorNotFoundException(f'Sensor {sensor_name} does not exist')
 
-        data = read_timeseries(sensor_name=sensor_name, parameter=query.parameter, start_timestamp=start_timestamp,
-                               end_timestamp=end_timestamp)
+        data = read_timeseries(sensor_name=sensor_name, parameter=query.parameter, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
         filtered_data = []
         for item in data:
             if item[query.parameter] is None:
@@ -89,14 +88,14 @@ class ReadSensorDataQueryHandler:
             if excl is not None and item[query.parameter] == excl:
                 continue
             filtered_data.append({
-                'date_time': item['datetime'],
+                'date_time': item['date_time'],
                 'value': item[query.parameter] if query.parameter in item else None,
             })
 
         if len(filtered_data) == 0:
             return ReadSensorDataQueryResult(SensorData(items=[]))
 
-        df = pd.DataFrame.from_records(filtered_data)
+        df = pd.DataFrame(filtered_data)
         df['date_time'] = pd.to_datetime(df['date_time'])
         df = df.set_index('date_time')
         if time_resolution != 'RAW':

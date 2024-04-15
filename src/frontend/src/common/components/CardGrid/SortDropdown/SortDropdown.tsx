@@ -3,44 +3,22 @@ import './SortDropdown.less';
 import {Dropdown, DropdownProps} from 'semantic-ui-react';
 import React, {SyntheticEvent} from 'react';
 
-import {ICard} from '../Card';
-import {ISortOption} from '../SortDropdown';
-
-interface IProps {
-  data: ICard[];
-  sortOptions: ISortOption[];
-  setModelData: (data: ICard[]) => void;
+interface IProps<T> {
+  sortOptions: T[];
+  onChangeSortOption: (value: T) => void;
   placeholder: string
   style?: React.CSSProperties;
   className?: string;
 }
 
 
-const SortDropdown = ({sortOptions, data, setModelData, placeholder, style, className}: IProps) => {
+const SortDropdown = <T extends { value: string, text: string }>({sortOptions, onChangeSortOption, placeholder, style, className}: IProps<T>) => {
 
-  const handleSort = (e: SyntheticEvent<HTMLElement>, {value}: DropdownProps) => {
-
-
-    let sortedData = [...data];
-    
-    switch (value) {
-    case 'mostRecent':
-      sortedData.sort((a, b) => new Date(b.date_time.split('.').reverse().join('-')).getTime() - new Date(a.date_time.split('.').reverse().join('-')).getTime());
-      break;
-    case 'lessRecent':
-      sortedData.sort((a, b) => new Date(a.date_time.split('.').reverse().join('-')).getTime() - new Date(b.date_time.split('.').reverse().join('-')).getTime());
-      break;
-    case 'aToZ':
-      sortedData.sort((a, b) => a.title.localeCompare(b.title));
-      break;
-    case 'zToA':
-      sortedData.sort((a, b) => b.title.localeCompare(a.title));
-      break;
-    default:
-      console.log('default');
-      break;
+  const handleSortOptionChange = (e: SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+    const sortOption = sortOptions.find((option) => option.value === data.value);
+    if (sortOption) {
+      onChangeSortOption(sortOption);
     }
-    setModelData(sortedData);
   };
 
   return (
@@ -56,14 +34,10 @@ const SortDropdown = ({sortOptions, data, setModelData, placeholder, style, clas
         icon="sort amount up"
         placeholder={placeholder}
         options={sortOptions}
-        onChange={handleSort}
+        onChange={handleSortOptionChange}
       />
     </div>
-
-
   );
 };
 
 export default SortDropdown;
-
-

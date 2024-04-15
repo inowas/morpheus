@@ -9,9 +9,9 @@ MimeType = NewType('MimeType', str)
 
 @dataclasses.dataclass(frozen=True)
 class File:
-    filename: FileName
-    size: FileSize
-    mimetype: MimeType
+    file_name: FileName
+    size_in_bytes: FileSize
+    mime_type: MimeType
 
     def to_dict(self):
         return dataclasses.asdict(self)
@@ -19,7 +19,7 @@ class File:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            filename=FileName(obj['filename']),
-            size=FileSize(obj['size']),
-            mimetype=MimeType(obj['mimetype']),
+            file_name=FileName(obj['file_name']),
+            size_in_bytes=FileSize(obj['size_in_bytes']),
+            mime_type=MimeType(obj['mime_type']),
         )

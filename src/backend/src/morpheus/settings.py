@@ -23,13 +23,13 @@ class Settings:
         self.MONGO_SENSOR_DATABASE: str = values.MONGO_SENSOR_DATABASE
         self.MORPHEUS_PROJECT_ASSET_DATA: str = values.MORPHEUS_PROJECT_ASSET_DATA
         self.MORPHEUS_PROJECT_CALCULATION_DATA: str = values.MORPHEUS_PROJECT_CALCULATION_DATA
+        self.MORPHEUS_PROJECT_PREVIEW_IMAGE_DIMENSIONS: tuple[int, int] = (100, 100)
         self.MORPHEUS_SENSORS_UIT_FTP_HOST: str = values.MORPHEUS_SENSORS_UIT_FTP_HOST
         self.MORPHEUS_SENSORS_UIT_FTP_USER: str = values.MORPHEUS_SENSORS_UIT_FTP_USER
         self.MORPHEUS_SENSORS_UIT_FTP_PASSWORD: str = values.MORPHEUS_SENSORS_UIT_FTP_PASSWORD
         self.MORPHEUS_SENSORS_UIT_FTP_PATH: str = values.MORPHEUS_SENSORS_UIT_FTP_PATH
         self.MORPHEUS_SENSOR_LOCAL_DATA: str = values.MORPHEUS_SENSOR_LOCAL_DATA
-        self.OPENAPI_BUNDLED_SPEC_FILE: str = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), 'openapi.bundle.yml'))
+        self.OPENAPI_BUNDLED_SPEC_FILE: str = os.path.abspath(os.path.join(os.path.dirname(__file__), 'openapi.bundle.json'))
         self.CELERY_BROKER = values.CELERY_BROKER
         self.CELERY_RESULT_BACKEND = values.CELERY_RESULT_BACKEND
         self.CELERY_INCLUDE_TASK_MODULES = ['morpheus.project.tasks']

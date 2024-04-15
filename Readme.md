@@ -72,3 +72,29 @@ console is "admin" with password "dev".
 
 The dev realm can be updated in the local dev environment and then exported with `make export-keycloak-dev-realm` to be
 committed to the repository.
+
+## Local full stack development
+
+To develop the full stack application locally you can run the following commands:
+
+### Start backend infrastructure
+
+```bash
+cd src/backend
+make install-dev
+make start-dev
+```
+
+### Start frontend
+
+```bash
+cd src/frontend
+make start-morpheus-integration-local
+```
+
+### Run flask backend api locally in pycharm or via make
+
+```bash
+cd src/backend
+make run-flask-app
+```

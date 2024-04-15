@@ -1,6 +1,6 @@
 import React from 'react';
 import CreateProjectModal from '../components/CreateProjectModal';
-import {useCreateProject} from '../../application';
+import {useProject} from '../../application';
 import {useNavigate} from 'common/hooks';
 
 interface IProps {
@@ -10,15 +10,14 @@ interface IProps {
 
 const CreateProjectContainer = ({open, onClose}: IProps) => {
 
-  const {createProject, loading, error} = useCreateProject();
+  const {createProject, loading, error} = useProject();
   const navigate = useNavigate();
 
-  const handleSubmit = async (name: string, description: string, keywords: string[]) => {
-    const projectId = await createProject({name, description, keywords});
-
+  const handleSubmit = async (name: string, description: string, tags: string[]) => {
+    const projectId = await createProject(name, description, tags);
     if (projectId) {
-      onClose();
       navigate(`/projects/${projectId}`);
+      onClose();
     }
   };
 

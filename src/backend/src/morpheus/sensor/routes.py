@@ -3,7 +3,7 @@ from flask_cors import CORS, cross_origin
 
 from .presentation.api import ReadSensorListRequestHandler, ReadSensorsLatestValuesRequestHandler, \
     ReadSensorDataRequestHandler
-from ..common.presentation.middleware.schema_validation import validate_request
+from ..common.presentation.api.middleware.schema_validation import validate_request
 
 
 def register_routes(blueprint: Blueprint):
@@ -24,6 +24,5 @@ def register_routes(blueprint: Blueprint):
 
     @blueprint.route('/project/<project>/sensor/<sensor>/parameter/<parameter>', methods=['GET'])
     @cross_origin()
-    @validate_request
     def read_sensor_data(project, sensor, parameter):
         return ReadSensorDataRequestHandler.handle(request, project, sensor, parameter)

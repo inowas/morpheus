@@ -77,4 +77,5 @@ export interface GeomanProps extends GeomanHandlers {
   onUnmount?: () => void
   onClick?: () => void
   lang?: PM.SupportLocales
+  map: L.Map
 }

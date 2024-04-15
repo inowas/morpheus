@@ -1,6 +1,7 @@
 import {IError, ITimeDiscretization} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface IUseTimeDiscretization {
   timeDiscretization: ITimeDiscretization | null;
@@ -9,17 +10,17 @@ interface IUseTimeDiscretization {
   error: IError | null;
 }
 
-type ITimeDiscretizationPutRequest = ITimeDiscretization;
 type ITimeDiscretizationGetResponse = ITimeDiscretization;
 
-const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretization => {
+const useTimeDiscretization = (projectId: string): IUseTimeDiscretization => {
 
   const isMounted = useRef(true);
   const [timeDiscretization, setTimeDiscretization] = useState<ITimeDiscretization | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
-  const {httpGet, httpPut} = useApi();
+  const {httpGet} = useApi();
+  const {sendCommand} = useProjectCommandBus();
 
   useEffect(() => {
     if (!projectId) {
@@ -38,6 +39,8 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
         return;
       }
 
+      setLoading(false);
+
       if (result.ok) {
         setTimeDiscretization(result.val);
       }
@@ -48,8 +51,6 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
           code: result.val.code,
         });
       }
-
-      setLoading(false);
     };
 
     fetch();
@@ -59,7 +60,7 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
     };
 
     // eslint-disable-next-line
-  }, [projectId]);
+    }, [projectId]);
 
 
   const updateTimeDiscretization = async (data: ITimeDiscretization) => {
@@ -68,28 +69,33 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
       return;
     }
 
-    if (!projectId) {
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
+    const result = await sendCommand<Commands.IUpdateModelTimeDiscretizationCommand>({
+      command_name: 'update_model_time_discretization_command',
+      payload: {
+        project_id: projectId,
+        start_date_time: data.start_date_time,
+        end_date_time: data.end_date_time,
+        stress_periods: data.stress_periods,
+        time_unit: data.time_unit,
+      },
+    });
 
-    const result = await httpPut<ITimeDiscretizationPutRequest>(`/projects/${projectId}/model/time-discretization`, data);
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
 
     if (result.ok) {
       setTimeDiscretization(data);
     }
 
     if (result.err) {
-      setError({
-        message: result.val.message,
-        code: result.val.code,
-      });
+      setError(result.val);
     }
-    setLoading(false);
-
   };
 
   return {
@@ -98,6 +104,8 @@ const useTimeDiscretization = (projectId: string | undefined): IUseTimeDiscretiz
     loading,
     error,
   };
-};
+}
+;
 
 export default useTimeDiscretization;
+export type {IUseTimeDiscretization};
