@@ -24,6 +24,8 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     propertyId?: string;
   }>();
 
+  console.log(useParams())
+
   const {error, state} = useModel(projectId);
 
   const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => sidebarItems.map((item) => ({
