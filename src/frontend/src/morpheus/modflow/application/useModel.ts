@@ -34,8 +34,6 @@ const useModel = (projectId: string | undefined): IUseModel => {
 
       const result = await httpGet<IModel>(`/projects/${projectId}/model`);
 
-      console.log('result', result);
-
       dispatch(setLoading(false));
 
       if (result.ok) {
