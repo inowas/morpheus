@@ -16,11 +16,9 @@ interface IProps {
   columns: TColumns;
 }
 
-
 function formatDateFormat(date: string): string { // Function to replace 'm' with 'M' in date format for correct parsing
   return date.replace(/m/g, 'M');
 }
-
 
 const StressperiodsUploadModal = ({open, data, onSave, onCancel, columns: propsColumns}: IProps) => {
   const [columns, setColumns] = useState<TColumns>(propsColumns);
@@ -352,9 +350,7 @@ const StressperiodsUploadModal = ({open, data, onSave, onCancel, columns: propsC
         </DataGrid>
       </Modal.Content>
     </Modal.Modal>
-
   );
 };
-
 
 export default StressperiodsUploadModal;
