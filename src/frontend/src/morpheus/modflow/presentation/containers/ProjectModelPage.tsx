@@ -24,6 +24,8 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     propertyId?: string;
   }>();
 
+  console.log(useParams())
+
   const {error, state} = useModel(projectId);
 
   const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => sidebarItems.map((item) => ({
@@ -63,6 +65,8 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
   if ('initializing' === state || 'loading' === state) {
     return <pre>Loading...</pre>;
   }
+
+  console.log('projectId', projectId)
 
   if ('setup' === state) {
     return (
