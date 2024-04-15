@@ -66,6 +66,8 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     return <pre>Loading...</pre>;
   }
 
+  console.log('projectId', projectId)
+
   if ('setup' === state) {
     return (
       <>
