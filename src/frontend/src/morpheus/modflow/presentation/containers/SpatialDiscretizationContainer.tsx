@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Feature, FeatureCollection, GeoJSON, MultiPolygon, Polygon} from 'geojson';
-import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/ModelSpatialDiscretization';
+import {SpatialDiscretizationContent, SpatialDiscretizationMap} from '../components/ModelSpatialDiscretization';
 import {useParams} from 'react-router-dom';
-import {IAssetId, useAssets, useSpatialDiscretization} from '../../application';
+import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {AffectedCells, IAffectedCells, IGrid} from '../../types';
 import {Button, DataGrid} from 'common/components';
@@ -118,7 +118,7 @@ const SpatialDiscretizationContainer = () => {
     console.log(geojson);
 
     setShapeFileGeoJson(geojson);
-  }
+  };
 
   return (
     <>
