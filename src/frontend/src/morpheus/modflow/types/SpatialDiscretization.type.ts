@@ -112,6 +112,42 @@ export class AffectedCells {
     }
   }
 
+  public toRaster(): boolean[][] {
+    if ('raster' === this.type) {
+      return cloneDeep(this.data as boolean[][]);
+    }
+
+    if ('sparse' === this.type) {
+      const raster = new Array(this.shape[0]).fill(false).map(() => new Array(this.shape[1]).fill(false));
+      (this.data as Array<[number, number]>).forEach((c) => {
+        raster[c[0]][c[1]] = true;
+      });
+      return raster;
+    }
+
+    if ('sparse_inverse' === this.type) {
+      const raster = new Array(this.shape[0]).fill(true).map(() => new Array(this.shape[1]).fill(true));
+      (this.data as Array<[number, number]>).forEach((c) => {
+        raster[c[0]][c[1]] = false;
+      });
+      return raster;
+    }
+
+    return [];
+  }
+
+  public isEqual(cells: AffectedCells): boolean {
+    if (this.shape !== cells.shape) {
+      return false;
+    }
+
+    if (this.type !== cells.type) {
+      return false;
+    }
+
+    return JSON.stringify(this.data.toSorted()) === JSON.stringify(cells.data.toSorted());
+  }
+
   public toObject() {
     return {
       type: this.type,

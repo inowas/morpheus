@@ -47,7 +47,8 @@ import RandomImage from './RandomImage/RandomImage';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
-import Tab from 'common/components/Tabs';
+import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
+import {Tab, TabPane}  from 'common/components/Tab';
 import Toggle from './Toggle/Toggle';
 import UploadCsvComponent from './UploadCSVComponent';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
@@ -100,9 +101,11 @@ export {
   SectionTitle,
   Segment,
   Select,
+  ShapeFileInput,
   SliderSwiper,
   SortDropdown,
   Tab,
+  TabPane,
   Toggle,
   UploadCsvComponent,
   UploadCSVFile,
