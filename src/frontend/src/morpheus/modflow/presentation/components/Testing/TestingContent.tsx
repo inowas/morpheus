@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import Slider from 'common/components/Slider/SimpleSlider';
-import {Button, DataGrid, DataRow, SectionTitle, UploadFile} from 'common/components';
+import {Button, DataGrid, DataRow, SectionTitle} from 'common/components';
 import {Dropdown, Form, Icon, Radio, Tab, TabPane, TextArea} from 'semantic-ui-react';
+import {UploadShapefile} from '../UploadShapefile';
 import DatePicker from 'react-datepicker';
 import styles from './TestingContent.module.less';
 
@@ -39,7 +40,7 @@ const TestingContent: React.FC = () => {
 
   const panes = [
     {menuItem: 'Drow on map', render: () => <TabPane><Button primary={true} size={'small'}>Drow on map</Button></TabPane>},
-    {menuItem: 'Upload file', render: () => <TabPane><UploadFile/></TabPane>},
+    {menuItem: 'Upload file', render: () => <TabPane>UploadFile</TabPane>},
   ];
 
   const hendleDateChange = (name: string, date: Date) => {
@@ -71,6 +72,8 @@ const TestingContent: React.FC = () => {
 
   return (
     <>
+      {/* Shape File => */}
+      <UploadShapefile/>
       {/* Upload File (OLD STYLE) => */}
       <div className={styles.fullHeight}>
         <DataGrid columns={2} style={{alignItems: 'normal'}}>

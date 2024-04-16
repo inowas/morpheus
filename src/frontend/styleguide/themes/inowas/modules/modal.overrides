@@ -4,7 +4,7 @@
 
 
 .ui.page.dimmer.modals.active {
-  z-index: 102;
+  z-index: 1001;
 }
 
 .ui.inverted.dimmer > .ui.modal {
@@ -15,5 +15,13 @@
 .ui.page.dimmer.modals .content {
   padding: 60px 70px 20px;
   background-color: #EEEEEE;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #6C84A6;
 }
 

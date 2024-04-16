@@ -1,5 +1,4 @@
-import {Tab as SemanticTab, TabProps} from 'semantic-ui-react';
-
+import {Tab as SemanticTab, TabPane as SemanticTabPane, TabProps} from 'semantic-ui-react';
 import React from 'react';
 
 export type ITabProps = {
@@ -9,7 +8,7 @@ export type ITabProps = {
   menu?: any;
   grid?: { rows: number; columns: number };
   menuPosition?: 'left' | 'right';
-  onTabChange?: (event: React.MouseEvent<HTMLDivElement>, data: TabProps) => void;
+  onTabChange?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => void;
   panes?: any;
   renderActiveOnly?: boolean;
   style?: React.CSSProperties;
@@ -17,7 +16,9 @@ export type ITabProps = {
   title?: boolean;
 };
 
-const Tab: React.FC<ITabProps> = ({
+type TabComponentProps = ITabProps;
+
+const Tab: React.FC<TabComponentProps> & { TabPane: typeof SemanticTabPane } = ({
   variant,
   title,
   className: customClassName,
@@ -26,18 +27,22 @@ const Tab: React.FC<ITabProps> = ({
 }) => {
   const classNames = title ? 'first-item-title' : '';
 
+  const handleTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+    if (onTabChange) {
+      onTabChange(event, data); // Pass the event and data object to the onTabChange function
+    }
+  };
+
   return (
     <SemanticTab
       {...props}
-      onClick={(event: React.MouseEvent<HTMLDivElement>, data: TabProps) => {
-        if (onTabChange) {
-          onTabChange(event, data);
-        }
-      }}
-      {...(null !== variant ? {'data-variant': variant} : {})}
+      onTabChange={handleTabChange} // Pass the handleTabChange function to the onTabChange prop
+      {...(variant ? {'data-variant': variant} : {})}
       className={`${classNames}${customClassName ? ` ${customClassName}` : ''}`}
     />
   );
 };
+
+Tab.TabPane = SemanticTabPane;
 
 export default Tab;

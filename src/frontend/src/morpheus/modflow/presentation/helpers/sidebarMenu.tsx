@@ -24,6 +24,7 @@ import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationC
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 import ModelSetupContainer from '../containers/ModelSetupContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import TestingContainer from '../containers/TestingContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -201,6 +202,13 @@ const sidebarItems: IMenuItem[] = [
   //   isTitle: false,
   //   slug: 'download-modflow-files',
   // },
+  {
+    icon: <FontAwesomeIcon icon={faLayerGroup}/>,
+    name: 'Test layers',
+    isTitle: false,
+    slug: 'test',
+    component: <TestingContainer/>,
+  },
 ];
 
 export {sidebarItems};

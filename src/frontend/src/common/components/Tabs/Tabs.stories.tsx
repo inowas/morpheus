@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, InfoTitle, Tab} from 'common/components';
-import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
+import {Icon, MenuItem} from 'semantic-ui-react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 
@@ -23,7 +23,7 @@ const panesPrimary = [
   {
     menuItem: <MenuItem key="properties">Properties</MenuItem>,
     render: () => (
-      <TabPane attached={false}>
+      <Tab.TabPane attached={false}>
         <h2>Properties</h2>
         <p>Tab 1 Content</p>
         <p>
@@ -72,7 +72,7 @@ const panesPrimary = [
           dolorum enim expedita maiores maxime, minus molestias nobis qui,
           quidem repudiandae sapiente.
         </p>
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
   {
@@ -83,7 +83,7 @@ const panesPrimary = [
       </MenuItem>
     ),
     render: () => (
-      <TabPane attached={false}>
+      <Tab.TabPane attached={false}>
         <h2>Validation</h2>
         <p>Tab 2 Content</p>
         <p>
@@ -116,7 +116,7 @@ const panesPrimary = [
           voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
           maxime, minus molestias nobis qui, quidem repudiandae sapiente.
         </p>
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
 ];
@@ -124,7 +124,7 @@ const panesPrimaryV2 = [
   {
     menuItem: <MenuItem key="properties">Properties</MenuItem>,
     render: () => (
-      <TabPane attached={false}>
+      <Tab.TabPane attached={false}>
         <h2>Properties</h2>
         <p>Tab 1 Content</p>
         <p>
@@ -173,7 +173,7 @@ const panesPrimaryV2 = [
           dolorum enim expedita maiores maxime, minus molestias nobis qui,
           quidem repudiandae sapiente.
         </p>
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
   {
@@ -184,7 +184,7 @@ const panesPrimaryV2 = [
       </MenuItem>
     ),
     render: () => (
-      <TabPane attached={false}>
+      <Tab.TabPane attached={false}>
         <h2>Validation</h2>
         <p>Tab 2 Content</p>
         <p>
@@ -217,39 +217,39 @@ const panesPrimaryV2 = [
           voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
           maxime, minus molestias nobis qui, quidem repudiandae sapiente.
         </p>
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
 ];
 const panesPrimaryV3 = [
   {
     menuItem: 'Upload shapefile',
-    render: () => <TabPane attached={false}>Upload shapefile</TabPane>,
+    render: () => <Tab.TabPane attached={false}>Upload shapefile</Tab.TabPane>,
   },
   {
     menuItem: 'Polygons',
-    render: () => <TabPane attached={false}>Polygons</TabPane>,
+    render: () => <Tab.TabPane attached={false}>Polygons</Tab.TabPane>,
   },
 ];
 const panesPrimaryV4 = [
   {
     menuItem: <MenuItem key="Upload shapefile">Properties</MenuItem>,
-    render: () => <TabPane attached={false}>Upload shapefile</TabPane>,
+    render: () => <Tab.TabPane attached={false}>Upload shapefile</Tab.TabPane>,
   },
   {
     menuItem: <MenuItem key="Polygons">Properties</MenuItem>,
-    render: () => <TabPane attached={false}>Polygons</TabPane>,
+    render: () => <Tab.TabPane attached={false}>Polygons</Tab.TabPane>,
   },
 ];
 const panesSecondary = [
   {
     menuItem: 'Layer properties',
-    render: () => <TabPane></TabPane>,
+    render: () => <Tab.TabPane></Tab.TabPane>,
   },
   {
     menuItem: 'Confinement',
     render: () => (
-      <TabPane>
+      <Tab.TabPane>
         <InfoTitle
           title="Upload shapefile"
           description="Shapefile description"
@@ -264,58 +264,58 @@ const panesSecondary = [
         <Button size={'tiny'}>Choose file</Button>
         <InfoTitle title="Upload raster" description="raster description"/>
         <Button size={'tiny'}>Choose file</Button>
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
   {
     menuItem: 'Top elevation',
     render: () => (
-      <TabPane>
+      <Tab.TabPane>
         <Tab
           variant="primary"
           menu={{secondary: true, pointing: true}}
           panes={panesPrimaryV3}
         />
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
   {
     menuItem: 'Bottom elevation',
     render: () => (
-      <TabPane>
+      <Tab.TabPane>
         <Tab
           variant="primary"
           menu={{secondary: true, pointing: true}}
           panes={panesPrimaryV4}
         />
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
   {
     menuItem: 'Hydraulic conductivity along rows',
-    render: () => <TabPane>Tab 4 Content</TabPane>,
+    render: () => <Tab.TabPane>Tab 4 Content</Tab.TabPane>,
   },
   {
     menuItem: 'Horizontal hydraulic anisotropy',
-    render: () => <TabPane>Tab 5 Content</TabPane>,
+    render: () => <Tab.TabPane>Tab 5 Content</Tab.TabPane>,
   },
   {
     menuItem: 'Vertical hydraulic conductivity',
-    render: () => <TabPane>Tab 6 Content</TabPane>,
+    render: () => <Tab.TabPane>Tab 6 Content</Tab.TabPane>,
   },
   {
     menuItem: 'Specific storage',
-    render: () => <TabPane>Tab 7 Content</TabPane>,
+    render: () => <Tab.TabPane>Tab 7 Content</Tab.TabPane>,
   },
   {
     menuItem: 'Specific yield',
-    render: () => <TabPane>Tab 8 Content</TabPane>,
+    render: () => <Tab.TabPane>Tab 8 Content</Tab.TabPane>,
   },
-  {menuItem: 'Starting head', render: () => <TabPane>Tab 9 Content</TabPane>},
+  {menuItem: 'Starting head', render: () => <Tab.TabPane>Tab 9 Content</Tab.TabPane>},
   {
     menuItem: 'iBound',
     render: () => (
-      <TabPane>
+      <Tab.TabPane>
         Tab 10 Content Lorem ipsum dolor sit amet, consectetur adipisicing elit.
         Accusamus beatae culpa, delectus deserunt dolorum et eum facere facilis
         fugiat, in ipsum minus nesciunt nulla officia perspiciatis provident
@@ -327,7 +327,7 @@ const panesSecondary = [
         quos reiciendis suscipit tempora temporibus velit veniam vitae,
         voluptate voluptatem voluptates? Dolor eaque eius, excepturi facilis
         illum minima obcaecati placeat porro quaerat recusandae repellat!
-      </TabPane>
+      </Tab.TabPane>
     ),
   },
 ];

@@ -40,6 +40,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-i18next": "^14.1.0",
     "react-iframe": "^1.8.5",
     "react-lazy-load-image-component": "^1.6.0",

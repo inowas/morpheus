@@ -1,314 +1,314 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Meta, StoryFn } from "@storybook/react";
+import {Meta, StoryFn} from '@storybook/react';
 
-import Button from "./Button";
-import React from "react";
+import Button from './Button';
+import React from 'react';
 
 export default {
   /* 👇 The title prop is optional.
    * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
    * to learn how to generate automatic titles
    */
-  title: "Button",
+  title: 'Button',
   component: Button,
 } as Meta<typeof Button>;
 
 const buttonWrapper: React.CSSProperties = {
-  width: "calc(100% + 20px)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  flexWrap: "wrap",
+  width: 'calc(100% + 20px)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexWrap: 'wrap',
 };
 
 const buttonCard: React.CSSProperties = {
-  width: "calc(100% / 3 - 20px)",
-  border: "1px solid #8494B2",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  marginRight: "20px",
-  marginBottom: "20px",
-  padding: "20px",
+  width: 'calc(100% / 3 - 20px)',
+  border: '1px solid #8494B2',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: '20px',
+  marginBottom: '20px',
+  padding: '20px',
 };
 
 export const AllButtons: StoryFn<typeof Button> = () => {
   return (
     <div style={buttonWrapper}>
       <div style={buttonCard}>
-        <Button primary={true}>Button Large</Button>
-        <br />
+        <Button primary={true}>Button Large primary</Button>
+        <br/>
         <code>
           padding: 10px;
-          <br />
+          <br/>
           background-color: #009FE3;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 13.5px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
+          <br/>
           text-transform: uppercase;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button secondary={true}>Button Large</Button>
-        <br />
+        <Button secondary={true}>Button Large secondary</Button>
+        <br/>
         <code>
           padding: 10px;
-          <br />
+          <br/>
           background-color: #DD2727;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 13.5px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
+          <br/>
           text-transform: uppercase;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
         <Button>Button Large</Button>
-        <br />
+        <br/>
         <code>
           padding: 10px;
-          <br />
+          <br/>
           background-color: #8494B2;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 13.5px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
+          <br/>
           text-transform: uppercase;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button primary={true} size={"small"}>
+        <Button primary={true} size={'small'}>
           Button Small
         </Button>
-        <br />
+        <br/>
         <code>
           padding: 10px;
-          <br />
+          <br/>
           background-color: #009FE3;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 12px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button secondary={true} size={"small"}>
+        <Button secondary={true} size={'small'}>
           Button Small
         </Button>
-        <br />
+        <br/>
         <code>
           padding: 10px;
-          <br />
+          <br/>
           background-color: #DD2727;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 12px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button size={"small"}>Button Small</Button>
-        <br />
+        <Button size={'small'}>Button Small</Button>
+        <br/>
         <code>
           padding: 10px;
-          <br />
+          <br/>
           background-color: #8494B2;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 12px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button primary={true} size={"tiny"}>
+        <Button primary={true} size={'tiny'}>
           Button Tiny
         </Button>
-        <br />
+        <br/>
         <code>
           padding: 4px 10px;
-          <br />
+          <br/>
           border-radius: 0;
-          <br />
+          <br/>
           min-width: 110px;
-          <br />
+          <br/>
           text-transform: none;
-          <br />
+          <br/>
           background-color: #009FE3;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 12px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button secondary={true} size={"tiny"}>
+        <Button secondary={true} size={'tiny'}>
           Button tiny
         </Button>
-        <br />
+        <br/>
         <code>
           padding: 4px 10px;
-          <br />
+          <br/>
           border-radius: 0;
-          <br />
+          <br/>
           min-width: 110px;
-          <br />
+          <br/>
           text-transform: none;
-          <br />
+          <br/>
           background-color: #DD2727;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 12px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
       <div style={buttonCard}>
-        <Button size={"tiny"}>Button tiny</Button>
-        <br />
+        <Button size={'tiny'}>Button tiny</Button>
+        <br/>
         <code>
           padding: 4px 10px;
-          <br />
+          <br/>
           border-radius: 0;
-          <br />
+          <br/>
           min-width: 110px;
-          <br />
+          <br/>
           text-transform: none;
-          <br />
+          <br/>
           background-color: #8494B2;
-          <br />
+          <br/>
           color: #FFFFFF;
-          <br />
+          <br/>
           font-family: "Open Sans", sans-serif;
-          <br />
+          <br/>
           font-size: 12px;
-          <br />
+          <br/>
           font-weight: 400;
-          <br />
+          <br/>
           line-height: 1.5;
-          <br />
-          <br />
+          <br/>
+          <br/>
           :hover
-          <br />
+          <br/>
           background-color: #6C84A6;
-          <br />
+          <br/>
           text-decoration: underline;
-          <br />
+          <br/>
         </code>
       </div>
     </div>
