@@ -11,7 +11,7 @@ const ProjectMetadataContainer = () => {
 
   const {id} = useParams<{ id: string; }>();
 
-  const {metadata, loading, error} = useProjectMetadata(id);
+  const {metadata, loading, error} = useProjectMetadata(id as string);
   if (loading) {
     return <Loading/>;
   }
