@@ -4,7 +4,7 @@ import TimeDiscretizationGeneralParameters from './GeneralParameters';
 import TimeDiscretizationStressPeriods from './StressPeriods';
 import {StressperiodsUpload} from './StressperiodsUpload';
 import {IStressPeriod, ITimeDiscretization} from '../../../types';
-import {addDays, isValid, parseISO} from 'date-fns';
+import {addDays, parseISO} from 'date-fns';
 import {Button, DataGrid, SectionTitle} from 'common/components';
 
 interface IProps {
@@ -13,85 +13,19 @@ interface IProps {
   loading: boolean;
 }
 
-
-const withSortedStressPeriods = (td: ITimeDiscretization): ITimeDiscretization => {
-  return {
-    ...td, stress_periods: td.stress_periods.sort((a: IStressPeriod, b: IStressPeriod) => {
-      const dateA = parseISO(a.start_date_time);
-      const dateB = parseISO(b.start_date_time);
-      if (!isValid(dateA)) return 1; // Move items with null dates to the end
-      if (!isValid(dateB)) return -1; // Move items with null dates to the end
-      return dateA.getTime() - dateB.getTime();
-    }),
-  };
-};
-
-
 const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IProps) => {
-  const [uploadedData, setUploadedData] = useState<IStressPeriod[][] | null>(null);
-  const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(
-    withSortedStressPeriods(timeDiscretization),
-  );
+  const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(timeDiscretization);
 
-  const transformData = (processedData: IStressPeriod[][]): ITimeDiscretization | null => {
-    if (!processedData) {
-      return null;
-    }
-    const stressPeriods: IStressPeriod[] = processedData.map((period: any[]) => {
-      const [
-        startDateTime,
-        nstp,
-        tsmult,
-        steady,
-      ] = period;
-      return {
-        start_date_time: startDateTime,
-        number_of_time_steps: nstp,
-        time_step_multiplier: tsmult,
-        steady_state: steady,
-      };
-    });
-
-    let earliestDate = isValid(new Date(stressPeriods[0].start_date_time))
-      ? new Date(stressPeriods[0].start_date_time)
-      : new Date();
-    let latestDate = earliestDate;
-
-    stressPeriods.forEach(period => {
-      if (!isValid(new Date(period.start_date_time))) {
-        return;
-      }
-      const startDate = new Date(period.start_date_time);
-      if (startDate < earliestDate) {
-        earliestDate = startDate;
-      }
-      if (startDate > latestDate) {
-        latestDate = startDate;
-      }
-    });
-
-
-    return {
-      start_date_time: earliestDate.toISOString(),
-      end_date_time: latestDate.toISOString(),
-      time_unit: timeDiscretizationLocal.time_unit,
-      stress_periods: stressPeriods,
-    };
+  const handleStressPeriodsUpload = (stressPeriods: IStressPeriod[]) => {
+    setTimeDiscretizationLocal({...timeDiscretizationLocal, stress_periods: stressPeriods});
   };
 
-
   useEffect(() => {
-    if (!uploadedData) return;
-    const updatedTimeDiscretization = transformData(uploadedData) ?? timeDiscretizationLocal;
-    setTimeDiscretizationLocal(withSortedStressPeriods(updatedTimeDiscretization));
-  }, [uploadedData]);
-
-  useEffect(() => {
-    setTimeDiscretizationLocal(withSortedStressPeriods(timeDiscretization));
+    setTimeDiscretizationLocal(timeDiscretization);
   }, [timeDiscretization]);
 
   const handleTimeDiscretizationChange = (td: ITimeDiscretization) => {
-    const newTimeDiscretization = withSortedStressPeriods(td);
+    const newTimeDiscretization = td;
     const startDateTime = parseISO(newTimeDiscretization.stress_periods[0].start_date_time);
     newTimeDiscretization.start_date_time = startDateTime.toISOString();
 
@@ -131,9 +65,7 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
     content: {
       content: (
         <>
-          <StressperiodsUpload
-            onSave={setUploadedData}
-          />
+          <StressperiodsUpload onSubmit={handleStressPeriodsUpload}/>
           <TimeDiscretizationStressPeriods
             timeDiscretization={timeDiscretizationLocal}
             onChange={handleTimeDiscretizationChange}

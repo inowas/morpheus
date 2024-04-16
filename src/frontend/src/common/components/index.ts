@@ -1,6 +1,7 @@
 import Checkbox, {ICheckboxProps} from './Checkbox/Checkbox';
 import Confirm, {IConfirm, IConfirmProps} from './Confirm/Confirm';
 import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
+import CsvFileInput from './CSVFileInput';
 import {DataGrid, DataRow} from './DataGrid';
 import DatePicker from './DatePicker';
 import DotsMenu, {IAction} from './DotsMenu';
@@ -9,8 +10,8 @@ import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import ModelCard, {ICard} from './CardGrid/Card';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Select, {DropdownProps} from './Select/Select';
-import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 
+import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
 import Breadcrumb from './Breadcrumb';
@@ -50,7 +51,6 @@ import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
 import {Tab, TabPane}  from 'common/components/Tab';
 import Toggle from './Toggle/Toggle';
-import UploadCsvComponent from './UploadCSVComponent';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 
@@ -107,7 +107,7 @@ export {
   Tab,
   TabPane,
   Toggle,
-  UploadCsvComponent,
+  CsvFileInput,
   UploadCSVFile,
   UploadFile,
 };
