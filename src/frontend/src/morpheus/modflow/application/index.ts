@@ -1,4 +1,4 @@
-import useAssets from './useAssets';
+import useAssets, {IAssetId} from './useAssets';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useNavbarItems from './useNavbarItems';
@@ -23,3 +23,5 @@ export {
   useTimeDiscretization,
   useTranslate,
 };
+
+export type {IAssetId};
