@@ -1,12 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import type {Feature, FeatureCollection, GeoJSON, MultiPolygon, Polygon} from 'geojson';
-import {SpatialDiscretizationMap, SpatialDiscretizationContent} from '../components/ModelSpatialDiscretization';
+import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
+import SpatialDiscretizationMap from '../components/ModelSpatialDiscretization/SpatialDiscretizationMap';
 import {useParams} from 'react-router-dom';
-import {IAssetId, useAssets, useSpatialDiscretization} from '../../application';
+import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {AffectedCells, IAffectedCells, IGrid} from '../../types';
-import {Button, DataGrid} from 'common/components';
+import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
+import {Accordion, AccordionContent} from '../components/Content';
+import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
+import {Header, MenuItem} from 'semantic-ui-react';
+import ModelAffectedCells from '../components/ModelSpatialDiscretization/ModelAffectedCells';
+import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 
 
 const SpatialDiscretizationContainer = () => {
@@ -17,10 +24,8 @@ const SpatialDiscretizationContainer = () => {
   const [affectedCells, setAffectedCells] = useState<IAffectedCells | undefined>();
   const [grid, setGrid] = useState<IGrid | undefined>();
   const [locked, setLocked] = useState<boolean>(false);
-  const [editModelGeometry, setEditModelGeometry] = useState<boolean>(false);
-  const [editAffectedCells, setEditAffectedCells] = useState<boolean>(false);
 
-  const [shapeFileGeoJson, setShapeFileGeoJson] = useState<GeoJSON | undefined>();
+  const [editMode, setEditMode] = useState<'geometry' | 'affected_cells' | 'locked' | 'grid'>(locked ? 'locked' : 'geometry');
 
   const {projectId} = useParams();
   const {
@@ -34,7 +39,7 @@ const SpatialDiscretizationContainer = () => {
     fetchGridGeometry,
   } = useSpatialDiscretization(projectId as string);
 
-  const {uploadAsset, fetchAssetData} = useAssets(projectId as string);
+  const {processShapefile} = useAssets(projectId as string);
 
   useEffect(() => {
     if (spatialDiscretization?.affected_cells) {
@@ -53,30 +58,42 @@ const SpatialDiscretizationContainer = () => {
       setGrid(spatialDiscretization.grid);
       fetchGridGeometry().then(setGridGeometry);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spatialDiscretization?.grid]);
 
   useEffect(() => {
     if (spatialDiscretization?.affected_cells) {
       fetchAffectedCellsGeometry().then(setAffectedCellsGeometry);
     }
+    // eslint-disable-next-line
   }, [spatialDiscretization?.affected_cells]);
 
-  const handleSubmit = async () => {
-    if (projectId && modelGeometry && grid) {
-      if (spatialDiscretization?.geometry !== modelGeometry) {
-        updateGeometry(modelGeometry);
-      }
-      setEditModelGeometry(false);
+  const handleSubmitAffectedCells = async () => {
+    if (!projectId || !affectedCells) {
+      return;
+    }
 
-      if (affectedCells && spatialDiscretization?.affected_cells !== affectedCells) {
-        updateAffectedCells(affectedCells);
-      }
+    if (JSON.stringify(affectedCells) !== JSON.stringify(spatialDiscretization?.affected_cells)) {
+      updateAffectedCells(affectedCells);
+    }
+  };
 
-      setEditAffectedCells(false);
+  const handleSubmitGeometry = async () => {
+    if (!projectId || !modelGeometry) {
+      return;
+    }
 
-      if (grid.n_cols === spatialDiscretization?.grid.n_cols && grid.n_rows === spatialDiscretization?.grid.n_rows && grid.rotation === spatialDiscretization?.grid.rotation && grid.length_unit === spatialDiscretization?.grid.length_unit) {
-        return;
-      }
+    if (JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization?.geometry)) {
+      updateGeometry(modelGeometry);
+    }
+  };
+
+  const handleSubmitGrid = async () => {
+    if (!projectId || !grid) {
+      return;
+    }
+
+    if (JSON.stringify(grid) !== JSON.stringify(spatialDiscretization?.grid)) {
       updateGrid({
         n_cols: grid.n_cols,
         n_rows: grid.n_rows,
@@ -98,66 +115,80 @@ const SpatialDiscretizationContainer = () => {
     return <Error message={error.message}/>;
   }
 
-  const handleShapeFileInputChange = async (file: File) => {
-    // upload shape file to server
-    // when successfully uploaded, get shape file metadata from server
-    // load shapefile data from server as geojson and show in a modal
-    // select polygon geometry in the model and return it as model geometry
-    // put this logic in a child component
-    const assetId = await uploadAsset(file, 'shapefile');
-
-    if (!assetId) {
-      return;
-    }
-
-    const geojson = await fetchAssetData(assetId) as unknown as GeoJSON | undefined;
-    if (!geojson) {
-      return;
-    }
-
-    console.log(geojson);
-
-    setShapeFileGeoJson(geojson);
-  }
-
   return (
     <>
       <SidebarContent maxWidth={600}>
-        <SpatialDiscretizationContent
-          grid={grid}
-          onEditAffectedCellsClick={() => setEditAffectedCells(true)}
-          onEditModelGeometryClick={() => setEditModelGeometry(true)}
-          readOnly={locked}
-          onChangeLock={setLocked}
-          onChange={setGrid}
-          onShapeFileInputChange={handleShapeFileInputChange}
-        />
-        <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
-          <Button
-            style={{marginLeft: 'auto'}}
-            size={'tiny'}
-            disabled={locked}
-            onClick={() => {
-              setModelGeometry(spatialDiscretization.geometry);
-              setGrid(spatialDiscretization.grid);
-            }}
-          >
-            {'Reset'}
-          </Button>
-          <Button
-            primary={true}
-            size={'tiny'}
-            disabled={locked}
-            onClick={handleSubmit}
-            loading={loading}
-          >
-            {'Apply'}
-          </Button>
+        <DataGrid>
+          <SectionTitle
+            title={'Model Geometry'}
+            faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
+            faIconText={locked ? 'Locked' : 'Unlocked'}
+            faIconOnClick={() => setLocked(!locked)}
+          />
+          <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
+            <AccordionContent title={'Model domain'}>
+              <Tab
+                variant='primary'
+                menu={{pointing: true}}
+                panes={[
+                  {
+                    menuItem: <MenuItem key='model_domain' onClick={() => setEditMode('geometry')}><Header as='h4'>Model Domain</Header></MenuItem>,
+                    render: () => <TabPane attached={false}>
+                      <ModelDomain
+                        isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
+                        isLoading={loading}
+                        isLocked={locked}
+                        onChangeGeometry={setModelGeometry}
+                        onReset={() => setModelGeometry(spatialDiscretization.geometry)}
+                        onSubmit={handleSubmitGeometry}
+                        processShapefile={processShapefile}
+                      />
+                    </TabPane>,
+                  },
+                  {
+                    menuItem: <MenuItem key='affected_cells' onClick={() => setEditMode('affected_cells')}><Header as='h4'>Affected Cells</Header></MenuItem>,
+                    render: () => <TabPane attached={false}>
+                      {affectedCells && spatialDiscretization.affected_cells &&
+                        <ModelAffectedCells
+                          isDirty={!AffectedCells.fromObject(affectedCells).isEqual(AffectedCells.fromObject(spatialDiscretization.affected_cells))}
+                          isLoading={loading}
+                          isLocked={locked}
+                          onReset={() => setAffectedCells(spatialDiscretization.affected_cells)}
+                          onSubmit={handleSubmitAffectedCells}
+                        />}
+                    </TabPane>,
+                  },
+                ]}
+              />
+            </AccordionContent>
+            <AccordionContent title={'Model grid'}>
+              <Tab
+                variant='primary'
+                menu={{pointing: true}}
+                panes={[
+                  {
+                    menuItem: 'Grid Properties',
+                    render: () => <TabPane attached={false}>
+                      <ModelGrid
+                        grid={grid}
+                        onChange={setGrid}
+                        isDirty={JSON.stringify(grid) !== JSON.stringify(spatialDiscretization.grid)}
+                        isLoading={loading}
+                        isLocked={locked}
+                        onReset={() => setGrid(spatialDiscretization.grid)}
+                        onSubmit={handleSubmitGrid}
+                      />
+                    </TabPane>,
+                  },
+                ]}
+              />
+            </AccordionContent>
+          </Accordion>
         </DataGrid>
       </SidebarContent>
       <BodyContent>
         <SpatialDiscretizationMap
-          editAffectedCells={editAffectedCells}
+          editAffectedCells={'affected_cells' === editMode}
           affectedCellsGeometry={affectedCellsGeometry || undefined}
           onChangeAffectedCell={(row: number, col: number, active: boolean) => {
             if (!affectedCells) {
@@ -168,12 +199,9 @@ const SpatialDiscretizationContainer = () => {
             setAffectedCells(newAffectedCells.toObject() as IAffectedCells);
           }}
           modelGeometry={modelGeometry}
-          grid={gridGeometry || undefined}
-          onChangeModelGeometry={(polygon: Polygon) => {
-            setModelGeometry(polygon);
-            setEditModelGeometry(false);
-          }}
-          editModelGeometry={!locked && editModelGeometry}
+          gridGeometry={gridGeometry || undefined}
+          onChangeModelGeometry={(polygon: Polygon) => setModelGeometry(polygon)}
+          editModelGeometry={'geometry' === editMode}
         />
       </BodyContent>
     </>
