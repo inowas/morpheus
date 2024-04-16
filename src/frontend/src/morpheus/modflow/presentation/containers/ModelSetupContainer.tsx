@@ -90,7 +90,7 @@ const ModelSetupContainer = () => {
         <DataGrid>
           <SectionTitle title={'Model Geometry'}/>
           <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
-            <AccordionContent title={'Model domain'} icon={'dropdown'}>
+            <AccordionContent title={'Model domain'}>
               <Tab
                 variant='primary'
                 menu={{pointing: true}}
@@ -103,7 +103,7 @@ const ModelSetupContainer = () => {
                 }]}
               />
             </AccordionContent>
-            <AccordionContent title={'Model grid'} icon={'dropdown'}>
+            <AccordionContent title={'Model grid'}>
               <Tab
                 variant='primary'
                 menu={{pointing: true}}
