@@ -1,3 +1,3 @@
-import ShowCreateOrEditPolygon from './ShowCreateOrEditPolygon';
+import ModelSetupMap from './ModelSetupMap';
 
-export default ShowCreateOrEditPolygon;
+export default ModelSetupMap;

@@ -5,11 +5,11 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 import {FeatureGroup, GeoJSON, Polygon as LeafletPolygon, useMap, useMapEvents} from 'react-leaflet';
-import {GeomanControls} from 'common/components/Map';
+import {GeomanControls, Map} from 'common/components/Map';
 import cloneDeep from 'lodash.clonedeep';
 
 
-interface Props {
+interface IProps {
   editAffectedCells?: boolean
   affectedCellsGeometry?: Feature<Polygon | MultiPolygon>;
   onChangeAffectedCell?: (row: number, col: number, active: boolean) => void
@@ -32,7 +32,7 @@ const SpatialDiscretizationMap = ({
   onChangeModelGeometry,
   editModelGeometry,
   onChangeAffectedCell,
-}: Props) => {
+}: IProps) => {
   const editModelGeometryRef = useRef<L.FeatureGroup>(L.featureGroup());
   const map = useMap();
 
@@ -211,7 +211,7 @@ const SpatialDiscretizationMap = ({
     <>
       <FeatureGroup ref={editModelGeometryRef}>
         {editModelGeometry && <GeomanControls
-          key={modelGeometry ? 'edit' : 'create'}
+          key={modelGeometry ? 'edit_controls' : 'create_controls'}
           options={{
             position: 'topleft',
             drawText: false,
@@ -233,10 +233,9 @@ const SpatialDiscretizationMap = ({
           onMount={() => L.PM.setOptIn(false)}
           onUnmount={() => L.PM.setOptIn(true)}
           onUpdate={handleChange}
-          map={map}
         />}
         {modelGeometry && <LeafletPolygon
-          key={editModelGeometry ? 'edit' : 'view'}
+          key={editModelGeometry ? 'edit_geometry' : 'view_geometry'}
           positions={modelGeometry.coordinates[0].map((c) => [c[1], c[0]])}
           fill={false}
           weight={editModelGeometry ? 2 : 1}
@@ -292,4 +291,11 @@ const SpatialDiscretizationMap = ({
   );
 };
 
-export default SpatialDiscretizationMap;
+const MapWrapper = (props: IProps) => (
+  <Map>
+    <SpatialDiscretizationMap{...props} />
+  </Map>
+);
+
+
+export default MapWrapper;

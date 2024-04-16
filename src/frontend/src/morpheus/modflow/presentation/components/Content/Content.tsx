@@ -6,12 +6,10 @@ interface IProps {
   fullWidth?: boolean;
 }
 
-const Content = ({children, fullWidth = true}: IProps) => {
-  return (
-    <div className={`${styles.sidebarContent} ${fullWidth ? styles.sidebarContentFullWidth : ''}`}>
-      {children}
-    </div>
-  );
-};
+const Content = ({children, fullWidth = true}: IProps) => (
+  <div className={`${styles.sidebarContent} ${fullWidth ? styles.sidebarContentFullWidth : ''}`}>
+    {children}
+  </div>
+);
 
 export default Content;
