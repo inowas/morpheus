@@ -1,11 +1,13 @@
 import {IError} from '../types';
 import {useRef, useState} from 'react';
 import {useApi} from '../incoming';
+import {GeoJSON} from 'geojson';
 
-interface IUseFileUpload {
+interface IUseAssets {
   uploadAsset: (file: File, description: string | undefined) => Promise<IAssetId | undefined>;
   fetchAssetData: (assetId: IAssetId) => Promise<object | [] | undefined>;
   fetchAssetMetadata: (assetId: string) => Promise<IAsset | undefined>;
+  processShapefile: (zipFile: File) => Promise<GeoJSON>;
   loading: boolean;
   error?: IError;
 }
@@ -59,7 +61,7 @@ interface IShapefileMetadata {
 }
 
 
-const useAssets = (projectId: string): IUseFileUpload => {
+const useAssets = (projectId: string): IUseAssets => {
   const isMounted = useRef(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
@@ -88,7 +90,7 @@ const useAssets = (projectId: string): IUseFileUpload => {
     if (getResponse.err) {
       setError(getResponse.val);
     }
-  }
+  };
 
   const fetchAssetData = async (assetId: IAssetId): Promise<object | [] | undefined> => {
     if (!isMounted.current) {
@@ -113,7 +115,7 @@ const useAssets = (projectId: string): IUseFileUpload => {
     if (getResponse.err) {
       setError(getResponse.val);
     }
-  }
+  };
 
   const uploadAsset = async (file: File, description: string | undefined): Promise<IAssetId | undefined> => {
     if (!isMounted.current) {
@@ -146,10 +148,30 @@ const useAssets = (projectId: string): IUseFileUpload => {
     }
   };
 
+  const processShapefile = async (zipFile: File): Promise<GeoJSON> => {
+    // upload shape file to server
+    // when successfully uploaded, get shape file metadata from server
+    // load shapefile data from server as geojson and show in a modal
+    // select polygon geometry in the model and return it as model geometry
+    // put this logic in a child component
+    const assetId = await uploadAsset(zipFile, 'shapefile');
+
+    if (!assetId) {
+      return Promise.reject('Failed to upload shapefile.');
+    }
+
+    const geojson = await fetchAssetData(assetId) as unknown as GeoJSON | undefined;
+    if (!geojson) {
+      return Promise.reject('Failed to fetch shapefile data.');
+    }
+
+    return Promise.resolve(geojson);
+  };
 
   return {
     fetchAssetData,
     fetchAssetMetadata,
+    processShapefile,
     uploadAsset,
     loading,
     error: error ? error : undefined,
@@ -157,4 +179,4 @@ const useAssets = (projectId: string): IUseFileUpload => {
 };
 
 export default useAssets;
-export type {IUseFileUpload};
+export type {IUseAssets};
