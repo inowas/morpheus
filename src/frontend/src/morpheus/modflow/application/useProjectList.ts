@@ -2,8 +2,8 @@ import {IError, IProjectListItem} from '../types';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {useApi, useAuthentication} from '../incoming';
-import {formatISO, subYears} from 'date-fns';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
+import useDateTimeFormat from './useDateTimeFormat';
 
 interface IUseProjectList {
   projects: IProjectListItem[];
@@ -139,6 +139,7 @@ const useProjectList = (): IUseProjectList => {
   const [error, setError] = useState<IError | null>(null);
 
   const {sendCommand} = useProjectCommandBus();
+  const {} = useDateTimeFormat();
 
   const {userProfile} = useAuthentication();
   const myUserId = userProfile?.sub || '';
@@ -164,16 +165,16 @@ const useProjectList = (): IUseProjectList => {
       },
       by_date: {
         created_at: {
-          start_date: formatISO(subYears(new Date(), 8)),
-          end_date: formatISO(new Date()),
+          start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString(),
+          end_date: new Date().toISOString(),
         },
         updated_at: {
-          start_date: formatISO(subYears(new Date(), 2)),
-          end_date: formatISO(new Date()),
+          start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString(),
+          end_date: new Date().toISOString(),
         },
         model_date: {
-          start_date: formatISO(subYears(new Date(), 6)),
-          end_date: formatISO(new Date()),
+          start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString(),
+          end_date: new Date().toISOString(),
         },
       },
       boundary_conditions: {

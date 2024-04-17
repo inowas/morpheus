@@ -6,8 +6,9 @@ import {Button, Notification} from 'common/components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './TimeDiscretizationStressPeriods.module.less';
-import {addDays, format, isValid, parseISO} from 'date-fns';
 import {IStressPeriod, ITimeDiscretization} from '../../../../types';
+import {useDateTimeFormat} from '../../../../application';
+import Papa from 'papaparse';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
@@ -16,16 +17,11 @@ interface IProps {
 }
 
 const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, onChange, readOnly}) => {
-  const tableRef = useRef<HTMLTableSectionElement>(null);
 
+  const {addDays, formatISO, formatISODate, isValid} = useDateTimeFormat();
+
+  const tableRef = useRef<HTMLTableSectionElement>(null);
   const [showNotification, setShowNotification] = useState(false);
-  const toCsv = () => {
-    let text = 'start_date_time;nstp;tsmult;steady\n';
-    timeDiscretization.stress_periods.forEach((sp: IStressPeriod) => {
-      text += `${parseISO(sp.start_date_time).toISOString()};${sp.number_of_time_steps};${sp.time_step_multiplier};${sp.steady_state ? 1 : 0}\n`;
-    });
-    return text;
-  };
 
   const handleDeleteAllStressPeriods = () => onChange({
     ...timeDiscretization,
@@ -50,14 +46,14 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
       });
     }
 
-    if (!isValid(new Date(lastStressPeriod.start_date_time))) {
+    if (!isValid(lastStressPeriod.start_date_time)) {
       setShowNotification(true);
       return;
     }
     setShowNotification(false);
     const newStressPeriod: IStressPeriod = {
       ...lastStressPeriod,
-      start_date_time: addDays(parseISO(lastStressPeriod.start_date_time), 1).toISOString(),
+      start_date_time: formatISO(addDays(formatISO(lastStressPeriod.start_date_time), 1)),
       steady_state: false,
       time_step_multiplier: 1,
       number_of_time_steps: 1,
@@ -66,20 +62,33 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
   };
 
   const handleChangeStressPeriod = (key: number, sp: IStressPeriod) => {
+    console.log(sp);
     const newStressPeriods = timeDiscretization.stress_periods.map((s: IStressPeriod, idx: number) => (idx === key ? sp : s));
+
     onChange({...timeDiscretization, stress_periods: newStressPeriods});
   };
 
   const handleDownload = () => {
-    const filename = 'stressperiods.csv';
-    const text = toCsv();
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    const csv = Papa.unparse({
+      fields: ['start_date_time', 'number_of_time_steps', 'time_step_multiplier', 'steady_state'],
+      data: timeDiscretization.stress_periods.map((sp) => (
+        [sp.start_date_time, sp.number_of_time_steps, sp.time_step_multiplier, sp.steady_state]
+      )),
+    });
+
+    const mimeType = 'text/csv';
+    const blob = new Blob([csv], {type: `${mimeType};charset=utf-8`});
+    const link = document.createElement('a');
+
+    if (undefined === link.download) {
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'stressperiods.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const renderHeader = () => (
@@ -137,13 +146,13 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
                   name={'start_date_time'}
                   idx={idx}
                   style={{width: '100%'}}
-                  value={format(parseISO(sp.start_date_time), 'yyyy-MM-dd')}
+                  value={formatISODate(sp.start_date_time)}
                   onChange={(e: ChangeEvent<HTMLInputElement>, {value}: InputOnChangeData) => {
-                    const dateValue = parseISO(`${value}`);
+                    const dateValue = formatISO(`${value}`);
                     if (!isValid(dateValue)) {
                       return;
                     }
-                    handleChangeStressPeriod(idx, {...sp, start_date_time: format(dateValue, 'yyyy-MM-dd') + 'T00:00:00Z'});
+                    handleChangeStressPeriod(idx, {...sp, start_date_time: dateValue});
                   }}
                 />
               </Table.Cell>

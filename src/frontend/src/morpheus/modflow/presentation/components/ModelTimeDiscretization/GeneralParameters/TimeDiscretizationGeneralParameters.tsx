@@ -4,7 +4,7 @@ import React, {useMemo} from 'react';
 import {DataGrid} from 'common/components/DataGrid';
 import styles from './TimeDiscretizationGeneralParameters.module.less';
 import {ITimeDiscretization, ITimeUnit} from '../../../../types';
-import {isValid, parseISO} from 'date-fns';
+import {useDateTimeFormat} from '../../../../application';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
@@ -13,20 +13,22 @@ interface IProps {
 
 const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange}) => {
 
+  const {isValid, formatISO, getUnixTimestamp, formatISODate} = useDateTimeFormat();
+
   const handleChangeStartDateTime = (value: string) => {
-    const dateValue = parseISO(`${value}T00:00:00Z`);
+    const dateValue = formatISO(value);
     if (!isValid(dateValue)) {
       return;
     }
-    onChange({...timeDiscretization, start_date_time: dateValue.toISOString()});
+    onChange({...timeDiscretization, start_date_time: dateValue});
   };
 
   const handleChangeEndDateTime = (value: string) => {
-    const dateValue = parseISO(`${value}T00:00:00Z`);
+    const dateValue = formatISO(value);
     if (!isValid(dateValue)) {
       return;
     }
-    onChange({...timeDiscretization, end_date_time: dateValue.toISOString()});
+    onChange({...timeDiscretization, end_date_time: dateValue});
   };
 
   const handleChangeTimeUnit = (value: ITimeUnit) => {
@@ -41,9 +43,9 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     {key: ITimeUnit.DAYS, text: 'Days', value: 4},
     {key: ITimeUnit.YEARS, text: 'Years', value: 5},
   ];
-  
+
   const calculatedTotalTime = useMemo(() => {
-    const seconds = (parseISO(timeDiscretization.end_date_time).getTime() - parseISO(timeDiscretization.start_date_time).getTime()) / 1000;
+    const seconds = (getUnixTimestamp(timeDiscretization.end_date_time) - getUnixTimestamp(timeDiscretization.start_date_time)) / 1000;
     switch (timeDiscretization.time_unit) {
     case ITimeUnit.UNDEFINED:
       return 'undefined';
@@ -76,7 +78,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               className={styles.inputField}
               type="date"
               name={'startDate'}
-              value={parseISO(timeDiscretization.start_date_time).toISOString().split('T')[0]}
+              value={formatISODate(timeDiscretization.start_date_time)}
               onChange={(_, {value}) => handleChangeStartDateTime(value)}
             />
             <Icon className={'dateIcon'} name="calendar outline"/>
@@ -92,7 +94,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               className={styles.inputField}
               type="date"
               name={'endDate'}
-              value={parseISO(timeDiscretization.end_date_time).toISOString().split('T')[0]}
+              value={formatISODate(timeDiscretization.end_date_time)}
               onChange={(_, {value}) => handleChangeEndDateTime(value)}
             />
             <Icon className={'dateIcon'} name="calendar outline"/>

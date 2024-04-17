@@ -1,5 +1,5 @@
 import useAssets, {IAssetId} from './useAssets';
-import useFormatDateTime from './useFormatDateTime';
+import useDateTimeFormat from './useDateTimeFormat';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useNavbarItems from './useNavbarItems';
@@ -13,7 +13,7 @@ import useTranslate from './useTranslate';
 
 export {
   useAssets,
-  useFormatDateTime,
+  useDateTimeFormat,
   useModel,
   useModelSetup,
   useNavbarItems,

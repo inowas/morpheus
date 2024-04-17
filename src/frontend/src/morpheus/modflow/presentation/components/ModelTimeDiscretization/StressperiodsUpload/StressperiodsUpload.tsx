@@ -4,12 +4,12 @@ import {Button, CsvFileInput} from 'common/components';
 import {Container} from 'semantic-ui-react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
-import {format} from 'date-fns';
 import Papa from 'papaparse';
 import {IColumn} from './types/StressperiodsUpload.type';
 import {IStressPeriod} from '../../../../types';
 
 interface IProps {
+  stressPeriods: IStressPeriod[];
   onSubmit: (stressPeriods: IStressPeriod[]) => void;
 }
 
@@ -20,21 +20,32 @@ const columns: IColumn[] = [
   {value: 'steady_state', text: 'Steady state', type: ECsvColumnType.BOOLEAN, default: '-'},
 ];
 
-const StressperiodsUpload = ({onSubmit}: IProps) => {
+const StressperiodsUpload = ({stressPeriods, onSubmit}: IProps) => {
 
   const [csvRawData, setCsvRawData] = useState<any[][] | null>(null);
 
   const handleDownloadTemplate = () => {
-    const filename = 'stressperiods.csv';
-    const todayDate = format(new Date(), 'dd.MM.yyyy');
-    const templateText = `start_date_time;nstp;tsmult;steady\n${todayDate};1;1;1\n`;
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(templateText));
-    element.setAttribute('download', filename);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+
+    const csv = Papa.unparse({
+      fields: ['start_date_time', 'number_of_time_steps', 'time_step_multiplier', 'steady_state'],
+      data: stressPeriods.map((sp) => (
+        [sp.start_date_time, sp.number_of_time_steps, sp.time_step_multiplier, sp.steady_state]
+      )),
+    });
+
+    const mimeType = 'text/csv';
+    const blob = new Blob([csv], {type: `${mimeType};charset=utf-8`});
+    const link = document.createElement('a');
+
+    if (undefined === link.download) {
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'stressperiods.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleCsvFileInputChange = (csvFile: File) => {
@@ -52,8 +63,8 @@ const StressperiodsUpload = ({onSubmit}: IProps) => {
     });
   };
 
-  const handleSubmit = (stressPeriods: IStressPeriod[]) => {
-    onSubmit(stressPeriods);
+  const handleSubmit = (uploadedStressPeriods: IStressPeriod[]) => {
+    onSubmit(uploadedStressPeriods);
   };
 
   const handleCancel = () => {

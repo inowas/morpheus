@@ -34,7 +34,7 @@ const CsvFileInput = ({onChange}: ICsvFileInput) => {
         type="file"
         accept="text/csv"
       />
-      {filename && <span>{filename}</span>}
+      {/*{filename && <span>{filename}</span>}*/}
       {error && <span style={{color: 'red'}}>{error}</span>}
     </div>
   );

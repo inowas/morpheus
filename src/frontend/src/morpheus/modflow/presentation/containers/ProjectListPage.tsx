@@ -7,8 +7,8 @@ import Error from 'common/components/Error';
 import {useNavbarItems} from '../../../application/application';
 import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
-import {format} from 'date-fns';
 import {useAuthentication} from '../../incoming';
+import {useDateTimeFormat} from '../../application';
 
 interface IProps {
   basePath: string;
@@ -24,6 +24,7 @@ const ProjectListPage = ({basePath}: IProps) => {
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   const {userProfile} = useAuthentication();
+  const {format} = useDateTimeFormat();
   const myUserId = userProfile?.sub || '';
 
   const cards = useMemo(() => {
@@ -38,7 +39,7 @@ const ProjectListPage = ({basePath}: IProps) => {
         description: project.description,
         image: project.image,
         status: 'green',
-        date_time: format(new Date(project.created_at), 'dd.MM.yyyy'),
+        date_time: format(project.created_at, 'dd.MM.yyyy'),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
         onDeleteClick: canBeDeleted ? () => onDeleteClick(project.project_id) : undefined,
         onCopyClick: canBeCopied ? () => console.log('Copy project') : undefined,

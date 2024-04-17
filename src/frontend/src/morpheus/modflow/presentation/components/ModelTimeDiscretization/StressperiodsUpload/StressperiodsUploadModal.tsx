@@ -4,8 +4,9 @@ import {ECsvColumnType, IColumn} from './types/StressperiodsUpload.type';
 import {Button, Modal, Notification, SectionTitle} from 'common/components';
 import {Checkbox, Form, Icon, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';
-import {format, isValid, parse} from 'date-fns';
 import {IStressPeriod} from '../../../../types';
+import {useDateTimeFormat} from '../../../../application';
+
 
 interface IProps {
   columns: IColumn[];
@@ -24,6 +25,8 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
   const [firstRowIsHeader, setFirstRowIsHeader] = useState<boolean>(true);
   const [stressPeriods, setStressPeriods] = useState<IStressPeriod[] | null>(null);
 
+  const {format, isValid, parseUserInput} = useDateTimeFormat();
+
   useEffect(() => {
     const parsedData: IStressPeriod[] = [];
     rawData.forEach((rawDataRow, rowIdx) => {
@@ -41,7 +44,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
 
         if (column.type === ECsvColumnType.DATE_TIME) {
           const value = rawDataRow[colIdx];
-          const parsedDate = parse(value, dateTimeFormat, new Date());
+          const parsedDate = parseUserInput(value, dateTimeFormat);
           if (isValid(parsedDate)) {
             parsedDataRow[column.value] = format(parsedDate, dateTimeFormat);
           } else {
@@ -51,7 +54,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
 
         if (column.type === ECsvColumnType.BOOLEAN) {
           const value = rawDataRow[colIdx];
-          parsedDataRow[column.value] = !!value;
+          parsedDataRow[column.value] = 'true' === value.toLowerCase() || '1' === value;
         }
 
         if (column.type === ECsvColumnType.FLOAT) {
@@ -75,19 +78,26 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
 
     setStressPeriods(parsedData);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawData, firstRowIsHeader, dateTimeFormat, columns, columnOrder]);
 
   const isFormValid = () => {
     try {
+
+      let formIsValid = true;
+
       if (!stressPeriods) {
-        return false;
+        formIsValid = false;
+        return formIsValid;
       }
+
       stressPeriods.forEach((sp) => {
-        if (!isValid(parse(sp.start_date_time, dateTimeFormat, new Date()))) {
-          return false;
+        if (!isValid(parseUserInput(sp.start_date_time, dateTimeFormat))) {
+          formIsValid = false;
         }
       });
-      return true;
+
+      return formIsValid;
     } catch (e) {
       return false;
     }
@@ -101,7 +111,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
     if (stressPeriods) {
       const stressPeriodsWithIsoDates = stressPeriods.map((sp) => ({
         ...sp,
-        start_date_time: format(parse(sp.start_date_time, dateTimeFormat, new Date()), 'yyyy-MM-dd') + 'T00:00:00Z',
+        start_date_time: parseUserInput(sp.start_date_time, dateTimeFormat),
       }));
 
       stressPeriodsWithIsoDates.sort((a, b) => {
@@ -184,10 +194,10 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
                       style={{backgroundColor: 'white', padding: '5px 10px'}}
                       value={dateTimeFormat}
                       options={[
-                        {key: 0, value: 'yyyy-MM-dd', text: format(new Date(), 'yyyy-MM-dd')},
-                        {key: 1, value: 'yyyy/MM/dd', text: format(new Date(), 'yyyy/MM/dd')},
-                        {key: 2, value: 'yyyyMMdd', text: format(new Date(), 'yyyyMMdd')},
-                        {key: 3, value: 'dd.MM.yyyy', text: format(new Date(), 'dd.MM.yyyy')},
+                        {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
+                        {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
+                        {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
+                        {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
                       ]}
                       onChange={(e, d) => setDateTimeFormat(d.value as string)}
                     />
@@ -218,7 +228,6 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps
                       onChange={(e, d) => {
                         const newColumnOrder = columnOrder.map((co, idx) => {
                           if (idx === key) {
-                            console.log({...co, colIdx: d.value as number});
                             return {...co, colIdx: d.value as number};
                           }
 
