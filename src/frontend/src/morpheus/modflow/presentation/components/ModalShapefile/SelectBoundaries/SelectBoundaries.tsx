@@ -5,13 +5,13 @@ import styles from './SelectBoundaries.module.less';
 
 
 interface ISelectBoundaries {
-  stressPeriods: { id: string; name: string }[];
+  layers: { id: string; name: string }[];
 }
 
-const SelectBoundaries = ({stressPeriods}: ISelectBoundaries) => {
+const SelectBoundaries = ({layers}: ISelectBoundaries) => {
   const columnOptions = [
     {key: 'select', text: 'Select column', value: ''},
-    ...stressPeriods.map(value => ({key: value.id, text: value.name, value: value.id})),
+    ...layers.map(value => ({key: value.id, text: value.name, value: value.id})),
   ];
 
   return (
@@ -27,7 +27,7 @@ const SelectBoundaries = ({stressPeriods}: ISelectBoundaries) => {
           />
         </div>
         <List className={styles.list}>
-          {stressPeriods.map(value => (
+          {layers.map(value => (
             <ListItem key={value.id} className={styles.listItem}>
               <Checkbox
                 className={styles.checkbox}

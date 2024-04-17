@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
-import {ShapeFileInput, DataGrid, Button} from 'common/components';
+import {Button, DataGrid, ShapeFileInput} from 'common/components';
 import {GeoJSON, Polygon} from 'geojson';
+import {ModalShapefile} from '../ModalShapefile';
+
 
 interface IProps {
   isDirty: boolean;
@@ -15,6 +17,8 @@ interface IProps {
 const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, isLoading, processShapefile}: IProps) => {
 
   const [shapeFileError, setShapeFileError] = useState<string | undefined>(undefined);
+  const [showModal, setShowModal] = useState(false);
+
 
   const handleSubmitShapeFile = async (zipFile: File) => {
     setShapeFileError(undefined);
@@ -38,6 +42,8 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
     } catch (e) {
       setShapeFileError('Error processing shapefile. Please try again.');
     }
+    setShowModal(true);
+
   };
 
   const renderButtons = () => {
@@ -68,10 +74,27 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
     );
   };
 
+
   return (
     <>
-      <ShapeFileInput onSubmit={handleSubmitShapeFile} error={shapeFileError}/>
+      <ShapeFileInput
+        useDropzone={true}
+        onSubmit={handleSubmitShapeFile}
+        error={shapeFileError}
+      />
+      <Button onClick={() => setShowModal(true)}>Upload shapefile</Button>
       {renderButtons()}
+      <ModalShapefile
+        open={showModal}
+        onSave={() => {
+          setShowModal(false);
+          console.log('save');
+        }}
+        onCancel={() => {
+          setShowModal(false);
+          console.log('cancel');
+        }}
+      />
     </>
   );
 };

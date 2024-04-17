@@ -86,7 +86,7 @@ const ModelSetupContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={650}>
         <DataGrid>
           <SectionTitle title={'Model Geometry'}/>
           <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>

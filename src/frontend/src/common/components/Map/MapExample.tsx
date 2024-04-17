@@ -12,6 +12,7 @@ import GeomanExample from './GeomanExample';
 import React, {useEffect, useRef} from 'react';
 
 interface IProps {
+  style?: React.CSSProperties;
   editable: boolean;
   coords: LatLngTuple;
   geojson: FeatureCollection;
@@ -63,7 +64,7 @@ const MapRef = ({mapRef}: IMapEffectProps) => {
   return null;
 };
 
-const MapExample = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
+const MapExample = ({coords, geojson, onChangeGeojson, editable, style}: IProps) => {
   const redOptions = {color: 'red'};
   const polygonCoordinates = getPolygonCoordinates(geojson);
 
@@ -106,7 +107,7 @@ const MapExample = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
   // }
 
   return (
-    <div ref={containerRef} style={{height: 'auto', width: '100%', minHeight: '100%'}}>
+    <div ref={containerRef} style={{height: '100%', width: '100%', ...style}}>
       <MapContainer
         center={coords}
         zoom={13}

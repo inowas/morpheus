@@ -9,9 +9,10 @@ interface IShapeFileInput {
   onSubmit: (zipFile: File) => void;
   error?: string;
   fileName?: string | null;
+  centered?: boolean;
 }
 
-const ShapeFileInput = ({onSubmit, error, fileName = null, useDropzone = false}: IShapeFileInput) => {
+const ShapeFileInput = ({onSubmit, error, fileName = null, useDropzone = false, centered = false}: IShapeFileInput) => {
   const fileInputRef = createRef<HTMLInputElement>();
 
   const handleAcceptedFiles = async (files: File[]) => {
@@ -62,20 +63,24 @@ const ShapeFileInput = ({onSubmit, error, fileName = null, useDropzone = false}:
           />
         </>
       ) : (
-        <div {...getRootProps()} className={styles.dropzoneContent}>
-          <Button style={{position: 'absolute', top: '20px', left: '20px'}} size="tiny">
-            Choose file
-          </Button>
-          <input {...getInputProps()} />
-          {isDragActive ? <p className="h4">Drop the files here ...</p> : <p className="h4">Drag and drop a shapefile here</p>}
-          <p>Supported file extensions: ESRI shapefile (.shp, .shx, .dbf, .prj)</p>
-          <p>Maximum file size: 20 MB</p>
+        <div {...getRootProps()} className={centered && styles.centered}>
+          <div style={{display: 'flex', alignItems: 'baseline'}}>
+            <Button size="tiny">
+              Choose file
+            </Button>
+            <input {...getInputProps()} />
+          </div>
+          <div style={{width: '100%', paddingTop: '22px'}}>
+            {isDragActive ? <p className="h4">Drop the files here ...</p> : <p className="h4">Drag and drop a shapefile here</p>}
+            <p>Supported file extensions: ESRI shapefile (.shp, .shx, .dbf, .prj)</p>
+          </div>
         </div>
       )}
       {error && (
         <Message
-          negative={true} compact={true}
-          size="small"
+          negative={true}
+          compact={true}
+          size="tiny"
         >
           <p>{error}</p>
         </Message>

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Slider from 'common/components/Slider/SimpleSlider';
 import {Button, DataGrid, DataRow, SectionTitle} from 'common/components';
 import {Dropdown, Form, Icon, Radio, Tab, TabPane, TextArea} from 'semantic-ui-react';
-import {UploadShapefile} from '../UploadShapefile';
+import {ModalShapefile} from '../ModalShapefile';
 import DatePicker from 'react-datepicker';
 import styles from './TestingContent.module.less';
 
@@ -73,7 +73,7 @@ const TestingContent: React.FC = () => {
   return (
     <>
       {/* Shape File => */}
-      <UploadShapefile/>
+      <ModalShapefile/>
       {/* Upload File (OLD STYLE) => */}
       <div className={styles.fullHeight}>
         <DataGrid columns={2} style={{alignItems: 'normal'}}>

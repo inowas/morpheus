@@ -22,7 +22,7 @@ const ProjectMetadataContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={700}>
+      <SidebarContent maxWidth={650}>
         <ProjectMetadataContent content={metadata}/>
       </SidebarContent>
       <BodyContent>

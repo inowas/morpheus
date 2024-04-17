@@ -117,7 +117,7 @@ const SpatialDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={650}>
         <DataGrid>
           <SectionTitle
             title={'Model Geometry'}
