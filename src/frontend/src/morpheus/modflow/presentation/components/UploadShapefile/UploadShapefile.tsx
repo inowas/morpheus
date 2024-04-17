@@ -1,59 +1,67 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Modal, SectionTitle, Tab} from 'common/components';
-import UploadFile from './UploadFile';
+import ShapeFileInput from './ShapeFileInput';
+import SelectBoundaries from './SelectBoundaries';
 import styles from './UploadShapefile.module.less';
-import {FileWithPath} from 'react-dropzone';
-import * as Papa from 'papaparse';
+
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faDownload} from '@fortawesome/free-solid-svg-icons';
+import jsonData from './jsonData.json';
 
 const UploadShapefile = () => {
-  const [isCancelled, setIsCancelled] = useState<boolean>(false);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const [activeIndex, setActiveIndex] = useState<number>(1);
   const [showShapeFileModal, setShowShapeFileModal] = useState(true);
-  const [shapefile, setShapefile] = useState<FileWithPath | null>(null);
+  const [shapefile, setShapefile] = useState<File | null>(null);
+
+  /*
+    JSON file using for markup, should be replaced with Shape in the future
+  */
+  // const json = JSON.stringify(jsonData, null, 2);
+  const stressPeriods = jsonData.map(item => ({id: item.id, name: item.name}));
+
 
   const panes = [
     {
-      menuItem: 'UploadFile',
+      menuItem: 'Upload file',
       render: () => <Tab.TabPane>
-        <UploadFile
-          isCancelled={isCancelled}
-          shapefile={shapefile}
-          setShapefile={setShapefile}
-        />
+        <div className={styles.wrapper}>
+          <ShapeFileInput
+            fileName={shapefile?.name}
+            onSubmit={setShapefile}
+          />
+          <Button
+            className='buttonLink'
+            size={'tiny'}
+            onClick={() => console.log('Download template')}
+          >
+            Download template
+            <FontAwesomeIcon icon={faDownload}/>
+          </Button>
+        </div>
       </Tab.TabPane>,
     },
-    {menuItem: 'Select boundaries', render: () => <Tab.TabPane>Select boundaries</Tab.TabPane>},
+    {
+      menuItem: 'Select boundaries', render: () => <Tab.TabPane>
+        <SelectBoundaries stressPeriods={stressPeriods}/>
+      </Tab.TabPane>,
+    },
     {menuItem: 'Assign properties', render: () => <Tab.TabPane>Assign properties</Tab.TabPane>},
   ];
 
   const handleCancel = () => {
-    setIsCancelled(true);
     setShapefile(null);
     setShowShapeFileModal(false);
   };
 
   const handleSave = () => {
-    console.log(handleSave);
-  };
-
-  const handleParseCSV = (file: File) => {
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      if (event.target && event.target.result) {
-        const csvData = Papa.parse(event.target.result as string);
-        console.log('Parsed CSV data:', csvData.data);
-      }
-    };
-
-    reader.readAsText(file);
+    console.log('handleSave');
   };
 
   useEffect(() => {
-    console.log(shapefile);
     if (shapefile) {
       setActiveIndex(1);
-      handleParseCSV(shapefile);
+      console.log(shapefile);
     }
   }, [shapefile]);
 

@@ -1,0 +1,55 @@
+@import "common/components/site.variables";
+
+.wrapper {
+  //margin: auto;
+}
+
+.filter {
+  width: 356px;
+  background-color: @white;
+  padding: 20px 24px 40px;
+}
+
+.header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #979797;
+}
+
+.list {
+  height: 100%;
+  max-height: 256px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: @ref-box-shadow;
+    background: @ref-color-borderTable;
+    border-radius: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: @ref-color-underline;
+    border-radius: 2px;
+  }
+
+  .listItem {
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    text-align: left;
+    margin-right: 10px;
+    padding: 0 !important;
+    border-bottom: 1px solid @ref-color-borderTable;
+  }
+
+  .checkbox {
+    padding: 7px 0;
+    width: 100%;
+  }
+}

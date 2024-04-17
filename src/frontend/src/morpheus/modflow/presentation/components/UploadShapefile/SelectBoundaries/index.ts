@@ -1,3 +1,3 @@
-import SpatialDiscretizationMap from './SpatialDiscretizationMap';
+import SelectBoundaries from './SelectBoundaries';
 
-export default SpatialDiscretizationMap;
+export default SelectBoundaries;
