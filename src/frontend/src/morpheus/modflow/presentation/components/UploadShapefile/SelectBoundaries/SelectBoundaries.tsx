@@ -1,5 +1,3 @@
-// eslint-disable-next-line
-
 import React from 'react';
 import {Checkbox, Form, List, ListItem, Select} from 'semantic-ui-react';
 

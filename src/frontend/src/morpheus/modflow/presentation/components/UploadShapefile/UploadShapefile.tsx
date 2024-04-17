@@ -1,12 +1,51 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Modal, SectionTitle, Tab} from 'common/components';
-import ShapeFileInput from './ShapeFileInput';
+import {Button, MapExample, Modal, SectionTitle, ShapeFileInput, Tab} from 'common/components';
+// import ShapeFileInput from './ShapeFileInput';
 import SelectBoundaries from './SelectBoundaries';
 import styles from './UploadShapefile.module.less';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
 import jsonData from './jsonData.json';
+import type {FeatureCollection} from 'geojson';
+
+const geoJsonPolygon: FeatureCollection = {
+  'type': 'FeatureCollection',
+  'features': [
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [
+          [
+            [
+              13.737521,
+              51.05702,
+            ],
+            [
+              13.723092,
+              51.048919,
+            ],
+            [
+              13.736491,
+              51.037358,
+            ],
+            [
+              13.751779,
+              51.04773,
+            ],
+            [
+              13.737521,
+              51.05702,
+            ],
+          ],
+        ],
+      },
+    },
+  ],
+};
+
 
 const UploadShapefile = () => {
 
@@ -27,6 +66,7 @@ const UploadShapefile = () => {
       render: () => <Tab.TabPane>
         <div className={styles.wrapper}>
           <ShapeFileInput
+            useDropzone={true}
             fileName={shapefile?.name}
             onSubmit={setShapefile}
           />
@@ -44,6 +84,14 @@ const UploadShapefile = () => {
     {
       menuItem: 'Select boundaries', render: () => <Tab.TabPane>
         <SelectBoundaries stressPeriods={stressPeriods}/>
+        <MapExample
+          editable={false}
+          geojson={geoJsonPolygon}
+          onChangeGeojson={(geojson) => {
+            console.log(geojson);
+          }}
+          coords={[51.051772741784625, 13.72531677893111]}
+        />
       </Tab.TabPane>,
     },
     {menuItem: 'Assign properties', render: () => <Tab.TabPane>Assign properties</Tab.TabPane>},
@@ -70,6 +118,8 @@ const UploadShapefile = () => {
       <Button style={{marginBottom: '40px'}} onClick={() => setShowShapeFileModal(!showShapeFileModal)}>
         Upload shapefile
       </Button>
+
+
       <Modal.Modal
         style={{zIndex: '10000'}}
         open={showShapeFileModal}

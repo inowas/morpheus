@@ -106,7 +106,7 @@ const MapExample = ({coords, geojson, onChangeGeojson, editable}: IProps) => {
   // }
 
   return (
-    <div ref={containerRef} style={{height: '100%', width: '100%'}}>
+    <div ref={containerRef} style={{height: 'auto', width: '100%', minHeight: '100%'}}>
       <MapContainer
         center={coords}
         zoom={13}

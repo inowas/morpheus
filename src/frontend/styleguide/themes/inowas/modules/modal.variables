@@ -7,10 +7,8 @@
 @zIndex: 1001;
 @borderRadius: @defaultBorderRadius;
 @transformOrigin: 50% 25%;
-@boxShadow:
-  1px 3px 3px 0px rgba(0, 0, 0, 0.2),
-  1px 3px 15px 2px rgba(0, 0, 0, 0.2)
-;
+@boxShadow: 1px 3px 3px 0px rgba(0, 0, 0, 0.2),
+1px 3px 15px 2px rgba(0, 0, 0, 0.2);
 
 /* Close Icon */
 @closeOpacity: 0.8;
@@ -70,7 +68,7 @@
 @mobileHeaderPadding: 0.75rem 1rem;
 @mobileContentPadding: 1rem;
 @mobileImagePadding: 0rem 0rem 1rem;
-@mobileDescriptionPadding: 1rem 0rem ;
+@mobileDescriptionPadding: 1rem 0rem;
 @mobileButtonDistance: 1rem;
 @mobileActionPadding: 1rem 1rem (1rem - @mobileButtonDistance);
 @mobileImageIconSize: 5rem;
@@ -82,7 +80,7 @@
 @tabletWidth: 88%;
 @computerWidth: 850px;
 @largeMonitorWidth: 900px;
-@widescreenMonitorWidth: 950px;
+@widescreenMonitorWidth: 1100px;
 
 @mobileMargin: 0em 0em 0em 0em;
 @tabletMargin: 0em 0em 0em 0em;
