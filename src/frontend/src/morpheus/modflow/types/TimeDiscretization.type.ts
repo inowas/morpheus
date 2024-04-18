@@ -13,7 +13,6 @@ export interface IStressPeriod {
 }
 
 export enum ITimeUnit {
-  UNDEFINED = 'undefined',
   SECONDS = 'seconds',
   MINUTES = 'minutes',
   HOURS = 'hours',

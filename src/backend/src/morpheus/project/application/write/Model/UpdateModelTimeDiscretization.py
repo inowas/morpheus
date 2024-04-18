@@ -30,7 +30,7 @@ class UpdateModelTimeDiscretizationCommand(CommandBase):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
-            time_discretization=TimeDiscretization.from_dict(payload['time_discretization']),
+            time_discretization=TimeDiscretization.from_dict(payload),
         )
 
 

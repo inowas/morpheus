@@ -3,7 +3,6 @@ import ProjectsFilter from './ProjectsFilter';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import {IFilterOptions} from 'morpheus/modflow/application/useProjectList';
-import {formatISO, subYears} from 'date-fns';
 
 const filterOptions: IFilterOptions = {
   number_of_my_projects: 10,
@@ -25,16 +24,16 @@ const filterOptions: IFilterOptions = {
   },
   by_date: {
     created_at: {
-      start_date: formatISO(subYears(new Date(), 8)),
-      end_date: formatISO(new Date()),
+      start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString(),
+      end_date: new Date().toISOString(),
     },
     updated_at: {
-      start_date: formatISO(subYears(new Date(), 2)),
-      end_date: formatISO(new Date()),
+      start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString(),
+      end_date: new Date().toISOString(),
     },
     model_date: {
-      start_date: formatISO(subYears(new Date(), 6)),
-      end_date: formatISO(new Date()),
+      start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString(),
+      end_date: new Date().toISOString(),
     },
   },
   boundary_conditions: {
