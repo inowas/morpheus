@@ -7,18 +7,19 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './TimeDiscretizationStressPeriods.module.less';
 import {IStressPeriod, ITimeDiscretization} from '../../../../types';
-import {useDateTimeFormat} from '../../../../application';
+import {useDateTimeFormat} from 'common/hooks';
 import Papa from 'papaparse';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (value: ITimeDiscretization) => void;
   readOnly: boolean;
+  timeZone?: string;
 }
 
-const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, onChange, readOnly}) => {
+const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, onChange, readOnly, timeZone}) => {
 
-  const {addDays, formatISO, formatISODate, isValid} = useDateTimeFormat();
+  const {addDays, formatISO, formatISODate, isValid} = useDateTimeFormat(timeZone);
 
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const [showNotification, setShowNotification] = useState(false);

@@ -6,18 +6,19 @@ import {StressperiodsUpload} from './StressperiodsUpload';
 import {IStressPeriod, ITimeDiscretization} from '../../../types';
 import {Button, DataGrid, SectionTitle} from 'common/components';
 import cloneDeep from 'lodash.clonedeep';
-import {useDateTimeFormat} from '../../../application';
+import {useDateTimeFormat} from 'common/hooks';
 
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (data: ITimeDiscretization) => void;
   loading: boolean;
+  timeZone?: string;
 }
 
-const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IProps) => {
+const TimeDiscretizationContent = ({timeDiscretization, onChange, loading, timeZone}: IProps) => {
 
-  const {addDays, isValid, formatISO} = useDateTimeFormat();
+  const {addDays, isValid, formatISO} = useDateTimeFormat(timeZone);
 
   const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(timeDiscretization);
 

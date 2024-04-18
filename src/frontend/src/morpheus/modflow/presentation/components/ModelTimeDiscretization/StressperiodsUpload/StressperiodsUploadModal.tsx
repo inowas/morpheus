@@ -5,7 +5,7 @@ import {Button, Modal, Notification, SectionTitle} from 'common/components';
 import {Checkbox, Form, Icon, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';
 import {IStressPeriod} from '../../../../types';
-import {useDateTimeFormat} from '../../../../application';
+import {useDateTimeFormat} from 'common/hooks';
 
 
 interface IProps {
@@ -13,19 +13,20 @@ interface IProps {
   rawData: any[][];
   onSubmit: (stressPeriods: IStressPeriod[]) => void
   onCancel: () => void;
+  timeZone?: string;
 }
 
 interface IIndexedColumn extends IColumn {
   colIdx: number;
 }
 
-const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel}: IProps) => {
+const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZone}: IProps) => {
   const [columnOrder, setColumnOrder] = useState<IIndexedColumn[]>(columns.map((c, idx) => ({...c, colIdx: idx})));
   const [dateTimeFormat, setDateTimeFormat] = useState<string>('dd.MM.yyyy');
   const [firstRowIsHeader, setFirstRowIsHeader] = useState<boolean>(true);
   const [stressPeriods, setStressPeriods] = useState<IStressPeriod[] | null>(null);
 
-  const {format, isValid, parseUserInput} = useDateTimeFormat();
+  const {format, isValid, parseUserInput} = useDateTimeFormat(timeZone);
 
   useEffect(() => {
     const parsedData: IStressPeriod[] = [];

@@ -3,7 +3,6 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {useApi, useAuthentication} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
-import useDateTimeFormat from './useDateTimeFormat';
 
 interface IUseProjectList {
   projects: IProjectListItem[];
@@ -139,7 +138,6 @@ const useProjectList = (): IUseProjectList => {
   const [error, setError] = useState<IError | null>(null);
 
   const {sendCommand} = useProjectCommandBus();
-  const {} = useDateTimeFormat();
 
   const {userProfile} = useAuthentication();
   const myUserId = userProfile?.sub || '';

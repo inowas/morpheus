@@ -8,7 +8,7 @@ import {useNavbarItems} from '../../../application/application';
 import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useAuthentication} from '../../incoming';
-import {useDateTimeFormat} from '../../application';
+import {useDateTimeFormat} from 'common/hooks';
 
 interface IProps {
   basePath: string;

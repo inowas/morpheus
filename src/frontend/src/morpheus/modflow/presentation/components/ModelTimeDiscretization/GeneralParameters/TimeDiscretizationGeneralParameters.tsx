@@ -4,16 +4,17 @@ import React, {useMemo} from 'react';
 import {DataGrid} from 'common/components/DataGrid';
 import styles from './TimeDiscretizationGeneralParameters.module.less';
 import {ITimeDiscretization, ITimeUnit} from '../../../../types';
-import {useDateTimeFormat} from '../../../../application';
+import {useDateTimeFormat} from 'common/hooks';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (data: ITimeDiscretization) => void;
+  timeZone?: string;
 }
 
-const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange}) => {
+const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange, timeZone}) => {
 
-  const {isValid, formatISO, getUnixTimestamp, formatISODate} = useDateTimeFormat();
+  const {isValid, formatISO, getUnixTimestamp, formatISODate} = useDateTimeFormat(timeZone);
 
   const handleChangeStartDateTime = (value: string) => {
     const dateValue = formatISO(value);
@@ -36,19 +37,16 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
   };
 
   const timeUnitOptions = [
-    {key: ITimeUnit.UNDEFINED, text: 'Undefined', value: 0},
-    {key: ITimeUnit.SECONDS, text: 'Seconds', value: 1},
-    {key: ITimeUnit.MINUTES, text: 'Minutes', value: 2},
-    {key: ITimeUnit.HOURS, text: 'Hours', value: 3},
-    {key: ITimeUnit.DAYS, text: 'Days', value: 4},
-    {key: ITimeUnit.YEARS, text: 'Years', value: 5},
+    {key: ITimeUnit.SECONDS, text: 'Seconds', value: ITimeUnit.SECONDS},
+    {key: ITimeUnit.MINUTES, text: 'Minutes', value: ITimeUnit.MINUTES},
+    {key: ITimeUnit.HOURS, text: 'Hours', value: ITimeUnit.HOURS},
+    {key: ITimeUnit.DAYS, text: 'Days', value: ITimeUnit.DAYS},
+    {key: ITimeUnit.YEARS, text: 'Years', value: ITimeUnit.YEARS},
   ];
 
   const calculatedTotalTime = useMemo(() => {
     const seconds = (getUnixTimestamp(timeDiscretization.end_date_time) - getUnixTimestamp(timeDiscretization.start_date_time)) / 1000;
     switch (timeDiscretization.time_unit) {
-    case ITimeUnit.UNDEFINED:
-      return 'undefined';
     case ITimeUnit.SECONDS:
       return seconds;
     case ITimeUnit.MINUTES:
@@ -62,6 +60,8 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     default:
       return 0;
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeDiscretization.start_date_time, timeDiscretization.end_date_time, timeDiscretization.time_unit]);
 
   return (

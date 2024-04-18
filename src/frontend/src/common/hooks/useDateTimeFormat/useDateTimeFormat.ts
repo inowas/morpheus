@@ -10,37 +10,35 @@ interface IUseDateTimeFormat {
   parseUserInput: (isoDateString: string, formatString: string) => string;
 }
 
-const useDateTimeFormat = (): IUseDateTimeFormat => {
-
-  const defaultTimeZone = 'UTC';
+const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFormat => {
 
   const addDays = (dateString: string, days: number): string => {
-    return DateTime.fromISO(dateString).setZone(defaultTimeZone).plus({days}).toISO() as string;
+    return DateTime.fromISO(dateString).setZone(timezone).plus({days}).toISO() as string;
   };
 
   // returns the Unix timestamp of the given date string in milliseconds
   const getUnixTimestamp = (dateString: string): number => {
-    return DateTime.fromISO(dateString).setZone(defaultTimeZone).toMillis();
+    return DateTime.fromISO(dateString).setZone(timezone).toMillis();
   };
 
   const format = (dateString: string, formatString: string): string => {
-    return DateTime.fromISO(dateString).setZone(defaultTimeZone).toFormat(formatString);
+    return DateTime.fromISO(dateString).setZone(timezone).toFormat(formatString);
   };
 
   const formatISO = (dateString: string): string => {
-    return DateTime.fromISO(dateString).setZone(defaultTimeZone).toISO() as string;
+    return DateTime.fromISO(dateString).setZone(timezone).toISO() as string;
   };
 
   const formatISODate = (dateString: string): string => {
-    return DateTime.fromISO(dateString).setZone(defaultTimeZone).toFormat('yyyy-MM-dd');
+    return DateTime.fromISO(dateString).setZone(timezone).toFormat('yyyy-MM-dd');
   };
 
   const isValid = (dateString: string): boolean => {
-    return DateTime.fromISO(dateString).setZone(defaultTimeZone).isValid;
+    return DateTime.fromISO(dateString).setZone(timezone).isValid;
   };
 
   const parseUserInput = (isoDateString: string, formatString: string): string => {
-    return DateTime.fromFormat(isoDateString, formatString, {zone: defaultTimeZone}).toISO() as string;
+    return DateTime.fromFormat(isoDateString, formatString, {zone: timezone}).toISO() as string;
   };
 
   return {
