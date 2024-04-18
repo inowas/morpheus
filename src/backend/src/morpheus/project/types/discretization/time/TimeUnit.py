@@ -28,8 +28,8 @@ class TimeUnit:
         return cls.from_int(number=cls.__dict__[value.upper()])
 
     @classmethod
-    def from_value(cls, value: int):
-        return cls.from_int(number=value)
+    def from_value(cls, value: str):
+        return cls.from_str(value)
 
     @classmethod
     def from_default(cls):
@@ -58,5 +58,19 @@ class TimeUnit:
     def to_int(self) -> int:
         return self.unit
 
-    def to_value(self) -> int:
-        return self.to_int()
+    def to_value(self) -> str:
+        return self.to_str()
+
+    def to_str(self) -> str:
+        if self.unit == self.SECONDS:
+            return 'seconds'
+        if self.unit == self.MINUTES:
+            return 'minutes'
+        if self.unit == self.HOURS:
+            return 'hours'
+        if self.unit == self.DAYS:
+            return 'days'
+        if self.unit == self.YEARS:
+            return 'years'
+
+        raise ValueError('Invalid time unit')
