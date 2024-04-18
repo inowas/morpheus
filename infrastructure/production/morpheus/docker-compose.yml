@@ -86,7 +86,7 @@ services:
       #- ./cron/jobs/weekly:/etc/periodic/weekly:ro
       #- ./cron/jobs/monthly:/etc/periodic/monthly:ro
       # inject docker socket
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_SOCKET}:/var/run/docker.sock
     command: crond -f -l 8
   mongodb_backend:
     image: mongo:7.0
