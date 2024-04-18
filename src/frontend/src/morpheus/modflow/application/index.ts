@@ -1,4 +1,4 @@
-import useAssets, {IAssetId} from "./useAssets";
+import useAssets, {IAssetId} from './useAssets';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useNavbarItems from './useNavbarItems';

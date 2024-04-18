@@ -1,22 +1,21 @@
 import * as L from 'leaflet';
 
 import React, {useEffect, useRef} from 'react';
-
+import {Map} from 'common/components/Map';
 import type {Polygon} from 'geojson';
 import {FeatureGroup, GeoJSON, useMap} from 'react-leaflet';
 import {GeomanControls} from 'common/components/Map';
 
 
-interface Props {
+interface IProps {
   editable?: boolean
   polygon?: Polygon
   onChange: (polygon: Polygon) => void
 }
 
-const ShowCreateOrEditPolygon = ({polygon, onChange, editable}: Props) => {
+const ModelSetupMap = ({polygon, onChange, editable}: IProps) => {
   const ref = useRef<L.FeatureGroup>(L.featureGroup());
   const map = useMap();
-
 
   const handleChange = () => {
     const layer = ref.current.getLayers().find((l) => l instanceof L.Polygon);
@@ -70,9 +69,19 @@ const ShowCreateOrEditPolygon = ({polygon, onChange, editable}: Props) => {
         onDragEnd={handleChange}
         onMarkerDragEnd={handleChange}
       />}
-      {polygon && <GeoJSON data={polygon}/>}
+      {polygon && <GeoJSON
+        key={JSON.stringify(polygon)}
+        data={polygon}
+      />}
     </FeatureGroup>
   );
 };
 
-export default ShowCreateOrEditPolygon;
+const MapWrapper = (props: IProps) => (
+  <Map>
+    <ModelSetupMap{...props} />
+  </Map>
+);
+
+
+export default MapWrapper;

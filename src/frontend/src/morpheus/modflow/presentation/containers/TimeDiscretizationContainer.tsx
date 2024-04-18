@@ -25,6 +25,7 @@ const TimeDiscretizationContainer = () => {
           timeDiscretization={timeDiscretization}
           onChange={updateTimeDiscretization}
           loading={loading}
+          timeZone={'UTC'}
         />
       </SidebarContent>
       <BodyContent>

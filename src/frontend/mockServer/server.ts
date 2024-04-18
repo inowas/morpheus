@@ -13,7 +13,7 @@ export function makeServer({environment = 'test'} = {}) {
     environment,
     routes() {
       this.timing = 100;
-      this.namespace = 'api/v1';
+      this.namespace = '';
 
       this.get('projects', (schema) => {
         const projectSummaries: IProjectListItem[] = schema.db.projects.map(
@@ -52,10 +52,24 @@ export function makeServer({environment = 'test'} = {}) {
         });
       });
 
-      this.get('projects/:id/metadata', (schema, request) => {
-        const id = request.params.id;
-        const metadata = getProjectMetadata(id);
+      this.post('projects/messagebox', (schema, request) => {
+        return new Response(204);
+      });
+
+      this.get('projects/:projectId/metadata', (schema, request) => {
+        const projectId = request.params.projectId;
+        const metadata = getProjectMetadata(projectId);
         return new Response(200, {}, metadata);
+      });
+
+      this.get('projects/:projectId/model', (schema, request) => {
+        const projectId = request.params.projectId;
+        const project = schema.db.projects.findBy({project_id: projectId}) as IProject | undefined;
+        if (!project) {
+          return new Response(404, {}, {message: 'Project not found'});
+        }
+
+        return new Response(200, {}, project.model);
       });
 
       this.post('projects/:projectId/model', (schema, request) => {

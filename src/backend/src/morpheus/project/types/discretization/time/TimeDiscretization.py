@@ -12,9 +12,7 @@ class TimeDiscretization:
     stress_periods: StressPeriodCollection
     time_unit: TimeUnit
 
-    def __init__(self, start_date_time: StartDateTime, end_date_time: EndDateTime,
-                 stress_periods: StressPeriodCollection,
-                 time_unit: TimeUnit):
+    def __init__(self, start_date_time: StartDateTime, end_date_time: EndDateTime, stress_periods: StressPeriodCollection, time_unit: TimeUnit):
         self.start_date_time = start_date_time
         self.end_date_time = end_date_time
         self.stress_periods = stress_periods
