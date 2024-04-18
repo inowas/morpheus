@@ -2,50 +2,53 @@ import React, {useEffect, useState} from 'react';
 import {Accordion, AccordionPanelProps} from 'semantic-ui-react';
 import TimeDiscretizationGeneralParameters from './GeneralParameters';
 import TimeDiscretizationStressPeriods from './StressPeriods';
+import {StressperiodsUpload} from './StressperiodsUpload';
 import {IStressPeriod, ITimeDiscretization} from '../../../types';
-import {addDays, isValid, parseISO} from 'date-fns';
 import {Button, DataGrid, SectionTitle} from 'common/components';
+import cloneDeep from 'lodash.clonedeep';
+import {useDateTimeFormat} from 'common/hooks';
+
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (data: ITimeDiscretization) => void;
   loading: boolean;
+  timeZone?: string;
 }
 
-const withSortedStressPeriods = (td: ITimeDiscretization): ITimeDiscretization => {
-  return {
-    ...td, stress_periods: td.stress_periods.sort((a: IStressPeriod, b: IStressPeriod) => {
-      const dateA = parseISO(a.start_date_time);
-      const dateB = parseISO(b.start_date_time);
-      if (!isValid(dateA)) return 1; // Move items with null dates to the end
-      if (!isValid(dateB)) return -1; // Move items with null dates to the end
-      return dateA.getTime() - dateB.getTime();
-    }),
-  };
-};
+const TimeDiscretizationContent = ({timeDiscretization, onChange, loading, timeZone}: IProps) => {
 
+  const {addDays, isValid, formatISO} = useDateTimeFormat(timeZone);
 
-const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IProps) => {
-
-  const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(
-    withSortedStressPeriods(timeDiscretization),
-  );
+  const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization>(timeDiscretization);
 
   useEffect(() => {
-    setTimeDiscretizationLocal(withSortedStressPeriods(timeDiscretization));
+    setTimeDiscretizationLocal(timeDiscretization);
   }, [timeDiscretization]);
 
   const handleTimeDiscretizationChange = (td: ITimeDiscretization) => {
-    const newTimeDiscretization = withSortedStressPeriods(td);
-    const startDateTime = parseISO(newTimeDiscretization.stress_periods[0].start_date_time);
-    newTimeDiscretization.start_date_time = startDateTime.toISOString();
+    const updatedTimeDiscretization = cloneDeep(td);
 
-    const endDateTime = addDays(parseISO(newTimeDiscretization.stress_periods[newTimeDiscretization.stress_periods.length - 1].start_date_time), 1);
-    const currentEndDateTime = parseISO(newTimeDiscretization.end_date_time);
-    if (currentEndDateTime.getTime() < endDateTime.getTime()) {
-      newTimeDiscretization.end_date_time = endDateTime.toISOString();
+    const newStartDateTime = updatedTimeDiscretization.stress_periods[0].start_date_time;
+    if (!isValid(newStartDateTime)) {
+      return;
     }
-    setTimeDiscretizationLocal(newTimeDiscretization);
+    updatedTimeDiscretization.start_date_time = formatISO(newStartDateTime);
+
+    const lastStartDateTime = updatedTimeDiscretization.stress_periods[updatedTimeDiscretization.stress_periods.length - 1].start_date_time;
+    if (!isValid(lastStartDateTime)) {
+      return;
+    }
+
+    updatedTimeDiscretization.end_date_time = addDays(lastStartDateTime, 1);
+    setTimeDiscretizationLocal(updatedTimeDiscretization);
+  };
+
+  const handleStressPeriodsUpload = (stressPeriods: IStressPeriod[]) => {
+    handleTimeDiscretizationChange({
+      ...timeDiscretizationLocal,
+      stress_periods: stressPeriods,
+    });
   };
 
   const handleSubmit = () => {
@@ -75,11 +78,14 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
     },
     content: {
       content: (
-        <TimeDiscretizationStressPeriods
-          timeDiscretization={timeDiscretizationLocal}
-          onChange={handleTimeDiscretizationChange}
-          readOnly={false}
-        />
+        <>
+          <StressperiodsUpload onSubmit={handleStressPeriodsUpload} stressPeriods={timeDiscretizationLocal.stress_periods}/>
+          <TimeDiscretizationStressPeriods
+            timeDiscretization={timeDiscretizationLocal}
+            onChange={handleTimeDiscretizationChange}
+            readOnly={false}
+          />
+        </>
       ),
     },
   }];
@@ -104,3 +110,4 @@ const TimeDiscretizationContent = ({timeDiscretization, onChange, loading}: IPro
 };
 
 export default TimeDiscretizationContent;
+

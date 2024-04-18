@@ -62,6 +62,7 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       if (!firstRowIsHeader || (firstRowIsHeader && 0 < rKey)) {
         const row = columns.map((c) => {
           if (c.type === ECsvColumnType.DATE_TIME) {
+            console.log(moment.utc(r[parameterColumns[c.value]], dateTimeFormat));
             return moment.utc(r[parameterColumns[c.value]], dateTimeFormat);
           }
           if (c.type === ECsvColumnType.BOOLEAN) {
