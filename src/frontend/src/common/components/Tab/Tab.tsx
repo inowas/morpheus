@@ -6,11 +6,11 @@ export type ITabProps = {
   activeIndex?: number | string;
   className?: string;
   defaultActiveIndex?: number | string;
-  menu?: any;
+  menu?: TabProps['menu'];
   grid?: { rows: number; columns: number };
   menuPosition?: 'left' | 'right';
   onTabChange?: (event: React.MouseEvent<HTMLDivElement>, data: TabProps) => void;
-  panes?: any;
+  panes?: TabProps['panes'];
   renderActiveOnly?: boolean;
   style?: React.CSSProperties;
   variant?: 'primary' | 'secondary' | null;

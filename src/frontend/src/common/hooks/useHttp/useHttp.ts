@@ -133,7 +133,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
         url: url,
         withCredentials: false,
         validateStatus: (status) => 201 === status || 202 === status || 204 === status,
-        data: data
+        data: data,
       });
       return Ok({
         location: response?.headers?.location,

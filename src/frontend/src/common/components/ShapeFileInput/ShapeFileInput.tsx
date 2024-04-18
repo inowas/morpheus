@@ -1,10 +1,11 @@
-import React, {createRef, useState} from 'react';
+import React, {createRef} from 'react';
 
 import Button from 'common/components/Button/Button';
 import JSZip from 'jszip';
 
 interface IShapeFileInput {
-  onChangeFile: (zipFile: File) => void;
+  onSubmit: (zipFile: File) => void;
+  error?: string;
 }
 
 /*
@@ -12,7 +13,7 @@ Component for uploading shape files as zip file
 The user can select multiple files and the component will compress them into a zip file
 or upload the zip file if it is already a zip file
  */
-const ShapeFileInput = ({onChangeFile}: IShapeFileInput) => {
+const ShapeFileInput = ({onSubmit, error}: IShapeFileInput) => {
 
   const fileInputRef = createRef<HTMLInputElement>();
 
@@ -20,26 +21,27 @@ const ShapeFileInput = ({onChangeFile}: IShapeFileInput) => {
     // Check if the file is a zip file and return this file directly
     const zipFile = files.find((file) => file.name.endsWith('.zip'));
     if (zipFile) {
-      onChangeFile(zipFile);
+      onSubmit(zipFile);
     }
 
     // if no zip file is found, compress the files and upload the zip file
     if (!zipFile) {
       const zip = new JSZip();
-      files.forEach((file, idx) => zip.file(`${file.name}`, file));
+      files.forEach((file) => zip.file(`${file.name}`, file));
       const zipContent = await zip.generateAsync({type: 'blob'});
       const file = new File([zipContent], 'shapefile.zip', {type: 'application/zip'});
-      onChangeFile(file);
+      onSubmit(file);
     }
   };
 
   return (
     <>
       <Button
-        content={'Upload file'}
+        content={'Upload Shapefile'}
         onClick={() => fileInputRef.current?.click()}
         size={'tiny'}
       />
+      {error && <div style={{color: 'red'}}>{error}</div>}
       <input
         ref={fileInputRef}
         type={'file'}
