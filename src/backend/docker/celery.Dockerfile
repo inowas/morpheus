@@ -19,7 +19,7 @@ ENV PYTHONUNBUFFERED 1
 
 # create system user celery
 RUN addgroup --system celery && adduser --system --group celery
-RUN groupmod -g ${CELERY_USER_ID} celery
+RUN groupmod -g ${CELERY_GROUP_ID} celery
 RUN usermod -u ${CELERY_USER_ID} -g ${CELERY_GROUP_ID} celery
 
 
