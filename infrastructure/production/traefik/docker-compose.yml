@@ -27,7 +27,7 @@ services:
       - "--certificatesresolvers.tud-resolver.acme.eab.hmacencoded=${TRAEFIK_ACME_TUD_EAB_HMAC_ENCODED}"
       - "--certificatesresolvers.tud-resolver.acme.storage=/etc/traefik/acme/acme_tud.json"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_SOCKET}:/var/run/docker.sock
       - ./acme:/etc/traefik/acme
       - ./config.yml:/etc/traefik/config.yml:ro
       - ./logs:/var/logs/traefik
