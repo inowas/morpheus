@@ -49,8 +49,6 @@ label.labelSmall,
   letter-spacing: 0px;
   line-height: 18px;
   text-align: left;
-  background: transparent;
-  padding: 0;
   width: 100%;
 
   i.info {
@@ -131,6 +129,12 @@ label.labelSmall,
   .icon {
     display: none;
   }
+}
+
+.disabled input {
+  color: inherit !important;
+  opacity: inherit !important;
+  background-color: inherit !important;
 }
 
 .field textarea {

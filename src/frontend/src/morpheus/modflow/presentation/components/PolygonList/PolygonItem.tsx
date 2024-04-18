@@ -1,18 +1,7 @@
 import {Accordion, Icon, MenuItem, TabPane} from 'semantic-ui-react';
 import {Button, DataGrid, InfoTitle, MovableAccordionList, SectionTitle, Tab} from 'common/components';
 import React, {useState} from 'react';
-import {PolygonList} from '../PolygonList';
 
-const polygons = [
-  {name: 'Green Land', coordinates: 732.46},
-  {name: 'Red Land', coordinates: 536.21},
-  {name: 'Blue Land', coordinates: 93.22},
-  {name: 'Yellow Land', coordinates: 452.00},
-  {name: 'Purple Land', coordinates: 621.67},
-  {name: 'Orange Land', coordinates: 732.46},
-  {name: 'Cyan Land', coordinates: 93.22},
-  {name: 'Magenta Land', coordinates: 2.46},
-];
 const panelsPrimaryV3 = [
   {
     menuItem: 'Upload shapefile',
@@ -20,9 +9,7 @@ const panelsPrimaryV3 = [
   },
   {
     menuItem: 'Polygons',
-    render: () => <TabPane attached={false}>
-      <PolygonList polygons={polygons}/>
-    </TabPane>,
+    render: () => <TabPane attached={false}> 3dasd </TabPane>,
   },
 ];
 const panelsPrimaryV4 = [
