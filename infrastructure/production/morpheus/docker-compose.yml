@@ -64,9 +64,9 @@ services:
     restart: always
     user: flask
     volumes:
-      - morpheus_project_asset_data:${BACKEND_MORPHEUS_PROJECT_ASSET_DATA}:rw
-      - morpheus_project_calculation_data:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
-      - morpheus_sensor_data:${BACKEND_MORPHEUS_SENSOR_LOCAL_DATA}:rw
+      - morpheus_project_asset_data:/mnt/project/assets
+      - morpheus_project_calculation_data:/mnt/project/calculations
+      - morpheus_sensor_data:/mnt/sensors
   cron:
     image: inowas/cron:latest
     restart: always
@@ -141,7 +141,7 @@ services:
     env_file:
       - .env
     volumes:
-      - morpheus_project_calculation_data:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
+      - morpheus_project_calculation_data:/mnt/project/calculations
     tmpfs:
       - /tmp:mode=777,size=200m
     restart: always

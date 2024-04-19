@@ -48,7 +48,6 @@ function prepareBackendEnvFile {
 
    # prepare .env file for backend (overwriting vars for dev environment)
   cp "$localInfrastructureRoot/.env" "$backendEnvFile.tmp" \
-    && sed -i.bak -e "/BACKEND_MORPHEUS_SENSOR_LOCAL_DATA/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_POSTGRES_HOST/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_MONGO_HOST/d" -- "$backendEnvFile.tmp" \
     && sed -i.bak -e "/BACKEND_APP_ROOT_PATH/d" -- "$backendEnvFile.tmp" \

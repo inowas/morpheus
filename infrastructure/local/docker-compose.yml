@@ -67,9 +67,9 @@ services:
       - BACKEND_APP_ROOT_PATH=/app
       - MPLCONFIGDIR=/tmp
     volumes:
-      - ${LOCAL_PROJECT_ASSET_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_ASSET_DATA}:rw
-      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
-      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_SENSOR_LOCAL_DATA}:rw
+      - ${LOCAL_PROJECT_ASSET_DATA_MOUNTPOINT}:/mnt/project/assets
+      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:/mnt/project/calculations
+      - ${LOCAL_SENSOR_DATA_MOUNTPOINT}:/mnt/sensors
     tmpfs:
       - /tmp:mode=777,size=200m
       - /var/cache:mode=777,size=200m
@@ -266,7 +266,7 @@ services:
     environment:
       - BACKEND_APP_ROOT_PATH=/app
     volumes:
-      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:${BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA}:rw
+      - ${LOCAL_PROJECT_CALCULATION_DATA_MOUNTPOINT}:/mnt/project/calculations
     tmpfs:
       - /tmp:mode=777,size=200m
     restart: always
