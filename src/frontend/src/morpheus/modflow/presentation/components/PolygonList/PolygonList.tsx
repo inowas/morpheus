@@ -55,24 +55,22 @@ const PolygonList = ({polygons}: IProps) => {
           <Table.Body>
             {polygonData.map((polygon, index) => (
               <Table.Row key={index}>
-                <Table.Cell width={8}>
-                  <div className={styles.name}>
-                    <Checkbox
-                      checked={selectedPolygons.includes(polygon.name)}
-                      onChange={() => handleCheckboxChange(polygon.name)}
-                    />
-                    {polygon.name}
-                  </div>
+                <Table.Cell width={9}>
+                  <Checkbox
+                    className={styles.checkbox}
+                    label={polygon.name}
+                    name={polygon.name}
+                    checked={selectedPolygons.includes(polygon.name)}
+                    onChange={() => handleCheckboxChange(polygon.name)}
+                  />
                 </Table.Cell>
-                <Table.Cell width={6}>
-                  <div className="">
-                    <input
-                      type="number"
-                      value={polygon.coordinates}
-                      onChange={(e) => handleCoordinateChange(index, parseFloat(e.target.value))}
-                      step={0.1}
-                    />
-                  </div>
+                <Table.Cell width={5}>
+                  <input
+                    type="number"
+                    value={polygon.coordinates}
+                    onChange={(e) => handleCoordinateChange(index, parseFloat(e.target.value))}
+                    step={0.1}
+                  />
                 </Table.Cell>
                 <Table.Cell width={2}>
                   <DotsMenu
