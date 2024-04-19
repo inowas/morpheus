@@ -1,4 +1,3 @@
-version: "3"
 services:
   sonarqube:
     image: davealdon/sonarqube-with-docker-and-m1-macs:latest

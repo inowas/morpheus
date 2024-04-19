@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   traefik:
     image:
@@ -56,7 +55,6 @@ services:
       args:
         - FLASK_USER_ID=${FLASK_USER_ID}
         - FLASK_GROUP_ID=${FLASK_GROUP_ID}
-        - DOCKERFILE_BUILD_BASE_STAGE=local_base
     container_name: ${COMPOSE_PROJECT_NAME}-backend
     depends_on:
       mongodb_backend:
@@ -259,7 +257,6 @@ services:
       args:
         - CELERY_USER_ID=${CELERY_USER_ID}
         - CELERY_GROUP_ID=${CELERY_GROUP_ID}
-        - DOCKERFILE_BUILD_BASE_STAGE=local_base
     container_name: ${COMPOSE_PROJECT_NAME}-celery_worker
     depends_on:
       backend:

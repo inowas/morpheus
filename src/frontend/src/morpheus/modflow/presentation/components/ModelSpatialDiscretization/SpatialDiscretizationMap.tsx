@@ -16,7 +16,7 @@ interface IProps {
   gridGeometry?: FeatureCollection
   editModelGeometry?: boolean
   modelGeometry?: Polygon
-  onChangeModelGeometry: (polygon: Polygon) => void
+  onChangeModelGeometry?: (polygon: Polygon) => void
 }
 
 const emptyFeatureCollection: FeatureCollection = {
@@ -201,11 +201,15 @@ const SpatialDiscretizationMap = ({
     if (layer instanceof L.Polygon) {
       const feature = layer.toGeoJSON();
       if (feature.geometry && 'Polygon' === feature.geometry.type) {
-        onChangeModelGeometry(feature.geometry as Polygon);
-        map.fitBounds(layer.getBounds());
+        if (onChangeModelGeometry) {
+          onChangeModelGeometry(feature.geometry);
+          map.fitBounds(layer.getBounds());
+        }
       }
     }
   };
+
+  const showGeometryOnly = !editModelGeometry && !editAffectedCells;
 
   return (
     <>
@@ -237,9 +241,9 @@ const SpatialDiscretizationMap = ({
         {modelGeometry && <LeafletPolygon
           key={editModelGeometry ? 'edit_geometry' : 'view_geometry'}
           positions={modelGeometry.coordinates[0].map((c) => [c[1], c[0]])}
-          fill={false}
-          weight={editModelGeometry ? 2 : 1}
-          opacity={editModelGeometry ? 1 : 0.5}
+          fill={showGeometryOnly}
+          weight={(editModelGeometry || showGeometryOnly) ? 2 : 1}
+          opacity={(editModelGeometry) ? 1 : 0.5}
         />}
       </FeatureGroup>
 
