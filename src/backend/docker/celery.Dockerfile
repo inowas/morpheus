@@ -22,6 +22,12 @@ RUN addgroup --system celery && adduser --system --group celery
 RUN groupmod -g ${CELERY_GROUP_ID} celery
 RUN usermod -u ${CELERY_USER_ID} -g ${CELERY_GROUP_ID} celery
 
+# prepare mount points to be not mounted as root in the container (see https://github.com/moby/moby/issues/2259)
+# other docker containers do this as well (e.g. mongodb sets the user to mongodb for mount point /data/db)
+# so this seems to be the current best practice to solve permission errors when running containers as non-root
+RUN mkdir -p /mnt/project/calculations
+RUN chown -R celery:celery /mnt
+
 
 FROM base as celery_worker
 ARG BACKEND_APP_ROOT_PATH
