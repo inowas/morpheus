@@ -266,7 +266,7 @@ class Grid:
 
     def row_geometries(self) -> list[Feature]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
-        n_cols, n_rows = self.n_cols(), self.n_rows()
+        n_rows = self.n_rows()
         features = np.empty(n_rows, dtype=Polygon)
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
@@ -289,7 +289,7 @@ class Grid:
 
     def column_geometries(self) -> list[Feature]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
-        n_cols, n_rows = self.n_cols(), self.n_rows()
+        n_cols = self.n_cols()
         features = np.empty(n_cols, dtype=Polygon)
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
@@ -304,7 +304,7 @@ class Grid:
                 (origin_3857_x + col_coordinates[col], origin_3857_y),
             ))
 
-            rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
             features[col] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'col': col, 'type': 'col'})
 

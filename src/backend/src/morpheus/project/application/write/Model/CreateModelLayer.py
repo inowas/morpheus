@@ -6,7 +6,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.soil_model.Layer import LayerName, LayerDescription, LayerType, LayerData, LayerId
+from morpheus.project.types.soil_model.Layer import LayerName, LayerDescription, LayerType, LayerProperties, LayerId
 
 
 class CreateModelLayerCommandPayload(TypedDict):
@@ -33,7 +33,7 @@ class CreateModelLayerCommand(CommandBase):
     name: LayerName
     description: LayerDescription
     type: LayerType
-    data: LayerData
+    data: LayerProperties
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: CreateModelLayerCommandPayload):
@@ -45,7 +45,7 @@ class CreateModelLayerCommand(CommandBase):
             name=LayerName.from_str(payload['name']),
             description=LayerDescription.from_str(payload['description']),
             type=LayerType.from_str(payload['type']),
-            data=LayerData.from_dict({
+            data=LayerProperties.from_dict({
                 'kx': payload['kx'],
                 'ky': payload['ky'],
                 'kz': payload['kz'],

@@ -38,20 +38,20 @@ class SoilModel:
         return len(self.layers)
 
     def top(self):
-        top = self.layers[0].data.top
+        top = self.layers[0].properties.top.get_data() if self.layers[0].properties.top else None
         if top is not None:
             return top
 
         raise ValueError("Top of first layer is not set")
 
     def bottom(self):
-        return self.layers[-1].data.bottom
+        return self.layers[-1].properties.bottom.get_data()
 
     def initial_heads(self):
-        return [layer.data.initial_head for layer in self.layers]
+        return [layer.properties.initial_head.get_data() for layer in self.layers]
 
     def bottoms(self):
-        return [layer.data.bottom for layer in self.layers]
+        return [layer.properties.bottom.get_data() for layer in self.layers]
 
     def get_layer_ids(self) -> list[LayerId]:
         return [layer.id for layer in self.layers]

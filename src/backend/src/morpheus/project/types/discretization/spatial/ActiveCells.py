@@ -254,6 +254,12 @@ class ActiveCells:
 
         return GeometryCollection(geometries=cell_geometries)
 
+    def to_mask(self) -> np.ndarray:
+        raster_data = np.full(shape=self.shape, fill_value=False, dtype=bool)
+        for cell in self.data:
+            raster_data[cell.row, cell.col] = True
+        return raster_data
+
     def outline_to_geojson(self, grid: Grid) -> Feature:
         geometries = self.to_geojson(grid).geometries
         geometries = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]

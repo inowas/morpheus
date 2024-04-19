@@ -48,7 +48,7 @@ class UitCsvFileReader:
             raise EmptyCsvFileException(f"File {self.file_path} is empty")
         except ParsingHeaderErrorException:
             raise ParsingHeaderErrorException(f"Could not parse header of file {self.file_path}")
-        except Exception as e:
+        except Exception:
             raise ParsingCsvErrorException(f"Could not parse datetime of file {self.file_path}")
 
     def to_dataframe(self) -> pd.DataFrame:

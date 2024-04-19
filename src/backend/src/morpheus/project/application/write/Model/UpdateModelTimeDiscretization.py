@@ -15,9 +15,19 @@ from morpheus.project.types.User import UserId
 from morpheus.project.types.discretization import TimeDiscretization
 
 
+class StressPeriod(TypedDict):
+    start_date_time: str
+    end_date_time: str
+    number_of_time_steps: int
+    steady_state: bool
+
+
 class UpdateModelTimeDiscretizationCommandPayload(TypedDict):
     project_id: str
-    time_discretization: dict
+    start_date_time: str
+    end_date_time: str
+    stress_periods: list[StressPeriod]
+    time_unit: dict
 
 
 @dataclasses.dataclass(frozen=True)
@@ -30,7 +40,12 @@ class UpdateModelTimeDiscretizationCommand(CommandBase):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
-            time_discretization=TimeDiscretization.from_dict(payload),
+            time_discretization=TimeDiscretization.from_dict({
+                'start_date_time': payload['start_date_time'],
+                'end_date_time': payload['end_date_time'],
+                'stress_periods': payload['stress_periods'],
+                'time_unit': payload['time_unit']
+            }),
         )
 
 
