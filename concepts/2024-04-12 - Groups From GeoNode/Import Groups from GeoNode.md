@@ -4,8 +4,8 @@ In Morpheus we want to be able to have groups of users. This helps us in managin
 In GeoNode exists the possibility to create and manage groups. Our users for Morpheus and GeoNode authenticate using
 our Keycloak identity provider.
 
-As the users are the same (identified by Keaycloak uuid) in Morpheus and GeoNode we can use the groups from GeoNode
-in Morpheus. Our idea is to import the groups manually from GeoNode into Morpheus by using the GeoNode API.
+As the users exist in Keycloak and are used in Morpheus, and Groups are managed in GeoNode we can use the groups
+from GeoNode in Morpheus. Our idea is to import the groups manually from GeoNode into Morpheus by using the GeoNode API.
 
 
 # Appetite — How much time we want to spend and how that constrains the solution
@@ -14,6 +14,19 @@ We want to evaluate the possibility of it and then implement the import if possi
 days on this in total. We want to look for another solution if we find out it is not possible.
 
 # Solution — The core elements we came up with, presented in a form that’s easy for people to immediately understand
+
+## Identifiying the users
+
+When a user logs in into GeoNode using with Keycloak, a user account is created in GeoNode. The uuid of the keycloak
+is not available in GeoNode (through the API). The username is immutable in Keycloak and GeoNode. In order to identify
+the user in Morpheus we can use the username.
+In Morpheus we will have to fetch the users from Keycloak. Then we fetch the groups and the users of the groups from
+GeoNode. If a user with the same username exists in both systems, we assume it is the same user.
+We might add further checks, like comparing the emails. But this might lead to false negatives, as the email can be
+changed in Keycloak and GeoNode independently. When not comparing the emails, there is the possibility of false
+positives, if two users have the same username on both plattforms but are actually different users.
+
+## Importing groups
 
 There are several things we must ensure that the idea is possible and that we can implement it:
 * we must ensure users authenticate with Keycloak in GeoNode
@@ -32,10 +45,14 @@ The import of groups will be implemented in the Morpheus backend. It will consis
 
 # Rabbit holes — Details about the solution worth calling out to avoid problems
 
-We can try to convince the users of GeoNode to authenticate and register with Keycloak by adding texts to the GeoNode
-login page or hiding the normal login page. This requires theming GeoNode. See
+We can try to convince the users of GeoNode to authenticate and register with Keycloak only by adding texts to the
+GeoNode login page or hiding the normal login page. This requires theming GeoNode. See
 https://docs.geonode.org/en/master/basic/theme/index.html and our GeoNode repo at
 https://gitlab.junghanns.it/inowas/datahub. This might be a lot of effort though.
+In general forcing users to only authenticate and register with Keycloak is preferred but it requires customization of
+the GeoNode system, which is a lot of effort and might require external support (as already discussed in a meeting with
+the GeoNode team).
+
 
 # No-gos — Anything specifically excluded from the concept: functionality or use cases we intentionally aren’t covering to fit the appetite or make the problem tractable
 
