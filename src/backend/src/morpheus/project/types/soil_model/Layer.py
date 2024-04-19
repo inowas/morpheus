@@ -160,8 +160,8 @@ class LayerPropertyRaster:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            data=obj['data'] if 'data' in obj else None,
-            asset=LayerPropertyRasterAsset.from_dict(obj['asset']) if 'asset' in obj else None
+            data=obj['data'] if 'data' in obj and obj['data'] is not None else None,
+            asset=LayerPropertyRasterAsset.from_dict(obj['asset']) if 'asset' in obj and obj['asset'] is not None else None
         )
 
 
@@ -207,8 +207,8 @@ class LayerProperty:
     def from_dict(cls, obj: dict):
         return cls(
             value=obj['value'],
-            raster=LayerPropertyRaster.from_dict(obj['raster']) if 'raster' in obj else None,
-            zones=[LayerPropertyZone.from_dict(zone) for zone in obj.get('zones', [])]
+            raster=LayerPropertyRaster.from_dict(obj['raster']) if 'raster' and obj['raster'] is not None else None,
+            zones=[LayerPropertyZone.from_dict(zone) for zone in obj['zones']] if 'zones' in obj and obj['zones'] is not None else None
         )
 
     def to_dict(self):
@@ -300,6 +300,19 @@ class LayerProperties:
             initial_head=LayerProperty.from_dict(obj['initial_head']),
             top=LayerProperty.from_dict(obj['top']) if obj['top'] is not None else None,
             bottom=LayerProperty.from_dict(obj['bottom'])
+        )
+
+    @classmethod
+    def from_values(cls, kx: float, ky: float, kz: float, specific_storage: float, specific_yield: float, initial_head: float, top: float | None, bottom: float):
+        return cls(
+            kx=LayerProperty(value=kx),
+            ky=LayerProperty(value=ky),
+            kz=LayerProperty(value=kz),
+            specific_storage=LayerProperty(value=specific_storage),
+            specific_yield=LayerProperty(value=specific_yield),
+            initial_head=LayerProperty(value=initial_head),
+            top=LayerProperty(value=top) if top is not None else None,
+            bottom=LayerProperty(value=bottom)
         )
 
     def to_dict(self):
