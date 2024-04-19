@@ -77,24 +77,24 @@ const TimeDiscretizationContainer = () => {
   return (
     <>
       <SidebarContent maxWidth={600}>
-        <SectionTitle title={'Time Discretization'}/>
-        <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
-          <AccordionContent title={'General parameters'}>
-            <TimeDiscretizationGeneralParameters
-              timeDiscretization={timeDiscretizationLocal}
-              onChange={handleTimeDiscretizationChange}
-            />
-          </AccordionContent>
-          <AccordionContent title={'Stress periods'}>
-            <StressperiodsUpload onSubmit={handleStressPeriodsUpload} stressPeriods={timeDiscretizationLocal.stress_periods}/>
-            <TimeDiscretizationStressPeriods
-              timeDiscretization={timeDiscretizationLocal}
-              onChange={handleTimeDiscretizationChange}
-              readOnly={false}
-            />
-          </AccordionContent>
-        </Accordion>
         <DataGrid>
+          <SectionTitle title={'Time Discretization'}/>
+          <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
+            <AccordionContent title={'General parameters'}>
+              <TimeDiscretizationGeneralParameters
+                timeDiscretization={timeDiscretizationLocal}
+                onChange={handleTimeDiscretizationChange}
+              />
+            </AccordionContent>
+            <AccordionContent title={'Stress periods'}>
+              <StressperiodsUpload onSubmit={handleStressPeriodsUpload} stressPeriods={timeDiscretizationLocal.stress_periods}/>
+              <TimeDiscretizationStressPeriods
+                timeDiscretization={timeDiscretizationLocal}
+                onChange={handleTimeDiscretizationChange}
+                readOnly={false}
+              />
+            </AccordionContent>
+          </Accordion>
           <Button
             onClick={handleSubmit}
             disabled={JSON.stringify(timeDiscretization) === JSON.stringify(timeDiscretizationLocal)}
