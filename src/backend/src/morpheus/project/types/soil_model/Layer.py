@@ -1,6 +1,7 @@
 import dataclasses
 import uuid
-from typing import Literal
+from enum import StrEnum
+from typing import Literal, Mapping
 
 import numpy as np
 
@@ -121,7 +122,7 @@ class LayerType:
 
 
 @dataclasses.dataclass
-class LayerPropertyRasterAsset:
+class LayerPropertyRasterReference:
     asset_id: str
     asset_type: str
     band: int
@@ -145,23 +146,23 @@ class LayerPropertyRasterAsset:
 @dataclasses.dataclass
 class LayerPropertyRaster:
     data: list[list[float]] | None
-    asset: LayerPropertyRasterAsset | None
+    reference: LayerPropertyRasterReference | None
 
-    def __init__(self, data: list[list[float]] | None = None, asset: LayerPropertyRasterAsset | None = None):
+    def __init__(self, data: list[list[float]] | None = None, reference: LayerPropertyRasterReference | None = None):
         self.data = data
-        self.asset = asset
+        self.reference = reference
 
     def to_dict(self):
         return {
             'data': self.data,
-            'asset': self.asset.to_dict() if self.asset is not None else None
+            'reference': self.reference.to_dict() if self.reference is not None else None
         }
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
             data=obj['data'] if 'data' in obj and obj['data'] is not None else None,
-            asset=LayerPropertyRasterAsset.from_dict(obj['asset']) if 'asset' in obj and obj['asset'] is not None else None
+            reference=LayerPropertyRasterReference.from_dict(obj['reference']) if 'reference' in obj and obj['reference'] is not None else None
         )
 
 
@@ -193,7 +194,7 @@ class LayerPropertyZone:
 
 
 @dataclasses.dataclass
-class LayerProperty:
+class LayerPropertyValue:
     value: float
     raster: LayerPropertyRaster | None
     zones: list[LayerPropertyZone] | None
@@ -204,7 +205,7 @@ class LayerProperty:
         self.zones = zones
 
     @classmethod
-    def from_dict(cls, obj: dict):
+    def from_dict(cls, obj: dict | Mapping):
         return cls(
             value=obj['value'],
             raster=LayerPropertyRaster.from_dict(obj['raster']) if 'raster' and obj['raster'] is not None else None,
@@ -233,39 +234,75 @@ class LayerProperty:
         return self.value
 
 
+class LayerPropertyName(StrEnum):
+    kx = 'kx'
+    ky = 'ky'
+    kz = 'kz'
+    specific_storage = 'specific_storage'
+    specific_yield = 'specific_yield'
+    initial_head = 'initial_head'
+    top = 'top'
+    bottom = 'bottom'
+
+
 @dataclasses.dataclass
 class LayerProperties:
-    kx: LayerProperty
-    ky: LayerProperty
-    kz: LayerProperty
-    specific_storage: LayerProperty
-    specific_yield: LayerProperty
-    initial_head: LayerProperty
-    top: LayerProperty | None
-    bottom: LayerProperty
+    kx: LayerPropertyValue
+    ky: LayerPropertyValue
+    kz: LayerPropertyValue
+    specific_storage: LayerPropertyValue
+    specific_yield: LayerPropertyValue
+    initial_head: LayerPropertyValue
+    top: LayerPropertyValue | None
+    bottom: LayerPropertyValue
 
-    def with_updated_kx(self, kx: LayerProperty):
+    def with_updated_property(self, name: LayerPropertyName, value: LayerPropertyValue):
+        if name == LayerPropertyName.kx:
+            return self.with_updated_kx(value)
+        if name == LayerPropertyName.ky:
+            return self.with_updated_ky(value)
+        if name == LayerPropertyName.kz:
+            return self.with_updated_kz(value)
+        if name == LayerPropertyName.specific_storage:
+            return self.with_updated_specific_storage(value)
+        if name == LayerPropertyName.specific_yield:
+            return self.with_updated_specific_yield(value)
+        if name == LayerPropertyName.initial_head:
+            return self.with_updated_initial_head(value)
+        if name == LayerPropertyName.top:
+            return self.with_updated_top(value)
+        if name == LayerPropertyName.bottom:
+            return self.with_updated_bottom(value)
+        raise ValueError(f'Unknown property name: {name}')
+
+    def with_updated_hk(self, hk: LayerPropertyValue):
+        return self.with_updated_kx(hk)
+
+    def with_updated_hani(self, hani: LayerPropertyValue):
+        return self.with_updated_ky(hani)
+
+    def with_updated_kx(self, kx: LayerPropertyValue):
         return dataclasses.replace(self, kx=kx)
 
-    def with_updated_ky(self, ky: LayerProperty):
+    def with_updated_ky(self, ky: LayerPropertyValue):
         return dataclasses.replace(self, ky=ky)
 
-    def with_updated_kz(self, kz: LayerProperty):
+    def with_updated_kz(self, kz: LayerPropertyValue):
         return dataclasses.replace(self, kz=kz)
 
-    def with_updated_specific_storage(self, specific_storage: LayerProperty):
+    def with_updated_specific_storage(self, specific_storage: LayerPropertyValue):
         return dataclasses.replace(self, specific_storage=specific_storage)
 
-    def with_updated_specific_yield(self, specific_yield: LayerProperty):
+    def with_updated_specific_yield(self, specific_yield: LayerPropertyValue):
         return dataclasses.replace(self, specific_yield=specific_yield)
 
-    def with_updated_initial_head(self, initial_head: LayerProperty):
+    def with_updated_initial_head(self, initial_head: LayerPropertyValue):
         return dataclasses.replace(self, initial_head=initial_head)
 
-    def with_updated_top(self, top: LayerProperty):
+    def with_updated_top(self, top: LayerPropertyValue):
         return dataclasses.replace(self, top=top)
 
-    def with_updated_bottom(self, bottom: LayerProperty):
+    def with_updated_bottom(self, bottom: LayerPropertyValue):
         return dataclasses.replace(self, bottom=bottom)
 
     def get_hk(self):
@@ -286,33 +323,33 @@ class LayerProperties:
     def get_layer_average(self):
         return 0
 
-    def get_transmissivity(self, top: LayerProperty) -> LayerProperty:
+    def get_transmissivity(self, top: LayerPropertyValue) -> LayerPropertyValue:
         return (np.array(self.kx.get_data()) * (np.array(top.get_data()) - np.array(self.bottom.get_data()))).tolist()
 
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            kx=LayerProperty.from_dict(obj['kx']),
-            ky=LayerProperty.from_dict(obj['ky']),
-            kz=LayerProperty.from_dict(obj['kz']),
-            specific_storage=LayerProperty.from_dict(obj['specific_storage']),
-            specific_yield=LayerProperty.from_dict(obj['specific_yield']),
-            initial_head=LayerProperty.from_dict(obj['initial_head']),
-            top=LayerProperty.from_dict(obj['top']) if obj['top'] is not None else None,
-            bottom=LayerProperty.from_dict(obj['bottom'])
+            kx=LayerPropertyValue.from_dict(obj['kx']),
+            ky=LayerPropertyValue.from_dict(obj['ky']),
+            kz=LayerPropertyValue.from_dict(obj['kz']),
+            specific_storage=LayerPropertyValue.from_dict(obj['specific_storage']),
+            specific_yield=LayerPropertyValue.from_dict(obj['specific_yield']),
+            initial_head=LayerPropertyValue.from_dict(obj['initial_head']),
+            top=LayerPropertyValue.from_dict(obj['top']) if obj['top'] is not None else None,
+            bottom=LayerPropertyValue.from_dict(obj['bottom'])
         )
 
     @classmethod
     def from_values(cls, kx: float, ky: float, kz: float, specific_storage: float, specific_yield: float, initial_head: float, top: float | None, bottom: float):
         return cls(
-            kx=LayerProperty(value=kx),
-            ky=LayerProperty(value=ky),
-            kz=LayerProperty(value=kz),
-            specific_storage=LayerProperty(value=specific_storage),
-            specific_yield=LayerProperty(value=specific_yield),
-            initial_head=LayerProperty(value=initial_head),
-            top=LayerProperty(value=top) if top is not None else None,
-            bottom=LayerProperty(value=bottom)
+            kx=LayerPropertyValue(value=kx),
+            ky=LayerPropertyValue(value=ky),
+            kz=LayerPropertyValue(value=kz),
+            specific_storage=LayerPropertyValue(value=specific_storage),
+            specific_yield=LayerPropertyValue(value=specific_yield),
+            initial_head=LayerPropertyValue(value=initial_head),
+            top=LayerPropertyValue(value=top) if top is not None else None,
+            bottom=LayerPropertyValue(value=bottom)
         )
 
     def to_dict(self):
@@ -344,14 +381,14 @@ class Layer:
             description=LayerDescription.new(),
             type=LayerType.confined(),
             properties=LayerProperties(
-                kx=LayerProperty(value=1.0),
-                ky=LayerProperty(value=1.0),
-                kz=LayerProperty(value=1.0),
-                specific_storage=LayerProperty(value=0.0001),
-                specific_yield=LayerProperty(value=0.1),
-                initial_head=LayerProperty(value=1.0),
-                top=LayerProperty(value=1.0),
-                bottom=LayerProperty(value=0.0)
+                kx=LayerPropertyValue(value=1.0),
+                ky=LayerPropertyValue(value=1.0),
+                kz=LayerPropertyValue(value=1.0),
+                specific_storage=LayerPropertyValue(value=0.0001),
+                specific_yield=LayerPropertyValue(value=0.1),
+                initial_head=LayerPropertyValue(value=1.0),
+                top=LayerPropertyValue(value=1.0),
+                bottom=LayerPropertyValue(value=0.0)
             )
         )
 

@@ -1,0 +1,536 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for ModelCommands
+definitions:
+  ModelCommands:
+    oneOf:
+      - "$ref": "#/definitions/commands/CreateModelCommand"
+      - "$ref": "#/definitions/commands/CreateModelLayerCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerCommand"
+      - "$ref": "#/definitions/commands/DeleteModelLayerCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerPropertyCommand"
+      - "$ref": "#/definitions/commands/UpdateModelGeometryCommand"
+      - "$ref": "#/definitions/commands/UpdateModelGridCommand"
+      - "$ref": "#/definitions/commands/UpdateModelTimeDiscretizationCommand"
+      - "$ref": "#/definitions/commands/UpdateModelAffectedCellsCommand"
+      - "$ref": "#/definitions/commands/CreateModelVersionCommand"
+      - "$ref": "#/definitions/commands/DeleteModelVersionCommand"
+      - "$ref": "#/definitions/commands/UpdateModelVersionDescriptionCommand"
+  commands:
+    CreateModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - create_model_layer_command
+          example: create_model_layer_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            name:
+              type: string
+              example: Layer 1
+            description:
+              type: string
+              example: Layer 1 description
+            type:
+              "$ref": "#/definitions/components/LayerType"
+            kx:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            ky:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            kz:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            specific_storage:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            specific_yield:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            initial_head:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            top:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+            bottom:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+          required:
+            - project_id
+            - name
+            - type
+            - kx
+            - ky
+            - kz
+            - specific_storage
+            - specific_yield
+            - initial_head
+            - bottom
+    CreateModelCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - create_model_command
+          example: create_model_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            geometry:
+              "$ref": "#/definitions/components/Polygon"
+            n_cols:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            n_rows:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            rotation:
+              type: number
+              minimum: -90
+              maximum: 90
+          required:
+            - project_id
+            - geometry
+            - n_cols
+            - n_rows
+            - rotation
+    CreateModelVersionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - create_model_version_command
+          example: create_model_version_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_tag:
+              type: string
+              example: v1.0.0
+            version_description:
+              type: string
+              example: Initial version
+          required:
+            - project_id
+            - version_tag
+            - version_description
+    DeleteModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - delete_model_layer_command
+          example: delete_model_layer_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - layer_id
+    DeleteModelVersionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - delete_model_version_command
+          example: delete_model_version_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+    UpdateModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_command
+          example: update_model_layer_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            name:
+              type: string
+              example: Layer 1
+            description:
+              type: string
+              example: Layer 1 description
+            type:
+              "$ref": "#/definitions/components/LayerType"
+          required:
+            - project_id
+            - layer_id
+            - name
+            - description
+            - type
+    UpdateModelLayerPropertyCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_property_command
+          example: update_model_layer_property_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            property_name:
+              type: string
+              enum:
+                - hk
+                - hani
+                - vk
+                - vka
+                - kx
+                - ky
+                - kz
+                - specific_storage
+                - specific_yield
+                - initial_head
+                - top
+                - bottom
+              example: kx
+            property_value:
+              "$ref": "#/definitions/components/LayerPropertyValue"
+          required:
+            - project_id
+            - layer_id
+            - property_name
+            - property_value
+    UpdateModelAffectedCellsCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_affected_cells_command
+          example: update_model_affected_cells_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            affected_cells:
+              "$ref": "#/definitions/components/AffectedCells"
+          required:
+            - project_id
+            - affected_cells
+    UpdateModelGeometryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_geometry_command
+          example: update_model_geometry_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            geometry:
+              "$ref": "#/definitions/components/Polygon"
+          required:
+            - project_id
+            - geometry
+      required:
+        - command_name
+        - payload
+    UpdateModelGridCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_grid_command
+          example: update_model_grid_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            n_cols:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            n_rows:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            origin:
+              "$ref": "#/definitions/components/Point"
+            col_widths:
+              type: array
+              items:
+                type: number
+            total_width:
+              type: number
+            row_heights:
+              type: array
+              items:
+                type: number
+            total_height:
+              type: number
+            rotation:
+              type: number
+              minimum: -90
+              maximum: 90
+            length_unit:
+              type: string
+              enum:
+                - meters
+                - centimeters
+                - feet
+                - unknown
+          required:
+            - project_id
+            - n_cols
+            - n_rows
+    UpdateModelTimeDiscretizationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_time_discretization_command
+          example: update_model_time_discretization_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            start_date_time:
+              type: string
+              format: date-time
+            end_date_time:
+              type: string
+              format: date-time
+            stress_periods:
+              type: array
+              items:
+                type: object
+                properties:
+                  start_date_time:
+                    type: string
+                    format: date-time
+                  number_of_time_steps:
+                    type: integer
+                    minimum: 1
+                    maximum: 1000
+                  time_step_multiplier:
+                    type: number
+                    minimum: 0.0001
+                    maximum: 1000
+                  steady_state:
+                    type: boolean
+            time_unit:
+              type: string
+              enum:
+                - seconds
+                - minutes
+                - hours
+                - days
+                - years
+          required:
+            - project_id
+            - start_date_time
+            - end_date_time
+            - stress_periods
+            - time_unit
+    UpdateModelVersionDescriptionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_version_description_command
+          example: update_model_version_description_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_description:
+              type: string
+              example: Initial version
+          required:
+            - project_id
+            - version_id
+            - version_description
+  components:
+    AffectedCells:
+      type: object
+    LayerType:
+      type: string
+      enum:
+        - confined
+        - unconfined
+        - convertible
+      example: confined
+    LayerPropertyValue:
+      type: object
+      properties:
+        value:
+          type: number
+          example: 1.0
+        raster:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+            reference:
+              type: object
+              properties:
+                asset_id:
+                  type: string
+                  example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+                asset_type:
+                  type: string
+                  enum:
+                    - raster
+                  example: raster
+                band:
+                  type: integer
+                  minimum: 1
+                  maximum: 1000
+        zones:
+          type: array
+          items:
+            type: object
+            properties:
+              geometry:
+                oneOf:
+                  - "$ref": "#/definitions/components/Polygon"
+                  - "$ref": "#/definitions/components/MultiPolygon"
+              value:
+                type: number
+    MultiPolygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPolygon
+          example: MultiPolygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - - - - 13.922514437551428
+                  - 50.964720483303836
+                - - 13.925250781947113
+                  - 50.965228748412386
+                - - 13.925036413951403
+                  - 50.96623732041704
+                - - 13.92222441026388
+                  - 50.96609040370362
+                - - 13.922514437551428
+                  - 50.964720483303836
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                  minItems: 2
+                  maxItems: 2
+      required:
+        - type
+        - coordinates
+    Point:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+          example: Point
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - 13.922514437551428
+            - 50.964720483303836
+          items:
+            type: number
+            minItems: 2
+            maxItems: 2
+      required:
+        - type
+        - coordinates
+    Polygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Polygon
+          example: Polygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - - - 13.922514437551428
+                - 50.964720483303836
+              - - 13.925250781947113
+                - 50.965228748412386
+              - - 13.925036413951403
+                - 50.96623732041704
+              - - 13.92222441026388
+                - 50.96609040370362
+              - - 13.922514437551428
+                - 50.964720483303836
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                minItems: 2
+                maxItems: 2
+      required:
+        - type
+        - coordinates
