@@ -7,7 +7,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, DrainBounda
 from morpheus.project.types.boundaries.DrainObservation import DrainDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import SoilModel
+from morpheus.project.types.soil_model import LayersCollection
 
 
 class DrnStressPeriodData(StressPeriodData):
@@ -17,7 +17,7 @@ class DrnStressPeriodData(StressPeriodData):
 def calculate_drn_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: SoilModel,
+    soil_model: LayersCollection,
     drn_boundary: DrainBoundary
 ) -> DrnStressPeriodData:
     layer_ids = [layer.id for layer in soil_model.layers]
@@ -117,7 +117,7 @@ def calculate_stress_period_data(model: Model) -> DrnStressPeriodData | None:
         sp_data_boundary = calculate_drn_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
-            soil_model=model.soil_model,
+            soil_model=model.layers,
             drn_boundary=drn_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)

@@ -55,7 +55,7 @@ class HeadObservationData:
 
 
 def calculate_observation_items(model: Model) -> HeadObservationData:
-    soil_model = model.soil_model
+    soil_model = model.layers
     time_discretization = model.time_discretization
 
     layer_ids = [layer.id for layer in soil_model.layers]

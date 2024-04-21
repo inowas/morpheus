@@ -7,7 +7,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, RiverBounda
 from morpheus.project.types.boundaries.RiverObservation import RiverDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import SoilModel
+from morpheus.project.types.soil_model import LayersCollection
 
 
 class RivStressPeriodData(StressPeriodData):
@@ -17,7 +17,7 @@ class RivStressPeriodData(StressPeriodData):
 def calculate_riv_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: SoilModel,
+    soil_model: LayersCollection,
     riv_boundary: RiverBoundary
 ) -> RivStressPeriodData:
     layer_ids = [layer.id for layer in soil_model.layers]
@@ -124,7 +124,7 @@ def calculate_stress_period_data(model: Model) -> RivStressPeriodData | None:
         sp_data_boundary = calculate_riv_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
-            soil_model=model.soil_model,
+            soil_model=model.layers,
             riv_boundary=riv_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)

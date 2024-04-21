@@ -1,4 +1,5 @@
 import dataclasses
+import numpy as np
 from flopy.modflow import ModflowBcf as FlopyModflowBcf
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
@@ -68,7 +69,7 @@ class BcfPackageData:
 
 def calculate_bcf_package_data(model: Model) -> BcfPackageData:
     transmissivity = []
-    for layer_idx, layer in enumerate(model.soil_model):
+    for layer_idx, layer in enumerate(model.layers):
         if layer_idx == 0:
             top = layer.properties.top
             if top is None:
@@ -76,15 +77,15 @@ def calculate_bcf_package_data(model: Model) -> BcfPackageData:
             transmissivity.append(layer.properties.get_transmissivity(top).get_data())
             continue
 
-        transmissivity.append(layer.properties.get_transmissivity(model.soil_model.layers[layer_idx - 1].properties.bottom).get_data())
+        transmissivity.append(layer.properties.get_transmissivity(model.layers.layers[layer_idx - 1].properties.bottom).get_data())
 
     bcf_package_data = BcfPackageData(
         ipakcb=None,
-        intercellt=[layer.properties.get_layer_average() for layer in model.soil_model],
-        laycon=[0 if layer.is_confined() else 1 for layer in model.soil_model],
-        trpy=[layer.properties.get_horizontal_anisotropy() for layer in model.soil_model],
+        intercellt=[layer.properties.get_layer_average() for layer in model.layers],
+        laycon=[0 if layer.is_confined() else 1 for layer in model.layers],
+        trpy=[np.array(layer.properties.get_horizontal_anisotropy()).mean() for layer in model.layers],
         hdry=-1e+30,
-        iwdflg=any([layer.properties.is_wetting_active() for layer in model.soil_model]),
+        iwdflg=any([layer.properties.is_wetting_active() for layer in model.layers]),
         wetfct=0.1,
         iwetit=1,
         ihdwet=0,

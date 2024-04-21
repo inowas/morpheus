@@ -1,4 +1,4 @@
-from .SoilModel import SoilModel
+from .LayersCollection import LayersCollection
 from .Layer import Layer, LayerId
 
-__all__ = ['SoilModel', 'Layer', 'LayerId']
+__all__ = ['LayersCollection', 'Layer', 'LayerId']

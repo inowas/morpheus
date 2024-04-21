@@ -6,7 +6,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, Evapotransp
 from morpheus.project.types.boundaries.EvapotranspirationObservation import EvapotranspirationDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import SoilModel
+from morpheus.project.types.soil_model import LayersCollection
 
 
 class EvtStressPeriodData(LayerBasedStressPeriodData):
@@ -24,7 +24,7 @@ class EvtStressPeriodData(LayerBasedStressPeriodData):
 
 
 def calculate_evt_boundary_stress_period_data(
-    soil_model: SoilModel,
+    soil_model: LayersCollection,
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
     evt_boundary: EvapotranspirationBoundary
@@ -88,7 +88,7 @@ def calculate_stress_period_data(model: Model) -> EvtStressPeriodData | None:
             )
 
         sp_data_boundary = calculate_evt_boundary_stress_period_data(
-            soil_model=model.soil_model,
+            soil_model=model.layers,
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
             evt_boundary=boundary

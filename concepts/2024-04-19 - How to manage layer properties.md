@@ -1,11 +1,14 @@
 # Problem — The raw idea, a use case, or something we’ve seen that motivates us to work on this
 
-A groundwater model consists of horizontal layers with (a rectlinear grid with a fixed numer of rows and columns which can differ in their width and heigt) and layer specific properties. 
+A groundwater model consists of horizontal layers with (a rectlinear grid with a fixed numer of rows and columns which
+can differ in their width and heigt) and layer specific properties.
 
-Flow values in three dimensions: 
+Conductivity in two different formats:
 
-* kx, ky, kz or 
+* kx, ky, kz or
 * hk, vka, hka
+
+has to be treated somehow.
 
 Storage Values:
 
@@ -14,11 +17,10 @@ Storage Values:
 These values can be available in three different formats:
 
 * one value for all cells
-* raster data (uploaded as reasterfile, geotiff)
+* raster data (uploaded as rasterfile, geotiff)
 * vector data with on value per element (uploaded in geojson format)
 
 The user should have the possibility to upload and manage this data.
-
 
 # Appetite — How much time we want to spend and how that constrains the solution
 
@@ -30,33 +32,55 @@ These layer specific properties can be represented by an object with the followi
 
 ```typescript
 interface IPropertyType {
-	raster?: IRaster;
-	value: number;
-	zones?: IZone[];
+  value: number;
+  raster?: IRaster;
+  zones?: IZone[];
 }
 
 interface IRaster {
-	data?: number[][]
-	asset? {
-		asset_id: string;
-		asset_type: 'raster';
-		band: number;
-	}
+  data?: number[][]
+  reference?: {
+    asset_id: string;
+    asset_type: 'raster';
+    band: number;
+  }
 }
 
 interface IZone {
-	type: "Feature",
-	geometry: Polygon | Multipolygon,
-	properties: {
-		name: string
-		value: number;
-  }
+  geometry: Polygon | Multipolygon;
+  affected_cells: IAffectedCells;
+  name: string;
+  value: number;
 }
 ```
 
-To store the asset information could be optional. 
+To have the possibility to store the relative representation of ky (as kx * hani) and kz (as kx * vani) the solution for
+this would be:
 
+* setting hk sets kx and vice versa
+* when setting hani, ky will be set to None and vice versa
+* when setting vani, kz will be set to None and vice versa
+
+# Uploading a value
+
+The user should have the possibility to upload a value for all cells. This value will be stored in the property object.
+A value has always to be set as fallback value. If the user uploads vector data or raster date with holes,
+the value will be used for the cells without a value.
+
+# Uploading a Raster
+
+The user should have the possibility to upload the raster data as geotiff and the vector data as geojson.
+
+To upload raster data the user has to select the file and the band.
+The uploaded file will be stored as an asset and the reference to this asset will be stored in the property object.
+The data-property of the raster object will be filled on the server after raster interpolation
+
+# Uploading a Vector
+
+The user can upload vector data as geojson (Polygon or Multipolygon). The value will be stored in the property object.
+On the server the affected cells will be calculated and stored in the property object.
 
 # Rabbit holes and No-gos
 
+* Nothing at the moment
 

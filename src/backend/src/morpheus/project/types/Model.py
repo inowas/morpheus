@@ -6,7 +6,7 @@ from morpheus.common.types import Uuid, String
 from morpheus.project.types.boundaries.Boundary import BoundaryCollection
 from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.observations.Observation import ObservationCollection
-from morpheus.project.types.soil_model.SoilModel import SoilModel
+from morpheus.project.types.soil_model.LayersCollection import LayersCollection
 from morpheus.project.types.transport.Transport import Transport
 from morpheus.project.types.variable_density.VariableDensityFlow import VariableDensityFlow
 
@@ -26,7 +26,7 @@ class Model:
     time_discretization: TimeDiscretization
     boundaries: BoundaryCollection
     observations: ObservationCollection
-    soil_model: SoilModel
+    layers: LayersCollection
     transport: Transport
     variable_density: VariableDensityFlow
 
@@ -38,7 +38,7 @@ class Model:
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
             boundaries=BoundaryCollection.from_dict(obj['boundaries']),
             observations=ObservationCollection.from_dict(obj['observations'] if 'observations' in obj else []),
-            soil_model=SoilModel.from_dict(obj['soil_model']),
+            layers=LayersCollection.from_dict(obj['soil_model']),
             transport=Transport.from_dict(obj['transport'] if 'transport' in obj else None),
             variable_density=VariableDensityFlow.from_dict(
                 obj['variable_density'] if 'variable_density' in obj else None),
@@ -52,7 +52,7 @@ class Model:
             time_discretization=TimeDiscretization.new(),
             boundaries=BoundaryCollection.new(),
             observations=ObservationCollection.new(),
-            soil_model=SoilModel.new(),
+            layers=LayersCollection.new(),
             transport=Transport.new(),
             variable_density=VariableDensityFlow.new(),
         )
@@ -64,7 +64,7 @@ class Model:
             'time_discretization': self.time_discretization.to_dict(),
             'boundaries': self.boundaries.to_dict(),
             'observations': self.observations.to_dict(),
-            'soil_model': self.soil_model.to_dict(),
+            'soil_model': self.layers.to_dict(),
             'transport': self.transport.to_dict(),
             'variable_density': self.variable_density.to_dict(),
         }
@@ -87,8 +87,8 @@ class Model:
     def with_updated_observations(self, observations: ObservationCollection):
         return dataclasses.replace(self, observations=observations)
 
-    def with_updated_soilmodel(self, soil_model: SoilModel):
-        return dataclasses.replace(self, soil_model=soil_model)
+    def with_updated_layers(self, layers: LayersCollection):
+        return dataclasses.replace(self, layers=layers)
 
     def with_updated_transport(self, transport: Transport):
         return dataclasses.replace(self, transport=transport)

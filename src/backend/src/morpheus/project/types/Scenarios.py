@@ -77,7 +77,7 @@ class Scenario:
             time_discretization=model.time_discretization if self.time_discretization is None else self.time_discretization,
             boundaries=merged_boundaries,
             observations=model.observations,
-            soil_model=model.soil_model,
+            layers=model.layers,
             transport=model.transport,
             variable_density=model.variable_density
         )

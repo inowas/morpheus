@@ -5,12 +5,14 @@ from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 
 from morpheus.project.domain.events.ProjectEventName import ProjectEventName
-from morpheus.project.types.Model import Model
+from morpheus.project.types.Model import Model, ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.ModelVersion import ModelVersion, VersionId, VersionDescription
 from morpheus.project.types.discretization import TimeDiscretization
 from morpheus.project.types.discretization.spatial import Grid, ActiveCells
 from morpheus.project.types.geometry import Polygon
+from morpheus.project.types.soil_model import Layer, LayerId
+from morpheus.project.types.soil_model.Layer import LayerType, LayerDescription, LayerName, LayerPropertyName, LayerPropertyValue
 
 
 class ModelAffectedCellsUpdatedEvent(EventBase):
@@ -157,6 +159,128 @@ class ModelTimeDiscretizationUpdatedEvent(EventBase):
 
     def get_event_name(self) -> EventName:
         return EventName.from_str(ProjectEventName.MODEL_TIME_DISCRETIZATION_UPDATED.to_str())
+
+
+class ModelLayerCreatedEvent(EventBase):
+    @classmethod
+    def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime = DateTime.now()):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer': layer.to_dict()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer(self) -> Layer:
+        return Layer.from_dict(self.payload['layer'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_CREATED.to_str())
+
+
+class ModelLayerDeletedEvent(EventBase):
+    @classmethod
+    def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, occurred_at: DateTime = DateTime.now()):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer_id(self) -> LayerId:
+        return LayerId.from_str(self.payload['layer_id'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_DELETED.to_str())
+
+
+class ModelLayerUpdatedEvent(EventBase):
+    @classmethod
+    def from_props(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, layer_name: LayerName | None, layer_description: LayerDescription | None,
+                   layer_type: LayerType | None, occurred_at: DateTime = DateTime.now()):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str(),
+                'layer_name': layer_name.to_str() if layer_name else None,
+                'layer_description': layer_description.to_str() if layer_description else None,
+                'layer_type': layer_type.to_str() if layer_type else None,
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer_id(self) -> LayerId:
+        return LayerId.from_str(self.payload['layer_id'])
+
+    def get_layer_name(self) -> LayerName | None:
+        return LayerName.from_str(self.payload['layer_name'])
+
+    def get_layer_description(self) -> LayerDescription | None:
+        return LayerDescription.from_str(self.payload['layer_description'])
+
+    def get_layer_type(self) -> LayerType | None:
+        return LayerType.from_str(self.payload['layer_type'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_UPDATED.to_str())
+
+
+class ModelLayerPropertyUpdatedEvent(EventBase):
+    @classmethod
+    def from_property(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_value: LayerPropertyValue,
+                      occurred_at: DateTime = DateTime.now()):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str(),
+                'property_name': property_name.to_value(),
+                'property_value': property_value.to_dict(),
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer_id(self) -> LayerId:
+        return LayerId.from_str(self.payload['layer_id'])
+
+    def get_property_name(self) -> LayerPropertyName:
+        return LayerPropertyName.from_value(self.payload['property_name'])
+
+    def get_property_value(self) -> LayerPropertyValue:
+        return LayerPropertyValue.from_dict(self.payload['property_value'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_UPDATED.to_str())
 
 
 class VersionCreatedEvent(EventBase):

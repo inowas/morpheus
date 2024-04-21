@@ -208,13 +208,12 @@ definitions:
             property_name:
               type: string
               enum:
-                - hk
-                - hani
-                - vk
-                - vka
                 - kx
                 - ky
                 - kz
+                - hk
+                - hani
+                - vani
                 - specific_storage
                 - specific_yield
                 - initial_head

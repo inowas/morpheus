@@ -5,7 +5,7 @@ from .Layer import Layer, LayerId
 
 
 @dataclasses.dataclass(frozen=True)
-class SoilModel:
+class LayersCollection:
     layers: list[Layer]
 
     def __iter__(self) -> Iterator[Layer]:
@@ -26,13 +26,13 @@ class SoilModel:
         return next((layer for layer in self.layers if layer.id == layer_id), None)
 
     def with_added_layer(self, layer: Layer):
-        return SoilModel(layers=self.layers + [layer])
+        return LayersCollection(layers=self.layers + [layer])
 
     def with_updated_layer(self, updated_layer: Layer):
-        return SoilModel(layers=[updated_layer if updated_layer.id == layer.id else layer for layer in self.layers])
+        return LayersCollection(layers=[updated_layer if updated_layer.id == layer.id else layer for layer in self.layers])
 
-    def with_deleted_layer(self, layer_id: str):
-        return SoilModel(layers=[layer for layer in self.layers if layer.id != layer_id])
+    def with_deleted_layer(self, layer_id: LayerId):
+        return LayersCollection(layers=[layer for layer in self.layers if layer.id != layer_id])
 
     def number_of_layers(self):
         return len(self.layers)

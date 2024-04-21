@@ -120,6 +120,9 @@ class LayerType:
     def to_value(self):
         return self.type
 
+    def to_str(self):
+        return self.type
+
 
 @dataclasses.dataclass
 class LayerPropertyRasterReference:
@@ -238,18 +241,32 @@ class LayerPropertyName(StrEnum):
     kx = 'kx'
     ky = 'ky'
     kz = 'kz'
+    hk = 'hk'
+    hani = 'hani'
+    vani = 'vani'
     specific_storage = 'specific_storage'
     specific_yield = 'specific_yield'
     initial_head = 'initial_head'
     top = 'top'
     bottom = 'bottom'
 
+    def to_value(self):
+        return self.value
+
+    @classmethod
+    def from_value(cls, value: str):
+        return cls(value)
+
 
 @dataclasses.dataclass
 class LayerProperties:
     kx: LayerPropertyValue
-    ky: LayerPropertyValue
-    kz: LayerPropertyValue
+    ky: LayerPropertyValue | None
+    kz: LayerPropertyValue | None
+
+    hani: LayerPropertyValue | None
+    vani: LayerPropertyValue | None
+
     specific_storage: LayerPropertyValue
     specific_yield: LayerPropertyValue
     initial_head: LayerPropertyValue
@@ -263,6 +280,12 @@ class LayerProperties:
             return self.with_updated_ky(value)
         if name == LayerPropertyName.kz:
             return self.with_updated_kz(value)
+        if name == LayerPropertyName.hk:
+            return self.with_updated_hk(value)
+        if name == LayerPropertyName.hani:
+            return self.with_updated_hani(value)
+        if name == LayerPropertyName.vani:
+            return self.with_updated_vani(value)
         if name == LayerPropertyName.specific_storage:
             return self.with_updated_specific_storage(value)
         if name == LayerPropertyName.specific_yield:
@@ -275,12 +298,6 @@ class LayerProperties:
             return self.with_updated_bottom(value)
         raise ValueError(f'Unknown property name: {name}')
 
-    def with_updated_hk(self, hk: LayerPropertyValue):
-        return self.with_updated_kx(hk)
-
-    def with_updated_hani(self, hani: LayerPropertyValue):
-        return self.with_updated_ky(hani)
-
     def with_updated_kx(self, kx: LayerPropertyValue):
         return dataclasses.replace(self, kx=kx)
 
@@ -289,6 +306,15 @@ class LayerProperties:
 
     def with_updated_kz(self, kz: LayerPropertyValue):
         return dataclasses.replace(self, kz=kz)
+
+    def with_updated_hk(self, hk: LayerPropertyValue):
+        return dataclasses.replace(self, kx=hk)
+
+    def with_updated_hani(self, hani: LayerPropertyValue):
+        return dataclasses.replace(self, hani=hani, ky=None)
+
+    def with_updated_vani(self, vani: LayerPropertyValue):
+        return dataclasses.replace(self, vani=vani, kz=None)
 
     def with_updated_specific_storage(self, specific_storage: LayerPropertyValue):
         return dataclasses.replace(self, specific_storage=specific_storage)
@@ -309,13 +335,40 @@ class LayerProperties:
         return self.kx
 
     def get_vka(self):
-        return self.kz
+        if self.kz:
+            return self.kz
+
+        kx = self.kx.get_data() if self.kx else None
+        vani = self.vani.get_data() if self.vani else None
+
+        if kx and vani:
+            return (np.array(kx) * np.array(vani)).tolist()
+
+        raise ValueError('Vertical hydraulic conductivity cannot be calculated without kx and ky')
 
     def get_horizontal_anisotropy(self):
-        return (np.array(self.ky.get_data()) / np.array(self.kx.value)).tolist()
+        if self.hani:
+            return self.hani.get_data()
+
+        kx = self.kx.get_data() if self.kx else None
+        ky = self.ky.get_data() if self.ky else None
+
+        if ky and kx:
+            return (np.array(ky) / np.array(kx)).tolist()
+
+        raise ValueError('Horizontal anisotropy cannot be calculated without kx and ky')
 
     def get_vertical_anisotropy(self):
-        return (np.array(self.kz.get_data()) / np.array(self.kx.get_data())).tolist()
+        if self.vani:
+            return self.vani.get_data()
+
+        kx = self.kx.get_data() if self.kx else None
+        kz = self.kz.get_data() if self.kz else None
+
+        if kz and kx:
+            return (np.array(kz) / np.array(kx)).tolist()
+
+        raise ValueError('Vertical anisotropy cannot be calculated without kx and kz')
 
     def is_wetting_active(self):
         return False
@@ -330,8 +383,10 @@ class LayerProperties:
     def from_dict(cls, obj: dict):
         return cls(
             kx=LayerPropertyValue.from_dict(obj['kx']),
-            ky=LayerPropertyValue.from_dict(obj['ky']),
-            kz=LayerPropertyValue.from_dict(obj['kz']),
+            ky=LayerPropertyValue.from_dict(obj['ky']) if obj['ky'] is not None else None,
+            kz=LayerPropertyValue.from_dict(obj['kz']) if obj['kz'] is not None else None,
+            hani=LayerPropertyValue.from_dict(obj['hani']) if obj['hani'] is not None else None,
+            vani=LayerPropertyValue.from_dict(obj['vani']) if obj['vani'] is not None else None,
             specific_storage=LayerPropertyValue.from_dict(obj['specific_storage']),
             specific_yield=LayerPropertyValue.from_dict(obj['specific_yield']),
             initial_head=LayerPropertyValue.from_dict(obj['initial_head']),
@@ -345,6 +400,8 @@ class LayerProperties:
             kx=LayerPropertyValue(value=kx),
             ky=LayerPropertyValue(value=ky),
             kz=LayerPropertyValue(value=kz),
+            hani=None,
+            vani=None,
             specific_storage=LayerPropertyValue(value=specific_storage),
             specific_yield=LayerPropertyValue(value=specific_yield),
             initial_head=LayerPropertyValue(value=initial_head),
@@ -355,8 +412,10 @@ class LayerProperties:
     def to_dict(self):
         return {
             'kx': self.kx.to_dict(),
-            'ky': self.ky.to_dict(),
-            'kz': self.kz.to_dict(),
+            'ky': self.ky.to_dict() if self.ky is not None else None,
+            'kz': self.kz.to_dict() if self.kz is not None else None,
+            'hani': self.hani.to_dict() if self.hani is not None else None,
+            'vani': self.vani.to_dict() if self.vani is not None else None,
             'specific_storage': self.specific_storage.to_dict(),
             'specific_yield': self.specific_yield.to_dict(),
             'initial_head': self.initial_head.to_dict(),
@@ -380,15 +439,15 @@ class Layer:
             name=LayerName.new(),
             description=LayerDescription.new(),
             type=LayerType.confined(),
-            properties=LayerProperties(
-                kx=LayerPropertyValue(value=1.0),
-                ky=LayerPropertyValue(value=1.0),
-                kz=LayerPropertyValue(value=1.0),
-                specific_storage=LayerPropertyValue(value=0.0001),
-                specific_yield=LayerPropertyValue(value=0.1),
-                initial_head=LayerPropertyValue(value=1.0),
-                top=LayerPropertyValue(value=1.0),
-                bottom=LayerPropertyValue(value=0.0)
+            properties=LayerProperties.from_values(
+                kx=1.0,
+                ky=1.0,
+                kz=1.0,
+                specific_storage=0.0001,
+                specific_yield=0.1,
+                initial_head=1.0,
+                top=1.0,
+                bottom=0.0
             )
         )
 
@@ -413,3 +472,15 @@ class Layer:
 
     def is_confined(self):
         return self.type == LayerType.confined()
+
+    def with_updated_name(self, layer_name: LayerName):
+        return dataclasses.replace(self, name=layer_name)
+
+    def with_updated_description(self, layer_description: LayerDescription):
+        return dataclasses.replace(self, description=layer_description)
+
+    def with_updated_type(self, layer_type: LayerType):
+        return dataclasses.replace(self, type=layer_type)
+
+    def with_updated_property(self, property_name: LayerPropertyName, property_value: LayerPropertyValue):
+        return dataclasses.replace(self, properties=self.properties.with_updated_property(property_name, property_value))
