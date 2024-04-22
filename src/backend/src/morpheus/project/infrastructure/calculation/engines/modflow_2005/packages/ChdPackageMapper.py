@@ -85,12 +85,12 @@ def calculate_chd_boundary_stress_period_data(
 
             grid_cell_centers = spatial_discretization.grid.get_cell_centers()
             for cell in chd_boundary.affected_cells:
-                if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
+                if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                     # if the cell is not part of the model
                     # we do not apply any data for this cell
                     continue
 
-                center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
+                center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                 xx_new = [line_string.project(center, normalized=True)]
                 yy_new_start_head = float(np.interp(xx_new, xx, yy_start_heads)[0])
                 yy_new_end_head = float(np.interp(xx_new, xx, yy_end_heads)[0])

@@ -85,7 +85,7 @@ class ActiveCells:
 
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
-                grid_cell_geometry = ShapelyPolygon(geometries[col][row].coordinates[0])
+                grid_cell_geometry = ShapelyPolygon(geometries[row][col].coordinates[0])
                 if grid_cell_geometry.intersects(linestring):
                     cells.set_active(col=col, row=row)
 
@@ -98,7 +98,7 @@ class ActiveCells:
         grid_cell_centers = grid.get_cell_centers()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
-                center = ShapelyPoint(grid_cell_centers[col][row].coordinates)
+                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
                 if area.contains(center):
                     cells.set_active(col=col, row=row)
 
@@ -111,7 +111,7 @@ class ActiveCells:
         grid_cell_geometries = grid.get_cell_geometries()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
-                grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[col][row].coordinates[0])
+                grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[row][col].coordinates[0])
                 if grid_cell_geometry.contains(point):
                     cells.set_active(col=col, row=row)
 
@@ -250,7 +250,7 @@ class ActiveCells:
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
                 if self.is_active(col=col, row=row):
-                    cell_geometries.append(cells_geometries[col][row])
+                    cell_geometries.append(cells_geometries[row][col])
 
         return GeometryCollection(geometries=cell_geometries)
 
