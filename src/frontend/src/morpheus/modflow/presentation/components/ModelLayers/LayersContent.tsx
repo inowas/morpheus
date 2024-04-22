@@ -1,9 +1,9 @@
 import {Accordion, Icon, MenuItem, TabPane} from 'semantic-ui-react';
 import {Button, DataGrid, InfoTitle, MovableAccordionList, SectionTitle, Tab} from 'common/components';
 import React, {useState} from 'react';
-import {PolygonList} from '../PolygonList';
+import {ZonesList} from '../ZonesList';
 
-const polygons = [
+const zones = [
   {name: 'Green Land', coordinates: 732.46},
   {name: 'Red Land', coordinates: 536.21},
   {name: 'Blue Land', coordinates: 93.22},
@@ -21,7 +21,7 @@ const panelsPrimaryV3 = [
   {
     menuItem: 'Polygons',
     render: () => <TabPane attached={false}>
-      <PolygonList polygons={polygons}/>
+      <ZonesList zones={zones}/>
     </TabPane>,
   },
 ];

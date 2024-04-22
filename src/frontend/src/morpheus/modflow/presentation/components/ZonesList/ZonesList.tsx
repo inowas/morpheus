@@ -1,19 +1,19 @@
 import {Checkbox, Table} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
 import {DotsMenu} from 'common/components';
-import styles from './PolygonList.module.less';
+import styles from './ZonesList.module.less';
 
-interface IPolygon {
+interface IZones {
   name: string;
   coordinates: number;
 }
 
-interface IProps {
-  polygons: IPolygon[];
+interface IZonesProps {
+  zones: IZones[];
 }
 
-const PolygonList = ({polygons}: IProps) => {
-  const [polygonData, setPolygonData] = useState<IPolygon[]>(polygons);
+const ZonesList = ({zones}: IZonesProps) => {
+  const [polygonData, setPolygonData] = useState<IZones[]>(zones);
   const [selectedPolygons, setSelectedPolygons] = useState<string[]>([]);
 
   const handleCheckboxChange = (name: string) => {
@@ -89,4 +89,4 @@ const PolygonList = ({polygons}: IProps) => {
   );
 };
 
-export default PolygonList;
+export default ZonesList;
