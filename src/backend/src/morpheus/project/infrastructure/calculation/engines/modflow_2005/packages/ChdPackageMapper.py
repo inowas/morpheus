@@ -7,7 +7,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, ConstantHea
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import LayersCollection
+from morpheus.project.types.layers import LayersCollection
 
 
 class ChdStressPeriodData(StressPeriodData):
@@ -17,10 +17,10 @@ class ChdStressPeriodData(StressPeriodData):
 def calculate_chd_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: LayersCollection,
+    layers: LayersCollection,
     chd_boundary: ConstantHeadBoundary
 ) -> ChdStressPeriodData:
-    layer_ids = [layer.id for layer in soil_model.layers]
+    layer_ids = [layer.id for layer in layers.layers]
     sp_data = ChdStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -114,7 +114,7 @@ def calculate_stress_period_data(model: Model) -> ChdStressPeriodData | None:
         sp_data_boundary = calculate_chd_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
-            soil_model=model.layers,
+            layers=model.layers,
             chd_boundary=chd_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)

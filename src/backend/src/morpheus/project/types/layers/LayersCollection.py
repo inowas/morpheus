@@ -11,6 +11,9 @@ class LayersCollection:
     def __iter__(self) -> Iterator[Layer]:
         return iter(self.layers)
 
+    def __getitem__(self, item):
+        return self.layers[item]
+
     @classmethod
     def new(cls):
         return cls(layers=[Layer.from_default()])

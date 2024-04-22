@@ -6,7 +6,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, RechargeBou
 from morpheus.project.types.boundaries.RechargeObservation import RechargeDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import LayersCollection
+from morpheus.project.types.layers import LayersCollection
 
 
 class RchStressPeriodData(LayerBasedStressPeriodData):
@@ -16,7 +16,7 @@ class RchStressPeriodData(LayerBasedStressPeriodData):
 def calculate_rch_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: LayersCollection,
+    layers: LayersCollection,
     rch_boundary: RechargeBoundary
 ) -> RchStressPeriodData:
     grid = spatial_discretization.grid
@@ -67,7 +67,7 @@ def calculate_stress_period_data(model: Model) -> RchStressPeriodData | None:
             )
 
         sp_data_boundary = calculate_rch_boundary_stress_period_data(
-            soil_model=model.layers,
+            layers=model.layers,
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
             rch_boundary=boundary

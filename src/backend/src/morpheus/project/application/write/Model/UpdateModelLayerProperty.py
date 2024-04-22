@@ -13,7 +13,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.soil_model.Layer import LayerId, LayerPropertyName, LayerPropertyValue
+from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, LayerPropertyValue
 
 
 class ModelLayerPropertyValueRasterReferencePayload(TypedDict):

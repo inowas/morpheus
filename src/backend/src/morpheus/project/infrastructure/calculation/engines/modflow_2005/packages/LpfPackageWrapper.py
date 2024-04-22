@@ -3,7 +3,7 @@ from flopy.modflow import ModflowLpf as FlopyModflowLpf
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
-from morpheus.project.types.soil_model.Layer import LayerType
+from morpheus.project.types.layers.Layer import LayerType
 
 
 @dataclasses.dataclass

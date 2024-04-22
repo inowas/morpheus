@@ -6,7 +6,7 @@ from morpheus.common.types import Uuid, String
 from morpheus.project.types.boundaries.Boundary import BoundaryCollection
 from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.observations.Observation import ObservationCollection
-from morpheus.project.types.soil_model.LayersCollection import LayersCollection
+from morpheus.project.types.layers.LayersCollection import LayersCollection
 from morpheus.project.types.transport.Transport import Transport
 from morpheus.project.types.variable_density.VariableDensityFlow import VariableDensityFlow
 
@@ -38,7 +38,7 @@ class Model:
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
             boundaries=BoundaryCollection.from_dict(obj['boundaries']),
             observations=ObservationCollection.from_dict(obj['observations'] if 'observations' in obj else []),
-            layers=LayersCollection.from_dict(obj['soil_model']),
+            layers=LayersCollection.from_dict(obj['layers']),
             transport=Transport.from_dict(obj['transport'] if 'transport' in obj else None),
             variable_density=VariableDensityFlow.from_dict(
                 obj['variable_density'] if 'variable_density' in obj else None),
@@ -64,7 +64,7 @@ class Model:
             'time_discretization': self.time_discretization.to_dict(),
             'boundaries': self.boundaries.to_dict(),
             'observations': self.observations.to_dict(),
-            'soil_model': self.layers.to_dict(),
+            'layers': self.layers.to_dict(),
             'transport': self.transport.to_dict(),
             'variable_density': self.variable_density.to_dict(),
         }

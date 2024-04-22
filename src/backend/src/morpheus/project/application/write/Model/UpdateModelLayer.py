@@ -13,7 +13,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.soil_model.Layer import LayerName, LayerDescription, LayerType, LayerId
+from morpheus.project.types.layers.Layer import LayerName, LayerDescription, LayerType, LayerId
 
 
 class UpdateModelLayerCommandPayload(TypedDict):

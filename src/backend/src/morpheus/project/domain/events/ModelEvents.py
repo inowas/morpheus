@@ -11,8 +11,7 @@ from morpheus.project.types.ModelVersion import ModelVersion, VersionId, Version
 from morpheus.project.types.discretization import TimeDiscretization
 from morpheus.project.types.discretization.spatial import Grid, ActiveCells
 from morpheus.project.types.geometry import Polygon
-from morpheus.project.types.soil_model import Layer, LayerId
-from morpheus.project.types.soil_model.Layer import LayerType, LayerDescription, LayerName, LayerPropertyName, LayerPropertyValue
+from morpheus.project.types.layers.Layer import Layer, LayerId, LayerType, LayerDescription, LayerName, LayerPropertyName, LayerPropertyValue
 
 
 class ModelAffectedCellsUpdatedEvent(EventBase):
