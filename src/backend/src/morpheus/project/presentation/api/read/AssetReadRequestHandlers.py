@@ -1,10 +1,10 @@
 from flask import request
 from morpheus.authentication.outgoing import get_logged_in_user_id
 from morpheus.common.presentation.api.helpers.pagination import create_pagination_parameters_from_request
-from morpheus.project.application.read.AssetReader import asset_reader
+from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.presentation.api.helpers.asset import asset_file_response, default_preview_image_response, create_filter_for_asset_list
-from morpheus.project.types.Asset import AssetId
+from morpheus.project.types.Asset import AssetId, AssetType
 from morpheus.project.types.Project import ProjectId
 
 
@@ -21,6 +21,7 @@ class ReadPreviewImageRequestHandler:
         if not project_reader.project_exists(project_id):
             return '', 404
 
+        asset_reader = get_asset_reader()
         preview_image_asset = asset_reader.get_preview_image(project_id)
         if preview_image_asset is None:
             return default_preview_image_response()
@@ -40,6 +41,7 @@ class ReadAssetListRequestHandler:
         if not project_reader.project_exists(project_id):
             return '', 404
 
+        asset_reader = get_asset_reader()
         asset_filter = create_filter_for_asset_list(project_id, request)
         pagination = create_pagination_parameters_from_request(request)
 
@@ -71,6 +73,7 @@ class ReadAssetRequestHandler:
         if not project_reader.project_exists(project_id):
             return '', 404
 
+        asset_reader = get_asset_reader()
         asset = asset_reader.get_asset(project_id, asset_id)
         if asset is None:
             return '', 404
@@ -91,6 +94,7 @@ class DownloadAssetRequestHandler:
         if not project_reader.project_exists(project_id):
             return '', 404
 
+        asset_reader = get_asset_reader()
         asset = asset_reader.get_asset(project_id, asset_id)
         if asset is None:
             return '', 404
@@ -100,7 +104,7 @@ class DownloadAssetRequestHandler:
 
 class ReadAssetDataRequestHandler:
     @staticmethod
-    def handle(project_id_url_parameter: str, asset_id_url_parameter: str):
+    def handle(project_id_url_parameter: str, asset_id_url_parameter: str, band: str | None = None):
         user_id = get_logged_in_user_id()
         if user_id is None:
             return '', 401
@@ -111,8 +115,23 @@ class ReadAssetDataRequestHandler:
         if not project_reader.project_exists(project_id):
             return '', 404
 
-        asset_data = asset_reader.get_asset_data(project_id, asset_id)
-        if asset_data is None:
+        asset_reader = get_asset_reader()
+        asset = asset_reader.get_asset(project_id, asset_id)
+        if asset is None:
             return '', 404
 
-        return asset_data.to_dict(), 200
+        if asset.type == AssetType.GEO_TIFF:
+            asset_data = asset_reader.get_raster_asset_data(project_id, asset_id, band=int(band) if band is not None else 0)
+            if asset_data is None:
+                return '', 404
+
+            return asset_data.to_dict(), 200
+
+        if asset.type == AssetType.SHAPEFILE:
+            asset_data = asset_reader.get_vector_asset_data(project_id, asset_id)
+            if asset_data is None:
+                return '', 404
+
+            return asset_data.to_dict(), 200
+
+        return '', 404

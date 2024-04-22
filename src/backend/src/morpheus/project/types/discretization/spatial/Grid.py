@@ -1,4 +1,6 @@
 import dataclasses
+from typing import Tuple
+
 import numpy as np
 import pyproj
 
@@ -221,15 +223,24 @@ class Grid:
         row_coordinates = self.row_coordinates()
         return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
+    def get_wgs_coordinates(self) -> Tuple[list[float], list[float]]:
+        cell_centers = self.get_cell_centers()
+        rows = cell_centers[0]
+        cols = [row[0] for row in cell_centers]
+        x_coords = [point.coordinates[0] for point in rows]
+        y_coords = [point.coordinates[1] for point in cols]
+
+        return x_coords, y_coords
+
     def get_cell_centers(self) -> list[list[Point]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols, n_rows = self.n_cols(), self.n_rows()
-        centers = np.empty((n_cols, n_rows), dtype=Point)
+        centers = np.empty((n_rows, n_cols), dtype=Point)
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         origin_3857 = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-        for col in range(self.n_cols()):
-            for row in range(self.n_rows()):
+        for row in range(self.n_rows()):
+            for col in range(self.n_cols()):
                 point_3857 = ShapelyPoint((
                     origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2,
                     origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
@@ -237,20 +248,20 @@ class Grid:
 
                 rotated_point_3857: ShapelyPoint = rotate(geom=point_3857, angle=self.rotation.to_float(), origin=origin_3857)  # type: ignore
                 point_4326 = from_3857_to_4326.transform(rotated_point_3857.x, rotated_point_3857.y)
-                centers[col][row] = Point(coordinates=point_4326)
+                centers[row][col] = Point(coordinates=point_4326)
 
         return centers.tolist()
 
     def get_cell_geometries(self) -> list[list[Polygon]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols, n_rows = self.n_cols(), self.n_rows()
-        geometries = np.empty((n_cols, n_rows), dtype=Polygon)
+        geometries = np.empty((n_rows, n_cols), dtype=Polygon)
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
-        for col in range(n_cols):
-            for row in range(n_rows):
+        for row in range(n_rows):
+            for col in range(n_cols):
                 polygon_3857 = ShapelyPolygon((
                     (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
                     (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[row]),
@@ -261,7 +272,7 @@ class Grid:
 
                 rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
                 geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
-                geometries[col][row] = Polygon(coordinates=[geometry_4326])
+                geometries[row][col] = Polygon(coordinates=[geometry_4326])
         return geometries.tolist()
 
     def row_geometries(self) -> list[Feature]:
@@ -327,3 +338,9 @@ class Grid:
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
         geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
         return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box', **self.to_dict()})
+
+    def bbox(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+        bounding_box_geometry = self.bounding_box_geometry()
+        bounds = ShapelyPolygon(bounding_box_geometry.geometry.coordinates[0]).bounds
+        x_min, y_min, x_max, y_max = bounds
+        return (x_min, y_min), (x_max, y_max)

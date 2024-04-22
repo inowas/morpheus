@@ -1,6 +1,6 @@
 import dataclasses
 from enum import StrEnum
-from typing import Literal, Any
+from typing import Literal
 
 from morpheus.common.types.File import File, FileName
 from morpheus.common.types import Uuid, String
@@ -155,17 +155,17 @@ class AssetData:
 class GeoTiffAssetData(AssetData):
     n_cols: int
     n_rows: int
-    n_bands: int
+    band: int
     wgs_84_bounding_box: BoundingBox
-    wgs_84_coords: Any
+    data: list[list[float]]
 
     def to_dict(self):
         return {
             'n_cols': self.n_cols,
             'n_rows': self.n_rows,
-            'n_bands': self.n_bands,
+            'band': self.band,
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
-            'wgs_84_coords': self.wgs_84_coords,
+            'data': self.data
         }
 
 

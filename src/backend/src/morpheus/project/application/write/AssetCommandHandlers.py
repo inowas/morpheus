@@ -8,7 +8,7 @@ from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from ..read.AssetReader import asset_reader
+from ..read.AssetReader import get_asset_reader
 from ..read.ProjectReader import project_reader
 from ...domain.AssetService import AssetService
 from ...domain.events.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
@@ -148,7 +148,7 @@ class DeleteAssetCommandHandler:
         project_reader.assert_project_exists(command.project_id)
 
         # TODO check permissions
-
+        asset_reader = get_asset_reader()
         asset = asset_reader.get_asset(command.project_id, command.asset_id)
         if asset is None:
             raise NotFoundException(f'Asset {command.asset_id.to_str()} for project {command.project_id.to_str()} not found')
@@ -174,7 +174,7 @@ class UpdateAssetCommandHandler:
         project_reader.assert_project_exists(command.project_id)
 
         # TODO check permissions
-
+        asset_reader = get_asset_reader()
         asset = asset_reader.get_asset(command.project_id, command.asset_id)
         if asset is None:
             raise NotFoundException(f'Asset {command.asset_id.to_str()} for project {command.project_id.to_str()} not found')

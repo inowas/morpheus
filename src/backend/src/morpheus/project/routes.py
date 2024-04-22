@@ -137,4 +137,4 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def read_project_asset_data(project_id: str, asset_id: str):
-        return ReadAssetDataRequestHandler().handle(project_id, asset_id)
+        return ReadAssetDataRequestHandler().handle(project_id_url_parameter=project_id, asset_id_url_parameter=asset_id, band=request.args.get('band', None))
