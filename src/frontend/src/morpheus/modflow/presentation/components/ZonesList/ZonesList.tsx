@@ -13,13 +13,13 @@ interface IZonesProps {
 }
 
 const ZonesList = ({zones}: IZonesProps) => {
-  const [polygonData, setPolygonData] = useState<IZones[]>(zones);
-  const [selectedPolygons, setSelectedPolygons] = useState<string[]>([]);
+  const [zoneData, setZoneData] = useState<IZones[]>(zones);
+  const [selectedZones, setSelectedZones] = useState<string[]>([]);
 
   const handleCheckboxChange = (name: string) => {
-    setSelectedPolygons(prevSelected => {
+    setSelectedZones(prevSelected => {
       if (prevSelected.includes(name)) {
-        return prevSelected.filter(polygonName => polygonName !== name);
+        return prevSelected.filter(zoneName => zoneName !== name);
       } else {
         return [...prevSelected, name];
       }
@@ -27,22 +27,22 @@ const ZonesList = ({zones}: IZonesProps) => {
   };
 
   const handleCoordinateChange = (index: number, value: number) => {
-    const updatedPolygons = [...polygonData];
-    updatedPolygons[index].coordinates = value;
-    setPolygonData(updatedPolygons);
+    const updatedZones = [...zoneData];
+    updatedZones[index].coordinates = value;
+    setZoneData(updatedZones);
   };
 
   const handleDelete = (value: string) => {
-    const updatedPolygons = polygonData.filter(polygon => polygon.name !== value);
-    const updatedSelectedPolygons = selectedPolygons.filter(polygonName => polygonName !== value);
-    setPolygonData(updatedPolygons);
-    setSelectedPolygons(updatedSelectedPolygons);
+    const updatedZones = zoneData.filter(zone => zone.name !== value);
+    const updatedSelectedZones = selectedZones.filter(zoneName => zoneName !== value);
+    setZoneData(updatedZones);
+    setSelectedZones(updatedSelectedZones);
   };
 
   useEffect(() => {
-    console.log(polygonData);
-    console.log(selectedPolygons);
-  }, [selectedPolygons, polygonData]);
+    console.log(zoneData);
+    console.log(selectedZones);
+  }, [selectedZones, zoneData]);
 
   return (
     <>
@@ -53,21 +53,21 @@ const ZonesList = ({zones}: IZonesProps) => {
       <div className={styles.container}>
         <Table basic={true} className={styles.table}>
           <Table.Body>
-            {polygonData.map((polygon, index) => (
+            {zoneData.map((zone, index) => (
               <Table.Row key={index}>
                 <Table.Cell width={9}>
                   <Checkbox
                     className={styles.checkbox}
-                    label={polygon.name}
-                    name={polygon.name}
-                    checked={selectedPolygons.includes(polygon.name)}
-                    onChange={() => handleCheckboxChange(polygon.name)}
+                    label={zone.name}
+                    name={zone.name}
+                    checked={selectedZones.includes(zone.name)}
+                    onChange={() => handleCheckboxChange(zone.name)}
                   />
                 </Table.Cell>
                 <Table.Cell width={5}>
                   <input
                     type="number"
-                    value={polygon.coordinates}
+                    value={zone.coordinates}
                     onChange={(e) => handleCoordinateChange(index, parseFloat(e.target.value))}
                     step={0.1}
                   />
@@ -76,7 +76,7 @@ const ZonesList = ({zones}: IZonesProps) => {
                   <DotsMenu
                     className={styles.dotsMenu}
                     actions={[
-                      {text: 'Delete', icon: 'remove', onClick: () => handleDelete(polygon.name)},
+                      {text: 'Delete', icon: 'remove', onClick: () => handleDelete(zone.name)},
                     ]}
                   />
                 </Table.Cell>
