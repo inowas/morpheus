@@ -8,6 +8,9 @@ from .Layer import Layer, LayerId
 class LayersCollection:
     layers: list[Layer]
 
+    def __len__(self):
+        return len(self.layers)
+
     def __iter__(self) -> Iterator[Layer]:
         return iter(self.layers)
 
@@ -29,13 +32,13 @@ class LayersCollection:
         return next((layer for layer in self.layers if layer.id == layer_id), None)
 
     def with_added_layer(self, layer: Layer):
-        return LayersCollection(layers=self.layers + [layer])
+        return dataclasses.replace(self, layers=self.layers + [layer])
 
     def with_updated_layer(self, updated_layer: Layer):
-        return LayersCollection(layers=[updated_layer if updated_layer.id == layer.id else layer for layer in self.layers])
+        return dataclasses.replace(self, layers=[updated_layer if updated_layer.id == layer.id else layer for layer in self.layers])
 
     def with_deleted_layer(self, layer_id: LayerId):
-        return LayersCollection(layers=[layer for layer in self.layers if layer.id != layer_id])
+        return dataclasses.replace(self, layers=[layer for layer in self.layers if layer.id != layer_id])
 
     def number_of_layers(self):
         return len(self.layers)

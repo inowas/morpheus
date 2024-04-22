@@ -124,17 +124,19 @@ class ModelProjector(EventListenerBase):
         updated_by = UserId.from_str(metadata.get_created_by().to_str())
         updated_at = event.get_occurred_at()
 
-        latest = self.model_repo.get_latest_model(project_id=project_id)
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
 
-        if latest.model_id != model_id:
+        if latest_model.model_id != model_id:
             return
 
-        layers = latest.layers
+        layers = latest_model.layers
         if layers is None:
             return
 
-        latest = latest.with_updated_layers(layers=layers.with_added_layer(layer=layer))
-        self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
+        new_layers = layers.with_added_layer(layer=layer)
+        updated_model = latest_model.with_updated_layers(layers=new_layers)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
     @listen_to(ModelLayerDeletedEvent)
     def on_model_layer_deleted(self, event: ModelLayerDeletedEvent, metadata: EventMetadata) -> None:

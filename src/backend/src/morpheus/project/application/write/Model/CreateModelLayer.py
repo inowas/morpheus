@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict, Literal, Optional
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
@@ -78,7 +78,8 @@ class CreateModelLayerCommandHandler(CommandHandlerBase):
                 description=command.description,
                 type=command.type,
                 properties=command.properties
-            )
+            ),
+            occurred_at=DateTime.now()
         )
 
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))

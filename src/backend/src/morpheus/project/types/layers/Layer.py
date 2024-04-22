@@ -215,6 +215,10 @@ class LayerPropertyValue:
             zones=[LayerPropertyZone.from_dict(zone) for zone in obj['zones']] if 'zones' in obj and obj['zones'] is not None else None
         )
 
+    @classmethod
+    def from_value(cls, value: float):
+        return cls(value=value)
+
     def to_dict(self):
         return {
             'value': self.value,

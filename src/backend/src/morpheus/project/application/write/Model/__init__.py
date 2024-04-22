@@ -4,6 +4,7 @@ from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCom
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
 from .UpdateModelLayer import UpdateModelLayerCommand, UpdateModelLayerCommandHandler
+from .UpdateModelLayerProperty import UpdateModelLayerPropertyCommand, UpdateModelLayerPropertyCommandHandler
 from .UpdateModelAffectedCells import UpdateModelAffectedCellsCommand, UpdateModelAffectedCellsCommandHandler
 from .UpdateModelGeometry import UpdateModelGeometryCommand, UpdateModelGeometryCommandHandler
 from .UpdateModelGrid import UpdateModelGridCommand, UpdateModelGridCommandHandler
@@ -17,6 +18,7 @@ model_command_handler_map = {
     DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
     UpdateModelLayerCommand: UpdateModelLayerCommandHandler,
+    UpdateModelLayerPropertyCommand: UpdateModelLayerPropertyCommandHandler,
     UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
     UpdateModelGeometryCommand: UpdateModelGeometryCommandHandler,
     UpdateModelGridCommand: UpdateModelGridCommandHandler,

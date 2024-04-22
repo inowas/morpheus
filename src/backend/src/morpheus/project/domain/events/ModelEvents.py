@@ -16,7 +16,7 @@ from morpheus.project.types.layers.Layer import Layer, LayerId, LayerType, Layer
 
 class ModelAffectedCellsUpdatedEvent(EventBase):
     @classmethod
-    def from_affected_cells(cls, project_id: ProjectId, affected_cells: ActiveCells, occurred_at: DateTime = DateTime.now()):
+    def from_affected_cells(cls, project_id: ProjectId, affected_cells: ActiveCells, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -37,7 +37,7 @@ class ModelAffectedCellsUpdatedEvent(EventBase):
 
 class ModelAffectedCellsRecalculatedEvent(EventBase):
     @classmethod
-    def from_affected_cells(cls, project_id: ProjectId, affected_cells: ActiveCells, occurred_at: DateTime = DateTime.now()):
+    def from_affected_cells(cls, project_id: ProjectId, affected_cells: ActiveCells, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -59,7 +59,7 @@ class ModelAffectedCellsRecalculatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class ModelCreatedEvent(EventBase):
     @classmethod
-    def from_model(cls, project_id: ProjectId, model: Model, occurred_at: DateTime = DateTime.now()):
+    def from_model(cls, project_id: ProjectId, model: Model, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -78,7 +78,7 @@ class ModelCreatedEvent(EventBase):
 
 class ModelGeometryUpdatedEvent(EventBase):
     @classmethod
-    def from_geometry(cls, project_id: ProjectId, polygon: Polygon, occurred_at: DateTime = DateTime.now()):
+    def from_geometry(cls, project_id: ProjectId, polygon: Polygon, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -99,7 +99,7 @@ class ModelGeometryUpdatedEvent(EventBase):
 
 class ModelGridRecalculatedEvent(EventBase):
     @classmethod
-    def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime = DateTime.now()):
+    def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -120,7 +120,7 @@ class ModelGridRecalculatedEvent(EventBase):
 
 class ModelGridUpdatedEvent(EventBase):
     @classmethod
-    def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime = DateTime.now()):
+    def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -141,7 +141,7 @@ class ModelGridUpdatedEvent(EventBase):
 
 class ModelTimeDiscretizationUpdatedEvent(EventBase):
     @classmethod
-    def from_time_discretization(cls, project_id: ProjectId, time_discretization: TimeDiscretization, occurred_at: DateTime = DateTime.now()):
+    def from_time_discretization(cls, project_id: ProjectId, time_discretization: TimeDiscretization, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -162,7 +162,7 @@ class ModelTimeDiscretizationUpdatedEvent(EventBase):
 
 class ModelLayerCreatedEvent(EventBase):
     @classmethod
-    def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime = DateTime.now()):
+    def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -187,7 +187,7 @@ class ModelLayerCreatedEvent(EventBase):
 
 class ModelLayerDeletedEvent(EventBase):
     @classmethod
-    def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, occurred_at: DateTime = DateTime.now()):
+    def from_layer_id(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -213,7 +213,7 @@ class ModelLayerDeletedEvent(EventBase):
 class ModelLayerUpdatedEvent(EventBase):
     @classmethod
     def from_props(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, layer_name: LayerName | None, layer_description: LayerDescription | None,
-                   layer_type: LayerType | None, occurred_at: DateTime = DateTime.now()):
+                   layer_type: LayerType | None, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -251,7 +251,7 @@ class ModelLayerUpdatedEvent(EventBase):
 class ModelLayerPropertyUpdatedEvent(EventBase):
     @classmethod
     def from_property(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_value: LayerPropertyValue,
-                      occurred_at: DateTime = DateTime.now()):
+                      occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -285,7 +285,7 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
 class VersionCreatedEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime = DateTime.now()):
+    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -305,7 +305,7 @@ class VersionCreatedEvent(EventBase):
 class VersionAssignedToModelEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime = DateTime.now()):
+    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -313,7 +313,7 @@ class VersionAssignedToModelEvent(EventBase):
         )
 
     @classmethod
-    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime = DateTime.now()):
+    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -333,7 +333,7 @@ class VersionAssignedToModelEvent(EventBase):
 class VersionDeletedEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime = DateTime.now()):
+    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -341,7 +341,7 @@ class VersionDeletedEvent(EventBase):
         )
 
     @classmethod
-    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime = DateTime.now()):
+    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -361,7 +361,7 @@ class VersionDeletedEvent(EventBase):
 class VersionDescriptionUpdatedEvent(EventBase):
 
     @classmethod
-    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime = DateTime.now()):
+    def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -369,7 +369,7 @@ class VersionDescriptionUpdatedEvent(EventBase):
         )
 
     @classmethod
-    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, description: VersionDescription, occurred_at: DateTime = DateTime.now()):
+    def from_version_id(cls, project_id: ProjectId, version_id: VersionId, description: VersionDescription, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
