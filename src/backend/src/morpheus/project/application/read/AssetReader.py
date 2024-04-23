@@ -67,7 +67,7 @@ class AssetReader:
         return geo_tiff_service.extract_asset_data(file=asset_handling_service.get_full_path_to_asset(asset), band=band)
 
     def get_raster_asset_coords(self, project_id: ProjectId, asset_id: AssetId,
-                                bbox: Tuple[Tuple[float, float], Tuple[float, float]] | None) -> Tuple[list[float], list[float]] | None:
+                                bbox: Tuple[Tuple[float, float], Tuple[float, float]] | None) -> Tuple[list[list[float]], list[list[float]]] | None:
 
         asset = self.get_asset(project_id, asset_id)
         if asset is None:

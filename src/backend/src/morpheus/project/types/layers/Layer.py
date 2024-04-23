@@ -1,7 +1,7 @@
 import dataclasses
 import uuid
 from enum import StrEnum
-from typing import Literal, Mapping
+from typing import Literal, Mapping, Sequence
 
 import numpy as np
 
@@ -148,10 +148,10 @@ class LayerPropertyRasterReference:
 
 @dataclasses.dataclass
 class LayerPropertyRaster:
-    data: list[list[float]] | None
+    data: Sequence[Sequence[float | None]]
     reference: LayerPropertyRasterReference | None
 
-    def __init__(self, data: list[list[float]] | None = None, reference: LayerPropertyRasterReference | None = None):
+    def __init__(self, data: Sequence[Sequence[float | None]], reference: LayerPropertyRasterReference | None = None):
         self.data = data
         self.reference = reference
 
@@ -164,7 +164,7 @@ class LayerPropertyRaster:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            data=obj['data'] if 'data' in obj and obj['data'] is not None else None,
+            data=obj['data'],
             reference=LayerPropertyRasterReference.from_dict(obj['reference']) if 'reference' in obj and obj['reference'] is not None else None
         )
 
@@ -228,7 +228,9 @@ class LayerPropertyValue:
 
     def get_data(self) -> float | list[list[float]]:
         if self.raster is not None and self.raster.data is not None:
-            return self.raster.data
+            np_raster_data = np.array(self.raster.data)
+            raster_data = np.where(np_raster_data is None, self.value, np_raster_data).tolist()
+            return raster_data
 
         if self.zones is not None and len(self.zones) > 0:
             shape = self.zones[0].affected_cells.shape

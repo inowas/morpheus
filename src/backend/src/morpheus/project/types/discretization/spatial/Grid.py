@@ -223,14 +223,11 @@ class Grid:
         row_coordinates = self.row_coordinates()
         return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
-    def get_wgs_coordinates(self) -> Tuple[list[float], list[float]]:
+    def get_wgs_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
         cell_centers = self.get_cell_centers()
-        rows = cell_centers[0]
-        cols = [row[0] for row in cell_centers]
-        x_coords = [point.coordinates[0] for point in rows]
-        y_coords = [point.coordinates[1] for point in cols]
-
-        return x_coords, y_coords
+        xx_coords = [[point.coordinates[0] for point in row] for row in cell_centers]
+        yy_coords = [[point.coordinates[1] for point in row] for row in cell_centers]
+        return xx_coords, yy_coords
 
     def get_cell_centers(self) -> list[list[Point]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()

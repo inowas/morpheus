@@ -78,6 +78,22 @@ class ActiveCells:
         return self.is_active(col=cell.col, row=cell.row)
 
     @classmethod
+    def from_geometry(cls, geometry: LineString | MultiPolygon | Point | Polygon, grid: Grid):
+        if isinstance(geometry, LineString):
+            return cls.from_linestring(linestring=geometry, grid=grid)
+
+        if isinstance(geometry, MultiPolygon):
+            return cls.from_multipolygon(polygon=geometry, grid=grid)
+
+        if isinstance(geometry, Point):
+            return cls.from_point(point=geometry, grid=grid)
+
+        if isinstance(geometry, Polygon):
+            return cls.from_polygon(polygon=geometry, grid=grid)
+
+        raise ValueError(f'Unknown geometry type: {geometry}')
+
+    @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         geometries = grid.get_cell_geometries()
@@ -100,6 +116,19 @@ class ActiveCells:
             for row in range(grid.n_rows()):
                 center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
                 if area.contains(center):
+                    cells.set_active(col=col, row=row)
+
+        return cells
+
+    @classmethod
+    def from_multipolygon(cls, polygon: MultiPolygon, grid: Grid):
+        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+        areas = ShapelyMultiPolygon(polygon.coordinates)
+        grid_cell_centers = grid.get_cell_centers()
+        for col in range(grid.n_cols()):
+            for row in range(grid.n_rows()):
+                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
+                if areas.contains(center):
                     cells.set_active(col=col, row=row)
 
         return cells

@@ -1,8 +1,5 @@
 import dataclasses
 from typing import TypedDict, Literal, Optional
-from scipy.interpolate import RegularGridInterpolator
-
-import numpy as np
 
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
@@ -14,11 +11,13 @@ from morpheus.project.application.read.PermissionsReader import PermissionsReade
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents import ModelLayerPropertyUpdatedEvent
+from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, RasterCoordinates, RasterData, Raster
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Asset import AssetId, GeoTiffAssetData
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
+from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, LayerPropertyValue
 
 
@@ -89,6 +88,12 @@ class UpdateModelLayerPropertyCommandHandler(CommandHandlerBase):
         # if the user references a raster, we need to interpolate the raster to the layer's geometry
         property_value = command.property_value
 
+        # This is not in every case necessary
+        # We could add a check if the raster or zone is needed to be interpolated or recalculated
+        model_reader = ModelReader()
+        model = model_reader.get_latest_model(project_id=project_id)
+        grid = model.spatial_discretization.grid
+
         if property_value.raster and property_value.raster.reference and not property_value.raster.data:
             reference = property_value.raster.reference
             asset_id = AssetId.from_str(reference.asset_id)
@@ -101,24 +106,27 @@ class UpdateModelLayerPropertyCommandHandler(CommandHandlerBase):
             if not isinstance(raster_asset_data, GeoTiffAssetData):
                 raise ValueError(f'Asset {asset_id.to_str()} not found in project {project_id.to_str()}')
 
-            # interpolate raster data to model geometry
-            model_reader = ModelReader()
-            model = model_reader.get_latest_model(project_id=project_id)
-            grid = model.spatial_discretization.grid
-
             raster_coordinates = asset_reader.get_raster_asset_coords(project_id=project_id, asset_id=asset_id, bbox=grid.bbox())
             if raster_coordinates is None:
                 raise ValueError(f'Asset {asset_id.to_str()} does not cover the model geometry')
 
-            raster_x_coords, raster_y_coords = raster_coordinates
-            raster_data = raster_asset_data.data
+            input_raster_xx, input_raster_yy = raster_coordinates
+            input_raster_coords = RasterCoordinates(xx_coords=input_raster_xx, yy_coords=input_raster_yy)
+            input_raster_data = RasterData(data=raster_asset_data.data)
+            input_raster = Raster(input_raster_coords, input_raster_data)
 
             # interpolate raster data to model geometry
-            interp = RegularGridInterpolator((raster_x_coords, raster_y_coords), raster_data, bounds_error=False)
-            new_x_coords, new_y_coords = grid.get_wgs_coordinates()
-            new_xx, new_yy = np.meshgrid(new_x_coords, new_y_coords, indexing='xy')
-            new_data = interp((new_xx, new_yy), method='linear')
-            property_value.raster.data = new_data.tolist()
+            interpolation_service = RasterInterpolationService()
+
+            xx_coords, yy_coords = grid.get_wgs_coordinates()
+            output_coords = RasterCoordinates(xx_coords=xx_coords, yy_coords=yy_coords)
+            output_raster = interpolation_service.interpolate_raster(raster=input_raster, new_coords=output_coords, method='linear', fill_value=None)
+            property_value.raster.data = output_raster.data.data
+
+        if property_value.zones:
+            for zone in property_value.zones:
+                if not zone.affected_cells:
+                    zone.affected_cells = ActiveCells.from_geometry(zone.geometry, grid)
 
         event = ModelLayerPropertyUpdatedEvent.from_property(
             project_id=project_id,

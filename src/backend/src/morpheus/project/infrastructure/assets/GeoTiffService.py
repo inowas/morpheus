@@ -33,7 +33,7 @@ class GeoTiffService:
 
     # returns a tuple of two lists of 1D-floats, the first list contains the x coordinates and the second list contains the y coordinates
     # example: ([1.0, 2.0, 3.0], [4.0, 5.0, 6.0])
-    def extract_asset_coordinates(self, file: FilePath, bbox: Tuple[Tuple[float, float], Tuple[float, float]] | None) -> Tuple[list[float], list[float]] | None:
+    def extract_asset_coordinates(self, file: FilePath, bbox: Tuple[Tuple[float, float], Tuple[float, float]] | None) -> Tuple[list[list[float]], list[list[float]]] | None:
         geo_tiff = self._open_geo_tiff_in_wgs_84(file)
         coords_x, coords_y = geo_tiff.get_coord_arrays(bBox=bbox)
 
