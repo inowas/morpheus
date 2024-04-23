@@ -1,10 +1,9 @@
 import {Accordion, Icon} from 'semantic-ui-react';
 import {arrayMove, List} from 'react-movable';
 import React, {useState} from 'react';
-
-import {DotsMenu} from '../index';
-import styles from './MovableAccordionList.module.less';
 import {v4 as uuidv4} from 'uuid';
+import {DotsMenu, IAction} from '../index';
+import styles from './MovableAccordionList.module.less';
 
 interface ListItem {
   key: number | string;
@@ -19,6 +18,7 @@ interface ListItem {
 
 interface MovableAccordionListProps {
   items: ListItem[];
+  renameItems?: boolean;
   onMovableListChange: (newItems: ListItem[]) => void;
   defaultOpenIndexes?: number[];
   openEachOnClick?: boolean;
@@ -29,6 +29,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
   onMovableListChange,
   openEachOnClick = false,
   defaultOpenIndexes = [],
+  renameItems = true,
 }) => {
   const [openIndexes, setOpenIndexes] = useState<number[]>(defaultOpenIndexes);
   const [openEditingTitle, setOpenEditingTitle] = useState<number | string | null>(null);
@@ -48,6 +49,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
     setInputValue('');
     setOpenEditingTitle(null);
   };
+
   const handleDeleteItem = (key: string | number) => {
     if (!key) {
       setOpenEditingTitle(null);
@@ -87,7 +89,6 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
 
     setOpenIndexes(newOpenIndexes);
   };
-
 
   return (
     <div className={'movableList'}>
@@ -158,7 +159,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
                   backgroundColor: '#002557',
                 }}
               />
-              {openEditingTitle === value.content[0].key && (
+              {renameItems && openEditingTitle === value.content[0].key && (
                 <div className={styles.renameField}>
                   <input
                     type='text'
@@ -175,13 +176,11 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
                 </div>
               )}
               <DotsMenu
-                actions={
-                  [
-                    {text: 'Clone', icon: 'clone', onClick: () => handleCloneItem(value.content[0].key)},
-                    {text: 'Delete', icon: 'remove', onClick: () => handleDeleteItem(value.content[0].key)},
-                    {text: 'Rename Item', icon: 'edit', onClick: () => setOpenEditingTitle(value.content[0].key)},
-                  ]
-                }
+                actions={[
+                  {text: 'Clone', icon: 'clone', onClick: () => handleCloneItem(value.content[0].key)},
+                  {text: 'Delete', icon: 'remove', onClick: () => handleDeleteItem(value.content[0].key)},
+                  renameItems && {text: 'Rename Item', icon: 'edit', onClick: () => setOpenEditingTitle(value.content[0].key)},
+                ].filter(action => false !== action) as IAction[]}
                 style={{
                   cursor: 'move',
                   position: 'absolute',

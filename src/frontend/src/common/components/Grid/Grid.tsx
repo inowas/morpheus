@@ -20,16 +20,23 @@ export type IGridProps = {
   padded?: boolean | 'horizontally' | 'vertically'
   relaxed?: boolean | 'very'
   reversed?: GridReversedProp
+  responsive?: boolean
   stackable?: boolean
   stretched?: boolean
   textAlign?: SemanticTEXTALIGNMENTS
   verticalAlign?: SemanticVERTICALALIGNMENTS
   style?: React.CSSProperties;
+  variant?: 'secondary' | null;
 };
 
-const Grid: React.FC<IGridProps> = (props) => (
-  <SemanticGrid {...props} />
-);
+const Grid: React.FC<IGridProps> = ({variant, ...props}) => {
+  return (
+    <SemanticGrid
+      {...props}
+      {...(null !== variant ? {'data-variant': variant} : {})}
+    />
+  );
+};
 
 export type IGridColumnProps = {
   as?: any
@@ -68,6 +75,7 @@ export type IGridRowProps = {
   textAlign?: SemanticTEXTALIGNMENTS
   verticalAlign?: SemanticVERTICALALIGNMENTS
   style?: React.CSSProperties;
+
 };
 
 const Row: React.FC<IGridRowProps> = (props) => (

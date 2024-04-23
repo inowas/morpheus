@@ -7,3 +7,12 @@
     margin: 0 -1rem !important;
   }
 }
+
+
+[data-variant="secondary"].ui.grid {
+  
+  & > .column:first-child {
+    background: #FFFFFF;
+    box-shadow: 9px 0 10px -11px #BABABA;
+  }
+}

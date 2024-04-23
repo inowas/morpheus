@@ -24,6 +24,7 @@ import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationC
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 import ModelSetupContainer from '../containers/ModelSetupContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import BoundaryContainer from '../containers/BoundaryContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -67,6 +68,7 @@ const sidebarItems: IMenuItem[] = [
     name: 'Boundary conditions',
     isTitle: false,
     slug: 'boundary-conditions',
+    component: <BoundaryContainer/>,
   },
   {
     icon: <FontAwesomeIcon icon={faLocationCrosshairs}/>,

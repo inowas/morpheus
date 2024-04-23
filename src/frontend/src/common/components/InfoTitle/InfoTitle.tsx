@@ -31,19 +31,33 @@ const InfoTitle = ({title, description, actions, secondary, isLocked}: IProps) =
       {!description && (
         secondary ? <span className={styles.secondary}>{title}</span> : <span><Icon className={'dateIcon'} name="info circle"/> {title}</span>
       )}
-      {!actions ? null : (<div className={styles.actions}>
-        {actions.map((action, index) => (
-          <Popup
-            key={index}
-            trigger={action.onClick ?
-              <Button disabled={isLocked} onClick={action.onClick}><Icon className={'dateIcon'} name="info circle"/>{action.actionText}</Button> :
-              <span><Icon className={'dateIcon'} name="info circle"/>{action.actionText}</span>}
-            content={action.actionDescription}
-            hideOnScroll={true}
-            size="tiny"
-          />
-        ))}
-      </div>)}
+      {!actions ? null : (
+        <div className={styles.actions}>
+          {actions.map((action, index) => (
+            action.actionDescription ? (
+              <Popup
+                key={index}
+                trigger={action.onClick ? (
+                  <Button disabled={isLocked} onClick={action.onClick}>
+                    <Icon className={'dateIcon'} name="info circle"/>{action.actionText}
+                  </Button>
+                ) : (
+                  <span><Icon className={'dateIcon'} name="info circle"/>{action.actionText}</span>
+                )}
+                content={action.actionDescription}
+                hideOnScroll={true}
+                size="tiny"
+              />
+            ) : (
+              <div key={index}>
+                {action.onClick
+                  ? <Button disabled={isLocked} onClick={action.onClick}>{action.actionText}</Button>
+                  : <span>{action.actionText}</span>}
+              </div>
+            )
+          ))}
+
+        </div>)}
     </div>
   );
 };
