@@ -42,7 +42,117 @@
     background: @ref-color-underline;
     border-radius: 2px;
   }
+
+  .item {
+    padding: 0 5px 0 25px !important;
+    margin: 0;
+    position: relative;
+
+    * > {
+      z-index: 1;
+    }
+  }
+
+  .title {
+    height: 33px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid @ref-color-borderTable;
+
+    &:before,
+    &:after {
+      content: none;
+      height: 33px;
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    &:before {
+      width: 100%;
+      background-color: @ref-color-lightGrey;
+    }
+
+    &:after {
+      width: 2px;
+      background-color: @ref-color-blackLight;
+    }
+
+    &:hover,
+    &.titleSelected {
+      &:before,
+      &:after {
+        content: '';
+      }
+    }
+
+    &.titleSelected {
+      font-weight: 700;
+    }
+
+  }
+
+  .titleInner {
+    width: calc(100% - 80px);
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+
+    & > [class*="checkbox"] {
+      width: 15px;
+      min-width: 15px;
+      height: 15px;
+      min-height: 15px;
+      margin-right: 12px;
+    }
+
+  }
+
+  .buttonsWrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .accordionContent {
+    border-bottom: 1px solid @ref-color-borderTable;
+
+    [class*="list"] {
+
+      [class*="item"] {
+        font-size: 12px;
+        font-weight: 500;
+        padding-bottom: 0.5em;
+        margin: 0 22px 0.5em;
+      }
+
+      [class*="item"]:not(:last-child) {
+        border-bottom: 1px solid @ref-color-borderTable;
+      }
+    }
+  }
+
+  [class*="disabled"],
+  .disabled {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  button.dotsMenu {
+    margin-left: 0 !important;
+    color: @black !important;
+    transition: transform 300ms;
+
+    &:hover,
+    &:focus {
+      background-color: transparent !important;
+      transform: scale(1.2);
+    }
+  }
 }
+
 
 //.table {
 //  border: 0 !important;
@@ -82,13 +192,4 @@
 //
 //}
 //
-button.dotsMenu {
-  color: @black !important;
-  transition: transform 300ms;
 
-  &:hover,
-  &:focus {
-    background-color: transparent !important;
-    transform: scale(1.2);
-  }
-}

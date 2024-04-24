@@ -1,80 +1,113 @@
-import {Checkbox, List, ListItem, Search} from 'semantic-ui-react';
-import {DotsMenu, Label} from 'common/components';
+import {Accordion, Checkbox, Icon, List, ListItem, Search} from 'semantic-ui-react';
+import {DotsMenu} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import styles from './SelectedList.module.less';
 
-interface ISelectedItem {
+interface IBoundaryItem {
   id: string;
   name: string;
-  sub_layers?: string[];
+  observations: any[];
+  checked: boolean,
+  selected: boolean,
 }
 
 interface ISelectedListProps {
-  boundary?: any;
-  items: ISelectedItem[];
+  boundaries: any[];
+  onDelete: (id: string) => void;
+  onCopy: (id: string) => void;
 }
 
-const SelectedList = ({items, boundary}: ISelectedListProps) => {
-  const [listItems, setListItems] = useState<ISelectedItem[]>(items);
-  const [checkedItems, setCheckedItems] = useState<string[]>([]);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
+  const [listItems, setListItems] = useState<IBoundaryItem[]>([]);
+  const [filterdListItems, setFilterdListItems] = useState<IBoundaryItem[]>([]);
   const [selectAllChecked, setSelectAllChecked] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
-
-  console.log(boundary);
-  useEffect(() => {
-    setListItems(items);
-  }, [items]);
+  const [activePanels, setActivePanels] = useState<number[]>([]);
 
   useEffect(() => {
-    if (selectAllChecked) {
-      const allItemIds = listItems.map(item => item.id);
-      setSelectedItems(allItemIds);
-    } else {
-      setSelectedItems([]);
-    }
-  }, [selectAllChecked, listItems]);
+    const boundariesListObj = boundaries.map(boundaryItem => ({
+      id: boundaryItem.id,
+      name: boundaryItem.name,
+      observations: boundaryItem.observations,
+      checked: true,
+      selected: false,
+    }));
+    setListItems(boundariesListObj);
+  }, [boundaries]);
+
+  const handleSelectAllChange = () => {
+    setSelectAllChecked(prev => !prev);
+    setListItems(prevListItems => prevListItems.map(item => ({
+      ...item,
+      selected: !item.checked ? false : !item.selected,
+    })));
+  };
 
   const handleItemClick = (itemId: string, metaPressed: boolean) => {
-    let updatedSelection: string[];
-
-    if (metaPressed) {
-      if (selectedItems.includes(itemId)) {
-        updatedSelection = selectedItems.filter(item => item !== itemId);
+    const updatedListItems = listItems.map(item => {
+      if (item.id === itemId) {
+        if (metaPressed) {
+          // Toggle the selected state if meta key is pressed
+          return {
+            ...item,
+            selected: !item.selected,
+          };
+        } else {
+          // Deselect all other items and select only the clicked item
+          return {
+            ...item,
+            selected: true,
+          };
+        }
       } else {
-        updatedSelection = [...selectedItems, itemId];
-      }
-    } else {
-      updatedSelection = [itemId];
-    }
-    setSelectAllChecked(false);
-    setSelectedItems(updatedSelection);
-  };
-
-  const handleCheckboxChange = (name: string) => {
-    setCheckedItems(prevSelected => {
-      if (prevSelected.includes(name)) {
-        return prevSelected.filter(itemName => itemName !== name);
-      } else {
-        return [...prevSelected, name];
+        if (!metaPressed) {
+          // Deselect other items if meta key is not pressed
+          return {
+            ...item,
+            selected: false,
+          };
+        }
+        // Keep other items unchanged if meta key is pressed
+        return item;
       }
     });
+
+    setSelectAllChecked(false);
+    setListItems(updatedListItems);
   };
 
-  const handleDelete = (value: string) => {
-    const updatedItemList = listItems.filter(item => item.name !== value);
-    const updatedSelectedItems = checkedItems.filter(itemName => itemName !== value);
-    setListItems(updatedItemList);
-    setCheckedItems(updatedSelectedItems);
+  const handleCheckboxChange = (id: string, index: number) => {
+    const updatedListItems = listItems.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          selected: false,
+          checked: !item.checked,
+        };
+      }
+      return item;
+    });
+    if (activePanels.includes(index)) {
+      setActivePanels(activePanels.filter(item => item !== index));
+    }
+    setListItems(updatedListItems);
   };
 
   const handleSearchChange = (event: React.MouseEvent<HTMLElement>, data: any) => {
+    setFilterdListItems(listItems);
     const query = data.value.toLowerCase();
     setSearchQuery(query);
-    const filteredItems = items.filter(item =>
+    const filteredItems = filterdListItems.filter(item =>
       item.name.toLowerCase().includes(query),
     );
     setListItems(filteredItems);
+  };
+
+  const toggleAccordion = (index: number) => {
+    const newActivePanels = activePanels.includes(index)
+      ? activePanels.filter(item => item !== index)
+      : [...activePanels, index];
+    setActivePanels(newActivePanels);
   };
 
   return (
@@ -85,7 +118,7 @@ const SelectedList = ({items, boundary}: ISelectedListProps) => {
       <Checkbox
         className={styles.checkbox}
         checked={selectAllChecked}
-        onChange={() => setSelectAllChecked(prev => !prev)}
+        onChange={handleSelectAllChange}
       />
       <Search
         onSearchChange={handleSearchChange}
@@ -96,38 +129,80 @@ const SelectedList = ({items, boundary}: ISelectedListProps) => {
       {/*Body with list items*/}
       {/**/}
       <List className={styles.list}>
-        {0 < listItems.length && listItems.map(item => (
+        {listItems.map((item, index) => (
           <ListItem
             key={item.id}
-            className={styles.listItem}
+            className={styles.item}
           >
             <div
-              className={styles.listItemContent}
-              style={{
-                backgroundColor: selectedItems.includes(item.id) ? 'lightblue' : 'white',
-                cursor: 'pointer',
-              }}
-              onClick={(e) => handleItemClick(item.id, e.metaKey)}
+              // Title styles when item is selected
+              className={`${styles.title} ${item.selected ? styles.titleSelected : ''}`}
             >
-              <Checkbox
-                className={styles.checkbox}
-                checked={selectedItems.includes(item.id)}
-                onChange={() => handleItemClick(item.id, true)}
-              />
-              <Label>{item.name}
+              <div
+                className={`${styles.titleInner} ${!item.checked ? styles.disabled : ''}`}
+                onClick={(e) => handleItemClick(item.id, e.metaKey)}
+              >
+                <Checkbox
+                  checked={item.selected}
+                  onChange={() => handleItemClick(item.id, true)}
+                />
+                <div style={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
+                >
+                  {item.name}
+                </div>
+
+              </div>
+              <div
+                className={styles.buttonsWrapper}
+                style={{paddingRight: `${!item.observations[0].observation_name && '21px'}`}}
+              >
                 <Checkbox
                   toggle={true}
-                  checked={checkedItems.includes(item.name)}
-                  onChange={() => handleCheckboxChange(item.name)}
+                  checked={item.checked}
+                  onChange={() => handleCheckboxChange(item.id, index)}
                 />
-              </Label>
-              <DotsMenu
-                className={styles.dotsMenu}
-                actions={[
-                  {text: 'Delete', icon: 'remove', onClick: () => handleDelete(item.name)},
-                ]}
-              />
+                <DotsMenu
+                  className={`${styles.dotsMenu} ${!item.checked ? styles.disabled : ''}`}
+                  actions={[
+                    {text: 'Copy', icon: 'copy', onClick: () => onCopy(item.id)},
+                    {text: 'Delete', icon: 'remove', onClick: () => onDelete(item.id)},
+                  ]}
+                />
+                {item.observations[0].observation_name && (
+                  <Icon
+                    className={`${!item.checked ? styles.disabled : ''}`}
+                    name={`${activePanels.includes(index) ? 'angle down' : 'angle right'}`}
+                    onClick={() => toggleAccordion(index)}
+                  />
+                )}
+              </div>
             </div>
+            {(item.observations[0].observation_name && item.observations[0].observation_id) && (
+              <Accordion.Content
+                className={styles.accordionContent}
+                active={activePanels.includes(index)}
+                style={{display: activePanels.includes(index) ? 'block' : 'none'}}
+              >
+                <List>
+                  {item.observations.map((observation) => {
+                    return (
+                      <ListItem
+                        key={observation.observation_id}
+                      >
+                        <Icon name="circle" style={{color: '#748EB3', marginRight: '5px'}}/>
+                        {observation.observation_name}
+                      </ListItem>
+                    );
+                  })}
+                </List>
+
+              </Accordion.Content>
+            )}
+
           </ListItem>
         ))}
       </List>

@@ -34,7 +34,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
   const [openIndexes, setOpenIndexes] = useState<number[]>(defaultOpenIndexes);
   const [openEditingTitle, setOpenEditingTitle] = useState<number | string | null>(null);
   const [inputValue, setInputValue] = useState('');
-
+  
   const handleSaveTitle = (key: string | number, newTitle: string) => {
     if (!newTitle) {
       setOpenEditingTitle(null);

@@ -1,36 +1,42 @@
-import {DataGrid, Grid, InfoTitle, MovableAccordionList, SectionTitle} from 'common/components';
+import {DataGrid, DotsMenu, Grid, InfoTitle, SectionTitle} from 'common/components';
 import React, {useState} from 'react';
-import {Dropdown, Form} from 'semantic-ui-react';
-// import {ZonesList} from '../ZonesList';
-import jsonData from './items.json';
-import boundaryItems from './boundary.json';
+import boundarieData from './boundarie.json';
 import {SelectedList} from '../SelectedList';
-
-
-// const zones = [
-//   {name: 'Green Land', coordinates: 732.46},
-//   {name: 'Red Land', coordinates: 536.21},
-//   {name: 'Blue Land', coordinates: 93.22},
-//   {name: 'Yellow Land', coordinates: 452.00},
-//   {name: 'Purple Land', coordinates: 621.67},
-//   {name: 'Orange Land', coordinates: 732.46},
-//   {name: 'Cyan Land', coordinates: 93.22},
-//   {name: 'Magenta Land', coordinates: 2.46},
-// ];
+import {Accordion} from 'semantic-ui-react';
+import {v4 as uuidv4} from 'uuid';
 
 const BoundaryContent: React.FC = () => {
-  const layers = jsonData.map(item => ({id: item.id, name: item.name, sub_layers: item.sub_layers}));
-  // console.log(boundaryItems);
+  const [boundaries, setBoundaries] = useState(boundarieData);
+  const handleBoundarieDelete = (id: number | string) => {
+    setBoundaries(boundaries.filter(boundarieItem => boundarieItem.id !== id));
+  };
+  const handleBoundarieCopy = (id: number | string) => {
+    const itemToCopyIndex = boundaries.findIndex(boundaryItem => boundaryItem.id === id);
+    if (-1 === itemToCopyIndex) return;
+    const newId = uuidv4();
+    const copiedItem = {...boundaries[itemToCopyIndex], id: newId};
+    const newBoundaries = [...boundaries];
+    newBoundaries.splice(itemToCopyIndex + 1, 0, copiedItem);
+    setBoundaries(newBoundaries);
+  };
 
-  const movableItems: any = [
+
+  const panels = [
     {
-      key: 1123123,
+      key: 1,
       title: {
         content: (
-          <div>
-            <span>WEL</span>
-            <span>Well Boundaries</span>
-            <span>(396)</span>
+          <div className='customTitle'>
+            <DotsMenu
+              actions={[
+                {text: 'Delete', icon: 'remove', onClick: () => console.log('delete')},
+              ]}
+            />
+            <div>
+              <span>WEL</span>
+              <span>Well Boundaries</span>
+              <span>(396)</span>
+            </div>
           </div>
         ),
         icon: false,
@@ -44,7 +50,11 @@ const BoundaryContent: React.FC = () => {
             variant='secondary'
           >
             <Grid.Column>
-              <SelectedList items={layers} boundary={boundaryItems}/>
+              <SelectedList
+                boundaries={boundaries}
+                onDelete={handleBoundarieDelete}
+                onCopy={handleBoundarieCopy}
+              />
             </Grid.Column>
             <Grid.Column>
               <InfoTitle
@@ -54,53 +64,52 @@ const BoundaryContent: React.FC = () => {
                   {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
                 ]}
               />
-              <Form>
-                <Grid.Grid columns='equal'>
-                  <Grid.Row>
-                    <Grid.Column>
-                      <Dropdown
-                        name="selectedLayer"
-                        clearable={true}
-                        multiple={true}
-                        selection={true}
-                        options={layers.map(layer => ({
-                          key: layer.id,
-                          value: layer.name,
-                          text: <span>{layer.name}</span>,
-                        }))}
-                        placeholder="Select Layer"
-                        // value={filterParams.users || []}
-                        // onChange={(_, {value}) => {
-                        //   if (Array.isArray(value)) {
-                        //     const selectedOptions = value.map(option => String(option));
-                        //     onChangeFilterParams({...filterParams, users: 0 < selectedOptions.length ? selectedOptions : undefined});
-                        //   }
-                        // }}
-                      />
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column>
-                      <Form.Field>
-                        <Form.Input label="Name" placeholder="Name"/>
-                      </Form.Field>
-                    </Grid.Column>
-                    <Grid.Column>
-                      <Form.Field>
-                        <Form.Input label="Name" placeholder="Name"/>
-                      </Form.Field>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column>
-                      <Form.Field>
-                        <Form.TextArea label="Name" placeholder="Name"/>
-                      </Form.Field>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid.Grid>
-              </Form>
-
+              {/*<Form>*/}
+              {/*  <Grid.Grid columns='equal'>*/}
+              {/*    <Grid.Row>*/}
+              {/*      <Grid.Column>*/}
+              {/*        <Dropdown*/}
+              {/*          name="selectedLayer"*/}
+              {/*          clearable={true}*/}
+              {/*          multiple={true}*/}
+              {/*          selection={true}*/}
+              {/*          // options={boundary.map(layer => ({*/}
+              {/*          //   key: layer.id,*/}
+              {/*          //   value: layer.name,*/}
+              {/*          //   text: <span>{layer.name}</span>,*/}
+              {/*          // }))}*/}
+              {/*          placeholder="Select Layer"*/}
+              {/*          // value={filterParams.users || []}*/}
+              {/*          // onChange={(_, {value}) => {*/}
+              {/*          //   if (Array.isArray(value)) {*/}
+              {/*          //     const selectedOptions = value.map(option => String(option));*/}
+              {/*          //     onChangeFilterParams({...filterParams, users: 0 < selectedOptions.length ? selectedOptions : undefined});*/}
+              {/*          //   }*/}
+              {/*          // }}*/}
+              {/*        />*/}
+              {/*      </Grid.Column>*/}
+              {/*    </Grid.Row>*/}
+              {/*    <Grid.Row>*/}
+              {/*      <Grid.Column>*/}
+              {/*        <Form.Field>*/}
+              {/*          <Form.Input label="Name" placeholder="Name"/>*/}
+              {/*        </Form.Field>*/}
+              {/*      </Grid.Column>*/}
+              {/*      <Grid.Column>*/}
+              {/*        <Form.Field>*/}
+              {/*          <Form.Input label="Name" placeholder="Name"/>*/}
+              {/*        </Form.Field>*/}
+              {/*      </Grid.Column>*/}
+              {/*    </Grid.Row>*/}
+              {/*    <Grid.Row>*/}
+              {/*      <Grid.Column>*/}
+              {/*        <Form.Field>*/}
+              {/*          <Form.TextArea label="Name" placeholder="Name"/>*/}
+              {/*        </Form.Field>*/}
+              {/*      </Grid.Column>*/}
+              {/*    </Grid.Row>*/}
+              {/*  </Grid.Grid>*/}
+              {/*</Form>*/}
             </Grid.Column>
           </Grid.Grid>
 
@@ -112,7 +121,18 @@ const BoundaryContent: React.FC = () => {
       key: 2,
       title: {
         content: (
-          'Some clay-silt lenses'
+          <div className='customTitle'>
+            {/*<DotsMenu*/}
+            {/*  actions={[*/}
+            {/*    {text: 'Delete', icon: 'remove', onClick: () => handlePanelDelete(2)},*/}
+            {/*  ]}*/}
+            {/*/>*/}
+            <div>
+              <span>WEL</span>
+              <span>Well Boundaries 2</span>
+              <span>(36)</span>
+            </div>
+          </div>
         ),
         icon: false,
       },
@@ -128,39 +148,16 @@ const BoundaryContent: React.FC = () => {
       isOpen: false,
 
     },
-    {
-      key: 3,
-      title: {
-        content: (
-          'New Content 2'
-        ),
-        icon: false,
-      },
-      content: {
-        content: (
-          <p style={{padding: '20px'}}>New content for item 2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet dignissimos facilis inventore minima numquam porro
-            quia, quibusdam sapiente
-            tempore vitae!</p>
-        ),
-      },
-      isOpen: false,
-
-    },
   ];
-
-  const [movableListItems, setMovableListItems] = useState<any[]>(movableItems);
-  const onMovableListChange = (newItems: any) => {
-    setMovableListItems(newItems);
-  };
 
   return <>
     <DataGrid>
       <SectionTitle title={'MODEL BOUNDARIES'}/>
-      <MovableAccordionList
-        defaultOpenIndexes={[0, 1, 2, 3]}
-        items={movableListItems}
-        onMovableListChange={onMovableListChange}
-        renameItems={false}
+      <Accordion
+        defaultActiveIndex={[0]}
+        className='accordionPrimary'
+        panels={panels}
+        exclusive={false}
       />
     </DataGrid>
   </>

@@ -190,7 +190,31 @@
     ],
     "observations": [
       {
+        "observation_name": "Gauge Laubegast",
         "observation_id": "c0595a35-2ab9-4b6f-94b4-5e238df15587",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.57,
+            -31.367
+          ]
+        },
+        "raw_data": [
+          {
+            "date_time": "2015-01-01T00:00:00",
+            "stage": 455,
+            "conductance": 200
+          },
+          {
+            "date_time": "2020-12-31T00:00:00",
+            "stage": 455,
+            "conductance": 200
+          }
+        ]
+      },
+      {
+        "observation_name": "Gauge Weixdorf",
+        "observation_id": "c0595a35-2ab9-4b6f-94b4-5e238df1234327",
         "geometry": {
           "type": "Point",
           "coordinates": [
@@ -432,7 +456,7 @@
   {
     "id": "67adf6bf-7e19-494a-b58a-7e4ded644072",
     "type": "well",
-    "name": "Irrigation Well 1",
+    "name": "Irrigation Well GHB-East Irrigation GHB-East",
     "geometry": {
       "type": "Point",
       "coordinates": [
@@ -509,6 +533,7 @@
     ],
     "observations": [
       {
+        "observation_name": "Irrigation Laubegast",
         "observation_id": "709cf656-e386-4eb9-81d8-cabbbe9d1fe6",
         "geometry": {
           "type": "Point",
