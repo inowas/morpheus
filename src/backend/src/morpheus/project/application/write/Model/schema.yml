@@ -40,21 +40,21 @@ definitions:
             type:
               "$ref": "#/definitions/components/LayerType"
             kx:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             ky:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             kz:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             specific_storage:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             specific_yield:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             initial_head:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             top:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             bottom:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
           required:
             - project_id
             - name
@@ -202,6 +202,9 @@ definitions:
             project_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
             layer_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
@@ -220,13 +223,18 @@ definitions:
                 - top
                 - bottom
               example: kx
-            property_value:
-              "$ref": "#/definitions/components/LayerPropertyValue"
+            property_default_value:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            property_raster:
+              "$ref": "#/definitions/components/LayerPropertyRaster"
+            property_zones:
+              "$ref": "#/definitions/components/LayerPropertyZones"
           required:
             - project_id
+            - model_id
             - layer_id
             - property_name
-            - property_value
+            - property_default_value
     UpdateModelAffectedCellsCommand:
       type: object
       properties:
@@ -400,47 +408,55 @@ definitions:
         - unconfined
         - convertible
       example: confined
-    LayerPropertyValue:
+    LayerPropertyDefaultValue:
+      description: The default value of a layer property.
+      type: number
+      example: 1.0
+    LayerPropertyRaster:
+      description: The raster data of a layer property.
       type: object
       properties:
-        value:
-          type: number
-          example: 1.0
-        raster:
+        data:
           type: object
           properties:
             data:
-              type: array
-              items:
-                type: array
-                items:
-                  type: number
-            reference:
-              type: object
-              properties:
-                asset_id:
-                  type: string
-                  example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-                asset_type:
-                  type: string
-                  enum:
-                    - raster
-                  example: raster
-                band:
-                  type: integer
-                  minimum: 1
-                  maximum: 1000
-        zones:
-          type: array
-          items:
+              $ref: "#/definitions/components/2DGrid"
+            nodata_value:
+              type: number
+              example: -9999.0
+        reference:
+          type: object
+          properties:
+            asset_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            band:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            nodata_value:
+              type: number
+              example: -9999
+    LayerPropertyZones:
+      description: The zones of a layer property.
+      type: array
+      items:
+        type: object
+        properties:
+          zone_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          geometry:
+            oneOf:
+              - "$ref": "#/definitions/components/Polygon"
+              - "$ref": "#/definitions/components/MultiPolygon"
+          affected_cells:
             type: object
-            properties:
-              geometry:
-                oneOf:
-                  - "$ref": "#/definitions/components/Polygon"
-                  - "$ref": "#/definitions/components/MultiPolygon"
-              value:
-                type: number
+          value:
+            type: number
+        required:
+          - geometry
+          - value
     MultiPolygon:
       type: object
       description: The geometry of the feature.
@@ -533,3 +549,9 @@ definitions:
       required:
         - type
         - coordinates
+    2DGrid:
+      type: array
+      items:
+        type: array
+        items:
+          type: number

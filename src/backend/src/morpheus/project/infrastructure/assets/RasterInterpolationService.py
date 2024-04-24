@@ -1,42 +1,18 @@
-import dataclasses
-from typing import Literal, Any, Sequence
+from typing import Literal
 
 import numpy as np
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-
-@dataclasses.dataclass
-class RasterCoordinates:
-    xx_coords: list[list[float]]
-    yy_coords: list[list[float]]
-
-
-@dataclasses.dataclass
-class RasterData:
-    data: Sequence[Sequence[float | None]]
-
-    def __getitem__(self, item):
-        return self.data[item]
-
-    def __len__(self):
-        return len(self.data)
-
-    def __iter__(self):
-        return iter(self.data)
-
-
-@dataclasses.dataclass
-class Raster:
-    coords: RasterCoordinates
-    data: RasterData
+from morpheus.project.types.discretization.spatial.Raster import Raster, RasterCoordinates, RasterData
 
 
 class RasterInterpolationService:
     @staticmethod
-    def interpolate_raster(raster: Raster, new_coords: RasterCoordinates, method: Literal['linear', 'nearest'] = 'linear', fill_value: Any = None) -> Raster:
+    def interpolate_raster(raster: Raster, new_coords: RasterCoordinates, method: Literal['linear', 'nearest'] = 'linear', nodata_value: float = -9999) -> Raster:
         raster_xx = np.array(raster.coords.xx_coords)
         raster_yy = np.array(raster.coords.yy_coords)
-        raster_data = np.array(raster.data.data)
+        raster_data = np.array(raster.data.get_data())
+        raster_data = np.where(raster_data == nodata_value, np.nan, raster_data)
 
         if method == 'nearest':
             interp = NearestNDInterpolator(list(zip(raster_xx.ravel(), raster_yy.ravel())), raster_data.ravel())
@@ -45,11 +21,7 @@ class RasterInterpolationService:
 
         new_raster_xx = np.array(new_coords.xx_coords)
         new_raster_yy = np.array(new_coords.yy_coords)
-        grid_data = interp((new_raster_xx, new_raster_yy)).tolist()
+        grid_data = interp((new_raster_xx, new_raster_yy))
+        grid_data = np.where(np.isnan(grid_data), nodata_value, grid_data)
 
-        for i, row in enumerate(grid_data):
-            for j, value in enumerate(row):
-                if np.isnan(value):
-                    grid_data[i][j] = fill_value
-
-        return Raster(coords=new_coords, data=RasterData(data=grid_data.tolist()))
+        return Raster(coords=new_coords, data=RasterData(data=grid_data.tolist(), nodata_value=nodata_value))

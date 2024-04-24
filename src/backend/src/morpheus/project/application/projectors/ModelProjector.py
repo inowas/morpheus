@@ -7,6 +7,7 @@ from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, Pr
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
 from morpheus.project.types.User import UserId
+from morpheus.project.types.layers.Layer import LayerPropertyValues
 
 
 class ModelProjector(EventListenerBase):
@@ -218,7 +219,14 @@ class ModelProjector(EventListenerBase):
         if layer is None:
             return
 
-        layer = layer.with_updated_property(property_name=event.get_property_name(), property_value=event.get_property_value())
+        property_value = LayerPropertyValues(value=event.get_property_default_value())
+        if event.has_property_zones():
+            property_value.zones = event.get_property_zones()
+
+        if event.has_property_raster():
+            property_value.raster = event.get_property_raster()
+
+        layer = layer.with_updated_property(property_name=event.get_property_name(), property_value=property_value)
 
         latest = latest.with_updated_layers(layers=layers.with_updated_layer(updated_layer=layer))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
