@@ -20,7 +20,7 @@ def calculate_drn_boundary_stress_period_data(
     layers: LayersCollection,
     drn_boundary: DrainBoundary
 ) -> DrnStressPeriodData:
-    layer_ids = [layer.id for layer in layers.layers]
+    layer_ids = [layer.layer_id for layer in layers.layers]
     sp_data = DrnStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period

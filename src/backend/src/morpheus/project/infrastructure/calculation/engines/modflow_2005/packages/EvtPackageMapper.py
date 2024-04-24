@@ -32,7 +32,7 @@ def calculate_evt_boundary_stress_period_data(
     grid = spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
 
-    layer_ids = [layer.id for layer in layers]
+    layer_ids = [layer.layer_id for layer in layers]
     layer_indices = [layer_ids.index(layer_id) for layer_id in evt_boundary.affected_layers]
     layer_index = layer_indices[0] if len(layer_indices) > 0 else 0
 

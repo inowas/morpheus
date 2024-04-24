@@ -58,7 +58,7 @@ def calculate_observation_items(model: Model) -> HeadObservationData:
     layers = model.layers
     time_discretization = model.time_discretization
 
-    layer_ids = [layer.id for layer in layers]
+    layer_ids = [layer.layer_id for layer in layers]
 
     head_observation_data = HeadObservationData.new()
     for observation in model.observations:

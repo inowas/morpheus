@@ -73,7 +73,7 @@ class CreateModelLayerCommandHandler(CommandHandlerBase):
             project_id=project_id,
             model_id=command.model_id,
             layer=Layer(
-                id=command.layer_id,
+                layer_id=command.layer_id,
                 name=command.name,
                 description=command.description,
                 type=command.type,

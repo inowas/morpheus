@@ -29,16 +29,16 @@ class LayersCollection:
         return [layer.to_dict() for layer in self.layers]
 
     def get_layer(self, layer_id: LayerId):
-        return next((layer for layer in self.layers if layer.id == layer_id), None)
+        return next((layer for layer in self.layers if layer.layer_id == layer_id), None)
 
     def with_added_layer(self, layer: Layer):
         return dataclasses.replace(self, layers=self.layers + [layer])
 
     def with_updated_layer(self, updated_layer: Layer):
-        return dataclasses.replace(self, layers=[updated_layer if updated_layer.id == layer.id else layer for layer in self.layers])
+        return dataclasses.replace(self, layers=[updated_layer if updated_layer.layer_id == layer.layer_id else layer for layer in self.layers])
 
     def with_deleted_layer(self, layer_id: LayerId):
-        return dataclasses.replace(self, layers=[layer for layer in self.layers if layer.id != layer_id])
+        return dataclasses.replace(self, layers=[layer for layer in self.layers if layer.layer_id != layer_id])
 
     def number_of_layers(self):
         return len(self.layers)
@@ -60,4 +60,4 @@ class LayersCollection:
         return [layer.properties.bottom.get_data() for layer in self.layers]
 
     def get_layer_ids(self) -> list[LayerId]:
-        return [layer.id for layer in self.layers]
+        return [layer.layer_id for layer in self.layers]

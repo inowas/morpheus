@@ -101,7 +101,7 @@ def calculate_lak_package_data(model: Model) -> LakPackageData | None:
         stages.append(observation.initial_stage.to_float())
         stage_range.append((observation.stage_range.min, observation.stage_range.max))
 
-        layer_ids = [layer.id for layer in model.layers.layers]
+        layer_ids = [layer.layer_id for layer in model.layers.layers]
         layer_indices = [layer_ids.index(layer_id) for layer_id in lake_boundary.affected_layers]
 
         for affected_cell in lake_boundary.affected_cells:

@@ -140,7 +140,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
 
     date_times = get_date_times(model)
     total_times = get_total_times(date_times, model)
-    layer_ids = [layer.id for layer in model.layers.layers]
+    layer_ids = [layer.layer_id for layer in model.layers.layers]
 
     fhb_stress_period_data = FhbStressPeriodData(date_times, total_times)
 

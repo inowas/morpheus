@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 from .incoming import authenticate
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
+from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
@@ -67,6 +68,12 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_get_time_discretization(project_id: str):
         return ReadModelTimeDiscretizationRequestHandler().handle(ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/model/layers', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_get_layers(project_id: str):
+        return ReadModelLayersRequestHandler().handle(ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['GET'])
     @cross_origin()

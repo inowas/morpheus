@@ -17,7 +17,7 @@ def calculate_wel_boundary_stress_period_data(
     layers: LayersCollection,
     wel_boundary: WellBoundary
 ) -> WelStressPeriodData:
-    layer_ids = [layer.id for layer in layers]
+    layer_ids = [layer.layer_id for layer in layers]
     sp_data = WelStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period

@@ -23,7 +23,7 @@ const getProjectDashboardNavbarItems = (translate: (key: string) => string): INa
   },
 ]);
 
-const getProjectNavbarItems = (translate: (key: string) => string, projectId: any): INavbarItem[] => ([
+const getProjectNavbarItems = (translate: (key: string) => string, projectId: string): INavbarItem[] => ([
   {
     name: 'project',
     label: translate('Overview'),

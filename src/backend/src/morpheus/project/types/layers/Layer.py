@@ -314,7 +314,7 @@ class LayerPropertyValues:
     @classmethod
     def from_dict(cls, obj: dict | Mapping):
         return cls(
-            value=LayerPropertyDefaultValue(obj['value']),
+            value=LayerPropertyDefaultValue.from_float(obj['value']),
             raster=LayerPropertyRaster.from_dict(obj['raster']) if 'raster' and obj['raster'] is not None else None,
             zones=LayerPropertyZones.from_list(obj['zones']) if 'zones' and obj['zones'] is not None else None
         )
@@ -325,7 +325,7 @@ class LayerPropertyValues:
 
     def to_dict(self):
         return {
-            'value': self.value.to_value(),
+            'value': self.value.to_float(),
             'raster': self.raster.to_dict() if self.raster is not None else None,
             'zones': [zone.to_dict() for zone in self.zones] if self.zones is not None else None
         }
@@ -561,7 +561,7 @@ class LayerProperties:
 
 @dataclasses.dataclass
 class Layer:
-    id: LayerId
+    layer_id: LayerId
     name: LayerName
     description: LayerDescription
     type: LayerType
@@ -570,7 +570,7 @@ class Layer:
     @classmethod
     def from_default(cls):
         return cls(
-            id=LayerId.new(),
+            layer_id=LayerId.new(),
             name=LayerName.new(),
             description=LayerDescription.new(),
             type=LayerType.confined(),
@@ -589,7 +589,7 @@ class Layer:
     @classmethod
     def from_dict(cls, obj: dict):
         return cls(
-            id=LayerId.from_value(obj['id']),
+            layer_id=LayerId.from_value(obj['layer_id']),
             name=LayerName.from_value(obj['name']),
             description=LayerDescription.from_value(obj['description']),
             type=LayerType.from_value(obj['type']),
@@ -598,7 +598,7 @@ class Layer:
 
     def to_dict(self):
         return {
-            'id': self.id.to_value(),
+            'layer_id': self.layer_id.to_value(),
             'name': self.name.to_value(),
             'description': self.description.to_value(),
             'type': self.type.to_value(),
