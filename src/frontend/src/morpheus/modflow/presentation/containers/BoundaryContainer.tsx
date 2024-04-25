@@ -2,7 +2,7 @@ import React from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import MapExample from '../../../../common/components/Map/MapExample';
 import type {FeatureCollection} from 'geojson';
-import {BoundaryContent} from '../components/BoundaryLayers';
+import {BoundariesContent} from '../components/BoundariesLayers';
 
 const geojson: FeatureCollection = {
   type: 'FeatureCollection',
@@ -31,7 +31,7 @@ const BoundaryContainer = () => {
   return (
     <>
       <SidebarContent maxWidth={700}>
-        <BoundaryContent/>
+        <BoundariesContent/>
       </SidebarContent>
       <BodyContent>
         <MapExample

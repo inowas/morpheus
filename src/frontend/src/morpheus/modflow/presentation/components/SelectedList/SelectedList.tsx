@@ -1,103 +1,83 @@
-import {Accordion, Checkbox, Icon, List, ListItem, Search} from 'semantic-ui-react';
+import {Accordion, Checkbox, HeaderContent, Icon, List, ListItem, Search} from 'semantic-ui-react';
 import {DotsMenu} from 'common/components';
 import React, {useEffect, useState} from 'react';
+import {IBoundaries} from '../BoundariesLayers/type/BoundariesContent.type';
 import styles from './SelectedList.module.less';
 
-interface IBoundaryItem {
-  id: string;
-  name: string;
-  observations: any[];
-  checked: boolean,
-  selected: boolean,
-}
 
 interface ISelectedListProps {
-  boundaries: any[];
+  boundaries: IBoundaries[];
+  onSelect: (id: string[]) => void;
   onDelete: (id: string) => void;
   onCopy: (id: string) => void;
 }
 
-const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
-  const [listItems, setListItems] = useState<IBoundaryItem[]>([]);
-  const [filterdListItems, setFilterdListItems] = useState<IBoundaryItem[]>([]);
+const SelectedList = ({boundaries, onDelete, onCopy, onSelect}: ISelectedListProps) => {
+  const [listItems, setListItems] = useState<IBoundaries[]>([]);
   const [selectAllChecked, setSelectAllChecked] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activePanels, setActivePanels] = useState<number[]>([]);
+  // List items with checked checkbox
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  // List items which are selected manually
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   useEffect(() => {
-    const boundariesListObj = boundaries.map(boundaryItem => ({
-      id: boundaryItem.id,
-      name: boundaryItem.name,
-      observations: boundaryItem.observations,
-      checked: true,
-      selected: false,
-    }));
-    setListItems(boundariesListObj);
+    setListItems(boundaries);
   }, [boundaries]);
 
-  const handleSelectAllChange = () => {
-    setSelectAllChecked(prev => !prev);
-    setListItems(prevListItems => prevListItems.map(item => ({
-      ...item,
-      selected: !item.checked ? false : !item.selected,
-    })));
-  };
+  useEffect(() => {
+    onSelect(selectedItems);
+  }, [selectedItems]);
+
+  // selectAll functionality
+  useEffect(() => {
+    if (selectAllChecked) {
+      const selectedWithoutChecked = listItems
+        .filter(item => !checkedItems.includes(item.id))
+        .map(item => item.id);
+      setSelectedItems(selectedWithoutChecked);
+    } else {
+      setSelectedItems([]);
+    }
+  }, [selectAllChecked, listItems, checkedItems]);
 
   const handleItemClick = (itemId: string, metaPressed: boolean) => {
-    const updatedListItems = listItems.map(item => {
-      if (item.id === itemId) {
-        if (metaPressed) {
-          // Toggle the selected state if meta key is pressed
-          return {
-            ...item,
-            selected: !item.selected,
-          };
-        } else {
-          // Deselect all other items and select only the clicked item
-          return {
-            ...item,
-            selected: true,
-          };
-        }
+    let updatedSelection: string[];
+    if (metaPressed) {
+      if (selectedItems.includes(itemId)) {
+        updatedSelection = selectedItems.filter(item => item !== itemId);
       } else {
-        if (!metaPressed) {
-          // Deselect other items if meta key is not pressed
-          return {
-            ...item,
-            selected: false,
-          };
-        }
-        // Keep other items unchanged if meta key is pressed
-        return item;
+        updatedSelection = [...selectedItems, itemId];
       }
-    });
-
+    } else {
+      updatedSelection = [itemId];
+    }
     setSelectAllChecked(false);
-    setListItems(updatedListItems);
+    setSelectedItems(updatedSelection);
   };
 
-  const handleCheckboxChange = (id: string, index: number) => {
-    const updatedListItems = listItems.map(item => {
-      if (item.id === id) {
-        return {
-          ...item,
-          selected: false,
-          checked: !item.checked,
-        };
+  const handleCheckboxChange = (itemId: string, index: number) => {
+    setCheckedItems(prevSelected => {
+      if (prevSelected.includes(itemId)) {
+        return prevSelected.filter(item => item !== itemId);
+      } else {
+        return [...prevSelected, itemId];
       }
-      return item;
+
     });
+    if (selectedItems.includes(itemId)) {
+      setSelectedItems(selectedItems.filter(item => item !== itemId));
+    }
     if (activePanels.includes(index)) {
       setActivePanels(activePanels.filter(item => item !== index));
     }
-    setListItems(updatedListItems);
   };
 
   const handleSearchChange = (event: React.MouseEvent<HTMLElement>, data: any) => {
-    setFilterdListItems(listItems);
     const query = data.value.toLowerCase();
     setSearchQuery(query);
-    const filteredItems = filterdListItems.filter(item =>
+    const filteredItems = boundaries.filter(item =>
       item.name.toLowerCase().includes(query),
     );
     setListItems(filteredItems);
@@ -115,16 +95,22 @@ const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
       {/**/}
       {/*Header with select all checkbox*/}
       {/**/}
-      <Checkbox
-        className={styles.checkbox}
-        checked={selectAllChecked}
-        onChange={handleSelectAllChange}
-      />
-      <Search
-        onSearchChange={handleSearchChange}
-        value={searchQuery}
-        className={styles.search}
-      />
+      <HeaderContent className={styles.header}>
+        <Checkbox
+          className={styles.checkbox}
+          checked={selectAllChecked}
+          onChange={() => setSelectAllChecked(prev => !prev)}
+        />
+        <span>
+          Search
+        </span>
+        <Search
+          icon={false}
+          onSearchChange={handleSearchChange}
+          value={searchQuery}
+          className={styles.search}
+        />
+      </HeaderContent>
       {/**/}
       {/*Body with list items*/}
       {/**/}
@@ -136,14 +122,14 @@ const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
           >
             <div
               // Title styles when item is selected
-              className={`${styles.title} ${item.selected ? styles.titleSelected : ''}`}
+              className={`${styles.title} ${selectedItems.includes(item.id) ? styles.titleSelected : ''}`}
             >
               <div
-                className={`${styles.titleInner} ${!item.checked ? styles.disabled : ''}`}
+                className={`${styles.titleInner} ${checkedItems.includes(item.id) ? styles.disabled : ''}`}
                 onClick={(e) => handleItemClick(item.id, e.metaKey)}
               >
                 <Checkbox
-                  checked={item.selected}
+                  checked={selectedItems.includes(item.id)}
                   onChange={() => handleItemClick(item.id, true)}
                 />
                 <div style={{
@@ -162,11 +148,11 @@ const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
               >
                 <Checkbox
                   toggle={true}
-                  checked={item.checked}
+                  checked={!checkedItems.includes(item.id)}
                   onChange={() => handleCheckboxChange(item.id, index)}
                 />
                 <DotsMenu
-                  className={`${styles.dotsMenu} ${!item.checked ? styles.disabled : ''}`}
+                  className={`${styles.dotsMenu} ${checkedItems.includes(item.id) ? styles.disabled : ''}`}
                   actions={[
                     {text: 'Copy', icon: 'copy', onClick: () => onCopy(item.id)},
                     {text: 'Delete', icon: 'remove', onClick: () => onDelete(item.id)},
@@ -174,7 +160,7 @@ const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
                 />
                 {item.observations[0].observation_name && (
                   <Icon
-                    className={`${!item.checked ? styles.disabled : ''}`}
+                    className={`${checkedItems.includes(item.id) ? styles.disabled : ''}`}
                     name={`${activePanels.includes(index) ? 'angle down' : 'angle right'}`}
                     onClick={() => toggleAccordion(index)}
                   />
@@ -199,10 +185,8 @@ const SelectedList = ({boundaries, onDelete, onCopy}: ISelectedListProps) => {
                     );
                   })}
                 </List>
-
               </Accordion.Content>
             )}
-
           </ListItem>
         ))}
       </List>

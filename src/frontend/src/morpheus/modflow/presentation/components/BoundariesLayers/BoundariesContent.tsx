@@ -1,12 +1,22 @@
 import {DataGrid, DotsMenu, Grid, InfoTitle, SectionTitle} from 'common/components';
-import React, {useState} from 'react';
-import boundarieData from './boundarie.json';
+import React, {useEffect, useState} from 'react';
+import {IBoundaries} from './type/BoundariesContent.type';
+import boundariesData from './boundaries.json';
 import {SelectedList} from '../SelectedList';
 import {Accordion} from 'semantic-ui-react';
 import {v4 as uuidv4} from 'uuid';
 
-const BoundaryContent: React.FC = () => {
-  const [boundaries, setBoundaries] = useState(boundarieData);
+
+const BoundariesContent: React.FC = () => {
+
+  // @ts-expect-error IBoundaries type
+  const [boundaries, setBoundaries] = useState<IBoundaries[]>(boundariesData);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  useEffect(() => {
+    console.log(selectedItems);
+  }, [selectedItems]);
+
   const handleBoundarieDelete = (id: number | string) => {
     setBoundaries(boundaries.filter(boundarieItem => boundarieItem.id !== id));
   };
@@ -52,6 +62,7 @@ const BoundaryContent: React.FC = () => {
             <Grid.Column>
               <SelectedList
                 boundaries={boundaries}
+                onSelect={setSelectedItems}
                 onDelete={handleBoundarieDelete}
                 onCopy={handleBoundarieCopy}
               />
@@ -146,7 +157,6 @@ const BoundaryContent: React.FC = () => {
         ),
       },
       isOpen: false,
-
     },
   ];
 
@@ -164,4 +174,4 @@ const BoundaryContent: React.FC = () => {
   ;
 };
 
-export default BoundaryContent;
+export default BoundariesContent;

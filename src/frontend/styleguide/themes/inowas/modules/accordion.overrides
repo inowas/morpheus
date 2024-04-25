@@ -102,9 +102,9 @@
   margin-top: 30px;
 }
 
-.ui.accordion:not(.styled) .title ~ .content:not(.ui) {
-  padding: 20px 0 0 0;
-}
+//.ui.accordion:not(.styled) .title ~ .content:not(.ui) {
+//  padding: 20px 0 0 0;
+//}
 
 
 // Primary Accordion
