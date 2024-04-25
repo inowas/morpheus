@@ -3,7 +3,7 @@ import {MovableAccordionList} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {IAction, IMovableAccordionItem} from 'common/components/MovableAccordionList/MovableAccordionList';
 import LayerDetails from './LayerDetails';
-import isEqual from 'lodash/isEqual';
+import isEqual from 'lodash.isequal';
 
 
 interface IProps {
