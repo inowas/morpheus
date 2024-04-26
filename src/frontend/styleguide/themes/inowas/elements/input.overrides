@@ -2,29 +2,6 @@
          Theme Overrides
 *******************************/
 
-
-.ui.selection.dropdown,
-.ui.multiple.dropdown {
-  border: none !important;
-  border-radius: 0 !important;
-  min-height: 26px !important;
-  padding: 5px !important;
-}
-
-.ui.selection.dropdown {
-  min-width: 8em !important;
-  width: 100%;
-}
-
-
-.ui.selection.dropdown .menu {
-  border: none !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  min-width: 100% !important;
-  width: 100% !important;
-}
-
 .ui.form .field {
   margin-bottom: 0;
 }
@@ -115,17 +92,7 @@ label.labelSmall,
     opacity: inherit !important;
     background-color: inherit !important;
   }
-
-  .disabled.dropdown {
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3) !important;
-    width: 100% !important;
-    border: none !important;
-    border-radius: unset !important;
-    min-height: 26px !important;
-    line-height: 16px !important;
-    padding: 5px 10px !important;
-  }
-
+  
   .icon {
     display: none;
   }
@@ -140,14 +107,6 @@ label.labelSmall,
 .field textarea {
   resize: none;
   height: 76px;
-}
-
-.field .dropdown .text {
-  margin: 0 !important;
-}
-
-.field .dropdown.icon {
-  padding: 6px !important;
 }
 
 .field .icon.info {

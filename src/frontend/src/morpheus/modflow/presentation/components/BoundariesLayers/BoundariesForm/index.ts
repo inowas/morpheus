@@ -1,5 +1,5 @@
-import BoundariesContent from './BoundariesContent';
+import BoundariesForm from './BoundariesForm';
 
 export {
-  BoundariesContent,
+  BoundariesForm,
 };

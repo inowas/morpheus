@@ -23,7 +23,7 @@ interface ObservationData {
   riverbed_bottom?: number;
 }
 
-interface Observation {
+export interface Observation {
   observation_name?: string;
   observation_id: string;
   geometry: GeometryPoint;

@@ -2,13 +2,14 @@ import {Accordion as SemanticAccordion, AccordionContent, AccordionProps, Accord
 import React, {ReactNode, useState} from 'react';
 
 interface AccordionItemProps {
-  title: string;
+  title?: string;
   children: ReactNode;
   active?: boolean;
   onClick?: () => void;
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({title, children, active, onClick}) => {
+
   return (
     <>
       <AccordionTitle active={active} onClick={onClick}>

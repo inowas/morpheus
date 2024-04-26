@@ -4,7 +4,7 @@
 .header {
   display: flex;
   gap: 12px;
-  margin: 20px 0 0 25px;
+  margin: 0 0 0 25px;
   padding: 0 0 10px 0;
   align-items: center;
   justify-content: space-between;
@@ -33,15 +33,13 @@
       display: none !important;
     }
   }
-
 }
-
 
 .list {
   font-size: 12px;
   font-weight: 400;
-  max-height: 280px;
-  min-height: 280px;
+  max-height: 265px;
+  min-height: 265px;
   margin-bottom: 30px !important;
   overflow-y: auto;
   overflow-x: hidden;
@@ -137,11 +135,71 @@
 
     [class*="list"] {
 
+
+      .checkboxObservation {
+        min-height: 12px;
+        min-width: 12px;
+        line-height: 12px;
+        max-height: 12px;
+        margin-right: 5px;
+
+        label:before {
+          border-radius: 50%;
+          width: 12px;
+          height: 12px;
+        }
+
+        input:checked ~ label:after {
+          content: "";
+          display: block;
+          background-color: #748EB3;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+      }
+
       [class*="item"] {
+        display: flex;
+        align-items: center;
         font-size: 12px;
         font-weight: 500;
         padding-bottom: 0.5em;
         margin: 0 22px 0.5em;
+        cursor: pointer;
+        position: relative;
+
+        &:before,
+        &:after {
+          content: '';
+          //content: none;
+          height: 100%;
+          display: block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: -1;
+        }
+
+        &:before {
+          width: 100%;
+          background-color: @ref-color-lightGrey;
+        }
+
+        &:after {
+          width: 2px;
+          background-color: @ref-color-blackLight;
+        }
+
+        &:hover {
+          &:before,
+          &:after {
+            content: '';
+          }
+        }
       }
 
       [class*="item"]:not(:last-child) {
