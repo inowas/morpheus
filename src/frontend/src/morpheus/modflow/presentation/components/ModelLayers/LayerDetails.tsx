@@ -56,18 +56,18 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           menuItem: 'Hydraulic conductivity',
           render: () => <TabPane>
             <LayerPropertyValues
-              values={layer.properties.kx}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, kx: layerPropertyValues}})}
+              values={layer.properties.hk}
+              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, hk: layerPropertyValues}})}
               readOnly={false}
               unit={'m/d'}
             />
           </TabPane>,
         }, {
-          menuItem: 'Horizontal hydraulic conductivity',
+          menuItem: 'Horizontal Anisotropy',
           render: () => <TabPane>
             <LayerPropertyValues
-              values={layer.properties.ky}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, ky: layerPropertyValues}})}
+              values={layer.properties.hani}
+              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, hani: layerPropertyValues}})}
               readOnly={false}
               unit={'m/d'}
             />
@@ -77,8 +77,8 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           menuItem: 'Vertical hydraulic conductivity',
           render: () => <TabPane>
             <LayerPropertyValues
-              values={layer.properties.kz}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, kz: layerPropertyValues}})}
+              values={layer.properties.vka}
+              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, vka: layerPropertyValues}})}
               readOnly={false}
               unit={'m/d'}
             />
