@@ -13,11 +13,9 @@ export interface ILayer {
 type ILayerType = 'confined' | 'convertible' | 'unconfined';
 
 interface ILayerProperties {
-  kx: ILayerPropertyValues;
-  ky: ILayerPropertyValues | null;
-  kz: ILayerPropertyValues | null;
-  hani: ILayerPropertyValues | null;
-  vani: ILayerPropertyValues | null;
+  hk: ILayerPropertyValues;
+  hani: ILayerPropertyValues;
+  vka: ILayerPropertyValues
   specific_storage: ILayerPropertyValues;
   specific_yield: ILayerPropertyValues;
   top: ILayerPropertyValues | null;
@@ -30,7 +28,7 @@ export interface ILayerPropertyValues {
   zones: ILayerPropertyValueZone[] | null;
 }
 
-interface ILayerPropertyValueRaster {
+export interface ILayerPropertyValueRaster {
   data: ILayerPropertyValueRasterData;
   reference: ILayerPropertyValueRasterReference | null;
 }
@@ -46,12 +44,7 @@ interface ILayerPropertyValueRasterReference {
   nodata_value: number;
 }
 
-interface ICreateLayerPropertyValueZone {
-  affected_cells: IAffectedCells;
-  geometry: Polygon | MultiPolygon;
-}
-
-interface ILayerPropertyValueZone {
+export interface ILayerPropertyValueZone {
   zone_id: string;
   affected_cells: IAffectedCells;
   geometry: Polygon | MultiPolygon;

@@ -110,7 +110,7 @@ def calculate_lpf_package_data(model: Model) -> LpfPackageData:
         wetfct=0.1,
         iwetit=1,
         ihdwet=0,
-        hk=[layer.properties.kx.get_data() for layer in model.layers.layers],
+        hk=[layer.properties.hk.get_data() for layer in model.layers.layers],
         hani=[layer.properties.get_horizontal_anisotropy() for layer in model.layers.layers],
         vka=[layer.properties.get_vka().get_data() for layer in model.layers.layers],
         ss=[layer.properties.specific_storage.get_data() for layer in model.layers.layers],

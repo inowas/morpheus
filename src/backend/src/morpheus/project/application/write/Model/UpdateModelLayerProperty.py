@@ -80,7 +80,7 @@ class UpdateModelLayerPropertyCommandPayload(TypedDict):
     project_id: str
     model_id: str
     layer_id: str
-    property_name: Literal['kx', 'ky', 'kz', 'hk', 'hani', 'vani', 'specific_storage', 'specific_yield', 'initial_head', 'top', 'bottom']
+    property_name: Literal['hk', 'hani', 'vka', 'specific_storage', 'specific_yield', 'initial_head', 'top', 'bottom']
     property_default_value: float
     property_raster: Optional[ModelLayerPropertyValueRasterPayload]
     property_zones: Optional[list[ModelLayerPropertyValueZonePayload]]

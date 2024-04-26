@@ -22,9 +22,9 @@ class CreateModelLayerCommandPayload(TypedDict):
     name: str
     description: str
     type: Literal['confined', 'convertible', 'unconfined']
-    kx: float
-    ky: float
-    kz: float
+    hk: float
+    hani: float
+    vka: float
     specific_storage: float
     specific_yield: float
     initial_head: float
@@ -53,7 +53,7 @@ class CreateModelLayerCommand(CommandBase):
             description=LayerDescription.from_str(payload['description']),
             type=LayerType.from_str(payload['type']),
             properties=LayerProperties.from_values(
-                kx=payload['kx'], ky=payload['ky'], kz=payload['kz'], specific_storage=payload['specific_storage'], specific_yield=payload['specific_yield'],
+                hk=payload['hk'], hani=payload['hani'], vka=payload['vka'], specific_storage=payload['specific_storage'], specific_yield=payload['specific_yield'],
                 initial_head=payload['initial_head'], top=payload['top'], bottom=payload['bottom']
             ),
         )

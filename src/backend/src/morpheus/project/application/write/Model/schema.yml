@@ -39,11 +39,11 @@ definitions:
               example: Layer 1 description
             type:
               "$ref": "#/definitions/components/LayerType"
-            kx:
+            hk:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
-            ky:
+            hani:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
-            kz:
+            vka:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             specific_storage:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
@@ -59,9 +59,9 @@ definitions:
             - project_id
             - name
             - type
-            - kx
-            - ky
-            - kz
+            - hk
+            - hani
+            - vka
             - specific_storage
             - specific_yield
             - initial_head
@@ -211,18 +211,15 @@ definitions:
             property_name:
               type: string
               enum:
-                - kx
-                - ky
-                - kz
                 - hk
                 - hani
-                - vani
+                - vka
                 - specific_storage
                 - specific_yield
                 - initial_head
                 - top
                 - bottom
-              example: kx
+              example: hk
             property_default_value:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             property_raster:

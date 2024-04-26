@@ -1,5 +1,6 @@
 import {Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
+import {ILayerPropertyValues} from '../types/Layers.type';
 
 export interface ICreateProjectCommand {
   command_name: 'create_project_command';
@@ -97,14 +98,14 @@ export interface ICreateModelLayerCommand {
     name: string;
     description: string;
     type: 'confined' | 'convertible' | 'unconfined';
-    kx: number | number[][];
-    ky: number | number[][];
-    kz: number | number[][];
-    specific_storage: number | number[][];
-    specific_yield: number | number[][];
-    initial_head: number | number[][];
-    top?: number | number[][];
-    bottom: number | number[][];
+    hk: number;
+    hani: number;
+    vka: number;
+    specific_storage: number;
+    specific_yield: number;
+    initial_head: number;
+    top?: number;
+    bottom: number;
   }
 }
 
@@ -120,18 +121,24 @@ export interface IUpdateModelLayerCommand {
   command_name: 'update_model_layer_command';
   payload: {
     project_id: string;
+    model_id: string;
     layer_id: string;
     name?: string;
     description?: string;
     type?: 'confined' | 'convertible' | 'unconfined';
-    kx?: number | number[][];
-    ky?: number | number[][];
-    kz?: number | number[][];
-    specific_storage?: number | number[][];
-    specific_yield?: number | number[][];
-    initial_head?: number | number[][];
-    top?: number | number[][];
-    bottom?: number | number[][];
+  }
+}
+
+export interface IUpdateModelLayerPropertyCommand {
+  command_name: 'update_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: 'hk' | 'hani' | 'vka' | 'specific_storage' | 'specific_yield' | 'initial_head' | 'top' | 'bottom';
+    property_default_value: ILayerPropertyValues['value'];
+    property_raster?: ILayerPropertyValues['raster'];
+    property_zones?: ILayerPropertyValues['zones'];
   }
 }
 
@@ -200,6 +207,7 @@ export type ICommand =
   | ICreateModelLayerCommand
   | IDeleteModelLayerCommand
   | IUpdateModelLayerCommand
+  | IUpdateModelLayerPropertyCommand
   | ICreateModelVersionCommand
   | IDeleteModelVersionCommand
   | IUpdateModelVersionDescriptionCommand
