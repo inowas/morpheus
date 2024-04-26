@@ -21,7 +21,6 @@ const Tab: React.FC<ITabProps> = ({
   variant,
   title,
   className: customClassName,
-  onTabChange,
   ...props
 }) => {
   const classNames = title ? 'first-item-title' : '';
@@ -29,11 +28,6 @@ const Tab: React.FC<ITabProps> = ({
   return (
     <SemanticTab
       {...props}
-      onClick={(event: React.MouseEvent<HTMLDivElement>, data: TabProps) => {
-        if (onTabChange) {
-          onTabChange(event, data);
-        }
-      }}
       {...(null !== variant ? {'data-variant': variant} : {})}
       className={`${classNames}${customClassName ? ` ${customClassName}` : ''}`}
     />

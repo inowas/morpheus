@@ -24,7 +24,7 @@ interface ILayerProperties {
   bottom: ILayerPropertyValues;
 }
 
-interface ILayerPropertyValues {
+export interface ILayerPropertyValues {
   value: number;
   raster: ILayerPropertyValueRaster | null;
   zones: ILayerPropertyValueZone[] | null;

@@ -1,21 +1,24 @@
-import React from 'react';
-import {BodyContent, SidebarContent} from '../components';
-import SpatialDiscretizationMap from '../components/ModelSpatialDiscretization/SpatialDiscretizationMap';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
+import React, {useRef} from 'react';
 import {useParams} from 'react-router-dom';
+import {Icon, MenuItem} from 'semantic-ui-react';
+import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
+
+import {BodyContent, SidebarContent} from '../components';
 import useLayers from '../../application/useLayers';
-import {DataGrid, SectionTitle, Tab} from '../../../../common/components';
-import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import LayersList from '../components/ModelLayers/LayersList';
+import {IMapRef, LeafletMapProvider} from 'common/components/Map';
+import LayersMap from '../components/ModelLayers/LayersMap';
 
 
 const LayersContainer = () => {
 
   const {projectId} = useParams();
-  const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
   const {layers, onOrderChange} = useLayers(projectId as string);
+  const {geometry} = useSpatialDiscretization(projectId as string);
+  const mapRef: IMapRef = useRef(null);
 
-  if (!layers) {
+  if (!layers || !geometry) {
     return null;
   }
 
@@ -31,7 +34,9 @@ const LayersContainer = () => {
               menuItem: <MenuItem key='properties'>Properties</MenuItem>,
               render: () =>
                 <TabPane attached={false}>
-                  <LayersList layers={layers} onOrderChange={onOrderChange}/>
+                  <LeafletMapProvider mapRef={mapRef}>
+                    <LayersList layers={layers} onOrderChange={onOrderChange}/>
+                  </LeafletMapProvider>
                 </TabPane>,
             }, {
               menuItem: <MenuItem key='validation' className='tabItemWithIcon'>Validation<Icon name='check circle'/></MenuItem>,
@@ -41,7 +46,7 @@ const LayersContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <SpatialDiscretizationMap modelGeometry={spatialDiscretization?.geometry}/>
+        <LayersMap modelGeometry={geometry} mapRef={mapRef}/>
       </BodyContent>
     </>
   );

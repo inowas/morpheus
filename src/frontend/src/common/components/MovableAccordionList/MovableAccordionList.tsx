@@ -2,7 +2,7 @@ import {Accordion, Icon, SemanticICONS} from 'semantic-ui-react';
 import {arrayMove, List} from 'react-movable';
 import React, {useState} from 'react';
 
-import {DotsMenu} from '../index';
+import {DotsMenu} from 'common/components';
 import styles from './MovableAccordionList.module.less';
 
 export interface IMovableAccordionItem {
@@ -11,10 +11,10 @@ export interface IMovableAccordionItem {
   content: React.ReactNode;
   editTitle: boolean;
   onChangeTitle: (newTitle: string) => void;
-  submittable: boolean;
+  isSubmittable: boolean;
 }
 
-export interface IAction {
+export interface IMovableAccordionListAction {
   text: string;
   icon: SemanticICONS;
   onClick: (item: IMovableAccordionItem) => void;
@@ -25,7 +25,7 @@ interface IMovableAccordionProps {
   onMovableListChange: (newItems: IMovableAccordionItem[]) => void;
   defaultOpenIndexes?: number[];
   openEachOnClick?: boolean;
-  actions?: IAction[];
+  actions?: IMovableAccordionListAction[];
 }
 
 const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnClick = false, defaultOpenIndexes = []}: IMovableAccordionProps) => {
@@ -157,7 +157,7 @@ const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnCl
               panels={[{
                 key: value.content.key,
                 title: {
-                  content: value.content.title + (value.content.submittable ? ' *' : ''),
+                  content: value.content.title + (value.content.isSubmittable ? ' *' : ''),
                   icon: false,
                   onClick: () => handleAccordionClick(index),
                 },

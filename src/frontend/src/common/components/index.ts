@@ -4,7 +4,7 @@ import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
 import CsvFileInput from './CSVFileInput';
 import {DataGrid, DataRow} from './DataGrid';
 import DatePicker from './DatePicker';
-import DotsMenu, {IAction} from './DotsMenu';
+import DotsMenu, {IDotsMenuAction} from './DotsMenu';
 import Icon, {IIconProps} from './Icon/Icon';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import ModelCard, {ICard} from './CardGrid/Card';
@@ -36,7 +36,7 @@ import MapExample from './Map/MapExample';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import CardGrid from './CardGrid/Grid';
-import MovableAccordionList from './MovableAccordionList';
+import MovableAccordionList, {IMovableAccordionListAction, IMovableAccordionItem} from './MovableAccordionList';
 import Navbar from './Navbar';
 import NotFound from './NotFound';
 import Notification from './Notification/Notification';
@@ -113,12 +113,14 @@ export {
 };
 
 export type {
-  IAction,
   ICheckboxProps,
   IConfirm,
   IConfirmProps,
+  IDotsMenuAction,
   IDropdownItemProps,
   IIconProps,
+  IMovableAccordionItem,
+  IMovableAccordionListAction,
   IPaginationProps,
   DropdownProps,
   IInputProps,

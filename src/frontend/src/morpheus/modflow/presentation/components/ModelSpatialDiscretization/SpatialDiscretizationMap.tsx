@@ -174,7 +174,6 @@ const SpatialDiscretizationMap = ({
     },
   });
 
-
   useEffect(() => {
     if (!modelGeometry) {
       return;
@@ -183,7 +182,6 @@ const SpatialDiscretizationMap = ({
     const layer = L.geoJSON(modelGeometry);
     map.fitBounds(layer.getBounds());
   }, [modelGeometry]);
-
 
   const handleChange = () => {
     const featureGroup = editModelGeometryRef.current as L.FeatureGroup;
@@ -246,7 +244,6 @@ const SpatialDiscretizationMap = ({
           opacity={(editModelGeometry) ? 1 : 0.5}
         />}
       </FeatureGroup>
-
 
       <FeatureGroup>
         {gridGeometry && <GeoJSON
