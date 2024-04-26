@@ -101,7 +101,9 @@ class UpdateModelLayerPropertyCommand(CommandBase):
         property_name = LayerPropertyName(payload['property_name'])
         property_raster = LayerPropertyRaster.from_dict(obj=payload['property_raster']) if 'property_raster' in payload else None
         property_value = LayerPropertyDefaultValue(payload['property_default_value'])
-        property_zones = [LayerPropertyZoneWithOptionalAffectedCells.from_payload(obj=zone) for zone in payload['property_zones']] if 'property_zones' in payload else None
+
+        property_zones = [LayerPropertyZoneWithOptionalAffectedCells.from_payload(obj=zone) for zone in payload['property_zones']] if 'property_zones' in payload and payload[
+            'property_zones'] else None
 
         return cls(
             user_id=user_id,

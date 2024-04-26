@@ -40,9 +40,8 @@ def validate_request(f):
     return decorated_function
 
 
-def parse_schema_file() -> bool:
+def parse_schema_file() -> None:
     try:
         OpenAPI.from_file_path(settings.OPENAPI_BUNDLED_SPEC_FILE)
-        return True
     except Exception as e:
         raise SchemaValidationException('Schema Validation Error:', [str(e)], e)

@@ -50,7 +50,7 @@ To export data for visualization, we need to interpolate the model data to a car
 In this case, we can have two possibilities:
 
 * export the raster data to a cartesian grid with a rotation angle
-* export the model data to the bounding box ouf the model grid without rotation
+* export the model data to the bounding box of the model grid without rotation
 
 Let's define the names of the three different algorithms:
 

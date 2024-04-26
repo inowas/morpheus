@@ -29,9 +29,8 @@ def bootstrap(app: Flask):
     @app.cli.command('check-schema')
     def check_schema_file():
         print('\n\x1b[1;32;40m' + 'Checking schema file...' + '\x1b[0m' + '\n')
-        result = parse_schema_file()
-        if result:
-            print('\x1b[6;30;42m' + 'Success!... Schema is valid and can be parsed by the system.' + '\x1b[0m' + '\n\n\n')
+        parse_schema_file()
+        print('\x1b[6;30;42m' + 'Success!... Schema is valid and can be parsed by the system.' + '\x1b[0m' + '\n\n\n')
 
     @app.errorhandler(SchemaValidationException)
     def handle_schema_validation_exception(exception: SchemaValidationException):

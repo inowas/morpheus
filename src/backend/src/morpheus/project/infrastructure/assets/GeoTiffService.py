@@ -26,7 +26,7 @@ class GeoTiffService:
         return GeoTiffAssetData(
             n_cols=metadata.n_cols,
             n_rows=metadata.n_rows,
-            band=metadata.n_bands,
+            band=band,
             wgs_84_bounding_box=metadata.wgs_84_bounding_box,
             data=data
         )
