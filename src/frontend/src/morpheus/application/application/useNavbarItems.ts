@@ -1,7 +1,6 @@
 import {INavbarItem} from 'common/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
 import {useParams} from 'react-router-dom';
-import {useProjectPermissions} from '../../modflow/application';
 
 const getProjectDashboardNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
   {
@@ -82,12 +81,11 @@ interface IUseNavbarItems {
   navbarItems: INavbarItem[];
 }
 
-const useNavbarItems = (): IUseNavbarItems => {
+const useNavbarItems = (isReadOnly: boolean = false): IUseNavbarItems => {
   const {translate} = useTranslate();
 
   const {projectId} = useParams();
   const isDashboardPage = projectId === undefined;
-  const {isReadOnly} = useProjectPermissions(projectId as string);
   const navbarItems: INavbarItem[] = isDashboardPage ? getProjectDashboardNavbarItems(translate) : getProjectNavbarItems(translate, projectId, isReadOnly);
 
   return ({
