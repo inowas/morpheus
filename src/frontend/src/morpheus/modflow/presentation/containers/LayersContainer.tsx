@@ -16,12 +16,10 @@ import LayersMap from '../components/ModelLayers/LayersMap';
 const LayersContainer = () => {
 
   const {projectId} = useParams();
-  const {layers, onLayerOrderChange, onCloneLayer, onDeleteLayer} = useLayers(projectId as string);
+  const {layers, onChangeLayerOrder, onChangeLayerConfinement, onChangeLayerMetadata, onCloneLayer, onDeleteLayer} = useLayers(projectId as string);
   const {geometry} = useSpatialDiscretization(projectId as string);
-  const {isReadOnly, permissions} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPermissions(projectId as string);
   const mapRef: IMapRef = useRef(null);
-
-  console.log('layers', layers, permissions, isReadOnly);
 
   if (!layers || !geometry) {
     return null;
@@ -44,7 +42,9 @@ const LayersContainer = () => {
                       layers={layers}
                       onCloneLayer={onCloneLayer}
                       onDeleteLayer={onDeleteLayer}
-                      onLayerOrderChange={onLayerOrderChange}
+                      onChangeLayerConfinement={onChangeLayerConfinement}
+                      onChangeLayerMetadata={onChangeLayerMetadata}
+                      onChangeLayerOrder={onChangeLayerOrder}
                       readOnly={isReadOnly}
                     />
                   </LeafletMapProvider>

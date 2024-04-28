@@ -2,7 +2,7 @@ import {IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
-import {ILayer} from '../types/Layers.type';
+import {ILayer, ILayerConfinement} from '../types/Layers.type';
 import {setLayers} from '../infrastructure/modelStore';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
@@ -11,7 +11,9 @@ interface IUseLayers {
   layers: ILayer[] | null;
   onCloneLayer: (layerId: string) => void;
   onDeleteLayer: (layerId: string) => void;
-  onLayerOrderChange: (newOrderIds: string[]) => void;
+  onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => void;
+  onChangeLayerOrder: (newOrderIds: string[]) => void;
+  onChangeLayerConfinement: (layerId: string, confinement: ILayerConfinement) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -70,7 +72,7 @@ const useLayers = (projectId: string): IUseLayers => {
     // eslint-disable-next-line
   }, [projectId]);
 
-  const onLayerOrderChange = async (newOrderIds: string[]) => {
+  const onChangeLayerOrder = async (newOrderIds: string[]) => {
 
     if (!model) {
       return;
@@ -129,6 +131,77 @@ const useLayers = (projectId: string): IUseLayers => {
     }
 
     dispatch(setLayers(orderedLayers));
+  };
+
+  const onChangeLayerConfinement = async (layerId: string, confinement: ILayerConfinement) => {
+    if (!model) {
+      return;
+    }
+
+    const layer = model.layers.find((l) => l.layer_id === layerId);
+
+    if (!layer) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateModelLayerConfinementResult = await sendCommand<Commands.IUpdateModelLayerConfinementCommand>({
+      command_name: 'update_model_layer_confinement_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        layer_id: layerId,
+        confinement,
+      },
+    });
+
+    if (updateModelLayerConfinementResult.err) {
+      setError({
+        message: updateModelLayerConfinementResult.val.message,
+        code: updateModelLayerConfinementResult.val.code,
+      });
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+
+    await fetchLayers();
+  };
+
+  const onChangeLayerMetadata = async (layerId: string, name?: string, description?: string) => {
+    if (!model) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateModelLayerMetadataResult = await sendCommand<Commands.IUpdateModelLayerMetadataCommand>({
+      command_name: 'update_model_layer_metadata_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        layer_id: layerId,
+        name: name,
+        description: description,
+      },
+    });
+
+    if (updateModelLayerMetadataResult.err) {
+      setError({
+        message: updateModelLayerMetadataResult.val.message,
+        code: updateModelLayerMetadataResult.val.code,
+      });
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+
+    await fetchLayers();
   };
 
   const onCloneLayer = async (layerId: string) => {
@@ -209,7 +282,9 @@ const useLayers = (projectId: string): IUseLayers => {
     layers: model?.layers || null,
     onCloneLayer,
     onDeleteLayer,
-    onLayerOrderChange,
+    onChangeLayerConfinement,
+    onChangeLayerMetadata,
+    onChangeLayerOrder,
     loading,
     error,
   };

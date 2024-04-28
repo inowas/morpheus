@@ -87,7 +87,7 @@ class LayerDescription:
 
 
 @dataclasses.dataclass
-class LayerType:
+class LayerConfinement:
     type: Literal['confined', 'convertible', 'unconfined']
 
     def __eq__(self, other):
@@ -506,7 +506,7 @@ class Layer:
     layer_id: LayerId
     name: LayerName
     description: LayerDescription
-    type: LayerType
+    confinement: LayerConfinement
     properties: LayerProperties
 
     @classmethod
@@ -515,7 +515,7 @@ class Layer:
             layer_id=LayerId.new(),
             name=LayerName.new(),
             description=LayerDescription.new(),
-            type=LayerType.confined(),
+            confinement=LayerConfinement.confined(),
             properties=LayerProperties.from_values(
                 hk=1.0,
                 hani=1.0,
@@ -534,7 +534,7 @@ class Layer:
             layer_id=LayerId.from_value(obj['layer_id']),
             name=LayerName.from_value(obj['name']),
             description=LayerDescription.from_value(obj['description']),
-            type=LayerType.from_value(obj['type']),
+            confinement=LayerConfinement.from_value(obj['confinement']),
             properties=LayerProperties.from_dict(obj['properties'])
         )
 
@@ -543,12 +543,12 @@ class Layer:
             'layer_id': self.layer_id.to_value(),
             'name': self.name.to_value(),
             'description': self.description.to_value(),
-            'type': self.type.to_value(),
+            'confinement': self.confinement.to_value(),
             'properties': self.properties.to_dict()
         }
 
     def is_confined(self):
-        return self.type == LayerType.confined()
+        return self.confinement == LayerConfinement.confined()
 
     def clone(self, layer_id: LayerId):
         return dataclasses.replace(self, layer_id=layer_id)
@@ -559,8 +559,8 @@ class Layer:
     def with_updated_description(self, layer_description: LayerDescription):
         return dataclasses.replace(self, description=layer_description)
 
-    def with_updated_type(self, layer_type: LayerType):
-        return dataclasses.replace(self, type=layer_type)
+    def with_updated_confinement(self, confinement: LayerConfinement):
+        return dataclasses.replace(self, confinement=confinement)
 
     def with_updated_property(self, property_name: LayerPropertyName, property_value: LayerPropertyValues):
         return dataclasses.replace(self, properties=self.properties.with_updated_property(property_name, property_value))

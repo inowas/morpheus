@@ -12,8 +12,8 @@ from morpheus.project.types.ModelVersion import ModelVersion, VersionId, Version
 from morpheus.project.types.discretization import TimeDiscretization
 from morpheus.project.types.discretization.spatial import Grid, ActiveCells
 from morpheus.project.types.geometry import Polygon
-from morpheus.project.types.layers.Layer import Layer, LayerId, LayerType, LayerDescription, LayerName, LayerPropertyName, LayerPropertyDefaultValue, \
-    LayerPropertyRaster, LayerPropertyZones
+from morpheus.project.types.layers.Layer import Layer, LayerId, LayerDescription, LayerName, LayerPropertyName, LayerPropertyDefaultValue, \
+    LayerPropertyRaster, LayerPropertyZones, LayerConfinement
 
 
 class ModelAffectedCellsUpdatedEvent(EventBase):
@@ -191,6 +191,35 @@ class ModelLayerClonedEvent(EventBase):
         return EventName.from_str(ProjectEventName.MODEL_LAYER_CLONED.to_str())
 
 
+class ModelLayerConfinementUpdatedEvent(EventBase):
+    @classmethod
+    def from_confinement(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, confinement: LayerConfinement, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str(),
+                'confinement': confinement.to_value()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer_id(self) -> LayerId:
+        return LayerId.from_str(self.payload['layer_id'])
+
+    def get_confinement(self) -> LayerConfinement:
+        return LayerConfinement.from_value(self.payload['confinement'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_CONFINEMENT_UPDATED.to_str())
+
+
 class ModelLayerCreatedEvent(EventBase):
     @classmethod
     def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
@@ -241,10 +270,10 @@ class ModelLayerDeletedEvent(EventBase):
         return EventName.from_str(ProjectEventName.MODEL_LAYER_DELETED.to_str())
 
 
-class ModelLayerUpdatedEvent(EventBase):
+class ModelLayerMetadataUpdatedEvent(EventBase):
     @classmethod
     def from_props(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, layer_name: LayerName | None, layer_description: LayerDescription | None,
-                   layer_type: LayerType | None, occurred_at: DateTime):
+                   occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -253,7 +282,6 @@ class ModelLayerUpdatedEvent(EventBase):
                 'layer_id': layer_id.to_str(),
                 'layer_name': layer_name.to_str() if layer_name else None,
                 'layer_description': layer_description.to_str() if layer_description else None,
-                'layer_type': layer_type.to_str() if layer_type else None,
             }
         )
 
@@ -272,11 +300,8 @@ class ModelLayerUpdatedEvent(EventBase):
     def get_layer_description(self) -> LayerDescription | None:
         return LayerDescription.from_str(self.payload['layer_description'])
 
-    def get_layer_type(self) -> LayerType | None:
-        return LayerType.from_str(self.payload['layer_type'])
-
     def get_event_name(self) -> EventName:
-        return EventName.from_str(ProjectEventName.MODEL_LAYER_UPDATED.to_str())
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_METADATA_UPDATED.to_str())
 
 
 class ModelLayerOrderUpdatedEvent(EventBase):
@@ -367,7 +392,7 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
         return LayerPropertyZones.from_list(self.payload['property_zones']) if self.payload['property_zones'] else None
 
     def get_event_name(self) -> EventName:
-        return EventName.from_str(ProjectEventName.MODEL_LAYER_UPDATED.to_str())
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_PROPERTY_UPDATED.to_str())
 
 
 class VersionCreatedEvent(EventBase):

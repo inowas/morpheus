@@ -2,8 +2,8 @@ from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDescriptionUpdatedEvent, \
     VersionDeletedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelAffectedCellsUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, \
-    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerUpdatedEvent, ModelLayerPropertyUpdatedEvent, \
-    ModelLayerClonedEvent, ModelLayerOrderUpdatedEvent
+    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerMetadataUpdatedEvent, \
+    ModelLayerPropertyUpdatedEvent, ModelLayerClonedEvent, ModelLayerOrderUpdatedEvent, ModelLayerConfinementUpdatedEvent
 from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
@@ -146,6 +146,34 @@ class ModelProjector(EventListenerBase):
 
         self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
+    @listen_to(ModelLayerConfinementUpdatedEvent)
+    def on_model_layer_confinement_updated(self, event: ModelLayerConfinementUpdatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        layer_id = event.get_layer_id()
+        confinement = event.get_confinement()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        layers = latest_model.layers
+        if layers is None:
+            return
+
+        layer = layers.get_layer(layer_id=layer_id)
+        if not isinstance(layer, Layer):
+            return
+
+        layer = layer.with_updated_confinement(confinement=confinement)
+        updated_layers = layers.with_updated_layer(updated_layer=layer)
+        updated_model = latest_model.with_updated_layers(layers=updated_layers)
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
     @listen_to(ModelLayerCreatedEvent)
     def on_model_layer_created(self, event: ModelLayerCreatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
@@ -211,8 +239,8 @@ class ModelProjector(EventListenerBase):
         latest = latest.with_updated_layers(layers=layers.with_updated_order(layer_ids=order))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
 
-    @listen_to(ModelLayerUpdatedEvent)
-    def on_model_layer_updated(self, event: ModelLayerUpdatedEvent, metadata: EventMetadata) -> None:
+    @listen_to(ModelLayerMetadataUpdatedEvent)
+    def on_model_layer_metadata_updated(self, event: ModelLayerMetadataUpdatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
         model_id = event.get_model_id()
         layer_id = event.get_layer_id()
@@ -240,10 +268,6 @@ class ModelProjector(EventListenerBase):
         layer_description = event.get_layer_description()
         if layer_description is not None:
             layer = layer.with_updated_description(layer_description=layer_description)
-
-        layer_type = event.get_layer_type()
-        if layer_type is not None:
-            layer = layer.with_updated_type(layer_type=layer_type)
 
         latest = latest.with_updated_layers(layers=layers.with_updated_layer(updated_layer=layer))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)

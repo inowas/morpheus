@@ -10,11 +10,13 @@ interface IProps {
   layers: ILayer[];
   onCloneLayer: (layerId: ILayer['layer_id']) => void;
   onDeleteLayer: (layerId: ILayer['layer_id']) => void;
-  onLayerOrderChange: (newOrderIds: string[]) => void;
+  onChangeLayerMetadata: (layerId: ILayer['layer_id'], name?: ILayer['name'], description?: ILayer['description']) => void;
+  onChangeLayerConfinement: (layerId: ILayer['layer_id'], confinement: ILayer['confinement']) => void;
+  onChangeLayerOrder: (newOrderIds: string[]) => void;
   readOnly: boolean;
 }
 
-const LayersList = ({layers, onCloneLayer, onDeleteLayer, onLayerOrderChange, readOnly}: IProps) => {
+const LayersList = ({layers, onCloneLayer, onDeleteLayer, onChangeLayerConfinement, onChangeLayerMetadata, onChangeLayerOrder, readOnly}: IProps) => {
 
   const [editTitle, setEditTitle] = useState<string | null>(null);
   const [layersLocal, setLayersLocal] = useState<ILayer[]>(layers);
@@ -24,16 +26,20 @@ const LayersList = ({layers, onCloneLayer, onDeleteLayer, onLayerOrderChange, re
   }, [layers]);
 
   const handleOrderChange = (newOrderedItems: IMovableAccordionItem[]) => {
-    onLayerOrderChange(newOrderedItems.map((item) => item.key as string));
+    onChangeLayerOrder(newOrderedItems.map((item) => item.key as string));
   };
 
-  const handleChangeLayer = (layer: ILayer) => {
-    setLayersLocal(layersLocal.map((l) => l.layer_id === layer.layer_id ? layer : l));
-  };
-
-  const handleChangeTitle = (key: string, newTitle: string) => {
-    handleChangeLayer({...layersLocal.find((l) => l.layer_id === key), name: newTitle} as ILayer);
+  const handleChangeLayerName = (layerId: string, name: string) => {
+    onChangeLayerMetadata(layerId, name);
     setEditTitle(null);
+  };
+
+  const handleChangeLayerConfinement = (layerId: string, confinement: ILayer['confinement']) => {
+    onChangeLayerConfinement(layerId, confinement);
+  };
+
+  const handleChangeLayerPropertyValues = (layer: ILayer) => {
+    setLayersLocal(layersLocal.map((l) => l.layer_id === layer.layer_id ? layer : l));
   };
 
   const getActions = (): IMovableAccordionListAction[] | undefined => {
@@ -59,10 +65,11 @@ const LayersList = ({layers, onCloneLayer, onDeleteLayer, onLayerOrderChange, re
       title: layerLocal.name,
       content: <LayerDetails
         layer={layerLocal}
-        onChange={handleChangeLayer}
+        onChangeLayerPropertyValues={handleChangeLayerPropertyValues}
+        onChangeLayerConfinement={handleChangeLayerConfinement}
       />,
       editTitle: editTitle === layerLocal.layer_id,
-      onChangeTitle: (newTitle: string) => handleChangeTitle(layerLocal.layer_id, newTitle),
+      onChangeTitle: (newTitle: string) => handleChangeLayerName(layerLocal.layer_id, newTitle),
       isSubmittable: !isEqual(layerLocal, layers.find((l) => l.layer_id === layerLocal.layer_id)),
     });
   });

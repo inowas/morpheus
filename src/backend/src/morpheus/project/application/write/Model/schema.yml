@@ -7,8 +7,9 @@ definitions:
       - "$ref": "#/definitions/commands/CloneModelLayerCommand"
       - "$ref": "#/definitions/commands/CreateModelCommand"
       - "$ref": "#/definitions/commands/CreateModelLayerCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerConfinementCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerOrderCommand"
-      - "$ref": "#/definitions/commands/UpdateModelLayerCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerMetadataCommand"
       - "$ref": "#/definitions/commands/DeleteModelLayerCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerPropertyCommand"
       - "$ref": "#/definitions/commands/UpdateModelGeometryCommand"
@@ -66,8 +67,8 @@ definitions:
             description:
               type: string
               example: Layer 1 description
-            type:
-              "$ref": "#/definitions/components/LayerType"
+            confinement:
+              "$ref": "#/definitions/components/LayerConfinement"
             hk:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             hani:
@@ -191,14 +192,41 @@ definitions:
             version_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-    UpdateModelLayerCommand:
+    UpdateModelLayerConfinementCommand:
       type: object
       properties:
         command_name:
           type: string
           enum:
-            - update_model_layer_command
-          example: update_model_layer_command
+            - update_model_layer_confinement_command
+          example: update_model_layer_confinement_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            confinement:
+              "$ref": "#/definitions/components/LayerConfinement"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - confinement
+    UpdateModelLayerMetadataCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_metadata_command
+          example: update_model_layer_metadata_command
         payload:
           type: object
           properties:
@@ -217,15 +245,10 @@ definitions:
             description:
               type: string
               example: Layer 1 description
-            type:
-              "$ref": "#/definitions/components/LayerType"
           required:
             - project_id
             - model_id
             - layer_id
-            - name
-            - description
-            - type
     UpdateModelLayerOrderCommand:
       type: object
       properties:
@@ -461,7 +484,7 @@ definitions:
   components:
     AffectedCells:
       type: object
-    LayerType:
+    LayerConfinement:
       type: string
       enum:
         - confined

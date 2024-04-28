@@ -6,11 +6,11 @@ export interface ILayer {
   layer_id: string;
   name: string;
   description: string;
-  type: ILayerType;
+  confinement: ILayerConfinement;
   properties: ILayerProperties;
 }
 
-type ILayerType = 'confined' | 'convertible' | 'unconfined';
+export type ILayerConfinement = 'confined' | 'convertible' | 'unconfined';
 
 interface ILayerProperties {
   hk: ILayerPropertyValues;

@@ -1,67 +1,50 @@
 import dataclasses
-from typing import TypedDict, Literal, Optional
+from typing import TypedDict, Literal
 
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents import ModelLayerCreatedEvent
+from morpheus.project.domain.events.ModelEvents import ModelLayerConfinementUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.layers.Layer import LayerName, LayerDescription, LayerConfinement, LayerProperties, LayerId, Layer
+from morpheus.project.types.layers.Layer import LayerId, LayerConfinement
 
 
-class CreateModelLayerCommandPayload(TypedDict):
+class UpdateModelLayerConfinementPayload(TypedDict):
     project_id: str
     model_id: str
-    name: str
-    description: str
+    layer_id: str
     confinement: Literal['confined', 'convertible', 'unconfined']
-    hk: float
-    hani: float
-    vka: float
-    specific_storage: float
-    specific_yield: float
-    initial_head: float
-    top: Optional[float]
-    bottom: float
 
 
 @dataclasses.dataclass(frozen=True)
-class CreateModelLayerCommand(CommandBase):
+class UpdateModelLayerConfinementCommand(CommandBase):
     project_id: ProjectId
     model_id: ModelId
     layer_id: LayerId
-    name: LayerName
-    description: LayerDescription
     confinement: LayerConfinement
-    properties: LayerProperties
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: CreateModelLayerCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: UpdateModelLayerConfinementPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
-            layer_id=LayerId.new(),
-            name=LayerName.from_str(payload['name']),
-            description=LayerDescription.from_str(payload['description']),
-            confinement=LayerConfinement.from_str(payload['confinement']),
-            properties=LayerProperties.from_values(
-                hk=payload['hk'], hani=payload['hani'], vka=payload['vka'], specific_storage=payload['specific_storage'], specific_yield=payload['specific_yield'],
-                initial_head=payload['initial_head'], top=payload['top'], bottom=payload['bottom']
-            ),
+            layer_id=LayerId.from_str(payload['layer_id']),
+            confinement=LayerConfinement.from_str(payload['confinement'])
         )
 
 
-class CreateModelLayerCommandHandler(CommandHandlerBase):
+class UpdateModelLayerConfinementCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: CreateModelLayerCommand):
+    def handle(command: UpdateModelLayerConfinementCommand):
         project_id = command.project_id
         user_id = command.user_id
         permissions = PermissionsReader().get_permissions(project_id=project_id)
@@ -69,17 +52,16 @@ class CreateModelLayerCommandHandler(CommandHandlerBase):
         if not permissions.member_can_edit(user_id=user_id):
             raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update the time discretization of {project_id.to_str()}')
 
-        event = ModelLayerCreatedEvent.from_layer(
+        model = ModelReader().get_latest_model(project_id=project_id)
+        if model.model_id != command.model_id:
+            raise ValueError(f'Model with id {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
+
+        event = ModelLayerConfinementUpdatedEvent.from_confinement(
             project_id=project_id,
             model_id=command.model_id,
-            layer=Layer(
-                layer_id=command.layer_id,
-                name=command.name,
-                description=command.description,
-                confinement=command.confinement,
-                properties=command.properties
-            ),
-            occurred_at=DateTime.now()
+            layer_id=command.layer_id,
+            confinement=command.confinement,
+            occurred_at=DateTime.now(),
         )
 
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))

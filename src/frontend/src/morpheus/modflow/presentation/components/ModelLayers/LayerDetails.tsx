@@ -6,10 +6,11 @@ import LayerPropertyValues from './LayerPropertyValues';
 
 interface IProps {
   layer: ILayer;
-  onChange: (layer: ILayer) => void;
+  onChangeLayerPropertyValues: (layer: ILayer) => void;
+  onChangeLayerConfinement: (layerId: string, confinement: ILayer['confinement']) => void;
 }
 
-const LayerDetails = ({layer, onChange}: IProps) => (
+const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinement}: IProps) => (
   <div className={'scrollWrapper-Y'}>
     <Tab
       variant='secondary'
@@ -24,8 +25,8 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           menuItem: 'Confinement',
           render: () => <TabPane>
             <LayerConfinement
-              layerType={layer.type}
-              onSubmit={(layerType) => onChange({...layer, type: layerType})}
+              layerType={layer.confinement}
+              onSubmit={(layerType) => onChangeLayerConfinement(layer.layer_id, layerType)}
               readOnly={false}
             />
           </TabPane>,
@@ -35,7 +36,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.top}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, top: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, top: layerPropertyValues}})}
               readOnly={false}
               unit={'m asl'}
             />
@@ -46,7 +47,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.bottom}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, bottom: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, bottom: layerPropertyValues}})}
               readOnly={false}
               unit={'m asl'}
             />
@@ -57,7 +58,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.hk}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, hk: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, hk: layerPropertyValues}})}
               readOnly={false}
               unit={'m/d'}
             />
@@ -67,7 +68,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.hani}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, hani: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, hani: layerPropertyValues}})}
               readOnly={false}
               unit={'m/d'}
             />
@@ -78,7 +79,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.vka}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, vka: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, vka: layerPropertyValues}})}
               readOnly={false}
               unit={'m/d'}
             />
@@ -89,7 +90,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.specific_storage}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, specific_storage: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, specific_storage: layerPropertyValues}})}
               readOnly={false}
               unit={'1/m'}
             />
@@ -100,7 +101,7 @@ const LayerDetails = ({layer, onChange}: IProps) => (
           render: () => <TabPane>
             <LayerPropertyValues
               values={layer.properties.specific_yield}
-              onSubmit={(layerPropertyValues) => onChange({...layer, properties: {...layer.properties, specific_yield: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, specific_yield: layerPropertyValues}})}
               readOnly={false}
               unit={'-'}
             />

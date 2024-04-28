@@ -3,7 +3,7 @@ from flopy.modflow import ModflowLpf as FlopyModflowLpf
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
-from morpheus.project.types.layers.Layer import LayerType
+from morpheus.project.types.layers.Layer import LayerConfinement
 
 
 @dataclasses.dataclass
@@ -91,11 +91,11 @@ class LpfPackageData:
 def calculate_lpf_package_data(model: Model) -> LpfPackageData:
     laytyp = [0 for _ in model.layers.layers]
     for idx, layer in enumerate(model.layers.layers):
-        if LayerType.confined() == layer.type:
+        if LayerConfinement.confined() == layer.confinement:
             laytyp[idx] = 0
-        if LayerType.convertible() == layer.type:
+        if LayerConfinement.convertible() == layer.confinement:
             laytyp[idx] = 1
-        if LayerType.unconfined() == layer.type:
+        if LayerConfinement.unconfined() == layer.confinement:
             laytyp[idx] = -1
 
     package_data = LpfPackageData(

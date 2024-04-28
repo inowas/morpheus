@@ -106,7 +106,7 @@ export interface ICreateModelLayerCommand {
     model_id: string;
     name: string;
     description: string;
-    type: 'confined' | 'convertible' | 'unconfined';
+    confinement: 'confined' | 'convertible' | 'unconfined';
     hk: number;
     hani: number;
     vka: number;
@@ -127,15 +127,24 @@ export interface IDeleteModelLayerCommand {
   }
 }
 
-export interface IUpdateModelLayerCommand {
-  command_name: 'update_model_layer_command';
+export interface IUpdateModelLayerConfinementCommand {
+  command_name: 'update_model_layer_confinement_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    confinement: 'confined' | 'convertible' | 'unconfined';
+  }
+}
+
+export interface IUpdateModelLayerMetadataCommand {
+  command_name: 'update_model_layer_metadata_command';
   payload: {
     project_id: string;
     model_id: string;
     layer_id: string;
     name?: string;
     description?: string;
-    type?: 'confined' | 'convertible' | 'unconfined';
   }
 }
 
@@ -226,7 +235,8 @@ export type ICommand =
   | ICloneModelLayerCommand
   | ICreateModelLayerCommand
   | IDeleteModelLayerCommand
-  | IUpdateModelLayerCommand
+  | IUpdateModelLayerConfinementCommand
+  | IUpdateModelLayerMetadataCommand
   | IUpdateModelLayerOrderCommand
   | IUpdateModelLayerPropertyCommand
   | ICreateModelVersionCommand

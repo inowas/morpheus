@@ -4,7 +4,8 @@ from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHa
 from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
-from .UpdateModelLayer import UpdateModelLayerCommand, UpdateModelLayerCommandHandler
+from .UpdateModelLayerConfinement import UpdateModelLayerConfinementCommand, UpdateModelLayerConfinementCommandHandler
+from .UpdateModelLayerMetadata import UpdateModelLayerMetadataCommand, UpdateModelLayerMetadataCommandHandler
 from .UpdateModelLayerOrder import UpdateModelLayerOrderCommand, UpdateModelLayerOrderCommandHandler
 from .UpdateModelLayerProperty import UpdateModelLayerPropertyCommand, UpdateModelLayerPropertyCommandHandler
 from .UpdateModelAffectedCells import UpdateModelAffectedCellsCommand, UpdateModelAffectedCellsCommandHandler
@@ -20,7 +21,8 @@ model_command_handler_map = {
     CreateModelVersionCommand: CreateModelVersionCommandHandler,
     DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
-    UpdateModelLayerCommand: UpdateModelLayerCommandHandler,
+    UpdateModelLayerConfinementCommand: UpdateModelLayerConfinementCommandHandler,
+    UpdateModelLayerMetadataCommand: UpdateModelLayerMetadataCommandHandler,
     UpdateModelLayerOrderCommand: UpdateModelLayerOrderCommandHandler,
     UpdateModelLayerPropertyCommand: UpdateModelLayerPropertyCommandHandler,
     UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
