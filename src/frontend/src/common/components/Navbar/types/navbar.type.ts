@@ -3,6 +3,7 @@ export interface IMenuItem {
   label: string,
   admin: boolean,
   to: string,
+  disabled?: boolean,
 }
 
 export interface IDropdownItem {
@@ -11,6 +12,7 @@ export interface IDropdownItem {
   admin: boolean,
   basepath: string,
   subMenu: ISubMenuItem[];
+  disabled?: boolean;
 }
 
 interface ISubMenuItem {
@@ -18,6 +20,7 @@ interface ISubMenuItem {
   label: string,
   admin: boolean,
   to: string,
+  disabled?: boolean,
 }
 
 export type INavbarItem = IMenuItem | IDropdownItem;

@@ -8,10 +8,13 @@ import {ILayer} from '../../../types/Layers.type';
 
 interface IProps {
   layers: ILayer[];
-  onOrderChange: (newOrderIds: string[]) => void;
+  onCloneLayer: (layerId: ILayer['layer_id']) => void;
+  onDeleteLayer: (layerId: ILayer['layer_id']) => void;
+  onLayerOrderChange: (newOrderIds: string[]) => void;
+  readOnly: boolean;
 }
 
-const LayersList = ({layers, onOrderChange}: IProps) => {
+const LayersList = ({layers, onCloneLayer, onDeleteLayer, onLayerOrderChange, readOnly}: IProps) => {
 
   const [editTitle, setEditTitle] = useState<string | null>(null);
   const [layersLocal, setLayersLocal] = useState<ILayer[]>(layers);
@@ -21,7 +24,7 @@ const LayersList = ({layers, onOrderChange}: IProps) => {
   }, [layers]);
 
   const handleOrderChange = (newOrderedItems: IMovableAccordionItem[]) => {
-    onOrderChange(newOrderedItems.map((item) => item.key as string));
+    onLayerOrderChange(newOrderedItems.map((item) => item.key as string));
   };
 
   const handleChangeLayer = (layer: ILayer) => {
@@ -33,11 +36,22 @@ const LayersList = ({layers, onOrderChange}: IProps) => {
     setEditTitle(null);
   };
 
-  const actions: IMovableAccordionListAction[] = [
-    {text: 'Clone', icon: 'clone', onClick: (item: IMovableAccordionItem) => console.log('Clone action', item)},
-    {text: 'Delete', icon: 'remove', onClick: (item: IMovableAccordionItem) => console.log('Delete action', item)},
-    {text: 'Rename Item', icon: 'edit', onClick: (item: IMovableAccordionItem) => setEditTitle(item.key)},
-  ];
+  const getActions = (): IMovableAccordionListAction[] | undefined => {
+    if (readOnly) {
+      return;
+    }
+
+    const actions: IMovableAccordionListAction[] = [
+      {text: 'Clone', icon: 'clone', onClick: (item: IMovableAccordionItem) => onCloneLayer(item.key)},
+      {text: 'Rename Item', icon: 'edit', onClick: (item: IMovableAccordionItem) => setEditTitle(item.key)},
+    ];
+
+    if (1 < layersLocal.length) {
+      actions.push({text: 'Delete', icon: 'remove', onClick: (item: IMovableAccordionItem) => onDeleteLayer(item.key)});
+    }
+
+    return actions;
+  };
 
   const movableListItems: IMovableAccordionItem[] = layersLocal.map((layerLocal) => {
     return ({
@@ -57,7 +71,7 @@ const LayersList = ({layers, onOrderChange}: IProps) => {
     <MovableAccordionList
       items={movableListItems}
       onMovableListChange={handleOrderChange}
-      actions={actions}
+      actions={getActions()}
       defaultOpenIndexes={[0]}
     />
   );

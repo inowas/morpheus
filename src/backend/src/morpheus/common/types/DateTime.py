@@ -1,5 +1,5 @@
 import dataclasses
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 @dataclasses.dataclass
@@ -27,7 +27,7 @@ class DateTime:
 
     @classmethod
     def from_datetime(cls, value: datetime):
-        return cls(value=value.replace(tzinfo=None))
+        return cls(value=value.replace(tzinfo=timezone.utc))
 
     @classmethod
     def from_str(cls, value: str):

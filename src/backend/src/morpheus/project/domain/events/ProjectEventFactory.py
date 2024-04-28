@@ -4,7 +4,8 @@ from ...domain.events.ProjectEventName import ProjectEventName
 
 from ...domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDeletedEvent, VersionDescriptionUpdatedEvent, \
     ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent, \
-    ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerUpdatedEvent, ModelLayerPropertyUpdatedEvent
+    ModelGridRecalculatedEvent, ModelLayerClonedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerOrderUpdatedEvent, ModelLayerUpdatedEvent,  \
+    ModelLayerPropertyUpdatedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
 from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent, ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
 
@@ -25,10 +26,14 @@ class ProjectEventFactory:
             return ModelGridUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_TIME_DISCRETIZATION_UPDATED:
             return ModelTimeDiscretizationUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.MODEL_LAYER_CLONED:
+            return ModelLayerClonedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_LAYER_CREATED:
             return ModelLayerCreatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_LAYER_DELETED:
             return ModelLayerDeletedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.MODEL_LAYER_ORDER_UPDATED:
+            return ModelLayerOrderUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_LAYER_UPDATED:
             return ModelLayerUpdatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_LAYER_PROPERTY_UPDATED:

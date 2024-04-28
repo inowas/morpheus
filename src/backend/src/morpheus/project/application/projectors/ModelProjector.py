@@ -2,12 +2,13 @@ from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDescriptionUpdatedEvent, \
     VersionDeletedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelAffectedCellsUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, \
-    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerUpdatedEvent, ModelLayerPropertyUpdatedEvent
+    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerUpdatedEvent, ModelLayerPropertyUpdatedEvent, \
+    ModelLayerClonedEvent, ModelLayerOrderUpdatedEvent
 from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
 from morpheus.project.types.User import UserId
-from morpheus.project.types.layers.Layer import LayerPropertyValues
+from morpheus.project.types.layers.Layer import LayerPropertyValues, Layer
 
 
 class ModelProjector(EventListenerBase):
@@ -116,6 +117,35 @@ class ModelProjector(EventListenerBase):
         latest = latest.with_updated_time_discretization(time_discretization=time_discretization)
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
 
+    @listen_to(ModelLayerClonedEvent)
+    def on_model_layer_cloned(self, event: ModelLayerClonedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        layer_id = event.get_layer_id()
+        new_layer_id = event.get_new_layer_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        layers = latest_model.layers
+        if layers is None:
+            return
+
+        layer = layers.get_layer(layer_id=layer_id)
+        if not isinstance(layer, Layer):
+            return
+
+        new_layer = layer.clone(layer_id=new_layer_id)
+        new_layers = layers.with_added_layer(layer=new_layer)
+        updated_model = latest_model.with_updated_layers(layers=new_layers)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
     @listen_to(ModelLayerCreatedEvent)
     def on_model_layer_created(self, event: ModelLayerCreatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
@@ -158,6 +188,27 @@ class ModelProjector(EventListenerBase):
             return
 
         latest = latest.with_updated_layers(layers=layers.with_deleted_layer(layer_id=layer_id))
+        self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelLayerOrderUpdatedEvent)
+    def on_model_layer_order_updated(self, event: ModelLayerOrderUpdatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        order = event.get_order()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest.model_id != model_id:
+            return
+
+        layers = latest.layers
+        if layers is None:
+            return
+
+        latest = latest.with_updated_layers(layers=layers.with_updated_order(layer_ids=order))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
 
     @listen_to(ModelLayerUpdatedEvent)

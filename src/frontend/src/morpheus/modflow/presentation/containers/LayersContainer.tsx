@@ -2,21 +2,26 @@ import React, {useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import {Icon, MenuItem} from 'semantic-ui-react';
 import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
+import {IMapRef, LeafletMapProvider} from 'common/components/Map';
+
+import useLayers from '../../application/useLayers';
+import useProjectPermissions from '../../application/useProjectPermissions';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {BodyContent, SidebarContent} from '../components';
-import useLayers from '../../application/useLayers';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import LayersList from '../components/ModelLayers/LayersList';
-import {IMapRef, LeafletMapProvider} from 'common/components/Map';
 import LayersMap from '../components/ModelLayers/LayersMap';
 
 
 const LayersContainer = () => {
 
   const {projectId} = useParams();
-  const {layers, onOrderChange} = useLayers(projectId as string);
+  const {layers, onLayerOrderChange, onCloneLayer, onDeleteLayer} = useLayers(projectId as string);
   const {geometry} = useSpatialDiscretization(projectId as string);
+  const {isReadOnly, permissions} = useProjectPermissions(projectId as string);
   const mapRef: IMapRef = useRef(null);
+
+  console.log('layers', layers, permissions, isReadOnly);
 
   if (!layers || !geometry) {
     return null;
@@ -35,7 +40,13 @@ const LayersContainer = () => {
               render: () =>
                 <TabPane attached={false}>
                   <LeafletMapProvider mapRef={mapRef}>
-                    <LayersList layers={layers} onOrderChange={onOrderChange}/>
+                    <LayersList
+                      layers={layers}
+                      onCloneLayer={onCloneLayer}
+                      onDeleteLayer={onDeleteLayer}
+                      onLayerOrderChange={onLayerOrderChange}
+                      readOnly={isReadOnly}
+                    />
                   </LeafletMapProvider>
                 </TabPane>,
             }, {

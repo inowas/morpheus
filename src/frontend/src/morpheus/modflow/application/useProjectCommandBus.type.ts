@@ -90,6 +90,15 @@ export interface IUpdateModelTimeDiscretizationCommand {
   }
 }
 
+export interface ICloneModelLayerCommand {
+  command_name: 'clone_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+  }
+}
+
 export interface ICreateModelLayerCommand {
   command_name: 'create_model_layer_command';
   payload: {
@@ -113,6 +122,7 @@ export interface IDeleteModelLayerCommand {
   command_name: 'delete_model_layer_command';
   payload: {
     project_id: string;
+    model_id: string;
     layer_id: string;
   }
 }
@@ -126,6 +136,15 @@ export interface IUpdateModelLayerCommand {
     name?: string;
     description?: string;
     type?: 'confined' | 'convertible' | 'unconfined';
+  }
+}
+
+export interface IUpdateModelLayerOrderCommand {
+  command_name: 'update_model_layer_order_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_ids: string[];
   }
 }
 
@@ -204,9 +223,11 @@ export type ICommand =
   | IUpdateModelGridCommand
   | IUpdateModelAffectedCellsCommand
   | IUpdateModelTimeDiscretizationCommand
+  | ICloneModelLayerCommand
   | ICreateModelLayerCommand
   | IDeleteModelLayerCommand
   | IUpdateModelLayerCommand
+  | IUpdateModelLayerOrderCommand
   | IUpdateModelLayerPropertyCommand
   | ICreateModelVersionCommand
   | IDeleteModelVersionCommand

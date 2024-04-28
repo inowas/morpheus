@@ -37,7 +37,38 @@ class LayersCollection:
     def with_updated_layer(self, updated_layer: Layer):
         return dataclasses.replace(self, layers=[updated_layer if updated_layer.layer_id == layer.layer_id else layer for layer in self.layers])
 
+    def assert_layer_can_be_deleted(self, layer_id: LayerId):
+        if layer_id not in self.get_layer_ids():
+            raise ValueError("Layer to be deleted does not exist in the collection")
+
+        if len(self.layers) == 1:
+            raise ValueError("Cannot delete the last layer")
+
+    def assert_layer_can_be_cloned(self, layer_id: LayerId, new_layer_id: LayerId):
+        if layer_id not in self.get_layer_ids():
+            raise ValueError("Layer to be cloned does not exist in the collection")
+
+        if new_layer_id in self.get_layer_ids():
+            raise ValueError("New layer id already exists in the collection")
+
+    def assert_order_can_be_updated(self, layer_ids: list[LayerId]):
+        # check if all layer_ids are in the collection
+        if not all(layer_id in self.get_layer_ids() for layer_id in layer_ids):
+            raise ValueError("Not all layer_ids are part of the collection")
+
+        if len(layer_ids) != len(set(layer_ids)):
+            raise ValueError("Not all layer_ids are unique")
+
+        # check if the number of layer_ids is the same as the number of layers
+        if len(layer_ids) != len(self.layers):
+            raise ValueError("Number of layer_ids does not match the number of layers")
+
+    def with_updated_order(self, layer_ids: list[LayerId]):
+        self.assert_order_can_be_updated(layer_ids)
+        return dataclasses.replace(self, layers=[layer for layer_id in layer_ids for layer in self.layers if layer.layer_id == layer_id])
+
     def with_deleted_layer(self, layer_id: LayerId):
+        self.assert_layer_can_be_deleted(layer_id)
         return dataclasses.replace(self, layers=[layer for layer in self.layers if layer.layer_id != layer_id])
 
     def number_of_layers(self):

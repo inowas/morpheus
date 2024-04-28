@@ -28,7 +28,6 @@ const AssetsPage = ({}: IProps) => {
         </ContentWrapper>
       </ModflowContainer>
     </>
-
   );
 };
 

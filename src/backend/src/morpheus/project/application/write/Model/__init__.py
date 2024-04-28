@@ -1,9 +1,11 @@
+from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
 from .CreateModel import CreateModelCommand, CreateModelCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
 from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
 from .UpdateModelLayer import UpdateModelLayerCommand, UpdateModelLayerCommandHandler
+from .UpdateModelLayerOrder import UpdateModelLayerOrderCommand, UpdateModelLayerOrderCommandHandler
 from .UpdateModelLayerProperty import UpdateModelLayerPropertyCommand, UpdateModelLayerPropertyCommandHandler
 from .UpdateModelAffectedCells import UpdateModelAffectedCellsCommand, UpdateModelAffectedCellsCommandHandler
 from .UpdateModelGeometry import UpdateModelGeometryCommand, UpdateModelGeometryCommandHandler
@@ -12,12 +14,14 @@ from .UpdateModelTimeDiscretization import UpdateModelTimeDiscretizationCommand,
 from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand, UpdateModelVersionDescriptionCommandHandler
 
 model_command_handler_map = {
+    CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelCommand: CreateModelCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,
     CreateModelVersionCommand: CreateModelVersionCommandHandler,
     DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
     UpdateModelLayerCommand: UpdateModelLayerCommandHandler,
+    UpdateModelLayerOrderCommand: UpdateModelLayerOrderCommandHandler,
     UpdateModelLayerPropertyCommand: UpdateModelLayerPropertyCommandHandler,
     UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
     UpdateModelGeometryCommand: UpdateModelGeometryCommandHandler,

@@ -550,6 +550,9 @@ class Layer:
     def is_confined(self):
         return self.type == LayerType.confined()
 
+    def clone(self, layer_id: LayerId):
+        return dataclasses.replace(self, layer_id=layer_id)
+
     def with_updated_name(self, layer_name: LayerName):
         return dataclasses.replace(self, name=layer_name)
 

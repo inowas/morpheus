@@ -1,4 +1,5 @@
 import dataclasses
+from typing import List
 
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
@@ -161,6 +162,35 @@ class ModelTimeDiscretizationUpdatedEvent(EventBase):
         return EventName.from_str(ProjectEventName.MODEL_TIME_DISCRETIZATION_UPDATED.to_str())
 
 
+class ModelLayerClonedEvent(EventBase):
+    @classmethod
+    def from_layer_id(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, new_layer_id: LayerId, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str(),
+                'new_layer_id': new_layer_id.to_str()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer_id(self) -> LayerId:
+        return LayerId.from_str(self.payload['layer_id'])
+
+    def get_new_layer_id(self) -> LayerId:
+        return LayerId.from_str(self.payload['new_layer_id'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_CLONED.to_str())
+
+
 class ModelLayerCreatedEvent(EventBase):
     @classmethod
     def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
@@ -247,6 +277,31 @@ class ModelLayerUpdatedEvent(EventBase):
 
     def get_event_name(self) -> EventName:
         return EventName.from_str(ProjectEventName.MODEL_LAYER_UPDATED.to_str())
+
+
+class ModelLayerOrderUpdatedEvent(EventBase):
+    @classmethod
+    def from_layer_ids(cls, project_id: ProjectId, model_id: ModelId, layer_ids: List[LayerId], occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'order': [layer_id.to_str() for layer_id in layer_ids]
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_order(self) -> List[LayerId]:
+        return [LayerId.from_str(layer_id) for layer_id in self.payload['order']]
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_LAYER_ORDER_UPDATED.to_str())
 
 
 class ModelLayerPropertyUpdatedEvent(EventBase):

@@ -20,7 +20,7 @@ const ProjectListPage = ({basePath}: IProps) => {
   const location = useLocation();
   const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
-  const {projects, loading, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
+  const {projects, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   const {userProfile} = useAuthentication();

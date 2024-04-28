@@ -21,8 +21,10 @@ class ProjectEventName(StrEnum):
     MODEL_GRID_UPDATED = 'Model Grid Updated'
     MODEL_TIME_DISCRETIZATION_UPDATED = 'Model Time Discretization Updated'
 
+    MODEL_LAYER_CLONED = 'Model Layer Cloned'
     MODEL_LAYER_CREATED = 'Model Layer Created'
     MODEL_LAYER_DELETED = 'Model Layer Deleted'
+    MODEL_LAYER_ORDER_UPDATED = 'Model Layer Order Updated'
     MODEL_LAYER_UPDATED = 'Model Layer Updated'
     MODEL_LAYER_PROPERTY_UPDATED = 'Model Layer Property Updated'
 

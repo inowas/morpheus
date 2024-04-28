@@ -4,8 +4,10 @@ title: Schema for ModelCommands
 definitions:
   ModelCommands:
     oneOf:
+      - "$ref": "#/definitions/commands/CloneModelLayerCommand"
       - "$ref": "#/definitions/commands/CreateModelCommand"
       - "$ref": "#/definitions/commands/CreateModelLayerCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerOrderCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerCommand"
       - "$ref": "#/definitions/commands/DeleteModelLayerCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerPropertyCommand"
@@ -17,6 +19,30 @@ definitions:
       - "$ref": "#/definitions/commands/DeleteModelVersionCommand"
       - "$ref": "#/definitions/commands/UpdateModelVersionDescriptionCommand"
   commands:
+    CloneModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_layer_command
+          example: clone_model_layer_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - layer_id
     CreateModelLayerCommand:
       type: object
       properties:
@@ -31,6 +57,9 @@ definitions:
             project_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
             name:
               type: string
               example: Layer 1
@@ -57,6 +86,7 @@ definitions:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
           required:
             - project_id
+            - model_id
             - name
             - type
             - hk
@@ -135,11 +165,15 @@ definitions:
             project_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
             layer_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
           required:
             - project_id
+            - model_id
             - layer_id
     DeleteModelVersionCommand:
       type: object
@@ -171,6 +205,9 @@ definitions:
             project_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
             layer_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
@@ -184,10 +221,36 @@ definitions:
               "$ref": "#/definitions/components/LayerType"
           required:
             - project_id
+            - model_id
             - layer_id
             - name
             - description
             - type
+    UpdateModelLayerOrderCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_order_command
+          example: update_model_layer_order_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            layer_ids:
+              type: array
+              items:
+                type: string
+          required:
+            - project_id
+            - model_id
+            - layer_ids
     UpdateModelLayerPropertyCommand:
       type: object
       properties:

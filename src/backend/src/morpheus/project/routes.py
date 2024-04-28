@@ -8,11 +8,12 @@ from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayers
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
+from .presentation.api.read.ReadPermissionsRequestHandler import ReadPermissionsRequestHandler
 from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequestHandler
 from .types.Project import ProjectId
 from .presentation.api.read.AssetReadRequestHandlers import ReadPreviewImageRequestHandler, ReadAssetListRequestHandler, DownloadAssetRequestHandler, ReadAssetRequestHandler, \
     ReadAssetDataRequestHandler
-from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler
+from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadProjectEventLogRequestHandler
 from .presentation.api.write.AssetWriteRequestHandlers import UploadPreviewImageRequestHandler, DeletePreviewImageRequestHandler, UploadAssetRequestHandler, \
     DeleteAssetRequestHandler, UpdateAssetRequestHandler
 from ..common.presentation.api.middleware.schema_validation import validate_request
@@ -34,6 +35,12 @@ def register_routes(blueprint: Blueprint):
     @validate_request
     def create_project():
         return MessageBoxRequestHandler().handle(request)
+
+    @blueprint.route('/<project_id>/event-log', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_event_log(project_id: str):
+        return ReadProjectEventLogRequestHandler().handle(ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/model', methods=['GET'])
     @cross_origin()
@@ -74,6 +81,12 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_get_layers(project_id: str):
         return ReadModelLayersRequestHandler().handle(ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/permissions', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_get_permissions(project_id: str):
+        return ReadPermissionsRequestHandler().handle(ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['GET'])
     @cross_origin()

@@ -17,8 +17,8 @@ from morpheus.project.types.discretization import TimeDiscretization
 
 class StressPeriod(TypedDict):
     start_date_time: str
-    end_date_time: str
     number_of_time_steps: int
+    time_step_multiplier: float
     steady_state: bool
 
 
@@ -27,7 +27,7 @@ class UpdateModelTimeDiscretizationCommandPayload(TypedDict):
     start_date_time: str
     end_date_time: str
     stress_periods: list[StressPeriod]
-    time_unit: dict
+    time_unit: str
 
 
 @dataclasses.dataclass(frozen=True)

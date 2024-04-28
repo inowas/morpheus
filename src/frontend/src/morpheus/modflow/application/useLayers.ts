@@ -9,7 +9,9 @@ import {IRootState} from '../../store';
 
 interface IUseLayers {
   layers: ILayer[] | null;
-  onOrderChange: (newOrderIds: string[]) => void;
+  onCloneLayer: (layerId: string) => void;
+  onDeleteLayer: (layerId: string) => void;
+  onLayerOrderChange: (newOrderIds: string[]) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -28,38 +30,38 @@ const useLayers = (projectId: string): IUseLayers => {
   const {httpGet} = useApi();
   const {sendCommand} = useProjectCommandBus();
 
+  const fetchLayers = async () => {
+    if (!isMounted.current) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const result = await httpGet<IGetLayersResponse>(`/projects/${projectId}/model/layers`);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.ok) {
+      dispatch(setLayers(result.val));
+    }
+
+    if (result.err) {
+      setError({
+        message: result.val.message,
+        code: result.val.code,
+      });
+    }
+  };
+
   useEffect(() => {
     if (!projectId) {
       return;
     }
 
-    const fetch = async () => {
-      if (!isMounted.current) {
-        return;
-      }
-      setLoading(true);
-      setError(null);
-      const result = await httpGet<IGetLayersResponse>(`/projects/${projectId}/model/layers`);
-
-      if (!isMounted.current) {
-        return;
-      }
-
-      setLoading(false);
-
-      if (result.ok) {
-        dispatch(setLayers(result.val));
-      }
-
-      if (result.err) {
-        setError({
-          message: result.val.message,
-          code: result.val.code,
-        });
-      }
-    };
-
-    fetch();
+    fetchLayers();
 
     return (): void => {
       isMounted.current = false;
@@ -68,7 +70,12 @@ const useLayers = (projectId: string): IUseLayers => {
     // eslint-disable-next-line
   }, [projectId]);
 
-  const onOrderChange = async (newOrderIds: string[]) => {
+  const onLayerOrderChange = async (newOrderIds: string[]) => {
+
+    if (!model) {
+      return;
+    }
+
     const layers = model?.layers || [];
 
     let success = true;
@@ -90,15 +97,119 @@ const useLayers = (projectId: string): IUseLayers => {
       return;
     }
 
-    // send_command to update the order of the layers
-    // const newOrder = orderedLayers.map((l) => l.layer_id);
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateModelOrderResult = await sendCommand<Commands.IUpdateModelLayerOrderCommand>({
+      command_name: 'update_model_layer_order_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        layer_ids: newOrderIds,
+      },
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateModelOrderResult.err) {
+      setError({
+        message: updateModelOrderResult.val.message,
+        code: updateModelOrderResult.val.code,
+      });
+      setLoading(false);
+      return;
+    }
 
     dispatch(setLayers(orderedLayers));
   };
 
+  const onCloneLayer = async (layerId: string) => {
+    if (!model) {
+      return;
+    }
+
+    const layer = model.layers.find((l) => l.layer_id === layerId);
+
+    if (!layer) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const cloneLayerResult = await sendCommand<Commands.ICloneModelLayerCommand>({
+      command_name: 'clone_model_layer_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        layer_id: layerId,
+      },
+    });
+
+    if (cloneLayerResult.err) {
+      setError({
+        message: cloneLayerResult.val.message,
+        code: cloneLayerResult.val.code,
+      });
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+
+    await fetchLayers();
+  };
+
+  const onDeleteLayer = async (layerId: string) => {
+    if (!model) {
+      return;
+    }
+
+    const layer = model.layers.find((l) => l.layer_id === layerId);
+
+    if (!layer) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const deleteLayerResult = await sendCommand<Commands.IDeleteModelLayerCommand>({
+      command_name: 'delete_model_layer_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        layer_id: layerId,
+      },
+    });
+
+    if (deleteLayerResult.err) {
+      setError({
+        message: deleteLayerResult.val.message,
+        code: deleteLayerResult.val.code,
+      });
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+
+    await fetchLayers();
+  };
+
   return {
     layers: model?.layers || null,
-    onOrderChange,
+    onCloneLayer,
+    onDeleteLayer,
+    onLayerOrderChange,
     loading,
     error,
   };

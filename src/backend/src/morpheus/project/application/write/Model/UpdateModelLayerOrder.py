@@ -9,7 +9,7 @@ from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents import ModelLayerDeletedEvent
+from morpheus.project.domain.events.ModelEvents import ModelLayerOrderUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
@@ -17,31 +17,31 @@ from morpheus.project.types.User import UserId
 from morpheus.project.types.layers.Layer import LayerId
 
 
-class DeleteModelLayerCommandPayload(TypedDict):
+class UpdateModelLayerOrderPayload(TypedDict):
     project_id: str
     model_id: str
-    layer_id: str
+    layer_ids: list[str]
 
 
 @dataclasses.dataclass(frozen=True)
-class DeleteModelLayerCommand(CommandBase):
+class UpdateModelLayerOrderCommand(CommandBase):
     project_id: ProjectId
     model_id: ModelId
-    layer_id: LayerId
+    layer_ids: list[LayerId]
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: DeleteModelLayerCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: UpdateModelLayerOrderPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
-            layer_id=LayerId.from_str(payload['layer_id']),
+            layer_ids=[LayerId.from_str(layer_id) for layer_id in payload['layer_ids']]
         )
 
 
-class DeleteModelLayerCommandHandler(CommandHandlerBase):
+class UpdateModelLayerOrderCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: DeleteModelLayerCommand):
+    def handle(command: UpdateModelLayerOrderCommand):
         project_id = command.project_id
         user_id = command.user_id
         permissions = PermissionsReader().get_permissions(project_id=project_id)
@@ -53,12 +53,12 @@ class DeleteModelLayerCommandHandler(CommandHandlerBase):
         if model.model_id != command.model_id:
             raise ValueError(f'Model with id {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
-        model.layers.assert_layer_can_be_deleted(layer_id=command.layer_id)
+        model.layers.assert_order_can_be_updated(layer_ids=command.layer_ids)
 
-        event = ModelLayerDeletedEvent.from_layer_id(
+        event = ModelLayerOrderUpdatedEvent.from_layer_ids(
             project_id=project_id,
             model_id=command.model_id,
-            layer_id=command.layer_id,
+            layer_ids=command.layer_ids,
             occurred_at=DateTime.now()
         )
 

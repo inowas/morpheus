@@ -1,6 +1,7 @@
 import {INavbarItem} from 'common/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
 import {useParams} from 'react-router-dom';
+import {useProjectPermissions} from '../../modflow/application';
 
 const getProjectDashboardNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
   {
@@ -23,7 +24,7 @@ const getProjectDashboardNavbarItems = (translate: (key: string) => string): INa
   },
 ]);
 
-const getProjectNavbarItems = (translate: (key: string) => string, projectId: string): INavbarItem[] => ([
+const getProjectNavbarItems = (translate: (key: string) => string, projectId: string, isReadOnly: boolean): INavbarItem[] => ([
   {
     name: 'project',
     label: translate('Overview'),
@@ -47,6 +48,13 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: st
     label: translate('Assets'),
     admin: false,
     to: '/projects/' + projectId + '/assets',
+  },
+  {
+    name: 'event-log',
+    label: translate('Event Log'),
+    admin: false,
+    to: '/projects/' + projectId + '/event-log',
+    disabled: !isReadOnly,
   },
   {
     name: 'settings',
@@ -76,12 +84,11 @@ interface IUseNavbarItems {
 
 const useNavbarItems = (): IUseNavbarItems => {
   const {translate} = useTranslate();
-  const {
-    projectId,
-  } = useParams();
 
+  const {projectId} = useParams();
   const isDashboardPage = projectId === undefined;
-  const navbarItems: INavbarItem[] = isDashboardPage ? getProjectDashboardNavbarItems(translate) : getProjectNavbarItems(translate, projectId);
+  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const navbarItems: INavbarItem[] = isDashboardPage ? getProjectDashboardNavbarItems(translate) : getProjectNavbarItems(translate, projectId, isReadOnly);
 
   return ({
     navbarItems,
