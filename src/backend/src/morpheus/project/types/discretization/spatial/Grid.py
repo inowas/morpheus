@@ -178,6 +178,7 @@ class Grid:
             'origin': self.origin.to_dict(),
             'rotation': self.rotation.to_value(),
             'length_unit': self.length_unit.to_value(),
+            'bounding_box': self.bbox(),
         }
 
     def to_geojson(self) -> FeatureCollection:
@@ -337,7 +338,22 @@ class Grid:
         return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box', **self.to_dict()})
 
     def bbox(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
-        bounding_box_geometry = self.bounding_box_geometry()
-        bounds = ShapelyPolygon(bounding_box_geometry.geometry.coordinates[0]).bounds
-        x_min, y_min, x_max, y_max = bounds
-        return (x_min, y_min), (x_max, y_max)
+        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
+        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+
+        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+
+        polygon_3857 = ShapelyPolygon((
+            (origin_3857_x, origin_3857_y),
+            (origin_3857_x + col_coordinates[-1], origin_3857_y),
+            (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
+            (origin_3857_x, origin_3857_y - row_coordinates[-1]),
+            (origin_3857_x, origin_3857_y),
+        ))
+
+        rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+        geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+
+        polygon = ShapelyPolygon(geometry_4326)
+        return (polygon.bounds[0], polygon.bounds[1]), (polygon.bounds[2], polygon.bounds[3])

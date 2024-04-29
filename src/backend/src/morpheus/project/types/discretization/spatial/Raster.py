@@ -36,5 +36,14 @@ class Raster:
     coords: RasterCoordinates
     data: RasterData
 
-    def get_data(self):
+    def get_data(self) -> list[list[float]]:
         return self.data.get_data()
+
+    def get_nodata_value(self) -> float:
+        return self.data.get_nodata_value()
+
+    def get_min_value(self) -> float:
+        return min([min(row) for row in self.get_data()])
+
+    def get_max_value(self) -> float:
+        return max([max(row) for row in self.get_data()])

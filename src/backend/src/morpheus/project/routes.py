@@ -1,9 +1,12 @@
+from typing import Literal
+
 from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
+from .presentation.api.read.ReadModelLayerPropertyRequestHandler import ReadModelLayerPropertyRequestHandler
 from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
@@ -16,6 +19,7 @@ from .presentation.api.read.AssetReadRequestHandlers import ReadPreviewImageRequ
 from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadProjectEventLogRequestHandler
 from .presentation.api.write.AssetWriteRequestHandlers import UploadPreviewImageRequestHandler, DeletePreviewImageRequestHandler, UploadAssetRequestHandler, \
     DeleteAssetRequestHandler, UpdateAssetRequestHandler
+from .types.layers.Layer import LayerPropertyName, LayerId
 from ..common.presentation.api.middleware.schema_validation import validate_request
 
 
@@ -81,6 +85,17 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_get_layers(project_id: str):
         return ReadModelLayersRequestHandler().handle(ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/model/layers/<layer_id>/properties/<property_name>', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_get_layers_property(project_id_str: str, layer_id_str: str, property_name_str: str):
+        project_id = ProjectId.from_str(project_id_str)
+        layer_id = LayerId.from_str(layer_id_str)
+        property_name = LayerPropertyName(property_name_str)
+        output_format: Literal['json', 'image', 'colorbar'] | str = request.args.get('format', 'json')
+
+        return ReadModelLayerPropertyRequestHandler().handle(project_id=project_id, layer_id=layer_id, property_name=property_name, output_format=output_format)
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

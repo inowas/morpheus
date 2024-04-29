@@ -309,9 +309,13 @@ definitions:
             property_default_value:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
             property_raster:
-              "$ref": "#/definitions/components/LayerPropertyRaster"
+              oneOf:
+                - "$ref": "#/definitions/components/LayerPropertyRaster"
+                - "$ref": "#/definitions/components/Nullable"
             property_zones:
-              "$ref": "#/definitions/components/LayerPropertyZones"
+              oneOf:
+                - "$ref": "#/definitions/components/LayerPropertyZones"
+                - "$ref": "#/definitions/components/Nullable"
           required:
             - project_id
             - model_id
@@ -503,7 +507,7 @@ definitions:
           type: object
           properties:
             data:
-              $ref: "#/definitions/components/2DGrid"
+              "$ref": "#/definitions/components/2DGrid"
             nodata_value:
               type: number
               example: -9999.0
@@ -576,6 +580,8 @@ definitions:
       required:
         - type
         - coordinates
+    Nullable:
+      type: 'null'
     Point:
       type: object
       description: The geometry of the feature.

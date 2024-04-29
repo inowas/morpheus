@@ -1,23 +1,60 @@
 import React, {useEffect, useState} from 'react';
 import {ILayerPropertyValues} from '../../../types/Layers.type';
 import {Button, InfoTitle} from 'common/components';
-import {Marker, Popup} from 'react-leaflet';
+import isEqual from 'lodash.isequal';
+import {ISpatialDiscretization} from '../../../types';
+import {FeatureGroup, ImageOverlay} from 'react-leaflet';
+import Legend from './Legend';
 
 interface IProps {
+  fetchLayerPropertyImage?: () => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
+  spatialDiscretization: ISpatialDiscretization;
   values: ILayerPropertyValues | null;
   onSubmit: (layerPropertyValues: ILayerPropertyValues) => void;
+
   unit?: string;
   readOnly: boolean;
 }
 
-const LayerPropertyValues = ({values, onSubmit, readOnly, unit}: IProps) => {
+const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly, unit, fetchLayerPropertyImage}: IProps) => {
 
   const [layerPropertyValuesLocal, setLayerPropertyValuesLocal] = useState<ILayerPropertyValues | null>(values);
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
+  const [colorbarUrl, setColorbarUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    setLayerPropertyValuesLocal(values);
+    if (values && !isEqual(values, layerPropertyValuesLocal)) {
+      setLayerPropertyValuesLocal(values);
+    }
+
+    if (fetchLayerPropertyImage) {
+      fetchLayerPropertyImage().then((data) => {
+        if (data) {
+          setImgUrl(data.imageUrl);
+          setColorbarUrl(data.colorbarUrl);
+        }
+      });
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
+
+  const renderMapContent = () => {
+    const [[xMin, yMin], [xMax, yMax]] = spatialDiscretization.grid.bounding_box;
+    return (
+      <FeatureGroup>
+        {spatialDiscretization.geometry && imgUrl && (
+          <ImageOverlay
+            url={imgUrl}
+            bounds={[[yMin, xMin], [yMax, xMax]]}
+            opacity={0.5}
+          />
+        )}
+        {colorbarUrl && <Legend colorbarUrl={colorbarUrl}/>}
+      </FeatureGroup>
+
+    );
+  };
 
 
   return (
@@ -40,7 +77,7 @@ const LayerPropertyValues = ({values, onSubmit, readOnly, unit}: IProps) => {
       <div style={{marginTop: 20}}>
         <InfoTitle
           title='Layer default value'
-          description='A confined layer is a layer that is confined by impermeable layers above and below. A convertible layer is a layer that can be converted to a confined layer by setting the vertical conductance to zero.'
+          description='You can provide a default value for the specified property for the whole layer.'
         />
         <input
           type="number"
@@ -54,11 +91,7 @@ const LayerPropertyValues = ({values, onSubmit, readOnly, unit}: IProps) => {
         />{unit}
       </div>
 
-      <Marker position={[51.101887, 13.743875]}>
-        <Popup>
-          A pretty CSS3 popup.
-        </Popup>
-      </Marker>
+      {renderMapContent()}
 
       {layerPropertyValuesLocal?.value !== values?.value && !readOnly && (
         <button onClick={() => {

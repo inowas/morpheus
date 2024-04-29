@@ -20,6 +20,7 @@
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-xhr-backend": "^3.2.2",
     "immutability-helper": "^3.1.1",
+    "js-colormaps-es": "^0.0.5",
     "jszip": "^3.10.1",
     "leaflet": "^1.9.4",
     "leaflet-smooth-wheel-zoom": "https://github.com/inowas/Leaflet.SmoothWheelZoom.git#master",

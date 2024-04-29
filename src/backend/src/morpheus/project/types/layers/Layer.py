@@ -550,6 +550,9 @@ class Layer:
     def is_confined(self):
         return self.confinement == LayerConfinement.confined()
 
+    def get_property_value(self, property_name: LayerPropertyName) -> LayerPropertyValues | None:
+        return self.properties.get_property(property_name)
+
     def clone(self, layer_id: LayerId):
         return dataclasses.replace(self, layer_id=layer_id)
 

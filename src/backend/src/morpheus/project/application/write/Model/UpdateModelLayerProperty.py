@@ -99,7 +99,7 @@ class UpdateModelLayerPropertyCommand(CommandBase):
     @classmethod
     def from_payload(cls, user_id: UserId, payload: UpdateModelLayerPropertyCommandPayload):
         property_name = LayerPropertyName(payload['property_name'])
-        property_raster = LayerPropertyRaster.from_dict(obj=payload['property_raster']) if 'property_raster' in payload else None
+        property_raster = LayerPropertyRaster.from_dict(obj=payload['property_raster']) if 'property_raster' in payload and payload['property_raster'] else None
         property_value = LayerPropertyDefaultValue(payload['property_default_value'])
 
         property_zones = [LayerPropertyZoneWithOptionalAffectedCells.from_payload(obj=zone) for zone in payload['property_zones']] if 'property_zones' in payload and payload[
@@ -108,7 +108,7 @@ class UpdateModelLayerPropertyCommand(CommandBase):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
-            model_id=ModelId.new(),
+            model_id=ModelId.from_str(payload['model_id']),
             layer_id=LayerId.from_str(payload['layer_id']),
             property_name=property_name,
             property_value=property_value,
@@ -165,7 +165,7 @@ class UpdateModelLayerPropertyCommandHandler(CommandHandlerBase):
 
             xx_coords, yy_coords = grid.get_wgs_coordinates()
             output_coords = RasterCoordinates(xx_coords=xx_coords, yy_coords=yy_coords)
-            output_raster = interpolation_service.interpolate_raster(raster=input_raster, new_coords=output_coords, method='linear', nodata_value=-9999)
+            output_raster = interpolation_service.raster_to_raster(raster=input_raster, new_coords=output_coords, method='linear', nodata_value=-9999)
             raster.data = LayerPropertyRasterData(data=output_raster.data.get_data(), nodata_value=output_raster.data.get_nodata_value())
 
         event = ModelLayerPropertyUpdatedEvent.for_property(

@@ -1,34 +1,34 @@
 import React, {useEffect} from 'react';
-import type {Polygon} from 'geojson';
 import {FeatureGroup, Polygon as LeafletPolygon, useMap} from 'react-leaflet';
 import {IMapRef, Map} from 'common/components/Map';
 import * as L from 'leaflet';
 import {MapRef} from 'common/components/Map/Map';
+import {ISpatialDiscretization} from '../../../types';
 
 
 interface IProps {
-  modelGeometry: Polygon | null
+  spatialDiscretization: ISpatialDiscretization;
   mapRef: IMapRef
 }
 
-const LayersMap = ({modelGeometry}: IProps) => {
+const LayersMap = ({spatialDiscretization}: IProps) => {
   const map = useMap();
   useEffect(() => {
-    if (!modelGeometry) {
+    if (!spatialDiscretization) {
       return;
     }
 
-    const layer = L.geoJSON(modelGeometry);
+    const layer = L.geoJSON(spatialDiscretization.geometry);
     map.fitBounds(layer.getBounds());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelGeometry]);
+  }, [spatialDiscretization.geometry]);
 
   return (
     <FeatureGroup>
-      {modelGeometry && (
+      {spatialDiscretization && (
         <LeafletPolygon
           pmIgnore={true}
-          positions={modelGeometry.coordinates[0].map((c) => [c[1], c[0]])}
+          positions={spatialDiscretization.geometry.coordinates[0].map((c) => [c[1], c[0]])}
           fill={false}
           weight={1.5}
         />
