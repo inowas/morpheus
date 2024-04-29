@@ -44,7 +44,7 @@ const SelectedList = ({
   useEffect(() => {
     setListItems(boundaries);
   }, [boundaries]);
-
+  
   // selectAll functionality
   useEffect(() => {
     if (selectAllChecked) {
@@ -54,6 +54,24 @@ const SelectedList = ({
       onSelect(selectedWithoutChecked);
     } else {
       onSelect([]);
+    }
+  }, [selectAllChecked, listItems]);
+
+  useEffect(() => {
+    if (selectAllChecked) {
+      const selectedWithoutChecked: string[] = [];
+      const updatedObservationSelection: string[] = [];
+      listItems.forEach(item => {
+        selectedWithoutChecked.push(item.id);
+        item.observations.forEach(observation => {
+          updatedObservationSelection.push(observation.observation_id);
+        });
+      });
+      onSelect(selectedWithoutChecked);
+      onSelectObservations(updatedObservationSelection);
+    } else {
+      onSelect([]);
+      onSelectObservations([]);
     }
   }, [selectAllChecked, listItems]);
 
@@ -207,18 +225,21 @@ const SelectedList = ({
                 active={activePanels.includes(index)}
                 style={{display: activePanels.includes(index) ? 'block' : 'none'}}
               >
-                <List>
+                <List className={styles.listObservations}>
                   {item.observations.map((observation) => {
                     return (
                       <ListItem
                         key={observation.observation_id}
                         onClick={() => handleObservationSelect(observation.observation_id)}
                       >
-                        <Checkbox
-                          className={styles.checkboxObservation}
-                          checked={selectedObservations.includes(observation.observation_id)}
-                        />
-                        {observation.observation_name}
+                        <div className={styles.observationItem}>
+                          <Checkbox
+                            className={styles.checkboxObservation}
+                            checked={selectedObservations.includes(observation.observation_id)}
+                          />
+                          {observation.observation_name}
+                        </div>
+
                       </ListItem>
                     );
                   })}

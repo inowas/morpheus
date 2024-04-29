@@ -1,5 +1,5 @@
 import {AccordionRef, DataGrid, Grid, InfoTitle, SectionTitle, Tab} from 'common/components';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {IBoundaries} from './type/BoundariesContent.type';
 import boundariesData from './boundaries.json';
 import {BoundariesTable} from './BoundariesTable/';
@@ -15,10 +15,6 @@ const BoundariesContent: React.FC = () => {
   const [boundaries, setBoundaries] = useState<IBoundaries[]>(boundariesData);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedObservation, setSelectedObservation] = useState<string[]>([]);
-
-  useEffect(() => {
-    console.log({'selectedItems': selectedItems, 'selectedObservation': selectedObservation});
-  }, [selectedObservation, selectedItems]);
 
   const handleSelectItem = (items: string[]) => {
     setSelectedItems(items);

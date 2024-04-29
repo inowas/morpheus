@@ -133,8 +133,8 @@
   .accordionContent {
     border-bottom: 1px solid @ref-color-borderTable;
 
-    [class*="list"] {
-
+    .listObservations {
+      padding: 2px;
 
       .checkboxObservation {
         min-height: 12px;
@@ -162,20 +162,29 @@
         }
       }
 
+      .observationItem {
+        width: 100%;
+        padding: 0 30px;
+      }
+
+      .observationItem:not(:last-child) {
+        border-bottom: 1px solid @ref-color-borderTable;
+      }
+
       [class*="item"] {
         display: flex;
         align-items: center;
         font-size: 12px;
         font-weight: 500;
-        padding-bottom: 0.5em;
-        margin: 0 22px 0.5em;
+        padding: 0.5em 0 !important;
+        //margin: 0 22px 0.5em;
         cursor: pointer;
         position: relative;
 
         &:before,
         &:after {
-          content: '';
-          //content: none;
+          visibility: visible;
+          content: none;
           height: 100%;
           display: block;
           position: absolute;
@@ -200,10 +209,6 @@
             content: '';
           }
         }
-      }
-
-      [class*="item"]:not(:last-child) {
-        border-bottom: 1px solid @ref-color-borderTable;
       }
     }
   }
