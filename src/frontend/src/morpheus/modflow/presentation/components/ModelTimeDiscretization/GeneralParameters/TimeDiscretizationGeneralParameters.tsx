@@ -10,9 +10,10 @@ interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (data: ITimeDiscretization) => void;
   timeZone?: string;
+  readOnly: boolean;
 }
 
-const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange, timeZone}) => {
+const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange, timeZone, readOnly}) => {
 
   const {isValid, formatISO, getUnixTimestamp, formatISODate} = useDateTimeFormat(timeZone);
 
@@ -96,6 +97,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               name={'endDate'}
               value={formatISODate(timeDiscretization.end_date_time)}
               onChange={(_, {value}) => handleChangeEndDateTime(value)}
+              disabled={readOnly}
             />
             <Icon className={'dateIcon'} name="calendar outline"/>
           </div>

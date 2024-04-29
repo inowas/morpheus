@@ -2,18 +2,20 @@ import {IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
-import {ILayer, ILayerConfinement} from '../types/Layers.type';
+import {ILayer, ILayerConfinement, ILayerPropertyName, ILayerPropertyValues} from '../types/Layers.type';
 import {setLayers} from '../infrastructure/modelStore';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
 
 interface IUseLayers {
   layers: ILayer[] | null;
+  fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   onCloneLayer: (layerId: string) => void;
   onDeleteLayer: (layerId: string) => void;
   onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => void;
   onChangeLayerOrder: (newOrderIds: string[]) => void;
   onChangeLayerConfinement: (layerId: string, confinement: ILayerConfinement) => void;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -71,6 +73,21 @@ const useLayers = (projectId: string): IUseLayers => {
 
     // eslint-disable-next-line
   }, [projectId]);
+
+  const fetchLayerPropertyImage = async (layerId: string, propertyName: ILayerPropertyName): Promise<{ imageUrl: string, colorbarUrl: string } | null> => {
+
+    const imageResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}?format=image`, true);
+    const colorbarResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}?format=colorbar`, true);
+
+    if (imageResult.ok && colorbarResult.ok) {
+      return {
+        'imageUrl': URL.createObjectURL(imageResult.val),
+        'colorbarUrl': URL.createObjectURL(colorbarResult.val),
+      };
+    }
+
+    return null;
+  };
 
   const onChangeLayerOrder = async (newOrderIds: string[]) => {
 
@@ -204,6 +221,41 @@ const useLayers = (projectId: string): IUseLayers => {
     await fetchLayers();
   };
 
+  const onChangeLayerProperty = async (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => {
+    if (!model) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateModelLayerPropertyValuesResult = await sendCommand<Commands.IUpdateModelLayerPropertyCommand>({
+      command_name: 'update_model_layer_property_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        layer_id: layerId,
+        property_name: propertyName,
+        property_default_value: values.value,
+        property_raster: values.raster,
+        property_zones: values.zones,
+      },
+    });
+
+    if (updateModelLayerPropertyValuesResult.err) {
+      setError({
+        message: updateModelLayerPropertyValuesResult.val.message,
+        code: updateModelLayerPropertyValuesResult.val.code,
+      });
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+
+    await fetchLayers();
+  };
+
   const onCloneLayer = async (layerId: string) => {
     if (!model) {
       return;
@@ -280,11 +332,13 @@ const useLayers = (projectId: string): IUseLayers => {
 
   return {
     layers: model?.layers || null,
+    fetchLayerPropertyImage,
     onCloneLayer,
     onDeleteLayer,
     onChangeLayerConfinement,
     onChangeLayerMetadata,
     onChangeLayerOrder,
+    onChangeLayerProperty,
     loading,
     error,
   };

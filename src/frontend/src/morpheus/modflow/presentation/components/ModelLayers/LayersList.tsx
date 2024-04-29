@@ -4,19 +4,34 @@ import isEqual from 'lodash.isequal';
 import {MovableAccordionList, IMovableAccordionItem, IMovableAccordionListAction} from 'common/components';
 
 import LayerDetails from './LayerDetails';
-import {ILayer} from '../../../types/Layers.type';
+import {ILayer, ILayerPropertyName, ILayerPropertyValues} from '../../../types/Layers.type';
+import {ISpatialDiscretization} from '../../../types';
 
 interface IProps {
+  fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   layers: ILayer[];
+  spatialDiscretization: ISpatialDiscretization;
   onCloneLayer: (layerId: ILayer['layer_id']) => void;
   onDeleteLayer: (layerId: ILayer['layer_id']) => void;
   onChangeLayerMetadata: (layerId: ILayer['layer_id'], name?: ILayer['name'], description?: ILayer['description']) => void;
   onChangeLayerConfinement: (layerId: ILayer['layer_id'], confinement: ILayer['confinement']) => void;
   onChangeLayerOrder: (newOrderIds: string[]) => void;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => void;
   readOnly: boolean;
 }
 
-const LayersList = ({layers, onCloneLayer, onDeleteLayer, onChangeLayerConfinement, onChangeLayerMetadata, onChangeLayerOrder, readOnly}: IProps) => {
+const LayersList = ({
+  fetchLayerPropertyImage,
+  layers,
+  spatialDiscretization,
+  onCloneLayer,
+  onDeleteLayer,
+  onChangeLayerConfinement,
+  onChangeLayerMetadata,
+  onChangeLayerOrder,
+  onChangeLayerProperty,
+  readOnly,
+}: IProps) => {
 
   const [editTitle, setEditTitle] = useState<string | null>(null);
   const [layersLocal, setLayersLocal] = useState<ILayer[]>(layers);
@@ -36,10 +51,6 @@ const LayersList = ({layers, onCloneLayer, onDeleteLayer, onChangeLayerConfineme
 
   const handleChangeLayerConfinement = (layerId: string, confinement: ILayer['confinement']) => {
     onChangeLayerConfinement(layerId, confinement);
-  };
-
-  const handleChangeLayerPropertyValues = (layer: ILayer) => {
-    setLayersLocal(layersLocal.map((l) => l.layer_id === layer.layer_id ? layer : l));
   };
 
   const getActions = (): IMovableAccordionListAction[] | undefined => {
@@ -65,8 +76,10 @@ const LayersList = ({layers, onCloneLayer, onDeleteLayer, onChangeLayerConfineme
       title: layerLocal.name,
       content: <LayerDetails
         layer={layerLocal}
-        onChangeLayerPropertyValues={handleChangeLayerPropertyValues}
+        spatialDiscretization={spatialDiscretization}
         onChangeLayerConfinement={handleChangeLayerConfinement}
+        onChangeLayerProperty={onChangeLayerProperty}
+        fetchLayerPropertyImage={fetchLayerPropertyImage}
       />,
       editTitle: editTitle === layerLocal.layer_id,
       onChangeTitle: (newTitle: string) => handleChangeLayerName(layerLocal.layer_id, newTitle),

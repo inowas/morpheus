@@ -1,27 +1,5 @@
 import {INavbarItem} from 'common/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
-import {useParams} from 'react-router-dom';
-
-const getProjectDashboardNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
-  {
-    name: 'home',
-    label: translate('home'),
-    admin: false,
-    to: '/',
-  },
-  {
-    name: 'filter',
-    label: translate('filter'),
-    admin: false,
-    to: '#filter',
-  },
-  {
-    name: 'documentation',
-    label: translate('documentation'),
-    admin: false,
-    to: '/documentation',
-  },
-]);
 
 const getProjectNavbarItems = (translate: (key: string) => string, projectId: string, isReadOnly: boolean): INavbarItem[] => ([
   {
@@ -81,12 +59,9 @@ interface IUseNavbarItems {
   navbarItems: INavbarItem[];
 }
 
-const useNavbarItems = (isReadOnly: boolean = false): IUseNavbarItems => {
+const useNavbarItems = (projectId: string, isReadOnly: boolean = false): IUseNavbarItems => {
   const {translate} = useTranslate();
-
-  const {projectId} = useParams();
-  const isDashboardPage = projectId === undefined;
-  const navbarItems: INavbarItem[] = isDashboardPage ? getProjectDashboardNavbarItems(translate) : getProjectNavbarItems(translate, projectId, isReadOnly);
+  const navbarItems: INavbarItem[] = getProjectNavbarItems(translate, projectId, isReadOnly);
 
   return ({
     navbarItems,

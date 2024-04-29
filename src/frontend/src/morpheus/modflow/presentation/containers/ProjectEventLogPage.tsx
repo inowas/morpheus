@@ -8,6 +8,7 @@ import {Popup, Table} from 'semantic-ui-react';
 import {BodyContent, ModflowContainer, SidebarContent} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
+import useProjectPermissions from '../../application/useProjectPermissions';
 
 
 const ProjectEventLogPage = () => {
@@ -17,7 +18,10 @@ const ProjectEventLogPage = () => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems} = useNavbarItems();
+
+  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
+
 
   if (loading) {
     return <Loading/>;

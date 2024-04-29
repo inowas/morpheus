@@ -16,12 +16,12 @@ import LayersMap from '../components/ModelLayers/LayersMap';
 const LayersContainer = () => {
 
   const {projectId} = useParams();
-  const {layers, onChangeLayerOrder, onChangeLayerConfinement, onChangeLayerMetadata, onCloneLayer, onDeleteLayer} = useLayers(projectId as string);
-  const {geometry} = useSpatialDiscretization(projectId as string);
+  const {layers, fetchLayerPropertyImage, onChangeLayerOrder, onChangeLayerConfinement, onChangeLayerMetadata,  onChangeLayerProperty, onCloneLayer, onDeleteLayer} = useLayers(projectId as string);
+  const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
   const mapRef: IMapRef = useRef(null);
 
-  if (!layers || !geometry) {
+  if (!layers || !spatialDiscretization) {
     return null;
   }
 
@@ -40,11 +40,14 @@ const LayersContainer = () => {
                   <LeafletMapProvider mapRef={mapRef}>
                     <LayersList
                       layers={layers}
+                      spatialDiscretization={spatialDiscretization}
                       onCloneLayer={onCloneLayer}
                       onDeleteLayer={onDeleteLayer}
                       onChangeLayerConfinement={onChangeLayerConfinement}
                       onChangeLayerMetadata={onChangeLayerMetadata}
                       onChangeLayerOrder={onChangeLayerOrder}
+                      onChangeLayerProperty={onChangeLayerProperty}
+                      fetchLayerPropertyImage={fetchLayerPropertyImage}
                       readOnly={isReadOnly}
                     />
                   </LeafletMapProvider>
@@ -57,7 +60,7 @@ const LayersContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <LayersMap modelGeometry={geometry} mapRef={mapRef}/>
+        <LayersMap spatialDiscretization={spatialDiscretization} mapRef={mapRef}/>
       </BodyContent>
     </>
   );

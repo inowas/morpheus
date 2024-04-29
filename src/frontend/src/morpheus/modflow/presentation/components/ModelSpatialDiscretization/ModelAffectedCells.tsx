@@ -7,10 +7,11 @@ interface IProps {
   isLocked: boolean;
   onReset: () => void;
   onSubmit: () => void;
+  readOnly: boolean;
 }
 
-const ModelAffectedCells = ({isLoading, isDirty, isLocked, onReset, onSubmit}: IProps) => {
-  if (isLocked) {
+const ModelAffectedCells = ({isLoading, isDirty, isLocked, onReset, onSubmit, readOnly}: IProps) => {
+  if (isLocked || readOnly) {
     return null;
   }
 

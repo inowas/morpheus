@@ -37,7 +37,7 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import CardGrid from './CardGrid/Grid';
 import MovableAccordionList, {IMovableAccordionListAction, IMovableAccordionItem} from './MovableAccordionList';
-import Navbar from './Navbar';
+import Navbar, {INavbarItem} from './Navbar';
 import NotFound from './NotFound';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -121,6 +121,7 @@ export type {
   IIconProps,
   IMovableAccordionItem,
   IMovableAccordionListAction,
+  INavbarItem,
   IPaginationProps,
   DropdownProps,
   IInputProps,

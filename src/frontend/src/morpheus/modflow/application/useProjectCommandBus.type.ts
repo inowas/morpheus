@@ -158,15 +158,15 @@ export interface IUpdateModelLayerOrderCommand {
 }
 
 export interface IUpdateModelLayerPropertyCommand {
-  command_name: 'update_model_layer_command';
+  command_name: 'update_model_layer_property_command';
   payload: {
     project_id: string;
     model_id: string;
     layer_id: string;
     property_name: 'hk' | 'hani' | 'vka' | 'specific_storage' | 'specific_yield' | 'initial_head' | 'top' | 'bottom';
     property_default_value: ILayerPropertyValues['value'];
-    property_raster?: ILayerPropertyValues['raster'];
-    property_zones?: ILayerPropertyValues['zones'];
+    property_raster: ILayerPropertyValues['raster'] | null;
+    property_zones: ILayerPropertyValues['zones'] | null;
   }
 }
 

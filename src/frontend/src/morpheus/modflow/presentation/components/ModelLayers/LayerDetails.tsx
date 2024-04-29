@@ -1,16 +1,19 @@
 import React from 'react';
-import {ILayer} from '../../../types/Layers.type';
+import {ILayer, ILayerPropertyName, ILayerPropertyValues} from '../../../types/Layers.type';
 import {Tab, TabPane} from 'common/components';
 import LayerConfinement from './LayerConfinement';
 import LayerPropertyValues from './LayerPropertyValues';
+import {ISpatialDiscretization} from '../../../types';
 
 interface IProps {
+  fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   layer: ILayer;
-  onChangeLayerPropertyValues: (layer: ILayer) => void;
+  spatialDiscretization: ISpatialDiscretization;
   onChangeLayerConfinement: (layerId: string, confinement: ILayer['confinement']) => void;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => void;
 }
 
-const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinement}: IProps) => (
+const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, onChangeLayerProperty, fetchLayerPropertyImage}: IProps) => (
   <div className={'scrollWrapper-Y'}>
     <Tab
       variant='secondary'
@@ -35,8 +38,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Top elevation',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'top')}
               values={layer.properties.top}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, top: layerPropertyValues}})}
+              spatialDiscretization={spatialDiscretization}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'top', layerPropertyValues)}
               readOnly={false}
               unit={'m asl'}
             />
@@ -46,8 +51,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Bottom elevation',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'bottom')}
+              spatialDiscretization={spatialDiscretization}
               values={layer.properties.bottom}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, bottom: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'bottom', layerPropertyValues)}
               readOnly={false}
               unit={'m asl'}
             />
@@ -57,8 +64,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Hydraulic conductivity',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'hk')}
+              spatialDiscretization={spatialDiscretization}
               values={layer.properties.hk}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, hk: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'hk', layerPropertyValues)}
               readOnly={false}
               unit={'m/d'}
             />
@@ -67,8 +76,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Horizontal Anisotropy',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'hani')}
+              spatialDiscretization={spatialDiscretization}
               values={layer.properties.hani}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, hani: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'hani', layerPropertyValues)}
               readOnly={false}
               unit={'m/d'}
             />
@@ -78,8 +89,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Vertical hydraulic conductivity',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'vka')}
+              spatialDiscretization={spatialDiscretization}
               values={layer.properties.vka}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, vka: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'vka', layerPropertyValues)}
               readOnly={false}
               unit={'m/d'}
             />
@@ -89,8 +102,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Specific storage',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'specific_storage')}
+              spatialDiscretization={spatialDiscretization}
               values={layer.properties.specific_storage}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, specific_storage: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'specific_storage', layerPropertyValues)}
               readOnly={false}
               unit={'1/m'}
             />
@@ -100,8 +115,10 @@ const LayerDetails = ({layer, onChangeLayerPropertyValues, onChangeLayerConfinem
           menuItem: 'Specific yield',
           render: () => <TabPane>
             <LayerPropertyValues
+              fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'specific_yield')}
+              spatialDiscretization={spatialDiscretization}
               values={layer.properties.specific_yield}
-              onSubmit={(layerPropertyValues) => onChangeLayerPropertyValues({...layer, properties: {...layer.properties, specific_yield: layerPropertyValues}})}
+              onSubmit={(layerPropertyValues) => onChangeLayerProperty(layer.layer_id, 'specific_yield', layerPropertyValues)}
               readOnly={false}
               unit={'-'}
             />
