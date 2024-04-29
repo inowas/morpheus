@@ -134,6 +134,7 @@ const BoundariesContent: React.FC = () => {
             },
             isOpen: false,
           },
+
           {
             key: 2,
             title: {
@@ -225,6 +226,7 @@ const BoundariesContent: React.FC = () => {
             },
             isOpen: false,
           },
+
           {
             key: 3,
             title: {
@@ -316,6 +318,7 @@ const BoundariesContent: React.FC = () => {
             },
             isOpen: false,
           },
+
           {
             key: 4,
             title: {
@@ -407,94 +410,95 @@ const BoundariesContent: React.FC = () => {
             },
             isOpen: false,
           },
-          // {
-          //   key: 4,
-          //   title: {
-          //     content: (
-          //       <div>
-          //         <span>All</span>
-          //         <span>All boundaries</span>
-          //         <span>{`(${boundaries.length})`}</span>
-          //       </div>
-          //     ),
-          //     icon: false,
-          //   },
-          //   content: {
-          //     content: (
-          //       <>
-          //         <Grid.Grid
-          //           columns={2}
-          //           stackable={true}
-          //           responsive={true}
-          //           variant='secondary'
-          //         >
-          //           <Grid.Column width={9}>
-          //             <SelectedList
-          //               boundaries={boundaries}
-          //               selectedItems={selectedItems}
-          //               selectedObservations={selectedObservation}
-          //               onSelect={handleSelectItem}
-          //               onSelectObservations={handleSelectObservation}
-          //               onDelete={handleBoundarieDelete}
-          //               onCopy={handleBoundarieCopy}
-          //             />
-          //           </Grid.Column>
-          //           <Grid.Column width={7} style={{marginTop: '12px'}}>
-          //             <InfoTitle
-          //               title="Properties"
-          //               secondary={true}
-          //               actions={[
-          //                 {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-          //               ]}
-          //             />
-          //             <BoundariesForm
-          //               boundaries={boundaries}
-          //               selectedItems={selectedItems}
-          //               onSelect={handleSelectItem}
-          //               onSelectObservations={handleSelectObservation}
-          //
-          //             />
-          //           </Grid.Column>
-          //         </Grid.Grid>
-          //         <Grid.Grid>
-          //           <Tab
-          //             style={{width: '100%'}}
-          //             variant='primary'
-          //             menu={{secondary: true, pointing: true}}
-          //             panes={[
-          //               {
-          //                 menuItem: (
-          //                   <MenuItem key='table'>
-          //                                                   Table
-          //                   </MenuItem>
-          //                 ),
-          //                 render: () => <TabPane attached={false}>
-          //                   <BoundariesTable
-          //                     boundaries={boundaries}
-          //                     selectedObservation={selectedObservation}
-          //                   />
-          //                 </TabPane>,
-          //               },
-          //               {
-          //                 menuItem: (
-          //                   <MenuItem
-          //                     key='Chart'
-          //                   >
-          //                                                   Chart
-          //                   </MenuItem>
-          //                 ),
-          //                 render: () => <TabPane attached={false}>
-          //                                               Chart
-          //                 </TabPane>,
-          //               },
-          //             ]}
-          //           />
-          //         </Grid.Grid>
-          //       </>
-          //     ),
-          //   },
-          //   isOpen: false,
-          // },
+            
+          {
+            key: 5,
+            title: {
+              content: (
+                <div>
+                  <span>All</span>
+                  <span>All boundaries</span>
+                  <span>{`(${boundaries.length})`}</span>
+                </div>
+              ),
+              icon: false,
+            },
+            content: {
+              content: (
+                <>
+                  <Grid.Grid
+                    columns={2}
+                    stackable={true}
+                    responsive={true}
+                    variant='secondary'
+                  >
+                    <Grid.Column width={9}>
+                      <SelectedList
+                        boundaries={boundaries}
+                        selectedItems={selectedItems}
+                        selectedObservations={selectedObservation}
+                        onSelect={handleSelectItem}
+                        onSelectObservations={handleSelectObservation}
+                        onDelete={handleBoundarieDelete}
+                        onCopy={handleBoundarieCopy}
+                      />
+                    </Grid.Column>
+                    <Grid.Column width={7} style={{marginTop: '12px'}}>
+                      <InfoTitle
+                        title="Properties"
+                        secondary={true}
+                        actions={[
+                          {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
+                        ]}
+                      />
+                      <BoundariesForm
+                        boundaries={boundaries}
+                        selectedItems={selectedItems}
+                        onSelect={handleSelectItem}
+                        onSelectObservations={handleSelectObservation}
+
+                      />
+                    </Grid.Column>
+                  </Grid.Grid>
+                  <Grid.Grid>
+                    <Tab
+                      style={{width: '100%'}}
+                      variant='primary'
+                      menu={{secondary: true, pointing: true}}
+                      panes={[
+                        {
+                          menuItem: (
+                            <MenuItem key='table'>
+                                                            Table
+                            </MenuItem>
+                          ),
+                          render: () => <TabPane attached={false}>
+                            <BoundariesTable
+                              boundaries={boundaries}
+                              selectedObservation={selectedObservation}
+                            />
+                          </TabPane>,
+                        },
+                        {
+                          menuItem: (
+                            <MenuItem
+                              key='Chart'
+                            >
+                                                            Chart
+                            </MenuItem>
+                          ),
+                          render: () => <TabPane attached={false}>
+                                                        Chart
+                          </TabPane>,
+                        },
+                      ]}
+                    />
+                  </Grid.Grid>
+                </>
+              ),
+            },
+            isOpen: false,
+          },
         ]}
         exclusive={false}
       />

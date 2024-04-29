@@ -2,6 +2,7 @@ import {Icon, Popup} from 'semantic-ui-react';
 import React from 'react';
 import styles from './InfoTitle.module.less';
 import Button from '../Button/Button';
+import {v4 as uuidv4} from 'uuid';
 
 interface IAction {
   actionText: string;
@@ -36,7 +37,7 @@ const InfoTitle = ({title, description, actions, secondary, isLocked}: IProps) =
           {actions.map((action, index) => (
             action.actionDescription ? (
               <Popup
-                key={index}
+                key={uuidv4()}
                 trigger={action.onClick ? (
                   <Button disabled={isLocked} onClick={action.onClick}>
                     <Icon className={'dateIcon'} name="info circle"/>{action.actionText}
@@ -49,7 +50,7 @@ const InfoTitle = ({title, description, actions, secondary, isLocked}: IProps) =
                 size="tiny"
               />
             ) : (
-              <div key={index}>
+              <div key={uuidv4()}>
                 {action.onClick
                   ? <Button disabled={isLocked} onClick={action.onClick}>{action.actionText}</Button>
                   : <span>{action.actionText}</span>}
