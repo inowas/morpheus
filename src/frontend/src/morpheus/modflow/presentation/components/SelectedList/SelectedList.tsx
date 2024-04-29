@@ -5,15 +5,17 @@ import {IBoundaries} from '../BoundariesLayers/type/BoundariesContent.type';
 import styles from './SelectedList.module.less';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {getBoundariesByType} from '../BoundariesLayers/helpers/BoundariesContent.helpers';
 
 interface ISelectedListProps {
-  boundaries: IBoundaries[];
-  selectedItems: string[];
-  selectedObservations: string[];
-  onSelect: (id: string[]) => void;
-  onSelectObservations: (id: string[]) => void;
-  onDelete: (id: string) => void;
-  onCopy: (id: string) => void;
+    type?: string;
+    boundaries: IBoundaries[];
+    selectedItems: string[];
+    selectedObservations: string[];
+    onSelect: (id: string[]) => void;
+    onSelectObservations: (id: string[]) => void;
+    onDelete: (id: string) => void;
+    onCopy: (id: string) => void;
 }
 
 function findObservationIds(id: string, data: IBoundaries[]) {
@@ -26,6 +28,7 @@ function findObservationIds(id: string, data: IBoundaries[]) {
 }
 
 const SelectedList = ({
+  type,
   boundaries,
   selectedItems,
   selectedObservations,
@@ -40,11 +43,10 @@ const SelectedList = ({
   const [activePanels, setActivePanels] = useState<number[]>([]);
   // List items with checked checkbox
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
-
   useEffect(() => {
-    setListItems(boundaries);
+    setListItems(type ? getBoundariesByType(boundaries, type) : boundaries);
   }, [boundaries]);
-  
+
   // selectAll functionality
   useEffect(() => {
     if (selectAllChecked) {
@@ -254,13 +256,13 @@ const SelectedList = ({
           className='buttonLink'
           disabled={0 === selectedItems.length}
         >
-          Delete selected <FontAwesomeIcon icon={faTrashCan}/>
+                    Delete selected <FontAwesomeIcon icon={faTrashCan}/>
         </Button>
         <Button
           className='buttonLink'
           disabled={0 === selectedItems.length}
         >
-          Download selected <FontAwesomeIcon icon={faDownload}/></Button>
+                    Download selected <FontAwesomeIcon icon={faDownload}/></Button>
       </div>
     </>
   );

@@ -1,15 +1,17 @@
 import {DataGrid, DataRow} from 'common/components';
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Dropdown, Form, Icon, Input, Label, Popup} from 'semantic-ui-react';
 import {IBoundaries} from '../type/BoundariesContent.type';
+import {getBoundariesByType} from '../helpers/BoundariesContent.helpers';
 
 
 interface IProps {
+  type?: string;
   boundaries: IBoundaries[];
   selectedItems: string[];
   onSelect: (id: string[]) => void;
-
+  onSelectObservations: (id: string[]) => void;
 }
 
 const options = [
@@ -24,11 +26,24 @@ const options = [
   {key: 'wss', text: 'wss', value: 'wss'},
 ];
 
-const BoundariesForm = ({boundaries, selectedItems, onSelect}: IProps) => {
+const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObservations}: IProps) => {
+  const [listItems, setListItems] = useState<IBoundaries[]>([]);
+
   const handleLayerChange = (event: React.SyntheticEvent, {value}: any) => {
     onSelect(value);
+    const updatedObservationSelection: string[] = [];
+    boundaries.forEach(boundary => {
+      if (value.includes(boundary.id)) {
+        boundary.observations.forEach(observation => {
+          updatedObservationSelection.push(observation.observation_id);
+        });
+      }
+    });
+    onSelectObservations(updatedObservationSelection);
   };
-
+  useEffect(() => {
+    setListItems(type ? getBoundariesByType(boundaries, type) : boundaries);
+  }, [boundaries]);
 
   return <>
     <Form>
@@ -55,7 +70,7 @@ const BoundariesForm = ({boundaries, selectedItems, onSelect}: IProps) => {
             multiple={true}
             selection={true}
             value={selectedItems}
-            options={boundaries.map((boundary) => ({
+            options={listItems.map((boundary) => ({
               key: boundary.id,
               text: boundary.name,
               value: boundary.id,
