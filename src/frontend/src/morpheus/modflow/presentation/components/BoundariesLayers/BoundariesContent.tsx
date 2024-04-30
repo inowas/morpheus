@@ -17,15 +17,31 @@ const BoundariesContent: React.FC = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedObservation, setSelectedObservation] = useState<string[]>([]);
 
+  React.useEffect(() => {
+    console.log(boundaries);
+    console.log(selectedItems);
+  }, [selectedItems]);
+
   const handleSelectItem = (items: string[]) => {
     setSelectedItems(items);
   };
+
   const handleSelectObservation = (items: string[]) => {
     setSelectedObservation(items);
   };
-  const handleBoundarieDelete = (id: number | string) => {
-    setBoundaries(boundaries.filter(boundarieItem => boundarieItem.id !== id));
+
+  const handleBoundarieRename = (id: string | number, newTitle: string) => {
+    boundaries.forEach((boundary) => {
+      if (boundary.id === id) {
+        boundary.name = newTitle;
+      }
+    });
   };
+
+  const handleBoundarieDelete = (id: number | string) => {
+    setBoundaries(prevState => prevState.filter(boundary => boundary.id !== id));
+  };
+
   const handleBoundarieCopy = (id: number | string) => {
     const itemToCopyIndex = boundaries.findIndex(boundaryItem => boundaryItem.id === id);
     if (-1 === itemToCopyIndex) return;
@@ -72,6 +88,7 @@ const BoundariesContent: React.FC = () => {
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
                         onSelectObservations={handleSelectObservation}
+                        onRename={handleBoundarieRename}
                         onDelete={handleBoundarieDelete}
                         onCopy={handleBoundarieCopy}
                       />
@@ -164,6 +181,7 @@ const BoundariesContent: React.FC = () => {
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
                         onSelectObservations={handleSelectObservation}
+                        onRename={handleBoundarieRename}
                         onDelete={handleBoundarieDelete}
                         onCopy={handleBoundarieCopy}
                       />
@@ -255,6 +273,7 @@ const BoundariesContent: React.FC = () => {
                         selectedItems={selectedItems}
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
+                        onRename={handleBoundarieRename}
                         onSelectObservations={handleSelectObservation}
                         onDelete={handleBoundarieDelete}
                         onCopy={handleBoundarieCopy}
@@ -347,6 +366,7 @@ const BoundariesContent: React.FC = () => {
                         selectedItems={selectedItems}
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
+                        onRename={handleBoundarieRename}
                         onSelectObservations={handleSelectObservation}
                         onDelete={handleBoundarieDelete}
                         onCopy={handleBoundarieCopy}
@@ -410,7 +430,7 @@ const BoundariesContent: React.FC = () => {
             },
             isOpen: false,
           },
-            
+
           {
             key: 5,
             title: {
@@ -438,6 +458,7 @@ const BoundariesContent: React.FC = () => {
                         selectedItems={selectedItems}
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
+                        onRename={handleBoundarieRename}
                         onSelectObservations={handleSelectObservation}
                         onDelete={handleBoundarieDelete}
                         onCopy={handleBoundarieCopy}

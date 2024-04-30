@@ -65,6 +65,7 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
             Select Layer
           </Label>
           <Dropdown
+            disabled={0 === listItems.length}
             name="selectedLayer"
             clearable={true}
             multiple={true}
@@ -95,7 +96,9 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
               Latitude
             </Label>
             <Input
-              name={'latitude'} type={'number'}
+              disabled={0 === listItems.length}
+              name={'latitude'}
+              type={'number'}
             />
           </Form.Field>
           <Form.Field>
@@ -111,7 +114,11 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
 
               Longitude
             </Label>
-            <Input name={'longitude'} type={'number'}/>
+            <Input
+              disabled={0 === listItems.length}
+              name={'longitude'}
+              type={'number'}
+            />
           </Form.Field>
         </DataGrid>
         <Form.Field>
@@ -131,6 +138,7 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
             Length (m)
           </Label>
           <Input
+            disabled={0 === listItems.length}
             name={'length'}
             type={'number'}
           />
@@ -149,6 +157,7 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
             Tags
           </Label>
           <Dropdown
+            disabled={0 === listItems.length}
             className="dropdownTags"
             name="tags"
             clearable={true}

@@ -14,6 +14,7 @@ interface ISelectedListProps {
     selectedObservations: string[];
     onSelect: (id: string[]) => void;
     onSelectObservations: (id: string[]) => void;
+    onRename: (id: string, name: string) => void;
     onDelete: (id: string) => void;
     onCopy: (id: string) => void;
 }
@@ -34,6 +35,7 @@ const SelectedList = ({
   selectedObservations,
   onSelect,
   onSelectObservations,
+  onRename,
   onDelete,
   onCopy,
 }: ISelectedListProps) => {
@@ -43,22 +45,16 @@ const SelectedList = ({
   const [activePanels, setActivePanels] = useState<number[]>([]);
   // List items with checked checkbox
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  // Rename boundaries title
+  const [openEditingTitle, setOpenEditingTitle] = useState<number | string | null>(null);
+  const [inputValue, setInputValue] = useState('');
+
+
   useEffect(() => {
     setListItems(type ? getBoundariesByType(boundaries, type) : boundaries);
   }, [boundaries]);
 
   // selectAll functionality
-  useEffect(() => {
-    if (selectAllChecked) {
-      const selectedWithoutChecked = listItems
-        .filter(item => !checkedItems.includes(item.id))
-        .map(item => item.id);
-      onSelect(selectedWithoutChecked);
-    } else {
-      onSelect([]);
-    }
-  }, [selectAllChecked, listItems]);
-
   useEffect(() => {
     if (selectAllChecked) {
       const selectedWithoutChecked: string[] = [];
@@ -69,11 +65,19 @@ const SelectedList = ({
           updatedObservationSelection.push(observation.observation_id);
         });
       });
-      onSelect(selectedWithoutChecked);
-      onSelectObservations(updatedObservationSelection);
+      onSelect([...selectedWithoutChecked, ...selectedItems]);
+      onSelectObservations([...updatedObservationSelection, ...selectedObservations]);
     } else {
-      onSelect([]);
-      onSelectObservations([]);
+      const removableItemsId: string[] = [];
+      const removableObservationsId: string[] = [];
+      listItems.forEach(item => {
+        item.observations.forEach(observation => {
+          removableObservationsId.push(observation.observation_id);
+        });
+        removableItemsId.push(item.id);
+      });
+      onSelect(selectedItems.filter(item => !removableItemsId.includes(item)));
+      onSelectObservations(selectedObservations.filter(item => !removableObservationsId.includes(item)));
     }
   }, [selectAllChecked, listItems]);
 
@@ -138,6 +142,15 @@ const SelectedList = ({
     setListItems(filteredItems);
   };
 
+  const handleDeleteSelected = () => {
+    const removableItemsId = listItems.map((item) => {
+      return item.id;
+    });
+    removableItemsId.forEach(id => {
+      onDelete(id);
+    });
+  };
+
   const toggleAccordion = (index: number) => {
     const newActivePanels = activePanels.includes(index)
       ? activePanels.filter(item => item !== index)
@@ -152,14 +165,16 @@ const SelectedList = ({
       {/**/}
       <HeaderContent className={styles.header}>
         <Checkbox
+          disabled={0 === listItems.length}
           className={styles.checkbox}
-          checked={selectAllChecked}
+          checked={0 === listItems.length ? false : selectAllChecked}
           onChange={() => setSelectAllChecked(prev => !prev)}
         />
         <span>
           Search
         </span>
         <Search
+          disabled={0 === listItems.length}
           icon={false}
           onSearchChange={handleSearchChange}
           value={searchQuery}
@@ -186,14 +201,39 @@ const SelectedList = ({
                 <Checkbox
                   checked={selectedItems.includes(item.id)}
                 />
-                <div style={{
+                {openEditingTitle !== item.id && <div style={{
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
                 }}
                 >
                   {item.name}
-                </div>
+                </div>}
+                {openEditingTitle === item.id && (
+                  <div className={styles.renameField}>
+                    <input
+                      type='text'
+                      value={inputValue}
+                      placeholder={item.name}
+                      onChange={(e) => {
+                        const newTitle = e.target.value;
+                        setInputValue(newTitle);
+                      }}
+                    />
+                    <button onClick={() => {
+                      if (!inputValue) {
+                        setOpenEditingTitle(null);
+                        return;
+                      }
+                      onRename(item.id, inputValue);
+                      setInputValue('');
+                      setOpenEditingTitle(null);
+                    }}
+                    >
+                                            Apply
+                    </button>
+                  </div>
+                )}
 
               </div>
               <div
@@ -201,13 +241,21 @@ const SelectedList = ({
                 style={{paddingRight: `${!item.observations[0].observation_name && '21px'}`}}
               >
                 <Checkbox
+                  disabled={openEditingTitle === item.id}
                   toggle={true}
                   checked={!checkedItems.includes(item.id)}
                   onChange={() => handleItemDisabled(item.id, index)}
                 />
                 <DotsMenu
+                  disabled={openEditingTitle === item.id}
                   className={`${styles.dotsMenu} ${checkedItems.includes(item.id) ? styles.disabled : ''}`}
                   actions={[
+                    {
+                      text: 'Rename Item',
+                      icon: 'edit',
+                      onClick: () => setOpenEditingTitle(item.id),
+                    },
+
                     {text: 'Copy', icon: 'copy', onClick: () => onCopy(item.id)},
                     {text: 'Delete', icon: 'remove', onClick: () => onDelete(item.id)},
                   ]}
@@ -255,6 +303,7 @@ const SelectedList = ({
         <Button
           className='buttonLink'
           disabled={0 === selectedItems.length}
+          onClick={handleDeleteSelected}
         >
                     Delete selected <FontAwesomeIcon icon={faTrashCan}/>
         </Button>

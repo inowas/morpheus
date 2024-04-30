@@ -6,12 +6,13 @@ import {IAction} from './index';
 import styles from './DotsMenu.module.less';
 
 interface DotsMenuProps {
+  disabled?: boolean;
   actions: IAction[];
   className?: string;
   style?: React.CSSProperties;
 }
 
-const DotsMenu: React.FC<DotsMenuProps> = ({actions, style, className}) => {
+const DotsMenu: React.FC<DotsMenuProps> = ({disabled, actions, style, className}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
@@ -30,6 +31,7 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions, style, className}) => {
       className={styles.dotsMenuPopup}
       trigger={
         <Button
+          disabled={disabled}
           className={`${styles.dotsMenuButton} ${className ? className : ''}`}
           icon="ellipsis horizontal"
           onClick={(e: React.MouseEvent<HTMLElement>) => handleToggle(e)}

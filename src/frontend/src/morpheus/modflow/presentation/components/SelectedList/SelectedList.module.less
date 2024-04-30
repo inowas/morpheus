@@ -123,6 +123,42 @@
       margin-right: 12px;
     }
 
+    .renameField {
+      display: flex;
+      align-items: stretch;
+
+      input {
+        display: flex;
+        height: auto;
+        border: none;
+        border-radius: unset;
+        padding: 5px 10px;
+        color: #000000;
+        line-height: 16px;
+        box-shadow: @ref-box-shadow;
+      }
+
+      button {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        height: auto;
+        color: #FFFFFF;
+        background-color: @blue;
+        font-size: 13.5px;
+        letter-spacing: 0px;
+        text-align: center;
+        line-height: 19px;
+        border: none;
+
+        &:hover {
+          background-color: @hoverBlue;
+        }
+      }
+
+    }
+
+
   }
 
   .buttonsWrapper {
@@ -177,7 +213,6 @@
         font-size: 12px;
         font-weight: 500;
         padding: 0.5em 0 !important;
-        //margin: 0 22px 0.5em;
         cursor: pointer;
         position: relative;
 

@@ -227,6 +227,7 @@
 @green: #21BA45;
 @teal: #00B5AD;
 @blue: #009FE3;
+@hoverBlue: #0277CC;
 @violet: #6435C9;
 @purple: #A333C8;
 @pink: #E03997;
