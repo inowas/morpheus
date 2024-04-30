@@ -31,8 +31,8 @@ export interface ILayerPropertyValues {
 }
 
 export interface ILayerPropertyValueRaster {
-  data: ILayerPropertyValueRasterData;
-  reference: ILayerPropertyValueRasterReference | null;
+  data?: ILayerPropertyValueRasterData;
+  reference?: ILayerPropertyValueRasterReference;
 }
 
 interface ILayerPropertyValueRasterData {

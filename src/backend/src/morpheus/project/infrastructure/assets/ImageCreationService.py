@@ -20,6 +20,12 @@ class ImageCreationService:
         if v_max is None:
             v_max = np.nanmax(data) + np.nanstd(data)
 
+        if v_min == np.nan:
+            v_min = np.nanmin(data)
+
+        if v_max == np.nan:
+            v_max = np.nanmax(data)
+
         if v_min == v_max:
             v_min -= 1
             v_max += 1
@@ -29,20 +35,26 @@ class ImageCreationService:
         return bytes_image
 
     @staticmethod
-    def create_colorbar_from_data(data: list[list[float]] | float, v_min=None, v_max=None, cmap='jet_r') -> io.BytesIO:
+    def create_colorbar_from_data(data: list[list[float]] | float, v_min=None, v_max=None, cmap='jet_r', no_data_value=-9999.0) -> io.BytesIO:
         bytes_image = io.BytesIO()
 
         if isinstance(data, (int, float)):
             arr_data = np.array([[data]], dtype=np.float32)
         else:
             arr_data = np.array(data, dtype=np.float32)
-            arr_data = np.where(arr_data == np.nan, np.nan, arr_data)
+            arr_data = np.where(arr_data == no_data_value, np.nan, arr_data)
 
         if v_min is None:
             v_min = np.nanmin(arr_data) - np.nanstd(arr_data)
 
         if v_max is None:
             v_max = np.nanmax(arr_data) + np.nanstd(arr_data)
+
+        if v_min == np.nan:
+            v_min = np.nanmin(data)
+
+        if v_max == np.nan:
+            v_max = np.nanmax(data)
 
         if v_min == v_max:
             v_min -= 1

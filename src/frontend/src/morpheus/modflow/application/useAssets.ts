@@ -1,89 +1,87 @@
-import {IError} from '../types';
-import {useRef, useState} from 'react';
+import {IAsset, IAssetId, IError} from '../types';
 import {useApi} from '../incoming';
 import {GeoJSON} from 'geojson';
+import {useDispatch, useSelector} from 'react-redux';
+import {IRootState} from '../../store';
+import {setAssets, updateAsset, setLoading, removeAsset, setError} from '../infrastructure/assetsStore';
+import {useEffect} from 'react';
 
 interface IUseAssets {
+  assets: IAsset[];
   uploadAsset: (file: File, description: string | undefined) => Promise<IAssetId | undefined>;
+  fetchAssets: () => Promise<IAsset[] | undefined>;
   fetchAssetData: (assetId: IAssetId) => Promise<object | [] | undefined>;
-  fetchAssetMetadata: (assetId: string) => Promise<IAsset | undefined>;
+  fetchAssetMetadata: (assetId: IAssetId) => Promise<IAsset | undefined>;
+  deleteAsset: (assetId: IAssetId) => Promise<IAssetId | undefined>;
+  processRasterFile: (rasterFile: File) => Promise<number[][]>;
   processShapefile: (zipFile: File) => Promise<GeoJSON>;
   loading: boolean;
   error?: IError;
 }
 
-interface IAsset {
-  asset_id: IAssetId;
-  project_id: string;
-  type: IAssetType;
-  file: IFile;
-  metadata: IAssetMetadata;
+interface IGetAssetsResponse {
+  assets: IAsset[];
 }
-
-export type IAssetId = string;
-
-type IAssetType = 'image' | 'geo_tiff' | 'shapefile';
-
-interface IFile {
-  file_name: string;
-  size_in_bytes: number;
-  mime_type: string;
-}
-
-type IAssetMetadata = IImageMetadata | IGeoTiffMetadata | IShapefileMetadata;
-
-interface IImageMetadata {
-  width: number;
-  height: number;
-}
-
-interface IGeoTiffMetadata {
-  n_cols: number;
-  n_rows: number;
-  n_bands: number;
-  wgs_84_bounding_box: {
-    min_x: number;
-    min_y: number;
-    max_x: number;
-    max_y: number;
-  }
-}
-
-interface IShapefileMetadata {
-  number_of_features: number;
-  geometry_type: 'Point' | 'LineString' | 'Polygon';
-  wgs_84_bounding_box: {
-    min_x: number;
-    min_y: number;
-    max_x: number;
-    max_y: number;
-  }
-}
-
 
 const useAssets = (projectId: string): IUseAssets => {
-  const isMounted = useRef(true);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<IError | null>(null);
-  const {httpGet, httpPost} = useApi();
 
-  const fetchAssetMetadata = async (assetId: IAssetId): Promise<IAsset | undefined> => {
-    if (!isMounted.current) {
-      return;
+  const {assets, loading, error} = useSelector((state: IRootState) => state.project.assets);
+  const dispatch = useDispatch();
+  const {httpDelete, httpGet, httpPost} = useApi();
+
+  const deleteAsset = async (assetId: IAssetId): Promise<IAssetId | undefined> => {
+
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const deleteResponse = await httpDelete(`/projects/${projectId}/assets/${assetId}`);
+
+    dispatch(setLoading(false));
+
+    if (deleteResponse.ok) {
+      dispatch(removeAsset(assetId));
+      return assetId;
     }
 
-    setLoading(true);
-    setError(null);
+    if (deleteResponse.err) {
+      dispatch(setError(deleteResponse.val));
+    }
+  };
+
+  const fetchAssets = async (): Promise<undefined> => {
+
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const getResponse = await httpGet<IGetAssetsResponse>(`/projects/${projectId}/assets`);
+
+    dispatch(setLoading(false));
+
+    if (getResponse.ok) {
+      dispatch(setAssets(getResponse.val.assets));
+    }
+
+    if (getResponse.err) {
+      dispatch(setError(getResponse.val));
+    }
+  };
+
+  const fetchAssetMetadata = async (assetId: IAssetId): Promise<IAsset | undefined> => {
+
+    const asset = assets.find(({asset_id}) => asset_id === assetId);
+    if (asset) {
+      return asset;
+    }
+
+    dispatch(setLoading(true));
+    dispatch(setError(null));
 
     const getResponse = await httpGet<IAsset>(`/projects/${projectId}/assets/${assetId}`);
 
-    if (!isMounted.current) {
-      return;
-    }
-
-    setLoading(false);
+    dispatch(setLoading(false));
 
     if (getResponse.ok) {
+      dispatch(updateAsset(getResponse.val));
       return getResponse.val;
     }
 
@@ -93,37 +91,27 @@ const useAssets = (projectId: string): IUseAssets => {
   };
 
   const fetchAssetData = async (assetId: IAssetId): Promise<object | [] | undefined> => {
-    if (!isMounted.current) {
-      return;
-    }
 
-    setLoading(true);
-    setError(null);
+    dispatch(setLoading(true));
+    dispatch(setError(null));
 
     const getResponse = await httpGet<object>(`/projects/${projectId}/assets/${assetId}/data`);
 
-    if (!isMounted.current) {
-      return;
-    }
-
-    setLoading(false);
+    dispatch(setLoading(false));
 
     if (getResponse.ok) {
       return getResponse.val;
     }
 
     if (getResponse.err) {
-      setError(getResponse.val);
+      dispatch(setError(getResponse.val));
     }
   };
 
   const uploadAsset = async (file: File, description: string | undefined): Promise<IAssetId | undefined> => {
-    if (!isMounted.current) {
-      return;
-    }
 
-    setLoading(true);
-    setError(null);
+    dispatch(setLoading(true));
+    dispatch(setError(null));
 
     const formData = new FormData();
     formData.append('file', file);
@@ -133,18 +121,15 @@ const useAssets = (projectId: string): IUseAssets => {
 
     const postResponse = await httpPost<FormData>(`/projects/${projectId}/assets`, formData);
 
-    if (!isMounted.current) {
-      return;
-    }
-
-    setLoading(false);
+    dispatch(setLoading(false));
 
     if (postResponse.ok) {
+      await fetchAssets();
       return postResponse.val.location?.split('/').pop();
     }
 
     if (postResponse.err) {
-      setError(postResponse.val);
+      dispatch(setError(postResponse.val));
     }
   };
 
@@ -162,15 +147,39 @@ const useAssets = (projectId: string): IUseAssets => {
 
     const geojson = await fetchAssetData(assetId) as unknown as GeoJSON | undefined;
     if (!geojson) {
-      return Promise.reject('Failed to fetch shapefile data.');
+      return Promise.reject('Failed to fetch shape file data.');
     }
 
     return Promise.resolve(geojson);
   };
 
+  const processRasterFile = async (rasterFile: File): Promise<number[][]> => {
+    const assetId = await uploadAsset(rasterFile, 'rasterfile');
+
+    if (!assetId) {
+      return Promise.reject('Failed to upload raster file.');
+    }
+
+    const data = await fetchAssetData(assetId) as unknown as number[][] | undefined;
+    if (!data) {
+      return Promise.reject('Failed to fetch shapefile data.');
+    }
+
+    return Promise.resolve(data);
+  };
+
+  useEffect(() => {
+    fetchAssets();
+    // eslint-disable-next-line
+  }, []);
+
   return {
+    assets,
+    deleteAsset,
+    fetchAssets,
     fetchAssetData,
     fetchAssetMetadata,
+    processRasterFile,
     processShapefile,
     uploadAsset,
     loading,

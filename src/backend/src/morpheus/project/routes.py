@@ -89,13 +89,15 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/model/layers/<layer_id>/properties/<property_name>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_layers_property(project_id_str: str, layer_id_str: str, property_name_str: str):
-        project_id = ProjectId.from_str(project_id_str)
-        layer_id = LayerId.from_str(layer_id_str)
-        property_name = LayerPropertyName(property_name_str)
+    def project_model_get_layers_property(project_id: str, layer_id: str, property_name: str):
         output_format: Literal['json', 'image', 'colorbar'] | str = request.args.get('format', 'json')
 
-        return ReadModelLayerPropertyRequestHandler().handle(project_id=project_id, layer_id=layer_id, property_name=property_name, output_format=output_format)
+        return ReadModelLayerPropertyRequestHandler().handle(
+            project_id=ProjectId.from_str(project_id),
+            layer_id=LayerId.from_str(layer_id),
+            property_name=LayerPropertyName(property_name),
+            output_format=output_format
+        )
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

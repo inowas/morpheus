@@ -3,7 +3,7 @@ from enum import StrEnum
 from typing import Literal
 
 from morpheus.common.types.File import File, FileName
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import Uuid, String, Float
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry.BoundingBox import BoundingBox
 
@@ -16,6 +16,10 @@ class AssetType(StrEnum):
     IMAGE = 'image'
     GEO_TIFF = 'geo_tiff'
     SHAPEFILE = 'shapefile'
+
+
+class NoDataValue(Float):
+    pass
 
 
 class Metadata:
@@ -59,13 +63,18 @@ class GeoTiffMetadata(Metadata):
     n_cols: int
     n_rows: int
     n_bands: int
+    no_data_value: NoDataValue
     wgs_84_bounding_box: BoundingBox
+
+    def with_updated_no_data_value(self, no_data_value: NoDataValue) -> 'GeoTiffMetadata':
+        return dataclasses.replace(self, no_data_value=no_data_value)
 
     def to_dict(self):
         return {
             'n_cols': self.n_cols,
             'n_rows': self.n_rows,
             'n_bands': self.n_bands,
+            'no_data_value': self.no_data_value.to_float(),
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
         }
 
@@ -75,6 +84,7 @@ class GeoTiffMetadata(Metadata):
             n_cols=obj['n_cols'],
             n_rows=obj['n_rows'],
             n_bands=obj['n_bands'],
+            no_data_value=NoDataValue(obj['no_data_value']) if 'no_data_value' in obj else NoDataValue(-9999.0),
             wgs_84_bounding_box=BoundingBox.from_dict(obj['wgs_84_bounding_box']),
         )
 

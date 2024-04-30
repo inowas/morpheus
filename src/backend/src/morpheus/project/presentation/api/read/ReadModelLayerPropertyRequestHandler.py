@@ -32,6 +32,8 @@ class ReadModelLayerPropertyRequestHandler:
         if output_format == 'json':
             return json.dumps(data), 200
 
+        no_data_value = -9999.0
+
         image_creation_service = ImageCreationService()
 
         if output_format == 'image':
@@ -39,11 +41,11 @@ class ReadModelLayerPropertyRequestHandler:
             grid = model.spatial_discretization.grid
 
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
-            raster = raster_interpolator.grid_data_to_raster(grid=grid, data=data, target_resolution_x=target_resolution_x, method='linear')
+            raster = raster_interpolator.grid_data_to_raster(grid=grid, data=data, target_resolution_x=target_resolution_x, method='linear', nodata_value=no_data_value)
 
             image = image_creation_service.create_image_from_raster(raster=raster, cmap='jet_r')
             return send_file(image, mimetype='image/png', max_age=0)
 
         if output_format == 'colorbar':
-            image = image_creation_service.create_colorbar_from_data(data=data, cmap='jet_r')
+            image = image_creation_service.create_colorbar_from_data(data=data, cmap='jet_r', no_data_value=-9999.0)
             return send_file(image, mimetype='image/png', max_age=0)

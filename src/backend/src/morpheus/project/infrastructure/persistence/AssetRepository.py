@@ -114,6 +114,9 @@ class AssetRepository(RepositoryBase):
 
         self.collection.update_one({'asset_id': asset_id.to_str()}, {'$set': properties_to_update})
 
+    def update_asset_metadata(self, asset_id: AssetId, metadata: Metadata) -> None:
+        self.collection.update_one({'asset_id': asset_id.to_str()}, {'$set': {'metadata': metadata.to_dict()}})
+
 
 asset_repository = AssetRepository(
     collection=create_or_get_collection(

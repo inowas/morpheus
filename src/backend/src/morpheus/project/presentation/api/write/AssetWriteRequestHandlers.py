@@ -5,7 +5,7 @@ from morpheus.common.types.File import FileName
 from ....application.write.AssetCommandHandlers import UpdatePreviewImageCommand, UpdatePreviewImageCommandHandler, DeletePreviewImageCommand, DeletePreviewImageCommandHandler, \
     UploadAssetCommand, UploadAssetCommandHandler, DeleteAssetCommand, DeleteAssetCommandHandler, UpdateAssetCommand, UpdateAssetCommandHandler
 from ....incoming import get_logged_in_user_id
-from ....types.Asset import AssetId, AssetDescription
+from ....types.Asset import AssetId, AssetDescription, NoDataValue
 from ....types.Exceptions import InvalidMimeTypeException, InvalidShapefileException, InvalidGeoTiffException, InvalidFileNameException
 from ....types.Project import ProjectId
 from ....types.User import UserId
@@ -131,8 +131,9 @@ class UpdateAssetRequestHandler:
         if not request.is_json or request.json is None:
             abort(415, 'Request body must be JSON')
 
-        description = request.json.get('description')
-        file_name = request.json.get('file_name')
+        description = request.json.get('description', None)
+        file_name = request.json.get('file_name', None)
+        no_data_value = request.json.get('no_data_value', None)
 
         try:
             command = UpdateAssetCommand(
@@ -140,7 +141,9 @@ class UpdateAssetRequestHandler:
                 asset_id=AssetId.from_str(asset_id_url_parameter),
                 description=AssetDescription.try_from_str(description),
                 file_name=FileName(file_name) if file_name is not None else None,
+                no_data_value=NoDataValue(float(no_data_value)) if no_data_value is not None else None,
             )
+
             UpdateAssetCommandHandler.handle(command)
         except InvalidFileNameException as e:
             abort(422, str(e))

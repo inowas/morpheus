@@ -5,7 +5,7 @@ from geotiff import GeoTiff
 
 from morpheus.common.types.EpsgCode import EpsgCode
 from morpheus.common.types.File import FilePath
-from morpheus.project.types.Asset import GeoTiffMetadata, GeoTiffAssetData
+from morpheus.project.types.Asset import GeoTiffMetadata, GeoTiffAssetData, NoDataValue
 from morpheus.project.types.Exceptions import InvalidGeoTiffException
 from morpheus.project.types.geometry.BoundingBox import BoundingBox
 
@@ -21,7 +21,13 @@ class GeoTiffService:
 
         geo_tiff = self._open_geo_tiff_in_wgs_84(file)
         zarr_array = geo_tiff.read()
-        data = np.array(zarr_array)[band].tolist()
+        shape = zarr_array.shape
+        if len(shape) == 2:
+            data = np.array(zarr_array).tolist()
+        elif len(shape) == 3:
+            data = np.array(zarr_array)[band].tolist()
+        else:
+            raise InvalidGeoTiffException(f'Found invalid shape: {shape}')
 
         return GeoTiffAssetData(
             n_cols=metadata.n_cols,
@@ -35,7 +41,7 @@ class GeoTiffService:
     # example: ([1.0, 2.0, 3.0], [4.0, 5.0, 6.0])
     def extract_asset_coordinates(self, file: FilePath, bbox: Tuple[Tuple[float, float], Tuple[float, float]] | None) -> Tuple[list[list[float]], list[list[float]]] | None:
         geo_tiff = self._open_geo_tiff_in_wgs_84(file)
-        coords_x, coords_y = geo_tiff.get_coord_arrays(bBox=bbox)
+        coords_x, coords_y = geo_tiff.get_coord_arrays()
 
         if len(coords_x.shape) < 2 or len(coords_y.shape) < 2:
             return None
@@ -53,8 +59,6 @@ class GeoTiffService:
             raise InvalidGeoTiffException(f'Failed to read GeoTiff file: {e}')
 
     def _extract_metadata(self, geo_tiff: GeoTiff) -> GeoTiffMetadata:
-
-        # TODO I am not sure if this is correct (getting number of bands ...)
         shape = geo_tiff.tif_shape
         if len(shape) == 2:
             n_row, n_col = shape
@@ -64,14 +68,22 @@ class GeoTiffService:
         else:
             raise InvalidGeoTiffException(f'Found invalid shape: {shape}')
 
-        # TODO I am not sure if this is correct (this is getting bounding box only for the current band I think)
         wgs_84_bounding_box = BoundingBox.from_tuple_of_points(geo_tiff.tif_bBox_wgs_84)
+
+        # guess no data value
+        zarr_array = np.array(geo_tiff.read())
+        min_value = float(np.min(zarr_array))
+
+        no_data_value = NoDataValue.from_float(-9999.0)
+        if min_value in [-9999.0, -32768.0, -3.4028235e+38]:
+            no_data_value = NoDataValue.from_float(min_value)
 
         return GeoTiffMetadata(
             n_cols=n_col,
             n_rows=n_row,
             n_bands=n_band,
-            wgs_84_bounding_box=wgs_84_bounding_box
+            wgs_84_bounding_box=wgs_84_bounding_box,
+            no_data_value=no_data_value
         )
 
 

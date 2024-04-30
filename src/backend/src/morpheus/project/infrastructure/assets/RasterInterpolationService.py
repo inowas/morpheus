@@ -15,10 +15,13 @@ class RasterInterpolationService:
         raster_data = np.array(raster.data.get_data())
         raster_data = np.where(raster_data == nodata_value, np.nan, raster_data)
 
-        if method == 'nearest':
-            interp = NearestNDInterpolator(list(zip(raster_xx.ravel(), raster_yy.ravel())), raster_data.ravel())
-        else:
-            interp = LinearNDInterpolator(list(zip(raster_xx.ravel(), raster_yy.ravel())), raster_data.ravel(), fill_value=np.nan, rescale=True)
+        try:
+            if method == 'nearest':
+                interp = NearestNDInterpolator(list(zip(raster_xx.ravel(), raster_yy.ravel())), raster_data.ravel())
+            else:
+                interp = LinearNDInterpolator(list(zip(raster_xx.ravel(), raster_yy.ravel())), raster_data.ravel(), fill_value=np.nan, rescale=True)
+        except Exception as e:
+            raise ValueError(f'Failed to interpolate raster: {e}')
 
         new_raster_xx = np.array(new_coords.xx_coords)
         new_raster_yy = np.array(new_coords.yy_coords)

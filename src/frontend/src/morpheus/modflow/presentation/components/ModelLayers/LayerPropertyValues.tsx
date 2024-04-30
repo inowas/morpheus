@@ -5,6 +5,7 @@ import isEqual from 'lodash.isequal';
 import {ISpatialDiscretization} from '../../../types';
 import {FeatureGroup, ImageOverlay} from 'react-leaflet';
 import Legend from './Legend';
+import AssetsModalContainer from '../../containers/AssetsModalContainter';
 
 interface IProps {
   fetchLayerPropertyImage?: () => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
@@ -21,6 +22,7 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
   const [layerPropertyValuesLocal, setLayerPropertyValuesLocal] = useState<ILayerPropertyValues | null>(values);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [colorbarUrl, setColorbarUrl] = useState<string | null>(null);
+  const [showRasterFileUploadModal, setShowRasterFileUploadModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (values && !isEqual(values, layerPropertyValuesLocal)) {
@@ -52,10 +54,8 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
         )}
         {colorbarUrl && <Legend colorbarUrl={colorbarUrl}/>}
       </FeatureGroup>
-
     );
   };
-
 
   return (
     <>
@@ -72,7 +72,11 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
           title='Raster'
           description='You can upload a raster file to provide values for the specified property for each cell of the model.'
         />
-        <Button size={'tiny'}>Choose file</Button>
+        <Button
+          size={'tiny'}
+          content={'Upload Raster File'}
+          onClick={() => setShowRasterFileUploadModal(true)}
+        />
       </div>
       <div style={{marginTop: 20}}>
         <InfoTitle
@@ -100,6 +104,25 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
           }
         }}
         >Save</button>
+      )}
+
+      {showRasterFileUploadModal && (
+        <AssetsModalContainer
+          onClose={() => setShowRasterFileUploadModal(false)}
+          onSelectRasterFile={(assetId) => {
+            if (layerPropertyValuesLocal) {
+              setLayerPropertyValuesLocal({
+                ...layerPropertyValuesLocal, raster: {
+                  reference: {
+                    asset_id: assetId,
+                    band: 1,
+                    nodata_value: -9999,
+                  },
+                },
+              });
+            }
+          }}
+        />
       )}
     </>
   );

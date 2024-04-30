@@ -45,6 +45,7 @@ import Page from './PageContainer/Page';
 import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
+import RasterFileInput from './RasterFileInput';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
@@ -97,6 +98,7 @@ export {
   Pagination,
   Popup,
   Progress,
+  RasterFileInput,
   RandomImage,
   SectionTitle,
   Segment,

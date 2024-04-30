@@ -11,9 +11,9 @@ class RasterData:
     _data: list[list[float]]
     _nodata_value: float
 
-    def __init__(self, data: list[list[float]], nodata_value: float = -9999):
+    def __init__(self, data: list[list[float]], nodata_value: float = -9999.0):
         self._data = data
-        self._nodata_value = nodata_value
+        self._nodata_value = float(nodata_value)
 
     def __getitem__(self, key):
         return self._data[key]

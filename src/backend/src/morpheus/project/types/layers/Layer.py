@@ -333,7 +333,7 @@ class LayerPropertyValues:
     def get_data(self) -> float | list[list[float]]:
         if self.raster is not None and self.raster.data is not None:
             np_raster_data = np.array(self.raster.data)
-            raster_data = np.where(np_raster_data is None, self.value.to_float(), np_raster_data).tolist()
+            raster_data = np.where(np_raster_data == self.raster.data.nodata_value, self.value.to_float(), np_raster_data).tolist()
             return raster_data
 
         if self.zones is not None and len(self.zones) > 0:

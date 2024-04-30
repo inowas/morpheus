@@ -19,7 +19,7 @@ from ...infrastructure.assets.ShapefileService import shapefile_service
 from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from ...infrastructure.persistence.AssetRepository import asset_repository
 from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository
-from ...types.Asset import AssetId, Asset, AssetType, AssetDescription
+from ...types.Asset import AssetId, Asset, AssetType, AssetDescription, NoDataValue, GeoTiffMetadata
 from ...types.Project import ProjectId
 from ...types.User import UserId
 
@@ -162,6 +162,7 @@ class UpdateAssetCommand:
     asset_id: AssetId
     file_name: FileName | None
     description: AssetDescription | None
+    no_data_value: NoDataValue | None
 
     def __post_init__(self):
         if self.file_name is None and self.description is None:
@@ -181,8 +182,14 @@ class UpdateAssetCommandHandler:
 
         if command.file_name is not None:
             new_file_name = FileName(secure_filename(command.file_name))
-
             AssetService.assert_filename_can_be_changed_for_asset(asset, new_file_name)
+
+        if isinstance(command.no_data_value, NoDataValue) and isinstance(asset.metadata, GeoTiffMetadata):
+            asset.metadata.with_updated_no_data_value(command.no_data_value)
+            asset_repository.update_asset_metadata(
+                asset.asset_id,
+                asset.metadata,
+            )
 
         asset_repository.update_asset(
             asset.asset_id,
