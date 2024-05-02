@@ -19,10 +19,12 @@ class AssetType(StrEnum):
 
 
 class NoDataValue(Float):
-    pass
+    @classmethod
+    def default(cls) -> 'NoDataValue':
+        return cls(-9999.0)
 
 
-class Metadata:
+class AssetMetadata:
     def to_dict(self):
         raise NotImplementedError
 
@@ -43,7 +45,7 @@ class Metadata:
 
 
 @dataclasses.dataclass(frozen=True)
-class ImageMetadata(Metadata):
+class ImageMetadata(AssetMetadata):
     width: int
     height: int
 
@@ -59,7 +61,7 @@ class ImageMetadata(Metadata):
 
 
 @dataclasses.dataclass(frozen=True)
-class GeoTiffMetadata(Metadata):
+class GeoTiffMetadata(AssetMetadata):
     n_cols: int
     n_rows: int
     n_bands: int
@@ -90,7 +92,7 @@ class GeoTiffMetadata(Metadata):
 
 
 @dataclasses.dataclass(frozen=True)
-class ShapefileMetadata(Metadata):
+class ShapefileMetadata(AssetMetadata):
     geometry_type: Literal['Polygon'] | Literal['LineString'] | Literal['Point']
     n_geometries: int
     wgs_84_bounding_box: BoundingBox
@@ -121,7 +123,7 @@ class Asset:
     project_id: ProjectId
     type: AssetType
     file: File
-    metadata: Metadata
+    metadata: AssetMetadata
     description: AssetDescription | None = None
 
     def to_dict(self):
@@ -143,7 +145,7 @@ class Asset:
             project_id=ProjectId.from_str(obj['project_id']),
             type=asset_type,
             file=File.from_dict(obj['file']),
-            metadata=Metadata.from_dict_and_type(obj['metadata'], asset_type),
+            metadata=AssetMetadata.from_dict_and_type(obj['metadata'], asset_type),
             description=AssetDescription.try_from_str(obj['description']),
         )
 

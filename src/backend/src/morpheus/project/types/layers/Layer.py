@@ -357,12 +357,19 @@ class LayerPropertyName(StrEnum):
     top = 'top'
     bottom = 'bottom'
 
-    def to_value(self):
-        return self.value
-
     @classmethod
     def from_value(cls, value: str):
         return cls(value)
+
+    @classmethod
+    def from_str(cls, value: str):
+        return cls(value)
+
+    def to_value(self):
+        return self.value
+
+    def to_str(self):
+        return self.value
 
 
 @dataclasses.dataclass

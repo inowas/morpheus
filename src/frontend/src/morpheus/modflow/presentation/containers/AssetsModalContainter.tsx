@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, RasterFileInput} from 'common/components';
+import {ImageRenderer, Modal, RasterFileInput} from 'common/components';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import useAssets from '../../application/useAssets';
 import {Button, Container, Grid, GridColumn, Header, List, Segment} from 'semantic-ui-react';
@@ -14,22 +14,27 @@ interface IProps {
 const AssetsModalContainer = ({onClose, onSelectRasterFile}: IProps) => {
   const {projectId} = useParams();
   const {isReadOnly} = useProjectPermissions(projectId as string);
-  const {assets, loading, uploadAsset} = useAssets(projectId as string);
+  const {assets, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+
+  const [assetData, setAssetData] = useState<object | [] | undefined>(undefined);
+
 
   useEffect(() => {
     if (0 < assets.length && !selectedAssetId) {
       setSelectedAssetId(assets[0].asset_id);
     }
-  }, [assets, selectedAssetId]);
+  }, [assets]);
+
+  useEffect(() => {
+    if (selectedAssetId) {
+      fetchAssetData(selectedAssetId as string).then(setAssetData);
+    }
+  }, [selectedAssetId]);
 
   if (isReadOnly) {
     return null;
   }
-
-  const handleSelectAsset = (assetId: IAssetId) => {
-    setSelectedAssetId(assetId);
-  };
 
   const handleRasterFileUpload = async (file: File) => {
     const assetId = await uploadAsset(file, 'Raster File');
@@ -75,6 +80,7 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile}: IProps) => {
               <Container>
                 <Header as={'h2'}>Asset Details</Header>
                 <p>Asset ID: {selectedAssetId}</p>
+                {assetData && <ImageRenderer data={assetData as number[][]}/>}
               </Container>
             </GridColumn>
           </Grid>

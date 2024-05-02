@@ -1,4 +1,4 @@
-import {IAsset, IAssetId, IError} from '../types';
+import {IAsset, IAssetData, IAssetId, IError} from '../types';
 import {useApi} from '../incoming';
 import {GeoJSON} from 'geojson';
 import {useDispatch, useSelector} from 'react-redux';
@@ -95,12 +95,12 @@ const useAssets = (projectId: string): IUseAssets => {
     dispatch(setLoading(true));
     dispatch(setError(null));
 
-    const getResponse = await httpGet<object>(`/projects/${projectId}/assets/${assetId}/data`);
+    const getResponse = await httpGet<IAssetData>(`/projects/${projectId}/assets/${assetId}/data`);
 
     dispatch(setLoading(false));
 
     if (getResponse.ok) {
-      return getResponse.val;
+      return getResponse.val.data;
     }
 
     if (getResponse.err) {

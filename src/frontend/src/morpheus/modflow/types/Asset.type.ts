@@ -6,6 +6,10 @@ interface IAsset {
   metadata: IAssetMetadata;
 }
 
+interface IAssetData {
+  data: object | [] | undefined;
+}
+
 type IAssetId = string;
 
 type IAssetType = 'image' | 'geo_tiff' | 'shapefile';
@@ -46,4 +50,4 @@ interface IShapefileMetadata {
   }
 }
 
-export type {IAsset, IAssetId, IAssetType, IFile, IAssetMetadata, IImageMetadata, IGeoTiffMetadata, IShapefileMetadata};
+export type {IAsset, IAssetId, IAssetData, IAssetType, IFile, IAssetMetadata, IImageMetadata, IGeoTiffMetadata, IShapefileMetadata};

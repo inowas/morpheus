@@ -1,7 +1,7 @@
-from morpheus.common.types.File import FilePath
+from morpheus.common.types.File import FilePath, FileName
 from morpheus.project.infrastructure.filesystem.AssetFileStorage import AssetFileStorage, asset_file_storage
 from morpheus.project.infrastructure.persistence.AssetRepository import asset_repository, AssetRepository
-from morpheus.project.types.Asset import Asset, AssetId
+from morpheus.project.types.Asset import Asset, AssetId, AssetDescription, AssetMetadata
 from morpheus.project.types.Project import ProjectId
 
 
@@ -13,6 +13,15 @@ class AssetHandlingService:
     def persist_asset(self, asset: Asset, source_file: FilePath):
         self._file_storage.save_asset(asset, source_file)
         self._repository.add_asset(asset)
+
+    def update_asset_file_name(self, asset_id: AssetId, file_name: FileName):
+        self._repository.update_asset_file_name(asset_id=asset_id, file_name=file_name)
+
+    def update_asset_description(self, asset_id: AssetId, description: AssetDescription):
+        self._repository.update_asset_description(asset_id=asset_id, description=description)
+
+    def update_asset_metadata(self, asset_id: AssetId, metadata: AssetMetadata):
+        self._repository.update_asset_metadata(asset_id=asset_id, metadata=metadata)
 
     def delete_asset(self, asset: Asset):
         self._file_storage.delete_asset(asset)
@@ -38,3 +47,7 @@ asset_handling_service = AssetHandlingService(
     file_storage=asset_file_storage,
     repository=asset_repository,
 )
+
+
+def get_asset_handling_service() -> AssetHandlingService:
+    return asset_handling_service

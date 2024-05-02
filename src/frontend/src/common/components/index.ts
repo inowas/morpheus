@@ -28,6 +28,7 @@ import HeaderWrapper from './HeaderWrapper';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
+import ImageRenderer, {IImageRenderer} from './ImageRenderer';
 import InfoTitle from './InfoTitle/InfoTitle';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -50,7 +51,7 @@ import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
-import {Tab, TabPane}  from 'common/components/Tab';
+import {Tab, TabPane} from 'common/components/Tab';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
@@ -80,6 +81,7 @@ export {
   IconButton,
   Input,
   Image,
+  ImageRenderer,
   InfoTitle,
   Label,
   Loader,
@@ -121,6 +123,7 @@ export type {
   IDotsMenuAction,
   IDropdownItemProps,
   IIconProps,
+  IImageRenderer,
   IMovableAccordionItem,
   IMovableAccordionListAction,
   INavbarItem,

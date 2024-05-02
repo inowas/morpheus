@@ -10,13 +10,11 @@ from morpheus.project.types.Project import ProjectId
 
 class ReadPreviewImageRequestHandler:
     @staticmethod
-    def handle(project_id_url_parameter: str):
+    def handle(project_id: ProjectId):
         # for now without authentication (see https://redmine.junghanns.it/issues/2388)
         # user_id = get_logged_in_user_id()
         # if user_id is None:
         #     abort(401, 'Unauthorized')
-
-        project_id = ProjectId.from_str(project_id_url_parameter)
 
         if not project_reader.project_exists(project_id):
             return '', 404
@@ -31,12 +29,10 @@ class ReadPreviewImageRequestHandler:
 
 class ReadAssetListRequestHandler:
     @classmethod
-    def handle(cls, project_id_url_parameter: str):
+    def handle(cls, project_id: ProjectId):
         user_id = get_logged_in_user_id()
         if user_id is None:
             return '', 401
-
-        project_id = ProjectId.from_str(project_id_url_parameter)
 
         if not project_reader.project_exists(project_id):
             return '', 404
@@ -62,13 +58,10 @@ class ReadAssetListRequestHandler:
 
 class ReadAssetRequestHandler:
     @staticmethod
-    def handle(project_id_url_parameter: str, asset_id_url_parameter: str):
+    def handle(project_id: ProjectId, asset_id: AssetId):
         user_id = get_logged_in_user_id()
         if user_id is None:
             return '', 401
-
-        project_id = ProjectId.from_str(project_id_url_parameter)
-        asset_id = AssetId.from_str(asset_id_url_parameter)
 
         if not project_reader.project_exists(project_id):
             return '', 404
@@ -83,13 +76,10 @@ class ReadAssetRequestHandler:
 
 class DownloadAssetRequestHandler:
     @staticmethod
-    def handle(project_id_url_parameter: str, asset_id_url_parameter: str):
+    def handle(project_id: ProjectId, asset_id: AssetId):
         user_id = get_logged_in_user_id()
         if user_id is None:
             return '', 401
-
-        project_id = ProjectId.from_str(project_id_url_parameter)
-        asset_id = AssetId.from_str(asset_id_url_parameter)
 
         if not project_reader.project_exists(project_id):
             return '', 404
@@ -104,13 +94,10 @@ class DownloadAssetRequestHandler:
 
 class ReadAssetDataRequestHandler:
     @staticmethod
-    def handle(project_id_url_parameter: str, asset_id_url_parameter: str, band: str | None = None):
+    def handle(project_id: ProjectId, asset_id: AssetId, band: int | None = None):
         user_id = get_logged_in_user_id()
         if user_id is None:
             return '', 401
-
-        project_id = ProjectId.from_str(project_id_url_parameter)
-        asset_id = AssetId.from_str(asset_id_url_parameter)
 
         if not project_reader.project_exists(project_id):
             return '', 404

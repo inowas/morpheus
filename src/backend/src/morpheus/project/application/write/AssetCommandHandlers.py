@@ -1,14 +1,10 @@
 import dataclasses
 
-from werkzeug.utils import secure_filename
-
 from morpheus.common.infrastructure.files.FileService import FileService
 from morpheus.common.types import Uuid
-from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from ..read.AssetReader import get_asset_reader
 from ..read.ProjectReader import project_reader
 from ...domain.AssetService import AssetService
 from ...domain.events.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
@@ -17,9 +13,8 @@ from ...infrastructure.assets.GeoTiffService import geo_tiff_service
 from ...infrastructure.assets.PreviewImageService import preview_image_service
 from ...infrastructure.assets.ShapefileService import shapefile_service
 from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from ...infrastructure.persistence.AssetRepository import asset_repository
 from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository
-from ...types.Asset import AssetId, Asset, AssetType, AssetDescription, NoDataValue, GeoTiffMetadata
+from ...types.Asset import AssetId, Asset, AssetType, AssetDescription
 from ...types.Project import ProjectId
 from ...types.User import UserId
 
@@ -134,65 +129,3 @@ class UploadAssetCommandHandler:
 
         # persist new asset
         asset_handling_service.persist_asset(asset, command.file_path)
-
-
-@dataclasses.dataclass(frozen=True)
-class DeleteAssetCommand:
-    project_id: ProjectId
-    asset_id: AssetId
-
-
-class DeleteAssetCommandHandler:
-    @staticmethod
-    def handle(command: DeleteAssetCommand) -> None:
-        project_reader.assert_project_exists(command.project_id)
-
-        # TODO check permissions
-        asset_reader = get_asset_reader()
-        asset = asset_reader.get_asset(command.project_id, command.asset_id)
-        if asset is None:
-            raise NotFoundException(f'Asset {command.asset_id.to_str()} for project {command.project_id.to_str()} not found')
-
-        asset_handling_service.delete_asset(asset)
-
-
-@dataclasses.dataclass(frozen=True)
-class UpdateAssetCommand:
-    project_id: ProjectId
-    asset_id: AssetId
-    file_name: FileName | None
-    description: AssetDescription | None
-    no_data_value: NoDataValue | None
-
-    def __post_init__(self):
-        if self.file_name is None and self.description is None:
-            raise ValueError('At least one field must be set')
-
-
-class UpdateAssetCommandHandler:
-    @staticmethod
-    def handle(command: UpdateAssetCommand) -> None:
-        project_reader.assert_project_exists(command.project_id)
-
-        # TODO check permissions
-        asset_reader = get_asset_reader()
-        asset = asset_reader.get_asset(command.project_id, command.asset_id)
-        if asset is None:
-            raise NotFoundException(f'Asset {command.asset_id.to_str()} for project {command.project_id.to_str()} not found')
-
-        if command.file_name is not None:
-            new_file_name = FileName(secure_filename(command.file_name))
-            AssetService.assert_filename_can_be_changed_for_asset(asset, new_file_name)
-
-        if isinstance(command.no_data_value, NoDataValue) and isinstance(asset.metadata, GeoTiffMetadata):
-            asset.metadata.with_updated_no_data_value(command.no_data_value)
-            asset_repository.update_asset_metadata(
-                asset.asset_id,
-                asset.metadata,
-            )
-
-        asset_repository.update_asset(
-            asset.asset_id,
-            file_name=command.file_name,
-            description=command.description,
-        )
