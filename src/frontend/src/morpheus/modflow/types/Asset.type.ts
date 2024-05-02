@@ -1,13 +1,11 @@
+import {GeoJSON} from 'geojson';
+
 interface IAsset {
   asset_id: IAssetId;
   project_id: string;
   type: IAssetType;
   file: IFile;
   metadata: IAssetMetadata;
-}
-
-interface IAssetData {
-  data: object | [] | undefined;
 }
 
 type IAssetId = string;
@@ -50,4 +48,31 @@ interface IShapefileMetadata {
   }
 }
 
-export type {IAsset, IAssetId, IAssetData, IAssetType, IFile, IAssetMetadata, IImageMetadata, IGeoTiffMetadata, IShapefileMetadata};
+type IAssetData = IAssetRasterData | IAssetShapefileData;
+
+interface IAssetRasterData {
+  type: IAssetType;
+  data: number[][];
+  wgs_84_bounding_box: {
+    min_x: number;
+    min_y: number;
+    max_x: number;
+    max_y: number;
+  },
+  n_cols: number;
+  n_rows: number;
+  band: number;
+}
+
+interface IAssetShapefileData {
+  type: IAssetType;
+  data: GeoJSON,
+  wgs_84_bounding_box: {
+    min_x: number;
+    min_y: number;
+    max_x: number;
+    max_y: number;
+  }
+}
+
+export type {IAsset, IAssetId, IAssetData, IAssetRasterData, IAssetShapefileData, IAssetType, IFile, IAssetMetadata, IImageMetadata, IGeoTiffMetadata, IShapefileMetadata};

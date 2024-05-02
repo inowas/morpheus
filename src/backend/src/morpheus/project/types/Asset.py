@@ -173,6 +173,7 @@ class GeoTiffAssetData(AssetData):
 
     def to_dict(self):
         return {
+            'type': AssetType.GEO_TIFF.value,
             'n_cols': self.n_cols,
             'n_rows': self.n_rows,
             'band': self.band,
@@ -184,6 +185,11 @@ class GeoTiffAssetData(AssetData):
 @dataclasses.dataclass(frozen=True)
 class ShapefileAssetData(AssetData):
     data: dict
+    wgs_84_bounding_box: BoundingBox
 
     def to_dict(self):
-        return self.data
+        return {
+            'type': AssetType.SHAPEFILE.value,
+            'data': self.data,
+            'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
+        }

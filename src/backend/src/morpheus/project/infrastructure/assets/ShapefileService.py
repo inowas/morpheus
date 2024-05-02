@@ -24,9 +24,9 @@ class ShapefileService:
 
     def extract_asset_data(self, file: FilePath) -> ShapefileAssetData:
         geo_data_frame = self._read_wgs_84_geo_data_frame(file)
-
         return ShapefileAssetData(
             data=geo_data_frame.__geo_interface__,
+            wgs_84_bounding_box=BoundingBox.from_tuple_of_coordinates(geo_data_frame.total_bounds.tolist())
         )
 
     def _read_wgs_84_geo_data_frame(self, file: FilePath) -> geopandas.GeoDataFrame:

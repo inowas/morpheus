@@ -74,11 +74,14 @@ const ModelSetupContainer = () => {
         }
       }
 
+      console.log(geoJson);
+
       setShapeFileError({
         code: 400,
         message: 'No polygon found in shapefile.',
       });
     } catch (e) {
+      console.log(e);
       setShapeFileError({
         code: 400,
         message: 'Error processing shapefile.',

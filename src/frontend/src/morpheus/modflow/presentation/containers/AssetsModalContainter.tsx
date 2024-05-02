@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {ImageRenderer, Modal, RasterFileInput} from 'common/components';
+import {Modal, RasterFileInput} from 'common/components';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import useAssets from '../../application/useAssets';
 import {Button, Container, Grid, GridColumn, Header, List, Segment} from 'semantic-ui-react';
 import {useParams} from 'react-router-dom';
-import {IAssetId} from '../../types';
+import {IAssetData, IAssetId, IAssetRasterData, IAssetShapefileData} from '../../types';
+import {GeoTiffAssetData, ShapefileAssetData} from '../components/Asset';
 
 interface IProps {
   onSelectRasterFile: (assetId: IAssetId) => void;
@@ -17,7 +18,7 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile}: IProps) => {
   const {assets, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
 
-  const [assetData, setAssetData] = useState<object | [] | undefined>(undefined);
+  const [assetData, setAssetData] = useState<IAssetData | null>(null);
 
 
   useEffect(() => {
@@ -28,13 +29,20 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile}: IProps) => {
 
   useEffect(() => {
     if (selectedAssetId) {
-      fetchAssetData(selectedAssetId as string).then(setAssetData);
+      fetchAssetData(selectedAssetId as string).then((data) => {
+        if (data) {
+          setAssetData(data);
+        }
+      });
     }
   }, [selectedAssetId]);
 
   if (isReadOnly) {
     return null;
   }
+
+  const isAssetGeoTiffData = (data: IAssetData): data is IAssetRasterData => (data && 'geo_tiff' === data.type);
+  const isAssetShapefileData = (data: IAssetData): data is IAssetShapefileData => (data && 'shapefile' === data.type);
 
   const handleRasterFileUpload = async (file: File) => {
     const assetId = await uploadAsset(file, 'Raster File');
@@ -80,7 +88,8 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile}: IProps) => {
               <Container>
                 <Header as={'h2'}>Asset Details</Header>
                 <p>Asset ID: {selectedAssetId}</p>
-                {assetData && <ImageRenderer data={assetData as number[][]}/>}
+                {assetData && isAssetGeoTiffData(assetData) && <GeoTiffAssetData data={assetData}/>}
+                {assetData && isAssetShapefileData(assetData) && <ShapefileAssetData data={assetData}/>}
               </Container>
             </GridColumn>
           </Grid>

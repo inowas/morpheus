@@ -1,4 +1,4 @@
-import {IAsset, IAssetData, IAssetId, IError} from '../types';
+import {IAsset, IAssetData, IAssetId, IAssetRasterData, IError} from '../types';
 import {useApi} from '../incoming';
 import {GeoJSON} from 'geojson';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,10 +10,10 @@ interface IUseAssets {
   assets: IAsset[];
   uploadAsset: (file: File, description: string | undefined) => Promise<IAssetId | undefined>;
   fetchAssets: () => Promise<IAsset[] | undefined>;
-  fetchAssetData: (assetId: IAssetId) => Promise<object | [] | undefined>;
+  fetchAssetData: (assetId: IAssetId) => Promise<IAssetData | undefined>;
   fetchAssetMetadata: (assetId: IAssetId) => Promise<IAsset | undefined>;
   deleteAsset: (assetId: IAssetId) => Promise<IAssetId | undefined>;
-  processRasterFile: (rasterFile: File) => Promise<number[][]>;
+  processRasterFile: (rasterFile: File) => Promise<IAssetRasterData>;
   processShapefile: (zipFile: File) => Promise<GeoJSON>;
   loading: boolean;
   error?: IError;
@@ -90,7 +90,7 @@ const useAssets = (projectId: string): IUseAssets => {
     }
   };
 
-  const fetchAssetData = async (assetId: IAssetId): Promise<object | [] | undefined> => {
+  const fetchAssetData = async (assetId: IAssetId): Promise<IAssetData | undefined> => {
 
     dispatch(setLoading(true));
     dispatch(setError(null));
@@ -100,7 +100,7 @@ const useAssets = (projectId: string): IUseAssets => {
     dispatch(setLoading(false));
 
     if (getResponse.ok) {
-      return getResponse.val.data;
+      return getResponse.val;
     }
 
     if (getResponse.err) {
@@ -153,19 +153,19 @@ const useAssets = (projectId: string): IUseAssets => {
     return Promise.resolve(geojson);
   };
 
-  const processRasterFile = async (rasterFile: File): Promise<number[][]> => {
+  const processRasterFile = async (rasterFile: File): Promise<IAssetRasterData> => {
     const assetId = await uploadAsset(rasterFile, 'rasterfile');
 
     if (!assetId) {
       return Promise.reject('Failed to upload raster file.');
     }
 
-    const data = await fetchAssetData(assetId) as unknown as number[][] | undefined;
-    if (!data) {
+    const data = await fetchAssetData(assetId);
+    if (!data || 'geo_tiff' !== data.type) {
       return Promise.reject('Failed to fetch shapefile data.');
     }
 
-    return Promise.resolve(data);
+    return Promise.resolve(data as IAssetRasterData);
   };
 
   useEffect(() => {

@@ -30,6 +30,9 @@ const ImageRenderer = ({data}: IImageRenderer) => {
 
   }, [data]);
 
+  if (!data) {
+    return null;
+  }
 
   return (
     <div>
