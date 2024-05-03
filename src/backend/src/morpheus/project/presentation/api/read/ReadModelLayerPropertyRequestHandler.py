@@ -24,7 +24,7 @@ class ReadModelLayerPropertyRequestHandler:
         if not isinstance(layer, Layer):
             return {'message': 'Layer not found'}, 404
 
-        property_value = layer.get_property_value(property_name)
+        property_value = layer.get_property_values(property_name)
         if property_value is None:
             return {'message': 'Property not found'}, 404
 

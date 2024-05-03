@@ -1,6 +1,41 @@
 import {Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
-import {ILayerPropertyValues} from '../types/Layers.type';
+import {ILayerPropertyName, IZone} from '../types/Layers.type';
+
+export interface IDeleteAssetCommand {
+  command_name: 'delete_asset_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+  }
+}
+
+export interface IUpdateAssetDescriptionCommand {
+  command_name: 'update_asset_description_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+    asset_description: string;
+  }
+}
+
+export interface UpdateAssetFileNameCommand {
+  command_name: 'update_asset_file_name_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+    asset_file_name: string;
+  }
+}
+
+export interface UpdateRasterAssetNoDataValueCommand {
+  command_name: 'update_raster_asset_no_data_value_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+    no_data_value: number;
+  }
+}
 
 export interface ICreateProjectCommand {
   command_name: 'create_project_command';
@@ -157,16 +192,39 @@ export interface IUpdateModelLayerOrderCommand {
   }
 }
 
-export interface IUpdateModelLayerPropertyCommand {
-  command_name: 'update_model_layer_property_command';
+export interface IUpdateModelLayerPropertyRasterReferenceCommand {
+  command_name: 'update_model_layer_property_raster_reference_command';
   payload: {
     project_id: string;
     model_id: string;
     layer_id: string;
-    property_name: 'hk' | 'hani' | 'vka' | 'specific_storage' | 'specific_yield' | 'initial_head' | 'top' | 'bottom';
-    property_default_value: ILayerPropertyValues['value'];
-    property_raster: ILayerPropertyValues['raster'] | null;
-    property_zones: ILayerPropertyValues['zones'] | null;
+    property_name: ILayerPropertyName;
+    property_raster_reference: {
+      asset_id: string;
+      band: number;
+    } | null;
+  }
+}
+
+export interface IUpdateModelLayerPropertyDefaultValueCommand {
+  command_name: 'update_model_layer_property_default_value_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: ILayerPropertyName;
+    property_default_value: number;
+  }
+}
+
+export interface IUpdateModelLayerPropertyZonesCommand {
+  command_name: 'update_model_layer_property_zones_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: ILayerPropertyName;
+    property_zones: IZone[] | null;
   }
 }
 
@@ -222,8 +280,11 @@ export interface IUpdateProjectMemberRoleCommand {
   }
 }
 
-export type ICommand =
-  ICreateProjectCommand
+export type ICommand = IDeleteAssetCommand
+  | IUpdateAssetDescriptionCommand
+  | UpdateAssetFileNameCommand
+  | UpdateRasterAssetNoDataValueCommand
+  | ICreateProjectCommand
   | IDeleteProjectCommand
   | IUpdateProjectMetadataCommand
   | IUpdateProjectVisibilityCommand
@@ -238,7 +299,9 @@ export type ICommand =
   | IUpdateModelLayerConfinementCommand
   | IUpdateModelLayerMetadataCommand
   | IUpdateModelLayerOrderCommand
-  | IUpdateModelLayerPropertyCommand
+  | IUpdateModelLayerPropertyDefaultValueCommand
+  | IUpdateModelLayerPropertyRasterReferenceCommand
+  | IUpdateModelLayerPropertyZonesCommand
   | ICreateModelVersionCommand
   | IDeleteModelVersionCommand
   | IUpdateModelVersionDescriptionCommand

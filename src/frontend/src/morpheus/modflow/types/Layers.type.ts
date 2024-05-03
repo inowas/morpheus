@@ -68,3 +68,25 @@ export enum ITimeUnit {
   DAYS = 'days',
   YEARS = 'years',
 }
+
+interface IRasterReference {
+  asset_id: string;
+  band: number;
+}
+
+
+// important for write api
+export interface IChangeLayerPropertyValues {
+  defaultValue?: number;
+  rasterReference?: IRasterReference | null;
+  zones?: IZone[] | null;
+}
+
+export interface IZone {
+  zone_id?: string;
+  geometry: {
+    geometry: Polygon | MultiPolygon;
+    coordinates: number[][][];
+  };
+  value: number;
+}

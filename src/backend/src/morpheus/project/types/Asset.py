@@ -3,12 +3,16 @@ from enum import StrEnum
 from typing import Literal
 
 from morpheus.common.types.File import File, FileName
-from morpheus.common.types import Uuid, String, Float
+from morpheus.common.types import Uuid, String, Float, Integer
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry.BoundingBox import BoundingBox
 
 
 class AssetId(Uuid):
+    pass
+
+
+class RasterBand(Integer):
     pass
 
 

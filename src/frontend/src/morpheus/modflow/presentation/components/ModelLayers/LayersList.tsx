@@ -4,7 +4,7 @@ import isEqual from 'lodash.isequal';
 import {MovableAccordionList, IMovableAccordionItem, IMovableAccordionListAction} from 'common/components';
 
 import LayerDetails from './LayerDetails';
-import {ILayer, ILayerPropertyName, ILayerPropertyValues} from '../../../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayer, ILayerPropertyName, ILayerPropertyValues} from '../../../types/Layers.type';
 import {ISpatialDiscretization} from '../../../types';
 
 interface IProps {
@@ -16,7 +16,7 @@ interface IProps {
   onChangeLayerMetadata: (layerId: ILayer['layer_id'], name?: ILayer['name'], description?: ILayer['description']) => void;
   onChangeLayerConfinement: (layerId: ILayer['layer_id'], confinement: ILayer['confinement']) => void;
   onChangeLayerOrder: (newOrderIds: string[]) => void;
-  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => void;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => void;
   readOnly: boolean;
 }
 

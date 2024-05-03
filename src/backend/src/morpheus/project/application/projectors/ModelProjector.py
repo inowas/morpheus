@@ -294,15 +294,31 @@ class ModelProjector(EventListenerBase):
         if layer is None:
             return
 
-        property_value = LayerPropertyValues(value=event.get_property_default_value())
-        if event.has_property_zones():
-            property_value.zones = event.get_property_zones()
+        layer_property_values = layer.get_property_values(property_name=event.get_property_name())
+        if layer_property_values is None:
+            return
 
+        default_value = layer_property_values.value
+        if event.has_property_default_value():
+            event_property_default_value = event.get_property_default_value()
+            if event_property_default_value is not None:
+                default_value = event_property_default_value
+
+        raster = layer_property_values.raster
         if event.has_property_raster():
-            property_value.raster = event.get_property_raster()
+            raster = event.get_property_raster()
 
-        layer = layer.with_updated_property(property_name=event.get_property_name(), property_value=property_value)
+        zones = layer_property_values.zones
+        if event.has_property_zones():
+            zones = event.get_property_zones()
 
+        new_property_values = LayerPropertyValues(
+            value=default_value,
+            raster=raster,
+            zones=zones
+        )
+
+        layer = layer.with_updated_property(property_name=event.get_property_name(), property_values=new_property_values)
         latest = latest.with_updated_layers(layers=layers.with_updated_layer(updated_layer=layer))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
 

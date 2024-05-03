@@ -28,7 +28,8 @@ We have to implement this! And it shold take not more than 1 week.
 
 # Solution — The core elements we came up with, presented in a form that’s easy for people to immediately understand
 
-These layer specific properties can be represented by an object with the following structure:
+These layer specific properties are represented in the backend by an object with the following structure (shows as
+typescript!), internally the values are stored in python dataclasses.
 
 ```typescript
 interface IPropertyType {
@@ -38,7 +39,7 @@ interface IPropertyType {
 }
 
 interface IRaster {
-  data?: number[][]
+  data: number[][]
   reference?: {
     asset_id: string;
     asset_type: 'raster';
@@ -54,18 +55,19 @@ interface IZone {
 }
 ```
 
-To have the possibility to store the relative representation of ky (as kx * hani) and kz (as kx * vani) the solution for
-this would be:
-
-* setting hk sets kx and vice versa
-* when setting hani, ky will be set to None and vice versa
-* when setting vani, kz will be set to None and vice versa
+For the simplicity we use hk, hani and vka as conductivity properties.
 
 # Uploading a value
 
 The user should have the possibility to upload a value for all cells. This value will be stored in the property object.
 A value has always to be set as fallback value. If the user uploads vector data or raster date with holes,
 the value will be used for the cells without a value.
+
+Write command:
+
+```yaml
+
+```
 
 # Uploading a Raster
 
@@ -75,7 +77,7 @@ To upload raster data the user has to select the file and the band.
 The uploaded file will be stored as an asset and the reference to this asset will be stored in the property object.
 The data-property of the raster object will be filled on the server after raster interpolation
 
-# Uploading a Vector
+# Uploading zones (vector data)
 
 The user can upload vector data as geojson (Polygon or Multipolygon). The value will be stored in the property object.
 On the server the affected cells will be calculated and stored in the property object.

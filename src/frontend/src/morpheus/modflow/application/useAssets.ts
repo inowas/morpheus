@@ -5,6 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
 import {setAssets, updateAsset, setLoading, removeAsset, setError} from '../infrastructure/assetsStore';
 import {useEffect} from 'react';
+import useProjectCommandBus from './useProjectCommandBus';
+import {IDeleteAssetCommand} from './useProjectCommandBus.type';
 
 interface IUseAssets {
   assets: IAsset[];
@@ -27,14 +29,23 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const {assets, loading, error} = useSelector((state: IRootState) => state.project.assets);
   const dispatch = useDispatch();
-  const {httpDelete, httpGet, httpPost} = useApi();
+  const {httpGet, httpPost} = useApi();
+  const {sendCommand} = useProjectCommandBus();
 
   const deleteAsset = async (assetId: IAssetId): Promise<IAssetId | undefined> => {
 
     dispatch(setLoading(true));
     dispatch(setError(null));
 
-    const deleteResponse = await httpDelete(`/projects/${projectId}/assets/${assetId}`);
+    const deleteAssetCommand: IDeleteAssetCommand = {
+      command_name: 'delete_asset_command',
+      payload: {
+        project_id: projectId,
+        asset_id: assetId,
+      },
+    };
+
+    const deleteResponse = await sendCommand(deleteAssetCommand);
 
     dispatch(setLoading(false));
 

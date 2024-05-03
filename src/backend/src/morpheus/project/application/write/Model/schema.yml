@@ -11,7 +11,9 @@ definitions:
       - "$ref": "#/definitions/commands/UpdateModelLayerOrderCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerMetadataCommand"
       - "$ref": "#/definitions/commands/DeleteModelLayerCommand"
-      - "$ref": "#/definitions/commands/UpdateModelLayerPropertyCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerPropertyRasterReferenceCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerPropertyDefaultValueCommand"
+      - "$ref": "#/definitions/commands/UpdateModelLayerPropertyZonesCommand"
       - "$ref": "#/definitions/commands/UpdateModelGeometryCommand"
       - "$ref": "#/definitions/commands/UpdateModelGridCommand"
       - "$ref": "#/definitions/commands/UpdateModelTimeDiscretizationCommand"
@@ -274,14 +276,14 @@ definitions:
             - project_id
             - model_id
             - layer_ids
-    UpdateModelLayerPropertyCommand:
+    UpdateModelLayerPropertyRasterReferenceCommand:
       type: object
       properties:
         command_name:
           type: string
           enum:
-            - update_model_layer_property_command
-          example: update_model_layer_property_command
+            - update_model_layer_property_raster_reference_command
+          example: update_model_layer_property_raster_reference_command
         payload:
           type: object
           properties:
@@ -295,23 +297,69 @@ definitions:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
             property_name:
+              "$ref": "#/definitions/components/LayerPropertyName"
+            property_raster_reference:
+              oneOf:
+                - "$ref": "#/definitions/components/LayerPropertyRasterReference"
+                - "$ref": "#/definitions/components/Nullable"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - property_name
+            - property_raster_reference
+    UpdateModelLayerPropertyDefaultValueCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_property_default_value_command
+          example: update_model_layer_property_default_value_command
+        payload:
+          type: object
+          properties:
+            project_id:
               type: string
-              enum:
-                - hk
-                - hani
-                - vka
-                - specific_storage
-                - specific_yield
-                - initial_head
-                - top
-                - bottom
-              example: hk
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            property_name:
+              "$ref": "#/definitions/components/LayerPropertyName"
             property_default_value:
               "$ref": "#/definitions/components/LayerPropertyDefaultValue"
-            property_raster:
-              oneOf:
-                - "$ref": "#/definitions/components/LayerPropertyRaster"
-                - "$ref": "#/definitions/components/Nullable"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - property_name
+            - property_default_value
+    UpdateModelLayerPropertyZonesCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_property_zones_command
+          example: update_model_layer_property_zones_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            property_name:
+              "$ref": "#/definitions/components/LayerPropertyName"
             property_zones:
               oneOf:
                 - "$ref": "#/definitions/components/LayerPropertyZones"
@@ -321,7 +369,7 @@ definitions:
             - model_id
             - layer_id
             - property_name
-            - property_default_value
+            - property_zones
     UpdateModelAffectedCellsCommand:
       type: object
       properties:
@@ -495,35 +543,36 @@ definitions:
         - unconfined
         - convertible
       example: confined
+    LayerPropertyName:
+      type: string
+      enum:
+        - hk
+        - hani
+        - vka
+        - specific_storage
+        - specific_yield
+        - initial_head
+        - top
+        - bottom
+      example: hk
     LayerPropertyDefaultValue:
       description: The default value of a layer property.
       type: number
       example: 1.0
-    LayerPropertyRaster:
-      description: The raster data of a layer property.
+    LayerPropertyRasterReference:
+      description: The reference to a raster property.
       type: object
       properties:
-        data:
-          type: object
-          properties:
-            data:
-              "$ref": "#/definitions/components/2DGrid"
-            nodata_value:
-              type: number
-              example: -9999.0
-        reference:
-          type: object
-          properties:
-            asset_id:
-              type: string
-              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            band:
-              type: integer
-              minimum: 1
-              maximum: 1000
-            nodata_value:
-              type: number
-              example: -9999
+        asset_id:
+          type: string
+          example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+        band:
+          type: integer
+          minimum: 0
+          maximum: 1000
+      required:
+        - asset_id
+        - band
     LayerPropertyZones:
       description: The zones of a layer property.
       type: array

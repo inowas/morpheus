@@ -12,8 +12,8 @@ from morpheus.project.types.ModelVersion import ModelVersion, VersionId, Version
 from morpheus.project.types.discretization import TimeDiscretization
 from morpheus.project.types.discretization.spatial import Grid, ActiveCells
 from morpheus.project.types.geometry import Polygon
-from morpheus.project.types.layers.Layer import Layer, LayerId, LayerDescription, LayerName, LayerPropertyName, LayerPropertyDefaultValue, \
-    LayerPropertyRaster, LayerPropertyZones, LayerConfinement
+from morpheus.project.types.layers.Layer import Layer, LayerId, LayerDescription, LayerName, LayerPropertyName, LayerPropertyDefaultValue, LayerPropertyRaster, \
+    LayerPropertyZones, LayerConfinement
 
 
 class ModelAffectedCellsUpdatedEvent(EventBase):
@@ -331,8 +331,8 @@ class ModelLayerOrderUpdatedEvent(EventBase):
 
 class ModelLayerPropertyUpdatedEvent(EventBase):
     @classmethod
-    def for_property(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_default_value: LayerPropertyDefaultValue,
-                     occurred_at: DateTime):
+    def from_default_value(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_default_value: LayerPropertyDefaultValue,
+                           occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -344,23 +344,31 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
             }
         )
 
-    def with_updated_raster(self, raster: LayerPropertyRaster | None):
-        return ModelLayerPropertyUpdatedEvent(
-            entity_uuid=self.entity_uuid,
-            occurred_at=self.occurred_at,
+    @classmethod
+    def from_raster(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_raster: LayerPropertyRaster | None,
+                    occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
-                **self.payload,
-                'property_raster': raster.to_dict() if raster else None
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str(),
+                'property_name': property_name.to_value(),
+                'property_raster': property_raster.to_dict() if property_raster else None
             }
         )
 
-    def with_updated_zones(self, zones: LayerPropertyZones | None):
-        return ModelLayerPropertyUpdatedEvent(
-            entity_uuid=self.entity_uuid,
-            occurred_at=self.occurred_at,
+    @classmethod
+    def from_zones(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_zones: LayerPropertyZones | None,
+                   occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
             payload={
-                **self.payload,
-                'property_zones': zones.to_list() if zones else None
+                'model_id': model_id.to_str(),
+                'layer_id': layer_id.to_str(),
+                'property_name': property_name.to_value(),
+                'property_zones': property_zones.to_list() if property_zones else None
             }
         )
 
@@ -376,20 +384,23 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
     def get_property_name(self) -> LayerPropertyName:
         return LayerPropertyName.from_value(self.payload['property_name'])
 
-    def get_property_default_value(self) -> LayerPropertyDefaultValue:
-        return LayerPropertyDefaultValue.from_value(self.payload['property_default_value'])
+    def has_property_default_value(self) -> bool:
+        return 'property_default_value' in self.payload
+
+    def get_property_default_value(self) -> LayerPropertyDefaultValue | None:
+        return LayerPropertyDefaultValue.from_value(self.payload['property_default_value']) if 'property_default_value' in self.payload else None
 
     def has_property_raster(self) -> bool:
         return 'property_raster' in self.payload
 
     def get_property_raster(self) -> LayerPropertyRaster | None:
-        return LayerPropertyRaster.from_dict(self.payload['property_raster']) if self.payload['property_raster'] else None
+        return LayerPropertyRaster.from_dict(self.payload['property_raster']) if 'property_raster' in self.payload and self.payload['property_raster'] else None
 
     def has_property_zones(self) -> bool:
         return 'property_zones' in self.payload
 
     def get_property_zones(self) -> LayerPropertyZones | None:
-        return LayerPropertyZones.from_list(self.payload['property_zones']) if self.payload['property_zones'] else None
+        return LayerPropertyZones.from_list(self.payload['property_zones']) if 'property_zones' in self.payload and self.payload['property_zones'] else None
 
     def get_event_name(self) -> EventName:
         return EventName.from_str(ProjectEventName.MODEL_LAYER_PROPERTY_UPDATED.to_str())

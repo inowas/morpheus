@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ILayerPropertyValues} from '../../../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayerPropertyValues} from '../../../types/Layers.type';
 import {Button, InfoTitle} from 'common/components';
 import isEqual from 'lodash.isequal';
 import {ISpatialDiscretization} from '../../../types';
@@ -11,13 +11,14 @@ interface IProps {
   fetchLayerPropertyImage?: () => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   spatialDiscretization: ISpatialDiscretization;
   values: ILayerPropertyValues | null;
-  onSubmit: (layerPropertyValues: ILayerPropertyValues) => void;
-
+  onSubmitDefaultValueChange: (value: IChangeLayerPropertyValues['defaultValue']) => void;
+  onSubmitRasterReferenceChange: (raster: IChangeLayerPropertyValues['rasterReference']) => void;
+  onSubmitZoneChange?: (zones: IChangeLayerPropertyValues['zones']) => void;
   unit?: string;
   readOnly: boolean;
 }
 
-const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly, unit, fetchLayerPropertyImage}: IProps) => {
+const LayerPropertyValues = ({spatialDiscretization, values, onSubmitDefaultValueChange, onSubmitRasterReferenceChange, readOnly, unit, fetchLayerPropertyImage}: IProps) => {
 
   const [layerPropertyValuesLocal, setLayerPropertyValuesLocal] = useState<ILayerPropertyValues | null>(values);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
@@ -57,6 +58,8 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
     );
   };
 
+  const handleSelectRasterFile = (assetId: string, band: number = 0) => onSubmitRasterReferenceChange({asset_id: assetId, band: band});
+
   return (
     <>
       <div>
@@ -72,11 +75,35 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
           title='Raster'
           description='You can upload a raster file to provide values for the specified property for each cell of the model.'
         />
-        <Button
-          size={'tiny'}
-          content={'Upload Raster File'}
-          onClick={() => setShowRasterFileUploadModal(true)}
-        />
+
+        {undefined !== layerPropertyValuesLocal?.raster?.reference?.asset_id && layerPropertyValuesLocal?.raster?.reference?.asset_id == values?.raster?.reference?.asset_id ? (
+          <Button
+            size={'tiny'}
+            icon={'trash'}
+            color={'red'}
+            onClick={() => onSubmitRasterReferenceChange(null)}
+          />
+        ) : (
+          <Button
+            size={'tiny'}
+            icon={'upload'}
+            color={'blue'}
+            onClick={() => setShowRasterFileUploadModal(true)}
+          />
+        )}
+
+        {layerPropertyValuesLocal?.raster?.reference?.asset_id !== values?.raster?.reference?.asset_id && (
+          <Button
+            size={'tiny'}
+            content={'Save Raster File'}
+            onClick={() => {
+              if (layerPropertyValuesLocal?.raster && onSubmitRasterReferenceChange) {
+                onSubmitRasterReferenceChange(layerPropertyValuesLocal.raster.reference);
+              }
+            }}
+          />
+        )}
+
       </div>
       <div style={{marginTop: 20}}>
         <InfoTitle
@@ -94,34 +121,20 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmit, readOnly,
           disabled={readOnly}
         />{unit}
       </div>
+      <div>
+        {layerPropertyValuesLocal?.value !== values?.value && (
+          <button onClick={() => onSubmitDefaultValueChange(layerPropertyValuesLocal?.value)}>
+            Save
+          </button>
+        )}
+      </div>
 
       {renderMapContent()}
-
-      {layerPropertyValuesLocal?.value !== values?.value && !readOnly && (
-        <button onClick={() => {
-          if (layerPropertyValuesLocal) {
-            onSubmit(layerPropertyValuesLocal);
-          }
-        }}
-        >Save</button>
-      )}
 
       {showRasterFileUploadModal && (
         <AssetsModalContainer
           onClose={() => setShowRasterFileUploadModal(false)}
-          onSelectRasterFile={(assetId) => {
-            if (layerPropertyValuesLocal) {
-              setLayerPropertyValuesLocal({
-                ...layerPropertyValuesLocal, raster: {
-                  reference: {
-                    asset_id: assetId,
-                    band: 1,
-                    nodata_value: -9999,
-                  },
-                },
-              });
-            }
-          }}
+          onSelectRasterFile={handleSelectRasterFile}
         />
       )}
     </>

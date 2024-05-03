@@ -129,19 +129,17 @@ class LayerConfinement:
 class LayerPropertyRasterReference:
     asset_id: str
     band: int
-    nodata_value: float | int
 
     def __eq__(self, other):
         if not isinstance(other, LayerPropertyRasterReference):
             return False
 
-        return self.asset_id == other.asset_id and self.band == other.band and self.nodata_value == other.nodata_value
+        return self.asset_id == other.asset_id and self.band == other.band
 
     def to_dict(self):
         return {
             'asset_id': self.asset_id,
             'band': self.band,
-            'nodata_value': self.nodata_value
         }
 
     @classmethod
@@ -149,7 +147,13 @@ class LayerPropertyRasterReference:
         return cls(
             asset_id=obj['asset_id'],
             band=obj['band'],
-            nodata_value=obj['nodata_value']
+        )
+
+    @classmethod
+    def from_payload(cls, obj):
+        return cls(
+            asset_id=obj['asset_id'],
+            band=obj['band'],
         )
 
 
@@ -193,10 +197,10 @@ class LayerPropertyDefaultValue(Float):
 
 @dataclasses.dataclass
 class LayerPropertyRaster:
-    data: LayerPropertyRasterData | None
+    data: LayerPropertyRasterData
     reference: LayerPropertyRasterReference | None
 
-    def __init__(self, data: LayerPropertyRasterData | None, reference: LayerPropertyRasterReference | None = None):
+    def __init__(self, data: LayerPropertyRasterData, reference: LayerPropertyRasterReference | None = None):
         self.data = data
         self.reference = reference
 
@@ -208,14 +212,14 @@ class LayerPropertyRaster:
 
     def to_dict(self):
         return {
-            'data': self.data.to_dict() if self.data is not None else None,
+            'data': self.data.to_dict(),
             'reference': self.reference.to_dict() if self.reference is not None else None
         }
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
-            data=LayerPropertyRasterData.from_dict(obj['data']) if 'data' in obj and obj['data'] is not None else None,
+            data=LayerPropertyRasterData.from_dict(obj['data']),
             reference=LayerPropertyRasterReference.from_dict(obj['reference']) if 'reference' in obj and obj['reference'] is not None else None
         )
 
@@ -384,24 +388,24 @@ class LayerProperties:
     top: LayerPropertyValues | None
     bottom: LayerPropertyValues
 
-    def with_updated_property(self, name: LayerPropertyName, value: LayerPropertyValues):
-        if name == LayerPropertyName.hk:
-            return self.with_updated_hk(value)
-        if name == LayerPropertyName.hani:
-            return self.with_updated_hani(value)
-        if name == LayerPropertyName.vka:
-            return self.with_updated_vka(value)
-        if name == LayerPropertyName.specific_storage:
-            return self.with_updated_specific_storage(value)
-        if name == LayerPropertyName.specific_yield:
-            return self.with_updated_specific_yield(value)
-        if name == LayerPropertyName.initial_head:
-            return self.with_updated_initial_head(value)
-        if name == LayerPropertyName.top:
-            return self.with_updated_top(value)
-        if name == LayerPropertyName.bottom:
-            return self.with_updated_bottom(value)
-        raise ValueError(f'Unknown property name: {name}')
+    def with_updated_property(self, property_name: LayerPropertyName, property_values: LayerPropertyValues):
+        if property_name == LayerPropertyName.hk:
+            return self.with_updated_hk(property_values)
+        if property_name == LayerPropertyName.hani:
+            return self.with_updated_hani(property_values)
+        if property_name == LayerPropertyName.vka:
+            return self.with_updated_vka(property_values)
+        if property_name == LayerPropertyName.specific_storage:
+            return self.with_updated_specific_storage(property_values)
+        if property_name == LayerPropertyName.specific_yield:
+            return self.with_updated_specific_yield(property_values)
+        if property_name == LayerPropertyName.initial_head:
+            return self.with_updated_initial_head(property_values)
+        if property_name == LayerPropertyName.top:
+            return self.with_updated_top(property_values)
+        if property_name == LayerPropertyName.bottom:
+            return self.with_updated_bottom(property_values)
+        raise ValueError(f'Unknown property name: {property_name}')
 
     def with_updated_hk(self, hk: LayerPropertyValues):
         return dataclasses.replace(self, hk=hk)
@@ -557,7 +561,7 @@ class Layer:
     def is_confined(self):
         return self.confinement == LayerConfinement.confined()
 
-    def get_property_value(self, property_name: LayerPropertyName) -> LayerPropertyValues | None:
+    def get_property_values(self, property_name: LayerPropertyName) -> LayerPropertyValues | None:
         return self.properties.get_property(property_name)
 
     def clone(self, layer_id: LayerId):
@@ -572,5 +576,5 @@ class Layer:
     def with_updated_confinement(self, confinement: LayerConfinement):
         return dataclasses.replace(self, confinement=confinement)
 
-    def with_updated_property(self, property_name: LayerPropertyName, property_value: LayerPropertyValues):
-        return dataclasses.replace(self, properties=self.properties.with_updated_property(property_name, property_value))
+    def with_updated_property(self, property_name: LayerPropertyName, property_values: LayerPropertyValues):
+        return dataclasses.replace(self, properties=self.properties.with_updated_property(property_name=property_name, property_values=property_values))

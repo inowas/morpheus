@@ -2,10 +2,11 @@ import {IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
-import {ILayer, ILayerConfinement, ILayerPropertyName, ILayerPropertyValues} from '../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayer, ILayerConfinement, ILayerPropertyName} from '../types/Layers.type';
 import {setLayers} from '../infrastructure/modelStore';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
+
 
 interface IUseLayers {
   layers: ILayer[] | null;
@@ -15,7 +16,7 @@ interface IUseLayers {
   onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => void;
   onChangeLayerOrder: (newOrderIds: string[]) => void;
   onChangeLayerConfinement: (layerId: string, confinement: ILayerConfinement) => void;
-  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => void;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => void;
   loading: boolean;
   error: IError | null;
 }
@@ -221,37 +222,94 @@ const useLayers = (projectId: string): IUseLayers => {
     await fetchLayers();
   };
 
-  const onChangeLayerProperty = async (layerId: string, propertyName: ILayerPropertyName, values: ILayerPropertyValues) => {
+  const onChangeLayerProperty = async (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => {
     if (!model) {
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    console.log('onChangeLayerProperty', layerId, propertyName, values);
 
-    const updateModelLayerPropertyValuesResult = await sendCommand<Commands.IUpdateModelLayerPropertyCommand>({
-      command_name: 'update_model_layer_property_command',
-      payload: {
-        project_id: projectId,
-        model_id: model.model_id,
-        layer_id: layerId,
-        property_name: propertyName,
-        property_default_value: values.value,
-        property_raster: values.raster,
-        property_zones: values.zones,
-      },
-    });
+    if (values.defaultValue) {
+      setLoading(true);
+      setError(null);
 
-    if (updateModelLayerPropertyValuesResult.err) {
-      setError({
-        message: updateModelLayerPropertyValuesResult.val.message,
-        code: updateModelLayerPropertyValuesResult.val.code,
+      const defaultValueResult = await sendCommand<Commands.IUpdateModelLayerPropertyDefaultValueCommand>({
+        command_name: 'update_model_layer_property_default_value_command',
+        payload: {
+          project_id: projectId,
+          model_id: model.model_id,
+          layer_id: layerId,
+          property_name: propertyName,
+          property_default_value: values.defaultValue,
+        },
       });
+
+      if (defaultValueResult.err) {
+        setError({
+          message: defaultValueResult.val.message,
+          code: defaultValueResult.val.code,
+        });
+        setLoading(false);
+        return;
+      }
+
       setLoading(false);
-      return;
     }
 
-    setLoading(false);
+    if ('rasterReference' in values) {
+      setLoading(true);
+      setError(null);
+
+      const rasterReferenceResult = await sendCommand<Commands.IUpdateModelLayerPropertyRasterReferenceCommand>({
+        command_name: 'update_model_layer_property_raster_reference_command',
+        payload: {
+          project_id: projectId,
+          model_id: model.model_id,
+          layer_id: layerId,
+          property_name: propertyName,
+          property_raster_reference: values.rasterReference || null,
+        },
+      });
+
+      if (rasterReferenceResult.err) {
+        setError({
+          message: rasterReferenceResult.val.message,
+          code: rasterReferenceResult.val.code,
+        });
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+    }
+
+    if ('zones' in values) {
+      setLoading(true);
+      setError(null);
+
+      const zonesResult = await sendCommand<Commands.IUpdateModelLayerPropertyZonesCommand>({
+        command_name: 'update_model_layer_property_zones_command',
+        payload: {
+          project_id: projectId,
+          model_id: model.model_id,
+          layer_id: layerId,
+          property_name: propertyName,
+          property_zones: values.zones || null,
+        },
+      });
+
+      if (zonesResult.err) {
+        setError({
+          message: zonesResult.val.message,
+          code: zonesResult.val.code,
+        });
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+    }
+
 
     await fetchLayers();
   };
