@@ -1,12 +1,11 @@
-from typing import Literal
-
 from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
-from .presentation.api.read.ReadModelLayerPropertyRequestHandler import ReadModelLayerPropertyRequestHandler
+from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ReadModelLayerPropertyImageRequestHandler, ImageOutputFormat
+from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler, DataOutputFormat
 from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
@@ -107,9 +106,20 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_model_get_layers_property(project_id: str, layer_id: str, property_name: str):
-        output_format: Literal['json', 'image', 'colorbar'] | str = request.args.get('format', 'json')
+        output_format = DataOutputFormat(request.args.get('format', DataOutputFormat.raster))
+        return ReadModelLayerPropertyDataRequestHandler().handle(
+            project_id=ProjectId.from_str(project_id),
+            layer_id=LayerId.from_str(layer_id),
+            property_name=LayerPropertyName.from_str(property_name),
+            output_format=output_format
+        )
 
-        return ReadModelLayerPropertyRequestHandler().handle(
+    @blueprint.route('/<project_id>/model/layers/<layer_id>/properties/<property_name>/image', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_get_layers_property_image(project_id: str, layer_id: str, property_name: str):
+        output_format = ImageOutputFormat(request.args.get('format', ImageOutputFormat.raster))
+        return ReadModelLayerPropertyImageRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),
             layer_id=LayerId.from_str(layer_id),
             property_name=LayerPropertyName.from_str(property_name),

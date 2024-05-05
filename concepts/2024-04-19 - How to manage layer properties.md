@@ -86,3 +86,61 @@ On the server the affected cells will be calculated and stored in the property o
 
 * Nothing at the moment
 
+# Get data over the api
+
+We can return two different data formats for the uploaded data:
+
+As image (png-file) in two different formats:
+
+1. as raster data (asc-type) rotation = 0 and equal cell size
+   URL: /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}/image&format=raster
+   URL:
+   /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}/image&format=raster_colorbar
+2. as model grid data (rotated) with equal cell size
+   URL: URL:
+   /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}/image&format=grid
+   URL: URL:
+   /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}/image&format=grid_colorbar
+
+As json-data in three different formats:
+
+1. as raster data (asc-type) with rotation 0 and equal cell size
+   URL: /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}&format=raster
+2. as mo del grid data with rotation value and equal cell size
+   URL: /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}&format=grid
+3. as model grid data with rotation value the original cell size
+   URL:
+   /api/v1/projects/{project_id}/models/{model_id}/layers/{layer_id}/properties/{property_id}&format=grid_original
+
+# Esri Ascii Grid format
+
+The Esri Ascii Grid format is a simple, text-based grid format that can be used to store gridded data. The format
+consists of a two-line header followed by a matrix of numeric values. The header contains the following information:
+
+* ncols: the number of columns in the grid
+* nrows: the number of rows in the grid
+* xllcorner: the x-coordinate of the lower-left corner of the grid
+* yllcorner: the y-coordinate of the lower-left corner of the grid
+* cellsize: the size of each cell in the grid
+* nodata_value: the value that represents missing data in the grid
+* The matrix of numeric values represents the gridded data, with each row of the matrix corresponding to a row in the
+  grid.
+* The Esri Ascii Grid format is commonly used in GIS applications to store elevation data, land cover data, and other
+  types of gridded data.
+
+Example:
+
+```
+ncols         4
+nrows         6
+xllcorner     0.0
+yllcorner     0.0
+cellsize      1.0
+NODATA_value  -9999
+-9999  2 4 5
+-9999  1 2 3
+-9999  2 4 5
+-9999  1 2 3
+-9999  2 4 5
+-9999  1 2 3
+```
