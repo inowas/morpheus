@@ -2,7 +2,7 @@ import json
 from enum import StrEnum
 
 from ....application.read.ModelReader import ModelReader
-from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService
+from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
 from ....types.Project import ProjectId
 from ....types.layers.Layer import LayerPropertyName, LayerId, Layer
@@ -45,7 +45,8 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'rotation': model.spatial_discretization.grid.rotation,
                 'min_value': min([min(row) for row in data]) if isinstance(data, list) else data,
                 'max_value': max([max(row) for row in data]) if isinstance(data, list) else data,
-                'data': data
+                'data': data,
+                'nodata_value': None,
             }), 200
 
         if output_format == DataOutputFormat.grid:
@@ -56,7 +57,7 @@ class ReadModelLayerPropertyDataRequestHandler:
 
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
 
-            raster = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, method='linear',
+            raster = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, method=InterpolationMethod.linear,
                                                                                  nodata_value=no_data_value)
 
             return json.dumps({
@@ -66,17 +67,17 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'cell_size_y': raster.get_cell_size_y(),
                 'min_value': raster.get_min_value(),
                 'max_value': raster.get_max_value(),
-                'data': raster.get_data()
+                'data': raster.get_data(),
+                'nodata_value': raster.get_nodata_value()
             }), 200
 
         if output_format == DataOutputFormat.raster:
-            no_data_value = -9999.0
-
             raster_interpolator = RasterInterpolationService()
             grid = model.spatial_discretization.grid
-
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
-            raster = raster_interpolator.grid_data_to_raster_data(grid=grid, data=data, target_resolution_x=target_resolution_x, method='linear', nodata_value=no_data_value)
+            cartesian_grid = grid.to_cartesian_grid(n_cols=target_resolution_x)
+
+            raster = raster_interpolator.grid_to_grid(source_grid=grid, target_grid=cartesian_grid, source_data=data, method=InterpolationMethod.linear, nodata_value=None)
 
             return json.dumps({
                 'n_cols': raster.get_n_cols(),
@@ -85,7 +86,8 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'cell_size_y': raster.get_cell_size_y(),
                 'min_value': raster.get_min_value(),
                 'max_value': raster.get_max_value(),
-                'data': raster.get_data()
+                'data': raster.get_data(),
+                'nodata_value': raster.get_nodata_value()
             }), 200
 
         return {'message': f'Invalid output format: {output_format}, valid options are {DataOutputFormat.__members__.keys()}'}, 400

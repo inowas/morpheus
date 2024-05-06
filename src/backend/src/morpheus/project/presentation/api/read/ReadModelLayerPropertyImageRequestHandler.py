@@ -4,7 +4,7 @@ from flask import send_file
 
 from ....application.read.ModelReader import ModelReader
 from ....infrastructure.assets.ImageCreationService import ImageCreationService
-from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService
+from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
 from ....types.Project import ProjectId
 from ....types.layers.Layer import LayerPropertyName, LayerId, Layer
@@ -49,22 +49,23 @@ class ReadModelLayerPropertyImageRequestHandler:
 
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
 
-            raster = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, method='linear',
+            raster = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, method=InterpolationMethod.linear,
                                                                                  nodata_value=no_data_value)
 
             image = image_creation_service.create_image_from_raster(raster=raster, cmap='jet_r')
-
             return send_file(image, mimetype='image/png', max_age=0)
 
         if output_format == ImageOutputFormat.grid_colorbar:
-            return {'message': 'Not implemented'}, 501
+            image = image_creation_service.create_colorbar_from_data(data=data, cmap='jet_r', no_data_value=-9999.0)
+            return send_file(image, mimetype='image/png', max_age=0)
 
         if output_format == ImageOutputFormat.raster:
             raster_interpolator = RasterInterpolationService()
             grid = model.spatial_discretization.grid
-
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
-            raster = raster_interpolator.grid_data_to_raster_data(grid=grid, data=data, target_resolution_x=target_resolution_x, method='linear', nodata_value=None)
+            cartesian_grid = grid.to_cartesian_grid(n_cols=target_resolution_x)
+
+            raster = raster_interpolator.grid_to_grid(source_grid=grid, target_grid=cartesian_grid, source_data=data, method=InterpolationMethod.linear, nodata_value=None)
 
             image = image_creation_service.create_image_from_raster(raster=raster, cmap='jet_r')
             return send_file(image, mimetype='image/png', max_age=0)

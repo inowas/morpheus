@@ -11,7 +11,7 @@ from morpheus.project.application.read.PermissionsReader import PermissionsReade
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents import ModelLayerPropertyUpdatedEvent
-from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService
+from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Asset import AssetId, GeoTiffAssetData, RasterBand
 from morpheus.project.types.Model import ModelId
@@ -121,7 +121,7 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
 
             xx_coords, yy_coords = grid.get_wgs_coordinates()
             output_coords = RasterCoordinates(xx_coords=xx_coords, yy_coords=yy_coords)
-            output_raster = interpolation_service.raster_to_raster(raster=input_raster, new_coords=output_coords, method='linear', nodata_value=-9999)
+            output_raster = interpolation_service.raster_to_raster(raster=input_raster, new_coords=output_coords, method=InterpolationMethod.linear, nodata_value=-9999)
 
             property_raster = LayerPropertyRaster(
                 reference=LayerPropertyRasterReference(asset_id=raster_asset_id.to_str(), band=raster_band.to_int()),

@@ -357,3 +357,77 @@ class Grid:
 
         polygon = ShapelyPolygon(geometry_4326)
         return (polygon.bounds[0], polygon.bounds[1]), (polygon.bounds[2], polygon.bounds[3])
+
+    def bbox_aspect_ratio(self) -> float:
+        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
+        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+
+        polygon_3857 = ShapelyPolygon((
+            (origin_3857_x, origin_3857_y),
+            (origin_3857_x + col_coordinates[-1], origin_3857_y),
+            (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
+            (origin_3857_x, origin_3857_y - row_coordinates[-1]),
+            (origin_3857_x, origin_3857_y),
+        ))
+
+        rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+        return (rotated_polygon_3857.bounds[2] - rotated_polygon_3857.bounds[0]) / (rotated_polygon_3857.bounds[3] - rotated_polygon_3857.bounds[1])
+
+    def to_cartesian_grid(self, n_cols: int) -> 'Grid':
+
+        aspect_ratio = self.bbox_aspect_ratio()
+        n_rows = int(n_cols / aspect_ratio)
+
+        relative_col_coordinates = []
+        for col in range(n_cols):
+            relative_col_coordinates.append(round(1 / n_cols + relative_col_coordinates[-1] if col > 0 else 0, 5))
+        relative_col_coordinates.append(1)
+
+        relative_row_coordinates = []
+        for row in range(n_rows):
+            relative_row_coordinates.append(round(1 / n_rows + relative_row_coordinates[-1] if row > 0 else 0, 5))
+        relative_row_coordinates.append(1)
+
+        (min_x, min_y), (max_x, max_y) = self.bbox()
+        polygon = Polygon(coordinates=[[
+            (min_x, max_y),
+            (max_x, max_y),
+            (max_x, min_y),
+            (min_x, min_y),
+            (min_x, max_y)
+        ]])
+
+        new_grid = Grid.from_polygon_with_relative_coordinates(
+            polygon=polygon,
+            rotation=Rotation.from_float(0.0),
+            relative_col_coordinates=relative_col_coordinates,
+            relative_row_coordinates=relative_row_coordinates
+        )
+
+        return new_grid
+
+    def to_grid_with_equal_cells(self, n_cols: int) -> 'Grid':
+        col_coordinates_relative = []
+        for col in range(n_cols):
+            col_coordinates_relative.append(round(1 / n_cols + col_coordinates_relative[-1] if col > 0 else 0, 5))
+        col_coordinates_relative.append(1)
+
+        aspect_ratio = self.total_width / self.total_height
+        n_rows = int(n_cols / aspect_ratio)
+
+        row_coordinates_relative = []
+        for row in range(n_rows):
+            row_coordinates_relative.append(round(1 / n_rows + row_coordinates_relative[-1] if row > 0 else 0, 5))
+        row_coordinates_relative.append(1)
+
+        polygon = self.bounding_box_geometry().geometry
+        if not isinstance(polygon, Polygon):
+            raise ValueError('Grid bounding box is not a polygon')
+
+        return Grid.from_polygon_with_relative_coordinates(
+            polygon=polygon,
+            rotation=self.rotation,
+            relative_col_coordinates=col_coordinates_relative,
+            relative_row_coordinates=row_coordinates_relative
+        )
