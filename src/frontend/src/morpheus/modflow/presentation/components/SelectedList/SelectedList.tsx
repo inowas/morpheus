@@ -64,10 +64,12 @@ const SelectedList = ({
       const selectedWithoutChecked: string[] = [];
       const updatedObservationSelection: string[] = [];
       listItems.forEach(item => {
-        selectedWithoutChecked.push(item.id);
-        item.observations.forEach(observation => {
-          updatedObservationSelection.push(observation.observation_id);
-        });
+        if (!checkedItems.includes(item.id)) {
+          selectedWithoutChecked.push(item.id);
+          item.observations.forEach(observation => {
+            updatedObservationSelection.push(observation.observation_id);
+          });
+        }
       });
       onSelect([...selectedWithoutChecked, ...selectedItems]);
       onSelectObservations([...updatedObservationSelection, ...selectedObservations]);
@@ -75,16 +77,17 @@ const SelectedList = ({
       const removableItemsId: string[] = [];
       const removableObservationsId: string[] = [];
       listItems.forEach(item => {
-        item.observations.forEach(observation => {
-          removableObservationsId.push(observation.observation_id);
-        });
-        removableItemsId.push(item.id);
+        if (!checkedItems.includes(item.id)) {
+          item.observations.forEach(observation => {
+            removableObservationsId.push(observation.observation_id);
+          });
+          removableItemsId.push(item.id);
+        }
       });
       onSelect(selectedItems.filter(item => !removableItemsId.includes(item)));
       onSelectObservations(selectedObservations.filter(item => !removableObservationsId.includes(item)));
     }
   }, [selectAllChecked]);
-
 
   const handleItemSelect = (itemId: string, metaPressed: boolean) => {
     let updatedSelection: string[];
