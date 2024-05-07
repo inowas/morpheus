@@ -91,7 +91,7 @@ def calculate_riv_boundary_stress_period_data(
                 yy_conductances.append(mean_data.conductance.to_float())
                 yy_riverbed_bottoms.append(mean_data.riverbed_bottom.to_float())
 
-            grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+            grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
             for cell in riv_boundary.affected_cells:
                 if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                     # if the cell is not part of the model

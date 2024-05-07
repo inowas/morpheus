@@ -15,7 +15,7 @@ from ...geometry.Feature import Feature
 from ...geometry.FeatureCollection import FeatureCollection
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class Grid:
     """
     Class that represents non-uniform rectilinear 2D grid.
@@ -83,6 +83,9 @@ class Grid:
     rotation: Rotation
     length_unit: LengthUnit
     crs = Crs.from_str('EPSG:3857')
+
+    _from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
+    _from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
     @classmethod
     def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> "Grid":
@@ -178,13 +181,13 @@ class Grid:
             'origin': self.origin.to_dict(),
             'rotation': self.rotation.to_value(),
             'length_unit': self.length_unit.to_value(),
-            'bounding_box': self.bbox(),
+            'bounding_box': self.get_wgs_bbox(),
         }
 
     def to_geojson(self) -> FeatureCollection:
-        features = [self.bounding_box_geometry()]
-        features += self.column_geometries()
-        features += self.row_geometries()
+        features = [self.get_wgs_outline_geometry()]
+        features += self.get_wgs_column_geometries()
+        features += self.get_wgs_row_geometries()
         return FeatureCollection(features=features)
 
     def with_updated_geometry(self, polygon: Polygon, preserve_absolute_coordinates: bool = False):
@@ -224,18 +227,41 @@ class Grid:
         row_coordinates = self.row_coordinates()
         return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
-    def get_wgs_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
-        cell_centers = self.get_cell_centers()
+    def get_mercator_cell_center_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
+        cell_centers = self.get_mercator_cell_centers()
         xx_coords = [[point.coordinates[0] for point in row] for row in cell_centers]
         yy_coords = [[point.coordinates[1] for point in row] for row in cell_centers]
         return xx_coords, yy_coords
 
-    def get_cell_centers(self) -> list[list[Point]]:
+    def get_mercator_cell_centers(self) -> list[list[Point]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols, n_rows = self.n_cols(), self.n_rows()
         centers = np.empty((n_rows, n_cols), dtype=Point)
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857 = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        origin_3857 = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        for row in range(self.n_rows()):
+            for col in range(self.n_cols()):
+                point_3857 = ShapelyPoint((
+                    origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2,
+                    origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
+                )
+
+                rotated_point_3857: ShapelyPoint = rotate(geom=point_3857, angle=self.rotation.to_float(), origin=origin_3857)  # type: ignore
+                centers[row][col] = Point(coordinates=rotated_point_3857.__geo_interface__['coordinates'])
+
+        return centers.tolist()
+
+    def get_wgs_cell_center_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
+        cell_centers = self.get_wgs_cell_centers()
+        xx_coords = [[point.coordinates[0] for point in row] for row in cell_centers]
+        yy_coords = [[point.coordinates[1] for point in row] for row in cell_centers]
+        return xx_coords, yy_coords
+
+    def get_wgs_cell_centers(self) -> list[list[Point]]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_cols, n_rows = self.n_cols(), self.n_rows()
+        centers = np.empty((n_rows, n_cols), dtype=Point)
+
+        origin_3857 = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
         for row in range(self.n_rows()):
             for col in range(self.n_cols()):
@@ -250,12 +276,11 @@ class Grid:
 
         return centers.tolist()
 
-    def get_cell_geometries(self) -> list[list[Polygon]]:
+    def get_wgs_cell_geometries(self) -> list[list[Polygon]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols, n_rows = self.n_cols(), self.n_rows()
         geometries = np.empty((n_rows, n_cols), dtype=Polygon)
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
         for row in range(n_rows):
@@ -273,13 +298,12 @@ class Grid:
                 geometries[row][col] = Polygon(coordinates=[geometry_4326])
         return geometries.tolist()
 
-    def row_geometries(self) -> list[Feature]:
+    def get_wgs_row_geometries(self) -> list[Feature]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_rows = self.n_rows()
         features = np.empty(n_rows, dtype=Polygon)
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
 
         for row in range(n_rows):
             polygon_3857 = ShapelyPolygon((
@@ -291,18 +315,16 @@ class Grid:
             ))
 
             rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
-            geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+            geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
             features[row] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'row': row, 'type': 'row'})
 
         return features.tolist()
 
-    def column_geometries(self) -> list[Feature]:
+    def get_wgs_column_geometries(self) -> list[Feature]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols = self.n_cols()
         features = np.empty(n_cols, dtype=Polygon)
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
 
         for col in range(n_cols):
             polygon_3857 = ShapelyPolygon((
@@ -314,16 +336,15 @@ class Grid:
             ))
 
             rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
-            geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+            geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
             features[col] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'col': col, 'type': 'col'})
 
         return features.tolist()
 
-    def bounding_box_geometry(self) -> Feature:
+    def get_wgs_outline_geometry(self) -> Feature:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
-        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
 
         polygon_3857 = ShapelyPolygon((
             (origin_3857_x, origin_3857_y),
@@ -334,14 +355,30 @@ class Grid:
         ))
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
-        geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+        geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
         return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box', **self.to_dict()})
 
-    def bbox(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+    def get_wgs_width_height(self) -> Tuple[float, float]:
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        corner_upper_left = ShapelyPoint((origin_3857_x, origin_3857_y))
+        corner_upper_right = ShapelyPoint((origin_3857_x + self.total_width), origin_3857_y)
+        corner_lower_left = ShapelyPoint(origin_3857_x, (origin_3857_y - self.total_height))
 
-        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+        rotated_corner_upper_left = rotate(corner_upper_left, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+        rotated_corner_upper_right = rotate(corner_upper_right, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+        rotated_corner_lower_left = rotate(corner_lower_left, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
+
+        corner_upper_left_4326 = ShapelyPoint((self._from_3857_to_4326.transform(rotated_corner_upper_left.x, rotated_corner_upper_left.y)))
+        corner_upper_right_4326 = ShapelyPoint((self._from_3857_to_4326.transform(rotated_corner_upper_right.x, rotated_corner_upper_right.y)))
+        corner_lower_left_4326 = ShapelyPoint((self._from_3857_to_4326.transform(rotated_corner_lower_left.x, rotated_corner_lower_left.y)))
+
+        width = corner_upper_left_4326.distance(corner_upper_right_4326)
+        height = corner_upper_left_4326.distance(corner_lower_left_4326)
+
+        return width, height
+
+    def get_wgs_bbox(self) -> tuple[float, float, float, float]:
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
 
         polygon_3857 = ShapelyPolygon((
@@ -353,14 +390,13 @@ class Grid:
         ))
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
-        geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
+        geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
 
-        polygon = ShapelyPolygon(geometry_4326)
-        return (polygon.bounds[0], polygon.bounds[1]), (polygon.bounds[2], polygon.bounds[3])
+        return ShapelyPolygon(geometry_4326).bounds
 
-    def bbox_aspect_ratio(self) -> float:
-        from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
-        origin_3857_x, origin_3857_y = from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+    def get_bbox_aspect_ratio(self) -> float:
+
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
 
         polygon_3857 = ShapelyPolygon((
@@ -376,7 +412,7 @@ class Grid:
 
     def to_cartesian_grid(self, n_cols: int) -> 'Grid':
 
-        aspect_ratio = self.bbox_aspect_ratio()
+        aspect_ratio = self.get_bbox_aspect_ratio()
         n_rows = int(n_cols / aspect_ratio)
 
         relative_col_coordinates = []
@@ -389,7 +425,7 @@ class Grid:
             relative_row_coordinates.append(round(1 / n_rows + relative_row_coordinates[-1] if row > 0 else 0, 5))
         relative_row_coordinates.append(1)
 
-        (min_x, min_y), (max_x, max_y) = self.bbox()
+        (min_x, min_y, max_x, max_y) = self.get_wgs_bbox()
         polygon = Polygon(coordinates=[[
             (min_x, max_y),
             (max_x, max_y),
@@ -421,7 +457,7 @@ class Grid:
             row_coordinates_relative.append(round(1 / n_rows + row_coordinates_relative[-1] if row > 0 else 0, 5))
         row_coordinates_relative.append(1)
 
-        polygon = self.bounding_box_geometry().geometry
+        polygon = self.get_wgs_outline_geometry().geometry
         if not isinstance(polygon, Polygon):
             raise ValueError('Grid bounding box is not a polygon')
 

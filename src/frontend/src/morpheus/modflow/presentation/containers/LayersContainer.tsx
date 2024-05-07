@@ -16,7 +16,17 @@ import LayersMap from '../components/ModelLayers/LayersMap';
 const LayersContainer = () => {
 
   const {projectId} = useParams();
-  const {layers, fetchLayerPropertyImage, onChangeLayerOrder, onChangeLayerConfinement, onChangeLayerMetadata,  onChangeLayerProperty, onCloneLayer, onDeleteLayer} = useLayers(projectId as string);
+  const {
+    layers,
+    fetchLayerPropertyImage,
+    fetchLayerPropertyData,
+    onChangeLayerOrder,
+    onChangeLayerConfinement,
+    onChangeLayerMetadata,
+    onChangeLayerProperty,
+    onCloneLayer,
+    onDeleteLayer,
+  } = useLayers(projectId as string);
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
   const mapRef: IMapRef = useRef(null);
@@ -48,6 +58,7 @@ const LayersContainer = () => {
                       onChangeLayerOrder={onChangeLayerOrder}
                       onChangeLayerProperty={onChangeLayerProperty}
                       fetchLayerPropertyImage={fetchLayerPropertyImage}
+                      fetchLayerPropertyData={fetchLayerPropertyData}
                       readOnly={isReadOnly}
                     />
                   </LeafletMapProvider>

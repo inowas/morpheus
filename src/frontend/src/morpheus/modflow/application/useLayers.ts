@@ -2,7 +2,7 @@ import {IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
-import {IChangeLayerPropertyValues, ILayer, ILayerConfinement, ILayerPropertyName} from '../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayer, ILayerConfinement, ILayerPropertyData, ILayerPropertyName} from '../types/Layers.type';
 import {setLayers} from '../infrastructure/modelStore';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
@@ -11,6 +11,7 @@ import {IRootState} from '../../store';
 interface IUseLayers {
   layers: ILayer[] | null;
   fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
+  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName, format?: 'raster' | 'grid') => Promise<ILayerPropertyData | null>;
   onCloneLayer: (layerId: string) => void;
   onDeleteLayer: (layerId: string) => void;
   onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => void;
@@ -21,7 +22,11 @@ interface IUseLayers {
   error: IError | null;
 }
 
+
+
 type IGetLayersResponse = ILayer[];
+type IGetLayerPropertyDataResponse = ILayerPropertyData;
+
 
 const useLayers = (projectId: string): IUseLayers => {
 
@@ -77,14 +82,25 @@ const useLayers = (projectId: string): IUseLayers => {
 
   const fetchLayerPropertyImage = async (layerId: string, propertyName: ILayerPropertyName): Promise<{ imageUrl: string, colorbarUrl: string } | null> => {
 
-    const imageResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}?format=image`, true);
-    const colorbarResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}?format=colorbar`, true);
+    const imageResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}/image?format=raster`, true);
+    const colorbarResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}/image?format=raster_colorbar`, true);
 
     if (imageResult.ok && colorbarResult.ok) {
       return {
         'imageUrl': URL.createObjectURL(imageResult.val),
         'colorbarUrl': URL.createObjectURL(colorbarResult.val),
       };
+    }
+
+    return null;
+  };
+
+  const fetchLayerPropertyData = async (layerId: string, propertyName: ILayerPropertyName, format: 'raster' | 'grid' = 'raster'): Promise<ILayerPropertyData | null> => {
+
+    const result = await httpGet<IGetLayerPropertyDataResponse>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}?format=${format}`);
+
+    if (result.ok) {
+      return result.val;
     }
 
     return null;
@@ -391,6 +407,7 @@ const useLayers = (projectId: string): IUseLayers => {
   return {
     layers: model?.layers || null,
     fetchLayerPropertyImage,
+    fetchLayerPropertyData,
     onCloneLayer,
     onDeleteLayer,
     onChangeLayerConfinement,

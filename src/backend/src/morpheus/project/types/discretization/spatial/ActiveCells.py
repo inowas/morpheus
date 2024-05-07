@@ -96,7 +96,7 @@ class ActiveCells:
     @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        geometries = grid.get_cell_geometries()
+        geometries = grid.get_wgs_cell_geometries()
         linestring = ShapelyLineString(linestring.coordinates)
 
         for col in range(grid.n_cols()):
@@ -111,7 +111,7 @@ class ActiveCells:
     def from_polygon(cls, polygon: Polygon, grid: Grid):
         cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         area = ShapelyPolygon(polygon.coordinates[0])
-        grid_cell_centers = grid.get_cell_centers()
+        grid_cell_centers = grid.get_wgs_cell_centers()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
                 center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
@@ -124,7 +124,7 @@ class ActiveCells:
     def from_multipolygon(cls, polygon: MultiPolygon, grid: Grid):
         cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         areas = ShapelyMultiPolygon(polygon.coordinates)
-        grid_cell_centers = grid.get_cell_centers()
+        grid_cell_centers = grid.get_wgs_cell_centers()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
                 center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
@@ -137,7 +137,7 @@ class ActiveCells:
     def from_point(cls, point: Point, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         point = ShapelyPoint(point.coordinates)
-        grid_cell_geometries = grid.get_cell_geometries()
+        grid_cell_geometries = grid.get_wgs_cell_geometries()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
                 grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[row][col].coordinates[0])
@@ -274,7 +274,7 @@ class ActiveCells:
         self.data.append(ActiveCell(col=col, row=row))
 
     def to_geojson(self, grid: Grid) -> GeometryCollection:
-        cells_geometries = grid.get_cell_geometries()
+        cells_geometries = grid.get_wgs_cell_geometries()
         cell_geometries = []
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):

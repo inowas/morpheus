@@ -90,3 +90,21 @@ export interface IZone {
   };
   value: number;
 }
+
+export interface ILayerPropertyData {
+  n_cols: number;
+  n_rows: number;
+  grid_height: number;
+  grid_width: number;
+  bounds: {
+    x_min: number;
+    y_min: number;
+    x_max: number;
+    y_max: number;
+  }
+  rotation: number;
+  min_value: number;
+  max_value: number;
+  no_data_value: number;
+  data: number[][];
+}

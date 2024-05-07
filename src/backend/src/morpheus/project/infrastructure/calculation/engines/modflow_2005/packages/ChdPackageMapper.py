@@ -83,7 +83,7 @@ def calculate_chd_boundary_stress_period_data(
                 yy_start_heads.append(mean_data.start_head.to_float())
                 yy_end_heads.append(mean_data.end_head.to_float())
 
-            grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+            grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
             for cell in chd_boundary.affected_cells:
                 if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                     # if the cell is not part of the model

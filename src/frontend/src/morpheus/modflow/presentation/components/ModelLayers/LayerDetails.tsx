@@ -1,11 +1,12 @@
 import React from 'react';
-import {IChangeLayerPropertyValues, ILayer, ILayerPropertyName, ILayerPropertyValues} from '../../../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayer, ILayerPropertyData, ILayerPropertyName} from '../../../types/Layers.type';
 import {Tab, TabPane} from 'common/components';
 import LayerConfinement from './LayerConfinement';
 import LayerPropertyValues from './LayerPropertyValues';
 import {ISpatialDiscretization} from '../../../types';
 
 interface IProps {
+  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName) => Promise<ILayerPropertyData | null>;
   fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   layer: ILayer;
   spatialDiscretization: ISpatialDiscretization;
@@ -13,7 +14,7 @@ interface IProps {
   onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => void;
 }
 
-const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, onChangeLayerProperty, fetchLayerPropertyImage}: IProps) => {
+const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, onChangeLayerProperty, fetchLayerPropertyImage, fetchLayerPropertyData}: IProps) => {
 
   const handleSubmitDefaultValueChange = (layerId: string, propertyName: ILayerPropertyName) => {
     return (defaultValue: IChangeLayerPropertyValues['defaultValue']) => onChangeLayerProperty(layerId, propertyName, {defaultValue});
@@ -21,7 +22,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
 
   const handleSubmitRasterReferenceChange = (layerId: string, propertyName: ILayerPropertyName) => {
     return (rasterReference: IChangeLayerPropertyValues['rasterReference']) => onChangeLayerProperty(layerId, propertyName, {rasterReference});
-  }
+  };
 
   return (
     <div className={'scrollWrapper-Y'}>
@@ -48,6 +49,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Top elevation',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'top')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'top')}
                 values={layer.properties.top}
                 spatialDiscretization={spatialDiscretization}
@@ -62,6 +64,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Bottom elevation',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'bottom')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'bottom')}
                 spatialDiscretization={spatialDiscretization}
                 values={layer.properties.bottom}
@@ -76,6 +79,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Hydraulic conductivity',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'hk')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'hk')}
                 spatialDiscretization={spatialDiscretization}
                 values={layer.properties.hk}
@@ -89,6 +93,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Horizontal Anisotropy',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'hani')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'hani')}
                 spatialDiscretization={spatialDiscretization}
                 values={layer.properties.hani}
@@ -103,6 +108,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Vertical hydraulic conductivity',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'vka')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'vka')}
                 spatialDiscretization={spatialDiscretization}
                 values={layer.properties.vka}
@@ -117,6 +123,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Specific storage',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'specific_storage')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'specific_storage')}
                 spatialDiscretization={spatialDiscretization}
                 values={layer.properties.specific_storage}
@@ -131,6 +138,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
             menuItem: 'Specific yield',
             render: () => <TabPane>
               <LayerPropertyValues
+                fetchLayerPropertyData={() => fetchLayerPropertyData(layer.layer_id, 'specific_yield')}
                 fetchLayerPropertyImage={() => fetchLayerPropertyImage(layer.layer_id, 'specific_yield')}
                 spatialDiscretization={spatialDiscretization}
                 values={layer.properties.specific_yield}

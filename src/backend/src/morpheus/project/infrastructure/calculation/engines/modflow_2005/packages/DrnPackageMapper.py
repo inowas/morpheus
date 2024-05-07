@@ -86,7 +86,7 @@ def calculate_drn_boundary_stress_period_data(
                 yy_stages.append(mean_data.stage.to_float())
                 yy_conductances.append(mean_data.conductance.to_float())
 
-            grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+            grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
             for cell in drn_boundary.affected_cells:
                 if spatial_discretization.affected_cells.is_active(cell.row, cell.col) is None:
                     # if the cell is not part of the model

@@ -1,13 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {IChangeLayerPropertyValues, ILayerPropertyValues} from '../../../types/Layers.type';
+import React, {useEffect, useMemo, useState} from 'react';
+import {IChangeLayerPropertyValues, ILayerPropertyData, ILayerPropertyValues} from '../../../types/Layers.type';
 import {Button, InfoTitle} from 'common/components';
 import isEqual from 'lodash.isequal';
 import {ISpatialDiscretization} from '../../../types';
-import {FeatureGroup, ImageOverlay} from 'react-leaflet';
-import Legend from './Legend';
+import {FeatureGroup, GeoJSON} from 'react-leaflet';
 import AssetsModalContainer from '../../containers/AssetsModalContainter';
+import {contours} from 'd3-contour';
+import {useColorMap} from 'common/hooks';
 
 interface IProps {
+  fetchLayerPropertyData?: () => Promise<ILayerPropertyData | null>;
   fetchLayerPropertyImage?: () => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   spatialDiscretization: ISpatialDiscretization;
   values: ILayerPropertyValues | null;
@@ -18,23 +20,56 @@ interface IProps {
   readOnly: boolean;
 }
 
-const LayerPropertyValues = ({spatialDiscretization, values, onSubmitDefaultValueChange, onSubmitRasterReferenceChange, readOnly, unit, fetchLayerPropertyImage}: IProps) => {
+const LayerPropertyValues = ({
+  values,
+  onSubmitDefaultValueChange,
+  onSubmitRasterReferenceChange,
+  readOnly,
+  unit,
+  fetchLayerPropertyData,
+}: IProps) => {
 
   const [layerPropertyValuesLocal, setLayerPropertyValuesLocal] = useState<ILayerPropertyValues | null>(values);
-  const [imgUrl, setImgUrl] = useState<string | null>(null);
-  const [colorbarUrl, setColorbarUrl] = useState<string | null>(null);
   const [showRasterFileUploadModal, setShowRasterFileUploadModal] = useState<boolean>(false);
+
+  const [layerPropertyData, setLayerPropertyData] = useState<ILayerPropertyData | null>(null);
+
+  const contourMultiPolygons = useMemo(() => {
+    if (!layerPropertyData) {
+      return null;
+    }
+
+    const contoursFunction = contours().size([layerPropertyData.n_cols, layerPropertyData.n_rows]);
+    const {x_min: xMin, y_max: yMax} = layerPropertyData.bounds;
+
+    const multiPolygons = contoursFunction(layerPropertyData.data.reduce((acc, row) => acc.concat(row), []));
+
+    const cellSizeX = layerPropertyData.grid_width / layerPropertyData.n_cols;
+    const cellSizeY = layerPropertyData.grid_height / layerPropertyData.n_rows;
+
+    return multiPolygons.map((mp) => {
+      mp.coordinates = mp.coordinates.map(coordinates => coordinates.map(positions => positions.map(([x, y]) => {
+        x = xMin + (x * cellSizeX);
+        y = yMax - (y * cellSizeY);
+        return [x, y];
+      })));
+
+      return mp;
+    });
+
+  }, [layerPropertyData]);
+
+  const color = useColorMap('gist_earth');
 
   useEffect(() => {
     if (values && !isEqual(values, layerPropertyValuesLocal)) {
       setLayerPropertyValuesLocal(values);
     }
 
-    if (fetchLayerPropertyImage) {
-      fetchLayerPropertyImage().then((data) => {
+    if (fetchLayerPropertyData) {
+      fetchLayerPropertyData().then((data) => {
         if (data) {
-          setImgUrl(data.imageUrl);
-          setColorbarUrl(data.colorbarUrl);
+          setLayerPropertyData(data);
         }
       });
     }
@@ -43,18 +78,25 @@ const LayerPropertyValues = ({spatialDiscretization, values, onSubmitDefaultValu
   }, [values]);
 
   const renderMapContent = () => {
-    const [[xMin, yMin], [xMax, yMax]] = spatialDiscretization.grid.bounding_box;
     return (
-      <FeatureGroup>
-        {spatialDiscretization.geometry && imgUrl && (
-          <ImageOverlay
-            url={imgUrl}
-            bounds={[[yMin, xMin], [yMax, xMax]]}
-            opacity={0.5}
-          />
-        )}
-        {colorbarUrl && <Legend colorbarUrl={colorbarUrl}/>}
-      </FeatureGroup>
+      <>
+        <FeatureGroup>
+          {layerPropertyData && contourMultiPolygons && contourMultiPolygons.map((mp, key) => {
+            const rgbColor = color(layerPropertyData.min_value / layerPropertyData.max_value * mp.value);
+            return (
+              <GeoJSON
+                key={key}
+                data={mp}
+                pathOptions={{
+                  color: `rgb(${rgbColor.join(',')})`,
+                  opacity: 0,
+                  weight: 0,
+                }}
+              />
+            );
+          })}
+        </FeatureGroup>
+      </>
     );
   };
 

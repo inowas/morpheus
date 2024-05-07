@@ -4,10 +4,11 @@ import isEqual from 'lodash.isequal';
 import {MovableAccordionList, IMovableAccordionItem, IMovableAccordionListAction} from 'common/components';
 
 import LayerDetails from './LayerDetails';
-import {IChangeLayerPropertyValues, ILayer, ILayerPropertyName, ILayerPropertyValues} from '../../../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayer, ILayerPropertyData, ILayerPropertyName} from '../../../types/Layers.type';
 import {ISpatialDiscretization} from '../../../types';
 
 interface IProps {
+  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName) => Promise<ILayerPropertyData | null>;
   fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   layers: ILayer[];
   spatialDiscretization: ISpatialDiscretization;
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 const LayersList = ({
+  fetchLayerPropertyData,
   fetchLayerPropertyImage,
   layers,
   spatialDiscretization,
@@ -79,6 +81,7 @@ const LayersList = ({
         spatialDiscretization={spatialDiscretization}
         onChangeLayerConfinement={handleChangeLayerConfinement}
         onChangeLayerProperty={onChangeLayerProperty}
+        fetchLayerPropertyData={fetchLayerPropertyData}
         fetchLayerPropertyImage={fetchLayerPropertyImage}
       />,
       editTitle: editTitle === layerLocal.layer_id,

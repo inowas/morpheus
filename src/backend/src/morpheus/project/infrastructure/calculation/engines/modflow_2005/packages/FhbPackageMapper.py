@@ -213,7 +213,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                     if isinstance(mean_head_data, HeadDataItem):
                         yy_values.append(mean_head_data.head.to_float())
 
-                grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+                grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
                 for cell in fhb_boundary.affected_cells:
                     if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                         # if the cell is not part of the model
@@ -295,7 +295,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                     if isinstance(mean_flow_data, FlowDataItem):
                         yy_values.append(mean_flow_data.flow.to_float())
 
-                grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+                grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
                 for cell in fhb_boundary.affected_cells:
                     if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                         # if the cell is not part of the model

@@ -11,13 +11,12 @@ from morpheus.project.application.read.PermissionsReader import PermissionsReade
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents import ModelLayerPropertyUpdatedEvent
-from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
+from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod, RasterData
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Asset import AssetId, GeoTiffAssetData, RasterBand
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.discretization.spatial.Raster import RasterCoordinates, RasterData, Raster
 from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, LayerPropertyRaster, LayerPropertyRasterData, Layer, LayerPropertyRasterReference
 
 
@@ -103,29 +102,31 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
             # read asset data
             asset_reader = get_asset_reader()  # AssetReader
             raster_asset_data = asset_reader.get_raster_asset_data(project_id=project_id, asset_id=raster_asset_id, band=raster_band.to_int())
+            raster_asset_no_data_value = asset_reader.get_raster_asset_no_data_value(project_id=project_id, asset_id=raster_asset_id)
 
             if not isinstance(raster_asset_data, GeoTiffAssetData):
                 raise ValueError(f'Asset {raster_asset_id.to_str()} not found in project {project_id.to_str()}')
 
-            raster_coordinates = asset_reader.get_raster_asset_coords(project_id=project_id, asset_id=raster_asset_id, bbox=grid.bbox())
+            raster_coordinates = asset_reader.get_raster_asset_coords(project_id=project_id, asset_id=raster_asset_id, bbox=grid.get_wgs_bbox())
             if raster_coordinates is None:
                 raise ValueError(f'Asset {raster_asset_id.to_str()} does not cover the model geometry')
 
             input_raster_xx, input_raster_yy = raster_coordinates
-            input_raster_coords = RasterCoordinates(xx_coords=input_raster_xx, yy_coords=input_raster_yy)
-            input_raster_data = RasterData(data=raster_asset_data.data, nodata_value=-9999)
-            input_raster = Raster(input_raster_coords, input_raster_data)
+            input_raster_data = RasterData(
+                xx_centers=input_raster_xx,
+                yy_centers=input_raster_yy,
+                bounds=grid.get_wgs_bbox(),
+                data=raster_asset_data.data,
+                nodata_value=raster_asset_no_data_value.to_float()
+            )
 
             # interpolate raster data to model geometry
             interpolation_service = RasterInterpolationService()
 
-            xx_coords, yy_coords = grid.get_wgs_coordinates()
-            output_coords = RasterCoordinates(xx_coords=xx_coords, yy_coords=yy_coords)
-            output_raster = interpolation_service.raster_to_raster(raster=input_raster, new_coords=output_coords, method=InterpolationMethod.linear, nodata_value=-9999)
-
+            data, nodata_value = interpolation_service.raster_data_to_grid_data(raster_data=input_raster_data, grid=grid, method=InterpolationMethod.linear, no_data_value=-9999)
             property_raster = LayerPropertyRaster(
                 reference=LayerPropertyRasterReference(asset_id=raster_asset_id.to_str(), band=raster_band.to_int()),
-                data=LayerPropertyRasterData(data=output_raster.data.get_data(), nodata_value=output_raster.data.get_nodata_value())
+                data=LayerPropertyRasterData(data=data, nodata_value=nodata_value)
             )
 
             event = ModelLayerPropertyUpdatedEvent.from_raster(

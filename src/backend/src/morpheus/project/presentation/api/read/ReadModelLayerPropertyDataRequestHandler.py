@@ -50,44 +50,54 @@ class ReadModelLayerPropertyDataRequestHandler:
             }), 200
 
         if output_format == DataOutputFormat.grid:
-            no_data_value = -9999.0
-
+            no_data_value = None
             raster_interpolator = RasterInterpolationService()
             grid = model.spatial_discretization.grid
-
-            target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
-
-            raster = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, method=InterpolationMethod.linear,
-                                                                                 nodata_value=no_data_value)
+            target_resolution_x = grid.n_cols() if grid.n_cols() < 200 else int(grid.n_cols() / 2)
+            result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x,
+                                                                                      method=InterpolationMethod.linear,
+                                                                                      no_data_value=no_data_value)
 
             return json.dumps({
-                'n_cols': raster.get_n_cols(),
-                'n_rows': raster.get_n_rows(),
-                'cell_size_x': raster.get_cell_size_x(),
-                'cell_size_y': raster.get_cell_size_y(),
-                'min_value': raster.get_min_value(),
-                'max_value': raster.get_max_value(),
-                'data': raster.get_data(),
-                'nodata_value': raster.get_nodata_value()
+                'n_cols': len(result_data[0]),
+                'n_rows': len(result_data),
+                'bounds': grid.get_wgs_bbox(),
+                'rotation': grid.rotation.to_float(),
+                'min_value': min([min(row) for row in result_data]),
+                'max_value': max([max(row) for row in result_data]),
+                'data': result_data,
+                'nodata_value': no_data_value,
             }), 200
 
         if output_format == DataOutputFormat.raster:
+            no_data_value = None
             raster_interpolator = RasterInterpolationService()
             grid = model.spatial_discretization.grid
-            target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
+            target_resolution_x = grid.n_cols() if grid.n_cols() < 200 else int(grid.n_cols() / 2)
             cartesian_grid = grid.to_cartesian_grid(n_cols=target_resolution_x)
 
-            raster = raster_interpolator.grid_to_grid(source_grid=grid, target_grid=cartesian_grid, source_data=data, method=InterpolationMethod.linear, nodata_value=None)
+            result_data = raster_interpolator.grid_to_grid(source_grid=grid, target_grid=cartesian_grid, source_data=data, method=InterpolationMethod.linear,
+                                                           no_data_value=no_data_value)
+
+            (x_min, y_min, x_max, y_max) = cartesian_grid.get_wgs_bbox()
+            grid_width, grid_height = cartesian_grid.get_wgs_width_height()
 
             return json.dumps({
-                'n_cols': raster.get_n_cols(),
-                'n_rows': raster.get_n_rows(),
-                'cell_size_x': raster.get_cell_size_x(),
-                'cell_size_y': raster.get_cell_size_y(),
-                'min_value': raster.get_min_value(),
-                'max_value': raster.get_max_value(),
-                'data': raster.get_data(),
-                'nodata_value': raster.get_nodata_value()
+                'n_cols': cartesian_grid.n_cols(),
+                'n_rows': cartesian_grid.n_rows(),
+                "grid_width": grid_width,
+                "grid_height": grid_height,
+                'bounds': {
+                    'x_min': x_min,
+                    'y_min': y_min,
+                    'x_max': x_max,
+                    'y_max': y_max,
+                },
+                'rotation': grid.rotation.to_float(),
+                'min_value': min([min(row) for row in result_data]),
+                'max_value': max([max(row) for row in result_data]),
+                'data': result_data,
+                'nodata_value': no_data_value,
             }), 200
 
         return {'message': f'Invalid output format: {output_format}, valid options are {DataOutputFormat.__members__.keys()}'}, 400
