@@ -1,4 +1,4 @@
-import {Accordion, Checkbox, HeaderContent, Icon, List, ListItem, Search} from 'semantic-ui-react';
+import {Accordion, Checkbox, Icon, List, ListItem} from 'semantic-ui-react';
 import {Button, DotsMenu} from 'common/components';
 import React, {useEffect, useState} from 'react';
 import {IBoundaries} from '../BoundariesLayers/type/BoundariesContent.type';
@@ -6,17 +6,18 @@ import styles from './SelectedList.module.less';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {getBoundariesByType} from '../BoundariesLayers/helpers/BoundariesContent.helpers';
+import {SelectedListHeader} from './SelectedListHeader';
 
 interface ISelectedListProps {
-    type?: string;
-    boundaries: IBoundaries[];
-    selectedItems: string[];
-    selectedObservations: string[];
-    onSelect: (id: string[]) => void;
-    onSelectObservations: (id: string[]) => void;
-    onRename: (id: string, name: string) => void;
-    onDelete: (id: string) => void;
-    onCopy: (id: string) => void;
+  type?: string;
+  boundaries: IBoundaries[];
+  selectedItems: string[];
+  selectedObservations: string[];
+  onSelect: (id: string[]) => void;
+  onSelectObservations: (id: string[]) => void;
+  onRename: (id: string, name: string, observationsId?: string) => void;
+  onDelete: (id: string, observationsId?: string) => void;
+  onCopy: (id: string, observationsId?: string) => void;
 }
 
 function findObservationIds(id: string, data: IBoundaries[]) {
@@ -48,6 +49,9 @@ const SelectedList = ({
   // Rename boundaries title
   const [openEditingTitle, setOpenEditingTitle] = useState<number | string | null>(null);
   const [inputValue, setInputValue] = useState('');
+  // Rename Observations title
+  const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
+  const [inputObservationValue, setInputObservationValue] = useState('');
 
 
   useEffect(() => {
@@ -79,7 +83,8 @@ const SelectedList = ({
       onSelect(selectedItems.filter(item => !removableItemsId.includes(item)));
       onSelectObservations(selectedObservations.filter(item => !removableObservationsId.includes(item)));
     }
-  }, [selectAllChecked, listItems]);
+  }, [selectAllChecked]);
+
 
   const handleItemSelect = (itemId: string, metaPressed: boolean) => {
     let updatedSelection: string[];
@@ -136,19 +141,40 @@ const SelectedList = ({
   const handleSearchChange = (event: React.MouseEvent<HTMLElement>, data: any) => {
     const query = data.value.toLowerCase();
     setSearchQuery(query);
-    const filteredItems = boundaries.filter(item =>
+    const filteredItems = getBoundariesByType(boundaries, type).filter(item =>
       item.name.toLowerCase().includes(query),
     );
     setListItems(filteredItems);
   };
 
   const handleDeleteSelected = () => {
-    const removableItemsId = listItems.map((item) => {
-      return item.id;
+    // Reset "Select All" checkbox
+    setSelectAllChecked(false);
+
+    // Update selected items list
+    const updatedSelectedItems = selectedItems.filter(itemId => {
+      const foundItem = listItems.find(item => item.id === itemId);
+      if (foundItem) {
+        onDelete(itemId);
+        return false;
+      }
+      return true;
     });
-    removableItemsId.forEach(id => {
-      onDelete(id);
-    });
+    onSelect(updatedSelectedItems);
+
+    // Update selected observations list
+    const selectedObservationsToRemove = listItems
+      .filter(item => selectedItems.includes(item.id))
+      .map(item => findObservationIds(item.id, boundaries))
+      .flat();
+    const updatedSelectedObservations = selectedObservations.filter(observationId =>
+      !selectedObservationsToRemove.includes(observationId),
+    );
+    onSelectObservations(updatedSelectedObservations);
+
+    // Update the list of items
+    const updatedListItems = listItems.filter(item => !selectedItems.includes(item.id));
+    setListItems(updatedListItems);
   };
 
   const toggleAccordion = (index: number) => {
@@ -163,24 +189,12 @@ const SelectedList = ({
       {/**/}
       {/*Header with select all checkbox*/}
       {/**/}
-      <HeaderContent className={styles.header}>
-        <Checkbox
-          disabled={0 === listItems.length}
-          className={styles.checkbox}
-          checked={0 === listItems.length ? false : selectAllChecked}
-          onChange={() => setSelectAllChecked(prev => !prev)}
-        />
-        <span>
-          Search
-        </span>
-        <Search
-          disabled={0 === listItems.length}
-          icon={false}
-          onSearchChange={handleSearchChange}
-          value={searchQuery}
-          className={styles.search}
-        />
-      </HeaderContent>
+      <SelectedListHeader
+        checked={0 === listItems.length ? false : selectAllChecked}
+        onChange={() => setSelectAllChecked(prev => !prev)}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+      />
       {/**/}
       {/*Body with list items*/}
       {/**/}
@@ -230,11 +244,10 @@ const SelectedList = ({
                       setOpenEditingTitle(null);
                     }}
                     >
-                                            Apply
+                      Apply
                     </button>
                   </div>
                 )}
-
               </div>
               <div
                 className={styles.buttonsWrapper}
@@ -255,7 +268,6 @@ const SelectedList = ({
                       icon: 'edit',
                       onClick: () => setOpenEditingTitle(item.id),
                     },
-
                     {text: 'Copy', icon: 'copy', onClick: () => onCopy(item.id)},
                     {text: 'Delete', icon: 'remove', onClick: () => onDelete(item.id)},
                   ]}
@@ -283,11 +295,58 @@ const SelectedList = ({
                         onClick={() => handleObservationSelect(observation.observation_id)}
                       >
                         <div className={styles.observationItem}>
-                          <Checkbox
-                            className={styles.checkboxObservation}
-                            checked={selectedObservations.includes(observation.observation_id)}
+                          <span>
+                            <Checkbox
+                              className={styles.checkboxObservation}
+                              checked={selectedObservations.includes(observation.observation_id)}
+                            />
+                            {openEditingObservationTitle !== observation.observation_id && <div style={{
+                              textOverflow: 'ellipsis',
+                              overflow: 'hidden',
+                              whiteSpace: 'nowrap',
+                            }}
+                            >
+                              {observation.observation_name}
+                            </div>}
+                          </span>
+                          {openEditingObservationTitle === observation.observation_id && (
+                            <div className={styles.renameField}>
+                              <input
+                                type='text'
+                                value={inputObservationValue}
+                                placeholder={observation.observation_name}
+                                onChange={(e) => {
+                                  const newTitle = e.target.value;
+                                  setInputObservationValue(newTitle);
+                                }}
+                              />
+                              <button onClick={() => {
+                                if (!inputObservationValue) {
+                                  setOpenEditingObservationTitle(null);
+                                  return;
+                                }
+                                onRename(item.id, inputObservationValue, observation.observation_id);
+                                setInputObservationValue('');
+                                setOpenEditingObservationTitle(null);
+                              }}
+                              >
+                                Apply
+                              </button>
+                            </div>
+                          )}
+                          <DotsMenu
+                            className={`${styles.dotsMenu} ${checkedItems.includes(observation.observation_id) ? styles.disabled : ''}`}
+                            disabled={openEditingObservationTitle === observation.observation_id}
+                            actions={[
+                              {
+                                text: 'Rename Item',
+                                icon: 'edit',
+                                onClick: () => setOpenEditingObservationTitle(observation.observation_id),
+                              },
+                              {text: 'Copy', icon: 'copy', onClick: () => onCopy(item.id, observation.observation_id)},
+                              {text: 'Delete', icon: 'remove', onClick: () => onDelete(item.id, observation.observation_id)},
+                            ]}
                           />
-                          {observation.observation_name}
                         </div>
 
                       </ListItem>
@@ -305,16 +364,17 @@ const SelectedList = ({
           disabled={0 === selectedItems.length}
           onClick={handleDeleteSelected}
         >
-                    Delete selected <FontAwesomeIcon icon={faTrashCan}/>
+          Delete selected <FontAwesomeIcon icon={faTrashCan}/>
         </Button>
         <Button
           className='buttonLink'
           disabled={0 === selectedItems.length}
         >
-                    Download selected <FontAwesomeIcon icon={faDownload}/></Button>
+          Download selected <FontAwesomeIcon icon={faDownload}/></Button>
       </div>
     </>
   );
 };
 
 export default SelectedList;
+

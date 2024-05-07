@@ -17,10 +17,11 @@ const BoundariesContent: React.FC = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedObservation, setSelectedObservation] = useState<string[]>([]);
 
-  React.useEffect(() => {
-    console.log(boundaries);
-    console.log(selectedItems);
-  }, [selectedItems]);
+  // React.useEffect(() => {
+  //   console.log('boundaries ', boundaries);
+  //   console.log('selectedItems ', selectedItems);
+  //   console.log('selectedObservation ', selectedObservation);
+  // }, [boundaries, selectedItems, selectedObservation]);
 
   const handleSelectItem = (items: string[]) => {
     setSelectedItems(items);
@@ -30,27 +31,115 @@ const BoundariesContent: React.FC = () => {
     setSelectedObservation(items);
   };
 
-  const handleBoundarieRename = (id: string | number, newTitle: string) => {
-    boundaries.forEach((boundary) => {
-      if (boundary.id === id) {
-        boundary.name = newTitle;
-      }
-    });
+  const handleItemRename = (id: string | number, newTitle: string, observationId?: string) => {
+    const itemToRenameIndex = boundaries.findIndex(boundaryItem => boundaryItem.id === id);
+    if (-1 === itemToRenameIndex) return;
+
+    const boundaryToRename = boundaries[itemToRenameIndex];
+
+    // If observationId is provided, rename only that observation
+    if (observationId) {
+      const newObservations = boundaryToRename.observations.map(obs => {
+        if (obs.observation_id === observationId) {
+          return {
+            ...obs,
+            observation_name: newTitle,
+          };
+        }
+        return obs;
+      });
+
+      const newBoundaries = boundaries.map((boundaryItem, index) => {
+        if (index === itemToRenameIndex) {
+          return {
+            ...boundaryItem,
+            observations: newObservations,
+          };
+        }
+        return boundaryItem;
+      });
+
+      setBoundaries(newBoundaries);
+    } else {
+      // If observationId is not provided, rename the full boundary item
+      const newBoundaries = boundaries.map((boundaryItem, index) => {
+        if (index === itemToRenameIndex) {
+          return {
+            ...boundaryItem,
+            name: newTitle,
+          };
+        }
+        return boundaryItem;
+      });
+
+      setBoundaries(newBoundaries);
+    }
   };
 
-  const handleBoundarieDelete = (id: number | string) => {
-    setBoundaries(prevState => prevState.filter(boundary => boundary.id !== id));
-  };
+  const handleItemDelete = (id: number | string, observationId?: string) => {
+    // If observationId is provided, delete only that observation
+    if (observationId) {
+      const itemToDeleteIndex = boundaries.findIndex(boundaryItem => boundaryItem.id === id);
+      if (-1 === itemToDeleteIndex) return;
+      const boundaryToDelete = boundaries[itemToDeleteIndex];
+      const newObservations = boundaryToDelete.observations.filter(obs => obs.observation_id !== observationId);
 
-  const handleBoundarieCopy = (id: number | string) => {
+      const newBoundaries = boundaries.map((boundaryItem, index) => {
+        if (index === itemToDeleteIndex) {
+          return {
+            ...boundaryItem,
+            observations: newObservations,
+          };
+        }
+        return boundaryItem;
+      });
+
+      setBoundaries(newBoundaries);
+    } else {
+      // If observationId is not provided, delete the full boundary item
+      setBoundaries(prevState => prevState.filter(boundary => boundary.id !== id));
+    }
+  };
+  
+  const handleItemCopy = (id: number | string, observationId?: string) => {
     const itemToCopyIndex = boundaries.findIndex(boundaryItem => boundaryItem.id === id);
     if (-1 === itemToCopyIndex) return;
-    const newId = uuidv4();
-    const copiedItem = {...boundaries[itemToCopyIndex], id: newId};
-    const newBoundaries = [...boundaries];
-    newBoundaries.splice(itemToCopyIndex + 1, 0, copiedItem);
-    setBoundaries(newBoundaries);
+    const boundaryToCopy = boundaries[itemToCopyIndex];
+
+    // If observationId is provided, find and copy only that observation
+    if (observationId) {
+      const observationToCopyIndex = boundaryToCopy.observations.findIndex(obs => obs.observation_id === observationId);
+      if (-1 !== observationToCopyIndex) {
+        const observationToCopy = boundaryToCopy.observations.find(obs => obs.observation_id === observationId);
+        const newObservationId = uuidv4();
+        const newName = observationToCopy!.observation_name!.includes('copy') ? observationToCopy!.observation_name : `${observationToCopy!.observation_name} copy`;
+        const copiedObservation = {...boundaryToCopy.observations[observationToCopyIndex], observation_id: newObservationId, observation_name: newName};
+        const newObservations = [...boundaryToCopy.observations];
+        newObservations.splice(observationToCopyIndex + 1, 0, copiedObservation);
+
+        const newBoundaries = boundaries.map((boundaryItem, index) => {
+          if (index === itemToCopyIndex) {
+            return {
+              ...boundaryItem,
+              observations: newObservations,
+            };
+          }
+          return boundaryItem;
+        });
+
+        setBoundaries(newBoundaries);
+      }
+    } else {
+      // If observationId is not provided, copy the full boundary item
+      const newId = uuidv4();
+      const newName = boundaryToCopy.name.includes('copy') ? boundaryToCopy.name : `${boundaryToCopy.name} copy`;
+      const copiedItem = {...boundaryToCopy, id: newId, name: newName};
+      const newBoundaries = [...boundaries];
+      newBoundaries.splice(itemToCopyIndex + 1, 0, copiedItem);
+      setBoundaries(newBoundaries);
+    }
   };
+
 
   return <>
     <DataGrid>
@@ -77,7 +166,6 @@ const BoundariesContent: React.FC = () => {
                   <Grid.Grid
                     columns={2}
                     stackable={true}
-                    responsive={true}
                     variant='secondary'
                   >
                     <Grid.Column width={9}>
@@ -88,9 +176,9 @@ const BoundariesContent: React.FC = () => {
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
                         onSelectObservations={handleSelectObservation}
-                        onRename={handleBoundarieRename}
-                        onDelete={handleBoundarieDelete}
-                        onCopy={handleBoundarieCopy}
+                        onRename={handleItemRename}
+                        onDelete={handleItemDelete}
+                        onCopy={handleItemCopy}
                       />
                     </Grid.Column>
                     <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -120,7 +208,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                                                            Table
+                              Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -136,11 +224,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                                                            Chart
+                              Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                                                        Chart
+                            Chart
                           </TabPane>,
                         },
                       ]}
@@ -170,7 +258,6 @@ const BoundariesContent: React.FC = () => {
                   <Grid.Grid
                     columns={2}
                     stackable={true}
-                    responsive={true}
                     variant='secondary'
                   >
                     <Grid.Column width={9}>
@@ -181,9 +268,9 @@ const BoundariesContent: React.FC = () => {
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
                         onSelectObservations={handleSelectObservation}
-                        onRename={handleBoundarieRename}
-                        onDelete={handleBoundarieDelete}
-                        onCopy={handleBoundarieCopy}
+                        onRename={handleItemRename}
+                        onDelete={handleItemDelete}
+                        onCopy={handleItemCopy}
                       />
                     </Grid.Column>
                     <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -213,7 +300,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                                                            Table
+                              Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -229,11 +316,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                                                            Chart
+                              Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                                                        Chart
+                            Chart
                           </TabPane>,
                         },
                       ]}
@@ -263,7 +350,6 @@ const BoundariesContent: React.FC = () => {
                   <Grid.Grid
                     columns={2}
                     stackable={true}
-                    responsive={true}
                     variant='secondary'
                   >
                     <Grid.Column width={9}>
@@ -273,10 +359,10 @@ const BoundariesContent: React.FC = () => {
                         selectedItems={selectedItems}
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
-                        onRename={handleBoundarieRename}
+                        onRename={handleItemRename}
                         onSelectObservations={handleSelectObservation}
-                        onDelete={handleBoundarieDelete}
-                        onCopy={handleBoundarieCopy}
+                        onDelete={handleItemDelete}
+                        onCopy={handleItemCopy}
                       />
                     </Grid.Column>
                     <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -306,7 +392,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                                                            Table
+                              Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -322,11 +408,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                                                            Chart
+                              Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                                                        Chart
+                            Chart
                           </TabPane>,
                         },
                       ]}
@@ -356,7 +442,6 @@ const BoundariesContent: React.FC = () => {
                   <Grid.Grid
                     columns={2}
                     stackable={true}
-                    responsive={true}
                     variant='secondary'
                   >
                     <Grid.Column width={9}>
@@ -366,10 +451,10 @@ const BoundariesContent: React.FC = () => {
                         selectedItems={selectedItems}
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
-                        onRename={handleBoundarieRename}
+                        onRename={handleItemRename}
                         onSelectObservations={handleSelectObservation}
-                        onDelete={handleBoundarieDelete}
-                        onCopy={handleBoundarieCopy}
+                        onDelete={handleItemDelete}
+                        onCopy={handleItemCopy}
                       />
                     </Grid.Column>
                     <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -399,7 +484,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                                                            Table
+                              Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -415,11 +500,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                                                            Chart
+                              Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                                                        Chart
+                            Chart
                           </TabPane>,
                         },
                       ]}
@@ -449,7 +534,6 @@ const BoundariesContent: React.FC = () => {
                   <Grid.Grid
                     columns={2}
                     stackable={true}
-                    responsive={true}
                     variant='secondary'
                   >
                     <Grid.Column width={9}>
@@ -458,10 +542,10 @@ const BoundariesContent: React.FC = () => {
                         selectedItems={selectedItems}
                         selectedObservations={selectedObservation}
                         onSelect={handleSelectItem}
-                        onRename={handleBoundarieRename}
+                        onRename={handleItemRename}
                         onSelectObservations={handleSelectObservation}
-                        onDelete={handleBoundarieDelete}
-                        onCopy={handleBoundarieCopy}
+                        onDelete={handleItemDelete}
+                        onCopy={handleItemCopy}
                       />
                     </Grid.Column>
                     <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -490,7 +574,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                                                            Table
+                              Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -505,11 +589,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                                                            Chart
+                              Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                                                        Chart
+                            Chart
                           </TabPane>,
                         },
                       ]}
