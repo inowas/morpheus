@@ -17,12 +17,6 @@ const BoundariesContent: React.FC = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedObservation, setSelectedObservation] = useState<string[]>([]);
 
-  // React.useEffect(() => {
-  //   console.log('boundaries ', boundaries);
-  //   console.log('selectedItems ', selectedItems);
-  //   console.log('selectedObservation ', selectedObservation);
-  // }, [boundaries, selectedItems, selectedObservation]);
-
   const handleSelectItem = (items: string[]) => {
     setSelectedItems(items);
   };
@@ -100,7 +94,7 @@ const BoundariesContent: React.FC = () => {
       setBoundaries(prevState => prevState.filter(boundary => boundary.id !== id));
     }
   };
-  
+
   const handleItemCopy = (id: number | string, observationId?: string) => {
     const itemToCopyIndex = boundaries.findIndex(boundaryItem => boundaryItem.id === id);
     if (-1 === itemToCopyIndex) return;
