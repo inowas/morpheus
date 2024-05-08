@@ -12,10 +12,11 @@ export interface IDotsMenuAction {
 
 interface IDotsMenuProps {
   actions: IDotsMenuAction[];
+  className?: string;
   style?: React.CSSProperties;
 }
 
-const DotsMenu: React.FC<IDotsMenuProps> = ({actions, style}) => {
+const DotsMenu: React.FC<DotsMenuProps> = ({actions, style, className}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
@@ -31,10 +32,10 @@ const DotsMenu: React.FC<IDotsMenuProps> = ({actions, style}) => {
 
   return (
     <Popup
-      className={styles.dotsPopup}
+      className={styles.dotsMenuPopup}
       trigger={
         <Button
-          className={styles.dotsMenuButton}
+          className={`${styles.dotsMenuButton} ${className ? className : ''}`}
           icon="ellipsis horizontal"
           onClick={(e: React.MouseEvent<HTMLElement>) => handleToggle(e)}
           style={style}
