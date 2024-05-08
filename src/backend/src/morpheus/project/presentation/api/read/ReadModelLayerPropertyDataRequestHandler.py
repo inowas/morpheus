@@ -22,17 +22,19 @@ class DataOutputFormat(StrEnum):
 
 class ReadModelLayerPropertyDataRequestHandler:
 
-    def get_min_max(self, data: list[list[float | None]], no_data_value: float | None) -> tuple[float, float]:
+    def get_min_max(self, data: list[list[float | None]] | list[list[float]], no_data_value: float | None) -> tuple[float, float]:
         min_value = np.inf
         for row in data:
             for value in row:
-                if value != no_data_value and value < min_value:
-                    min_value = value
+                if value is not None:
+                    if value != no_data_value and value < min_value:
+                        min_value = value
         max_value = -np.inf
         for row in data:
             for value in row:
-                if value != no_data_value and value > max_value:
-                    max_value = value
+                if value is not None:
+                    if value != no_data_value and value > max_value:
+                        max_value = value
 
         return min_value, max_value
 
