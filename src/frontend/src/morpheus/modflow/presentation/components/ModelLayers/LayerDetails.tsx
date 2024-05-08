@@ -24,6 +24,10 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
     return (rasterReference: IChangeLayerPropertyValues['rasterReference']) => onChangeLayerProperty(layerId, propertyName, {rasterReference});
   };
 
+  const handleSubmitZoneChange = (layerId: string, propertyName: ILayerPropertyName) => {
+    return (zones: IChangeLayerPropertyValues['zones']) => onChangeLayerProperty(layerId, propertyName, {zones});
+  };
+
   return (
     <div className={'scrollWrapper-Y'}>
       <Tab
@@ -55,6 +59,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 spatialDiscretization={spatialDiscretization}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'top')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'top')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'top')}
                 readOnly={false}
                 unit={'m asl'}
               />
@@ -70,6 +75,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 values={layer.properties.bottom}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'bottom')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'bottom')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'bottom')}
                 readOnly={false}
                 unit={'m asl'}
               />
@@ -85,6 +91,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 values={layer.properties.hk}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'hk')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'hk')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'hk')}
                 readOnly={false}
                 unit={'m/d'}
               />
@@ -99,6 +106,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 values={layer.properties.hani}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'hani')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'hani')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'hani')}
                 readOnly={false}
                 unit={'m/d'}
               />
@@ -114,6 +122,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 values={layer.properties.vka}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'vka')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'vka')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'vka')}
                 readOnly={false}
                 unit={'m/d'}
               />
@@ -129,6 +138,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 values={layer.properties.specific_storage}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'specific_storage')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'specific_storage')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'specific_storage')}
                 readOnly={false}
                 unit={'1/m'}
               />
@@ -144,6 +154,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 values={layer.properties.specific_yield}
                 onSubmitDefaultValueChange={handleSubmitDefaultValueChange(layer.layer_id, 'specific_yield')}
                 onSubmitRasterReferenceChange={handleSubmitRasterReferenceChange(layer.layer_id, 'specific_yield')}
+                onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'specific_yield')}
                 readOnly={false}
                 unit={'-'}
               />

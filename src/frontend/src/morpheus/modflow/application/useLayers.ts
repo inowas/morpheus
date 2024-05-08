@@ -23,7 +23,6 @@ interface IUseLayers {
 }
 
 
-
 type IGetLayersResponse = ILayer[];
 type IGetLayerPropertyDataResponse = ILayerPropertyData;
 
@@ -243,9 +242,7 @@ const useLayers = (projectId: string): IUseLayers => {
       return;
     }
 
-    console.log('onChangeLayerProperty', layerId, propertyName, values);
-
-    if (values.defaultValue) {
+    if ('defaultValue' in values && values.defaultValue !== undefined) {
       setLoading(true);
       setError(null);
 

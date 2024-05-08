@@ -29,8 +29,10 @@ const RasterFileInput = ({onSubmit, error, readOnly}: IRasterFileInput) => {
       <Button
         content={'Upload raster file'}
         onClick={() => fileInputRef.current?.click()}
-        size={'tiny'}
         disabled={readOnly}
+        icon={'upload'}
+        color={'blue'}
+        fluid={true}
       />
       {error && <div style={{color: 'red'}}>{error}</div>}
       <input

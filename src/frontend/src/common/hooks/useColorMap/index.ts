@@ -1,4 +1,4 @@
-import useColorMap, {IColorScale, IUseColorMap} from './useColorMap';
+import useColorMap, {IColorMap, IUseColorMap} from './useColorMap';
 
 export default useColorMap;
-export type {IColorScale, IUseColorMap};
+export type {IColorMap, IUseColorMap};

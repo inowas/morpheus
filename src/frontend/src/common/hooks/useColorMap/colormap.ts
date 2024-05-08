@@ -2,7 +2,7 @@
 Add contents of data.js here:
  */
 
-export type IColorScale = 'jet' | 'jet_r' | 'gist_earth' | 'gist_earth_r' | string;
+export type IColorMap = 'jet' | 'jet_r' | 'gist_earth' | 'gist_earth_r' | string;
 
 interface IData {
   [key: string]: {
@@ -43,7 +43,7 @@ const qualitative = (x: number, colors: number[][]): [number, number, number] =>
   return [r, g, b];
 };
 
-const evaluateCMap = (x: number, name: IColorScale, reverse: boolean): [number, number, number] => {
+const evaluateCMap = (x: number, name: IColorMap, reverse: boolean): [number, number, number] => {
   /**
    * Evaluate colormap `name` at some value `x`.
    * @param {number} x - The value (between 0 and 1) at which to evaluate the colormap.
@@ -54,12 +54,12 @@ const evaluateCMap = (x: number, name: IColorScale, reverse: boolean): [number, 
 
   // Ensure that the value of `x` is valid (i.e., 0 <= x <= 1)
   if (!(0 <= x && 1 >= x)) {
-    alert('Illegal value for x! Must be in [0, 1].');
+    throw new Error('Illegal value for x! Must be in [0, 1].');
   }
 
   // Ensure that `name` is a valid colormap
   if (!(name in data)) {
-    alert('Colormap ' + name + 'does not exist!');
+    throw new Error(`Colormap ${name} not found.`);
   }
 
   // We can get the reverse colormap by evaluating colormap(1-x)
@@ -73,13 +73,13 @@ const evaluateCMap = (x: number, name: IColorScale, reverse: boolean): [number, 
 
   if (interpolate) {
     return interpolated(x, colors);
-  } else {
-    return qualitative(x, colors);
   }
+
+  return qualitative(x, colors);
 };
 
 
-const partial = (name: IColorScale): ((x: number) => [number, number, number]) => {
+const partial = (name: IColorMap): ((x: number) => [number, number, number]) => {
   if (name.endsWith('_r')) {
     return function (x: number) {
       return evaluateCMap(x, name.substring(0, name.length - 2), true);
@@ -91,7 +91,7 @@ const partial = (name: IColorScale): ((x: number) => [number, number, number]) =
   };
 };
 
-const getColorScale = (name: IColorScale) => {
+const getColorScale = (name: IColorMap) => {
   return partial(name);
 };
 

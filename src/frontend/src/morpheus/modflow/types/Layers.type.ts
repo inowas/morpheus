@@ -84,10 +84,7 @@ export interface IChangeLayerPropertyValues {
 
 export interface IZone {
   zone_id?: string;
-  geometry: {
-    geometry: Polygon | MultiPolygon;
-    coordinates: number[][][];
-  };
+  geometry: Polygon | MultiPolygon;
   value: number;
 }
 

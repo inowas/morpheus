@@ -1,6 +1,8 @@
 import json
 from enum import StrEnum
 
+import numpy as np
+
 from ....application.read.ModelReader import ModelReader
 from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
@@ -19,6 +21,21 @@ class DataOutputFormat(StrEnum):
 
 
 class ReadModelLayerPropertyDataRequestHandler:
+
+    def get_min_max(self, data: list[list[float | None]], no_data_value: float | None) -> tuple[float, float]:
+        min_value = np.inf
+        for row in data:
+            for value in row:
+                if value != no_data_value and value < min_value:
+                    min_value = value
+        max_value = -np.inf
+        for row in data:
+            for value in row:
+                if value != no_data_value and value > max_value:
+                    max_value = value
+
+        return min_value, max_value
+
     def handle(self, project_id: ProjectId, layer_id: LayerId, property_name: LayerPropertyName, output_format: DataOutputFormat):
 
         model_reader = ModelReader()
@@ -58,13 +75,15 @@ class ReadModelLayerPropertyDataRequestHandler:
                                                                                       method=InterpolationMethod.linear,
                                                                                       no_data_value=no_data_value)
 
+            min_value, max_value = self.get_min_max(result_data, no_data_value)
+
             return json.dumps({
                 'n_cols': len(result_data[0]),
                 'n_rows': len(result_data),
                 'bounds': grid.get_wgs_bbox(),
                 'rotation': grid.rotation.to_float(),
-                'min_value': min([min(row) for row in result_data]),
-                'max_value': max([max(row) for row in result_data]),
+                'min_value': min_value,
+                'max_value': max_value,
                 'data': result_data,
                 'nodata_value': no_data_value,
             }), 200
@@ -81,6 +100,7 @@ class ReadModelLayerPropertyDataRequestHandler:
 
             (x_min, y_min, x_max, y_max) = cartesian_grid.get_wgs_bbox()
             grid_width, grid_height = cartesian_grid.get_wgs_width_height()
+            min_value, max_value = self.get_min_max(result_data, no_data_value)
 
             return json.dumps({
                 'n_cols': cartesian_grid.n_cols(),
@@ -94,8 +114,8 @@ class ReadModelLayerPropertyDataRequestHandler:
                     'y_max': y_max,
                 },
                 'rotation': grid.rotation.to_float(),
-                'min_value': min([min(row) for row in result_data]),
-                'max_value': max([max(row) for row in result_data]),
+                'min_value': min_value,
+                'max_value': max_value,
                 'data': result_data,
                 'nodata_value': no_data_value,
             }), 200

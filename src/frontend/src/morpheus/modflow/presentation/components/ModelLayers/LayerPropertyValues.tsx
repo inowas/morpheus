@@ -1,12 +1,13 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {IChangeLayerPropertyValues, ILayerPropertyData, ILayerPropertyValues} from '../../../types/Layers.type';
-import {Button, InfoTitle} from 'common/components';
 import isEqual from 'lodash.isequal';
 import {ISpatialDiscretization} from '../../../types';
-import {FeatureGroup, GeoJSON} from 'react-leaflet';
 import AssetsModalContainer from '../../containers/AssetsModalContainter';
-import {contours} from 'd3-contour';
-import {useColorMap} from 'common/hooks';
+import LayerPropertyValuesMap from './LayerPropertyValuesMap';
+import {GeoJSON} from 'geojson';
+import LayerPropertyValuesDefaultValue from './LayerPropertyValuesDefaultValue';
+import LayerPropertyValuesRaster from './LayerPropertyValuesRaster';
+import LayerPropertyValuesZones from './LayerPropertyValuesZones';
 
 interface IProps {
   fetchLayerPropertyData?: () => Promise<ILayerPropertyData | null>;
@@ -15,7 +16,7 @@ interface IProps {
   values: ILayerPropertyValues | null;
   onSubmitDefaultValueChange: (value: IChangeLayerPropertyValues['defaultValue']) => void;
   onSubmitRasterReferenceChange: (raster: IChangeLayerPropertyValues['rasterReference']) => void;
-  onSubmitZoneChange?: (zones: IChangeLayerPropertyValues['zones']) => void;
+  onSubmitZoneChange: (zones: IChangeLayerPropertyValues['zones']) => void;
   unit?: string;
   readOnly: boolean;
 }
@@ -24,42 +25,16 @@ const LayerPropertyValues = ({
   values,
   onSubmitDefaultValueChange,
   onSubmitRasterReferenceChange,
+  onSubmitZoneChange,
   readOnly,
   unit,
   fetchLayerPropertyData,
 }: IProps) => {
 
   const [layerPropertyValuesLocal, setLayerPropertyValuesLocal] = useState<ILayerPropertyValues | null>(values);
-  const [showRasterFileUploadModal, setShowRasterFileUploadModal] = useState<boolean>(false);
-
   const [layerPropertyData, setLayerPropertyData] = useState<ILayerPropertyData | null>(null);
+  const [showFileUploadModal, setShowFileUploadModal] = useState<'raster' | 'shapefile' | false>(false);
 
-  const contourMultiPolygons = useMemo(() => {
-    if (!layerPropertyData) {
-      return null;
-    }
-
-    const contoursFunction = contours().size([layerPropertyData.n_cols, layerPropertyData.n_rows]);
-    const {x_min: xMin, y_max: yMax} = layerPropertyData.bounds;
-
-    const multiPolygons = contoursFunction(layerPropertyData.data.reduce((acc, row) => acc.concat(row), []));
-
-    const cellSizeX = layerPropertyData.grid_width / layerPropertyData.n_cols;
-    const cellSizeY = layerPropertyData.grid_height / layerPropertyData.n_rows;
-
-    return multiPolygons.map((mp) => {
-      mp.coordinates = mp.coordinates.map(coordinates => coordinates.map(positions => positions.map(([x, y]) => {
-        x = xMin + (x * cellSizeX);
-        y = yMax - (y * cellSizeY);
-        return [x, y];
-      })));
-
-      return mp;
-    });
-
-  }, [layerPropertyData]);
-
-  const color = useColorMap('gist_earth');
 
   useEffect(() => {
     if (values && !isEqual(values, layerPropertyValuesLocal)) {
@@ -77,108 +52,62 @@ const LayerPropertyValues = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
-  const renderMapContent = () => {
-    return (
-      <>
-        <FeatureGroup>
-          {layerPropertyData && contourMultiPolygons && contourMultiPolygons.map((mp, key) => {
-            const rgbColor = color(layerPropertyData.min_value / layerPropertyData.max_value * mp.value);
-            return (
-              <GeoJSON
-                key={key}
-                data={mp}
-                pathOptions={{
-                  color: `rgb(${rgbColor.join(',')})`,
-                  opacity: 0,
-                  weight: 0,
-                }}
-              />
-            );
-          })}
-        </FeatureGroup>
-      </>
-    );
-  };
 
   const handleSelectRasterFile = (assetId: string, band: number = 0) => onSubmitRasterReferenceChange({asset_id: assetId, band: band});
+  const handleSelectShapeFile = (assetId: string, data: GeoJSON) => console.log('handleSelectShapeFile', assetId, data);
+
+  const renderOptionalFileUploadModal = () => {
+    if ('raster' === showFileUploadModal) {
+      return (
+        <AssetsModalContainer
+          onClose={() => setShowFileUploadModal(false)}
+          onSelectRasterFile={handleSelectRasterFile}
+        />
+      );
+    }
+
+    if ('shapefile' === showFileUploadModal) {
+      return (
+        <AssetsModalContainer
+          onClose={() => setShowFileUploadModal(false)}
+          onSelectShapefile={handleSelectShapeFile}
+        />
+      );
+    }
+
+    return null;
+  };
+  const renderMapContent = () => {
+    if (layerPropertyData) {
+      return <LayerPropertyValuesMap data={layerPropertyData} colorMap={'gist_earth'}/>;
+    }
+  };
 
   return (
     <>
-      <div>
-        <InfoTitle
-          title='Zones'
-          description='You can upload or draw Polygones on map to provide one value for a specific area.'
-        />
-        <div>No zones specified</div>
-        <Button size={'tiny'}>Choose file</Button>
-      </div>
-      <div style={{marginTop: 20}}>
-        <InfoTitle
-          title='Raster'
-          description='You can upload a raster file to provide values for the specified property for each cell of the model.'
-        />
+      <LayerPropertyValuesZones
+        zones={layerPropertyValuesLocal?.zones || []}
+        onSubmit={onSubmitZoneChange}
+        readOnly={readOnly}
+      />
 
-        {undefined !== layerPropertyValuesLocal?.raster?.reference?.asset_id && layerPropertyValuesLocal?.raster?.reference?.asset_id == values?.raster?.reference?.asset_id ? (
-          <Button
-            size={'tiny'}
-            icon={'trash'}
-            color={'red'}
-            onClick={() => onSubmitRasterReferenceChange(null)}
-          />
-        ) : (
-          <Button
-            size={'tiny'}
-            icon={'upload'}
-            color={'blue'}
-            onClick={() => setShowRasterFileUploadModal(true)}
-          />
-        )}
+      <LayerPropertyValuesRaster
+        value={layerPropertyValuesLocal?.raster?.reference}
+        onSubmit={onSubmitRasterReferenceChange}
+        readOnly={readOnly}
+        style={{marginTop: 20}}
+      />
 
-        {layerPropertyValuesLocal?.raster?.reference?.asset_id !== values?.raster?.reference?.asset_id && (
-          <Button
-            size={'tiny'}
-            content={'Save Raster File'}
-            onClick={() => {
-              if (layerPropertyValuesLocal?.raster && onSubmitRasterReferenceChange) {
-                onSubmitRasterReferenceChange(layerPropertyValuesLocal.raster.reference);
-              }
-            }}
-          />
-        )}
-
-      </div>
-      <div style={{marginTop: 20}}>
-        <InfoTitle
-          title='Layer default value'
-          description='You can provide a default value for the specified property for the whole layer.'
-        />
-        <input
-          type="number"
-          value={layerPropertyValuesLocal?.value || 0}
-          onChange={(e) => {
-            if (layerPropertyValuesLocal) {
-              setLayerPropertyValuesLocal({...layerPropertyValuesLocal, value: Number(e.target.value)});
-            }
-          }}
-          disabled={readOnly}
-        />{unit}
-      </div>
-      <div>
-        {layerPropertyValuesLocal?.value !== values?.value && (
-          <button onClick={() => onSubmitDefaultValueChange(layerPropertyValuesLocal?.value)}>
-            Save
-          </button>
-        )}
-      </div>
+      <LayerPropertyValuesDefaultValue
+        value={layerPropertyValuesLocal?.value || 0}
+        onSubmit={(value) => onSubmitDefaultValueChange(value)}
+        readOnly={readOnly}
+        unit={unit}
+        style={{marginTop: 20}}
+      />
 
       {renderMapContent()}
-
-      {showRasterFileUploadModal && (
-        <AssetsModalContainer
-          onClose={() => setShowRasterFileUploadModal(false)}
-          onSelectRasterFile={handleSelectRasterFile}
-        />
-      )}
+      {renderOptionalFileUploadModal()}
     </>
   );
 };
