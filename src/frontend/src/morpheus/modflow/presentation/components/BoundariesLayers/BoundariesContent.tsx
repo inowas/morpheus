@@ -8,7 +8,7 @@ import {BoundariesForm} from './BoundariesForm/';
 import {MenuItem, TabPane} from 'semantic-ui-react';
 import {SelectedList} from '../SelectedList';
 import {v4 as uuidv4} from 'uuid';
-
+import SearchComponent from '../../../../../common/components/SearchComponent/SearchComponent';
 
 const BoundariesContent: React.FC = () => {
 
@@ -107,7 +107,11 @@ const BoundariesContent: React.FC = () => {
         const observationToCopy = boundaryToCopy.observations.find(obs => obs.observation_id === observationId);
         const newObservationId = uuidv4();
         const newName = observationToCopy!.observation_name!.includes('copy') ? observationToCopy!.observation_name : `${observationToCopy!.observation_name} copy`;
-        const copiedObservation = {...boundaryToCopy.observations[observationToCopyIndex], observation_id: newObservationId, observation_name: newName};
+        const copiedObservation = {
+          ...boundaryToCopy.observations[observationToCopyIndex],
+          observation_id: newObservationId,
+          observation_name: newName,
+        };
         const newObservations = [...boundaryToCopy.observations];
         newObservations.splice(observationToCopyIndex + 1, 0, copiedObservation);
 
@@ -134,13 +138,19 @@ const BoundariesContent: React.FC = () => {
     }
   };
 
-
   return <>
     <DataGrid>
       <SectionTitle title={'MODEL BOUNDARIES'}/>
+      <SearchComponent
+        onSearch={(searchText) => console.log(searchText)}
+        buttonText={'Add new boundary'}
+      />
       <AccordionRef
-        defaultActiveIndex={[0]}
+        defaultActiveIndex={0}
         className='accordionPrimary'
+        // exclusive value - if true, only one panel can be open at a time
+        // exclusive={false}
+        // defaultActiveIndex={[0]}
         panels={[
           {
             key: 1,
@@ -202,7 +212,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                              Table
+                                                            Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -218,11 +228,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                              Chart
+                                                            Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                            Chart
+                                                        Chart
                           </TabPane>,
                         },
                       ]}
@@ -294,7 +304,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                              Table
+                                                            Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -310,11 +320,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                              Chart
+                                                            Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                            Chart
+                                                        Chart
                           </TabPane>,
                         },
                       ]}
@@ -386,7 +396,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                              Table
+                                                            Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -402,11 +412,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                              Chart
+                                                            Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                            Chart
+                                                        Chart
                           </TabPane>,
                         },
                       ]}
@@ -478,7 +488,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                              Table
+                                                            Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -494,11 +504,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                              Chart
+                                                            Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                            Chart
+                                                        Chart
                           </TabPane>,
                         },
                       ]}
@@ -568,7 +578,7 @@ const BoundariesContent: React.FC = () => {
                         {
                           menuItem: (
                             <MenuItem key='table'>
-                              Table
+                                                            Table
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
@@ -583,11 +593,11 @@ const BoundariesContent: React.FC = () => {
                             <MenuItem
                               key='Chart'
                             >
-                              Chart
+                                                            Chart
                             </MenuItem>
                           ),
                           render: () => <TabPane attached={false}>
-                            Chart
+                                                        Chart
                           </TabPane>,
                         },
                       ]}
@@ -599,8 +609,8 @@ const BoundariesContent: React.FC = () => {
             isOpen: false,
           },
         ]}
-        exclusive={false}
       />
+
     </DataGrid>
   </>
   ;
