@@ -1,4 +1,4 @@
-import {AccordionRef, DataGrid, Grid, InfoTitle, SectionTitle, Tab} from 'common/components';
+import {AccordionRef, Button, DataGrid, Grid, InfoTitle, SectionTitle, Tab} from 'common/components';
 import React, {useState} from 'react';
 import {IBoundaries} from './type/BoundariesContent.type';
 import {getBoundariesByType} from './helpers/BoundariesContent.helpers';
@@ -9,6 +9,8 @@ import {MenuItem, TabPane} from 'semantic-ui-react';
 import {SelectedList} from '../SelectedList';
 import {v4 as uuidv4} from 'uuid';
 import SearchComponent from '../../../../../common/components/SearchComponent/SearchComponent';
+import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const BoundariesContent: React.FC = () => {
 
@@ -237,6 +239,26 @@ const BoundariesContent: React.FC = () => {
                         },
                       ]}
                     />
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      marginTop: '10px',
+                      marginLeft: 'auto',
+                    }}
+                    >
+                      <Button
+                        className='buttonLink'
+                        disabled={0 === selectedItems.length}
+                        onClick={() => console.log('general_head')}
+                      >
+                                                Delete all values <FontAwesomeIcon icon={faTrashCan}/>
+                      </Button>
+                      <Button
+                        className='buttonLink'
+                        disabled={0 === selectedItems.length}
+                      >
+                                                Download <FontAwesomeIcon icon={faDownload}/></Button>
+                    </div>
                   </Grid.Grid>
                 </>
               ),
