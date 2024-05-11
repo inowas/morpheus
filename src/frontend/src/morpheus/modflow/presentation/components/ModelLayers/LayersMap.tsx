@@ -1,7 +1,9 @@
+import * as L from 'leaflet';
+import '@geoman-io/leaflet-geoman-free';
+
 import React, {useEffect} from 'react';
 import {FeatureGroup, Polygon as LeafletPolygon, useMap} from 'react-leaflet';
 import {IMapRef, Map} from 'common/components/Map';
-import * as L from 'leaflet';
 import {MapRef} from 'common/components/Map/Map';
 import {ISpatialDiscretization} from '../../../types';
 

@@ -1,6 +1,5 @@
-import {IAsset, IAssetData, IAssetId, IAssetRasterData, IError} from '../types';
+import {IAsset, IAssetData, IAssetId, IAssetRasterData, IAssetShapefileData, IError} from '../types';
 import {useApi} from '../incoming';
-import {GeoJSON} from 'geojson';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
 import {setAssets, updateAsset, setLoading, removeAsset, setError} from '../infrastructure/assetsStore';
@@ -16,7 +15,7 @@ interface IUseAssets {
   fetchAssetMetadata: (assetId: IAssetId) => Promise<IAsset | undefined>;
   deleteAsset: (assetId: IAssetId) => Promise<IAssetId | undefined>;
   processRasterFile: (rasterFile: File) => Promise<IAssetRasterData>;
-  processShapefile: (zipFile: File) => Promise<GeoJSON>;
+  processShapefile: (zipFile: File) => Promise<IAssetShapefileData>;
   loading: boolean;
   error?: IError;
 }
@@ -144,7 +143,7 @@ const useAssets = (projectId: string): IUseAssets => {
     }
   };
 
-  const processShapefile = async (zipFile: File): Promise<GeoJSON> => {
+  const processShapefile = async (zipFile: File): Promise<IAssetShapefileData> => {
     // upload shape file to server
     // when successfully uploaded, get shape file metadata from server
     // load shapefile data from server as geojson and show in a modal
@@ -156,12 +155,12 @@ const useAssets = (projectId: string): IUseAssets => {
       return Promise.reject('Failed to upload shapefile.');
     }
 
-    const geojson = await fetchAssetData(assetId) as unknown as GeoJSON | undefined;
-    if (!geojson) {
+    const shapeFileData = await fetchAssetData(assetId) as IAssetShapefileData | undefined;
+    if (!shapeFileData) {
       return Promise.reject('Failed to fetch shape file data.');
     }
 
-    return Promise.resolve(geojson);
+    return Promise.resolve(shapeFileData as IAssetShapefileData);
   };
 
   const processRasterFile = async (rasterFile: File): Promise<IAssetRasterData> => {

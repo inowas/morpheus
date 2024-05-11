@@ -4,27 +4,34 @@ import './Legend.less';
 import {useMap} from 'react-leaflet';
 
 interface IProps {
-  colorbarUrl: string | null;
+  value: number | null;
+  getRgbColor: (value: number) => string;
+  grades: number[];
 }
 
-const Legend = ({colorbarUrl}: IProps) => {
+const Legend = ({value, getRgbColor, grades}: IProps) => {
 
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
 
   useEffect(() => {
-    if (map && colorbarUrl) {
+    if (map) {
       map.removeControl(legend);
 
       legend.onAdd = () => {
-        const div = L.DomUtil.create('div', 'legend');
-        div.innerHTML = '<img src="' + colorbarUrl + '" alt="legend" style="width: 80%; height: auto;">';
+        const div = L.DomUtil.create('div', 'legend_info legend');
+        div.innerHTML = '<h4>Legend</h4>';
+        div.innerHTML += `<p>Value: ${value || 'N/A'}</p>`;
+        for (var i = 0; i < grades.length; i++) {
+          div.innerHTML += '<i style="background:' + getRgbColor(grades[i] + 1) + '"></i> ' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
         return div;
       };
 
       legend.addTo(map);
     }
-  }, [colorbarUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, grades]);
 
   useEffect(() => {
     return () => {

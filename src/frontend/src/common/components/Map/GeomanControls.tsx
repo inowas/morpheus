@@ -45,32 +45,16 @@ const GeomanControls = ({
         return;
       }
 
+      if (map.pm.controlsVisible()) {
+        map.pm.removeControls();
+      }
+
       if (map.pm.disableDraw) {
         map.pm.disableDraw();
       }
 
-      if (map.pm.disableGlobalEditMode) {
-        map.pm.disableGlobalEditMode();
-      }
-
-      if (map.pm.disableGlobalRemovalMode) {
-        map.pm.disableGlobalRemovalMode();
-      }
-
-      if (map.pm.disableGlobalDragMode) {
-        map.pm.disableGlobalDragMode();
-      }
-
       if (map.pm.disableGlobalCutMode) {
         map.pm.disableGlobalCutMode();
-      }
-
-      if (map.pm.disableGlobalRotateMode) {
-        map.pm.disableGlobalRotateMode();
-      }
-
-      if (map.pm.disableGlobalDragMode) {
-        map.pm.disableGlobalDragMode();
       }
 
       if (map.pm.disableGlobalCutMode) {
@@ -81,12 +65,14 @@ const GeomanControls = ({
         map.pm.removeControls();
       }
 
+
       if (onUnmount) {
         onUnmount();
       }
 
       setMounted(false);
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

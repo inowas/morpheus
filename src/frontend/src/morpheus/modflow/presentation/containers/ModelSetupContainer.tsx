@@ -58,7 +58,8 @@ const ModelSetupContainer = () => {
   const handleSubmitShapeFile = async (zipFile: File) => {
     setShapeFileError(null);
     try {
-      const geoJson = await processShapefile(zipFile);
+      const assetShapefileData = await processShapefile(zipFile);
+      const geoJson = assetShapefileData.data;
       if ('Polygon' === geoJson.type) {
         setGeometry(geoJson);
       }
@@ -73,8 +74,6 @@ const ModelSetupContainer = () => {
           return setGeometry(polygon.geometry as Polygon);
         }
       }
-
-      console.log(geoJson);
 
       setShapeFileError({
         code: 400,

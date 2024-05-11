@@ -582,6 +582,9 @@ definitions:
           zone_id:
             type: string
             example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          name:
+            type: string
+            example: Zone 1
           geometry:
             oneOf:
               - "$ref": "#/definitions/components/Polygon"

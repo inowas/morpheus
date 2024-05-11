@@ -3,6 +3,7 @@ import {ILayerPropertyData} from '../../../types/Layers.type';
 import {FeatureGroup, GeoJSON} from 'react-leaflet';
 import {contours} from 'd3-contour';
 import {IColorMap, useColorMap} from 'common/hooks';
+import Legend from './Legend';
 
 interface IProps {
   data: ILayerPropertyData;
@@ -17,7 +18,8 @@ const LayerPropertyValuesMap = ({data, colorMap = 'gist_earth', minValue: minVal
   const {getRgbColor} = useColorMap(colorMap);
 
   const [minValue, setMinValue] = useState<number>(minValueProp || Math.round(data.min_value * Math.pow(10, precision)) / Math.pow(10, precision));
-  const [maxValue, setMaxValue] = useState<number>(maxValueProp || Math.round(data.min_value * Math.pow(10, precision)) / Math.pow(10, precision));
+  const [maxValue, setMaxValue] = useState<number>(maxValueProp || Math.round(data.max_value * Math.pow(10, precision)) / Math.pow(10, precision));
+  const [value, setValue] = useState<number | null>(null);
 
   useEffect(() => {
     if (minValueProp) {
@@ -65,22 +67,38 @@ const LayerPropertyValuesMap = ({data, colorMap = 'gist_earth', minValue: minVal
 
   return (
     <FeatureGroup key={'contourLayer'}>
-      {contourMultiPolygons.map((mp, key) => (
-        <GeoJSON
-          key={JSON.stringify(mp) + key}
-          data={mp}
-          onEachFeature={(feature, layer) => {
-            // @ts-ignore // Todo: Fix this later
-            const value = feature.value as number || 'N/A';
-            layer.on('click', () => layer.bindPopup(`Value: ${value}`).openPopup());
-          }}
-          pathOptions={{
-            color: getRgbColor(mp.value, minValue, maxValue),
-            opacity: 0,
-            weight: 0,
-          }}
-        />
-      ))}
+      {contourMultiPolygons.map((mp, key) => {
+        const rgbColor = getRgbColor(mp.value, minValue, maxValue);
+        return (
+          <GeoJSON
+            key={JSON.stringify(mp) + key}
+            data={mp}
+            onEachFeature={(feature, layer) => {
+              // @ts-ignore // Todo: Fix this later
+              layer.on('mouseover', () => {
+                setValue(mp.value);
+                // Todo show this value in Legend
+              });
+              layer.on('mouseout', () => {
+                setValue(null);
+              });
+            }}
+            pmIgnore={true}
+            pathOptions={{
+              fillOpacity: .5,
+              weight: .25,
+              opacity: 1,
+              color: rgbColor,
+              fillColor: rgbColor,
+            }}
+          />
+        );
+      })}
+      <Legend
+        value={value}
+        grades={contourMultiPolygons.map(mp => mp.value)}
+        getRgbColor={(v) => getRgbColor(v, minValue, maxValue)}
+      />
     </FeatureGroup>
   );
 };

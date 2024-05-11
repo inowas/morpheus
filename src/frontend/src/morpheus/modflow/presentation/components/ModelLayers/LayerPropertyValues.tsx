@@ -35,7 +35,6 @@ const LayerPropertyValues = ({
   const [layerPropertyData, setLayerPropertyData] = useState<ILayerPropertyData | null>(null);
   const [showFileUploadModal, setShowFileUploadModal] = useState<'raster' | 'shapefile' | false>(false);
 
-
   useEffect(() => {
     if (values && !isEqual(values, layerPropertyValuesLocal)) {
       setLayerPropertyValuesLocal(values);
@@ -77,6 +76,7 @@ const LayerPropertyValues = ({
 
     return null;
   };
+
   const renderMapContent = () => {
     if (layerPropertyData) {
       return <LayerPropertyValuesMap data={layerPropertyData} colorMap={'gist_earth'}/>;

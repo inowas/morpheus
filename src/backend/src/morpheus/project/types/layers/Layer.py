@@ -5,7 +5,7 @@ from typing import Literal, Mapping
 
 import numpy as np
 
-from morpheus.common.types import Float, Uuid
+from morpheus.common.types import Float, Uuid, String
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Polygon
 from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
@@ -232,15 +232,21 @@ class ZoneId(Uuid):
     pass
 
 
+class ZoneName(String):
+    pass
+
+
 @dataclasses.dataclass
 class LayerPropertyZone:
     zone_id: ZoneId
+    name: ZoneName
     affected_cells: ActiveCells
     geometry: Polygon | MultiPolygon
     value: float
 
-    def __init__(self, zone_id: ZoneId, affected_cells: ActiveCells, geometry: Polygon | MultiPolygon, value: float):
+    def __init__(self, zone_id: ZoneId, name: ZoneName, affected_cells: ActiveCells, geometry: Polygon | MultiPolygon, value: float):
         self.zone_id = zone_id
+        self.name = name
         self.affected_cells = affected_cells
         self.geometry = geometry
         self.value = value
@@ -249,11 +255,12 @@ class LayerPropertyZone:
         if not isinstance(other, LayerPropertyZone):
             return False
 
-        return self.affected_cells == other.affected_cells and self.geometry == other.geometry and self.value == other.value
+        return self.affected_cells == other.affected_cells and self.geometry == other.geometry and self.value == other.value and self.name == other.name
 
     def to_dict(self):
         return {
             'zone_id': self.zone_id.to_str(),
+            'name': self.name.to_str(),
             'affected_cells': self.affected_cells.to_dict(),
             'geometry': self.geometry.to_dict(),
             'value': self.value
@@ -263,6 +270,7 @@ class LayerPropertyZone:
     def from_dict(cls, obj: dict):
         return cls(
             zone_id=ZoneId.from_str(obj['zone_id']),
+            name=ZoneName.from_str(obj['name']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']) if obj['affected_cells'] is not None else ActiveCells.empty_from_shape(1, 1),
             geometry=Polygon.from_dict(obj['geometry']) if obj['geometry']['type'] == 'Polygon' else MultiPolygon.from_dict(obj['geometry']),
             value=obj['value']

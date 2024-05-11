@@ -3,6 +3,9 @@ import {Button, InfoTitle} from 'common/components';
 import {IChangeLayerPropertyValues, ILayerPropertyValueZone} from '../../../types/Layers.type';
 import AssetsModalContainer from '../../containers/AssetsModalContainter';
 import {FeatureCollection, MultiPolygon, Polygon} from 'geojson';
+import LayerPropertyValuesZonesList from './LayerPropertyValuesZonesList';
+import LayerPropertyValuesZonesMap from './LayerPropertyValuesZonesMap';
+import isEqual from 'lodash.isequal';
 
 interface IProps {
   zones: ILayerPropertyValueZone[];
@@ -12,69 +15,52 @@ interface IProps {
 }
 
 interface INewZone {
+  name: string;
   geometry: Polygon | MultiPolygon;
   value: number;
 }
 
-const LayerPropertyValuesZones = ({zones, onSubmit, readOnly, style = {}}: IProps) => {
+const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, style = {}}: IProps) => {
 
-  const [existingZones, setExistingZones] = useState<ILayerPropertyValueZone[]>([]);
-  const [newZones, setNewZones] = useState<INewZone[]>([]);
+  const [zones, setZones] = useState<Array<ILayerPropertyValueZone | INewZone>>(existingZones);
   const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
 
   useEffect(() => {
-    setExistingZones(zones);
+    setZones(existingZones);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zones]);
+  }, [existingZones]);
 
   const handleSelectShapeFile = (assetId: string, data: FeatureCollection) => {
-    const zonesToAdd = [...newZones];
+    const zonesToAdd: INewZone[] = [];
 
-    data.features.forEach((feature) => {
+    data.features.forEach((feature, idx) => {
       if (!feature.geometry) {
         return;
       }
 
       if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
         zonesToAdd.push({
+          name: feature.properties?.name || `New Zone ${idx + 1}`,
           geometry: feature.geometry as Polygon | MultiPolygon,
           value: 1,
         });
       }
     });
 
-    setNewZones(zonesToAdd);
+    setZones([...zones, ...zonesToAdd]);
+    onSubmit([...zones, ...zonesToAdd]);
     setShowFileUploadModal(false);
   };
 
-  const handleSubmitClick = () => {
-    onSubmit([...existingZones, ...newZones]);
-    setNewZones([]);
-  };
-
-  const handleRemoveAllZonesClick = () => {
-    onSubmit(null);
-    setNewZones([]);
-  };
-
-  const renderButtons = () => {
-    if (readOnly) {
-      return null;
-    }
-
-    if (zones !== existingZones || 0 < newZones.length) {
+  const renderSubmitButton = () => {
+    if (!readOnly && !isEqual(existingZones, zones)) {
       return (
-        <button onClick={handleSubmitClick}>
-          Save
-        </button>
-      );
-    }
-
-    if (0 < existingZones.length || 0 < newZones.length) {
-      return (
-        <button onClick={handleRemoveAllZonesClick}>
-          Remove all zones
-        </button>
+        <Button
+          size={'tiny'}
+          onClick={() => onSubmit(zones)}
+          floated={'right'}
+          content={'Submit'}
+        />
       );
     }
   };
@@ -88,17 +74,27 @@ const LayerPropertyValuesZones = ({zones, onSubmit, readOnly, style = {}}: IProp
 
       <Button
         size={'tiny'}
-        icon={'upload'}
         color={'blue'}
         onClick={() => setShowFileUploadModal(true)}
+        content={'Upload Shapefile'}
       />
 
+      <LayerPropertyValuesZonesList
+        zones={zones}
+        onChange={setZones}
+        precision={2}
+        readOnly={readOnly}
+      />
 
-      {0 === existingZones.length && 0 === newZones.length && <div>No zones specified</div>}
+      {renderSubmitButton()}
 
-      {renderButtons()}
+      <LayerPropertyValuesZonesMap
+        zones={zones}
+        onChange={setZones}
+        readOnly={readOnly}
+      />
 
-      {showFileUploadModal && <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectShapefile={handleSelectShapeFile}/>}
+      {showFileUploadModal && !readOnly && <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectShapefile={handleSelectShapeFile}/>}
     </div>
   );
 };

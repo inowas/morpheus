@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import '@geoman-io/leaflet-geoman-free';
 import * as turf from '@turf/turf';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -232,8 +233,8 @@ const SpatialDiscretizationMap = ({
             editable: true,
             draggable: true,
           }}
-          onMount={() => L.PM.setOptIn(false)}
-          onUnmount={() => L.PM.setOptIn(true)}
+          //onMount={() => L.PM.setOptIn(false)}
+          //onUnmount={() => L.PM.setOptIn(true)}
           onUpdate={handleChange}
         />}
         {modelGeometry && <LeafletPolygon

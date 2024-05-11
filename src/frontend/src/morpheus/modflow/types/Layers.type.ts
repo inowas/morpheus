@@ -48,11 +48,11 @@ interface ILayerPropertyValueRasterReference {
 
 export interface ILayerPropertyValueZone {
   zone_id: string;
+  name: string;
   affected_cells: IAffectedCells;
   geometry: Polygon | MultiPolygon;
   value: float;
 }
-
 
 export interface IStressPeriod {
   start_date_time: string;
@@ -74,7 +74,6 @@ interface IRasterReference {
   band: number;
 }
 
-
 // important for write api
 export interface IChangeLayerPropertyValues {
   defaultValue?: number;
@@ -84,6 +83,7 @@ export interface IChangeLayerPropertyValues {
 
 export interface IZone {
   zone_id?: string;
+  name: string;
   geometry: Polygon | MultiPolygon;
   value: number;
 }
