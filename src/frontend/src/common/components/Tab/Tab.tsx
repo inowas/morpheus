@@ -8,7 +8,7 @@ export interface IPane {
   pane?: SemanticShorthandItem<TabPaneProps>;
   menuItem?: any;
   render?: () => React.ReactNode;
-  isActive?: boolean;
+  isDisabled?: boolean;
 }
 
 export type ITabProps = {
@@ -35,7 +35,7 @@ const Tab: React.FC<ITabProps> = ({
 }) => {
   const classNames = title ? 'first-item-title' : '';
 
-  const filteredPanes = panes ? panes.filter((pane) => false !== pane.isActive) : [];
+  const filteredPanes = panes ? panes.filter((pane) => true !== pane.isDisabled) : [];
 
   return (
     <SemanticTab

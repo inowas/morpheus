@@ -65,7 +65,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 unit={'m asl'}
               />
             </TabPane>,
-            isActive: isTopLayer,
+            isDisabled: !isTopLayer,
           },
           {
             menuItem: 'Bottom elevation',
