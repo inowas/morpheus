@@ -72,7 +72,7 @@ const LayersList = ({
     return actions;
   };
 
-  const movableListItems: IMovableAccordionItem[] = layersLocal.map((layerLocal) => {
+  const movableListItems: IMovableAccordionItem[] = layersLocal.map((layerLocal, idx) => {
     return ({
       key: layerLocal.layer_id,
       title: layerLocal.name,
@@ -83,6 +83,7 @@ const LayersList = ({
         onChangeLayerProperty={onChangeLayerProperty}
         fetchLayerPropertyData={fetchLayerPropertyData}
         fetchLayerPropertyImage={fetchLayerPropertyImage}
+        isTopLayer={0 === idx}
       />,
       editTitle: editTitle === layerLocal.layer_id,
       onChangeTitle: (newTitle: string) => handleChangeLayerName(layerLocal.layer_id, newTitle),

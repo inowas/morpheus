@@ -12,9 +12,10 @@ interface IProps {
   spatialDiscretization: ISpatialDiscretization;
   onChangeLayerConfinement: (layerId: string, confinement: ILayer['confinement']) => void;
   onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => void;
+  isTopLayer: boolean;
 }
 
-const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, onChangeLayerProperty, fetchLayerPropertyImage, fetchLayerPropertyData}: IProps) => {
+const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, onChangeLayerProperty, fetchLayerPropertyImage, fetchLayerPropertyData, isTopLayer}: IProps) => {
 
   const handleSubmitDefaultValueChange = (layerId: string, propertyName: ILayerPropertyName) => {
     return (defaultValue: IChangeLayerPropertyValues['defaultValue']) => onChangeLayerProperty(layerId, propertyName, {defaultValue});
@@ -64,6 +65,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
                 unit={'m asl'}
               />
             </TabPane>,
+            isActive: isTopLayer,
           },
           {
             menuItem: 'Bottom elevation',
