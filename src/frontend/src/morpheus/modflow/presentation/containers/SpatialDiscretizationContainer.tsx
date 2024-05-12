@@ -14,6 +14,7 @@ import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {Header, MenuItem} from 'semantic-ui-react';
 import ModelAffectedCells from '../components/ModelSpatialDiscretization/ModelAffectedCells';
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
+import useProjectPermissions from '../../application/useProjectPermissions';
 
 
 const SpatialDiscretizationContainer = () => {
@@ -25,9 +26,23 @@ const SpatialDiscretizationContainer = () => {
   const [grid, setGrid] = useState<IGrid | undefined>();
   const [locked, setLocked] = useState<boolean>(false);
 
-  const [editMode, setEditMode] = useState<'geometry' | 'affected_cells' | 'locked' | 'grid'>(locked ? 'locked' : 'geometry');
-
   const {projectId} = useParams();
+  const {isReadOnly} = useProjectPermissions(projectId as string);
+
+  const getInitialEditMode = () => {
+    if (locked) {
+      return 'locked';
+    }
+
+    if (isReadOnly) {
+      return 'readOnly';
+    }
+
+    return 'geometry';
+  };
+
+  const [editMode, setEditMode] = useState<'geometry' | 'affected_cells' | 'locked' | 'grid' | 'readOnly'>(getInitialEditMode());
+
   const {
     spatialDiscretization,
     loading,
@@ -123,7 +138,7 @@ const SpatialDiscretizationContainer = () => {
             title={'Model Geometry'}
             faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
             faIconText={locked ? 'Locked' : 'Unlocked'}
-            faIconOnClick={() => setLocked(!locked)}
+            faIconOnClick={() => !isReadOnly && setLocked(!locked)}
           />
           <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
             <AccordionContent title={'Model domain'}>
@@ -142,6 +157,7 @@ const SpatialDiscretizationContainer = () => {
                         onReset={() => setModelGeometry(spatialDiscretization.geometry)}
                         onSubmit={handleSubmitGeometry}
                         processShapefile={processShapefile}
+                        readOnly={isReadOnly}
                       />
                     </TabPane>,
                   },
@@ -155,6 +171,7 @@ const SpatialDiscretizationContainer = () => {
                           isLocked={locked}
                           onReset={() => setAffectedCells(spatialDiscretization.affected_cells)}
                           onSubmit={handleSubmitAffectedCells}
+                          readOnly={isReadOnly}
                         />}
                     </TabPane>,
                   },
@@ -177,6 +194,7 @@ const SpatialDiscretizationContainer = () => {
                         isLocked={locked}
                         onReset={() => setGrid(spatialDiscretization.grid)}
                         onSubmit={handleSubmitGrid}
+                        readOnly={isReadOnly}
                       />
                     </TabPane>,
                   },

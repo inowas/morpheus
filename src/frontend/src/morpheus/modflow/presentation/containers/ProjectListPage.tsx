@@ -1,10 +1,9 @@
-import {Button, CardGrid, ContentWrapper, ICard, Navbar} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
 import {useProjectList, useTranslate} from '../../application';
 import Error from 'common/components/Error';
-import {useNavbarItems} from '../../../application/application';
 import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useAuthentication} from '../../incoming';
@@ -14,13 +13,33 @@ interface IProps {
   basePath: string;
 }
 
+const getProjectListNavbarItems = (translate: (key: string) => string): INavbarItem[] => ([
+  {
+    name: 'home',
+    label: translate('home'),
+    admin: false,
+    to: '/',
+  },
+  {
+    name: 'filter',
+    label: translate('filter'),
+    admin: false,
+    to: '#filter',
+  },
+  {
+    name: 'documentation',
+    label: translate('documentation'),
+    admin: false,
+    to: '/documentation',
+  },
+]);
+
 const ProjectListPage = ({basePath}: IProps) => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {navbarItems} = useNavbarItems();
   const {translate} = useTranslate();
-  const {projects, loading, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
+  const {projects, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   const {userProfile} = useAuthentication();
@@ -56,7 +75,7 @@ const ProjectListPage = ({basePath}: IProps) => {
     <>
       <Navbar
         location={location}
-        navbarItems={navbarItems}
+        navbarItems={getProjectListNavbarItems(translate)}
         navigateTo={navigateTo}
         search={{
           value: search,

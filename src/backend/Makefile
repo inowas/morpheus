@@ -62,4 +62,4 @@ run-flask-cli-command:
 
 ## bundle openapi spec
 build-openapi-spec:
-	scripts/dev/build-openapi-spec.sh
+	scripts/dev/build-openapi-spec.sh && make run-flask-cli-command check-schema

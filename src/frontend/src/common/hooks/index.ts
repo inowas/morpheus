@@ -1,5 +1,6 @@
 import useHttp, {IHttpError, IUseHttp} from './useHttp';
 import useTranslation, {IUseTranslation} from './useTranslation';
+import useColorMap, {IColorMap, IUseColorMap} from './useColorMap';
 
 import useDateTimeFormat from './useDateTimeFormat';
 import useLocation from './useLocation';
@@ -9,6 +10,7 @@ import useReleaseVersion from './useReleaseVersion';
 import useSearchParams from './useSearchParams';
 
 export {
+  useColorMap,
   useDateTimeFormat,
   useHttp,
   useLocation,
@@ -20,6 +22,8 @@ export {
 };
 
 export type {
+  IUseColorMap,
+  IColorMap,
   IHttpError,
   IUseHttp,
   IUseTranslation,

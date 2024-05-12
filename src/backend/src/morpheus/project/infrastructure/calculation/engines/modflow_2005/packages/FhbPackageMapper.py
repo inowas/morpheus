@@ -140,7 +140,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
 
     date_times = get_date_times(model)
     total_times = get_total_times(date_times, model)
-    layer_ids = [layer.id for layer in model.soil_model.layers]
+    layer_ids = [layer.layer_id for layer in model.layers.layers]
 
     fhb_stress_period_data = FhbStressPeriodData(date_times, total_times)
 
@@ -213,14 +213,14 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                     if isinstance(mean_head_data, HeadDataItem):
                         yy_values.append(mean_head_data.head.to_float())
 
-                grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+                grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
                 for cell in fhb_boundary.affected_cells:
-                    if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
+                    if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                         # if the cell is not part of the model
                         # we do not apply any data for this cell
                         continue
 
-                    center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
+                    center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                     xx_new = [line_string.project(center, normalized=True)]
                     yy_new_value = float(np.interp(xx_new, xx, yy_values)[0])
 
@@ -295,14 +295,14 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                     if isinstance(mean_flow_data, FlowDataItem):
                         yy_values.append(mean_flow_data.flow.to_float())
 
-                grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+                grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
                 for cell in fhb_boundary.affected_cells:
-                    if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
+                    if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                         # if the cell is not part of the model
                         # we do not apply any data for this cell
                         continue
 
-                    center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
+                    center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                     xx_new = [line_string.project(center, normalized=True)]
                     yy_new_value = float(np.interp(xx_new, xx, yy_values)[0])
 

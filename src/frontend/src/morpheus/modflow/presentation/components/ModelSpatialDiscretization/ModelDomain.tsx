@@ -10,9 +10,10 @@ interface IProps {
   onReset: () => void;
   onSubmit: () => void;
   processShapefile: (zipFile: File) => Promise<GeoJSON>;
+  readOnly: boolean;
 }
 
-const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, isLoading, processShapefile}: IProps) => {
+const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, isLoading, processShapefile, readOnly}: IProps) => {
 
   const [shapeFileError, setShapeFileError] = useState<string | undefined>(undefined);
 
@@ -41,7 +42,7 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
   };
 
   const renderButtons = () => {
-    if (isLocked) {
+    if (isLocked || readOnly) {
       return null;
     }
 
@@ -70,7 +71,11 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
 
   return (
     <>
-      <ShapeFileInput onSubmit={handleSubmitShapeFile} error={shapeFileError}/>
+      <ShapeFileInput
+        onSubmit={handleSubmitShapeFile}
+        error={shapeFileError}
+        readOnly={readOnly}
+      />
       {renderButtons()}
     </>
   );

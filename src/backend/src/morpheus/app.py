@@ -6,7 +6,7 @@ from flask import Flask, jsonify
 from flask_cors import cross_origin
 from werkzeug.exceptions import HTTPException
 from werkzeug import Response
-from morpheus.common.presentation.api.middleware.schema_validation import SchemaValidationException
+from morpheus.common.presentation.api.middleware.schema_validation import SchemaValidationException, parse_schema_file
 from morpheus.settings import settings
 from morpheus.project.bootstrap import bootstrap_project_module
 from morpheus.sensor.bootstrap import bootstrap_sensor_module
@@ -25,6 +25,12 @@ def bootstrap(app: Flask):
         with open(settings.OPENAPI_BUNDLED_SPEC_FILE) as file:
             data = json.load(file)
             return jsonify(data), 200
+
+    @app.cli.command('check-schema')
+    def check_schema_file():
+        print('\n\x1b[1;32;40m' + 'Checking schema file...' + '\x1b[0m' + '\n')
+        parse_schema_file()
+        print('\x1b[6;30;42m' + 'Success!... Schema is valid and can be parsed by the system.' + '\x1b[0m' + '\n\n\n')
 
     @app.errorhandler(SchemaValidationException)
     def handle_schema_validation_exception(exception: SchemaValidationException):

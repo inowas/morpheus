@@ -55,16 +55,15 @@ class HeadObservationData:
 
 
 def calculate_observation_items(model: Model) -> HeadObservationData:
-    soil_model = model.soil_model
+    layers = model.layers
     time_discretization = model.time_discretization
 
-    layer_ids = [layer.id for layer in soil_model.layers]
+    layer_ids = [layer.layer_id for layer in layers]
 
     head_observation_data = HeadObservationData.new()
     for observation in model.observations:
         layer_indices = [layer_ids.index(layer_id) for layer_id in observation.affected_layers]
-        data_items = observation.get_data_items(start=time_discretization.start_date_time,
-                                                end=time_discretization.end_date_time)
+        data_items = observation.get_data_items(start=time_discretization.start_date_time, end=time_discretization.end_date_time)
 
         if len(data_items) == 0:
             continue

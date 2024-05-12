@@ -6,6 +6,7 @@ import JSZip from 'jszip';
 interface IShapeFileInput {
   onSubmit: (zipFile: File) => void;
   error?: string;
+  readOnly: boolean;
 }
 
 /*
@@ -13,7 +14,7 @@ Component for uploading shape files as zip file
 The user can select multiple files and the component will compress them into a zip file
 or upload the zip file if it is already a zip file
  */
-const ShapeFileInput = ({onSubmit, error}: IShapeFileInput) => {
+const ShapeFileInput = ({onSubmit, error, readOnly}: IShapeFileInput) => {
 
   const fileInputRef = createRef<HTMLInputElement>();
 
@@ -40,6 +41,7 @@ const ShapeFileInput = ({onSubmit, error}: IShapeFileInput) => {
         content={'Upload Shapefile'}
         onClick={() => fileInputRef.current?.click()}
         size={'tiny'}
+        disabled={readOnly}
       />
       {error && <div style={{color: 'red'}}>{error}</div>}
       <input
@@ -54,6 +56,7 @@ const ShapeFileInput = ({onSubmit, error}: IShapeFileInput) => {
           }
         }}
         accept={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
+        disabled={readOnly}
       />
     </>
   );

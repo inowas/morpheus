@@ -92,7 +92,7 @@ class ProjectEventRepository(RepositoryBase):
         documents = self.collection.find({}).sort('version', pymongo.ASCENDING)
         return [ProjectEventStoreDocument.from_dict(document).to_envelope() for document in documents]
 
-    def find_all_by_entity_uuid_ordered_by_version(self, entity_uuid: Uuid):
+    def find_all_by_entity_uuid_ordered_by_version(self, entity_uuid: Uuid) -> list[EventEnvelope]:
         documents = self.collection.find({'entity_uuid': entity_uuid.to_str()}).sort('version', pymongo.ASCENDING)
         return [ProjectEventStoreDocument.from_dict(document).to_envelope() for document in documents]
 

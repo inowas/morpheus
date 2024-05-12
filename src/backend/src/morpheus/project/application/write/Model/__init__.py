@@ -1,9 +1,15 @@
+from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
 from .CreateModel import CreateModelCommand, CreateModelCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
 from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
-from .UpdateModelLayer import UpdateModelLayerCommand, UpdateModelLayerCommandHandler
+from .UpdateModelLayerConfinement import UpdateModelLayerConfinementCommand, UpdateModelLayerConfinementCommandHandler
+from .UpdateModelLayerMetadata import UpdateModelLayerMetadataCommand, UpdateModelLayerMetadataCommandHandler
+from .UpdateModelLayerOrder import UpdateModelLayerOrderCommand, UpdateModelLayerOrderCommandHandler
+from .UpdateModelLayerPropertyDefaultValue import UpdateModelLayerPropertyDefaultValueCommand, UpdateModelLayerPropertyDefaultValueCommandHandler
+from .UpdateModelLayerPropertyRasterReference import UpdateModelLayerPropertyRasterReferenceCommand, UpdateModelLayerPropertyRasterReferenceCommandHandler
+from .UpdateModelLayerPropertyZones import UpdateModelLayerPropertyZonesCommand, UpdateModelLayerPropertyZonesCommandHandler
 from .UpdateModelAffectedCells import UpdateModelAffectedCellsCommand, UpdateModelAffectedCellsCommandHandler
 from .UpdateModelGeometry import UpdateModelGeometryCommand, UpdateModelGeometryCommandHandler
 from .UpdateModelGrid import UpdateModelGridCommand, UpdateModelGridCommandHandler
@@ -11,12 +17,18 @@ from .UpdateModelTimeDiscretization import UpdateModelTimeDiscretizationCommand,
 from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand, UpdateModelVersionDescriptionCommandHandler
 
 model_command_handler_map = {
+    CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelCommand: CreateModelCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,
     CreateModelVersionCommand: CreateModelVersionCommandHandler,
     DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
-    UpdateModelLayerCommand: UpdateModelLayerCommandHandler,
+    UpdateModelLayerConfinementCommand: UpdateModelLayerConfinementCommandHandler,
+    UpdateModelLayerMetadataCommand: UpdateModelLayerMetadataCommandHandler,
+    UpdateModelLayerOrderCommand: UpdateModelLayerOrderCommandHandler,
+    UpdateModelLayerPropertyDefaultValueCommand: UpdateModelLayerPropertyDefaultValueCommandHandler,
+    UpdateModelLayerPropertyRasterReferenceCommand: UpdateModelLayerPropertyRasterReferenceCommandHandler,
+    UpdateModelLayerPropertyZonesCommand: UpdateModelLayerPropertyZonesCommandHandler,
     UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
     UpdateModelGeometryCommand: UpdateModelGeometryCommandHandler,
     UpdateModelGridCommand: UpdateModelGridCommandHandler,

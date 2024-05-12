@@ -6,7 +6,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, Evapotransp
 from morpheus.project.types.boundaries.EvapotranspirationObservation import EvapotranspirationDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import SoilModel
+from morpheus.project.types.layers import LayersCollection
 
 
 class EvtStressPeriodData(LayerBasedStressPeriodData):
@@ -24,7 +24,7 @@ class EvtStressPeriodData(LayerBasedStressPeriodData):
 
 
 def calculate_evt_boundary_stress_period_data(
-    soil_model: SoilModel,
+    layers: LayersCollection,
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
     evt_boundary: EvapotranspirationBoundary
@@ -32,7 +32,7 @@ def calculate_evt_boundary_stress_period_data(
     grid = spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
 
-    layer_ids = [layer.id for layer in soil_model.layers]
+    layer_ids = [layer.layer_id for layer in layers]
     layer_indices = [layer_ids.index(layer_id) for layer_id in evt_boundary.affected_layers]
     layer_index = layer_indices[0] if len(layer_indices) > 0 else 0
 
@@ -76,6 +76,8 @@ def calculate_evt_boundary_stress_period_data(
 
 
 def calculate_stress_period_data(model: Model) -> EvtStressPeriodData | None:
+    print(model)
+
     grid = model.spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.evapotranspiration())
@@ -88,7 +90,7 @@ def calculate_stress_period_data(model: Model) -> EvtStressPeriodData | None:
             )
 
         sp_data_boundary = calculate_evt_boundary_stress_period_data(
-            soil_model=model.soil_model,
+            layers=model.layers,
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
             evt_boundary=boundary

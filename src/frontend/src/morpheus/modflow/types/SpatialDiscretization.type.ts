@@ -34,6 +34,8 @@ export interface IGrid {
   origin: Point // top left corner of the grid
   rotation: number;
   length_unit: ILengthUnit;
+
+  bounding_box: [[number, number], [number, number]]; // [[minX, minY], [maxX, maxY]]
 }
 
 

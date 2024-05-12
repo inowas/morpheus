@@ -2,6 +2,9 @@ import {IError, ITimeDiscretization} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
+import {setTimeDiscretization} from '../infrastructure/modelStore';
+import {useDispatch, useSelector} from 'react-redux';
+import {IRootState} from '../../store';
 
 interface IUseTimeDiscretization {
   timeDiscretization: ITimeDiscretization | null;
@@ -14,8 +17,10 @@ type ITimeDiscretizationGetResponse = ITimeDiscretization;
 
 const useTimeDiscretization = (projectId: string): IUseTimeDiscretization => {
 
+  const {model} = useSelector((state: IRootState) => state.project.model);
+  const dispatch = useDispatch();
+
   const isMounted = useRef(true);
-  const [timeDiscretization, setTimeDiscretization] = useState<ITimeDiscretization | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
@@ -42,7 +47,7 @@ const useTimeDiscretization = (projectId: string): IUseTimeDiscretization => {
       setLoading(false);
 
       if (result.ok) {
-        setTimeDiscretization(result.val);
+        dispatch(setTimeDiscretization(result.val));
       }
 
       if (result.err) {
@@ -90,7 +95,7 @@ const useTimeDiscretization = (projectId: string): IUseTimeDiscretization => {
     setLoading(false);
 
     if (result.ok) {
-      setTimeDiscretization(data);
+      dispatch(setTimeDiscretization(data));
     }
 
     if (result.err) {
@@ -99,7 +104,7 @@ const useTimeDiscretization = (projectId: string): IUseTimeDiscretization => {
   };
 
   return {
-    timeDiscretization,
+    timeDiscretization: model?.time_discretization || null,
     updateTimeDiscretization,
     loading,
     error,

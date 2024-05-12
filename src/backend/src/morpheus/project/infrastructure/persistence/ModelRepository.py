@@ -110,13 +110,6 @@ class ModelRepository(RepositoryBase):
 
         return document.get_model()
 
-    def get_latest_model_from_user(self, project_id: ProjectId, user_id: UserId) -> Model:
-        document = self.get_latest_document(project_id, user_id)
-        if document is None:
-            raise ModelNotFoundException(f'Model for project with id {project_id} does not exist')
-
-        return document.get_model()
-
     def save_model(self, project_id: ProjectId, model: Model, created_at: DateTime, created_by: UserId) -> None:
         document = self.get_latest_document(project_id)
         if document is not None:

@@ -1,8 +1,9 @@
-import {IError, ISpatialDiscretization} from '../types';
+import {IError, ISpatialDiscretization, ITimeDiscretization} from '../types';
 
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
 import {IModel} from '../types/Model.type';
+import {ILayer} from '../types/Layers.type';
 
 
 type IModelState = 'initializing' | 'error' | 'loading' | 'loaded' | 'setup';
@@ -34,6 +35,16 @@ export const modelSlice = createSlice({
         state.model.spatial_discretization = action.payload;
       }
     },
+    setTimeDiscretization: (state, action: PayloadAction<ITimeDiscretization>) => {
+      if (state.model) {
+        state.model.time_discretization = action.payload;
+      }
+    },
+    setLayers: (state, action: PayloadAction<ILayer[]>) => {
+      if (state.model) {
+        state.model.layers = action.payload;
+      }
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
       if (action.payload) {
@@ -55,6 +66,13 @@ export const modelSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {setModel, setSpatialDiscretization, setLoading, setError} = modelSlice.actions;
+export const {
+  setModel,
+  setSpatialDiscretization,
+  setTimeDiscretization,
+  setLayers,
+  setLoading,
+  setError,
+} = modelSlice.actions;
 
 export default modelSlice.reducer;
