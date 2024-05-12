@@ -47,6 +47,9 @@ class StressPeriod:
             'steady_state': self.steady_state.to_value()
         }
 
+    def get_start_date_time(self):
+        return self.start_date_time
+
 
 @dataclasses.dataclass
 class StressPeriodCollection:
@@ -54,7 +57,7 @@ class StressPeriodCollection:
 
     def __init__(self, value: list[StressPeriod]):
         self.values = value
-        self.values.sort(key=lambda stress_period: stress_period.start_date_time.to_datetime())
+        self.values.sort(key=lambda stress_period: stress_period.get_start_date_time().to_datetime())
 
     def __iter__(self):
         return iter(self.values)

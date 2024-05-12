@@ -12,7 +12,7 @@ from morpheus.project.types.Project import Project, ProjectId, Name, Description
 @dataclasses.dataclass(frozen=True)
 class ProjectCreatedEvent(EventBase):
     @classmethod
-    def from_project(cls, project: Project, occurred_at=DateTime.now()):
+    def from_project(cls, project: Project, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project.project_id.to_str()),
             occurred_at=occurred_at,
@@ -32,7 +32,7 @@ class ProjectCreatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class ProjectDeletedEvent(EventBase):
     @classmethod
-    def from_project_id(cls, project_id: ProjectId, occurred_at=DateTime.now()):
+    def from_project_id(cls, project_id: ProjectId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -49,7 +49,7 @@ class ProjectDeletedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class ProjectMetadataUpdatedEvent(EventBase):
     @classmethod
-    def from_props(cls, project_id: ProjectId, name: Name | None = None, description: Description | None = None, tags: Tags | None = None, occurred_at=DateTime.now()):
+    def from_props(cls, project_id: ProjectId, occurred_at: DateTime, name: Name | None = None, description: Description | None = None, tags: Tags | None = None):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,

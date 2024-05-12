@@ -91,7 +91,7 @@ class GeneralHeadObservation(Observation):
         # Check if we need to adapt the frequency of the time series
         freq = '1D'
         if end_date_time.to_datetime() - start_date_time.to_datetime() < pd.Timedelta('1D'):
-            freq = '1H'
+            freq = '1h'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
         stages_interpolator = interp1d(

@@ -1,4 +1,7 @@
+from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.project.application.read.ProjectReader import project_reader
+from morpheus.project.application.read.ProjectEventLogReader import project_event_log_reader
+from morpheus.project.types.Project import ProjectId
 
 
 class ReadProjectListRequestHandler:
@@ -18,5 +21,21 @@ class ReadProjectListRequestHandler:
                 'created_at': project_summary.created_at.to_str(),
                 'updated_at': project_summary.updated_at.to_str(),
             })
+
+        return result, 200
+
+
+class ReadProjectEventLogRequestHandler:
+    @staticmethod
+    def handle(project_id: ProjectId):
+        event_log = project_event_log_reader.get_project_event_log(project_id)
+        result = []
+        for event in event_log:
+            if isinstance(event, EventBase):
+                result.append({
+                    'event_name': event.get_event_name().to_str(),
+                    'occurred_at': event.occurred_at.to_str(),
+                    'payload': event.payload,
+                })
 
         return result, 200

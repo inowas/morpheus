@@ -23,7 +23,7 @@ export interface IHttpPostResponse {
 }
 
 export interface IUseHttp {
-  httpGet: <T>(url: string) => Promise<Result<T, IHttpError>>;
+  httpGet: <T>(url: string, asBlob?: boolean) => Promise<Result<T, IHttpError>>;
   httpPatch: <T>(url: string, data: T) => Promise<Result<void, IHttpError>>;
   httpPost: <T>(url: string, data: T) => Promise<Result<IHttpPostResponse, IHttpError>>;
   httpPut: <T>(url: string, data: T) => Promise<Result<void, IHttpError>>;
@@ -56,6 +56,13 @@ const useHttp = (apiBaseUrl: string, auth?: {
 
       if (!config.data) {
         config.data = {};
+      }
+
+      if ('blob' === config.responseType) {
+        config.headers = new AxiosHeaders({
+          'Accept': 'image/png',
+          'Content-Type': 'application/json',
+        });
       }
 
       if (config.data instanceof FormData) {
@@ -105,7 +112,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiBaseUrl, auth?.accessToken]);
 
-  const httpGet = async <T>(url: string): Promise<Result<T, IHttpError>> => {
+  const httpGet = async <T>(url: string, asBlob: boolean = false): Promise<Result<T, IHttpError>> => {
     try {
       const response = await axiosInstance({
         method: 'GET',
@@ -113,6 +120,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
         withCredentials: false,
         validateStatus: (status) => 200 === status,
         data: {},
+        responseType: asBlob ? 'blob' : undefined,
       });
       return Ok(response.data as T);
     } catch (error) {

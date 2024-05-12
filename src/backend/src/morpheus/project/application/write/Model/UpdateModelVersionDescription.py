@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
@@ -47,7 +47,8 @@ class UpdateModelVersionDescriptionCommandHandler(CommandHandlerBase):
         if not permissions.member_can_edit(user_id=user_id):
             raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update the description of a version of {project_id.to_str()}')
 
-        event = VersionDescriptionUpdatedEvent.from_version_id(project_id=project_id, version_id=command.version_id, description=command.version_description)
+        event = VersionDescriptionUpdatedEvent.from_version_id(project_id=project_id, version_id=command.version_id, description=command.version_description,
+                                                               occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

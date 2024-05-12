@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import '@geoman-io/leaflet-geoman-free';
 import * as turf from '@turf/turf';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -174,7 +175,6 @@ const SpatialDiscretizationMap = ({
     },
   });
 
-
   useEffect(() => {
     if (!modelGeometry) {
       return;
@@ -183,7 +183,6 @@ const SpatialDiscretizationMap = ({
     const layer = L.geoJSON(modelGeometry);
     map.fitBounds(layer.getBounds());
   }, [modelGeometry]);
-
 
   const handleChange = () => {
     const featureGroup = editModelGeometryRef.current as L.FeatureGroup;
@@ -234,8 +233,8 @@ const SpatialDiscretizationMap = ({
             editable: true,
             draggable: true,
           }}
-          onMount={() => L.PM.setOptIn(false)}
-          onUnmount={() => L.PM.setOptIn(true)}
+          //onMount={() => L.PM.setOptIn(false)}
+          //onUnmount={() => L.PM.setOptIn(true)}
           onUpdate={handleChange}
         />}
         {modelGeometry && <LeafletPolygon
@@ -246,7 +245,6 @@ const SpatialDiscretizationMap = ({
           opacity={(editModelGeometry) ? 1 : 0.5}
         />}
       </FeatureGroup>
-
 
       <FeatureGroup>
         {gridGeometry && <GeoJSON

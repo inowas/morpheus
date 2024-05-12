@@ -16,7 +16,7 @@ from .WellObservation import WellObservation, WellRawDataItem
 from ..discretization.spatial import ActiveCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, LineString, Polygon, GeometryCollection
-from ..soil_model import LayerId
+from ..layers import LayerId
 
 
 class BoundaryId(Uuid):

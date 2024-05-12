@@ -7,6 +7,7 @@ import {ModflowContainer} from '../components';
 import {Navbar} from 'common/components';
 import {useNavbarItems} from '../../../application/application';
 import {useModel} from '../../application';
+import useProjectPermissions from '../../application/useProjectPermissions';
 
 interface IProps {
   basePath: string;
@@ -16,13 +17,15 @@ interface IProps {
 const ProjectModelPage = ({basePath, section}: IProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {navbarItems} = useNavbarItems();
 
   const {projectId, property} = useParams<{
     projectId?: string;
     property?: string;
     propertyId?: string;
   }>();
+
+  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
 
   const {error, state} = useModel(projectId);
 

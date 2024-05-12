@@ -12,7 +12,7 @@ class ReadModelLayersRequestHandler:
         except ModelNotFoundException:
             return {'message': 'Model not found'}, 404
 
-        layers = model.soil_model
+        layers = model.layers
 
         if layers is None:
             return {'message': 'Layers not found'}, 404

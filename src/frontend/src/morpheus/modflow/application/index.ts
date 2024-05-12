@@ -1,10 +1,11 @@
 import useAssets, {IAssetId} from './useAssets';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
-import useNavbarItems from './useNavbarItems';
 import useProject from './useProject';
 import useProjectList from './useProjectList';
+import useProjectPermissions from './useProjectPermissions';
 import useProjectCommandBus from './useProjectCommandBus';
+import useProjectEventLog from './useProjectEventLog';
 import useProjectMetadata from './useProjectMetadata';
 import useSpatialDiscretization from './useSpatialDiscretization';
 import useTimeDiscretization from './useTimeDiscretization';
@@ -14,10 +15,11 @@ export {
   useAssets,
   useModel,
   useModelSetup,
-  useNavbarItems,
   useProject,
   useProjectCommandBus,
+  useProjectEventLog,
   useProjectList,
+  useProjectPermissions,
   useProjectMetadata,
   useSpatialDiscretization,
   useTimeDiscretization,

@@ -25,7 +25,6 @@ class ReadModelGridRequestHandler:
             return {'message': 'Grid not found'}, 404
 
         if format == 'geojson':
-            response = grid.to_geojson().__geo_interface__()
             return grid.to_geojson().__geo_interface__(), 200
 
         return grid.to_dict(), 200

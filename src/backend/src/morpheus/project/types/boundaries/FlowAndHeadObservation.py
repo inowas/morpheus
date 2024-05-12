@@ -94,7 +94,7 @@ class FlowAndHeadObservation(Observation):
         if len(flows) == 0:
             return None
 
-        date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1H')
+        date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1h')
         flow_interpolator = interp1d(
             time_series.values.astype(float),
             flows.values.astype(float),
@@ -123,7 +123,7 @@ class FlowAndHeadObservation(Observation):
         if len(heads) == 0:
             return None
 
-        date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1H')
+        date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1h')
         head_interpolator = interp1d(
             time_series.values.astype(float),
             heads.values.astype(float),

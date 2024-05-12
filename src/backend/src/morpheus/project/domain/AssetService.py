@@ -34,3 +34,8 @@ class AssetService:
 
         if re.match('^[A-Za-z0-9_-]+$', new_file_name_without_ext) is None:
             raise InvalidFileNameException(f'Invalid file name: {new_file_name}')
+
+    @staticmethod
+    def assert_no_data_value_can_be_changed_for_asset(asset: Asset):
+        if asset.type != AssetType.GEO_TIFF:
+            raise ValueError(f'Asset type must be GEO_TIFF, but was {asset.type}')

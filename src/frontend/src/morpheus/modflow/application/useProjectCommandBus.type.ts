@@ -1,5 +1,41 @@
 import {Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
+import {ILayerPropertyName, IZone} from '../types/Layers.type';
+
+export interface IDeleteAssetCommand {
+  command_name: 'delete_asset_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+  }
+}
+
+export interface IUpdateAssetDescriptionCommand {
+  command_name: 'update_asset_description_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+    asset_description: string;
+  }
+}
+
+export interface UpdateAssetFileNameCommand {
+  command_name: 'update_asset_file_name_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+    asset_file_name: string;
+  }
+}
+
+export interface UpdateRasterAssetNoDataValueCommand {
+  command_name: 'update_raster_asset_no_data_value_command';
+  payload: {
+    project_id: string;
+    asset_id: string;
+    no_data_value: number;
+  }
+}
 
 export interface ICreateProjectCommand {
   command_name: 'create_project_command';
@@ -89,6 +125,15 @@ export interface IUpdateModelTimeDiscretizationCommand {
   }
 }
 
+export interface ICloneModelLayerCommand {
+  command_name: 'clone_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+  }
+}
+
 export interface ICreateModelLayerCommand {
   command_name: 'create_model_layer_command';
   payload: {
@@ -96,15 +141,15 @@ export interface ICreateModelLayerCommand {
     model_id: string;
     name: string;
     description: string;
-    type: 'confined' | 'convertible' | 'unconfined';
-    kx: number | number[][];
-    ky: number | number[][];
-    kz: number | number[][];
-    specific_storage: number | number[][];
-    specific_yield: number | number[][];
-    initial_head: number | number[][];
-    top?: number | number[][];
-    bottom: number | number[][];
+    confinement: 'confined' | 'convertible' | 'unconfined';
+    hk: number;
+    hani: number;
+    vka: number;
+    specific_storage: number;
+    specific_yield: number;
+    initial_head: number;
+    top?: number;
+    bottom: number;
   }
 }
 
@@ -112,26 +157,74 @@ export interface IDeleteModelLayerCommand {
   command_name: 'delete_model_layer_command';
   payload: {
     project_id: string;
+    model_id: string;
     layer_id: string;
   }
 }
 
-export interface IUpdateModelLayerCommand {
-  command_name: 'update_model_layer_command';
+export interface IUpdateModelLayerConfinementCommand {
+  command_name: 'update_model_layer_confinement_command';
   payload: {
     project_id: string;
+    model_id: string;
+    layer_id: string;
+    confinement: 'confined' | 'convertible' | 'unconfined';
+  }
+}
+
+export interface IUpdateModelLayerMetadataCommand {
+  command_name: 'update_model_layer_metadata_command';
+  payload: {
+    project_id: string;
+    model_id: string;
     layer_id: string;
     name?: string;
     description?: string;
-    type?: 'confined' | 'convertible' | 'unconfined';
-    kx?: number | number[][];
-    ky?: number | number[][];
-    kz?: number | number[][];
-    specific_storage?: number | number[][];
-    specific_yield?: number | number[][];
-    initial_head?: number | number[][];
-    top?: number | number[][];
-    bottom?: number | number[][];
+  }
+}
+
+export interface IUpdateModelLayerOrderCommand {
+  command_name: 'update_model_layer_order_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_ids: string[];
+  }
+}
+
+export interface IUpdateModelLayerPropertyRasterReferenceCommand {
+  command_name: 'update_model_layer_property_raster_reference_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: ILayerPropertyName;
+    property_raster_reference: {
+      asset_id: string;
+      band: number;
+    } | null;
+  }
+}
+
+export interface IUpdateModelLayerPropertyDefaultValueCommand {
+  command_name: 'update_model_layer_property_default_value_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: ILayerPropertyName;
+    property_default_value: number;
+  }
+}
+
+export interface IUpdateModelLayerPropertyZonesCommand {
+  command_name: 'update_model_layer_property_zones_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: ILayerPropertyName;
+    property_zones: IZone[] | null;
   }
 }
 
@@ -187,8 +280,11 @@ export interface IUpdateProjectMemberRoleCommand {
   }
 }
 
-export type ICommand =
-  ICreateProjectCommand
+export type ICommand = IDeleteAssetCommand
+  | IUpdateAssetDescriptionCommand
+  | UpdateAssetFileNameCommand
+  | UpdateRasterAssetNoDataValueCommand
+  | ICreateProjectCommand
   | IDeleteProjectCommand
   | IUpdateProjectMetadataCommand
   | IUpdateProjectVisibilityCommand
@@ -197,9 +293,15 @@ export type ICommand =
   | IUpdateModelGridCommand
   | IUpdateModelAffectedCellsCommand
   | IUpdateModelTimeDiscretizationCommand
+  | ICloneModelLayerCommand
   | ICreateModelLayerCommand
   | IDeleteModelLayerCommand
-  | IUpdateModelLayerCommand
+  | IUpdateModelLayerConfinementCommand
+  | IUpdateModelLayerMetadataCommand
+  | IUpdateModelLayerOrderCommand
+  | IUpdateModelLayerPropertyDefaultValueCommand
+  | IUpdateModelLayerPropertyRasterReferenceCommand
+  | IUpdateModelLayerPropertyZonesCommand
   | ICreateModelVersionCommand
   | IDeleteModelVersionCommand
   | IUpdateModelVersionDescriptionCommand

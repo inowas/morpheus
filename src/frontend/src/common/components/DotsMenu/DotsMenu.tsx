@@ -1,12 +1,17 @@
-import {Icon, Popup} from 'semantic-ui-react';
+import {Icon, Popup, SemanticICONS} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
 import {Button} from 'common/components';
-import {IAction} from './index';
 import styles from './DotsMenu.module.less';
 
-interface DotsMenuProps {
-  actions: IAction[];
+export interface IDotsMenuAction {
+  text: string;
+  icon?: SemanticICONS;
+  onClick: () => void;
+}
+
+interface IDotsMenuProps {
+  actions: IDotsMenuAction[];
   className?: string;
   style?: React.CSSProperties;
 }
@@ -19,7 +24,7 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions, style, className}) => {
     setIsOpen(!isOpen);
   };
 
-  const handleButtonClick = (e: React.MouseEvent<HTMLElement>, action: IAction) => {
+  const handleButtonClick = (e: React.MouseEvent<HTMLElement>, action: IDotsMenuAction) => {
     e.stopPropagation();
     action.onClick();
     setIsOpen(false);

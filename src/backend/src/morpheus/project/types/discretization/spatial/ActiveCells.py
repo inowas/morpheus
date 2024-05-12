@@ -78,14 +78,30 @@ class ActiveCells:
         return self.is_active(col=cell.col, row=cell.row)
 
     @classmethod
+    def from_geometry(cls, geometry: LineString | MultiPolygon | Point | Polygon, grid: Grid):
+        if isinstance(geometry, LineString):
+            return cls.from_linestring(linestring=geometry, grid=grid)
+
+        if isinstance(geometry, MultiPolygon):
+            return cls.from_multipolygon(polygon=geometry, grid=grid)
+
+        if isinstance(geometry, Point):
+            return cls.from_point(point=geometry, grid=grid)
+
+        if isinstance(geometry, Polygon):
+            return cls.from_polygon(polygon=geometry, grid=grid)
+
+        raise ValueError(f'Unknown geometry type: {geometry}')
+
+    @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        geometries = grid.get_cell_geometries()
+        geometries = grid.get_wgs_cell_geometries()
         linestring = ShapelyLineString(linestring.coordinates)
 
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
-                grid_cell_geometry = ShapelyPolygon(geometries[col][row].coordinates[0])
+                grid_cell_geometry = ShapelyPolygon(geometries[row][col].coordinates[0])
                 if grid_cell_geometry.intersects(linestring):
                     cells.set_active(col=col, row=row)
 
@@ -95,11 +111,24 @@ class ActiveCells:
     def from_polygon(cls, polygon: Polygon, grid: Grid):
         cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         area = ShapelyPolygon(polygon.coordinates[0])
-        grid_cell_centers = grid.get_cell_centers()
+        grid_cell_centers = grid.get_wgs_cell_centers()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
-                center = ShapelyPoint(grid_cell_centers[col][row].coordinates)
+                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
                 if area.contains(center):
+                    cells.set_active(col=col, row=row)
+
+        return cells
+
+    @classmethod
+    def from_multipolygon(cls, polygon: MultiPolygon, grid: Grid):
+        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+        areas = ShapelyMultiPolygon(polygon.coordinates)
+        grid_cell_centers = grid.get_wgs_cell_centers()
+        for col in range(grid.n_cols()):
+            for row in range(grid.n_rows()):
+                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
+                if areas.contains(center):
                     cells.set_active(col=col, row=row)
 
         return cells
@@ -108,10 +137,10 @@ class ActiveCells:
     def from_point(cls, point: Point, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
         point = ShapelyPoint(point.coordinates)
-        grid_cell_geometries = grid.get_cell_geometries()
+        grid_cell_geometries = grid.get_wgs_cell_geometries()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
-                grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[col][row].coordinates[0])
+                grid_cell_geometry = ShapelyPolygon(grid_cell_geometries[row][col].coordinates[0])
                 if grid_cell_geometry.contains(point):
                     cells.set_active(col=col, row=row)
 
@@ -245,14 +274,20 @@ class ActiveCells:
         self.data.append(ActiveCell(col=col, row=row))
 
     def to_geojson(self, grid: Grid) -> GeometryCollection:
-        cells_geometries = grid.get_cell_geometries()
+        cells_geometries = grid.get_wgs_cell_geometries()
         cell_geometries = []
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
                 if self.is_active(col=col, row=row):
-                    cell_geometries.append(cells_geometries[col][row])
+                    cell_geometries.append(cells_geometries[row][col])
 
         return GeometryCollection(geometries=cell_geometries)
+
+    def to_mask(self) -> np.ndarray:
+        raster_data = np.full(shape=self.shape, fill_value=False, dtype=bool)
+        for cell in self.data:
+            raster_data[cell.row, cell.col] = True
+        return raster_data
 
     def outline_to_geojson(self, grid: Grid) -> Feature:
         geometries = self.to_geojson(grid).geometries
