@@ -95,6 +95,7 @@ const LayersList = ({
     <MovableAccordionList
       items={movableListItems}
       onMovableListChange={handleOrderChange}
+      actions={getActions()}
       defaultOpenIndexes={[0]}
     />
   );
