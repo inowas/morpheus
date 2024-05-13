@@ -10,6 +10,7 @@ import {TabPane} from 'semantic-ui-react';
 import ShapeFileInput from '../../../../common/components/ShapeFileInput';
 import SetupGridProperties from '../components/ModelSetup/SetupGridProperties';
 import ModelSetupMap from '../components/ModelSetup/Map';
+import useProjectPermissions from '../../application/useProjectPermissions';
 
 interface ICreateGrid {
   n_cols: number;
@@ -32,6 +33,7 @@ const ModelSetupContainer = () => {
   const [geometry, setGeometry] = useState<Polygon | undefined>();
   const {loading, error: serverError, createModel} = useModelSetup(projectId as string);
   const [shapeFileError, setShapeFileError] = useState<IError | null>(null);
+  const {isReadOnly} = useProjectPermissions(projectId as string);
 
   const {processShapefile} = useAssets(projectId as string);
   const handleCreateModel = async () => {
@@ -56,7 +58,8 @@ const ModelSetupContainer = () => {
   const handleSubmitShapeFile = async (zipFile: File) => {
     setShapeFileError(null);
     try {
-      const geoJson = await processShapefile(zipFile);
+      const assetShapefileData = await processShapefile(zipFile);
+      const geoJson = assetShapefileData.data;
       if ('Polygon' === geoJson.type) {
         setGeometry(geoJson);
       }
@@ -77,6 +80,7 @@ const ModelSetupContainer = () => {
         message: 'No polygon found in shapefile.',
       });
     } catch (e) {
+      console.log(e);
       setShapeFileError({
         code: 400,
         message: 'Error processing shapefile.',
@@ -97,8 +101,8 @@ const ModelSetupContainer = () => {
                 panes={[{
                   menuItem: 'Upload File',
                   render: () => <TabPane attached={false}>
-                    <ShapeFileInput onSubmit={handleSubmitShapeFile}/>
-                    {shapeFileError && <div>{shapeFileError.message}</div>}
+                    <ShapeFileInput onSubmit={handleSubmitShapeFile} readOnly={isReadOnly}/>
+                    {shapeFileError && !isReadOnly && <div>{shapeFileError.message}</div>}
                   </TabPane>,
                 }]}
               />
@@ -110,7 +114,11 @@ const ModelSetupContainer = () => {
                 panes={[{
                   menuItem: 'Grid Properties',
                   render: () => <TabPane attached={false}>
-                    <SetupGridProperties gridProperties={gridProperties} onChange={setGridProperties}/>
+                    <SetupGridProperties
+                      gridProperties={gridProperties}
+                      onChange={setGridProperties}
+                      readOnly={isReadOnly}
+                    />
                   </TabPane>,
                 }]}
               />
@@ -119,7 +127,7 @@ const ModelSetupContainer = () => {
         </DataGrid>
         <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
           {serverError && <div>{serverError.message}</div>}
-          <Button
+          {!isReadOnly && <Button
             style={{marginLeft: 'auto'}}
             size={'tiny'}
             primary={true}
@@ -128,7 +136,7 @@ const ModelSetupContainer = () => {
             loading={loading}
           >
             {'Create Model'}
-          </Button>
+          </Button>}
         </DataGrid>
       </SidebarContent>
       <BodyContent>
@@ -137,7 +145,7 @@ const ModelSetupContainer = () => {
           onChange={(polygon: Polygon) => {
             setGeometry(polygon);
           }}
-          editable={true}
+          editable={!isReadOnly}
         />
       </BodyContent>
     </>

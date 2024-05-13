@@ -7,12 +7,16 @@ import {LatLngTuple} from 'leaflet';
 import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
 import React, {useEffect, useRef} from 'react';
+import {createLeafletContext, LeafletContext} from '@react-leaflet/core';
 
 interface IProps {
   center?: LatLngTuple;
   zoom?: number;
-  children: React.ReactNode[] | React.ReactNode;
+  children?: React.ReactNode[] | React.ReactNode;
+  mapRef?: IMapRef;
 }
+
+export type IMapRef = React.MutableRefObject<null | L.Map>;
 
 interface IMapEffectProps {
   mapRef: React.MutableRefObject<null | L.Map>;
@@ -32,6 +36,25 @@ const MapRef = ({mapRef}: IMapEffectProps) => {
 
   return null;
 };
+
+interface IMapFromMapRef {
+  mapRef: IMapRef;
+  children: React.ReactNode;
+}
+
+const LeafletMapProvider = ({mapRef, children}: IMapFromMapRef) => {
+  const map = mapRef.current;
+  if (!map) {
+    return null;
+  }
+
+  return (
+    <LeafletContext.Provider value={createLeafletContext(mapRef.current!)}>
+      {children}
+    </LeafletContext.Provider>
+  );
+};
+
 
 const defaultCenter: LatLngTuple = [51.05, 13.71];
 const defaultZoom = 13;
@@ -70,7 +93,7 @@ const Map = ({center, zoom, children}: IProps) => {
         scrollWheelZoom={false}
         wheelDebounceTime={100}
       >
-        <MapRef mapRef={mapRef}/>
+        <MapRef mapRef={mapRef}/>;
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
         {children}
       </MapContainer>
@@ -79,3 +102,5 @@ const Map = ({center, zoom, children}: IProps) => {
 };
 
 export default Map;
+
+export {LeafletMapProvider, MapRef};

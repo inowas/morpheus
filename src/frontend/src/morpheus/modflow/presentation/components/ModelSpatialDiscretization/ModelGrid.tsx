@@ -12,10 +12,11 @@ interface IProps {
   isLocked: boolean;
   onReset: () => void;
   onSubmit: () => void;
+  readOnly: boolean;
 }
 
 
-const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSubmit}: IProps) => (
+const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSubmit, readOnly}: IProps) => (
   <>
     <DataGrid columns={4}>
       <Form.Field>
@@ -24,7 +25,7 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
           Rows
         </Label>
         <Input
-          disabled={isLocked}
+          disabled={isLocked || readOnly}
           type="number"
           value={grid.n_rows}
           onChange={(e) => onChange({...grid, n_rows: parseInt(e.target.value)})}
@@ -37,7 +38,7 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
           Columns
         </Label>
         <Input
-          disabled={isLocked}
+          disabled={isLocked || readOnly}
           type="number"
           value={grid.n_cols}
           onChange={(e) => onChange({...grid, n_cols: parseInt(e.target.value)})}
@@ -75,7 +76,7 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
             Rotation angle (°)
           </Label>
           <Input
-            disabled={isLocked}
+            disabled={isLocked || readOnly}
             name="rotationAngle"
             type="number"
             value={grid.rotation}
@@ -84,7 +85,7 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
           />
         </div>
         <Slider
-          disabled={isLocked}
+          disabled={isLocked || readOnly}
           className="fieldSlider"
           min={-90}
           max={90}
@@ -94,7 +95,7 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
         />
       </div>
     </DataGrid>
-    {!isLocked && <DataGrid style={{display: 'flex', gap: 10, marginTop: 20}}>
+    {!isLocked && !readOnly && <DataGrid style={{display: 'flex', gap: 10, marginTop: 20}}>
       <Button
         style={{marginLeft: 'auto'}}
         size={'tiny'}

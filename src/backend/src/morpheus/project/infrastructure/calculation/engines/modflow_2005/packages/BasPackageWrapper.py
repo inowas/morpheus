@@ -49,7 +49,7 @@ class BasPackageData:
 
 def calculate_bas_package_data(model: Model) -> BasPackageData:
     cells = model.spatial_discretization.affected_cells
-    number_of_layers = model.soil_model.number_of_layers()
+    number_of_layers = model.layers.number_of_layers()
     if len(cells) == cells.shape[0] * cells.shape[1]:
         ibound = 1
     else:
@@ -59,7 +59,7 @@ def calculate_bas_package_data(model: Model) -> BasPackageData:
                 ibound[layer_index, cell.row, cell.col] = 1
         ibound = ibound.tolist()
 
-    initial_heads = model.soil_model.initial_heads()
+    initial_heads = model.layers.initial_heads()
 
     return BasPackageData(ibound=ibound, strt=initial_heads)
 

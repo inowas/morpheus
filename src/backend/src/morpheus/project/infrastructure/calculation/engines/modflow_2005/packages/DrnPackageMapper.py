@@ -7,7 +7,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, DrainBounda
 from morpheus.project.types.boundaries.DrainObservation import DrainDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import SoilModel
+from morpheus.project.types.layers import LayersCollection
 
 
 class DrnStressPeriodData(StressPeriodData):
@@ -17,10 +17,10 @@ class DrnStressPeriodData(StressPeriodData):
 def calculate_drn_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: SoilModel,
+    layers: LayersCollection,
     drn_boundary: DrainBoundary
 ) -> DrnStressPeriodData:
-    layer_ids = [layer.id for layer in soil_model.layers]
+    layer_ids = [layer.layer_id for layer in layers.layers]
     sp_data = DrnStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -86,14 +86,14 @@ def calculate_drn_boundary_stress_period_data(
                 yy_stages.append(mean_data.stage.to_float())
                 yy_conductances.append(mean_data.conductance.to_float())
 
-            grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+            grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
             for cell in drn_boundary.affected_cells:
-                if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
+                if spatial_discretization.affected_cells.is_active(cell.row, cell.col) is None:
                     # if the cell is not part of the model
                     # we do not apply any data for this cell
                     continue
 
-                center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
+                center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                 xx_new = [line_string.project(center, normalized=True)]
                 yy_new_stage = float(np.interp(xx_new, xx, yy_stages)[0])
                 yy_new_conductance = float(np.interp(xx_new, xx, yy_conductances)[0])
@@ -117,7 +117,7 @@ def calculate_stress_period_data(model: Model) -> DrnStressPeriodData | None:
         sp_data_boundary = calculate_drn_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
-            soil_model=model.soil_model,
+            layers=model.layers,
             drn_boundary=drn_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)

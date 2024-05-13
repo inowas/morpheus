@@ -7,7 +7,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, ConstantHea
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadDataItem
 
 from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
-from morpheus.project.types.soil_model import SoilModel
+from morpheus.project.types.layers import LayersCollection
 
 
 class ChdStressPeriodData(StressPeriodData):
@@ -17,10 +17,10 @@ class ChdStressPeriodData(StressPeriodData):
 def calculate_chd_boundary_stress_period_data(
     spatial_discretization: SpatialDiscretization,
     time_discretization: TimeDiscretization,
-    soil_model: SoilModel,
+    layers: LayersCollection,
     chd_boundary: ConstantHeadBoundary
 ) -> ChdStressPeriodData:
-    layer_ids = [layer.id for layer in soil_model.layers]
+    layer_ids = [layer.layer_id for layer in layers.layers]
     sp_data = ChdStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -83,14 +83,14 @@ def calculate_chd_boundary_stress_period_data(
                 yy_start_heads.append(mean_data.start_head.to_float())
                 yy_end_heads.append(mean_data.end_head.to_float())
 
-            grid_cell_centers = spatial_discretization.grid.get_cell_centers()
+            grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
             for cell in chd_boundary.affected_cells:
-                if spatial_discretization.affected_cells.is_active(cell.col, cell.row) is None:
+                if spatial_discretization.affected_cells.is_active(col=cell.col, row=cell.row) is None:
                     # if the cell is not part of the model
                     # we do not apply any data for this cell
                     continue
 
-                center = ShapelyPoint(grid_cell_centers[cell.col][cell.row].coordinates)
+                center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                 xx_new = [line_string.project(center, normalized=True)]
                 yy_new_start_head = float(np.interp(xx_new, xx, yy_start_heads)[0])
                 yy_new_end_head = float(np.interp(xx_new, xx, yy_end_heads)[0])
@@ -114,7 +114,7 @@ def calculate_stress_period_data(model: Model) -> ChdStressPeriodData | None:
         sp_data_boundary = calculate_chd_boundary_stress_period_data(
             spatial_discretization=model.spatial_discretization,
             time_discretization=model.time_discretization,
-            soil_model=model.soil_model,
+            layers=model.layers,
             chd_boundary=chd_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)

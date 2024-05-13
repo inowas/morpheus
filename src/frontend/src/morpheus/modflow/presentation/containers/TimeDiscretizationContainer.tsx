@@ -13,6 +13,7 @@ import cloneDeep from 'lodash.clonedeep';
 import {useDateTimeFormat} from 'common/hooks';
 import {StressperiodsUpload} from '../components/ModelTimeDiscretization/StressperiodsUpload';
 import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
+import useProjectPermissions from '../../application/useProjectPermissions';
 
 const TimeDiscretizationContainer = () => {
 
@@ -21,6 +22,7 @@ const TimeDiscretizationContainer = () => {
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
   const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization | null>(null);
   const {addDays, isValid, formatISO} = useDateTimeFormat('UTC');
+  const {isReadOnly} = useProjectPermissions(projectId as string);
 
   useEffect(() => {
     if (timeDiscretization) {
@@ -84,6 +86,7 @@ const TimeDiscretizationContainer = () => {
               <TimeDiscretizationGeneralParameters
                 timeDiscretization={timeDiscretizationLocal}
                 onChange={handleTimeDiscretizationChange}
+                readOnly={isReadOnly}
               />
             </AccordionContent>
             <AccordionContent title={'Stress periods'}>
@@ -91,20 +94,20 @@ const TimeDiscretizationContainer = () => {
               <TimeDiscretizationStressPeriods
                 timeDiscretization={timeDiscretizationLocal}
                 onChange={handleTimeDiscretizationChange}
-                readOnly={false}
+                readOnly={isReadOnly}
               />
             </AccordionContent>
           </Accordion>
-          <Button
+          {!isReadOnly && <Button
             onClick={handleSubmit}
             disabled={JSON.stringify(timeDiscretization) === JSON.stringify(timeDiscretizationLocal)}
             loading={loading}
             content={'Submit'}
-          />
+          />}
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <SpatialDiscretizationMap modelGeometry={spatialDiscretization?.geometry}/>
+        <SpatialDiscretizationMap modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
       </BodyContent>
     </>
   );

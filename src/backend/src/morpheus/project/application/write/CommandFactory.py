@@ -1,6 +1,7 @@
 from typing import Type
 
 from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.Asset import asset_command_handler_map
 from morpheus.project.application.write.Model import model_command_handler_map
 from morpheus.project.application.write.Project import project_command_handler_map
 
@@ -25,6 +26,9 @@ class CommandFactory:
 
 
 command_registry = {}
+
+for command in asset_command_handler_map.keys():
+    command_registry[command.command_name()] = command
 for command in model_command_handler_map.keys():
     command_registry[command.command_name()] = command
 for command in project_command_handler_map.keys():

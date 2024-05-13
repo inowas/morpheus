@@ -92,10 +92,16 @@ class MemberCollection:
     def member_is_admin(self, user_id: UserId) -> bool:
         if user_id not in self.members:
             return False
-        return self.members[user_id] == Role.ADMIN
+        try:
+            return self.members[user_id] == Role.ADMIN
+        except KeyError:
+            return False
 
     def member_is_editor(self, user_id: UserId) -> bool:
-        return self.members[user_id] == Role.EDITOR
+        try:
+            return self.members[user_id] == Role.EDITOR
+        except KeyError:
+            return False
 
     def member_can_manage(self, user_id: UserId) -> bool:
         return self.member_is_admin(user_id)
@@ -107,7 +113,10 @@ class MemberCollection:
         return self.member_is_admin(user_id) or self.member_is_editor(user_id) or self.member_is_viewer(user_id)
 
     def member_is_viewer(self, user_id: UserId) -> bool:
-        return self.members[user_id] == Role.VIEWER
+        try:
+            return self.members[user_id] == Role.VIEWER
+        except KeyError:
+            return False
 
     def member_can_edit_members_and_permissions(self, user_id: UserId) -> bool:
         return self.member_is_admin(user_id)
@@ -179,6 +188,9 @@ class Permissions:
             'members': self.members.to_dict(),
             'visibility': self.visibility.value
         }
+
+    def member_is_owner(self, user_id: UserId) -> bool:
+        return self.owner_id == user_id
 
     def member_can_manage(self, user_id: UserId) -> bool:
         if self.owner_id == user_id:

@@ -68,8 +68,9 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: './application/write/Model/schema.json#/definitions/ModelCommands'
-                - $ref: './application/write/Project/schema.json#/definitions/ProjectCommands'
+                - $ref: './application/write/Asset/schema.yml#/definitions/AssetCommands'
+                - $ref: './application/write/Model/schema.yml#/definitions/ModelCommands'
+                - $ref: './application/write/Project/schema.yml#/definitions/ProjectCommands'
 
       responses:
         201:
@@ -292,7 +293,7 @@ paths:
             schema:
               type: object
               properties:
-                file: {}
+                file: { }
               required:
                 - file
             encoding:
@@ -330,78 +331,117 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 
-  /projects/{project_id}/assets:
+  /projects/{project_id}/permissions:
     get:
-        parameters:
-            - $ref: '#/components/parameters/ProjectId'
-            - $ref: '#/components/parameters/FilterAssetType'
-            - $ref: '#/components/parameters/FilterAssetFileName'
-            - $ref: '#/components/parameters/FilterAssetDescription'
-            - $ref: '#/components/parameters/PaginationPage'
-            - $ref: '#/components/parameters/PaginationPageSize'
-        tags:
-            - Project
-        summary: Read optionally filtered and optionally paginated list of assets for a project
-        description: Read list of assets for a project. You can provide filters for asset type, file name and description. Pagination is supported if you provide page and page_size.
-        responses:
-          200:
-            description: List of assets
-            content:
-                application/json:
-                  schema:
-                    allOf:
-                      - $ref: '#/components/schemas/PaginationInfo'
-                      - type: object
-                        properties:
-                          assets:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/Asset'
-                        required:
-                          - assets
-          401:
-            $ref: '#/components/responses/UnauthorizedError'
-          403:
-            $ref: '#/components/responses/ForbiddenError'
-          500:
-            $ref: '#/components/responses/InternalServerError'
-    post:
-        tags:
-            - Project
-        summary: Upload a new asset for a project
-        description: Upload a new asset for a project
-        parameters:
-            - $ref: '#/components/parameters/ProjectId'
-        requestBody:
-          required: true
+      tags:
+        - Project
+      summary: Read the permissions of a project
+      description: Read the permissions of a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        200:
+          description: Permissions of the project
           content:
-            multipart/form-data:
+            application/json:
               schema:
                 type: object
                 properties:
-                  file: { }
-                  description:
-                    type: string
-                required:
-                  - file
-              encoding:
-                file:
-                  contentType: 'image/tiff, application/zip'
-        responses:
-            201:
-                description: Asset was successfully uploaded
-            401:
-                $ref: '#/components/responses/UnauthorizedError'
-            403:
-                $ref: '#/components/responses/ForbiddenError'
-            413:
-                $ref: '#/components/responses/UploadedFileTooLarge'
-            415:
-              $ref: '#/components/responses/UnsupportedMediaType'
-            422:
-                $ref: '#/components/responses/UnprocessableEntity'
-            500:
-                $ref: '#/components/responses/InternalServerError'
+                  is_owner:
+                    type: boolean
+                    description: "A flag to indicate if the user is the owner of the project."
+                    example: true
+                  can_manage:
+                    type: boolean
+                    description: "A flag to indicate if the user can manage the project."
+                    example: true
+                  can_edit:
+                    type: boolean
+                    description: "A flag to indicate if the user can read the project."
+                    example: true
+                  can_read:
+                    type: boolean
+                    description: "A flag to indicate if the user can read the project."
+                    example: true
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+
+  /projects/{project_id}/assets:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/FilterAssetType'
+        - $ref: '#/components/parameters/FilterAssetFileName'
+        - $ref: '#/components/parameters/FilterAssetDescription'
+        - $ref: '#/components/parameters/PaginationPage'
+        - $ref: '#/components/parameters/PaginationPageSize'
+      tags:
+        - Project
+      summary: Read optionally filtered and optionally paginated list of assets for a project
+      description: Read list of assets for a project. You can provide filters for asset type, file name and description. Pagination is supported if you provide page and page_size.
+      responses:
+        200:
+          description: List of assets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginationInfo'
+                  - type: object
+                    properties:
+                      assets:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Asset'
+                    required:
+                      - assets
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Project
+      summary: Upload a new asset for a project
+      description: Upload a new asset for a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { }
+                description:
+                  type: string
+              required:
+                - file
+            encoding:
+              file:
+                contentType: 'image/tiff, application/zip'
+      responses:
+        201:
+          description: Asset was successfully uploaded
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        413:
+          $ref: '#/components/responses/UploadedFileTooLarge'
+        415:
+          $ref: '#/components/responses/UnsupportedMediaType'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/assets/{asset_id}:
     get:
@@ -476,12 +516,12 @@ paths:
   /projects/{project_id}/assets/{asset_id}/data:
     get:
       tags:
-          - Project
+        - Project
       summary: Get the data for an asset
       description: Get the data for an asset
       parameters:
-          - $ref: '#/components/parameters/ProjectId'
-          - $ref: '#/components/parameters/AssetId'
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/AssetId'
       responses:
         200:
           description: The asset data
@@ -531,14 +571,14 @@ components:
       description: "Filter by file name"
       required: false
       schema:
-          type: string
+        type: string
     FilterAssetDescription:
       name: description
       in: query
       description: "Filter by description"
       required: false
       schema:
-          type: string
+        type: string
     PaginationPage:
       name: page
       in: query
@@ -750,66 +790,66 @@ components:
         - "shapefile"
       example: "geo_tiff"
     AssetDescription:
-        type: string
-        nullable: true
-        description: "The description of the asset"
-        example: "This asset contains recharge data for the model"
+      type: string
+      nullable: true
+      description: "The description of the asset"
+      example: "This asset contains recharge data for the model"
     AssetMetadata:
       oneOf:
         - $ref: '#/components/schemas/GeoTiffMetadata'
         - $ref: '#/components/schemas/ShapefileMetadata'
     ShapefileMetadata:
-        type: object
-        description: "Metadata of a shapefile"
-        properties:
-            geometry_type:
-                description: "The geometry type"
-                type: string
-                enum:
-                    - "Point"
-                    - "LineString"
-                    - "Polygon"
-                example: "Polygon"
-            n_geometries:
-                description: "The number of geometries"
-                type: integer
-                example: 10
-            wgs_84_bounding_box:
-                $ref: '#/components/schemas/Wgs84BoundingBox'
+      type: object
+      description: "Metadata of a shapefile"
+      properties:
+        geometry_type:
+          description: "The geometry type"
+          type: string
+          enum:
+            - "Point"
+            - "LineString"
+            - "Polygon"
+          example: "Polygon"
+        n_geometries:
+          description: "The number of geometries"
+          type: integer
+          example: 10
+        wgs_84_bounding_box:
+          $ref: '#/components/schemas/Wgs84BoundingBox'
     GeoTiffMetadata:
-        type: object
-        description: "Metadata of a GeoTIFF"
-        properties:
-            n_band:
-                description: "The number of bands"
-                type: integer
-                example: 1
-            n_row:
-                description: "The number of rows"
-                type: integer
-                example: 100
-            n_col:
-                description: "The number of columns"
-                type: integer
-                example: 100
-            wgs_84_bounding_box:
-                $ref: '#/components/schemas/Wgs84BoundingBox'
+      type: object
+      description: "Metadata of a GeoTIFF"
+      properties:
+        n_band:
+          description: "The number of bands"
+          type: integer
+          example: 1
+        n_row:
+          description: "The number of rows"
+          type: integer
+          example: 100
+        n_col:
+          description: "The number of columns"
+          type: integer
+          example: 100
+        wgs_84_bounding_box:
+          $ref: '#/components/schemas/Wgs84BoundingBox'
     Wgs84BoundingBox:
-        type: object
-        description: "Bounding box in WGS 84 coordinates"
-        properties:
-            min_x:
-                type: number
-                example: 13.922514437551428
-            min_y:
-                type: number
-                example: 50.964720483303836
-            max_x:
-                type: number
-                example: 13.925250781947113
-            max_y:
-                type: number
-                example: 50.965228748412386
+      type: object
+      description: "Bounding box in WGS 84 coordinates"
+      properties:
+        min_x:
+          type: number
+          example: 13.922514437551428
+        min_y:
+          type: number
+          example: 50.964720483303836
+        max_x:
+          type: number
+          example: 13.925250781947113
+        max_y:
+          type: number
+          example: 50.965228748412386
     File:
       type: object
       properties:
@@ -832,24 +872,24 @@ components:
       description: "The name of the file"
       example: "recharge.tif"
     PaginationInfo:
-        type: object
-        properties:
-            total:
-                description: "The total number of items"
-                type: integer
-                example: 17
-            page:
-                description: "The current page"
-                type: integer
-                example: 1
-            page_size:
-                description: "The number of items per page"
-                type: integer
-                example: 10
-            number_of_pages:
-                description: "The total number of pages"
-                type: integer
-                example: 2
+      type: object
+      properties:
+        total:
+          description: "The total number of items"
+          type: integer
+          example: 17
+        page:
+          description: "The current page"
+          type: integer
+          example: 1
+        page_size:
+          description: "The number of items per page"
+          type: integer
+          example: 10
+        number_of_pages:
+          description: "The total number of pages"
+          type: integer
+          example: 2
     ShapefileData:
       type: object
       description: "Data contained in a shapefile"
@@ -857,7 +897,7 @@ components:
         geo_json:
           type: object
           description: "The GeoJSON representation"
-          additionalProperties: {}
+          additionalProperties: { }
       required:
         - geo_json
     GeoTiffData:
@@ -869,7 +909,7 @@ components:
             wgs_84_coords:
               type: object
               description: "The coordinates in WGS 84 for all bands"
-              additionalProperties: {}
+              additionalProperties: { }
 
   responses:
     UnauthorizedError:

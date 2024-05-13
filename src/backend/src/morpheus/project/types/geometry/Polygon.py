@@ -19,6 +19,10 @@ class Polygon:
         shapely_polygon = ShapelyPolygon(self.coordinates[0])
         return Point(coordinates=shapely_polygon.centroid.coords[0])
 
+    def bbox(self) -> list[list[float]]:
+        shapely_polygon = ShapelyPolygon(self.coordinates[0])
+        return list(shapely_polygon.bounds)
+
     @classmethod
     def from_dict(cls, obj: dict):
         if str(obj['type']).lower() != 'Polygon'.lower():

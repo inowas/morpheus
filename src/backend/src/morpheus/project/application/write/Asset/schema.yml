@@ -1,0 +1,99 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for Asset Commands
+definitions:
+  AssetCommands:
+    oneOf:
+      - "$ref": "#/definitions/commands/DeleteAssetCommand"
+      - "$ref": "#/definitions/commands/UpdateAssetDescriptionCommand"
+      - "$ref": "#/definitions/commands/UpdateAssetFileNameCommand"
+      - "$ref": "#/definitions/commands/UpdateRasterAssetNoDataValueCommand"
+  commands:
+    DeleteAssetCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - delete_asset_command
+          example: delete_asset_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            asset_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - asset_id
+    UpdateAssetDescriptionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_asset_description_command
+          example: update_asset_description_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            asset_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            asset_description:
+              type: string
+              example: This is a description
+          required:
+            - project_id
+            - asset_id
+            - asset_description
+    UpdateAssetFileNameCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_asset_file_name_command
+          example: update_asset_file_name_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            asset_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            asset_file_name:
+              type: string
+              example: This is a description
+          required:
+            - project_id
+            - asset_id
+            - asset_file_name
+    UpdateRasterAssetNoDataValueCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_raster_asset_no_data_value_command
+          example: update_raster_asset_no_data_value_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            asset_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            no_data_value:
+              type: number
+              example: -9990
+          required:
+            - project_id
+            - asset_id
+            - no_data_value

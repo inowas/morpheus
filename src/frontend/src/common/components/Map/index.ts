@@ -1,9 +1,12 @@
 import GeomanControls from './GeomanControls';
-import Map from './Map';
+import Map, {LeafletMapProvider, IMapRef} from './Map';
 import MapExample from './MapExample';
 
 export {
   Map,
+  LeafletMapProvider,
   MapExample,
   GeomanControls,
 };
+
+export type {IMapRef};

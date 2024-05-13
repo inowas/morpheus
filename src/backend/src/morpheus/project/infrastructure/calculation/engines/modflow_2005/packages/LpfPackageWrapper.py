@@ -3,7 +3,7 @@ from flopy.modflow import ModflowLpf as FlopyModflowLpf
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
-from morpheus.project.types.soil_model.Layer import LayerType
+from morpheus.project.types.layers.Layer import LayerConfinement
 
 
 @dataclasses.dataclass
@@ -89,32 +89,32 @@ class LpfPackageData:
 
 
 def calculate_lpf_package_data(model: Model) -> LpfPackageData:
-    laytyp = [0 for _ in model.soil_model.layers]
-    for idx, layer in enumerate(model.soil_model.layers):
-        if LayerType.confined() == layer.type:
+    laytyp = [0 for _ in model.layers.layers]
+    for idx, layer in enumerate(model.layers.layers):
+        if LayerConfinement.confined() == layer.confinement:
             laytyp[idx] = 0
-        if LayerType.convertible() == layer.type:
+        if LayerConfinement.convertible() == layer.confinement:
             laytyp[idx] = 1
-        if LayerType.unconfined() == layer.type:
+        if LayerConfinement.unconfined() == layer.confinement:
             laytyp[idx] = -1
 
     package_data = LpfPackageData(
         laytyp=laytyp,
-        layavg=[layer.data.get_layer_average() for layer in model.soil_model.layers],
-        chani=[0 for _ in model.soil_model.layers],
-        layvka=[0 for _ in model.soil_model.layers],
-        laywet=[int(layer.data.is_wetting_active()) for layer in model.soil_model.layers],
+        layavg=[layer.properties.get_layer_average() for layer in model.layers.layers],
+        chani=[0 for _ in model.layers.layers],
+        layvka=[0 for _ in model.layers.layers],
+        laywet=[int(layer.properties.is_wetting_active()) for layer in model.layers.layers],
         ipakcb=0,  # 53 in the current frontend
         hdry=-1e30,
         iwdflg=0,
         wetfct=0.1,
         iwetit=1,
         ihdwet=0,
-        hk=[layer.data.kx for layer in model.soil_model.layers],
-        hani=[layer.data.get_horizontal_anisotropy() for layer in model.soil_model.layers],
-        vka=[layer.data.get_vka() for layer in model.soil_model.layers],
-        ss=[layer.data.specific_storage for layer in model.soil_model.layers],
-        sy=[layer.data.specific_yield for layer in model.soil_model.layers],
+        hk=[layer.properties.hk.get_data() for layer in model.layers.layers],
+        hani=[layer.properties.get_horizontal_anisotropy() for layer in model.layers.layers],
+        vka=[layer.properties.get_vka().get_data() for layer in model.layers.layers],
+        ss=[layer.properties.specific_storage.get_data() for layer in model.layers.layers],
+        sy=[layer.properties.specific_yield.get_data() for layer in model.layers.layers],
         vkcb=0.0,
         wetdry=-0.01,
         storagecoefficient=False,

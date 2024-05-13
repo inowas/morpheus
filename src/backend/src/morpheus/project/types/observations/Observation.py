@@ -6,7 +6,7 @@ from morpheus.common.types import Uuid, String, DateTime, Float
 from ..discretization.spatial import ActiveCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, GeometryCollection
-from ..soil_model import LayerId
+from ..layers import LayerId
 
 
 class ObservationId(Uuid):

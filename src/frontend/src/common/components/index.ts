@@ -4,7 +4,7 @@ import ContentWrapper, {IPageHeight, IPageWidth} from './ContentWrapper';
 import CsvFileInput from './CSVFileInput';
 import {DataGrid, DataRow} from './DataGrid';
 import DatePicker from './DatePicker';
-import DotsMenu, {IAction} from './DotsMenu';
+import DotsMenu, {IDotsMenuAction} from './DotsMenu';
 import Icon, {IIconProps} from './Icon/Icon';
 import Input, {IInputOnChangeData, IInputProps} from './Input/Input';
 import ModelCard, {ICard} from './CardGrid/Card';
@@ -29,6 +29,7 @@ import HeaderWrapper from './HeaderWrapper';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
+import ImageRenderer, {IImageRenderer} from './ImageRenderer';
 import InfoTitle from './InfoTitle/InfoTitle';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
@@ -37,8 +38,8 @@ import MapExample from './Map/MapExample';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import CardGrid from './CardGrid/Grid';
-import MovableAccordionList from './MovableAccordionList';
-import Navbar from './Navbar';
+import MovableAccordionList, {IMovableAccordionListAction, IMovableAccordionItem} from './MovableAccordionList';
+import Navbar, {INavbarItem} from './Navbar';
 import NotFound from './NotFound';
 import Notification from './Notification/Notification';
 import Notifications from './Notifications/Notifications';
@@ -46,6 +47,7 @@ import Page from './PageContainer/Page';
 import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
+import RasterFileInput from './RasterFileInput';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
@@ -82,6 +84,7 @@ export {
   IconButton,
   Input,
   Image,
+  ImageRenderer,
   InfoTitle,
   Label,
   Loader,
@@ -100,6 +103,7 @@ export {
   Pagination,
   Popup,
   Progress,
+  RasterFileInput,
   RandomImage,
   SectionTitle,
   Segment,
@@ -116,12 +120,16 @@ export {
 };
 
 export type {
-  IAction,
   ICheckboxProps,
   IConfirm,
   IConfirmProps,
+  IDotsMenuAction,
   IDropdownItemProps,
   IIconProps,
+  IImageRenderer,
+  IMovableAccordionItem,
+  IMovableAccordionListAction,
+  INavbarItem,
   IPaginationProps,
   DropdownProps,
   IInputProps,

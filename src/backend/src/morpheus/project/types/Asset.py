@@ -1,14 +1,18 @@
 import dataclasses
 from enum import StrEnum
-from typing import Literal, Any
+from typing import Literal
 
 from morpheus.common.types.File import File, FileName
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import Uuid, String, Float, Integer
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry.BoundingBox import BoundingBox
 
 
 class AssetId(Uuid):
+    pass
+
+
+class RasterBand(Integer):
     pass
 
 
@@ -18,7 +22,13 @@ class AssetType(StrEnum):
     SHAPEFILE = 'shapefile'
 
 
-class Metadata:
+class NoDataValue(Float):
+    @classmethod
+    def default(cls) -> 'NoDataValue':
+        return cls(-9999.0)
+
+
+class AssetMetadata:
     def to_dict(self):
         raise NotImplementedError
 
@@ -39,7 +49,7 @@ class Metadata:
 
 
 @dataclasses.dataclass(frozen=True)
-class ImageMetadata(Metadata):
+class ImageMetadata(AssetMetadata):
     width: int
     height: int
 
@@ -55,17 +65,22 @@ class ImageMetadata(Metadata):
 
 
 @dataclasses.dataclass(frozen=True)
-class GeoTiffMetadata(Metadata):
+class GeoTiffMetadata(AssetMetadata):
     n_cols: int
     n_rows: int
     n_bands: int
+    no_data_value: NoDataValue
     wgs_84_bounding_box: BoundingBox
+
+    def with_updated_no_data_value(self, no_data_value: NoDataValue) -> 'GeoTiffMetadata':
+        return dataclasses.replace(self, no_data_value=no_data_value)
 
     def to_dict(self):
         return {
             'n_cols': self.n_cols,
             'n_rows': self.n_rows,
             'n_bands': self.n_bands,
+            'no_data_value': self.no_data_value.to_float(),
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
         }
 
@@ -75,12 +90,13 @@ class GeoTiffMetadata(Metadata):
             n_cols=obj['n_cols'],
             n_rows=obj['n_rows'],
             n_bands=obj['n_bands'],
+            no_data_value=NoDataValue(obj['no_data_value']) if 'no_data_value' in obj else NoDataValue(-9999.0),
             wgs_84_bounding_box=BoundingBox.from_dict(obj['wgs_84_bounding_box']),
         )
 
 
 @dataclasses.dataclass(frozen=True)
-class ShapefileMetadata(Metadata):
+class ShapefileMetadata(AssetMetadata):
     geometry_type: Literal['Polygon'] | Literal['LineString'] | Literal['Point']
     n_geometries: int
     wgs_84_bounding_box: BoundingBox
@@ -111,7 +127,7 @@ class Asset:
     project_id: ProjectId
     type: AssetType
     file: File
-    metadata: Metadata
+    metadata: AssetMetadata
     description: AssetDescription | None = None
 
     def to_dict(self):
@@ -133,7 +149,7 @@ class Asset:
             project_id=ProjectId.from_str(obj['project_id']),
             type=asset_type,
             file=File.from_dict(obj['file']),
-            metadata=Metadata.from_dict_and_type(obj['metadata'], asset_type),
+            metadata=AssetMetadata.from_dict_and_type(obj['metadata'], asset_type),
             description=AssetDescription.try_from_str(obj['description']),
         )
 
@@ -155,23 +171,29 @@ class AssetData:
 class GeoTiffAssetData(AssetData):
     n_cols: int
     n_rows: int
-    n_bands: int
+    band: int
     wgs_84_bounding_box: BoundingBox
-    wgs_84_coords: Any
+    data: list[list[float]]
 
     def to_dict(self):
         return {
+            'type': AssetType.GEO_TIFF.value,
             'n_cols': self.n_cols,
             'n_rows': self.n_rows,
-            'n_bands': self.n_bands,
+            'band': self.band,
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
-            'wgs_84_coords': self.wgs_84_coords,
+            'data': self.data
         }
 
 
 @dataclasses.dataclass(frozen=True)
 class ShapefileAssetData(AssetData):
     data: dict
+    wgs_84_bounding_box: BoundingBox
 
     def to_dict(self):
-        return self.data
+        return {
+            'type': AssetType.SHAPEFILE.value,
+            'data': self.data,
+            'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
+        }

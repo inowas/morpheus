@@ -1,0 +1,11 @@
+from .DeleteAsset import DeleteAssetCommand, DeleteAssetCommandHandler
+from .UpdateAssetDescription import UpdateAssetDescriptionCommand, UpdateAssetDescriptionCommandHandler
+from .UpdateAssetFileName import UpdateAssetFileNameCommand, UpdateAssetFileNameCommandHandler
+from .UpdateRasterAssetNoDataValue import UpdateRasterAssetNoDataValueCommand, UpdateRasterAssetNoDataValueCommandHandler
+
+asset_command_handler_map = {
+    DeleteAssetCommand: DeleteAssetCommandHandler,
+    UpdateAssetDescriptionCommand: UpdateAssetDescriptionCommandHandler,
+    UpdateAssetFileNameCommand: UpdateAssetFileNameCommandHandler,
+    UpdateRasterAssetNoDataValueCommand: UpdateRasterAssetNoDataValueCommandHandler
+}

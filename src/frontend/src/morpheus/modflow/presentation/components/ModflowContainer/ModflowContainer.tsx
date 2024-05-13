@@ -4,15 +4,15 @@ import React from 'react';
 interface IProps {
   children: React.ReactNode;
   headerHeight?: number;
-
+  overflow?: 'hidden' | 'auto';
 }
 
-const ModflowContainer = ({children, headerHeight = 140}: IProps) => (
+const ModflowContainer = ({children, headerHeight = 140, overflow = 'hidden'}: IProps) => (
   <div
     style={{
       height: '100vh',
       display: 'flex',
-      overflow: 'hidden',
+      overflow: overflow,
       paddingTop: headerHeight,
     }}
   >

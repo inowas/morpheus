@@ -119,3 +119,4 @@ const Navbar: React.FC<IProps> = ({
 };
 
 export default Navbar;
+export type {INavbarItem};
