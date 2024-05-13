@@ -2,7 +2,7 @@ import {Accordion, Icon} from 'semantic-ui-react';
 import {arrayMove, List} from 'react-movable';
 import React, {useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
-import {DotsMenu, IAction} from '../index';
+import DotsMenu, {IAction} from 'common/components/DotsMenu';
 import styles from './MovableAccordionList.module.less';
 
 interface ListItem {

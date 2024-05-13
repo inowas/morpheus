@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import isEqual from 'lodash.isequal';
 
-import {MovableAccordionList, IMovableAccordionItem, IMovableAccordionListAction} from 'common/components';
+import {IMovableAccordionItem, IMovableAccordionListAction, MovableAccordionList} from 'common/components';
 
 import LayerDetails from './LayerDetails';
 import {IChangeLayerPropertyValues, ILayer, ILayerPropertyData, ILayerPropertyName} from '../../../types/Layers.type';
@@ -95,7 +95,6 @@ const LayersList = ({
     <MovableAccordionList
       items={movableListItems}
       onMovableListChange={handleOrderChange}
-      actions={getActions()}
       defaultOpenIndexes={[0]}
     />
   );
