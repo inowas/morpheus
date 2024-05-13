@@ -1,82 +1,36 @@
-import {Accordion, Icon} from 'semantic-ui-react';
+import {Accordion, Icon, SemanticICONS} from 'semantic-ui-react';
 import {arrayMove, List} from 'react-movable';
 import React, {useState} from 'react';
-import {v4 as uuidv4} from 'uuid';
-import DotsMenu, {IAction} from 'common/components/DotsMenu';
+
+import {DotsMenu} from 'common/components';
 import styles from './MovableAccordionList.module.less';
 
-interface ListItem {
-  key: number | string;
-  title: {
-    content: React.ReactNode;
-    icon: boolean;
-  };
-  content: {
-    content: React.ReactNode;
-  };
+export interface IMovableAccordionItem {
+  key: string;
+  title: React.ReactNode;
+  content: React.ReactNode;
+  editTitle: boolean;
+  onChangeTitle: (newTitle: string) => void;
+  isSubmittable: boolean;
 }
 
-interface MovableAccordionListProps {
-  items: ListItem[];
-  renameItems?: boolean;
-  onMovableListChange: (newItems: ListItem[]) => void;
+export interface IMovableAccordionListAction {
+  text: string;
+  icon: SemanticICONS;
+  onClick: (item: IMovableAccordionItem) => void;
+}
+
+interface IMovableAccordionProps {
+  items: IMovableAccordionItem[];
+  onMovableListChange: (newItems: IMovableAccordionItem[]) => void;
   defaultOpenIndexes?: number[];
   openEachOnClick?: boolean;
+  actions?: IMovableAccordionListAction[];
 }
 
-const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
-  items,
-  onMovableListChange,
-  openEachOnClick = false,
-  defaultOpenIndexes = [],
-  renameItems = true,
-}) => {
+const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnClick = false, defaultOpenIndexes = []}: IMovableAccordionProps) => {
   const [openIndexes, setOpenIndexes] = useState<number[]>(defaultOpenIndexes);
-  const [openEditingTitle, setOpenEditingTitle] = useState<number | string | null>(null);
-  const [inputValue, setInputValue] = useState('');
-
-  const handleSaveTitle = (key: string | number, newTitle: string) => {
-    if (!newTitle) {
-      setOpenEditingTitle(null);
-      return;
-    }
-    const newItems = items.map((item) =>
-      item.key === key
-        ? {...item, title: {content: newTitle, icon: false}}
-        : item,
-    );
-    onMovableListChange(newItems);
-    setInputValue('');
-    setOpenEditingTitle(null);
-  };
-
-  const handleDeleteItem = (key: string | number) => {
-    if (!key) {
-      setOpenEditingTitle(null);
-      return;
-    }
-    const newItems = items.filter((item) => (item.key !== key));
-    onMovableListChange(newItems);
-    setOpenEditingTitle(null);
-  };
-
-  const handleCloneItem = (key: number | string) => {
-    if (!key) {
-      setOpenEditingTitle(null);
-      return;
-    }
-
-    const newItems = items.map((item) => {
-      if (item.key === key) {
-        const clonedItem = {...item, key: uuidv4()};
-        return [item, clonedItem];
-      }
-      return [item];
-    }).flat();
-
-    onMovableListChange(newItems);
-    setOpenEditingTitle(null);
-  };
+  const [inputValue, setInputValue] = useState<string | null>(null);
 
   const handleAccordionClick = (index: number | undefined) => {
     if (index === undefined) {
@@ -90,12 +44,11 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
     setOpenIndexes(newOpenIndexes);
   };
 
+
   return (
     <div className={'movableList'}>
       <List
-        values={items.map((item) => ({
-          content: [item],
-        }))}
+        values={items.map((item) => ({content: item}))}
         onChange={({oldIndex, newIndex}) => {
           const newItems = arrayMove(items, oldIndex, newIndex);
           onMovableListChange(newItems);
@@ -115,6 +68,7 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
             ),
           );
         }}
+
         renderList={({children, props, isDragged}) => (
           <ul
             style={{
@@ -130,91 +84,90 @@ const MovableAccordionList: React.FC<MovableAccordionListProps> = ({
             {children}
           </ul>
         )}
-        renderItem={({props, value, index}) => {
-          return (
-            <li
-              {...props}
-              className={`${styles.movableItem} movableItem`}
+
+        renderItem={({props, value, index}) => (
+          <li
+            {...props}
+            className={`${styles.movableItem} movableItem`}
+            style={{
+              ...props.style,
+              zIndex: 99,
+              listStyle: 'none',
+            }}
+          >
+            <Icon
+              data-movable-handle={true}
+              className={styles.movableButton}
+              name="bars"
               style={{
-                ...props.style,
-                zIndex: 99,
-                listStyle: 'none',
+                cursor: 'move',
+                position: 'absolute',
+                zIndex: 9999999,
+                left: 0,
+                display: 'block',
+                height: '30px',
+                width: '30px',
+                marginRight: '12px',
+                padding: '6px',
+                color: value.content.editTitle ? '#009FE3' : '#fff',
+                backgroundColor: '#002557',
               }}
-            >
-              <Icon
-                data-movable-handle={true}
-                className={styles.movableButton}
-                name="bars"
-                style={{
-                  cursor: 'move',
-                  position: 'absolute',
-                  zIndex: 9999999,
-                  left: 0,
-                  display: 'block',
-                  height: '30px',
-                  width: '30px',
-                  marginRight: '12px',
-                  padding: '6px',
-                  color: openEditingTitle === value.content[0].key ? '#009FE3' : '#fff',
-                  backgroundColor: '#002557',
-                }}
-              />
-              {renameItems && openEditingTitle === value.content[0].key && (
-                <div className={styles.renameField}>
-                  <input
-                    type='text'
-                    value={inputValue}
-                    placeholder={String(value.content[0].title.content)}
-                    onChange={(e) => {
-                      const newTitle = e.target.value;
-                      setInputValue(newTitle);
-                    }}
-                  />
-                  <button onClick={() => handleSaveTitle(value.content[0].key, inputValue)}>
-                    Apply
-                  </button>
-                </div>
-              )}
-              <DotsMenu
-                actions={[
-                  {text: 'Clone', icon: 'clone', onClick: () => handleCloneItem(value.content[0].key)},
-                  {text: 'Delete', icon: 'remove', onClick: () => handleDeleteItem(value.content[0].key)},
-                  renameItems && {text: 'Rename Item', icon: 'edit', onClick: () => setOpenEditingTitle(value.content[0].key)},
-                ].filter(action => false !== action) as IAction[]}
-                style={{
-                  cursor: 'move',
-                  position: 'absolute',
-                  zIndex: 9999999,
-                  right: 40,
-                  top: 5,
-                  display: 'block',
-                  padding: '6px',
-                  color: '#fff',
-                  backgroundColor: '#002557',
-                }}
-              />
-              <Accordion
-                style={{
-                  backgroundColor: '#eeeeee',
-                }}
-                className="accordionPrimary"
-                panels={value.content.map((panel) => ({
-                  key: panel.key,
-                  title: {
-                    content: panel.title.content,
-                    icon: panel.title.icon,
-                    onClick: () => handleAccordionClick(index),
-                  },
-                  content: {content: panel.content.content},
-                  active: index !== undefined && 0 <= index && openIndexes.includes(index) ? true : false,
-                }))}
-                exclusive={false}
-              />
-            </li>
+            />
 
-          );
+            {value.content.editTitle && <div className={styles.renameField}>
+              <input
+                type='text'
+                value={inputValue || String(value.content.title)}
+                onChange={(e) => {
+                  const newTitle = e.target.value;
+                  setInputValue(newTitle);
+                }}
+              />
+              <button onClick={() => {
+                value.content.onChangeTitle(String(inputValue));
+                setInputValue(null);
+              }}
+              >
+                Apply
+              </button>
+            </div>}
 
-        }}
+            {actions && <DotsMenu
+              actions={actions.map((action) => ({
+                ...action,
+                onClick: () => action.onClick(value.content),
+              }))}
+              style={{
+                cursor: 'move',
+                position: 'absolute',
+                zIndex: 9999999,
+                right: 40,
+                top: 5,
+                display: 'block',
+                padding: '6px',
+                color: '#fff',
+                backgroundColor: '#002557',
+              }}
+            />
+            }
+
+            <Accordion
+              style={{backgroundColor: '#eeeeee'}}
+              className="accordionPrimary"
+              panels={[{
+                key: value.content.key,
+                title: {
+                  content: value.content.title + (value.content.isSubmittable ? ' *' : ''),
+                  icon: false,
+                  onClick: () => handleAccordionClick(index),
+                },
+                content: {content: value.content.content},
+                active: index !== undefined && 0 <= index && openIndexes.includes(index),
+              }]}
+              exclusive={false}
+            />
+          </li>
+        )}
       />
     </div>
   );
