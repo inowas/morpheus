@@ -8,7 +8,7 @@ export interface ITimeDiscretization {
 export interface IStressPeriod {
   start_date_time: string;
   number_of_time_steps: number;
-  time_step_multiplier: number;
+  time_step_multiplier: number | string;
   steady_state: boolean;
 }
 
