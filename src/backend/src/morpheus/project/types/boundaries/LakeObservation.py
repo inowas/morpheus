@@ -118,19 +118,19 @@ class LakeDataItem(DataItem):
 class LakeObservation(Observation):
     observation_id: ObservationId
     geometry: Point
-    raw_data: list[LakeRawDataItem]
+    data: list[LakeRawDataItem]
     bed_leakance: BedLeakance
     initial_stage: InitialStage
     stage_range: StageRange
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, raw_data: list[LakeRawDataItem], bed_leakance: BedLeakance,
+    def new(cls, name: ObservationName, geometry: Point, data: list[LakeRawDataItem], bed_leakance: BedLeakance,
             initial_stage: InitialStage, stage_range: StageRange):
         return cls(
             observation_id=ObservationId.new(),
             observation_name=name,
             geometry=geometry,
-            raw_data=raw_data,
+            data=data,
             bed_leakance=bed_leakance,
             initial_stage=initial_stage,
             stage_range=stage_range,
@@ -142,7 +142,7 @@ class LakeObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            raw_data=[LakeRawDataItem.from_dict(d) for d in obj['raw_data']],
+            data=[LakeRawDataItem.from_dict(d) for d in obj['data']],
             bed_leakance=BedLeakance.from_value(obj['bed_leakance']),
             initial_stage=InitialStage.from_value(obj['initial_stage']),
             stage_range=StageRange.from_dict(obj['stage_range']),
@@ -153,7 +153,7 @@ class LakeObservation(Observation):
             'observation_id': self.observation_id.to_value(),
             'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
-            'raw_data': [d.to_dict() for d in self.raw_data],
+            'data': [d.to_dict() for d in self.data],
             'bed_leakance': self.bed_leakance.to_value(),
             'initial_stage': self.initial_stage.to_value(),
             'stage_range': self.stage_range.to_dict(),
@@ -162,13 +162,13 @@ class LakeObservation(Observation):
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> LakeDataItem | None:
 
         # In range check
-        if end_date_time.to_datetime() < self.raw_data[0].date_time.to_datetime():
+        if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
             return None
 
-        if start_date_time.to_datetime() > self.raw_data[-1].date_time.to_datetime():
+        if start_date_time.to_datetime() > self.data[-1].date_time.to_datetime():
             return None
 
-        time_series = pd.Series([d.date_time.to_datetime() for d in self.raw_data])
+        time_series = pd.Series([d.date_time.to_datetime() for d in self.data])
 
         # Check if we need to adapt the frequency of the time series
         freq = '1D'
@@ -177,7 +177,7 @@ class LakeObservation(Observation):
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
 
-        precipitations = pd.Series([d.precipitation.to_value() for d in self.raw_data])
+        precipitations = pd.Series([d.precipitation.to_value() for d in self.data])
         precipitations_interpolator = interp1d(
             time_series.values.astype(float),
             precipitations.values.astype(float),
@@ -186,7 +186,7 @@ class LakeObservation(Observation):
         )
         precipitations = precipitations_interpolator(date_range.values.astype(float))
 
-        evaporations = pd.Series([d.evaporation.to_value() for d in self.raw_data])
+        evaporations = pd.Series([d.evaporation.to_value() for d in self.data])
         evaporations_interpolator = interp1d(
             time_series.values.astype(float),
             evaporations.values.astype(float),
@@ -195,7 +195,7 @@ class LakeObservation(Observation):
         )
         evaporations = evaporations_interpolator(date_range.values.astype(float))
 
-        runoffs = pd.Series([d.runoff.to_value() for d in self.raw_data])
+        runoffs = pd.Series([d.runoff.to_value() for d in self.data])
         runoff_interpolator = interp1d(
             time_series.values.astype(float),
             runoffs.values.astype(float),
@@ -204,7 +204,7 @@ class LakeObservation(Observation):
         )
         runoffs = runoff_interpolator(date_range.values.astype(float))
 
-        withdrawals = pd.Series([d.withdrawal.to_value() for d in self.raw_data])
+        withdrawals = pd.Series([d.withdrawal.to_value() for d in self.data])
         withdrawal_interpolator = interp1d(
             time_series.values.astype(float),
             withdrawals.values.astype(float),

@@ -42,7 +42,8 @@ class LayerPropertyZoneWithOptionalAffectedCells:
     def to_layer_property_zone(self, grid: Grid):
         zone_id = ZoneId.new() if not self.zone_id else self.zone_id
         affected_cells = self.affected_cells if self.affected_cells else ActiveCells.from_geometry(geometry=self.geometry, grid=grid)
-        return LayerPropertyZone(zone_id=zone_id, name=self.name, affected_cells=affected_cells, geometry=self.geometry, value=self.value)
+        zone_name = self.name if self.name else ZoneName('New Zone')
+        return LayerPropertyZone(zone_id=zone_id, name=zone_name, affected_cells=affected_cells, geometry=self.geometry, value=self.value)
 
 
 class ModelLayerPropertyValueZonePayload(TypedDict):

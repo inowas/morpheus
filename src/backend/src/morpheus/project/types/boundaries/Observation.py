@@ -46,7 +46,7 @@ class Observation:
     observation_id: ObservationId
     observation_name: ObservationName
     geometry: Point
-    raw_data: list[RawDataItem]
+    data: list[RawDataItem]
 
     @classmethod
     def from_dict(cls, obj):

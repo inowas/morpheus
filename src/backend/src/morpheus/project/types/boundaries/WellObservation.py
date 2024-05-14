@@ -61,15 +61,15 @@ class WellDataItem(DataItem):
 
 @dataclasses.dataclass
 class WellObservation(Observation):
-    raw_data: Sequence[WellRawDataItem]
+    data: Sequence[WellRawDataItem]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, raw_data: Sequence[WellRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: Sequence[WellRawDataItem]):
         return cls(
             observation_id=ObservationId.new(),
             observation_name=name,
             geometry=geometry,
-            raw_data=raw_data
+            data=data
         )
 
     @classmethod
@@ -78,7 +78,7 @@ class WellObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            raw_data=[WellRawDataItem.from_dict(d) for d in obj['raw_data']]
+            data=[WellRawDataItem.from_dict(d) for d in obj['data']]
         )
 
     def to_dict(self):
@@ -86,20 +86,20 @@ class WellObservation(Observation):
             'observation_id': self.observation_id.to_value(),
             'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
-            'raw_data': [d.to_dict() for d in self.raw_data]
+            'data': [d.to_dict() for d in self.data]
         }
 
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> WellDataItem | None:
 
         # In range check
-        if end_date_time.to_datetime() < self.raw_data[0].date_time.to_datetime():
+        if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
             return None
 
-        if start_date_time.to_datetime() > self.raw_data[-1].date_time.to_datetime():
+        if start_date_time.to_datetime() > self.data[-1].date_time.to_datetime():
             return None
 
-        time_series = pd.Series([d.date_time.to_datetime() for d in self.raw_data])
-        pumping_rates = pd.Series([d.pumping_rate.to_value() for d in self.raw_data])
+        time_series = pd.Series([d.date_time.to_datetime() for d in self.data])
+        pumping_rates = pd.Series([d.pumping_rate.to_value() for d in self.data])
 
         # Check if we need to adapt the frequency of the time series
         freq = '1D'

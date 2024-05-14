@@ -263,7 +263,7 @@ class ConstantHeadBoundary(Boundary):
 
         if observations is None:
             observations = [
-                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[], name=ObservationName.default())
+                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default())
             ]
 
         return cls(
@@ -303,7 +303,7 @@ class DrainBoundary(Boundary):
 
         if observations is None:
             observations = [
-                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[], name=ObservationName.default()),
+                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -337,7 +337,7 @@ class EvapotranspirationBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[EvapotranspirationRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
+                      data: list[EvapotranspirationRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
@@ -347,7 +347,7 @@ class EvapotranspirationBoundary(Boundary):
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                EvapotranspirationObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], name=ObservationName.default())
+                EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())
             ],
             enabled=True
         )
@@ -378,7 +378,7 @@ class FlowAndHeadBoundary(Boundary):
 
         if observations is None:
             observations = [
-                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[], name=ObservationName.default()),
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -450,7 +450,7 @@ class GeneralHeadBoundary(Boundary):
 
         if observations is None:
             observations = [
-                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[], name=ObservationName.default()),
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -484,7 +484,7 @@ class LakeBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[LakeRawDataItem] | None = None,
+                      data: list[LakeRawDataItem] | None = None,
                       bed_leakance: BedLeakance | None = None,
                       initial_stage: InitialStage | None = None,
                       stage_range: StageRange | None = None,
@@ -503,7 +503,7 @@ class LakeBoundary(Boundary):
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                LakeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], bed_leakance=bed_leakance,
+                LakeObservation.new(geometry=geometry.centroid(), data=data or [], bed_leakance=bed_leakance,
                                     initial_stage=initial_stage, stage_range=stage_range, name=ObservationName.default())
             ],
             enabled=True,
@@ -535,7 +535,7 @@ class RechargeBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[RechargeRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
+                      data: list[RechargeRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
@@ -545,7 +545,7 @@ class RechargeBoundary(Boundary):
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                RechargeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], name=ObservationName.default())
+                RechargeObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())
             ],
             enabled=True
         )
@@ -576,7 +576,7 @@ class RiverBoundary(Boundary):
 
         if observations is None:
             observations = [
-                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[], name=ObservationName.default()),
+                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -610,12 +610,12 @@ class WellBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Point, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[WellRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
+                      data: list[WellRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, Point):
             raise ValueError('Well boundaries must be points')
 
         observations = [
-            WellObservation.new(geometry=geometry, raw_data=raw_data or [], name=ObservationName.default()),
+            WellObservation.new(geometry=geometry, data=data or [], name=ObservationName.default()),
         ]
 
         return cls(
