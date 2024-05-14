@@ -30,6 +30,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [existingZones]);
 
+
   const handleSelectShapeFile = (assetId: string, data: FeatureCollection) => {
     const zonesToAdd: INewZone[] = [];
 
@@ -58,7 +59,6 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
         <Button
           size={'tiny'}
           onClick={() => {
-            console.log(zones);
             onSubmit(zones);
           }}
           floated={'right'}

@@ -20,12 +20,9 @@ interface IProps {
 }
 
 const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}: IProps) => {
-  const handleChange = (newZones: IZonesListItem[]) => {
-    onChange(newZones);
-  };
 
   const handleChangeName = (key: number, value: string) => {
-    handleChange(
+    onChange(
       zones.map((zone, idx) => {
         if (idx === key) {
           return {...zone, name: value};
@@ -36,7 +33,7 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
   };
 
   const handleChangeValue = (key: number, value: number) => {
-    handleChange(
+    onChange(
       zones.map((zone, idx) => {
         if (idx === key) {
           return {...zone, value};
@@ -46,7 +43,7 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
     );
   };
 
-  const handleDelete = (idx: number) => handleChange(zones.filter((zone, key) => key !== idx));
+  const handleDelete = (idx: number) => onChange(zones.filter((zone, key) => key !== idx));
 
   const updatedMovableItems = zones.map((zone, idx) => ({
     key: zone.zone_id ? zone.zone_id : String(idx),
@@ -81,8 +78,6 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
             />
           )}
         </div>
-
-
       </div>
     ),
   }));
@@ -101,7 +96,7 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
         <MovableList
           items={zones}
           renderListItem={updatedMovableItems}
-          onChange={handleChange}
+          onChange={onChange}
         />
       </div>
     </div>

@@ -26,6 +26,7 @@ const LayerDetails = ({layer, spatialDiscretization, onChangeLayerConfinement, o
   };
 
   const handleSubmitZoneChange = (layerId: string, propertyName: ILayerPropertyName) => {
+    console.log(layerId, propertyName);
     return (zones: IChangeLayerPropertyValues['zones']) => onChangeLayerProperty(layerId, propertyName, {zones});
   };
 
