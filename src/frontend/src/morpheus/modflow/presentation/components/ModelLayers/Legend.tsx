@@ -22,8 +22,8 @@ const Legend = ({value, getRgbColor, grades}: IProps) => {
         const div = L.DomUtil.create('div', 'legend_info legend');
         div.innerHTML = '<h4>Legend</h4>';
         div.innerHTML += `<p>Value: ${value || 'N/A'}</p>`;
-        for (var i = 0; i < grades.length; i++) {
-          div.innerHTML += '<i style="background:' + getRgbColor(grades[i] + 1) + '"></i> ' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        for (let i = 0; i < grades.length; i++) {
+          div.innerHTML += '<i style="background:' + getRgbColor(grades[i] + 1) + '"></i> ' + grades[i] + (grades[i + 1] && '&ndash;' + grades[i + 1] + '<br>');
         }
         return div;
       };
