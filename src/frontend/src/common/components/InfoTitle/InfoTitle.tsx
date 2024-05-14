@@ -10,6 +10,7 @@ interface IAction {
 }
 
 interface IProps {
+  style?: React.CSSProperties;
   title: string;
   isLocked?: boolean;
   description?: string;
@@ -17,9 +18,12 @@ interface IProps {
   secondary?: boolean;
 }
 
-const InfoTitle = ({title, description, actions, secondary, isLocked}: IProps) => {
+const InfoTitle = ({title, description, actions, secondary, isLocked, style}: IProps) => {
   return (
-    <div data-testid="info-title" className={styles.infoTitle}>
+    <div
+      data-testid="info-title" className={styles.infoTitle}
+      style={{...style}}
+    >
       {description && (
         <Popup
           trigger={secondary ? <span className={styles.secondary}>{title}</span> : <span><Icon className={'dateIcon'} name="info circle"/> {title}</span>}

@@ -1,86 +1,93 @@
 @import "../../../../../common/components/site.variables";
 
 
-.header {
-  display: flex;
-  color: @black;
-  border-bottom: 1px solid @ref-color-underline;
+.zoneList {
+  .header {
+    display: flex;
+    color: @black;
+    margin-left: 32px;
 
-  & *:first-child {
-    display: block;
-    width: 56.25%;
-  }
-}
-
-.container {
-  font-size: 12px;
-  font-weight: 400;
-  max-height: 280px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border-bottom: 1px solid @ref-color-underline;
-
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  &::-webkit-scrollbar-track {
-    box-shadow: @ref-box-shadow;
-    background: @ref-color-borderTable;
-    border-radius: 0;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: @ref-color-underline;
-    border-radius: 2px;
-  }
-}
-
-.table {
-  border: 0 !important;
-
-  tr {
-    padding: 2px 0;
-
-    &:not(:last-child) {
-      border-bottom: 1px solid @ref-color-borderTable;
-    }
-
-    th,
-    td {
-      padding: 2px 0 !important;
+    & *:first-child {
+      display: block;
+      width: 52%;
     }
   }
 
-
-  label {
-    font-size: 12px !important;
-  }
-
-  input {
-    font-family: inherit;
+  .container {
+    font-size: 12px;
     font-weight: 400;
-    padding: 2px 5px;
-    min-height: auto;
-    width: 100%;
-    border: 0;
-    text-align: end;
-    border: none;
-    border-radius: unset;
-    color: #000000;
-    line-height: 16px;
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0;
+    border-bottom: 1px solid @ref-color-underline;
+    border-top: 1px solid @ref-color-underline;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      box-shadow: @ref-box-shadow;
+      background: @ref-color-borderTable;
+      border-radius: 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: @ref-color-underline;
+      border-radius: 2px;
+    }
+  }
+}
+
+.zoneListBody {
+  display: flex;
+  gap: 10px;
+
+  .zoneListName {
+    width: 52%;
+
+    input {
+      box-shadow: none;
+      background-color: transparent;
+    }
+
+    input:focus-visible {
+      background-color: @white;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3) !important;
+    }
+  }
+
+  .zoneListValue {
+    width: 33%;
+
+    input {
+      text-align: end;
+    }
+  }
+
+  .zoneListButton {
+    width: 15%;
+
+    [class*="button"] {
+      min-width: unset;
+      height: 100%;
+    }
+
+    button.dotsMenu {
+      color: @black !important;
+      transition: transform 300ms;
+
+      &:hover,
+      &:focus {
+        background-color: transparent !important;
+        transform: scale(1.2);
+      }
+    }
   }
 
 }
 
-button.dotsMenu {
-  color: @black !important;
-  transition: transform 300ms;
 
-  &:hover,
-  &:focus {
-    background-color: transparent !important;
-    transform: scale(1.2);
-  }
-}
+
+

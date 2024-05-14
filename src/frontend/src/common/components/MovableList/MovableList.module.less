@@ -1,0 +1,38 @@
+@import '../site.variables';
+
+.movableList {
+  margin-bottom: 10px;
+}
+
+
+.movableItem {
+  align-items: center;
+  display: flex;
+  background-color: @ref-color-lightGrey;
+
+  & + .movableItem {
+    margin-top: 10px;
+  }
+}
+
+.movableButton {
+  cursor: move;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  color: @white;
+
+  &:before {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+}
+
+.movableItemInner {
+  display: flex;
+  padding: 0 0 5px 32px;
+  border-bottom: 1px solid @ref-color-underline;
+}

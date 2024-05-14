@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, InfoTitle} from 'common/components';
+import {Button, DataRow, InfoTitle} from 'common/components';
 import {IChangeLayerPropertyValues, ILayerPropertyValueZone} from '../../../types/Layers.type';
 import AssetsModalContainer from '../../containers/AssetsModalContainter';
 import {FeatureCollection, MultiPolygon, Polygon} from 'geojson';
@@ -57,7 +57,10 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
       return (
         <Button
           size={'tiny'}
-          onClick={() => onSubmit(zones)}
+          onClick={() => {
+            console.log(zones);
+            onSubmit(zones);
+          }}
           floated={'right'}
           content={'Submit'}
         />
@@ -66,12 +69,12 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
   };
 
   return (
-    <div style={{...style}}>
+    <DataRow style={{...style}}>
       <InfoTitle
         title='Zones'
         description='You can upload or draw Polygones on map to provide one value for a specific area.'
+        style={{marginBottom: 0}}
       />
-
       <Button
         size={'tiny'}
         color={'blue'}
@@ -95,7 +98,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
       />
 
       {showFileUploadModal && !readOnly && <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectShapefile={handleSelectShapeFile}/>}
-    </div>
+    </DataRow>
   );
 };
 
