@@ -1,14 +1,15 @@
-import {AccordionContent, AccordionProps, AccordionTitle, Accordion as SemanticAccordion} from 'semantic-ui-react';
+import {Accordion as SemanticAccordion, AccordionContent, AccordionProps, AccordionTitle} from 'semantic-ui-react';
 import React, {ReactNode, useState} from 'react';
 
 interface AccordionItemProps {
-  title: string;
+  title?: string;
   children: ReactNode;
   active?: boolean;
   onClick?: () => void;
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({title, children, active, onClick}) => {
+
   return (
     <>
       <AccordionTitle active={active} onClick={onClick}>

@@ -1,0 +1,41 @@
+@import '../site.variables';
+
+.searchWrapper {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+
+  .button,
+  .search {
+    display: flex;
+    height: auto;
+    align-items: center;
+  }
+
+  .button {
+    font-size: 16px !important;
+    margin-right: 10px;
+    border-radius: 2px;
+  }
+
+  .search {
+    align-items: center;
+    flex: 1;
+    border-radius: 2px;
+
+    [class*='input'] {
+      flex: 1;
+    }
+
+    input {
+      flex: 1;
+      border-radius: 2px !important;
+      border: 0 !important;
+      padding: 12px !important;
+      box-shadow: @ref-box-shadow !important;
+    }
+  }
+}
+
+
+

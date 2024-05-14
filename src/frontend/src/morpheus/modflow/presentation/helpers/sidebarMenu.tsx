@@ -10,6 +10,7 @@ import {
   faDatabase,
   faFlag,
   faFolder,
+  faInfo,
   faLayerGroup,
   faLocationCrosshairs,
   faMap,
@@ -19,11 +20,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import LayersContainer from '../containers/LayersContainer';
+import TestingContainer from '../containers/TestingContainer';
 import ProjectMetadataContainer from '../containers/ProjectMetadataContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 import ModelSetupContainer from '../containers/ModelSetupContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import BoundaryContainer from '../containers/BoundaryContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -67,6 +70,7 @@ const sidebarItems: IMenuItem[] = [
     name: 'Boundary conditions',
     isTitle: false,
     slug: 'boundary-conditions',
+    component: <BoundaryContainer/>,
   },
   {
     icon: <FontAwesomeIcon icon={faLocationCrosshairs}/>,
@@ -93,13 +97,13 @@ const sidebarItems: IMenuItem[] = [
     slug: 'meta-data',
     component: <ProjectMetadataContainer/>,
   },
-  // {
-  //   icon: <FontAwesomeIcon icon={faInfo}/>,
-  //   name: 'Testing',
-  //   isTitle: false,
-  //   slug: 'test',
-  //   component: <TestingContainer/>,
-  // },
+  {
+    icon: <FontAwesomeIcon icon={faInfo}/>,
+    name: 'Testing',
+    isTitle: false,
+    slug: 'test',
+    component: <TestingContainer/>,
+  },
   {
     icon: <FontAwesomeIcon icon={faSliders}/>,
     name: 'PACKAGES',
