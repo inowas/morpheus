@@ -1,8 +1,8 @@
 import dataclasses
 from typing import Literal, List
 
-from morpheus.common.types import Uuid, String, DateTime, Float
-
+from morpheus.common.types import Uuid, DateTime, Float
+from ..boundaries.Observation import ObservationName
 from ..discretization.spatial import ActiveCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, GeometryCollection
@@ -31,10 +31,6 @@ class ObservationType:
     @classmethod
     def head_observation(cls):
         return cls.from_str(value='head_observation')
-
-
-class ObservationName(String):
-    pass
 
 
 class ObservationDateTime(DateTime):

@@ -7,6 +7,7 @@ from morpheus.common.types import Float
 from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, StartDateTime, EndDateTime, \
     RawDataItem, Observation
 from morpheus.project.types.geometry import Point
+from morpheus.project.types.observations.Observation import ObservationName
 
 
 class HeadValue(Float):
@@ -65,9 +66,10 @@ class ConstantHeadObservation(Observation):
     raw_data: list[ConstantHeadRawDataItem]
 
     @classmethod
-    def new(cls, geometry: Point, raw_data: list[ConstantHeadRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, raw_data: list[ConstantHeadRawDataItem]):
         return cls(
             observation_id=ObservationId.new(),
+            observation_name=name,
             geometry=geometry,
             raw_data=raw_data
         )
@@ -108,6 +110,7 @@ class ConstantHeadObservation(Observation):
     def from_dict(cls, obj):
         return cls(
             observation_id=ObservationId.from_value(obj['observation_id']),
+            observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
             raw_data=[ConstantHeadRawDataItem.from_dict(d) for d in obj['raw_data']]
         )
@@ -115,6 +118,7 @@ class ConstantHeadObservation(Observation):
     def to_dict(self):
         return {
             'observation_id': self.observation_id.to_value(),
+            'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
             'raw_data': [d.to_dict() for d in self.raw_data]
         }

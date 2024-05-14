@@ -24,7 +24,7 @@ from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, Laye
 @dataclasses.dataclass
 class LayerPropertyZoneWithOptionalAffectedCells:
     zone_id: ZoneId | None
-    name: ZoneName
+    name: ZoneName | None
     affected_cells: ActiveCells | None
     geometry: Polygon | MultiPolygon
     value: float
@@ -33,7 +33,7 @@ class LayerPropertyZoneWithOptionalAffectedCells:
     def from_payload(cls, obj):
         return cls(
             zone_id=ZoneId.from_str(obj['zone_id']) if 'zone_id' in obj and obj['zone_id'] else None,
-            name=ZoneName.from_str(obj['name']),
+            name=ZoneName.from_str(obj['name']) if 'name' in obj else ZoneName('New Zone'),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']) if 'affected_cells' in obj and obj['affected_cells'] else None,
             geometry=Polygon.from_dict(obj['geometry']) if obj['geometry']['type'] == 'Polygon' else MultiPolygon.from_dict(obj['geometry']),
             value=obj['value']

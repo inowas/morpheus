@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .Observation import ObservationId, RawDataItem, DataItem, Observation
+from .Observation import ObservationId, RawDataItem, DataItem, Observation, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -82,9 +82,10 @@ class EvapotranspirationObservation(Observation):
     raw_data: list[EvapotranspirationRawDataItem]
 
     @classmethod
-    def new(cls, geometry: Point, raw_data: list[EvapotranspirationRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, raw_data: list[EvapotranspirationRawDataItem]):
         return cls(
             observation_id=ObservationId.new(),
+            observation_name=name,
             geometry=geometry,
             raw_data=raw_data
         )
@@ -93,6 +94,7 @@ class EvapotranspirationObservation(Observation):
     def from_dict(cls, obj):
         return cls(
             observation_id=ObservationId.from_value(obj['observation_id']),
+            observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
             raw_data=[EvapotranspirationRawDataItem.from_dict(d) for d in obj['raw_data']]
         )
@@ -100,6 +102,7 @@ class EvapotranspirationObservation(Observation):
     def to_dict(self):
         return {
             'observation_id': self.observation_id.to_value(),
+            'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
             'raw_data': [d.to_dict() for d in self.raw_data]
         }
