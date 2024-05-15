@@ -38,7 +38,7 @@ qa-check:
 
 ## run architecture layer boundary checks, static code analysis and tests
 run-notebooks:
-	scripts/dev/run-notebooks.sh
+	make start-dev && scripts/dev/run-notebooks.sh
 
 ## run tests
 run-tests:
