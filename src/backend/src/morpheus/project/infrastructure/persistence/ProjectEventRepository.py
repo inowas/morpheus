@@ -8,7 +8,7 @@ from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.event_sourcing.EventName import EventName
-from morpheus.project.domain.events.ProjectEventFactory import ProjectEventFactory, project_event_factory
+from morpheus.project.domain.events.EventFactory import ProjectEventFactory, project_event_factory
 from morpheus.settings import settings
 
 

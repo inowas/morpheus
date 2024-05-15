@@ -21,6 +21,13 @@ class WellRawDataItem(RawDataItem):
     pumping_rate: PumpingRate
 
     @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            pumping_rate=PumpingRate.from_float(0.0)
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
             date_time=StartDateTime.from_value(obj['date_time']),

@@ -29,6 +29,15 @@ class EvapotranspirationRawDataItem(RawDataItem):
     extinction_depth: ExtinctionDepth
 
     @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            surface_elevation=SurfaceElevation.from_float(0.0),
+            evapotranspiration=Evapotranspiration.from_float(0.0),
+            extinction_depth=ExtinctionDepth.from_float(0.0)
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
             date_time=StartDateTime.from_value(obj['date_time']),

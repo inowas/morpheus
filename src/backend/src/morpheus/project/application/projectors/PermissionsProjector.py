@@ -1,7 +1,7 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from ...domain.events.ProjectEvents import ProjectCreatedEvent
-from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, OwnershipUpdatedEvent, VisibilityUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
+from ...domain.events.ProjectPermissionEvents.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, OwnershipUpdatedEvent, VisibilityUpdatedEvent
 from ...infrastructure.persistence.PermissionsRepository import permissions_repository, PermissionsRepository
 
 

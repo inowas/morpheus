@@ -7,7 +7,7 @@ from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from ..read.ProjectReader import project_reader
 from ...domain.AssetService import AssetService
-from ...domain.events.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
 from ...infrastructure.assets.AssetHandlingService import asset_handling_service
 from ...infrastructure.assets.GeoTiffService import geo_tiff_service
 from ...infrastructure.assets.PreviewImageService import preview_image_service

@@ -61,6 +61,16 @@ class LakeRawDataItem(RawDataItem):
     withdrawal: Withdrawal
 
     @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            precipitation=Precipitation.from_float(0.0),
+            evaporation=Evaporation.from_float(0.0),
+            runoff=Runoff.from_float(0.0),
+            withdrawal=Withdrawal.from_float(0.0)
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
             date_time=StartDateTime.from_value(obj['date_time']),

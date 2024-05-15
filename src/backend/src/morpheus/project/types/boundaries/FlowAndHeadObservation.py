@@ -38,6 +38,14 @@ class FlowAndHeadRawDataItem:
     head: Head | None
 
     @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            flow=None,
+            head=Head.from_float(0.0)
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
             date_time=StartDateTime.from_value(obj['date_time']),

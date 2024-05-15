@@ -19,6 +19,13 @@ class RechargeRawDataItem(RawDataItem):
     recharge_rate: RechargeRate
 
     @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            recharge_rate=RechargeRate.from_float(0.0)
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
             date_time=StartDateTime.from_value(obj['date_time']),

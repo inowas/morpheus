@@ -4,8 +4,7 @@ from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
 
-from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, StartDateTime, EndDateTime, \
-    RawDataItem, Observation
+from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, StartDateTime, EndDateTime, RawDataItem, Observation
 from morpheus.project.types.geometry import Point
 from morpheus.project.types.observations.Observation import ObservationName
 
@@ -18,6 +17,13 @@ class HeadValue(Float):
 class ConstantHeadRawDataItem(RawDataItem):
     date_time: StartDateTime
     head: HeadValue
+
+    @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            head=HeadValue.from_float(0.0)
+        )
 
     @classmethod
     def from_dict(cls, obj):

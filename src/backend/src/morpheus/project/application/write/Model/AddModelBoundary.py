@@ -9,7 +9,7 @@ from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents import ModelBoundaryAddedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryAddedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
@@ -18,18 +18,13 @@ from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryNam
 from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import GeometryFactory, Point, Polygon, LineString
-from morpheus.project.types.layers.Layer import LayerId
 
 
 class AddModelBoundaryCommandPayload(TypedDict):
     project_id: str
     model_id: str
     boundary_type: IBoundaryTypeLiteral
-    boundary_name: str
-    boundary_tags: list[str]
     boundary_geometry: dict
-    boundary_affected_layers: list[str]
-    boundary_data: list[dict]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -41,8 +36,6 @@ class AddModelBoundaryCommand(CommandBase):
     name: BoundaryName
     tags: BoundaryTags
     geometry: Point | LineString | Polygon
-    affected_layers: list[LayerId]
-    data: list[dict]
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: AddModelBoundaryCommandPayload):
@@ -51,11 +44,9 @@ class AddModelBoundaryCommand(CommandBase):
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             type=BoundaryType.from_str(payload['boundary_type']),
-            name=BoundaryName.from_str(payload['boundary_name']),
-            tags=BoundaryTags.from_list(payload['boundary_tags']),
+            name=BoundaryName.from_str(f'New {payload["boundary_type"]} boundary'),
+            tags=BoundaryTags.empty(),
             geometry=GeometryFactory.from_dict(payload['boundary_geometry']),
-            affected_layers=[LayerId.from_str(layer_id) for layer_id in payload['boundary_affected_layers']],
-            data=payload['boundary_data']
         )
 
 
@@ -76,15 +67,15 @@ class AddModelBoundaryCommandHandler(CommandHandlerBase):
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
         current_grid = latest_model.spatial_discretization.grid
+        top_layer_id = latest_model.layers[0].layer_id
+        start_date_time = latest_model.time_discretization.start_date_time
 
-        boundary = BoundaryFactory().create_new(
+        boundary = BoundaryFactory().create_new_with_default_data(
             boundary_type=command.type,
-            name=command.name,
-            tags=command.tags,
             geometry=command.geometry,
             affected_cells=ActiveCells.from_geometry(geometry=command.geometry, grid=current_grid),
-            affected_layers=command.affected_layers,
-            data=command.data
+            affected_layers=[top_layer_id],
+            start_date_time=start_date_time,
         )
 
         if boundary is None:

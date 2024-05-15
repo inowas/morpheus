@@ -1,8 +1,8 @@
 from morpheus.common.application.Projector import ProjectorBase
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent
-from morpheus.project.domain.events.PermissionEvents import OwnershipUpdatedEvent, VisibilityUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent
+from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import VisibilityUpdatedEvent, OwnershipUpdatedEvent
 from morpheus.project.infrastructure.persistence.ProjectSummaryRepository import ProjectSummaryRepository, project_summary_repository
 from morpheus.project.types.Project import ProjectSummary
 

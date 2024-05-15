@@ -41,39 +41,17 @@ definitions:
             model_id:
               type: string
               example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            scenario_id:
-              type: string
-              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
             boundary_type:
               $ref: "#/definitions/components/BoundaryType"
-            boundary_name:
-              type: string
-              example: Boundary 1
-            boundary_tags:
-              type: array
-              items:
-                type: string
-              example: [ tag1, tag2 ]
             boundary_geometry:
               oneOf:
                 - $ref: "#/definitions/components/Point"
                 - $ref: "#/definitions/components/Linestring"
                 - $ref: "#/definitions/components/Polygon"
-            boundary_affected_layers:
-              type: array
-              items:
-                type: string
-                example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            boundary_data:
-              type: object
           required:
             - project_id
             - boundary_type
-            - boundary_name
-            - boundary_tags
             - boundary_geometry
-            - boundary_affected_layers
-            - boundary_data
     RemoveModelBoundaryCommand:
       type: object
       properties:

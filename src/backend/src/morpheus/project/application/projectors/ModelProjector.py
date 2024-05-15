@@ -1,10 +1,13 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDescriptionUpdatedEvent, \
-    VersionDeletedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelAffectedCellsUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, \
-    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerMetadataUpdatedEvent, \
-    ModelLayerPropertyUpdatedEvent, ModelLayerClonedEvent, ModelLayerOrderUpdatedEvent, ModelLayerConfinementUpdatedEvent, ModelBoundaryAddedEvent, ModelBoundaryRemovedEvent
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
+from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import VersionDeletedEvent, VersionAssignedToModelEvent, VersionDescriptionUpdatedEvent, VersionCreatedEvent, \
+    ModelCreatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryRemovedEvent, ModelBoundaryAddedEvent
+from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelAffectedCellsRecalculatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelGridUpdatedEvent, \
+    ModelGridRecalculatedEvent, ModelGeometryUpdatedEvent, ModelAffectedCellsUpdatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent, ModelLayerMetadataUpdatedEvent, ModelLayerOrderUpdatedEvent, \
+    ModelLayerDeletedEvent, ModelLayerCreatedEvent, ModelLayerConfinementUpdatedEvent, ModelLayerClonedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
 from morpheus.project.types.User import UserId

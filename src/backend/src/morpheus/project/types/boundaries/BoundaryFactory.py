@@ -1,11 +1,12 @@
-from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryType, WellBoundary, ConstantHeadBoundary, EvapotranspirationBoundary, FlowAndHeadBoundary, DrainBoundary, \
-    GeneralHeadBoundary, LakeBoundary, RechargeBoundary, RiverBoundary, BoundaryName, BoundaryTags
+from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryType, WellBoundary, ConstantHeadBoundary, \
+    EvapotranspirationBoundary, FlowAndHeadBoundary, DrainBoundary, GeneralHeadBoundary, LakeBoundary, RechargeBoundary, RiverBoundary, BoundaryName, BoundaryTags
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadRawDataItem
 from morpheus.project.types.boundaries.DrainObservation import DrainRawDataItem
 from morpheus.project.types.boundaries.EvapotranspirationObservation import EvapotranspirationRawDataItem
 from morpheus.project.types.boundaries.FlowAndHeadObservation import FlowAndHeadRawDataItem
 from morpheus.project.types.boundaries.GeneralHeadObservation import GeneralHeadRawDataItem
 from morpheus.project.types.boundaries.LakeObservation import LakeRawDataItem
+from morpheus.project.types.boundaries.Observation import StartDateTime
 from morpheus.project.types.boundaries.RechargeObservation import RechargeRawDataItem
 from morpheus.project.types.boundaries.RiverObservation import RiverRawDataItem
 from morpheus.project.types.boundaries.WellObservation import WellRawDataItem
@@ -34,8 +35,8 @@ class BoundaryFactory:
             raise ValueError('Geometry must be a polygon')
         return geometry
 
-    def create_new(self, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[dict],
-                   name: BoundaryName | None = None, tags: BoundaryTags | None = None) -> Boundary | None:
+    def create_new_with_default_data(self, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
+                                     start_date_time: StartDateTime, name: BoundaryName | None = None, tags: BoundaryTags | None = None) -> Boundary | None:
 
         if boundary_type == BoundaryType.constant_head():
             geometry = self.assert_is_line_string(geometry)
@@ -45,7 +46,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[ConstantHeadRawDataItem.from_dict(item) for item in data],
+                data=[ConstantHeadRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.drain():
@@ -56,7 +57,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[DrainRawDataItem.from_dict(item) for item in data],
+                data=[DrainRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.evapotranspiration():
@@ -67,7 +68,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[EvapotranspirationRawDataItem.from_dict(item) for item in data],
+                data=[EvapotranspirationRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.flow_and_head():
@@ -78,7 +79,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[FlowAndHeadRawDataItem.from_dict(item) for item in data],
+                data=[FlowAndHeadRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.general_head():
@@ -89,7 +90,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[GeneralHeadRawDataItem.from_dict(item) for item in data],
+                data=[GeneralHeadRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.lake():
@@ -100,7 +101,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[LakeRawDataItem.from_dict(item) for item in data],
+                data=[LakeRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.recharge():
@@ -111,7 +112,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[RechargeRawDataItem.from_dict(item) for item in data],
+                data=[RechargeRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.river():
@@ -122,7 +123,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[RiverRawDataItem.from_dict(item) for item in data],
+                data=[RiverRawDataItem.default(date_time=start_date_time)],
             )
 
         if boundary_type == BoundaryType.well():
@@ -133,7 +134,7 @@ class BoundaryFactory:
                 geometry=geometry,
                 affected_layers=affected_layers,
                 affected_cells=affected_cells,
-                data=[WellRawDataItem.from_dict(item) for item in data],
+                data=[WellRawDataItem.default(date_time=start_date_time)],
             )
 
         return None
