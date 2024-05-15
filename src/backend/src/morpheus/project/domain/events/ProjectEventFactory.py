@@ -5,13 +5,17 @@ from ...domain.events.ProjectEventName import ProjectEventName
 from ...domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDeletedEvent, VersionDescriptionUpdatedEvent, \
     ModelAffectedCellsUpdatedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelAffectedCellsRecalculatedEvent, \
     ModelGridRecalculatedEvent, ModelLayerClonedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerOrderUpdatedEvent, ModelLayerMetadataUpdatedEvent, \
-    ModelLayerPropertyUpdatedEvent, ModelLayerConfinementUpdatedEvent
+    ModelLayerPropertyUpdatedEvent, ModelLayerConfinementUpdatedEvent, ModelBoundaryAddedEvent, ModelBoundaryRemovedEvent
 from ...domain.events.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, VisibilityUpdatedEvent, OwnershipUpdatedEvent
 from ...domain.events.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent, ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
 
 
 class ProjectEventFactory:
     def create_event(self, event_name: EventName, entity_uuid: Uuid, occurred_at: DateTime, payload: dict):
+        if event_name.to_str() == ProjectEventName.MODEL_BOUNDARY_ADDED:
+            return ModelBoundaryAddedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
+        if event_name.to_str() == ProjectEventName.MODEL_BOUNDARY_REMOVED:
+            return ModelBoundaryRemovedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_AFFECTED_CELLS_RECALCULATED:
             return ModelAffectedCellsRecalculatedEvent(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload)
         if event_name.to_str() == ProjectEventName.MODEL_AFFECTED_CELLS_UPDATED:

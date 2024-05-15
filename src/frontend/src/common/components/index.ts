@@ -56,6 +56,7 @@ import {Tab, TabPane} from 'common/components/Tab';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
+import SearchInput from './SearchComponent/SearchComponent';
 
 export {
   ApplicationContentWrapper,
@@ -105,6 +106,7 @@ export {
   Progress,
   RasterFileInput,
   RandomImage,
+  SearchInput,
   SectionTitle,
   Segment,
   Select,

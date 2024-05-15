@@ -4,6 +4,8 @@ title: Schema for ModelCommands
 definitions:
   ModelCommands:
     oneOf:
+      - "$ref": "#/definitions/commands/AddModelBoundaryCommand"
+      - "$ref": "#/definitions/commands/RemoveModelBoundaryCommand"
       - "$ref": "#/definitions/commands/CloneModelLayerCommand"
       - "$ref": "#/definitions/commands/CreateModelCommand"
       - "$ref": "#/definitions/commands/CreateModelLayerCommand"
@@ -22,6 +24,82 @@ definitions:
       - "$ref": "#/definitions/commands/DeleteModelVersionCommand"
       - "$ref": "#/definitions/commands/UpdateModelVersionDescriptionCommand"
   commands:
+    AddModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_boundary_command
+          example: add_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            scenario_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_type:
+              $ref: "#/definitions/components/BoundaryType"
+            boundary_name:
+              type: string
+              example: Boundary 1
+            boundary_tags:
+              type: array
+              items:
+                type: string
+              example: [ tag1, tag2 ]
+            boundary_geometry:
+              oneOf:
+                - $ref: "#/definitions/components/Point"
+                - $ref: "#/definitions/components/Linestring"
+                - $ref: "#/definitions/components/Polygon"
+            boundary_affected_layers:
+              type: array
+              items:
+                type: string
+                example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_data:
+              type: object
+          required:
+            - project_id
+            - boundary_type
+            - boundary_name
+            - boundary_tags
+            - boundary_geometry
+            - boundary_affected_layers
+            - boundary_data
+    RemoveModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - remove_boundary_command
+          example: remove_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            scenario_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - boundary_id
     CloneModelLayerCommand:
       type: object
       properties:
@@ -634,6 +712,38 @@ definitions:
         - coordinates
     Nullable:
       type: 'null'
+    Linestring:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Linestring
+          example: Linestring
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: number
+            minItems: 2
+            maxItems: 2
+          example:
+            - - 13.922514437551428
+              - 50.964720483303836
+            - - 13.925250781947113
+              - 50.965228748412386
+            - - 13.925036413951403
+              - 50.96623732041704
+            - - 13.92222441026388
+              - 50.96609040370362
+            - - 13.922514437551428
+              - 50.964720483303836
+      required:
+        - type
+        - coordinates
     Point:
       type: object
       description: The geometry of the feature.
@@ -668,6 +778,14 @@ definitions:
         coordinates:
           type: array
           description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                minItems: 2
+                maxItems: 2
           example:
             - - - 13.922514437551428
                 - 50.964720483303836
@@ -679,14 +797,6 @@ definitions:
                 - 50.96609040370362
               - - 13.922514437551428
                 - 50.964720483303836
-          items:
-            type: array
-            items:
-              type: array
-              items:
-                type: number
-                minItems: 2
-                maxItems: 2
       required:
         - type
         - coordinates
@@ -696,3 +806,16 @@ definitions:
         type: array
         items:
           type: number
+    BoundaryType:
+      type: string
+      enum:
+        - constant_head
+        - drain
+        - evapotranspiration
+        - flow_and_head
+        - general_head
+        - lake
+        - recharge
+        - river
+        - well
+      example: constant_head

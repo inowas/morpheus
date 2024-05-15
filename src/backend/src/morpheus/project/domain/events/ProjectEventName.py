@@ -15,6 +15,16 @@ class ProjectEventName(StrEnum):
 
     MODEL_AFFECTED_CELLS_RECALCULATED = 'Model Affected Cells Recalculated'
     MODEL_AFFECTED_CELLS_UPDATED = 'Model Affected Cells Updated'
+
+    MODEL_BOUNDARY_ADDED = 'Model Boundary Added'
+    MODEL_BOUNDARY_REMOVED = 'Model Boundary Removed'
+    MODEL_BOUNDARY_METADATA_UPDATED = 'Model Boundary Metadata Updated'
+    MODEL_BOUNDARY_ENABLED = 'Model Boundary Enabled'
+    MODEL_BOUNDARY_DISABLED = 'Model Boundary Disabled'
+    MODEL_BOUNDARY_OBSERVATION_ADDED = 'Model Boundary Observation Added'
+    MODEL_BOUNDARY_OBSERVATION_REMOVED = 'Model Boundary Observation Removed'
+    MODEL_BOUNDARY_OBSERVATION_UPDATED = 'Model Boundary Observation Updated'
+
     MODEL_CREATED = 'Model Created'
     MODEL_GEOMETRY_UPDATED = 'Model Geometry Updated'
     MODEL_GRID_RECALCULATED = 'Model Grid Recalculated'

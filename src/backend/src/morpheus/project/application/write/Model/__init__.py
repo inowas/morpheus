@@ -1,9 +1,11 @@
+from .AddModelBoundary import AddModelBoundaryCommand, AddModelBoundaryCommandHandler
 from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
 from .CreateModel import CreateModelCommand, CreateModelCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
 from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
+from .RemoveModelBoundary import RemoveModelBoundaryCommand, RemoveModelBoundaryCommandHandler
 from .UpdateModelLayerConfinement import UpdateModelLayerConfinementCommand, UpdateModelLayerConfinementCommandHandler
 from .UpdateModelLayerMetadata import UpdateModelLayerMetadataCommand, UpdateModelLayerMetadataCommandHandler
 from .UpdateModelLayerOrder import UpdateModelLayerOrderCommand, UpdateModelLayerOrderCommandHandler
@@ -17,12 +19,14 @@ from .UpdateModelTimeDiscretization import UpdateModelTimeDiscretizationCommand,
 from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand, UpdateModelVersionDescriptionCommandHandler
 
 model_command_handler_map = {
+    AddModelBoundaryCommand: AddModelBoundaryCommandHandler,
     CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelCommand: CreateModelCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,
     CreateModelVersionCommand: CreateModelVersionCommandHandler,
     DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
+    RemoveModelBoundaryCommand: RemoveModelBoundaryCommandHandler,
     UpdateModelLayerConfinementCommand: UpdateModelLayerConfinementCommandHandler,
     UpdateModelLayerMetadataCommand: UpdateModelLayerMetadataCommandHandler,
     UpdateModelLayerOrderCommand: UpdateModelLayerOrderCommandHandler,

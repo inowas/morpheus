@@ -8,7 +8,6 @@ import {BoundariesForm} from './BoundariesForm/';
 import {MenuItem, TabPane} from 'semantic-ui-react';
 import {SelectedList} from '../SelectedList';
 import {v4 as uuidv4} from 'uuid';
-import SearchComponent from '../../../../../common/components/SearchComponent/SearchComponent';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
@@ -141,501 +140,493 @@ const BoundariesContent: React.FC = () => {
   };
 
   return <>
-    <DataGrid>
-      <SectionTitle title={'MODEL BOUNDARIES'}/>
-      <SearchComponent
-        onSearch={(searchText) => console.log(searchText)}
-        buttonText={'Add new boundary'}
-      />
-      <AccordionRef
-        defaultActiveIndex={0}
-        className='accordionPrimary'
-        // exclusive value - if true, only one panel can be open at a time
-        // exclusive={false}
-        // defaultActiveIndex={[0]}
-        panels={[
-          {
-            key: 1,
-            title: {
-              content: (
-                <div>
-                  <span>GHB</span>
-                  <span>General Head Boundaries</span>
-                  <span>{`(${getBoundariesByType(boundaries, 'general_head').length})`}</span>
-                </div>
-              ),
-              icon: false,
-            },
-            content: {
-              content: (
-                <>
-                  <Grid.Grid
-                    columns={2}
-                    stackable={true}
-                    variant='secondary'
-                  >
-                    <Grid.Column width={9}>
-                      <SelectedList
-                        type='general_head'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        selectedObservations={selectedObservation}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
-                        onRename={handleItemRename}
-                        onDelete={handleItemDelete}
-                        onCopy={handleItemCopy}
-                      />
-                    </Grid.Column>
-                    <Grid.Column width={7} style={{marginTop: '12px'}}>
-                      <InfoTitle
-                        title="Properties"
-                        secondary={true}
-                        actions={[
-                          {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-                        ]}
-                      />
-                      <BoundariesForm
-                        type='general_head'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
 
-                      />
-                    </Grid.Column>
-                  </Grid.Grid>
-                  <Grid.Grid>
-                    <Tab
-                      style={{width: '100%'}}
-                      variant='primary'
-                      menu={{secondary: true, pointing: true}}
-                      panes={[
-                        {
-                          menuItem: (
-                            <MenuItem key='table'>
-                                                            Table
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                            <BoundariesTable
-                              type='general_head'
-                              boundaries={boundaries}
-                              selectedObservation={selectedObservation}
-                            />
-                          </TabPane>,
-                        },
-                        {
-                          menuItem: (
-                            <MenuItem
-                              key='Chart'
-                            >
-                                                            Chart
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                                                        Chart
-                          </TabPane>,
-                        },
+    <AccordionRef
+      defaultActiveIndex={0}
+      className='accordionPrimary'
+      // exclusive value - if true, only one panel can be open at a time
+      // exclusive={false}
+      // defaultActiveIndex={[0]}
+      panels={[
+        {
+          key: 1,
+          title: {
+            content: (
+              <div>
+                <span>GHB</span>
+                <span>General Head Boundaries</span>
+                <span>{`(${getBoundariesByType(boundaries, 'general_head').length})`}</span>
+              </div>
+            ),
+            icon: false,
+          },
+          content: {
+            content: (
+              <>
+                <Grid.Grid
+                  columns={2}
+                  stackable={true}
+                  variant='secondary'
+                >
+                  <Grid.Column width={9}>
+                    <SelectedList
+                      type='general_head'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      selectedObservations={selectedObservation}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
+                      onRename={handleItemRename}
+                      onDelete={handleItemDelete}
+                      onCopy={handleItemCopy}
+                    />
+                  </Grid.Column>
+                  <Grid.Column width={7} style={{marginTop: '12px'}}>
+                    <InfoTitle
+                      title="Properties"
+                      secondary={true}
+                      actions={[
+                        {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
                       ]}
                     />
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      marginTop: '10px',
-                      marginLeft: 'auto',
-                    }}
+                    <BoundariesForm
+                      type='general_head'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
+
+                    />
+                  </Grid.Column>
+                </Grid.Grid>
+                <Grid.Grid>
+                  <Tab
+                    style={{width: '100%'}}
+                    variant='primary'
+                    menu={{secondary: true, pointing: true}}
+                    panes={[
+                      {
+                        menuItem: (
+                          <MenuItem key='table'>
+                            Table
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          <BoundariesTable
+                            type='general_head'
+                            boundaries={boundaries}
+                            selectedObservation={selectedObservation}
+                          />
+                        </TabPane>,
+                      },
+                      {
+                        menuItem: (
+                          <MenuItem
+                            key='Chart'
+                          >
+                            Chart
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          Chart
+                        </TabPane>,
+                      },
+                    ]}
+                  />
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginTop: '10px',
+                    marginLeft: 'auto',
+                  }}
+                  >
+                    <Button
+                      className='buttonLink'
+                      disabled={0 === selectedItems.length}
+                      onClick={() => console.log('general_head')}
                     >
-                      <Button
-                        className='buttonLink'
-                        disabled={0 === selectedItems.length}
-                        onClick={() => console.log('general_head')}
-                      >
-                                                Delete all values <FontAwesomeIcon icon={faTrashCan}/>
-                      </Button>
-                      <Button
-                        className='buttonLink'
-                        disabled={0 === selectedItems.length}
-                      >
-                                                Download <FontAwesomeIcon icon={faDownload}/></Button>
-                    </div>
-                  </Grid.Grid>
-                </>
-              ),
-            },
-            isOpen: false,
+                      Delete all values <FontAwesomeIcon icon={faTrashCan}/>
+                    </Button>
+                    <Button
+                      className='buttonLink'
+                      disabled={0 === selectedItems.length}
+                    >
+                      Download <FontAwesomeIcon icon={faDownload}/></Button>
+                  </div>
+                </Grid.Grid>
+              </>
+            ),
           },
+          isOpen: false,
+        },
 
-          {
-            key: 2,
-            title: {
-              content: (
-                <div>
-                  <span>WEL</span>
-                  <span>Well Boundaries </span>
-                  <span>{`(${getBoundariesByType(boundaries, 'well').length})`}</span>
-                </div>
-              ),
-              icon: false,
-            },
-            content: {
-              content: (
-                <>
-                  <Grid.Grid
-                    columns={2}
-                    stackable={true}
-                    variant='secondary'
-                  >
-                    <Grid.Column width={9}>
-                      <SelectedList
-                        type='well'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        selectedObservations={selectedObservation}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
-                        onRename={handleItemRename}
-                        onDelete={handleItemDelete}
-                        onCopy={handleItemCopy}
-                      />
-                    </Grid.Column>
-                    <Grid.Column width={7} style={{marginTop: '12px'}}>
-                      <InfoTitle
-                        title="Properties"
-                        secondary={true}
-                        actions={[
-                          {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-                        ]}
-                      />
-                      <BoundariesForm
-                        type='well'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
-
-                      />
-                    </Grid.Column>
-                  </Grid.Grid>
-                  <Grid.Grid>
-                    <Tab
-                      style={{width: '100%'}}
-                      variant='primary'
-                      menu={{secondary: true, pointing: true}}
-                      panes={[
-                        {
-                          menuItem: (
-                            <MenuItem key='table'>
-                                                            Table
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                            <BoundariesTable
-                              type='well'
-                              boundaries={boundaries}
-                              selectedObservation={selectedObservation}
-                            />
-                          </TabPane>,
-                        },
-                        {
-                          menuItem: (
-                            <MenuItem
-                              key='Chart'
-                            >
-                                                            Chart
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                                                        Chart
-                          </TabPane>,
-                        },
+        {
+          key: 2,
+          title: {
+            content: (
+              <div>
+                <span>WEL</span>
+                <span>Well Boundaries </span>
+                <span>{`(${getBoundariesByType(boundaries, 'well').length})`}</span>
+              </div>
+            ),
+            icon: false,
+          },
+          content: {
+            content: (
+              <>
+                <Grid.Grid
+                  columns={2}
+                  stackable={true}
+                  variant='secondary'
+                >
+                  <Grid.Column width={9}>
+                    <SelectedList
+                      type='well'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      selectedObservations={selectedObservation}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
+                      onRename={handleItemRename}
+                      onDelete={handleItemDelete}
+                      onCopy={handleItemCopy}
+                    />
+                  </Grid.Column>
+                  <Grid.Column width={7} style={{marginTop: '12px'}}>
+                    <InfoTitle
+                      title="Properties"
+                      secondary={true}
+                      actions={[
+                        {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
                       ]}
                     />
-                  </Grid.Grid>
-                </>
-              ),
-            },
-            isOpen: false,
+                    <BoundariesForm
+                      type='well'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
+
+                    />
+                  </Grid.Column>
+                </Grid.Grid>
+                <Grid.Grid>
+                  <Tab
+                    style={{width: '100%'}}
+                    variant='primary'
+                    menu={{secondary: true, pointing: true}}
+                    panes={[
+                      {
+                        menuItem: (
+                          <MenuItem key='table'>
+                            Table
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          <BoundariesTable
+                            type='well'
+                            boundaries={boundaries}
+                            selectedObservation={selectedObservation}
+                          />
+                        </TabPane>,
+                      },
+                      {
+                        menuItem: (
+                          <MenuItem
+                            key='Chart'
+                          >
+                            Chart
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          Chart
+                        </TabPane>,
+                      },
+                    ]}
+                  />
+                </Grid.Grid>
+              </>
+            ),
           },
+          isOpen: false,
+        },
 
-          {
-            key: 3,
-            title: {
-              content: (
-                <div>
-                  <span>REC</span>
-                  <span>Recharge</span>
-                  <span>{`(${getBoundariesByType(boundaries, 'recharge').length})`}</span>
-                </div>
-              ),
-              icon: false,
-            },
-            content: {
-              content: (
-                <>
-                  <Grid.Grid
-                    columns={2}
-                    stackable={true}
-                    variant='secondary'
-                  >
-                    <Grid.Column width={9}>
-                      <SelectedList
-                        type='recharge'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        selectedObservations={selectedObservation}
-                        onSelect={handleSelectItem}
-                        onRename={handleItemRename}
-                        onSelectObservations={handleSelectObservation}
-                        onDelete={handleItemDelete}
-                        onCopy={handleItemCopy}
-                      />
-                    </Grid.Column>
-                    <Grid.Column width={7} style={{marginTop: '12px'}}>
-                      <InfoTitle
-                        title="Properties"
-                        secondary={true}
-                        actions={[
-                          {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-                        ]}
-                      />
-                      <BoundariesForm
-                        type='recharge'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
-
-                      />
-                    </Grid.Column>
-                  </Grid.Grid>
-                  <Grid.Grid>
-                    <Tab
-                      style={{width: '100%'}}
-                      variant='primary'
-                      menu={{secondary: true, pointing: true}}
-                      panes={[
-                        {
-                          menuItem: (
-                            <MenuItem key='table'>
-                                                            Table
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                            <BoundariesTable
-                              type='recharge'
-                              boundaries={boundaries}
-                              selectedObservation={selectedObservation}
-                            />
-                          </TabPane>,
-                        },
-                        {
-                          menuItem: (
-                            <MenuItem
-                              key='Chart'
-                            >
-                                                            Chart
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                                                        Chart
-                          </TabPane>,
-                        },
+        {
+          key: 3,
+          title: {
+            content: (
+              <div>
+                <span>REC</span>
+                <span>Recharge</span>
+                <span>{`(${getBoundariesByType(boundaries, 'recharge').length})`}</span>
+              </div>
+            ),
+            icon: false,
+          },
+          content: {
+            content: (
+              <>
+                <Grid.Grid
+                  columns={2}
+                  stackable={true}
+                  variant='secondary'
+                >
+                  <Grid.Column width={9}>
+                    <SelectedList
+                      type='recharge'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      selectedObservations={selectedObservation}
+                      onSelect={handleSelectItem}
+                      onRename={handleItemRename}
+                      onSelectObservations={handleSelectObservation}
+                      onDelete={handleItemDelete}
+                      onCopy={handleItemCopy}
+                    />
+                  </Grid.Column>
+                  <Grid.Column width={7} style={{marginTop: '12px'}}>
+                    <InfoTitle
+                      title="Properties"
+                      secondary={true}
+                      actions={[
+                        {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
                       ]}
                     />
-                  </Grid.Grid>
-                </>
-              ),
-            },
-            isOpen: false,
+                    <BoundariesForm
+                      type='recharge'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
+
+                    />
+                  </Grid.Column>
+                </Grid.Grid>
+                <Grid.Grid>
+                  <Tab
+                    style={{width: '100%'}}
+                    variant='primary'
+                    menu={{secondary: true, pointing: true}}
+                    panes={[
+                      {
+                        menuItem: (
+                          <MenuItem key='table'>
+                            Table
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          <BoundariesTable
+                            type='recharge'
+                            boundaries={boundaries}
+                            selectedObservation={selectedObservation}
+                          />
+                        </TabPane>,
+                      },
+                      {
+                        menuItem: (
+                          <MenuItem
+                            key='Chart'
+                          >
+                            Chart
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          Chart
+                        </TabPane>,
+                      },
+                    ]}
+                  />
+                </Grid.Grid>
+              </>
+            ),
           },
+          isOpen: false,
+        },
 
-          {
-            key: 4,
-            title: {
-              content: (
-                <div>
-                  <span>RIV</span>
-                  <span>River</span>
-                  <span>{`(${getBoundariesByType(boundaries, 'river').length})`}</span>
-                </div>
-              ),
-              icon: false,
-            },
-            content: {
-              content: (
-                <>
-                  <Grid.Grid
-                    columns={2}
-                    stackable={true}
-                    variant='secondary'
-                  >
-                    <Grid.Column width={9}>
-                      <SelectedList
-                        type='river'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        selectedObservations={selectedObservation}
-                        onSelect={handleSelectItem}
-                        onRename={handleItemRename}
-                        onSelectObservations={handleSelectObservation}
-                        onDelete={handleItemDelete}
-                        onCopy={handleItemCopy}
-                      />
-                    </Grid.Column>
-                    <Grid.Column width={7} style={{marginTop: '12px'}}>
-                      <InfoTitle
-                        title="Properties"
-                        secondary={true}
-                        actions={[
-                          {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-                        ]}
-                      />
-                      <BoundariesForm
-                        type='river'
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
-
-                      />
-                    </Grid.Column>
-                  </Grid.Grid>
-                  <Grid.Grid>
-                    <Tab
-                      style={{width: '100%'}}
-                      variant='primary'
-                      menu={{secondary: true, pointing: true}}
-                      panes={[
-                        {
-                          menuItem: (
-                            <MenuItem key='table'>
-                                                            Table
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                            <BoundariesTable
-                              type='river'
-                              boundaries={boundaries}
-                              selectedObservation={selectedObservation}
-                            />
-                          </TabPane>,
-                        },
-                        {
-                          menuItem: (
-                            <MenuItem
-                              key='Chart'
-                            >
-                                                            Chart
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                                                        Chart
-                          </TabPane>,
-                        },
+        {
+          key: 4,
+          title: {
+            content: (
+              <div>
+                <span>RIV</span>
+                <span>River</span>
+                <span>{`(${getBoundariesByType(boundaries, 'river').length})`}</span>
+              </div>
+            ),
+            icon: false,
+          },
+          content: {
+            content: (
+              <>
+                <Grid.Grid
+                  columns={2}
+                  stackable={true}
+                  variant='secondary'
+                >
+                  <Grid.Column width={9}>
+                    <SelectedList
+                      type='river'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      selectedObservations={selectedObservation}
+                      onSelect={handleSelectItem}
+                      onRename={handleItemRename}
+                      onSelectObservations={handleSelectObservation}
+                      onDelete={handleItemDelete}
+                      onCopy={handleItemCopy}
+                    />
+                  </Grid.Column>
+                  <Grid.Column width={7} style={{marginTop: '12px'}}>
+                    <InfoTitle
+                      title="Properties"
+                      secondary={true}
+                      actions={[
+                        {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
                       ]}
                     />
-                  </Grid.Grid>
-                </>
-              ),
-            },
-            isOpen: false,
+                    <BoundariesForm
+                      type='river'
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
+
+                    />
+                  </Grid.Column>
+                </Grid.Grid>
+                <Grid.Grid>
+                  <Tab
+                    style={{width: '100%'}}
+                    variant='primary'
+                    menu={{secondary: true, pointing: true}}
+                    panes={[
+                      {
+                        menuItem: (
+                          <MenuItem key='table'>
+                            Table
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          <BoundariesTable
+                            type='river'
+                            boundaries={boundaries}
+                            selectedObservation={selectedObservation}
+                          />
+                        </TabPane>,
+                      },
+                      {
+                        menuItem: (
+                          <MenuItem
+                            key='Chart'
+                          >
+                            Chart
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          Chart
+                        </TabPane>,
+                      },
+                    ]}
+                  />
+                </Grid.Grid>
+              </>
+            ),
           },
+          isOpen: false,
+        },
 
-          {
-            key: 5,
-            title: {
-              content: (
-                <div>
-                  <span>All</span>
-                  <span>All boundaries</span>
-                  <span>{`(${boundaries.length})`}</span>
-                </div>
-              ),
-              icon: false,
-            },
-            content: {
-              content: (
-                <>
-                  <Grid.Grid
-                    columns={2}
-                    stackable={true}
-                    variant='secondary'
-                  >
-                    <Grid.Column width={9}>
-                      <SelectedList
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        selectedObservations={selectedObservation}
-                        onSelect={handleSelectItem}
-                        onRename={handleItemRename}
-                        onSelectObservations={handleSelectObservation}
-                        onDelete={handleItemDelete}
-                        onCopy={handleItemCopy}
-                      />
-                    </Grid.Column>
-                    <Grid.Column width={7} style={{marginTop: '12px'}}>
-                      <InfoTitle
-                        title="Properties"
-                        secondary={true}
-                        actions={[
-                          {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-                        ]}
-                      />
-                      <BoundariesForm
-                        boundaries={boundaries}
-                        selectedItems={selectedItems}
-                        onSelect={handleSelectItem}
-                        onSelectObservations={handleSelectObservation}
-
-                      />
-                    </Grid.Column>
-                  </Grid.Grid>
-                  <Grid.Grid>
-                    <Tab
-                      style={{width: '100%'}}
-                      variant='primary'
-                      menu={{secondary: true, pointing: true}}
-                      panes={[
-                        {
-                          menuItem: (
-                            <MenuItem key='table'>
-                                                            Table
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                            <BoundariesTable
-                              boundaries={boundaries}
-                              selectedObservation={selectedObservation}
-                            />
-                          </TabPane>,
-                        },
-                        {
-                          menuItem: (
-                            <MenuItem
-                              key='Chart'
-                            >
-                                                            Chart
-                            </MenuItem>
-                          ),
-                          render: () => <TabPane attached={false}>
-                                                        Chart
-                          </TabPane>,
-                        },
+        {
+          key: 5,
+          title: {
+            content: (
+              <div>
+                <span>All</span>
+                <span>All boundaries</span>
+                <span>{`(${boundaries.length})`}</span>
+              </div>
+            ),
+            icon: false,
+          },
+          content: {
+            content: (
+              <>
+                <Grid.Grid
+                  columns={2}
+                  stackable={true}
+                  variant='secondary'
+                >
+                  <Grid.Column width={9}>
+                    <SelectedList
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      selectedObservations={selectedObservation}
+                      onSelect={handleSelectItem}
+                      onRename={handleItemRename}
+                      onSelectObservations={handleSelectObservation}
+                      onDelete={handleItemDelete}
+                      onCopy={handleItemCopy}
+                    />
+                  </Grid.Column>
+                  <Grid.Column width={7} style={{marginTop: '12px'}}>
+                    <InfoTitle
+                      title="Properties"
+                      secondary={true}
+                      actions={[
+                        {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
                       ]}
                     />
-                  </Grid.Grid>
-                </>
-              ),
-            },
-            isOpen: false,
-          },
-        ]}
-      />
+                    <BoundariesForm
+                      boundaries={boundaries}
+                      selectedItems={selectedItems}
+                      onSelect={handleSelectItem}
+                      onSelectObservations={handleSelectObservation}
 
-    </DataGrid>
-  </>
-  ;
+                    />
+                  </Grid.Column>
+                </Grid.Grid>
+                <Grid.Grid>
+                  <Tab
+                    style={{width: '100%'}}
+                    variant='primary'
+                    menu={{secondary: true, pointing: true}}
+                    panes={[
+                      {
+                        menuItem: (
+                          <MenuItem key='table'>
+                            Table
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          <BoundariesTable
+                            boundaries={boundaries}
+                            selectedObservation={selectedObservation}
+                          />
+                        </TabPane>,
+                      },
+                      {
+                        menuItem: (
+                          <MenuItem
+                            key='Chart'
+                          >
+                            Chart
+                          </MenuItem>
+                        ),
+                        render: () => <TabPane attached={false}>
+                          Chart
+                        </TabPane>,
+                      },
+                    ]}
+                  />
+                </Grid.Grid>
+              </>
+            ),
+          },
+          isOpen: false,
+        },
+      ]}
+    />
+  </>;
 };
 
 export default BoundariesContent;

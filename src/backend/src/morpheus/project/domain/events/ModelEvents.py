@@ -9,6 +9,7 @@ from morpheus.project.domain.events.ProjectEventName import ProjectEventName
 from morpheus.project.types.Model import Model, ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.ModelVersion import ModelVersion, VersionId, VersionDescription
+from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryId
 from morpheus.project.types.discretization import TimeDiscretization
 from morpheus.project.types.discretization.spatial import Grid, ActiveCells
 from morpheus.project.types.geometry import Polygon
@@ -56,6 +57,58 @@ class ModelAffectedCellsRecalculatedEvent(EventBase):
 
     def get_event_name(self) -> EventName:
         return EventName.from_str(ProjectEventName.MODEL_AFFECTED_CELLS_RECALCULATED.to_str())
+
+
+@dataclasses.dataclass(frozen=True)
+class ModelBoundaryAddedEvent(EventBase):
+    @classmethod
+    def from_boundary(cls, project_id: ProjectId, model_id: ModelId, boundary: Boundary, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'boundary': boundary.to_dict()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_boundary(self) -> Boundary:
+        return Boundary.from_dict(self.payload['boundary'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_BOUNDARY_ADDED.to_str())
+
+
+@dataclasses.dataclass(frozen=True)
+class ModelBoundaryRemovedEvent(EventBase):
+    @classmethod
+    def from_boundary_id(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'boundary_id': boundary_id.to_str()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_boundary_id(self) -> BoundaryId:
+        return BoundaryId.from_str(self.payload['boundary_id'])
+
+    def get_event_name(self) -> EventName:
+        return EventName.from_str(ProjectEventName.MODEL_BOUNDARY_REMOVED.to_str())
 
 
 @dataclasses.dataclass(frozen=True)
