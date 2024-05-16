@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
+from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
 from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ReadModelLayerPropertyImageRequestHandler, ImageOutputFormat
 from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler, DataOutputFormat
@@ -125,6 +126,12 @@ def register_routes(blueprint: Blueprint):
             property_name=LayerPropertyName.from_str(property_name),
             output_format=output_format
         )
+
+    @blueprint.route('/<project_id>/model/boundaries', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_get_boundaries(project_id: str):
+        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

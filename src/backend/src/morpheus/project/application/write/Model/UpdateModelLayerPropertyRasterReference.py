@@ -10,7 +10,7 @@ from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents import ModelLayerPropertyUpdatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent
 from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod, RasterData
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Asset import AssetId, GeoTiffAssetData, RasterBand

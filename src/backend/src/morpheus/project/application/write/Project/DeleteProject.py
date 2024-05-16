@@ -10,7 +10,7 @@ from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.assets.AssetHandlingService import asset_handling_service
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.domain.events.ProjectEvents import ProjectDeletedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectDeletedEvent
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
 

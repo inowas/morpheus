@@ -347,10 +347,10 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
                 ))}
               </DataGrid>
               <DataRow>
-                <div className={styles.scrollContainer}>
+                <div className='scrollableTable'>
                   <Table
-                    celled={true} structured={true}
-                    className={styles.table}
+                    celled={true}
+                    structured={true}
                   >
                     <Table.Header>
                       {renderHeader()}

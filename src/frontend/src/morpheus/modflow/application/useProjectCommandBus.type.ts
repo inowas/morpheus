@@ -1,6 +1,26 @@
-import {Point, Polygon} from 'geojson';
+import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerPropertyName, IZone} from '../types/Layers.type';
+import {IBoundaryType} from "../types/Boundaries.type";
+
+export interface IAddModelBoundaryCommand {
+  command_name: 'add_model_boundary_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_type: IBoundaryType;
+    boundary_geometry: Point | LineString | Polygon;
+  }
+}
+
+export interface IRemoveModelBoundaryCommand {
+  command_name: 'remove_model_boundary_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+  }
+}
 
 export interface IDeleteAssetCommand {
   command_name: 'delete_asset_command';
@@ -280,7 +300,9 @@ export interface IUpdateProjectMemberRoleCommand {
   }
 }
 
-export type ICommand = IDeleteAssetCommand
+export type ICommand = IAddModelBoundaryCommand
+  | IRemoveModelBoundaryCommand
+  | IDeleteAssetCommand
   | IUpdateAssetDescriptionCommand
   | UpdateAssetFileNameCommand
   | UpdateRasterAssetNoDataValueCommand

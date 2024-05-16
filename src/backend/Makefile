@@ -36,6 +36,10 @@ stop-dev:
 qa-check:
 	scripts/dev/qa-check.sh
 
+## run architecture layer boundary checks, static code analysis and tests
+run-notebooks:
+	make start-dev && scripts/dev/run-notebooks.sh
+
 ## run tests
 run-tests:
 	scripts/dev/qa_check/run-tests.sh
