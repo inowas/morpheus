@@ -18,7 +18,7 @@ interface IGenericBoundary<T> {
   enabled: boolean;
 }
 
-type IBoundaryType = 'constant_head' | 'drain' | 'evapotranspiration' | 'flow_and_head' | 'general_head' | 'lake' | 'recharge' | 'river' | 'well';
+export type IBoundaryType = 'constant_head' | 'drain' | 'evapotranspiration' | 'flow_and_head' | 'general_head' | 'lake' | 'recharge' | 'river' | 'well';
 
 interface IObservation<T> {
   observation_id: string;

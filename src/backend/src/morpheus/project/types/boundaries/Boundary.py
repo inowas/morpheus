@@ -253,13 +253,14 @@ class ConstantHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.constant_head()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[ConstantHeadRawDataItem],
-            tags: BoundaryTags = BoundaryTags.empty()):
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[ConstantHeadRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
+
         if not isinstance(geometry, LineString):
             raise ValueError('Constant head boundaries must be lines')
 
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -312,13 +313,14 @@ class DrainBoundary(Boundary):
     type: BoundaryType = BoundaryType.drain()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[DrainRawDataItem],
-            tags: BoundaryTags = BoundaryTags.empty()):
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[DrainRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
+
         if not isinstance(geometry, LineString):
             raise ValueError('Drain boundaries must be lines')
 
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -371,10 +373,10 @@ class EvapotranspirationBoundary(Boundary):
     type: BoundaryType = BoundaryType.evapotranspiration()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[EvapotranspirationRawDataItem],
-            tags: BoundaryTags = BoundaryTags.empty()):
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[EvapotranspirationRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -422,11 +424,12 @@ class FlowAndHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.flow_and_head()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[FlowAndHeadRawDataItem],
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[FlowAndHeadRawDataItem],
             tags: BoundaryTags = BoundaryTags.empty()):
 
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -511,11 +514,12 @@ class GeneralHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.general_head()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[GeneralHeadRawDataItem],
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[GeneralHeadRawDataItem],
             tags: BoundaryTags = BoundaryTags.empty()):
 
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -568,10 +572,10 @@ class LakeBoundary(Boundary):
     type: BoundaryType = BoundaryType.lake()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[LakeRawDataItem],
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[LakeRawDataItem],
             bed_leakance: BedLeakance | None = None, initial_stage: InitialStage | None = None, stage_range: StageRange | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -642,10 +646,10 @@ class RechargeBoundary(Boundary):
     type: BoundaryType = BoundaryType.recharge()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[RechargeRawDataItem],
-            tags: BoundaryTags = BoundaryTags.empty()):
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[RechargeRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -658,10 +662,10 @@ class RechargeBoundary(Boundary):
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
+    def from_geometry(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
                       data: list[RechargeRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -693,13 +697,13 @@ class RiverBoundary(Boundary):
     type: BoundaryType = BoundaryType.river()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[RiverRawDataItem],
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[RiverRawDataItem],
             tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, LineString):
             raise ValueError('River boundaries must be lines')
 
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,
@@ -752,13 +756,13 @@ class WellBoundary(Boundary):
     type: BoundaryType = BoundaryType.well()
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[WellRawDataItem],
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[WellRawDataItem],
             tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, Point):
             raise ValueError('Well boundaries must be points')
 
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
             tags=tags,

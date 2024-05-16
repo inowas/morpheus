@@ -3,14 +3,14 @@ import {InfoTitle} from 'common/components';
 import {ILayer} from '../../../types/Layers.type';
 
 interface IProps {
-  layerType: ILayer['type'];  // 'confined' | 'convertible' | 'unconfined';
-  onSubmit: (layerType: ILayer['type']) => void;
+  layerType: ILayer['confinement'];  // 'confined' | 'convertible' | 'unconfined';
+  onSubmit: (layerType: ILayer['confinement']) => void;
   readOnly: boolean;
 }
 
 const LayerConfinement = ({layerType, onSubmit, readOnly}: IProps) => {
 
-  const [layerTypeLocal, setLayerTypeLocal] = useState<ILayer['type']>(layerType);
+  const [layerTypeLocal, setLayerTypeLocal] = useState<ILayer['confinement']>(layerType);
 
   useEffect(() => {
     setLayerTypeLocal(layerType);

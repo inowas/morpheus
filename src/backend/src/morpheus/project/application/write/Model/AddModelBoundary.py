@@ -14,7 +14,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, IBoundaryTypeLiteral
+from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, IBoundaryTypeLiteral, BoundaryId
 from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import GeometryFactory, Point, Polygon, LineString
@@ -32,6 +32,7 @@ class AddModelBoundaryCommand(CommandBase):
     user_id: UserId
     project_id: ProjectId
     model_id: ModelId
+    boundary_id: BoundaryId
     type: BoundaryType
     name: BoundaryName
     tags: BoundaryTags
@@ -43,6 +44,7 @@ class AddModelBoundaryCommand(CommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
+            boundary_id=BoundaryId.new(),
             type=BoundaryType.from_str(payload['boundary_type']),
             name=BoundaryName.from_str(f'New {payload["boundary_type"]} boundary'),
             tags=BoundaryTags.empty(),
@@ -70,7 +72,8 @@ class AddModelBoundaryCommandHandler(CommandHandlerBase):
         top_layer_id = latest_model.layers[0].layer_id
         start_date_time = latest_model.time_discretization.start_date_time
 
-        boundary = BoundaryFactory().create_new_with_default_data(
+        boundary = BoundaryFactory().create_with_default_data(
+            boundary_id=command.boundary_id,
             boundary_type=command.type,
             geometry=command.geometry,
             affected_cells=ActiveCells.from_geometry(geometry=command.geometry, grid=current_grid),

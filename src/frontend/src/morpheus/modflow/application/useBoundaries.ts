@@ -2,7 +2,11 @@ import {IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {IBoundary} from "../types/Boundaries.type";
+import {IBoundary, IBoundaryType} from "../types/Boundaries.type";
+import {useApi} from "../incoming";
+import useProjectCommandBus, {Commands} from "./useProjectCommandBus";
+import {setBoundaries} from "../infrastructure/modelStore";
+import {LineString, Point, Polygon} from "geojson";
 
 const data: IBoundary[] = [
   {
@@ -1820,9 +1824,13 @@ const data: IBoundary[] = [
 
 interface IUseBoundaries {
   boundaries: IBoundary[];
+  onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => void;
+  onRemoveBoundary: (boundaryId: string) => void;
   loading: boolean;
   error: IError | null;
 }
+
+type IGetBoundariesResponse = IBoundary[];
 
 const useBoundaries = (projectId: string): IUseBoundaries => {
 
@@ -1833,13 +1841,41 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
+  const {httpGet} = useApi();
+  const {sendCommand} = useProjectCommandBus();
+
+  const fetchBoundaries = async () => {
+    if (!isMounted.current) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const result = await httpGet<IGetBoundariesResponse>(`/projects/${projectId}/model/boundaries`);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.ok) {
+      dispatch(setBoundaries(result.val));
+    }
+
+    if (result.err) {
+      setError({
+        message: result.val.message,
+        code: result.val.code,
+      });
+    }
+  };
 
   useEffect(() => {
     if (!projectId) {
       return;
     }
 
-    // fetchBoundaries();
+    fetchBoundaries();
 
     return (): void => {
       isMounted.current = false;
@@ -1848,8 +1884,71 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     // eslint-disable-next-line
   }, [projectId]);
 
+  const onAddBoundary = async (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+
+    setLoading(true);
+    setError(null);
+
+
+    const addBoundaryResult = await sendCommand<Commands.IAddModelBoundaryCommand>({
+      command_name: 'add_model_boundary_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_type: boundary_type,
+        boundary_geometry: geometry,
+      }
+    });
+
+    setLoading(false);
+
+    if (addBoundaryResult.err) {
+      setError({
+        message: addBoundaryResult.val.message,
+        code: addBoundaryResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onRemoveBoundary = async (boundaryId: string) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const removeBoundaryResult = await sendCommand<Commands.IRemoveModelBoundaryCommand>({
+      command_name: 'remove_model_boundary_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+      }
+    });
+
+    setLoading(false);
+
+    if (removeBoundaryResult.err) {
+      setError({
+        message: removeBoundaryResult.val.message,
+        code: removeBoundaryResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
   return {
-    boundaries: data,
+    boundaries: model?.boundaries || [],
+    onAddBoundary,
+    onRemoveBoundary,
     loading,
     error,
   };

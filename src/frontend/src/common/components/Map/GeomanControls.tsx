@@ -65,7 +65,6 @@ const GeomanControls = ({
         map.pm.removeControls();
       }
 
-
       if (onUnmount) {
         onUnmount();
       }

@@ -1,14 +1,14 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
-import SearchComponent from './SearchComponent';
+import DropdownWithSearchInput from './DropdownWithSearchInput';
 
 export default {
   title: 'SearchComponent',
-  component: SearchComponent,
-} as Meta<typeof SearchComponent>;
+  component: DropdownWithSearchInput,
+} as Meta<typeof DropdownWithSearchInput>;
 
-export const SearchComponentExample: StoryFn<typeof SearchComponent> = () => {
+export const SearchComponentExample: StoryFn<typeof DropdownWithSearchInput> = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<{ title: string; }[]>([]);
   const handleSearchChange = (searchTerm: string) => {
@@ -28,16 +28,15 @@ export const SearchComponentExample: StoryFn<typeof SearchComponent> = () => {
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-      <SearchComponent
-        loading={loading}
-        results={results}
-        onSearch={handleSearchChange}
-        buttonText={'Add new boundary'}
-      />
-      <SearchComponent
-        loading={loading}
-        results={results}
-        onSearch={handleSearchChange}
+      <DropdownWithSearchInput
+        dropDownText={'Add new boundary'}
+        searchPlaceholder={'Search...'}
+        onChangeSearch={handleSearchChange}
+        dropdownItems={[
+          {text: 'Item 1', action: () => ({})},
+          {text: 'Item 2', action: () => ({})},
+        ]}
+        isReadOnly={false}
       />
     </div>
   );

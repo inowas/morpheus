@@ -30,8 +30,8 @@ definitions:
         command_name:
           type: string
           enum:
-            - add_boundary_command
-          example: add_boundary_command
+            - add_model_boundary_command
+          example: add_model_boundary_command
         payload:
           type: object
           properties:
@@ -50,6 +50,7 @@ definitions:
                 - $ref: "#/definitions/components/Polygon"
           required:
             - project_id
+            - model_id
             - boundary_type
             - boundary_geometry
     RemoveModelBoundaryCommand:
@@ -69,14 +70,12 @@ definitions:
             model_id:
               type: string
               example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            scenario_id:
-              type: string
-              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
             boundary_id:
               type: string
               example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
           required:
             - project_id
+            - model_id
             - boundary_id
     CloneModelLayerCommand:
       type: object
@@ -697,8 +696,8 @@ definitions:
         type:
           type: string
           enum:
-            - Linestring
-          example: Linestring
+            - LineString
+          example: LineString
         coordinates:
           type: array
           description: The coordinates of the geometry.

@@ -1,5 +1,5 @@
 from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryType, WellBoundary, ConstantHeadBoundary, \
-    EvapotranspirationBoundary, FlowAndHeadBoundary, DrainBoundary, GeneralHeadBoundary, LakeBoundary, RechargeBoundary, RiverBoundary, BoundaryName, BoundaryTags
+    EvapotranspirationBoundary, FlowAndHeadBoundary, DrainBoundary, GeneralHeadBoundary, LakeBoundary, RechargeBoundary, RiverBoundary, BoundaryName, BoundaryTags, BoundaryId
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadRawDataItem
 from morpheus.project.types.boundaries.DrainObservation import DrainRawDataItem
 from morpheus.project.types.boundaries.EvapotranspirationObservation import EvapotranspirationRawDataItem
@@ -35,12 +35,13 @@ class BoundaryFactory:
             raise ValueError('Geometry must be a polygon')
         return geometry
 
-    def create_new_with_default_data(self, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
-                                     start_date_time: StartDateTime, name: BoundaryName | None = None, tags: BoundaryTags | None = None) -> Boundary | None:
+    def create_with_default_data(self, boundary_id: BoundaryId, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
+                                 start_date_time: StartDateTime, name: BoundaryName | None = None, tags: BoundaryTags | None = None) -> Boundary | None:
 
         if boundary_type == BoundaryType.constant_head():
             geometry = self.assert_is_line_string(geometry)
             return ConstantHeadBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -52,6 +53,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.drain():
             geometry = self.assert_is_line_string(geometry)
             return DrainBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -63,6 +65,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.evapotranspiration():
             geometry = self.assert_is_polygon(geometry)
             return EvapotranspirationBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -74,6 +77,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.flow_and_head():
             geometry = self.assert_is_line_string(geometry)
             return FlowAndHeadBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -85,6 +89,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.general_head():
             geometry = self.assert_is_line_string(geometry)
             return GeneralHeadBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -96,6 +101,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.lake():
             geometry = self.assert_is_polygon(geometry)
             return LakeBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -107,6 +113,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.recharge():
             geometry = self.assert_is_polygon(geometry)
             return RechargeBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -118,6 +125,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.river():
             geometry = self.assert_is_line_string(geometry)
             return RiverBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
@@ -129,6 +137,7 @@ class BoundaryFactory:
         if boundary_type == BoundaryType.well():
             geometry = self.assert_is_point(geometry)
             return WellBoundary.new(
+                boundary_id=boundary_id,
                 name=name if name else BoundaryName.from_str(value=f'new {boundary_type.to_str()} boundary'),
                 tags=tags if tags else BoundaryTags.empty(),
                 geometry=geometry,
