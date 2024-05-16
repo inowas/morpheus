@@ -1,12 +1,18 @@
 import dataclasses
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, String
 from morpheus.project.types.discretization.time.Stressperiods import StartDateTime, EndDateTime
 from morpheus.project.types.geometry import Point
 
 
 class ObservationId(Uuid):
     pass
+
+
+class ObservationName(String):
+    @classmethod
+    def default(cls):
+        return cls.from_str(value='Observation Point 1')
 
 
 @dataclasses.dataclass
@@ -38,8 +44,9 @@ class DataItem:
 @dataclasses.dataclass
 class Observation:
     observation_id: ObservationId
+    observation_name: ObservationName
     geometry: Point
-    raw_data: list[RawDataItem]
+    data: list[RawDataItem]
 
     @classmethod
     def from_dict(cls, obj):

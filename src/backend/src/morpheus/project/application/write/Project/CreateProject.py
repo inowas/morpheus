@@ -7,7 +7,7 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
 from morpheus.project.types.Project import Name, Description, Tags, ProjectId, Project
 from morpheus.project.types.User import UserId
 

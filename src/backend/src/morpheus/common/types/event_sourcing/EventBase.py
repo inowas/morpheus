@@ -13,7 +13,16 @@ class EventBase:
     def get_entity_uuid(self) -> Uuid:
         return self.entity_uuid
 
-    def get_event_name(self) -> EventName:
+    @classmethod
+    def create(cls, entity_uuid: Uuid, occurred_at: DateTime, payload: dict):
+        return cls(
+            entity_uuid=entity_uuid,
+            occurred_at=occurred_at,
+            payload=payload
+        )
+
+    @staticmethod
+    def get_event_name() -> EventName:
         raise NotImplementedError()
 
     def get_payload(self) -> dict:

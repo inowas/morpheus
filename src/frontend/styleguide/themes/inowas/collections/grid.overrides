@@ -2,8 +2,22 @@
          Theme Overrides
 *******************************/
 
+.ui.grid {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .ui.padded.grid.SimpleToolGrid:not(.vertically):not(.horizontally) {
   @media (max-width: @computerBreakpoint - 1 ) {
     margin: 0 -1rem !important;
+  }
+}
+
+
+[data-variant="secondary"].ui.grid {
+
+  & > .column:first-child {
+    background: #FFFFFF;
+    box-shadow: 9px 0 10px -11px #BABABA;
   }
 }

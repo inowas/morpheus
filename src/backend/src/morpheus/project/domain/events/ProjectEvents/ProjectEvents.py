@@ -3,10 +3,10 @@ import dataclasses
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-
-from morpheus.project.domain.events.ProjectEventName import ProjectEventName
 from morpheus.project.types.Asset import AssetId
 from morpheus.project.types.Project import Project, ProjectId, Name, Description, Tags
+
+from .ProjectEventName import ProjectEventName
 
 
 @dataclasses.dataclass(frozen=True)
@@ -25,7 +25,8 @@ class ProjectCreatedEvent(EventBase):
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
 
-    def get_event_name(self) -> EventName:
+    @staticmethod
+    def get_event_name() -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_CREATED.to_str())
 
 
@@ -42,7 +43,8 @@ class ProjectDeletedEvent(EventBase):
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
 
-    def get_event_name(self) -> EventName:
+    @staticmethod
+    def get_event_name() -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_DELETED.to_str())
 
 
@@ -72,7 +74,8 @@ class ProjectMetadataUpdatedEvent(EventBase):
     def get_tags(self) -> Tags | None:
         return Tags.from_list(self.payload['tags']) if self.payload['tags'] else None
 
-    def get_event_name(self) -> EventName:
+    @staticmethod
+    def get_event_name() -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_METADATA_UPDATED.to_str())
 
 
@@ -94,7 +97,8 @@ class ProjectPreviewImageUpdatedEvent(EventBase):
     def get_asset_id(self) -> AssetId:
         return AssetId.from_str(self.payload['asset_id'])
 
-    def get_event_name(self) -> EventName:
+    @staticmethod
+    def get_event_name() -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_PREVIEW_IMAGE_UPDATED.to_str())
 
 
@@ -111,5 +115,6 @@ class ProjectPreviewImageDeletedEvent(EventBase):
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
 
-    def get_event_name(self) -> EventName:
+    @staticmethod
+    def get_event_name() -> EventName:
         return EventName.from_str(ProjectEventName.PROJECT_PREVIEW_IMAGE_DELETED.to_str())

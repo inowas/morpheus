@@ -2,15 +2,15 @@ import dataclasses
 from typing import Literal, Sequence
 
 from morpheus.common.types import Uuid, String
-from .ConstantHeadObservation import ConstantHeadObservation
-from .DrainObservation import DrainObservation
+from .ConstantHeadObservation import ConstantHeadObservation, ConstantHeadRawDataItem
+from .DrainObservation import DrainObservation, DrainRawDataItem
 from .EvapotranspirationObservation import EvapotranspirationObservation, EvapotranspirationRawDataItem
-from .FlowAndHeadObservation import FlowAndHeadObservation
-from .GeneralHeadObservation import GeneralHeadObservation
+from .FlowAndHeadObservation import FlowAndHeadObservation, FlowAndHeadRawDataItem
+from .GeneralHeadObservation import GeneralHeadObservation, GeneralHeadRawDataItem
 from .LakeObservation import LakeObservation, LakeRawDataItem, BedLeakance, InitialStage, StageRange
-from .Observation import Observation, DataItem
+from .Observation import Observation, DataItem, ObservationName
 from .RechargeObservation import RechargeObservation, RechargeRawDataItem
-from .RiverObservation import RiverObservation
+from .RiverObservation import RiverObservation, RiverRawDataItem
 from .WellObservation import WellObservation, WellRawDataItem
 
 from ..discretization.spatial import ActiveCells, Grid
@@ -23,28 +23,22 @@ class BoundaryId(Uuid):
     pass
 
 
+IBoundaryTypeLiteral = Literal['constant_head', 'evapotranspiration', 'flow_and_head', 'drain', 'general_head', 'lake', 'recharge', 'river', 'well']
+
+
 @dataclasses.dataclass(frozen=True)
 class BoundaryType:
-    type: Literal[
-        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain',
-        'general_head', 'lake', 'recharge', 'river', 'well'
-    ]
+    type: IBoundaryTypeLiteral
 
     def __eq__(self, other):
         return self.type == other.type
 
     @classmethod
-    def from_str(cls, value: Literal[
-        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain',
-        'general_head', 'lake', 'recharge', 'river', 'well'
-    ]):
+    def from_str(cls, value: IBoundaryTypeLiteral):
         return cls(type=value)
 
     @classmethod
-    def from_value(cls, value: Literal[
-        'constant_head', 'evapotranspiration', 'flow_and_head', 'drain',
-        'general_head', 'lake', 'recharge', 'river', 'well'
-    ]):
+    def from_value(cls, value: IBoundaryTypeLiteral):
         return cls.from_str(value=value)
 
     @classmethod
@@ -95,10 +89,34 @@ class BoundaryName(String):
 
 
 @dataclasses.dataclass
+class BoundaryTags:
+    value: list[str]
+
+    @classmethod
+    def from_list(cls, value: list[str]):
+        return cls(value=value)
+
+    @classmethod
+    def empty(cls):
+        return cls(value=[])
+
+    @classmethod
+    def from_value(cls, value: list[str]):
+        return cls.from_list(value=value)
+
+    def to_list(self):
+        return self.value
+
+    def to_value(self):
+        return self.to_list()
+
+
+@dataclasses.dataclass
 class Boundary:
     boundary_id: BoundaryId
     type: BoundaryType
     name: BoundaryName
+    tags: BoundaryTags
     geometry: Point | LineString | Polygon
     affected_cells: ActiveCells
     affected_layers: list[LayerId]
@@ -108,12 +126,13 @@ class Boundary:
     def __eq__(self, other):
         return self.to_dict() == other.to_dict()
 
-    def __init__(self, boundary_id: BoundaryId, boundary_type: BoundaryType, name: BoundaryName,
+    def __init__(self, boundary_id: BoundaryId, boundary_type: BoundaryType, name: BoundaryName, tags: BoundaryTags,
                  geometry: LineString | Point | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
                  observations: Sequence[Observation], enabled: bool = True):
         self.boundary_id = boundary_id
         self.type = boundary_type
         self.name = name
+        self.tags = tags
         self.geometry = geometry
         self.affected_cells = affected_cells
         self.affected_layers = affected_layers
@@ -175,6 +194,9 @@ class BoundaryCollection:
     def __iter__(self):
         return iter(self.boundaries)
 
+    def __getitem__(self, item):
+        return self.boundaries[item]
+
     def __len__(self):
         return len(self.boundaries)
 
@@ -231,19 +253,41 @@ class ConstantHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.constant_head()
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId], observations: list[Observation] | None = None):
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[ConstantHeadRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
+
+        if not isinstance(geometry, LineString):
+            raise ValueError('Constant head boundaries must be lines')
+
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
+    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId], observations: Sequence[Observation] | None = None,
+                      tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, LineString):
             raise ValueError('Constant head boundaries must be lines')
 
         if observations is None:
             observations = [
-                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+                ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default())
             ]
 
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
@@ -256,6 +300,7 @@ class ConstantHeadBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -268,20 +313,41 @@ class DrainBoundary(Boundary):
     type: BoundaryType = BoundaryType.drain()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[DrainRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
+
+        if not isinstance(geometry, LineString):
+            raise ValueError('Drain boundaries must be lines')
+
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
+                      observations: Sequence[Observation] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, LineString):
             raise ValueError('Drain boundaries must be lines')
 
         if observations is None:
             observations = [
-                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
@@ -294,6 +360,7 @@ class DrainBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -306,17 +373,34 @@ class EvapotranspirationBoundary(Boundary):
     type: BoundaryType = BoundaryType.evapotranspiration()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[EvapotranspirationRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[EvapotranspirationRawDataItem] | None = None):
+                      data: list[EvapotranspirationRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                EvapotranspirationObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [])
+                EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())
             ],
             enabled=True
         )
@@ -327,6 +411,7 @@ class EvapotranspirationBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Polygon.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -339,20 +424,39 @@ class FlowAndHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.flow_and_head()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[FlowAndHeadRawDataItem],
+            tags: BoundaryTags = BoundaryTags.empty()):
+
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                FlowAndHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
+                      observations: Sequence[Observation] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, LineString):
             raise ValueError('Flow and Head boundaries must be lines')
 
         if observations is None:
             observations = [
-                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+                FlowAndHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
@@ -365,6 +469,7 @@ class FlowAndHeadBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -400,7 +505,7 @@ class FlowAndHeadBoundary(Boundary):
                 if date_time not in date_times:
                     date_times.append(date_time)
 
-        date_times.sort(key=lambda date_time: date_time.to_datetime())
+        date_times.sort(key=lambda dt: dt.to_datetime())
 
         return date_times
 
@@ -409,20 +514,39 @@ class GeneralHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.general_head()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[GeneralHeadRawDataItem],
+            tags: BoundaryTags = BoundaryTags.empty()):
+
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
+                      observations: Sequence[Observation] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, LineString):
             raise ValueError('General head boundaries must be lines')
 
         if observations is None:
             observations = [
-                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
@@ -435,6 +559,7 @@ class GeneralHeadBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -447,11 +572,36 @@ class LakeBoundary(Boundary):
     type: BoundaryType = BoundaryType.lake()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[LakeRawDataItem],
+            bed_leakance: BedLeakance | None = None, initial_stage: InitialStage | None = None, stage_range: StageRange | None = None, tags: BoundaryTags = BoundaryTags.empty()):
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                LakeObservation.new(
+                    geometry=geometry.centroid(),
+                    data=data,
+                    bed_leakance=bed_leakance or BedLeakance.from_float(100.0),
+                    initial_stage=initial_stage or InitialStage.from_float(1.0),
+                    stage_range=stage_range or StageRange(min=0.0, max=1.0),
+                    name=ObservationName.default()
+                )
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[LakeRawDataItem] | None = None,
+                      data: list[LakeRawDataItem] | None = None,
                       bed_leakance: BedLeakance | None = None,
                       initial_stage: InitialStage | None = None,
-                      stage_range: StageRange | None = None):
+                      stage_range: StageRange | None = None,
+                      tags: BoundaryTags = BoundaryTags.empty()
+                      ):
         bed_leakance = bed_leakance or BedLeakance.from_float(0.0)
         initial_stage = initial_stage or InitialStage.from_float(0.0)
         stage_range = stage_range or StageRange(min=0.0, max=0.0)
@@ -460,12 +610,13 @@ class LakeBoundary(Boundary):
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                LakeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [], bed_leakance=bed_leakance,
-                                    initial_stage=initial_stage, stage_range=stage_range)
+                LakeObservation.new(geometry=geometry.centroid(), data=data or [], bed_leakance=bed_leakance,
+                                    initial_stage=initial_stage, stage_range=stage_range, name=ObservationName.default())
             ],
             enabled=True,
         )
@@ -476,6 +627,7 @@ class LakeBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Polygon.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -494,17 +646,34 @@ class RechargeBoundary(Boundary):
     type: BoundaryType = BoundaryType.recharge()
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[RechargeRawDataItem] | None = None):
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
+            data: list[RechargeRawDataItem], tags: BoundaryTags = BoundaryTags.empty()):
         return cls(
-            boundary_id=BoundaryId.new(),
+            boundary_id=boundary_id or BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                RechargeObservation.new(geometry=geometry.centroid(), data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
+    def from_geometry(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: list[LayerId],
+                      data: list[RechargeRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                RechargeObservation.new(geometry=geometry.centroid(), raw_data=raw_data or [])
+                RechargeObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())
             ],
             enabled=True
         )
@@ -515,6 +684,7 @@ class RechargeBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=BoundaryType.recharge(),
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Polygon.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -527,20 +697,40 @@ class RiverBoundary(Boundary):
     type: BoundaryType = BoundaryType.river()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[RiverRawDataItem],
+            tags: BoundaryTags = BoundaryTags.empty()):
+        if not isinstance(geometry, LineString):
+            raise ValueError('River boundaries must be lines')
+
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default()),
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: list[Observation] | None = None):
+                      observations: Sequence[Observation] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, LineString):
             raise ValueError('River boundaries must be lines')
 
         if observations is None:
             observations = [
-                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), raw_data=[]),
+                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_linestring(linestring=geometry, grid=grid),
             affected_layers=affected_layers,
@@ -553,6 +743,7 @@ class RiverBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
@@ -565,19 +756,39 @@ class WellBoundary(Boundary):
     type: BoundaryType = BoundaryType.well()
 
     @classmethod
+    def new(cls, boundary_id: BoundaryId | None, name: BoundaryName, geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[WellRawDataItem],
+            tags: BoundaryTags = BoundaryTags.empty()):
+        if not isinstance(geometry, Point):
+            raise ValueError('Well boundaries must be points')
+
+        return cls(
+            boundary_id=boundary_id or BoundaryId.new(),
+            boundary_type=cls.type,
+            name=name,
+            tags=tags,
+            geometry=geometry,
+            affected_cells=affected_cells,
+            affected_layers=affected_layers,
+            observations=[
+                WellObservation.new(geometry=geometry, data=data, name=ObservationName.default())
+            ],
+        )
+
+    @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Point, grid: Grid, affected_layers: list[LayerId],
-                      raw_data: list[WellRawDataItem] | None = None):
+                      data: list[WellRawDataItem] | None = None, tags: BoundaryTags = BoundaryTags.empty()):
         if not isinstance(geometry, Point):
             raise ValueError('Well boundaries must be points')
 
         observations = [
-            WellObservation.new(geometry=geometry, raw_data=raw_data or []),
+            WellObservation.new(geometry=geometry, data=data or [], name=ObservationName.default()),
         ]
 
         return cls(
             boundary_id=BoundaryId.new(),
             boundary_type=cls.type,
             name=name,
+            tags=tags,
             geometry=geometry,
             affected_cells=ActiveCells.from_point(point=geometry, grid=grid),
             affected_layers=affected_layers,
@@ -590,6 +801,7 @@ class WellBoundary(Boundary):
             boundary_id=BoundaryId.from_value(obj['id']),
             boundary_type=cls.type,
             name=BoundaryName.from_value(obj['name']),
+            tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Point.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],

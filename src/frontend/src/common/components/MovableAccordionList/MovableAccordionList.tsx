@@ -29,7 +29,6 @@ interface IMovableAccordionProps {
 }
 
 const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnClick = false, defaultOpenIndexes = []}: IMovableAccordionProps) => {
-
   const [openIndexes, setOpenIndexes] = useState<number[]>(defaultOpenIndexes);
   const [inputValue, setInputValue] = useState<string | null>(null);
 
@@ -44,6 +43,7 @@ const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnCl
 
     setOpenIndexes(newOpenIndexes);
   };
+
 
   return (
     <div className={'movableList'}>

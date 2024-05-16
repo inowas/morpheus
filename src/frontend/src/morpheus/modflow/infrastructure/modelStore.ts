@@ -4,6 +4,7 @@ import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
 import {IModel} from '../types/Model.type';
 import {ILayer} from '../types/Layers.type';
+import {IBoundary} from "../types/Boundaries.type";
 
 
 type IModelState = 'initializing' | 'error' | 'loading' | 'loaded' | 'setup';
@@ -45,6 +46,11 @@ export const modelSlice = createSlice({
         state.model.layers = action.payload;
       }
     },
+    setBoundaries: (state, action: PayloadAction<IBoundary[]>) => {
+      if (state.model) {
+        state.model.boundaries = action.payload;
+      }
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
       if (action.payload) {
@@ -71,6 +77,7 @@ export const {
   setSpatialDiscretization,
   setTimeDiscretization,
   setLayers,
+  setBoundaries,
   setLoading,
   setError,
 } = modelSlice.actions;

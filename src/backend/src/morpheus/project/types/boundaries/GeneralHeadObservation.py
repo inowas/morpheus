@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .Observation import ObservationId, Observation, DataItem
+from .Observation import ObservationId, Observation, DataItem, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -33,6 +33,14 @@ class GeneralHeadRawDataItem:
     conductance: Conductance
 
     @classmethod
+    def default(cls, date_time: StartDateTime):
+        return cls(
+            date_time=date_time,
+            stage=Stage.from_float(0.0),
+            conductance=Conductance.from_float(0.0)
+        )
+
+    @classmethod
     def from_dict(cls, obj):
         return cls(
             date_time=StartDateTime.from_value(obj['date_time']),
@@ -50,43 +58,46 @@ class GeneralHeadRawDataItem:
 
 @dataclasses.dataclass
 class GeneralHeadObservation(Observation):
-    raw_data: list[GeneralHeadRawDataItem]
+    data: list[GeneralHeadRawDataItem]
 
     @classmethod
-    def new(cls, geometry: Point, raw_data: list[GeneralHeadRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: list[GeneralHeadRawDataItem]):
         return cls(
             observation_id=ObservationId.new(),
+            observation_name=name,
             geometry=geometry,
-            raw_data=raw_data
+            data=data
         )
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             observation_id=ObservationId.from_value(obj['observation_id']),
+            observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            raw_data=[GeneralHeadRawDataItem.from_dict(d) for d in obj['raw_data']]
+            data=[GeneralHeadRawDataItem.from_dict(d) for d in obj['data']]
         )
 
     def to_dict(self):
         return {
             'observation_id': self.observation_id.to_value(),
+            'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
-            'raw_data': [d.to_dict() for d in self.raw_data]
+            'data': [d.to_dict() for d in self.data]
         }
 
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> GeneralHeadDataItem | None:
 
         # In range check
-        if end_date_time.to_datetime() < self.raw_data[0].date_time.to_datetime():
+        if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
             return None
 
-        if start_date_time.to_datetime() > self.raw_data[-1].date_time.to_datetime():
+        if start_date_time.to_datetime() > self.data[-1].date_time.to_datetime():
             return None
 
-        time_series = pd.Series([d.date_time.to_datetime() for d in self.raw_data])
-        stages = pd.Series([d.stage.to_value() for d in self.raw_data])
-        conductances = pd.Series([d.conductance.to_value() for d in self.raw_data])
+        time_series = pd.Series([d.date_time.to_datetime() for d in self.data])
+        stages = pd.Series([d.stage.to_value() for d in self.data])
+        conductances = pd.Series([d.conductance.to_value() for d in self.data])
 
         # Check if we need to adapt the frequency of the time series
         freq = '1D'

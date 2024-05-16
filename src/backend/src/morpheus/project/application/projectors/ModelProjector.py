@@ -1,10 +1,13 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.domain.events.ModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent, VersionDescriptionUpdatedEvent, \
-    VersionDeletedEvent, ModelGeometryUpdatedEvent, ModelGridUpdatedEvent, ModelAffectedCellsUpdatedEvent, ModelTimeDiscretizationUpdatedEvent, \
-    ModelAffectedCellsRecalculatedEvent, ModelGridRecalculatedEvent, ModelLayerCreatedEvent, ModelLayerDeletedEvent, ModelLayerMetadataUpdatedEvent, \
-    ModelLayerPropertyUpdatedEvent, ModelLayerClonedEvent, ModelLayerOrderUpdatedEvent, ModelLayerConfinementUpdatedEvent
-from morpheus.project.domain.events.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
+from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import VersionDeletedEvent, VersionAssignedToModelEvent, VersionDescriptionUpdatedEvent, VersionCreatedEvent, \
+    ModelCreatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryRemovedEvent, ModelBoundaryAddedEvent
+from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelAffectedCellsRecalculatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelGridUpdatedEvent, \
+    ModelGridRecalculatedEvent, ModelGeometryUpdatedEvent, ModelAffectedCellsUpdatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent, ModelLayerMetadataUpdatedEvent, ModelLayerOrderUpdatedEvent, \
+    ModelLayerDeletedEvent, ModelLayerCreatedEvent, ModelLayerConfinementUpdatedEvent, ModelLayerClonedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
 from morpheus.project.types.User import UserId
@@ -321,6 +324,52 @@ class ModelProjector(EventListenerBase):
         layer = layer.with_updated_property(property_name=event.get_property_name(), property_values=new_property_values)
         latest = latest.with_updated_layers(layers=layers.with_updated_layer(updated_layer=layer))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelBoundaryAddedEvent)
+    def on_model_boundary_added(self, event: ModelBoundaryAddedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        boundary = event.get_boundary()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        boundaries = latest_model.boundaries
+        if boundaries is None:
+            return
+
+        new_boundaries = boundaries.with_added_boundary(boundary=boundary)
+        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelBoundaryRemovedEvent)
+    def on_model_boundary_removed(self, event: ModelBoundaryRemovedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        boundary_id = event.get_boundary_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        boundaries = latest_model.boundaries
+        if boundaries is None:
+            return
+
+        new_boundaries = boundaries.with_removed_boundary(boundary_id=boundary_id)
+        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
     @listen_to(VersionCreatedEvent)
     def on_version_created(self, event: VersionCreatedEvent, metadata: EventMetadata) -> None:

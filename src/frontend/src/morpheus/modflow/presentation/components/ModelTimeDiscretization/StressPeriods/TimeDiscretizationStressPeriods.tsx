@@ -161,7 +161,7 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
                 <Form.Input
                   disabled={readOnly}
                   type="number"
-                  error={50 < sp.time_step_multiplier}
+                  error={50 < Number(sp.time_step_multiplier)}
                   max={50}
                   name="nstp"
                   idx={idx}
@@ -177,7 +177,7 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
                   type="number"
                   name="tsmult"
                   idx={idx}
-                  value={sp.time_step_multiplier.toFixed(3)}
+                  value={('-' === sp.time_step_multiplier ? 0 : Number(sp.time_step_multiplier)).toFixed(3)}
                   onChange={(_, {value}: InputOnChangeData) => {
                     handleChangeStressPeriod(idx, {...sp, time_step_multiplier: parseFloat(value)});
                   }}
