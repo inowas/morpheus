@@ -16,7 +16,7 @@ interface IDotsMenuProps {
   style?: React.CSSProperties;
 }
 
-const DotsMenu: React.FC<DotsMenuProps> = ({actions, style, className}) => {
+const DotsMenu: React.FC<IDotsMenuProps> = ({actions, style, className}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
@@ -41,6 +41,7 @@ const DotsMenu: React.FC<DotsMenuProps> = ({actions, style, className}) => {
           style={style}
         />
       }
+      hideOnScroll={true}
       on="click"
       position="bottom right"
       open={isOpen}

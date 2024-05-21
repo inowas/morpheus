@@ -61,7 +61,6 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
           onClick={() => {
             onSubmit(zones);
           }}
-          floated={'right'}
           content={'Submit'}
         />
       );
@@ -77,7 +76,6 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
       />
       <Button
         size={'tiny'}
-        color={'blue'}
         onClick={() => setShowFileUploadModal(true)}
         content={'Upload Shapefile'}
       />

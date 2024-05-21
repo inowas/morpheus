@@ -1,7 +1,29 @@
 @import '../site.variables';
 
 .movableList {
-  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 400;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 0 0 0 !important;
+  border-bottom: 1px solid @ref-color-underline;
+  border-top: 1px solid @ref-color-underline;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: @ref-box-shadow;
+    background: @ref-color-borderTable;
+    border-radius: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: @ref-color-underline;
+    border-radius: 2px;
+  }
 }
 
 
@@ -12,6 +34,16 @@
 
   & + .movableItem {
     margin-top: 10px;
+  }
+
+  .movableItemInner {
+    width: 100%;
+    display: flex;
+    padding: 0 0 5px 32px;
+  }
+
+  &:not(:last-child) .movableItemInner {
+    border-bottom: 1px solid @ref-color-underline;
   }
 }
 
@@ -31,8 +63,4 @@
   }
 }
 
-.movableItemInner {
-  display: flex;
-  padding: 0 0 5px 32px;
-  border-bottom: 1px solid @ref-color-underline;
-}
+

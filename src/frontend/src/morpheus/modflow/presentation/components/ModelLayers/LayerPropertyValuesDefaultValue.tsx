@@ -27,7 +27,7 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
     <div style={{...style}}>
       <div>
         <InfoTitle
-          title='Layer default value'
+          title={`Constant value ${unit ? `(${unit.split('').join('.')})` : ''}`}
           description='You can provide a default value for the specified property for the whole layer.'
         />
         <input
@@ -36,7 +36,11 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
           onChange={(e) => setValueLocal(Math.round(parseFloat(e.target.value) * Math.pow(10, precision || 0)) / Math.pow(10, precision || 0))}
           disabled={readOnly}
           step={Math.pow(10, -1 * (precision || 0))}
-        />{unit}
+          style={{
+            width: '110px',
+            textAlign: 'end',
+          }}
+        />
       </div>
       <div>
         {!readOnly && valueLocal !== value && (

@@ -6,6 +6,7 @@ import {MultiPolygon, Polygon} from 'geojson';
 
 export interface IZonesListItem {
   zone_id?: string;
+  disabled?: boolean;
   name: string;
   affected_cells?: IAffectedCells;
   geometry: Polygon | MultiPolygon;
@@ -43,14 +44,26 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
     );
   };
 
+  const handleDisable = (idx: number) => {
+    onChange(
+      zones.map((zone, key) => {
+        if (key === idx) {
+          return {...zone, disabled: !zone.disabled}; // Toggle the disabled state
+        }
+        return zone;
+      }),
+    );
+  };
+
   const handleDelete = (idx: number) => onChange(zones.filter((zone, key) => key !== idx));
 
   const updatedMovableItems = zones.map((zone, idx) => ({
+    disabled: zone.disabled ? zone.disabled : false,
     key: zone.zone_id ? zone.zone_id : String(idx),
     name: zone.name,
     element: (
-      <div className={styles.zoneListBody}>
-        <div className={styles.zoneListName}>
+      <div className={`${styles.zoneListItem} ${zone.disabled ? styles.zoneListItemDisabled : ''}`}>
+        <div className={styles.zoneListItemName}>
           <input
             type="text"
             value={zone.name}
@@ -58,7 +71,7 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
             disabled={readOnly}
           />
         </div>
-        <div className={styles.zoneListValue}>
+        <div className={styles.zoneListItemValue}>
           <input
             type="number"
             value={zone.value}
@@ -67,17 +80,18 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
             disabled={readOnly}
           />
         </div>
-        <div className={styles.zoneListButton}>
-          {!readOnly && (
+        {!readOnly && (
+          <div className={styles.zoneListItemButton}>
             <DotsMenu
               className={styles.dotsMenu}
               actions={[
+                {text: zone.disabled ? 'Enable' : 'Disable', icon: 'ban', onClick: () => handleDisable(idx)},
                 {text: 'Edit', icon: 'edit outline', onClick: () => console.log('Edit zone ', idx)},
                 {text: 'Delete', icon: 'remove', onClick: () => handleDelete(idx)},
               ]}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     ),
   }));
@@ -92,13 +106,11 @@ const LayerPropertyValuesZonesList = ({zones, onChange, precision = 2, readOnly}
         <span>Name</span>
         <span>Value (m a.s.l.)</span>
       </div>
-      <div className={styles.container}>
-        <MovableList
-          items={zones}
-          renderListItem={updatedMovableItems}
-          onChange={onChange}
-        />
-      </div>
+      <MovableList
+        items={zones}
+        renderListItem={updatedMovableItems}
+        onChange={onChange}
+      />
     </div>
   );
 };

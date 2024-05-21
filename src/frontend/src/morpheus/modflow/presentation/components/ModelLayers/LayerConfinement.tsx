@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {InfoTitle} from 'common/components';
-import {ILayer} from '../../../types/Layers.type';
+import {ILayerConfinement} from '../../../types/Layers.type';
 
 interface IProps {
-  layerType: ILayer['type'];  // 'confined' | 'convertible' | 'unconfined';
-  onSubmit: (layerType: ILayer['type']) => void;
+  layerType: ILayerConfinement;  // 'confined' | 'convertible' | 'unconfined';
+  onSubmit: (layerType: ILayerConfinement) => void;
   readOnly: boolean;
 }
 
 const LayerConfinement = ({layerType, onSubmit, readOnly}: IProps) => {
 
-  const [layerTypeLocal, setLayerTypeLocal] = useState<ILayer['type']>(layerType);
+  const [layerTypeLocal, setLayerTypeLocal] = useState<ILayerConfinement>(layerType);
 
   useEffect(() => {
     setLayerTypeLocal(layerType);

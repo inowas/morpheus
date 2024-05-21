@@ -4,7 +4,7 @@ import {Icon} from 'semantic-ui-react';
 import styles from './MovableList.module.less';
 
 interface MovableListProps<T> {
-  items: T[];
+  items?: T[];
   onChange: (newItems: T[]) => void;
   renderListItem: {
     key: string;
@@ -19,7 +19,8 @@ const MovableList: React.FC<MovableListProps<any>> = ({items, onChange, renderLi
     <List
       values={renderListItem.map((item) => ({content: item}))}
       onChange={({oldIndex, newIndex}) => {
-        const updatedItems = arrayMove(items, oldIndex, newIndex);
+        const currentItems = items ? items : renderListItem;
+        const updatedItems = arrayMove(currentItems, oldIndex, newIndex);
         onChange(updatedItems);
       }}
       renderList={({children, props, isDragged}) => <ul
@@ -64,7 +65,6 @@ const MovableList: React.FC<MovableListProps<any>> = ({items, onChange, renderLi
           </li>
         );
       }
-
       }
     />
   );
