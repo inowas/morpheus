@@ -110,17 +110,14 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
       onClose={onClose}
       open={true}
       dimmer={'inverted'}
-
-      // centered={false}
-      // size={'large'} closeIcon={true}
-      // open={true} onClose={onClose}
-      // dimmer={'blurring'}
-      // closeOnEscape={false}
-      // closeOnDimmerClick={false}
     >
       <Modal.Header>Assets</Modal.Header>
       <Modal.Content>
-        <Tab panes={getPanes()}/>
+        <Tab
+          panes={getPanes()}
+          variant="primary"
+          menu={{secondary: true, pointing: true}}
+        />
       </Modal.Content>
       <Modal.Actions>
         <Button
