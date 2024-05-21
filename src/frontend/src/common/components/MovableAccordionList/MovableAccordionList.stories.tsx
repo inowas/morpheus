@@ -1,13 +1,8 @@
-import {
-  Button,
-  InfoTitle,
-  MovableAccordionList,
-  Tab,
-} from 'common/components';
-import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
+import {Button, InfoTitle, MovableAccordionList, Tab} from 'common/components';
+import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
 
 export default {
   /* 👇 The title prop is optional.
@@ -26,200 +21,165 @@ const wrapper: React.CSSProperties = {
 const movableItems: any[] = [
   {
     key: 12312,
-    title: {
-      content: 'Top layer',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>Top layer</h2>
-          <p>Tab 1 Content</p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tabs 1',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>Top layer</h2>
+        <p>Tab 1 Content</p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
   {
     key: 223213,
-    title: {
-      content: 'Some clay-silt lenses',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>Some clay-silt lenses</h2>
-          <p>Tab 2 Content</p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tabs 2',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>Some clay-silt lenses</h2>
+        <p>Tab 2 Content</p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam
+        </p>
+      </div>
+    ),
   },
   {
     key: 32131232,
-    title: {
-      content: 'New Content 3',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 3</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tabs 3',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 3</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
     isOpen: false,
   },
   {
     key: 123124,
-    title: {
-      content: 'New Content 4',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 4</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tabs 4',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 4</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
   {
     key: 123125,
-    title: {
-      content: 'New Content 5',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 5</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tabs 5',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 5</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
   {
     key: 123126,
-    title: {
-      content: 'New Content 6',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 6</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
-        </div>
-      ),
-    },
+    title: 'Tabs 6',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 6</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
+      </div>
+    ),
   },
   {
     key: 123135,
-    title: {
-      content: 'New Content 14',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 14</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tabs 7',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 14</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
 ];
 
@@ -303,188 +263,153 @@ const tabPanelsSecondary = [
 const movableItemsWithTabs: any[] = [
   {
     key: 12312,
-    title: {
-      content: 'Tabs inside',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div className={'scrollWrapper-Y'}>
-          <Tab
-            variant="secondary"
-            title={true}
-            defaultActiveIndex={1}
-            grid={{rows: 1, columns: 2}}
-            menu={{fluid: true, vertical: true, tabular: true}}
-            panes={tabPanelsSecondary}
-          />
-        </div>
-      ),
-    },
+    title: 'Tabs 1',
+    content: (
+      <div className={'scrollWrapper-Y'}>
+        <Tab
+          variant="secondary"
+          title={true}
+          defaultActiveIndex={1}
+          grid={{rows: 1, columns: 2}}
+          menu={{fluid: true, vertical: true, tabular: true}}
+          panes={tabPanelsSecondary}
+        />
+      </div>
+    ),
   },
   {
     key: 223213,
-    title: {
-      content: 'Some clay-silt lenses',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>Some clay-silt lenses</h2>
-          <p>Tab 2 Content</p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam
-          </p>
-        </div>
-      ),
-    },
+    title: 'Some clay-silt lenses',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>Some clay-silt lenses</h2>
+        <p>Tab 2 Content</p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam
+        </p>
+      </div>
+    ),
   },
   {
     key: 32131232,
-    title: {
-      content: 'New Content 3',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 3</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'Tab 3',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 3</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
     isOpen: false,
   },
   {
     key: 123124,
-    title: {
-      content: 'New Content 4',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 4</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'New Content 4',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 4</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
   {
     key: 123125,
-    title: {
-      content: 'New Content 5',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 5</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'New Content 5',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 5</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
   {
     key: 123126,
-    title: {
-      content: 'New Content 6',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 6</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
-        </div>
-      ),
-    },
+    title: 'New Content 6',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 6</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
+      </div>
+    ),
   },
   {
     key: 123135,
-    title: {
-      content: 'New Content 14',
-      icon: false,
-    },
-    content: {
-      content: (
-        <div style={{padding: '20px'}}>
-          <h2>New Content 14</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
-            animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
-            explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
-            dolores doloribus ducimus explicabo facere hic illum libero
-            molestias nam nobis nostrum perspiciatis quas quos, sapiente
-            similique. Aliquid at, ea enim et exercitationem impedit, ipsam
-            magni minus numquam odio quae quaerat quod sit veritatis voluptas.
-            Architecto eligendi perspiciatis quia rem veniam. Consequatur
-            facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
-            et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
-            Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
-            impedit ipsam ipsum iste laborum minima nihil officiis omnis
-            perspiciatis provident quisquam quos rem, voluptas voluptatem?
-            laborum quia similique. Aperiam beatae cupiditate ducimus veniam
-            voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
-            maxime, minus molestias nobis qui, quidem repudiandae sapiente.
-          </p>
-        </div>
-      ),
-    },
+    title: 'New Content 14',
+    content: (
+      <div style={{padding: '20px'}}>
+        <h2>New Content 14</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci,
+          animi dicta illum incidunt ipsum nisi quod quos voluptates! Eligendi
+          explicabo quos ullam voluptate. Blanditiis consequuntur doloremque
+          dolores doloribus ducimus explicabo facere hic illum libero
+          molestias nam nobis nostrum perspiciatis quas quos, sapiente
+          similique. Aliquid at, ea enim et exercitationem impedit, ipsam
+          magni minus numquam odio quae quaerat quod sit veritatis voluptas.
+          Architecto eligendi perspiciatis quia rem veniam. Consequatur
+          facilis omnis recusandae repellat! Commodi deleniti dolorum ducimus
+          et illum incidunt iste nostrum quaerat, reprehenderit voluptatem?
+          Consectetur corporis dignissimos dolorum eveniet expedita, harum, id
+          impedit ipsam ipsum iste laborum minima nihil officiis omnis
+          perspiciatis provident quisquam quos rem, voluptas voluptatem?
+          laborum quia similique. Aperiam beatae cupiditate ducimus veniam
+          voluptas! Ab alias, aperiam doloremque dolorum enim expedita maiores
+          maxime, minus molestias nobis qui, quidem repudiandae sapiente.
+        </p>
+      </div>
+    ),
   },
 ];
 
