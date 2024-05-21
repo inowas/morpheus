@@ -107,12 +107,16 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
 
   return (
     <Modal.Modal
-      centered={false}
-      size={'large'} closeIcon={true}
-      open={true} onClose={onClose}
-      dimmer={'blurring'}
-      closeOnEscape={false}
-      closeOnDimmerClick={false}
+      onClose={onClose}
+      open={true}
+      dimmer={'inverted'}
+
+      // centered={false}
+      // size={'large'} closeIcon={true}
+      // open={true} onClose={onClose}
+      // dimmer={'blurring'}
+      // closeOnEscape={false}
+      // closeOnDimmerClick={false}
     >
       <Modal.Header>Assets</Modal.Header>
       <Modal.Content>
