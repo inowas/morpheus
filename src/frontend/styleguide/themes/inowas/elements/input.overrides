@@ -14,6 +14,21 @@
   color: @ref-color-red;
 }
 
+.ui.search {
+  width: 100%;
+
+  * {
+    width: inherit;
+  }
+
+  input {
+    border-radius: 0 !important;
+    border: 0 !important;
+    padding: 5px !important;
+    box-shadow: @ref-box-shadow !important;
+  }
+}
+
 label.labelSmall,
 .ui.label.labelSmall {
   display: block;
@@ -38,6 +53,31 @@ label.labelSmall,
   width: 100%;
 }
 
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="number"],
+input[type="date"],
+input[type="password"],
+textarea {
+  width: 100%;
+  border: none;
+  border-radius: unset;
+  min-height: 26px;
+  padding: 5px 10px;
+  color: #000000;
+  line-height: 16px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+
+  &:disabled {
+    background-color: transparent;
+  }
+
+  &:focus-visible {
+    outline: 1px dotted @ref-color-underline !important;
+  }
+}
+
 .field input[type="text"],
 .field input[type="email"],
 .field input[type="search"],
@@ -56,6 +96,10 @@ label.labelSmall,
 
   &:disabled {
     background-color: transparent;
+  }
+
+  &:focus-visible {
+    outline: 1px dotted @ref-color-underline !important;
   }
 }
 

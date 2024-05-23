@@ -7,10 +7,9 @@ interface IProps {
   value: ILayerPropertyValueRaster['reference'] | undefined;
   onSubmit: (rasterReference: IChangeLayerPropertyValues['rasterReference']) => void;
   readOnly: boolean;
-  style?: React.CSSProperties;
 }
 
-const LayerPropertyValuesRaster = ({value, onSubmit, readOnly, style = {}}: IProps) => {
+const LayerPropertyValuesRaster = ({value, onSubmit, readOnly}: IProps) => {
 
   const [valueLocal, setValueLocal] = useState<ILayerPropertyValueRaster['reference'] | undefined>(undefined);
   const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
@@ -34,6 +33,7 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly, style = {}}: IPro
           size={'tiny'}
           icon={'trash'}
           color={'red'}
+          content={'Delete'}
           onClick={() => onSubmit(null)}
           disabled={readOnly}
         />
@@ -44,7 +44,7 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly, style = {}}: IPro
       <Button
         size={'tiny'}
         icon={'upload'}
-        color={'blue'}
+        content={'Choose file'}
         onClick={() => setShowFileUploadModal(true)}
         disabled={readOnly}
       />
@@ -52,16 +52,15 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly, style = {}}: IPro
   };
 
   return (
-    <div style={{...style}}>
+    <>
       <InfoTitle
-        title='Raster'
+        title='Upload raster'
         description='You can upload a raster file to provide values for the specified property for each cell of the model.'
+        style={{marginBottom: 0}}
       />
-
       {renderButtons()}
-
       {showFileUploadModal && <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectRasterFile={handleSelectRasterFile}/>}
-    </div>
+    </>
   );
 };
 

@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {IAsset, IAssetData, IAssetRasterData} from '../../../types';
-import {Grid, GridColumn, Header, List, Search, Segment} from 'semantic-ui-react';
+import {Header, List, Search, SearchProps, Segment} from 'semantic-ui-react';
 import {GeoTiffAssetData} from './index';
-import {Divider, RasterFileInput} from 'common/components';
+import {Form, Grid, RasterFileInput} from 'common/components';
+import styles from './Asset.module.less';
 
 interface IProps {
   assets: IAsset[];
@@ -17,6 +18,16 @@ interface IProps {
 
 const RasterAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsset, loading, onFileUpload, isReadOnly}: IProps) => {
 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (event: React.MouseEvent<HTMLElement>, data: SearchProps) => {
+    const {value} = data;
+    setSearchQuery(value as string);
+  };
+
+  const filteredAssets = assets.filter(asset =>
+    asset.file.file_name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
   const isAssetGeoTiffData = (data: IAssetData): data is IAssetRasterData => (data && 'geo_tiff' === data.type);
 
   useEffect(() => {
@@ -31,34 +42,45 @@ const RasterAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsse
   }, []);
 
   return (
-    <Grid divided={true}>
-      <GridColumn width={4}>
-        <RasterFileInput readOnly={isReadOnly} onSubmit={onFileUpload}/>
-        <Divider/>
-        <Search fluid={true} placeholder={'Search assets...'}/>
-        <Divider/>
-        <List divided={true} relaxed={true}>
-          {assets.map((asset) => (
+    <Grid.Grid>
+      <Grid.Column width={6} style={{boxShadow: '9px 0 10px -11px #BABABA'}}>
+        <div className={styles.assetListHeader}>
+          <RasterFileInput
+            icon={'upload'}
+            readOnly={isReadOnly}
+            onSubmit={onFileUpload}
+          />
+          <Search
+            icon={false}
+            onSearchChange={handleSearchChange}
+            value={searchQuery}
+            placeholder={'Search assets...'}
+            className={styles.search}
+          />
+        </div>
+        <List className={styles.assetListList}>
+          {filteredAssets.map((asset) => (
             <List.Item
               key={asset.asset_id}
               onClick={() => onChangeSelectedAsset(asset)}
-              style={{cursor: 'pointer', backgroundColor: selectedAsset?.asset_id === asset.asset_id ? '#f9f9f9' : 'white'}}
             >
-              {selectedAsset?.asset_id === asset.asset_id ? <List.Icon name='file'/> : <List.Icon name='file outline'/>}
+              <Form.Radio
+                checked={selectedAsset?.asset_id === asset.asset_id}
+                disabled={isReadOnly}
+              />
               <List.Header>{asset.file.file_name}</List.Header>
-              <List.Description>{asset.type}</List.Description>
+              {selectedAsset?.asset_id === asset.asset_id ? <List.Icon name='file'/> : <List.Icon name='file outline'/>}
             </List.Item>))}
         </List>
-
-      </GridColumn>
-      <GridColumn width={12}>
-        <Segment loading={loading}>
-          <Header as={'h2'}>Asset Details</Header>
+      </Grid.Column>
+      <Grid.Column width={10}>
+        <Segment loading={loading} style={{height: '100%', border: 'none', boxShadow: 'none', padding: 0}}>
+          <Header as={'h4'}>Asset Details</Header>
           <p>Asset ID: {selectedAsset?.asset_id}</p>
           {assetData && isAssetGeoTiffData(assetData) && <GeoTiffAssetData data={assetData}/>}
         </Segment>
-      </GridColumn>
-    </Grid>
+      </Grid.Column>
+    </Grid.Grid>
   );
 };
 

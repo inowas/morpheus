@@ -8,6 +8,7 @@ import {GeoJSON} from 'geojson';
 import LayerPropertyValuesDefaultValue from './LayerPropertyValuesDefaultValue';
 import LayerPropertyValuesRaster from './LayerPropertyValuesRaster';
 import LayerPropertyValuesZones from './LayerPropertyValuesZones';
+import {DataRow} from 'common/components';
 
 interface IProps {
   fetchLayerPropertyData?: () => Promise<ILayerPropertyData | null>;
@@ -85,26 +86,26 @@ const LayerPropertyValues = ({
 
   return (
     <>
-      <LayerPropertyValuesZones
-        zones={layerPropertyValuesLocal?.zones || []}
-        onSubmit={onSubmitZoneChange}
-        readOnly={readOnly}
-      />
+      <DataRow>
+        <LayerPropertyValuesZones
+          zones={layerPropertyValuesLocal?.zones || []}
+          onSubmit={onSubmitZoneChange}
+          readOnly={readOnly}
+        />
 
-      <LayerPropertyValuesRaster
-        value={layerPropertyValuesLocal?.raster?.reference}
-        onSubmit={onSubmitRasterReferenceChange}
-        readOnly={readOnly}
-        style={{marginTop: 20}}
-      />
+        <LayerPropertyValuesRaster
+          value={layerPropertyValuesLocal?.raster?.reference}
+          onSubmit={onSubmitRasterReferenceChange}
+          readOnly={readOnly}
+        />
 
-      <LayerPropertyValuesDefaultValue
-        value={layerPropertyValuesLocal?.value || 0}
-        onSubmit={(value) => onSubmitDefaultValueChange(value)}
-        readOnly={readOnly}
-        unit={unit}
-        style={{marginTop: 20}}
-      />
+        <LayerPropertyValuesDefaultValue
+          value={layerPropertyValuesLocal?.value || 0}
+          onSubmit={(value) => onSubmitDefaultValueChange(value)}
+          readOnly={readOnly}
+          unit={unit}
+        />
+      </DataRow>
 
       {renderMapContent()}
       {renderOptionalFileUploadModal()}

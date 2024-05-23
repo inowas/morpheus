@@ -15,7 +15,7 @@ const DataRow = ({
 
 
   return (
-    <div className={`${styles.dataRow} ${className ? className : null}`} style={style}>
+    <div className={`${styles.dataRow} ${className ? className : ''}`} style={style}>
       {children}
     </div>
   );
