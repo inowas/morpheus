@@ -18,7 +18,6 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
   useEffect(() => {
     if (map) {
       map.removeControl(legend);
-
       legend.onAdd = () => {
         const div = L.DomUtil.create('div', 'legend_info legend');
         div.innerHTML = '<h4>Legend</h4>';

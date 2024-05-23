@@ -1,14 +1,14 @@
 import React, {useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import {BoundariesContent} from '../components/BoundariesLayers';
-import {useParams} from "react-router-dom";
-import useSpatialDiscretization from "../../application/useSpatialDiscretization";
-import useProjectPermissions from "../../application/useProjectPermissions";
-import {IMapRef, LeafletMapProvider} from "common/components/Map";
-import BoundariesMap from "../components/ModelBoundaries/BoundariesMap";
-import {DataGrid, SearchInput, SectionTitle} from "common/components";
-import useBoundaries from "../../application/useBoundaries";
-import {IBoundaryType} from "../../types/Boundaries.type";
+import {useParams} from 'react-router-dom';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
+import useProjectPermissions from '../../application/useProjectPermissions';
+import {IMapRef, LeafletMapProvider} from 'common/components/Map';
+import BoundariesMap from '../components/ModelBoundaries/BoundariesMap';
+import {DataGrid, SearchInput, SectionTitle} from 'common/components';
+import useBoundaries from '../../application/useBoundaries';
+import {IBoundaryType} from '../../types/Boundaries.type';
 
 
 const BoundariesContainer = () => {
@@ -27,8 +27,8 @@ const BoundariesContainer = () => {
 
   const handleAddBoundary = (type: IBoundaryType, geometry: any) => {
     onAddBoundary(type, geometry);
-    setAddBoundary(null)
-  }
+    setAddBoundary(null);
+  };
 
   return (
     <>
