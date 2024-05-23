@@ -156,9 +156,10 @@ const BoundaryList = ({
                 onClick={(e) => handleItemSelect(boundary.id, e.metaKey)}
               >
                 <Checkbox checked={selectedBoundaries.includes(boundary.id)}/>
-                {editBoundaryName !== boundary.id && <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
-                  {boundary.name}
-                </div>}
+                {editBoundaryName !== boundary.id &&
+                    <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
+                      {boundary.name}
+                    </div>}
 
                 {editBoundaryName === boundary.id && (
                   <div className={styles.renameField}>
@@ -277,8 +278,16 @@ const BoundaryList = ({
                               icon: 'edit',
                               onClick: () => setOpenEditingObservationTitle(observation.observation_id),
                             },
-                            {text: 'Copy', icon: 'copy', onClick: () => onClone(boundary.id, observation.observation_id)},
-                            {text: 'Delete', icon: 'remove', onClick: () => onDelete(boundary.id, observation.observation_id)},
+                            {
+                              text: 'Copy',
+                              icon: 'copy',
+                              onClick: () => onClone(boundary.id, observation.observation_id)
+                            },
+                            {
+                              text: 'Delete',
+                              icon: 'remove',
+                              onClick: () => onDelete(boundary.id, observation.observation_id)
+                            },
                           ]}
                         />
                       </div>

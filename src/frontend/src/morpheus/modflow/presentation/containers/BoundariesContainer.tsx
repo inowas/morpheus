@@ -1,23 +1,23 @@
 import React, {useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
-import useProjectPermissions from '../../application/useProjectPermissions';
 import {IMapRef, LeafletMapProvider} from 'common/components/Map';
-import BoundariesMap from '../components/ModelBoundaries/BoundariesMap';
 import {Accordion, DataGrid, SearchInput, SectionTitle} from 'common/components';
+
 import useBoundaries from '../../application/useBoundaries';
-import {IBoundaryType, availableBoundaries, IBoundary} from '../../types/Boundaries.type';
-import BoundaryPaneContent from '../components/ModelBoundaries/BoundaryPaneContent';
-import {getBoundariesByType} from "../components/BoundariesLayers/helpers/BoundariesContent.helpers";
 import useLayers from "../../application/useLayers";
+import useProjectPermissions from '../../application/useProjectPermissions';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
+
+import {IBoundaryType, availableBoundaries, IBoundary} from '../../types/Boundaries.type';
+import {BoundariesMap, BoundariesSection} from '../components/ModelBoundaries';
 
 const getPanelDetails = (boundaries: IBoundary[]) => availableBoundaries.map((b) => ({
   title: b.title,
   type: b.type,
-  boundaries: getBoundariesByType(boundaries, b.type),
+  boundaries: boundaries.filter((boundary) => boundary.type === b.type),
   canManageObservations: ['constant_head', 'drain', 'flow_and_head', 'general_head', 'river'].includes(b.type)
-}))
+})).filter((panel) => 0 < panel.boundaries.length)
 
 const BoundariesContainer = () => {
 
@@ -35,8 +35,8 @@ const BoundariesContainer = () => {
     return null;
   }
 
-  const handleAddBoundary = (type: IBoundaryType, geometry: any) => {
-    onAddBoundary(type, geometry);
+  const handleAddBoundary = async (type: IBoundaryType, geometry: any) => {
+    await onAddBoundary(type, geometry);
     setAddBoundaryOnMap(null)
   }
 
@@ -82,34 +82,31 @@ const BoundariesContainer = () => {
             isReadOnly={isReadOnly}
           />
           <LeafletMapProvider mapRef={mapRef}>
-            {/*<BoundariesContent boundaries={boundaries}/>*/}
             <Accordion
               defaultActiveIndex={0}
               className='accordionPrimary'
               exclusive={true}
-              panels={getPanelDetails(boundaries)
-                .filter((panel) => 0 < panel.boundaries.length)
-                .map((panel) => ({
-                  key: panel.type,
-                  title: {
-                    content: <span>{`${panel.title} (${panel.boundaries.length})`}</span>,
-                    icon: false,
-                  },
-                  content: {
-                    content: (
-                      <BoundaryPaneContent
-                        boundaries={panel.boundaries}
-                        type={panel.type}
-                        onCloneBoundaries={handleCloneBoundaries}
-                        onRemoveBoundaries={onRemoveBoundaries}
-                        onUpdateBoundaries={onUpdateBoundaries}
-                        isReadOnly={false}
-                        canManageObservations={panel.canManageObservations}
-                        layers={layers}
-                      />
-                    )
-                  }
-                }))}
+              panels={getPanelDetails(boundaries).map((panel) => ({
+                key: panel.type,
+                title: {
+                  content: <span>{`${panel.title} (${panel.boundaries.length})`}</span>,
+                  icon: false,
+                },
+                content: {
+                  content: (
+                    <BoundariesSection
+                      boundaries={panel.boundaries}
+                      type={panel.type}
+                      onCloneBoundaries={handleCloneBoundaries}
+                      onRemoveBoundaries={onRemoveBoundaries}
+                      onUpdateBoundaries={onUpdateBoundaries}
+                      isReadOnly={false}
+                      canManageObservations={panel.canManageObservations}
+                      layers={layers}
+                    />
+                  )
+                }
+              }))}
             />
           </LeafletMapProvider>
         </DataGrid>

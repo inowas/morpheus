@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId} from "../../../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryType, IObservationId} from "../../../types/Boundaries.type";
 import BoundaryList from "./BoundaryList";
 import {Grid, InfoTitle, Tab} from 'common/components';
 import {BoundariesForm} from "../BoundariesLayers/BoundariesForm";
@@ -23,7 +23,16 @@ interface ISelectedObservation {
   observationId: IObservationId;
 }
 
-const BoundaryPaneContent = ({type, boundaries, layers, canManageObservations, onCloneBoundaries, onUpdateBoundaries, onRemoveBoundaries, isReadOnly}: IProps) => {
+const BoundariesSection = ({
+                               type,
+                               boundaries,
+                               layers,
+                               canManageObservations,
+                               onCloneBoundaries,
+                               onUpdateBoundaries,
+                               onRemoveBoundaries,
+                               isReadOnly
+                             }: IProps) => {
 
   const [selectedBoundaries, setSelectedBoundaries] = useState<IBoundary['id'][]>([]);
   const [selectedObservation, setSelectedObservation] = useState<ISelectedObservation | null>(null);
@@ -104,11 +113,11 @@ const BoundaryPaneContent = ({type, boundaries, layers, canManageObservations, o
               ),
               render: () => <TabPane attached={false}>
                 {boundaryToShowData && selectedObservation &&
-                  <BoundariesTable
-                    boundary={boundaryToShowData}
-                    selectedObservation={selectedObservation.observationId}
-                    formatDateTime={() => '2021-01-01'}
-                  />
+                    <BoundariesTable
+                        boundary={boundaryToShowData}
+                        selectedObservation={selectedObservation.observationId}
+                        formatDateTime={() => '2021-01-01'}
+                    />
                 }
               </TabPane>,
             },
@@ -131,4 +140,4 @@ const BoundaryPaneContent = ({type, boundaries, layers, canManageObservations, o
   );
 }
 
-export default BoundaryPaneContent;
+export default BoundariesSection;
