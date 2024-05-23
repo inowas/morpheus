@@ -28,8 +28,6 @@ const RasterFileInput = ({onSubmit, error, readOnly, btnValue}: IRasterFileInput
   return (
     <>
       <Button
-        className={!btnValue ? 'no-content' : ''}
-        content={btnValue || false}
         icon={'upload'}
         onClick={() => fileInputRef.current?.click()}
         disabled={readOnly}
