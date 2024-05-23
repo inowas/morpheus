@@ -38,6 +38,7 @@ const DotsMenu: React.FC<DotsMenuProps> = ({disabled, actions, style, className}
           style={style}
         />
       }
+      hideOnScroll={true}
       on="click"
       position="bottom right"
       open={isOpen}

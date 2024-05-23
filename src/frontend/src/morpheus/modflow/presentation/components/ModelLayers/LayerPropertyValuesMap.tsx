@@ -95,6 +95,7 @@ const LayerPropertyValuesMap = ({data, colorMap = 'gist_earth', minValue: minVal
         );
       })}
       <Legend
+        direction={'horizontal'}
         value={value}
         grades={contourMultiPolygons.map(mp => mp.value)}
         getRgbColor={(v) => getRgbColor(v, minValue, maxValue)}

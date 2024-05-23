@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styles from './StressperiodsUpload.module.less';
 import {ECsvColumnType, IColumn} from './types/StressperiodsUpload.type';
-import {Button, Modal, Notification, SectionTitle} from 'common/components';
+import {Button, Modal, Notification} from 'common/components';
 import {Checkbox, Form, Icon, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';
 import {IStressPeriod} from '../../../../types';
@@ -177,96 +177,181 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
     ));
   };
 
+  // const renderContent = () => {
+  //   return (
+  //     <>
+  //       <DataGrid>
+  //         <SectionTitle title={'UPLOAD DATASET'}/>
+  //         {stressPeriods && 0 < stressPeriods.length &&
+  //           <>
+  //             <DataRow>
+  //               <DataGrid columns={2}>
+  //                 <Form.Field className={styles.dateFormat}>
+  //                   <label className={`${styles.dateFormatLabel} labelSmall`} style={{textAlign: 'left', fontWeight: 600}}>
+  //                     <Icon className={'dateIcon'} name="info circle"/>
+  //                     Date format
+  //                   </label>
+  //                   <Form.Dropdown
+  //                     style={{backgroundColor: 'white', padding: '5px 10px'}}
+  //                     value={dateTimeFormat}
+  //                     options={[
+  //                       {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
+  //                       {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
+  //                       {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
+  //                       {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
+  //                     ]}
+  //                     onChange={(e, d) => setDateTimeFormat(d.value as string)}
+  //                   />
+  //                 </Form.Field>
+  //                 <Form.Field>
+  //                   <Checkbox
+  //                     style={{textAlign: 'left', fontWeight: 600}}
+  //                     label="First row is header"
+  //                     checked={firstRowIsHeader}
+  //                     onChange={handleChange(setFirstRowIsHeader)}
+  //                     data-value={firstRowIsHeader ? 'true' : 'false'}
+  //                   />
+  //                 </Form.Field>
+  //               </DataGrid>
+  //             </DataRow>
+  //             <DataGrid columns={4}>
+  //               {columns.map((c, key) => (
+  //                 <Form.Field key={key}>
+  //                   <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
+  //                     <Icon className={'dateIcon'} name="info circle"/>
+  //                     {c.text}
+  //                   </label>
+  //                   <Form.Dropdown
+  //                     key={key}
+  //                     name={c.value}
+  //                     selection={true}
+  //                     value={columnOrder[key].colIdx}
+  //                     onChange={(e, d) => {
+  //                       const newColumnOrder = columnOrder.map((co, idx) => {
+  //                         if (idx === key) {
+  //                           return {...co, colIdx: d.value as number};
+  //                         }
+  //
+  //                         return co;
+  //                       });
+  //                       setColumnOrder(newColumnOrder);
+  //                     }}
+  //                     options={rawData[0].map((value: string, idx) => ({
+  //                       key: idx,
+  //                       value: idx,
+  //                       text: firstRowIsHeader ? value : `Column ${idx + 1}`,
+  //                     }))}
+  //                   />
+  //                 </Form.Field>
+  //               ))}
+  //             </DataGrid>
+  //             <DataRow>
+  //               {stressPeriods && 0 === stressPeriods.length && <Notification warning={true}>
+  //                 The CSV file cannot be empty
+  //               </Notification>}
+  //               <div className={styles.scrollContainer}>
+  //                 <Table
+  //                   celled={true} structured={true}
+  //                   className={styles.table}
+  //                 >
+  //                   <Table.Header>
+  //                     {renderHeader()}
+  //                   </Table.Header>
+  //                   <Table.Body>
+  //                     {stressPeriods && renderStressPeriods()}
+  //                   </Table.Body>
+  //                 </Table>
+  //               </div>
+  //             </DataRow>
+  //           </>
+  //         }
+  //       </DataGrid>
+  //     </>);
+  // };
+
   const renderContent = () => {
     return (
-      <>
-        <DataGrid>
-          <SectionTitle title={'UPLOAD DATASET'}/>
-          {stressPeriods && 0 < stressPeriods.length &&
-            <>
-              <DataRow>
-                <DataGrid columns={2}>
-                  <Form.Field className={styles.dateFormat}>
-                    <label className={`${styles.dateFormatLabel} labelSmall`} style={{textAlign: 'left', fontWeight: 600}}>
-                      <Icon className={'dateIcon'} name="info circle"/>
-                      Date format
-                    </label>
-                    <Form.Dropdown
-                      style={{backgroundColor: 'white', padding: '5px 10px'}}
-                      value={dateTimeFormat}
-                      options={[
-                        {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
-                        {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
-                        {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
-                        {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
-                      ]}
-                      onChange={(e, d) => setDateTimeFormat(d.value as string)}
-                    />
-                  </Form.Field>
-                  <Form.Field>
-                    <Checkbox
-                      style={{textAlign: 'left', fontWeight: 600}}
-                      label="First row is header"
-                      checked={firstRowIsHeader}
-                      onChange={handleChange(setFirstRowIsHeader)}
-                      data-value={firstRowIsHeader ? 'true' : 'false'}
-                    />
-                  </Form.Field>
-                </DataGrid>
-              </DataRow>
-              <DataGrid columns={4}>
-                {columns.map((c, key) => (
-                  <Form.Field key={key}>
-                    <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
-                      <Icon className={'dateIcon'} name="info circle"/>
-                      {c.text}
-                    </label>
-                    <Form.Dropdown
-                      key={key}
-                      name={c.value}
-                      selection={true}
-                      value={columnOrder[key].colIdx}
-                      onChange={(e, d) => {
-                        const newColumnOrder = columnOrder.map((co, idx) => {
-                          if (idx === key) {
-                            return {...co, colIdx: d.value as number};
-                          }
+      <DataGrid>
+        <DataRow>
+          <DataGrid columns={2}>
+            <Form.Field className={styles.dateFormat}>
+              <label className={`${styles.dateFormatLabel} labelSmall`} style={{textAlign: 'left', fontWeight: 600}}>
+                <Icon className={'dateIcon'} name="info circle"/>
+                Date format
+              </label>
+              <Form.Dropdown
+                style={{backgroundColor: 'white', padding: '5px 10px'}}
+                value={dateTimeFormat}
+                options={[
+                  {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
+                  {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
+                  {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
+                  {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
+                ]}
+                onChange={(e, d) => setDateTimeFormat(d.value as string)}
+              />
+            </Form.Field>
+            <Form.Field>
+              <Checkbox
+                style={{textAlign: 'left', fontWeight: 600}}
+                label="First row is header"
+                checked={firstRowIsHeader}
+                onChange={handleChange(setFirstRowIsHeader)}
+                data-value={firstRowIsHeader ? 'true' : 'false'}
+              />
+            </Form.Field>
+          </DataGrid>
+        </DataRow>
+        <DataGrid columns={4}>
+          {columns.map((c, key) => (
+            <Form.Field key={key}>
+              <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
+                <Icon className={'dateIcon'} name="info circle"/>
+                {c.text}
+              </label>
+              <Form.Dropdown
+                key={key}
+                name={c.value}
+                selection={true}
+                value={columnOrder[key].colIdx}
+                onChange={(e, d) => {
+                  const newColumnOrder = columnOrder.map((co, idx) => {
+                    if (idx === key) {
+                      return {...co, colIdx: d.value as number};
+                    }
 
-                          return co;
-                        });
-                        setColumnOrder(newColumnOrder);
-                      }}
-                      options={rawData[0].map((value: string, idx) => ({
-                        key: idx,
-                        value: idx,
-                        text: firstRowIsHeader ? value : `Column ${idx + 1}`,
-                      }))}
-                    />
-                  </Form.Field>
-                ))}
-              </DataGrid>
-              <DataRow>
-                {stressPeriods && 0 === stressPeriods.length && <Notification warning={true}>
-                  The CSV file cannot be empty
-                </Notification>}
-                <div className={styles.scrollContainer}>
-                  <Table
-                    celled={true} structured={true}
-                    className={styles.table}
-                  >
-                    <Table.Header>
-                      {renderHeader()}
-                    </Table.Header>
-                    <Table.Body>
-                      {stressPeriods && renderStressPeriods()}
-                    </Table.Body>
-                  </Table>
-                </div>
-              </DataRow>
-            </>
-          }
+                    return co;
+                  });
+                  setColumnOrder(newColumnOrder);
+                }}
+                options={rawData[0].map((value: string, idx) => ({
+                  key: idx,
+                  value: idx,
+                  text: firstRowIsHeader ? value : `Column ${idx + 1}`,
+                }))}
+              />
+            </Form.Field>
+          ))}
         </DataGrid>
-      </>);
+        <DataRow>
+          {stressPeriods && 0 === stressPeriods.length && <Notification warning={true}>
+            The CSV file cannot be empty
+          </Notification>}
+          <div className={styles.scrollContainer}>
+            <Table
+              celled={true} structured={true}
+              className={styles.table}
+            >
+              <Table.Header>
+                {renderHeader()}
+              </Table.Header>
+              <Table.Body>
+                {stressPeriods && renderStressPeriods()}
+              </Table.Body>
+            </Table>
+          </div>
+        </DataRow>
+      </DataGrid>);
   };
 
   return (
@@ -275,31 +360,32 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
       onClose={handleCancel}
       dimmer={'inverted'}
     >
+      <Modal.Header>
+        UPLOAD DATASET
+      </Modal.Header>
       <Modal.Content>
-        <DataGrid>
-          {renderContent()}
-          <div className={styles.buttonGroup}>
-            <Button
-              style={{
-                fontSize: '17px',
-                textTransform: 'capitalize',
-              }}
-              onClick={handleCancel}
-            >Cancel</Button>
-            <Button
-              style={{
-                fontSize: '17px',
-                textTransform: 'capitalize',
-              }}
-              primary={!!stressPeriods}
-              disabled={!isFormValid()}
-              onClick={handleSave}
-            >
-              Apply
-            </Button>
-          </div>
-        </DataGrid>
+        {renderContent()}
       </Modal.Content>
+      <Modal.Actions>
+        <Button
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
+          onClick={handleCancel}
+          content={'Cancel'}
+        />
+        <Button
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
+          primary={!!stressPeriods}
+          disabled={!isFormValid()}
+          onClick={handleSave}
+          content={'Apply'}
+        />
+      </Modal.Actions>
     </Modal.Modal>
   );
 };

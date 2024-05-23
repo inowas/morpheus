@@ -39,6 +39,7 @@ import Message from './Message/Message';
 import Modal from './Modal/Modal';
 import CardGrid from './CardGrid/Grid';
 import MovableAccordionList, {IMovableAccordionItem, IMovableAccordionListAction} from './MovableAccordionList';
+import MovableList from './MovableList';
 import Navbar, {INavbarItem} from './Navbar';
 import NotFound from './NotFound';
 import Notification from './Notification/Notification';
@@ -96,6 +97,7 @@ export {
   Grid,
   ModelCard,
   MovableAccordionList,
+  MovableList,
   Navbar,
   NotFound,
   Notification,
