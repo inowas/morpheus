@@ -13,7 +13,7 @@ import Select, {DropdownProps} from './Select/Select';
 
 import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
-import {AccordionItem, AccordionRef} from './Accordion/Accordion';
+import {AccordionItem, Accordion} from './Accordion/Accordion';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
 import Breadcrumb from './Breadcrumb';
 import Button from './Button/Button';
@@ -60,7 +60,7 @@ import SearchInput from './SearchComponent/DropdownWithSearchInput';
 
 export {
   ApplicationContentWrapper,
-  AccordionRef,
+  Accordion,
   AccordionItem,
   Breadcrumb,
   Button,

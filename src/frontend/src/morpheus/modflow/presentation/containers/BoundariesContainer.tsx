@@ -1,33 +1,62 @@
 import React, {useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import {BoundariesContent} from '../components/BoundariesLayers';
-import {useParams} from "react-router-dom";
-import useSpatialDiscretization from "../../application/useSpatialDiscretization";
-import useProjectPermissions from "../../application/useProjectPermissions";
-import {IMapRef, LeafletMapProvider} from "common/components/Map";
-import BoundariesMap from "../components/ModelBoundaries/BoundariesMap";
-import {DataGrid, SearchInput, SectionTitle} from "common/components";
-import useBoundaries from "../../application/useBoundaries";
-import {IBoundaryType} from "../../types/Boundaries.type";
+import {useParams} from 'react-router-dom';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
+import useProjectPermissions from '../../application/useProjectPermissions';
+import {IMapRef, LeafletMapProvider} from 'common/components/Map';
+import BoundariesMap from '../components/ModelBoundaries/BoundariesMap';
+import {Accordion, DataGrid, SearchInput, SectionTitle} from 'common/components';
+import useBoundaries from '../../application/useBoundaries';
+import {IBoundaryType, availableBoundaries, IBoundary} from '../../types/Boundaries.type';
+import BoundaryPaneContent from '../components/ModelBoundaries/BoundaryPaneContent';
+import {getBoundariesByType} from "../components/BoundariesLayers/helpers/BoundariesContent.helpers";
+import useLayers from "../../application/useLayers";
 
+const getPanelDetails = (boundaries: IBoundary[]) => availableBoundaries.map((b) => ({
+  title: b.title,
+  type: b.type,
+  boundaries: getBoundariesByType(boundaries, b.type),
+  canManageObservations: ['constant_head', 'drain', 'flow_and_head', 'general_head', 'river'].includes(b.type)
+}))
 
 const BoundariesContainer = () => {
 
   const {projectId} = useParams();
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
-  const {boundaries, onAddBoundary} = useBoundaries(projectId as string);
+  const {boundaries, onAddBoundary, onCloneBoundary, onUpdateBoundary, onRemoveBoundary} = useBoundaries(projectId as string);
+  const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
   const mapRef: IMapRef = useRef(null);
 
-  const [addBoundary, setAddBoundary] = useState<IBoundaryType | null>(null);
+  const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
 
-  if (!spatialDiscretization || !boundaries) {
+
+  if (!spatialDiscretization || !boundaries || !layers) {
     return null;
   }
 
   const handleAddBoundary = (type: IBoundaryType, geometry: any) => {
     onAddBoundary(type, geometry);
-    setAddBoundary(null)
+    setAddBoundaryOnMap(null)
+  }
+
+  const handleCloneBoundaries = async (ids: IBoundary['id'][]) => {
+    for (const id of ids) {
+      await onCloneBoundary(id);
+    }
+  }
+
+  const onRemoveBoundaries = async (ids: IBoundary['id'][]) => {
+    console.log('onRemoveBoundaries', ids)
+    for (const id of ids) {
+      await onRemoveBoundary(id);
+    }
+  }
+
+  const onUpdateBoundaries = async (boundaries: IBoundary[]) => {
+    for (const boundary of boundaries) {
+      await onUpdateBoundary(boundary);
+    }
   }
 
   return (
@@ -38,22 +67,50 @@ const BoundariesContainer = () => {
           <SearchInput
             dropDownText={'Add new boundary'}
             dropdownItems={[
-              {text: 'Constant head', action: () => setAddBoundary('constant_head')},
-              {text: 'Drain', action: () => setAddBoundary('drain')},
-              {text: 'Evapotranspiration', action: () => setAddBoundary('evapotranspiration')},
-              {text: 'Flow and head', action: () => setAddBoundary('flow_and_head')},
-              {text: 'General head', action: () => setAddBoundary('general_head')},
-              {text: 'Lake', action: () => setAddBoundary('lake')},
-              {text: 'Recharge', action: () => setAddBoundary('recharge')},
-              {text: 'River', action: () => setAddBoundary('river')},
-              {text: 'Well', action: () => setAddBoundary('well')},
+              {text: 'Constant head', action: () => setAddBoundaryOnMap('constant_head')},
+              {text: 'Drain', action: () => setAddBoundaryOnMap('drain')},
+              {text: 'Evapotranspiration', action: () => setAddBoundaryOnMap('evapotranspiration')},
+              {text: 'Flow and head', action: () => setAddBoundaryOnMap('flow_and_head')},
+              {text: 'General head', action: () => setAddBoundaryOnMap('general_head')},
+              {text: 'Lake', action: () => setAddBoundaryOnMap('lake')},
+              {text: 'Recharge', action: () => setAddBoundaryOnMap('recharge')},
+              {text: 'River', action: () => setAddBoundaryOnMap('river')},
+              {text: 'Well', action: () => setAddBoundaryOnMap('well')},
             ]}
             onChangeSearch={(search) => console.log(search)}
             searchPlaceholder={'Search boundaries'}
             isReadOnly={isReadOnly}
           />
           <LeafletMapProvider mapRef={mapRef}>
-            <BoundariesContent/>
+            {/*<BoundariesContent boundaries={boundaries}/>*/}
+            <Accordion
+              defaultActiveIndex={0}
+              className='accordionPrimary'
+              exclusive={true}
+              panels={getPanelDetails(boundaries)
+                .filter((panel) => 0 < panel.boundaries.length)
+                .map((panel) => ({
+                  key: panel.type,
+                  title: {
+                    content: <span>{`${panel.title} (${panel.boundaries.length})`}</span>,
+                    icon: false,
+                  },
+                  content: {
+                    content: (
+                      <BoundaryPaneContent
+                        boundaries={panel.boundaries}
+                        type={panel.type}
+                        onCloneBoundaries={handleCloneBoundaries}
+                        onRemoveBoundaries={onRemoveBoundaries}
+                        onUpdateBoundaries={onUpdateBoundaries}
+                        isReadOnly={false}
+                        canManageObservations={panel.canManageObservations}
+                        layers={layers}
+                      />
+                    )
+                  }
+                }))}
+            />
           </LeafletMapProvider>
         </DataGrid>
       </SidebarContent>
@@ -61,7 +118,7 @@ const BoundariesContainer = () => {
         <BoundariesMap
           spatialDiscretization={spatialDiscretization}
           mapRef={mapRef}
-          addBoundary={addBoundary}
+          addBoundary={addBoundaryOnMap}
           onAddBoundary={handleAddBoundary}
         />
       </BodyContent>

@@ -1,51 +1,31 @@
 import {DataGrid, DataRow} from 'common/components';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Dropdown, Form, Icon, Input, Label, Popup} from 'semantic-ui-react';
-import {IBoundaries} from '../type/BoundariesContent.type';
-import {getBoundariesByType} from '../helpers/BoundariesContent.helpers';
+import {IBoundary, IBoundaryType} from "../../../../types/Boundaries.type";
+import {ILayerId} from "../../../../types/Layers.type";
 
 
 interface IProps {
-  type?: string;
-  boundaries: IBoundaries[];
-  selectedItems: string[];
-  onSelect: (id: string[]) => void;
-  onSelectObservations: (id: string[]) => void;
+  type: IBoundaryType;
+  boundaries: IBoundary[];
+  onChangeBoundaries: (boundaries: IBoundary[]) => void;
+  isReadOnly: boolean;
+  layers: ILayerMetadata[];
 }
 
-const options = [
-  {key: 'wdd', text: 'wdd', value: 'wdd'},
-  {key: 'inowas', text: 'inowas', value: 'inowas'},
-  {key: 'htwdd', text: 'htwdd', value: 'htwdd'},
-  {key: 'hwd', text: 'hwd', value: 'hwd'},
-  {key: 'hdd', text: 'hdd', value: 'hdd'},
-  {key: 'wbd', text: 'wbd', value: 'wbd'},
-  {key: 'wvd', text: 'wvd', value: 'wvd'},
-  {key: 'wq', text: 'wq', value: 'wq'},
-  {key: 'wss', text: 'wss', value: 'wss'},
-];
+interface ILayerMetadata {
+  layer_id: string;
+  name: string;
+}
 
-const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObservations}: IProps) => {
-  const [listItems, setListItems] = useState<IBoundaries[]>([]);
+const BoundariesForm = ({boundaries, type, onChangeBoundaries, isReadOnly, layers}: IProps) => {
 
-  const handleLayerChange = (event: React.SyntheticEvent, {value}: any) => {
-    onSelect(value);
-    const updatedObservationSelection: string[] = [];
-    boundaries.forEach(boundary => {
-      if (value.includes(boundary.id)) {
-        boundary.observations.forEach(observation => {
-          updatedObservationSelection.push(observation.observation_id);
-        });
-      }
-    });
-    onSelectObservations(updatedObservationSelection);
-  };
-  useEffect(() => {
-    setListItems(type ? getBoundariesByType(boundaries, type) : boundaries);
-  }, [boundaries]);
+  const handleLayerChange = (layerIds: ILayerId[]) => onChangeBoundaries(boundaries.map(boundary => ({...boundary, affected_layers: layerIds})));
+  const [options, setOptions] = useState([{}]);
+  const [tags, setTags] = useState<string[]>([]);
 
-  return <>
+  return (
     <Form>
       <DataRow>
         <Form.Field>
@@ -54,122 +34,74 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
             className="labelSmall"
           >
             <Popup
-              trigger={<Icon
-                name="info circle"
-              />}
+              trigger={<Icon name="info circle"/>}
               content={'Select Layer'}
               hideOnScroll={true}
               size="tiny"
             />
-
             Select Layer
           </Label>
+
           <Dropdown
-            disabled={0 === listItems.length}
+            disabled={isReadOnly}
             name="selectedLayer"
-            clearable={true}
             multiple={true}
             selection={true}
-            value={selectedItems}
-            options={listItems.map((boundary) => ({
-              key: boundary.id,
-              text: boundary.name,
-              value: boundary.id,
+            value={boundaries.length === 1 ? boundaries[0].affected_layers : []}
+            options={layers.map((layer) => ({
+              key: layer.layer_id,
+              text: layer.name,
+              value: layer.layer_id,
             }))}
             onChange={(event, {value}) => {
-              handleLayerChange(event, {value});
+              if (!value) {
+                return;
+              }
+
+              if (!Array.isArray(value)) {
+                value = [value];
+              }
+
+              handleLayerChange(value.map((v) => String(v) as ILayerId));
             }}
-          />
-        </Form.Field>
-        <DataGrid columns={2}>
-          <Form.Field className="field">
-            <Label htmlFor="latitude" className="labelSmall">
-              <Popup
-                trigger={<Icon
-                  name="info circle"
-                />}
-                content={'Latitude value'}
-                hideOnScroll={true}
-                size="tiny"
-              />
-
-              Latitude
-            </Label>
-            <Input
-              disabled={0 === listItems.length}
-              name={'latitude'}
-              type={'number'}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Label htmlFor="longitude" className="labelSmall">
-              <Popup
-                trigger={<Icon
-                  name="info circle"
-                />}
-                content={'Longitude value'}
-                hideOnScroll={true}
-                size="tiny"
-              />
-
-              Longitude
-            </Label>
-            <Input
-              disabled={0 === listItems.length}
-              name={'longitude'}
-              type={'number'}
-            />
-          </Form.Field>
-        </DataGrid>
-        <Form.Field>
-          <Label
-            htmlFor="length"
-            className="labelSmall"
-          >
-            <Popup
-              trigger={<Icon
-                name="info circle"
-              />}
-              content={'Length value in meters'}
-              hideOnScroll={true}
-              size="tiny"
-            />
-
-            Length (m)
-          </Label>
-          <Input
-            disabled={0 === listItems.length}
-            name={'length'}
-            type={'number'}
           />
         </Form.Field>
         <Form.Field>
           <Label htmlFor="tags" className="labelSmall">
             <Popup
-              trigger={<Icon
-                name="info circle"
-              />}
+              trigger={<Icon name="info circle"/>}
               content={'Tags'}
               hideOnScroll={true}
               size="tiny"
             />
-
             Tags
           </Label>
+
           <Dropdown
-            disabled={0 === listItems.length}
+            allowAdditions={true}
+            fluid={true}
+            multiple={true}
+            onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setOptions([...options, {key: data.value, text: data.value, value: data.value}])}
+            onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTags(data.value as string[])}
+            options={options}
+            search={true}
+            selection={true}
+            value={boundaries.length === 1 ? boundaries[0].tags : []}
+          />
+
+          <Dropdown
+            disabled={0 === boundaries.length}
             className="dropdownTags"
             name="tags"
             clearable={true}
             multiple={true}
             selection={true}
-            options={options}
+            value={boundaries.length === 1 ? boundaries[0].tags : []}
           />
         </Form.Field>
       </DataRow>
     </Form>
-  </>
-  ;
+  )
 };
 
 export default BoundariesForm;

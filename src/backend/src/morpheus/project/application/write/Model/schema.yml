@@ -59,8 +59,8 @@ definitions:
         command_name:
           type: string
           enum:
-            - remove_boundary_command
-          example: remove_boundary_command
+            - remove_model_boundary_command
+          example: remove_model_boundary_command
         payload:
           type: object
           properties:

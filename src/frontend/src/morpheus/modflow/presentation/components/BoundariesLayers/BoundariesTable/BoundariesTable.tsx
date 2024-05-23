@@ -1,167 +1,59 @@
-import React, {useEffect, useState} from 'react';
-import {Icon, Popup, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow} from 'semantic-ui-react';
-import {IBoundaries} from '../type/BoundariesContent.type';
-import styles from './BoundariesTable.module.less';
-import {useDateTimeFormat} from '../../../../../../common/hooks';
-import {getBoundariesByType} from '../helpers/BoundariesContent.helpers';
-import {v4 as uuidv4} from 'uuid';
+import React from 'react';
+import DataTable from "./BoundariesDataTable";
+import {IBoundary, IObservationId} from "../../../../types/Boundaries.type";
 
 interface IProps {
-  boundaries: IBoundaries[];
-  type?: string;
-  selectedObservation: string[];
-  timeZone?: string;
+  boundary: IBoundary;
+  selectedObservation: IObservationId;
+  formatDateTime: (dateTime: string) => string;
 }
 
-const BoundariesTable = ({boundaries, type, selectedObservation, timeZone}: IProps) => {
+const isNotNullish = (value: any): value is number => value !== null && value !== undefined;
 
-  const {format} = useDateTimeFormat(timeZone);
-  const [listItems, setListItems] = useState<IBoundaries[]>([]);
-  const [data, setData] = useState<IBoundaries[]>([]);
+const BoundariesTable = ({boundary, selectedObservation, formatDateTime}: IProps) => {
 
-  useEffect(() => {
-    setListItems(type ? getBoundariesByType(boundaries, type) : boundaries);
-  }, [boundaries, type]);
+  const columns = [
+    {title: 'Start date', key: 'date_time', format: (value: string) => formatDateTime(value), fallback: '-'},
+    {title: 'Head', key: 'head', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Stage', key: 'stage', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Conductance', key: 'conductance', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Surface Elevation', key: 'surface_elevation', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Evapotranspiration', key: 'evapotranspiration', format: (value: number) => isNotNullish(value) ? value.toFixed(4) : '-', fallback: '-'},
+    {title: 'Extinction Depth', key: 'extinction_depth', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Flow', key: 'flow', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Precipitation', key: 'precipitation', format: (value: number) => isNotNullish(value) ? value.toFixed(4) : '-', fallback: '-'},
+    {title: 'Evaporation', key: 'evaporation', format: (value: number) => isNotNullish(value) ? value.toFixed(4) : '-', fallback: '-'},
+    {title: 'Runoff', key: 'runoff', format: (value: number) => isNotNullish(value) ? value.toFixed(4) : '-', fallback: '-'},
+    {title: 'Withdrawal', key: 'withdrawal', format: (value: number) => isNotNullish(value) ? value.toFixed(4) : '-', fallback: '-'},
+    {title: 'Recharge rate', key: 'recharge_rate', format: (value: number) => isNotNullish(value) ? value.toFixed(4) : '-', fallback: '-'},
+    {title: 'River Stage', key: 'river_stage', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Riverbed Bottom', key: 'riverbed_bottom', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+    {title: 'Pumping Rate', key: 'pumping_rate', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
+  ];
 
-  useEffect(() => {
-    const filteredBoundaries = listItems.map(boundary => ({
-      ...boundary,
-      observations: boundary.observations.filter(observation =>
-        selectedObservation.includes(observation.observation_id),
-      ),
-    })).filter(boundary => 0 < boundary.observations.length);
-    setData(filteredBoundaries);
-  }, [listItems, selectedObservation]);
+  const getColumns = () => {
+    const observationData = boundary.observations.find(o => o.observation_id === selectedObservation)?.data;
 
+    if (!observationData || observationData.length === 0) {
+      return [];
+    }
+    const dataKeys = Object.keys(observationData[0]);
+    return columns.filter(c => dataKeys.includes(c.key));
+  }
 
-  const renderHeader = () => {
+  const getData = () => {
+    const observationData = boundary.observations.find(o => o.observation_id === selectedObservation)?.data;
 
-    let headerCells = [];
-    switch (type) {
-    case 'well':
-      headerCells = [
-        'Start date',
-        'Pumping rate (m3/day)',
-      ];
-      break;
-    case 'general_head':
-      headerCells = [
-        'Start date',
-        'Conductance',
-        'Stage',
-      ];
-      break;
-    case 'recharge':
-      headerCells = [
-        'Start date',
-        'Recharge rate',
-      ];
-      break;
-    case 'river':
-      headerCells = [
-        'Start date',
-        'River Stag',
-        'Riverbed Bottom',
-      ];
-      break;
-    default:
-      headerCells = [
-        'Start date',
-        'Stage',
-        'Conductance',
-        'Recharge rate',
-        'River Stag',
-        'Riverbed Bottom',
-      ];
+    if (!observationData) {
+      return [];
     }
 
-    return headerCells.map((headerCell, index) => (
-      <TableHeaderCell
-        className={`${styles.headerCell} field`}
-        key={index}
-      >
-        <Popup
-          trigger={<Icon
-            name="info circle"
-          />}
-          content={headerCell}
-          hideOnScroll={true}
-          size="tiny"
-        />
-        {headerCell}
-      </TableHeaderCell>
-    ));
-  };
+    return observationData;
+  }
 
-  const renderBody = () => {
-    return data.flatMap(boundary =>
-      boundary.observations.flatMap(observation =>
-        observation.raw_data.map((item, index) => {
-          switch (type) {
-          case 'well':
-            return (
-              <TableRow key={uuidv4()}>
-                <TableCell>{format(item.date_time, 'dd.MM.yyyy')}</TableCell>
-                <TableCell>{item.pumping_rate || ''}</TableCell>
-              </TableRow>
-            );
-          case 'general_head':
-            return (
-              <TableRow key={uuidv4()}>
-                <TableCell>{format(item.date_time, 'dd.MM.yyyy')}</TableCell>
-                <TableCell>{item.stage || ''}</TableCell>
-                <TableCell>{item.conductance || ''}</TableCell>
-              </TableRow>
-            );
-          case 'recharge':
-            return (
-              <TableRow key={uuidv4()}>
-                <TableCell>{format(item.date_time, 'dd.MM.yyyy')}</TableCell>
-                <TableCell>{item.recharge_rate || ''}</TableCell>
-              </TableRow>
-            );
-          case 'river':
-            return (
-              <TableRow key={uuidv4()}>
-                <TableCell>{format(item.date_time, 'dd.MM.yyyy')}</TableCell>
-                <TableCell>{item.river_stage || ''}</TableCell>
-                <TableCell>{item.riverbed_bottom || ''}</TableCell>
-              </TableRow>
-            );
-          default:
-            return (
-              <TableRow key={uuidv4()}>
-                <TableCell>{format(item.date_time, 'dd.MM.yyyy')}</TableCell>
-                <TableCell>{item.stage || ''}</TableCell>
-                <TableCell>{item.conductance || ''}</TableCell>
-                <TableCell>{item.pumping_rate || ''}</TableCell>
-                <TableCell>{item.recharge_rate || ''}</TableCell>
-                <TableCell>{item.river_stage || ''}</TableCell>
-                <TableCell>{item.riverbed_bottom || ''}</TableCell>
-              </TableRow>
-            );
-          }
-        }),
-      ),
-    );
-  };
-  
   return (
-    <div className='scrollableTable'>
-      <Table
-        celled={true} striped={true}
-      >
-        <TableHeader>
-          <TableRow>
-            {renderHeader()}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {renderBody()}
-        </TableBody>
-      </Table>
-    </div>);
+    <DataTable columns={getColumns()} data={getData()}/>
+  );
 };
 
 export default BoundariesTable;

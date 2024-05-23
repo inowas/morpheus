@@ -167,6 +167,7 @@ class Boundary:
             'id': self.boundary_id.to_value(),
             'type': self.type.to_value(),
             'name': self.name.to_value(),
+            'tags': self.tags.to_list(),
             'geometry': self.geometry.to_dict(),
             'affected_cells': self.affected_cells.to_dict(),
             'affected_layers': [layer_id.to_value() for layer_id in self.affected_layers],
