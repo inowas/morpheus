@@ -46,6 +46,7 @@ const RasterAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsse
       <Grid.Column width={6} style={{boxShadow: '9px 0 10px -11px #BABABA'}}>
         <div className={styles.assetListHeader}>
           <RasterFileInput
+            icon={'upload'}
             readOnly={isReadOnly}
             onSubmit={onFileUpload}
           />
