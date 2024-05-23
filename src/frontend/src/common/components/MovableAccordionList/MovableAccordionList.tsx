@@ -44,6 +44,7 @@ const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnCl
     setOpenIndexes(newOpenIndexes);
   };
 
+
   return (
     <div className={'movableList'}>
       <List

@@ -9,7 +9,7 @@ from morpheus.project.application.read.PermissionsReader import PermissionsReade
 
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents import VersionAssignedToModelEvent, VersionCreatedEvent, ModelCreatedEvent
+from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import ModelCreatedEvent, VersionCreatedEvent, VersionAssignedToModelEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId, Model
 from morpheus.project.types.ModelVersion import VersionDescription, VersionTag, ModelVersion

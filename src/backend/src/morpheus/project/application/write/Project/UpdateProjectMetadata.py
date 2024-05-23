@@ -9,7 +9,7 @@ from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.domain.events.ProjectEvents import ProjectMetadataUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectMetadataUpdatedEvent
 from morpheus.project.types.Project import ProjectId, Name, Description, Tags
 from morpheus.project.types.User import UserId
 

@@ -2,8 +2,10 @@ import {float} from '@kitware/vtk.js/types';
 import {IAffectedCells} from './SpatialDiscretization.type';
 import {MultiPolygon, Polygon} from 'geojson';
 
+export type ILayerId = string;
+
 export interface ILayer {
-  layer_id: string;
+  layer_id: ILayerId;
   name: string;
   description: string;
   confinement: ILayerConfinement;

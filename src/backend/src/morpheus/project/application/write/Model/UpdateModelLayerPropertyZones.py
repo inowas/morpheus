@@ -9,7 +9,7 @@ from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents import ModelLayerPropertyUpdatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
@@ -24,7 +24,7 @@ from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, Laye
 @dataclasses.dataclass
 class LayerPropertyZoneWithOptionalAffectedCells:
     zone_id: ZoneId | None
-    name: ZoneName
+    name: ZoneName | None
     affected_cells: ActiveCells | None
     geometry: Polygon | MultiPolygon
     value: float
@@ -33,7 +33,7 @@ class LayerPropertyZoneWithOptionalAffectedCells:
     def from_payload(cls, obj):
         return cls(
             zone_id=ZoneId.from_str(obj['zone_id']) if 'zone_id' in obj and obj['zone_id'] else None,
-            name=ZoneName.from_str(obj['name']),
+            name=ZoneName.from_str(obj['name']) if 'name' in obj else ZoneName('New Zone'),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']) if 'affected_cells' in obj and obj['affected_cells'] else None,
             geometry=Polygon.from_dict(obj['geometry']) if obj['geometry']['type'] == 'Polygon' else MultiPolygon.from_dict(obj['geometry']),
             value=obj['value']
@@ -42,7 +42,8 @@ class LayerPropertyZoneWithOptionalAffectedCells:
     def to_layer_property_zone(self, grid: Grid):
         zone_id = ZoneId.new() if not self.zone_id else self.zone_id
         affected_cells = self.affected_cells if self.affected_cells else ActiveCells.from_geometry(geometry=self.geometry, grid=grid)
-        return LayerPropertyZone(zone_id=zone_id, name=self.name, affected_cells=affected_cells, geometry=self.geometry, value=self.value)
+        zone_name = self.name if self.name else ZoneName('New Zone')
+        return LayerPropertyZone(zone_id=zone_id, name=zone_name, affected_cells=affected_cells, geometry=self.geometry, value=self.value)
 
 
 class ModelLayerPropertyValueZonePayload(TypedDict):

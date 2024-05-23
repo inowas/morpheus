@@ -342,21 +342,34 @@ class LayerPropertyValues:
             'zones': [zone.to_dict() for zone in self.zones] if self.zones is not None else None
         }
 
+    def get_shape(self) -> tuple[int, ...] | None:
+        if self.raster is not None and self.raster.data is not None:
+            return np.array(self.raster.data).shape
+        if self.zones is not None:
+            return self.zones[0].affected_cells.shape
+        return None
+
     def get_data(self) -> float | list[list[float]]:
+        # if only the default value is set, return it
+        if self.raster is None and self.zones is None:
+            return self.value.to_float()
+
+        # get the shape of the area
+        shape = self.get_shape()
+        if shape is None:
+            return self.value.to_float()
+
+        np_raster_data = np.ones(shape) * self.value.to_float()
         if self.raster is not None and self.raster.data is not None:
             np_raster_data = np.array(self.raster.data)
-            raster_data = np.where(np_raster_data == self.raster.data.nodata_value, self.value.to_float(), np_raster_data).tolist()
-            return raster_data
+            np_raster_data = np.where(np_raster_data == self.raster.data.nodata_value, self.value.to_float(), np_raster_data)
 
         if self.zones is not None and len(self.zones) > 0:
-            shape = self.zones[0].affected_cells.shape
-            data = np.ones(shape) * self.value.to_float()
             for zone in self.zones:
                 zone_data = np.ones(shape) * zone.value * zone.affected_cells.to_mask()
-                data = np.where(zone.affected_cells.to_mask(), zone_data, data)
-            return data.tolist()
+                np_raster_data = np.where(zone.affected_cells.to_mask(), zone_data, np_raster_data)
 
-        return self.value.to_float()
+        return np_raster_data.tolist()
 
 
 class LayerPropertyName(StrEnum):

@@ -1,7 +1,7 @@
 from morpheus.common.application.Projector import ProjectorBase
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.domain.events.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent, ProjectDeletedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.PreviewImageRepository import PreviewImageRepository, preview_image_repository
 
 
