@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, DataRow, InfoTitle} from 'common/components';
+import {Button, InfoTitle} from 'common/components';
 import {IChangeLayerPropertyValues, ILayerPropertyValueZone} from '../../../types/Layers.type';
 import AssetsModalContainer from '../../containers/AssetsModalContainter';
 import {FeatureCollection, MultiPolygon, Polygon} from 'geojson';
@@ -11,7 +11,6 @@ interface IProps {
   zones: ILayerPropertyValueZone[];
   onSubmit: (zones: IChangeLayerPropertyValues['zones']) => void;
   readOnly: boolean;
-  style?: React.CSSProperties;
 }
 
 interface INewZone {
@@ -20,7 +19,7 @@ interface INewZone {
   value: number;
 }
 
-const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, style = {}}: IProps) => {
+const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly}: IProps) => {
 
   const [zones, setZones] = useState<Array<ILayerPropertyValueZone | INewZone>>(existingZones);
   const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
@@ -68,7 +67,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
   };
 
   return (
-    <DataRow style={{...style}}>
+    <>
       <InfoTitle
         title='Zones'
         description='You can upload or draw Polygones on map to provide one value for a specific area.'
@@ -96,7 +95,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
       />
 
       {showFileUploadModal && !readOnly && <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectShapefile={handleSelectShapeFile}/>}
-    </DataRow>
+    </>
   );
 };
 

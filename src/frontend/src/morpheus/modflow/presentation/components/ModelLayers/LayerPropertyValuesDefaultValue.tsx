@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {InfoTitle} from 'common/components';
+import {Button, InfoTitle} from 'common/components';
 
 interface IProps {
   value: number;
@@ -7,10 +7,9 @@ interface IProps {
   readOnly: boolean;
   unit?: string;
   precision?: number;
-  style?: React.CSSProperties;
 }
 
-const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, precision = 2, style = {}}: IProps) => {
+const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, precision = 2}: IProps) => {
 
   const [valueLocal, setValueLocal] = useState<number>(value);
 
@@ -24,32 +23,31 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
 
 
   return (
-    <div style={{...style}}>
-      <div>
-        <InfoTitle
-          title={`Constant value ${unit ? `(${unit.split('').join('.')})` : ''}`}
-          description='You can provide a default value for the specified property for the whole layer.'
+    <>
+      <InfoTitle
+        title={`Constant value ${unit ? `(${unit.split('').join('.')})` : ''}`}
+        description='You can provide a default value for the specified property for the whole layer.'
+        style={{marginBottom: 0}}
+      />
+      <input
+        type="number"
+        value={valueLocal}
+        onChange={(e) => setValueLocal(Math.round(parseFloat(e.target.value) * Math.pow(10, precision || 0)) / Math.pow(10, precision || 0))}
+        disabled={readOnly}
+        step={Math.pow(10, -1 * (precision || 0))}
+        style={{
+          width: '110px',
+          textAlign: 'end',
+        }}
+      />
+      {!readOnly && valueLocal !== value && (
+        <Button
+          onClick={() => onSubmit(valueLocal)}
+          content='Submit'
+          size={'tiny'}
         />
-        <input
-          type="number"
-          value={valueLocal}
-          onChange={(e) => setValueLocal(Math.round(parseFloat(e.target.value) * Math.pow(10, precision || 0)) / Math.pow(10, precision || 0))}
-          disabled={readOnly}
-          step={Math.pow(10, -1 * (precision || 0))}
-          style={{
-            width: '110px',
-            textAlign: 'end',
-          }}
-        />
-      </div>
-      <div>
-        {!readOnly && valueLocal !== value && (
-          <button onClick={() => onSubmit(valueLocal)}>
-            Save
-          </button>
-        )}
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
