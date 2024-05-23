@@ -3,6 +3,7 @@ import React, {createRef} from 'react';
 import Button from 'common/components/Button/Button';
 
 interface IRasterFileInput {
+  btnValue?: string;
   onSubmit: (file: File) => void;
   error?: string;
   readOnly: boolean;
@@ -13,7 +14,7 @@ Component for uploading shape files as zip file
 The user can select multiple files and the component will compress them into a zip file
 or upload the zip file if it is already a zip file
  */
-const RasterFileInput = ({onSubmit, error, readOnly}: IRasterFileInput) => {
+const RasterFileInput = ({onSubmit, error, readOnly, btnValue}: IRasterFileInput) => {
 
   const fileInputRef = createRef<HTMLInputElement>();
 
@@ -27,12 +28,13 @@ const RasterFileInput = ({onSubmit, error, readOnly}: IRasterFileInput) => {
   return (
     <>
       <Button
-        content={'Upload raster file'}
+        className={!btnValue ? 'no-content' : ''}
+        content={btnValue || false}
+        icon={'upload'}
         onClick={() => fileInputRef.current?.click()}
         disabled={readOnly}
-        icon={'upload'}
-        color={'blue'}
-        fluid={true}
+        size={'tiny'}
+        style={{minWidth: 'auto', display: 'flex', alignItems: 'center'}}
       />
       {error && <div style={{color: 'red'}}>{error}</div>}
       <input

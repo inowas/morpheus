@@ -1,7 +1,7 @@
 /*******************************
          Theme Overrides
 *******************************/
-.ui.segment {
-  border: 0px solid #eee;
+.ui.attached.segment {
+  border: none;
   border-radius: 0;
 }

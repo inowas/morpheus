@@ -24,13 +24,13 @@
   }
 }
 
-.ui.page.dimmer.modals .content {
+.ui.page.dimmer.modals > .content {
   padding: 60px 70px 20px;
 }
 
-.ui.page.dimmer.modals .modal .header,
-.ui.page.dimmer.modals .modal .content,
-.ui.page.dimmer.modals .modal .actions {
+.ui.page.dimmer.modals .modal > .header,
+.ui.page.dimmer.modals .modal > .content,
+.ui.page.dimmer.modals .modal > .actions {
   padding-left: 70px;
   padding-right: 70px;
   background-color: #EEEEEE;
@@ -38,11 +38,11 @@
   border-radius: 0;
 }
 
-.ui.page.dimmer.modals .modal .header + .content {
+.ui.page.dimmer.modals .modal > .header + .content {
   padding: 0 70px 26px;
 }
 
-.ui.page.dimmer.modals .modal .header {
+.ui.page.dimmer.modals .modal > .header {
   color: #333333;
   font-family: "Open Sans", sans-serif;
   font-size: 25px;
@@ -64,7 +64,7 @@
 }
 
 
-.ui.page.dimmer.modals .modal .actions {
+.ui.page.dimmer.modals .modal > .actions {
   position: relative;
 
   &:before {

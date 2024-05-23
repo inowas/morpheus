@@ -92,8 +92,10 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
         menuItem: 'Shape files', render: () => (
           <TabPane>
             <ShapeFileAssetList
-              assets={shapeFiles} selectedAsset={selectedAsset}
-              assetData={assetData} onChangeSelectedAsset={setSelectedAsset}
+              assets={shapeFiles}
+              selectedAsset={selectedAsset}
+              assetData={assetData}
+              onChangeSelectedAsset={setSelectedAsset}
               loading={loading}
               isReadOnly={isReadOnly}
               onFileUpload={handleFileUpload}
@@ -121,8 +123,12 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
       </Modal.Content>
       <Modal.Actions>
         <Button
-          positive={true}
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
           content={'Submit'}
+          primary={!!selectedAsset}
           disabled={!selectedAsset}
           onClick={() => {
             if ('shapefile' == selectedAsset?.type && onSelectShapefile && assetData) {
@@ -135,7 +141,14 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
             }
           }}
         />
-        <Button content={'Close'} onClick={onClose}/>
+        <Button
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
+          content={'Close'}
+          onClick={onClose}
+        />
       </Modal.Actions>
     </Modal.Modal>
   );

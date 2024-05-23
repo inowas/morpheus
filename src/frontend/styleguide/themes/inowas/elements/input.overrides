@@ -37,6 +37,21 @@
   color: @ref-color-red;
 }
 
+.ui.search {
+  width: 100%;
+
+  * {
+    width: inherit;
+  }
+
+  input {
+    border-radius: 0 !important;
+    border: 0 !important;
+    padding: 5px !important;
+    box-shadow: @ref-box-shadow !important;
+  }
+}
+
 label.labelSmall,
 .ui.label.labelSmall {
   display: block;
