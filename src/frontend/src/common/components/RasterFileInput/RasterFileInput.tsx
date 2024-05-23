@@ -6,6 +6,8 @@ interface IRasterFileInput {
   onSubmit: (file: File) => void;
   error?: string;
   readOnly: boolean;
+  icon?: string;
+  content?: string;
 }
 
 /*
@@ -13,7 +15,7 @@ Component for uploading shape files as zip file
 The user can select multiple files and the component will compress them into a zip file
 or upload the zip file if it is already a zip file
  */
-const RasterFileInput = ({onSubmit, error, readOnly}: IRasterFileInput) => {
+const RasterFileInput = ({onSubmit, error, readOnly, icon, content}: IRasterFileInput) => {
 
   const fileInputRef = createRef<HTMLInputElement>();
 
@@ -27,12 +29,12 @@ const RasterFileInput = ({onSubmit, error, readOnly}: IRasterFileInput) => {
   return (
     <>
       <Button
-        content={'Upload raster file'}
+        content={!content && !icon ? 'Choose File' : content}
+        icon={icon}
         onClick={() => fileInputRef.current?.click()}
         disabled={readOnly}
-        icon={'upload'}
-        color={'blue'}
-        fluid={true}
+        size={'tiny'}
+        style={{minWidth: 'auto', display: 'flex', alignItems: 'center'}}
       />
       {error && <div style={{color: 'red'}}>{error}</div>}
       <input

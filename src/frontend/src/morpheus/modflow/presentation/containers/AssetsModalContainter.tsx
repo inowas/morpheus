@@ -92,8 +92,10 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
         menuItem: 'Shape files', render: () => (
           <TabPane>
             <ShapeFileAssetList
-              assets={shapeFiles} selectedAsset={selectedAsset}
-              assetData={assetData} onChangeSelectedAsset={setSelectedAsset}
+              assets={shapeFiles}
+              selectedAsset={selectedAsset}
+              assetData={assetData}
+              onChangeSelectedAsset={setSelectedAsset}
               loading={loading}
               isReadOnly={isReadOnly}
               onFileUpload={handleFileUpload}
@@ -107,21 +109,26 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
 
   return (
     <Modal.Modal
-      centered={false}
-      size={'large'} closeIcon={true}
-      open={true} onClose={onClose}
-      dimmer={'blurring'}
-      closeOnEscape={false}
-      closeOnDimmerClick={false}
+      onClose={onClose}
+      open={true}
+      dimmer={'inverted'}
     >
       <Modal.Header>Assets</Modal.Header>
       <Modal.Content>
-        <Tab panes={getPanes()}/>
+        <Tab
+          panes={getPanes()}
+          variant="primary"
+          menu={{secondary: true, pointing: true}}
+        />
       </Modal.Content>
       <Modal.Actions>
         <Button
-          positive={true}
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
           content={'Submit'}
+          primary={!!selectedAsset}
           disabled={!selectedAsset}
           onClick={() => {
             if ('shapefile' == selectedAsset?.type && onSelectShapefile && assetData) {
@@ -134,7 +141,14 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
             }
           }}
         />
-        <Button content={'Close'} onClick={onClose}/>
+        <Button
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
+          content={'Close'}
+          onClick={onClose}
+        />
       </Modal.Actions>
     </Modal.Modal>
   );

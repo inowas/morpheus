@@ -19,6 +19,10 @@
     transition: color 300ms;
   }
 
+  &.no-content .icon {
+    margin: 0 !important;
+  }
+
   &:hover {
     color: #FFFFFF;
     background-color: #6C84A6;

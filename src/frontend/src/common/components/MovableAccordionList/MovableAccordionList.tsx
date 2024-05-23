@@ -68,7 +68,6 @@ const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnCl
             ),
           );
         }}
-
         renderList={({children, props, isDragged}) => (
           <ul
             style={{

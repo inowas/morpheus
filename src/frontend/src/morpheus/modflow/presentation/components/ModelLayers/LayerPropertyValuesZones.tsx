@@ -11,7 +11,6 @@ interface IProps {
   zones: ILayerPropertyValueZone[];
   onSubmit: (zones: IChangeLayerPropertyValues['zones']) => void;
   readOnly: boolean;
-  style?: React.CSSProperties;
 }
 
 interface INewZone {
@@ -20,7 +19,7 @@ interface INewZone {
   value: number;
 }
 
-const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, style = {}}: IProps) => {
+const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly}: IProps) => {
 
   const [zones, setZones] = useState<Array<ILayerPropertyValueZone | INewZone>>(existingZones);
   const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
@@ -29,6 +28,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
     setZones(existingZones);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [existingZones]);
+
 
   const handleSelectShapeFile = (assetId: string, data: FeatureCollection) => {
     const zonesToAdd: INewZone[] = [];
@@ -57,8 +57,9 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
       return (
         <Button
           size={'tiny'}
-          onClick={() => onSubmit(zones)}
-          floated={'right'}
+          onClick={() => {
+            onSubmit(zones);
+          }}
           content={'Submit'}
         />
       );
@@ -66,19 +67,17 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
   };
 
   return (
-    <div style={{...style}}>
+    <>
       <InfoTitle
         title='Zones'
         description='You can upload or draw Polygones on map to provide one value for a specific area.'
+        style={{marginBottom: 0}}
       />
-
       <Button
         size={'tiny'}
-        color={'blue'}
         onClick={() => setShowFileUploadModal(true)}
         content={'Upload Shapefile'}
       />
-
       <LayerPropertyValuesZonesList
         zones={zones}
         onChange={setZones}
@@ -95,7 +94,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly, sty
       />
 
       {showFileUploadModal && !readOnly && <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectShapefile={handleSelectShapeFile}/>}
-    </div>
+    </>
   );
 };
 

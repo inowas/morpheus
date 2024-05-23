@@ -389,30 +389,28 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       dimmer={'inverted'}
     >
       <Modal.Content>
-        <DataGrid>
-          {renderContent()}
-          <div className={styles.buttonGroup}>
-            <Button
-              style={{
-                fontSize: '17px',
-                textTransform: 'capitalize',
-              }}
-              onClick={handleCansel}
-            >Cancel</Button>
-            <Button
-              style={{
-                fontSize: '17px',
-                textTransform: 'capitalize',
-              }}
-              primary={!!processedData}
-              disabled={!processedData}
-              onClick={handleSave}
-            >
-              Apply
-            </Button>
-          </div>
-        </DataGrid>
+        {renderContent()}
       </Modal.Content>
+      <Modal.Actions>
+        <Button
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
+          onClick={handleCansel}
+          content={'Cancel'}
+        />
+        <Button
+          style={{
+            fontSize: '17px',
+            textTransform: 'capitalize',
+          }}
+          primary={!!processedData}
+          disabled={!processedData}
+          onClick={handleSave}
+          content={'Apply'}
+        />
+      </Modal.Actions>
     </Modal.Modal>
   );
 
@@ -472,7 +470,6 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
           />
           <span>{fileName ? fileName : 'No file selected.'}</span>
         </div>
-
         <Button
           className='buttonLink'
           onClick={handleDownloadTemplate}
