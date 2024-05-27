@@ -1,17 +1,19 @@
-import {DataGrid, DataRow} from 'common/components';
+import {Button, DataRow} from 'common/components';
 
-import React, {useState} from 'react';
-import {Dropdown, Form, Icon, Input, Label, Popup} from 'semantic-ui-react';
-import {IBoundary, IBoundaryType} from "../../../../types/Boundaries.type";
+import React, {useEffect, useState} from 'react';
+import {Dropdown, Form, Icon, Label, Popup} from 'semantic-ui-react';
+import {IBoundary} from "../../../../types/Boundaries.type";
 import {ILayerId} from "../../../../types/Layers.type";
+import {DropdownItemProps} from "semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem";
+import isEqual from "lodash.isequal";
+import {canHaveMultipleAffectedLayers} from "../../ModelBoundaries/helpers";
 
 
 interface IProps {
-  type: IBoundaryType;
-  boundaries: IBoundary[];
-  onChangeBoundaries: (boundaries: IBoundary[]) => void;
-  isReadOnly: boolean;
+  boundary: IBoundary;
+  onChangeBoundary: (boundary: IBoundary) => void;
   layers: ILayerMetadata[];
+  isReadOnly: boolean;
 }
 
 interface ILayerMetadata {
@@ -19,11 +21,26 @@ interface ILayerMetadata {
   name: string;
 }
 
-const BoundariesForm = ({boundaries, type, onChangeBoundaries, isReadOnly, layers}: IProps) => {
+const BoundariesForm = ({boundary, onChangeBoundary, isReadOnly, layers}: IProps) => {
 
-  const handleLayerChange = (layerIds: ILayerId[]) => onChangeBoundaries(boundaries.map(boundary => ({...boundary, affected_layers: layerIds})));
-  const [options, setOptions] = useState([{}]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
+  const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
+
+  const isDirty = () => {
+    if (!isEqual(boundaryLocal.tags, boundary.tags)) {
+      return true;
+    }
+
+    return !isEqual(boundaryLocal.affected_layers, boundary.affected_layers);
+  }
+
+  const handleSave = () => {
+    onChangeBoundary(boundaryLocal);
+  }
+
+  useEffect(() => {
+    setBoundaryLocal(boundary);
+  }, [boundary]);
 
   return (
     <Form>
@@ -45,9 +62,9 @@ const BoundariesForm = ({boundaries, type, onChangeBoundaries, isReadOnly, layer
           <Dropdown
             disabled={isReadOnly}
             name="selectedLayer"
-            multiple={true}
+            multiple={canHaveMultipleAffectedLayers(boundaryLocal)}
             selection={true}
-            value={boundaries.length === 1 ? boundaries[0].affected_layers : []}
+            value={canHaveMultipleAffectedLayers(boundaryLocal) ? boundaryLocal.affected_layers : boundaryLocal.affected_layers[0]}
             options={layers.map((layer) => ({
               key: layer.layer_id,
               text: layer.name,
@@ -62,7 +79,7 @@ const BoundariesForm = ({boundaries, type, onChangeBoundaries, isReadOnly, layer
                 value = [value];
               }
 
-              handleLayerChange(value.map((v) => String(v) as ILayerId));
+              setBoundaryLocal({...boundaryLocal, affected_layers: value as ILayerId[]})
             }}
           />
         </Form.Field>
@@ -78,27 +95,28 @@ const BoundariesForm = ({boundaries, type, onChangeBoundaries, isReadOnly, layer
           </Label>
 
           <Dropdown
+            disabled={isReadOnly}
             allowAdditions={true}
             fluid={true}
             multiple={true}
-            onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setOptions([...options, {key: data.value, text: data.value, value: data.value}])}
-            onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTags(data.value as string[])}
-            options={options}
+            onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
+            onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})}
+            options={tagOptions}
             search={true}
             selection={true}
-            value={boundaries.length === 1 ? boundaries[0].tags : []}
-          />
-
-          <Dropdown
-            disabled={0 === boundaries.length}
-            className="dropdownTags"
-            name="tags"
-            clearable={true}
-            multiple={true}
-            selection={true}
-            value={boundaries.length === 1 ? boundaries[0].tags : []}
+            value={boundaryLocal.tags}
           />
         </Form.Field>
+        {!isReadOnly && (
+          <Form.Field>
+            <Button
+              primary={true}
+              onClick={() => onChangeBoundary(boundaryLocal)}
+              disabled={!isDirty()}
+              content={'Save'}
+            />
+          </Form.Field>
+        )}
       </DataRow>
     </Form>
   )

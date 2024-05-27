@@ -3,22 +3,22 @@ import React from 'react';
 import styles from './BoundaryListHeader.module.less';
 
 interface ISelectedListHeaderProps {
-  allSelected: boolean;
-  onChangeAllSelected: (e: any, data: any) => void;
+  allSelected?: boolean;
+  onChangeAllSelected?: (e: any, data: any) => void;
   searchInput: string;
   onChangeSearchInput: (e: any, data: any) => void;
 }
 
 const BoundaryListHeader = ({allSelected, onChangeAllSelected, searchInput, onChangeSearchInput}: ISelectedListHeaderProps) => (
   <HeaderContent className={styles.header}>
-    <Checkbox
-      className={styles.checkbox}
-      checked={allSelected}
-      onChange={onChangeAllSelected}
-    />
-    <span>
-          Search
-      </span>
+    {allSelected !== undefined && onChangeAllSelected !== undefined && (
+      <Checkbox
+        className={styles.checkbox}
+        checked={allSelected}
+        onChange={onChangeAllSelected}
+      />
+    )}
+    <span>Search</span>
     <Search
       icon={false}
       onSearchChange={onChangeSearchInput}

@@ -6,6 +6,7 @@ interface IUseDateTimeFormat {
   format: (dateString: string, formatString: string) => string;
   formatISO: (dateString: string) => string;
   formatISODate: (dateString: string) => string;
+  formatISODateTime: (dateString: string) => string;
   isValid: (dateString: string) => boolean;
   parseUserInput: (isoDateString: string, formatString: string) => string;
 }
@@ -33,6 +34,10 @@ const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFo
     return DateTime.fromISO(dateString).setZone(timezone).toFormat('yyyy-MM-dd');
   };
 
+  const formatISODateTime = (dateString: string): string => {
+    return DateTime.fromISO(dateString).setZone(timezone).toFormat('yyyy-MM-dd HH:mm:ss');
+  };
+
   const isValid = (dateString: string): boolean => {
     return DateTime.fromISO(dateString).setZone(timezone).isValid;
   };
@@ -46,6 +51,7 @@ const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFo
     getUnixTimestamp,
     format,
     formatISODate,
+    formatISODateTime,
     formatISO,
     isValid,
     parseUserInput,

@@ -1,16 +1,15 @@
 import React from 'react';
 import DataTable from "./BoundariesDataTable";
-import {IBoundary, IObservationId} from "../../../../types/Boundaries.type";
+import {ISelectedBoundary} from "../../ModelBoundaries/types/SelectedBoundary.type";
 
 interface IProps {
-  boundary: IBoundary;
-  selectedObservation: IObservationId;
+  selectedBoundary: ISelectedBoundary;
   formatDateTime: (dateTime: string) => string;
 }
 
 const isNotNullish = (value: any): value is number => value !== null && value !== undefined;
 
-const BoundariesTable = ({boundary, selectedObservation, formatDateTime}: IProps) => {
+const BoundariesTable = ({selectedBoundary, formatDateTime}: IProps) => {
 
   const columns = [
     {title: 'Start date', key: 'date_time', format: (value: string) => formatDateTime(value), fallback: '-'},
@@ -31,8 +30,10 @@ const BoundariesTable = ({boundary, selectedObservation, formatDateTime}: IProps
     {title: 'Pumping Rate', key: 'pumping_rate', format: (value: number | null) => isNotNullish(value) ? value.toFixed(2) : '-', fallback: '-'},
   ];
 
+  const {boundary, observationId} = selectedBoundary;
+
   const getColumns = () => {
-    const observationData = boundary.observations.find(o => o.observation_id === selectedObservation)?.data;
+    const observationData = boundary.observations.find(o => o.observation_id === observationId)?.data;
 
     if (!observationData || observationData.length === 0) {
       return [];
@@ -42,7 +43,7 @@ const BoundariesTable = ({boundary, selectedObservation, formatDateTime}: IProps
   }
 
   const getData = () => {
-    const observationData = boundary.observations.find(o => o.observation_id === selectedObservation)?.data;
+    const observationData = boundary.observations.find(o => o.observation_id === observationId)?.data;
 
     if (!observationData) {
       return [];

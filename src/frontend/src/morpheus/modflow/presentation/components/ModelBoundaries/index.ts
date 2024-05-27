@@ -1,7 +1,7 @@
-import BoundariesSection from './BoundariesSection';
+import BoundariesAccordionPane from './BoundariesAccordionPane';
 import BoundariesMap from './BoundariesMap';
 
 export {
   BoundariesMap,
-  BoundariesSection
+  BoundariesAccordionPane
 }

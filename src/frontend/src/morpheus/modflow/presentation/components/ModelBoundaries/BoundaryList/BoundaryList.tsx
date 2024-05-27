@@ -1,62 +1,41 @@
 import {Accordion, Checkbox, Icon, List, ListItem} from 'semantic-ui-react';
-import {Button, DotsMenu} from 'common/components';
-import React, {useEffect, useState} from 'react';
+import {DotsMenu} from 'common/components';
+import React, {useMemo, useState} from 'react';
 import styles from './BoundaryList.module.less';
-import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservationId} from "../../../../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId} from "../../../../types/Boundaries.type";
 import BoundaryListHeader from "./BoundaryListHeader";
-
-interface ISelectedObservation {
-  boundaryId: IBoundaryId;
-  observationId: IObservationId;
-}
+import {ISelectedBoundary} from "../types/SelectedBoundary.type";
+import {canHaveMultipleObservations} from "../helpers";
 
 interface ISelectedListProps {
   type: IBoundaryType;
   boundaries: IBoundary[];
-  canManageObservations: boolean;
-  selectedBoundaries: IBoundaryId[];
-  onChangeSelectedBoundaries: (id: IBoundaryId[]) => void;
-
-  selectedObservation: ISelectedObservation | null;
-  onChangeSelectedObservation: (data: ISelectedObservation | null) => void;
-
-  onRename: (id: string, name: string, observationsId?: string) => void;
-  onRemoveBoundaries: (ids: IBoundaryId[]) => void;
-  onDelete: (id: string, observationsId?: string) => void;
-  onClone: (id: string, observationsId?: string) => void;
+  selectedBoundary: ISelectedBoundary;
+  onSelectBoundary: (selectedBoundary: ISelectedBoundary) => void;
+  onCloneBoundary: (boundaryId: IBoundaryId) => void;
+  onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => void;
+  onUpdateBoundary: (boundary: IBoundary) => void;
+  onUpdateObservation: (boundaryId: IBoundaryId, observationId: IObservationId, observation: IObservation<any>) => void;
+  onRemoveBoundary: (boundaryId: IBoundaryId) => void;
+  onRemoveObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => void;
+  isReadOnly: boolean;
 }
-
-const findObservationIds = (id: string, data: IBoundary[]) => {
-  const foundObject = data.find(obj => obj.id === id);
-  if (foundObject && foundObject.observations) {
-    return foundObject.observations.map(obs => obs.observation_id);
-  }
-
-  return [];
-};
 
 const BoundaryList = ({
                         type,
                         boundaries,
-                        canManageObservations,
-                        selectedBoundaries,
-                        selectedObservation,
-                        onChangeSelectedBoundaries,
-                        onChangeSelectedObservation,
-                        onRename,
-                        onDelete,
-                        onRemoveBoundaries,
-                        onClone
+                        selectedBoundary,
+                        onSelectBoundary,
+                        onCloneBoundary,
+                        onCloneObservation,
+                        onUpdateBoundary,
+                        onUpdateObservation,
+                        onRemoveBoundary,
+                        onRemoveObservation,
+                        isReadOnly
                       }: ISelectedListProps) => {
 
-  const [search, setSearch] = useState<string>('')
-  const [selectAllChecked, setSelectAllChecked] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const [activePanels, setActivePanels] = useState<number[]>([]);
-  const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  const [search, setSearch] = useState<string>('');
 
   // Rename boundaries title
   const [editBoundaryName, setEditBoundaryName] = useState<IBoundaryId | null>(null);
@@ -66,100 +45,42 @@ const BoundaryList = ({
   const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
   const [inputObservationValue, setInputObservationValue] = useState('');
 
-  // selectAll functionality
-  useEffect(() => {
-    if (!selectAllChecked) {
-      return onChangeSelectedBoundaries([])
-    }
+  const handleSelectBoundary = (boundary: IBoundary) => onSelectBoundary({boundary, observationId: boundary.observations[0].observation_id});
+  const handleSelectObservation = (boundary: IBoundary, observationId: IObservationId) => onSelectBoundary({boundary, observationId});
 
-    return onChangeSelectedBoundaries(boundaries.map(boundary => boundary.id));
-  }, [selectAllChecked]);
+  const filteredBoundaries = useMemo(() => {
+    return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
+  }, [boundaries, search, type]);
 
-  const handleItemSelect = (itemId: string, metaPressed: boolean) => {
-    let updatedSelection: string[];
-    let observationIds = findObservationIds(itemId, boundaries);
-    if (metaPressed) {
-      if (selectedBoundaries.includes(itemId)) {
-        updatedSelection = selectedBoundaries.filter(item => item !== itemId);
-      } else {
-        updatedSelection = [...selectedBoundaries, itemId];
-      }
-    } else {
-      updatedSelection = [itemId];
-    }
-    setSelectAllChecked(false);
-    onChangeSelectedBoundaries(updatedSelection);
-  };
-
-  const handleObservationSelect = (boundaryId: IBoundaryId, observationId: IObservationId) => {
-    onChangeSelectedObservation({boundaryId, observationId})
-  };
-
-  const handleItemDisabled = (itemId: string, index: number) => {
-    let observationIds = findObservationIds(itemId, boundaries);
-    if (selectedBoundaries.includes(itemId)) {
-      let updatedSelection = selectedBoundaries.filter(item => item !== itemId);
-      onChangeSelectedBoundaries(updatedSelection);
-
-      onChangeSelectedObservation(null)
-    }
-    setCheckedItems(prevSelected => {
-      if (prevSelected.includes(itemId)) {
-        return prevSelected.filter(item => item !== itemId);
-      } else {
-        return [...prevSelected, itemId];
-      }
-    });
-    if (activePanels.includes(index)) {
-      setActivePanels(activePanels.filter(item => item !== index));
-    }
-  };
-
-  const handleDeleteSelected = () => {
-    onRemoveBoundaries(selectedBoundaries)
-    setSelectAllChecked(false)
-  };
-
-  const toggleAccordion = (index: number) => {
-    const newActivePanels = activePanels.includes(index)
-      ? activePanels.filter(item => item !== index)
-      : [...activePanels, index];
-    setActivePanels(newActivePanels);
-  };
+  const isSelected = (boundary: IBoundary) => selectedBoundary.boundary.id === boundary.id;
 
   return (
     <>
       {/**/}
       {/*Header with select all checkbox*/}
+      {/* for the moment, the select all checkbox is not implemented */}
       {/**/}
       <BoundaryListHeader
-        allSelected={0 === boundaries.length ? false : selectAllChecked}
-        onChangeAllSelected={() => setSelectAllChecked(prev => !prev)}
-        searchInput={searchQuery}
+        allSelected={undefined}
+        onChangeAllSelected={undefined}
+        searchInput={search}
         onChangeSearchInput={setSearch}
       />
       {/**/}
       {/*Body with list items*/}
       {/**/}
       <List className={styles.list}>
-        {boundaries.map((boundary, idx) => (
-          <ListItem
-            key={boundary.id}
-            className={styles.item}
-          >
+        {filteredBoundaries.map((boundary) => (
+          <ListItem key={boundary.id} className={styles.item}>
             <div
               // Title styles when item is selected
-              className={`${styles.title} ${selectedBoundaries.includes(boundary.id) ? styles.titleSelected : ''}`}
+              className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}
             >
-              <div
-                className={`${styles.titleInner} ${checkedItems.includes(boundary.id) ? styles.disabled : ''}`}
-                onClick={(e) => handleItemSelect(boundary.id, e.metaKey)}
-              >
-                <Checkbox checked={selectedBoundaries.includes(boundary.id)}/>
+              <div className={`${styles.titleInner}`} onClick={() => handleSelectBoundary(boundary)}>
                 {editBoundaryName !== boundary.id &&
-                    <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
-                      {boundary.name}
-                    </div>}
+                  <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
+                    {boundary.name}
+                  </div>}
 
                 {editBoundaryName === boundary.id && (
                   <div className={styles.renameField}>
@@ -177,7 +98,7 @@ const BoundaryList = ({
                         setEditBoundaryName(null);
                         return;
                       }
-                      onRename(boundary.id, inputValue);
+                      onUpdateBoundary({...boundary, name: inputValue});
                       setInputValue('');
                       setEditBoundaryName(null);
                     }}
@@ -187,53 +108,47 @@ const BoundaryList = ({
                   </div>
                 )}
               </div>
+
               <div
                 className={styles.buttonsWrapper}
                 style={{paddingRight: `${!boundary.observations[0].observation_name && '21px'}`}}
               >
-                <Checkbox
-                  disabled={editBoundaryName === boundary.id}
-                  toggle={true}
-                  checked={!checkedItems.includes(boundary.id)}
-                  onChange={() => handleItemDisabled(boundary.id, idx)}
-                />
                 <DotsMenu
-                  disabled={editBoundaryName === boundary.id}
-                  className={`${styles.dotsMenu} ${checkedItems.includes(boundary.id) ? styles.disabled : ''}`}
+                  disabled={isReadOnly}
+                  className={`${styles.dotsMenu}`}
                   actions={[
                     {text: 'Rename Item', icon: 'edit', onClick: () => setEditBoundaryName(boundary.id)},
-                    {text: 'Copy', icon: 'copy', onClick: () => onClone(boundary.id)},
-                    {text: 'Delete', icon: 'remove', onClick: () => onDelete(boundary.id)},
+                    {text: 'Copy', icon: 'copy', onClick: () => onCloneBoundary(boundary.id)},
+                    {text: 'Delete', icon: 'remove', onClick: () => onRemoveBoundary(boundary.id)},
                   ]}
                 />
 
-                {canManageObservations && (
+                {canHaveMultipleObservations(boundary) && (
                   <Icon
-                    className={`${checkedItems.includes(boundary.id) ? styles.disabled : ''}`}
-                    name={`${activePanels.includes(idx) ? 'angle down' : 'angle right'}`}
-                    onClick={() => toggleAccordion(idx)}
+                    name={`${isSelected(boundary) ? 'angle down' : 'angle right'}`}
+                    onClick={() => handleSelectBoundary(boundary)}
                   />
                 )}
               </div>
             </div>
 
-            {canManageObservations && (
+            {canHaveMultipleObservations(boundary) && (
               <Accordion.Content
                 className={styles.accordionContent}
-                active={activePanels.includes(idx)}
-                style={{display: activePanels.includes(idx) ? 'block' : 'none'}}
+                active={isSelected(boundary)}
+                style={{display: isSelected(boundary) ? 'block' : 'none'}}
               >
                 <List className={styles.listObservations}>
                   {boundary.observations.map((observation) => (
                     <ListItem
                       key={observation.observation_id}
-                      onClick={() => handleObservationSelect(boundary.id, observation.observation_id)}
+                      onClick={() => handleSelectObservation(boundary, observation.observation_id)}
                     >
-                      <div className={styles.observationItem}>
+                      <div className={`${styles.observationItem} ${selectedBoundary.observationId === observation.observation_id ? styles.selected : ''} `}>
                           <span>
                             <Checkbox
                               className={styles.checkboxObservation}
-                              checked={selectedObservation?.observationId === observation.observation_id}
+                              checked={selectedBoundary.observationId === observation.observation_id}
                             />
                             {openEditingObservationTitle !== observation.observation_id && <div style={{
                               textOverflow: 'ellipsis',
@@ -260,7 +175,7 @@ const BoundaryList = ({
                                 setOpenEditingObservationTitle(null);
                                 return;
                               }
-                              onRename(boundary.id, inputObservationValue, observation.observation_id);
+                              onUpdateObservation(boundary.id, observation.observation_id, {...observation, observation_name: inputObservationValue});
                               setInputObservationValue('');
                               setOpenEditingObservationTitle(null);
                             }}
@@ -270,7 +185,7 @@ const BoundaryList = ({
                           </div>
                         )}
                         <DotsMenu
-                          className={`${styles.dotsMenu} ${checkedItems.includes(observation.observation_id) ? styles.disabled : ''}`}
+                          className={`${styles.dotsMenu}`}
                           disabled={openEditingObservationTitle === observation.observation_id}
                           actions={[
                             {
@@ -279,14 +194,14 @@ const BoundaryList = ({
                               onClick: () => setOpenEditingObservationTitle(observation.observation_id),
                             },
                             {
-                              text: 'Copy',
+                              text: 'Clone',
                               icon: 'copy',
-                              onClick: () => onClone(boundary.id, observation.observation_id)
+                              onClick: () => onCloneObservation(boundary.id, observation.observation_id),
                             },
                             {
                               text: 'Delete',
                               icon: 'remove',
-                              onClick: () => onDelete(boundary.id, observation.observation_id)
+                              onClick: () => onRemoveObservation(boundary.id, observation.observation_id),
                             },
                           ]}
                         />
@@ -299,23 +214,22 @@ const BoundaryList = ({
           </ListItem>
         ))}
       </List>
-      <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>
-        <Button
-          className='buttonLink'
-          disabled={0 === selectedBoundaries.length}
-          onClick={handleDeleteSelected}
-        >
-          Delete selected <FontAwesomeIcon icon={faTrashCan}/>
-        </Button>
-        <Button
-          className='buttonLink'
-          disabled={0 === selectedBoundaries.length}
-        >
-          Download selected <FontAwesomeIcon icon={faDownload}/></Button>
-      </div>
+      {/*<div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>*/}
+      {/*  <Button*/}
+      {/*    className='buttonLink'*/}
+      {/*    disabled={0 === checkedBoundaries.length}*/}
+      {/*    onClick={handleDeleteSelected}*/}
+      {/*  >*/}
+      {/*    Delete selected <FontAwesomeIcon icon={faTrashCan}/>*/}
+      {/*  </Button>*/}
+      {/*  <Button*/}
+      {/*    className='buttonLink'*/}
+      {/*    disabled={0 === checkedBoundaries.length}*/}
+      {/*  >*/}
+      {/*    Download selected <FontAwesomeIcon icon={faDownload}/></Button>*/}
+      {/*</div>*/}
     </>
   );
 };
 
 export default BoundaryList;
-

@@ -69,7 +69,8 @@
     }
 
     &.titleSelected {
-      font-weight: 700;
+      width: 100%;
+      background-color: @ref-color-lightGrey;
     }
 
   }
@@ -164,7 +165,7 @@
       .observationItem {
         position: relative;
         width: 100%;
-        margin: 0px 18px 0 24px;
+        margin: 0 18px 0 24px;
         display: flex;
         align-items: center;
 
@@ -175,6 +176,10 @@
 
         .dotsMenu {
           margin-left: auto !important;
+        }
+
+        .selected {
+          background-color: @ref-color-lightGrey;
         }
       }
 
