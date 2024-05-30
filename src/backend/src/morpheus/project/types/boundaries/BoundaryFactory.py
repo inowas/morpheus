@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryType, WellBoundary, ConstantHeadBoundary, \
     EvapotranspirationBoundary, FlowAndHeadBoundary, DrainBoundary, GeneralHeadBoundary, LakeBoundary, RechargeBoundary, RiverBoundary, BoundaryName, BoundaryTags, BoundaryId
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadRawDataItem
@@ -35,8 +37,9 @@ class BoundaryFactory:
             raise ValueError('Geometry must be a polygon')
         return geometry
 
-    def create_with_default_data(self, boundary_id: BoundaryId, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells, affected_layers: list[LayerId],
-                                 start_date_time: StartDateTime, name: BoundaryName | None = None, tags: BoundaryTags | None = None) -> Boundary | None:
+    def create_with_default_data(self, boundary_id: BoundaryId, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells,
+                                 affected_layers: Sequence[LayerId], start_date_time: StartDateTime, name: BoundaryName | None = None,
+                                 tags: BoundaryTags | None = None) -> Boundary | None:
 
         if boundary_type == BoundaryType.constant_head():
             geometry = self.assert_is_line_string(geometry)

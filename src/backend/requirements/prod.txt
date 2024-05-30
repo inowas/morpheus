@@ -4,7 +4,7 @@ Flask-Cors==4.0.0
 Flask==3.0.1
 SQLAlchemy==2.0.25
 celery==5.3.6
-flopy==3.5.0
+flopy==3.7.0
 geopandas==0.14.2
 geotiff==0.2.10
 gunicorn==21.2.0
