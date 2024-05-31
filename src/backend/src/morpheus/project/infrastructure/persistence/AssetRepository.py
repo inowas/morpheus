@@ -23,7 +23,7 @@ class AssetRepositoryDocument:
         return cls(
             asset_id=asset.asset_id.to_str(),
             project_id=asset.project_id.to_str(),
-            type=asset.type.value,
+            type=asset.get_asset_type(),
             file=asset.file.to_dict(),
             metadata=asset.metadata.to_dict(),
             description=asset.description.to_str() if asset.description is not None else None,

@@ -60,3 +60,15 @@ class Observation:
 
     def as_geojson(self):
         return self.geometry.as_geojson()
+
+    def with_updated_name(self, name: ObservationName):
+        return dataclasses.replace(self, observation_name=name)
+
+    def with_updated_geometry(self, geometry: Point):
+        return dataclasses.replace(self, geometry=geometry)
+
+    def with_appended_data(self, data_item: RawDataItem):
+        return dataclasses.replace(self, data=[*self.data, data_item])
+
+    def with_updated_data(self, data: list[RawDataItem]):
+        return dataclasses.replace(self, data=data)

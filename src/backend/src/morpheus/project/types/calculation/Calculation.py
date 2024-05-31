@@ -15,8 +15,8 @@ class CalculationState(StrEnum):
     CREATED = 'created'
     PREPROCESSING = 'preprocessing'
     RUNNING = 'running'
-    FINISHED = 'finished'
-    ERROR = 'error'
+    COMPLETED = 'completed'
+    FAILED = 'failed'
 
 
 @dataclasses.dataclass(frozen=True)
@@ -48,9 +48,9 @@ class Calculation:
     calculation_result: CalculationResult | None
 
     @classmethod
-    def new(cls, model: Model, calculation_profile: CalculationProfile):
+    def new(cls, model: Model, calculation_profile: CalculationProfile, calculation_id: CalculationId | None = None):
         return cls(
-            calculation_id=CalculationId.new(),
+            calculation_id=calculation_id if calculation_id is not None else CalculationId.new(),
             model=model,
             calculation_profile=calculation_profile,
             calculation_lifecycle=[CalculationState.CREATED],

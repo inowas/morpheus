@@ -153,6 +153,9 @@ class Asset:
             description=AssetDescription.try_from_str(obj['description']),
         )
 
+    def get_asset_type(self) -> AssetType:
+        return self.type
+
 
 @dataclasses.dataclass(frozen=True)
 class AssetFilter:

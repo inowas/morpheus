@@ -15,7 +15,7 @@ from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
 from morpheus.project.types.boundaries.Boundary import BoundaryId
-from morpheus.project.types.boundaries.Observation import ObservationName
+from morpheus.project.types.boundaries.Observation import ObservationName, ObservationId
 from morpheus.project.types.boundaries.ObservationFactory import ObservationFactory
 from morpheus.project.types.geometry import Point
 
@@ -35,6 +35,7 @@ class AddModelBoundaryObservationCommand(CommandBase):
     project_id: ProjectId
     model_id: ModelId
     boundary_id: BoundaryId
+    observation_id: ObservationId
     observation_name: ObservationName
     observation_geometry: Point
     observation_data: list
@@ -46,6 +47,7 @@ class AddModelBoundaryObservationCommand(CommandBase):
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             boundary_id=BoundaryId.from_str(payload['boundary_id']),
+            observation_id=ObservationId.new(),
             observation_name=ObservationName.from_str(payload['observation_name']),
             observation_geometry=Point.from_dict(payload['observation_geometry']),
             observation_data=payload['observation_data'],
@@ -77,7 +79,7 @@ class AddModelBoundaryObservationCommandHandler(CommandHandlerBase):
         boundary_type = boundary.type
 
         observation = ObservationFactory().new(boundary_type=boundary_type, observation_name=command.observation_name, observation_geometry=command.observation_geometry,
-                                               observation_data=command.observation_data)
+                                               observation_data=command.observation_data, observation_id=command.observation_id)
 
         event = ModelBoundaryObservationAddedEvent.from_props(
             project_id=project_id,

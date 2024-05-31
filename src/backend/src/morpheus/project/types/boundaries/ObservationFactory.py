@@ -5,7 +5,7 @@ from morpheus.project.types.boundaries.EvapotranspirationObservation import Evap
 from morpheus.project.types.boundaries.FlowAndHeadObservation import FlowAndHeadRawDataItem, FlowAndHeadObservation
 from morpheus.project.types.boundaries.GeneralHeadObservation import GeneralHeadRawDataItem, GeneralHeadObservation
 from morpheus.project.types.boundaries.LakeObservation import LakeRawDataItem, LakeObservation, BedLeakance, InitialStage, StageRange
-from morpheus.project.types.boundaries.Observation import Observation, ObservationName
+from morpheus.project.types.boundaries.Observation import Observation, ObservationName, ObservationId
 from morpheus.project.types.boundaries.RechargeObservation import RechargeRawDataItem, RechargeObservation
 from morpheus.project.types.boundaries.RiverObservation import RiverRawDataItem, RiverObservation
 from morpheus.project.types.boundaries.WellObservation import WellRawDataItem, WellObservation
@@ -15,7 +15,7 @@ from morpheus.project.types.geometry import Point
 class ObservationFactory:
 
     @staticmethod
-    def new(boundary_type: BoundaryType, observation_name: ObservationName, observation_geometry: Point, observation_data: list):
+    def new(boundary_type: BoundaryType, observation_name: ObservationName, observation_geometry: Point, observation_data: list, observation_id: ObservationId) -> Observation:
         if boundary_type == BoundaryType.constant_head():
             return ConstantHeadObservation.new(name=observation_name, geometry=observation_geometry, data=[ConstantHeadRawDataItem.from_dict(item) for item in observation_data])
         if boundary_type == BoundaryType.drain():
