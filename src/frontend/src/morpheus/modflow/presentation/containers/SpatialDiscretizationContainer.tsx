@@ -11,7 +11,7 @@ import {Accordion, AccordionContent} from '../components/Content';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
-import {Header, MenuItem} from 'semantic-ui-react';
+import {MenuItem} from 'semantic-ui-react';
 import ModelAffectedCells from '../components/ModelSpatialDiscretization/ModelAffectedCells';
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import useProjectPermissions from '../../application/useProjectPermissions';
@@ -147,7 +147,7 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem key='model_domain' onClick={() => setEditMode('geometry')}><Header as='h4'>Model Domain</Header></MenuItem>,
+                    menuItem: <MenuItem key='model_domain' onClick={() => setEditMode('geometry')}>Model Domain</MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelDomain
                         isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
@@ -162,7 +162,7 @@ const SpatialDiscretizationContainer = () => {
                     </TabPane>,
                   },
                   {
-                    menuItem: <MenuItem key='affected_cells' onClick={() => setEditMode('affected_cells')}><Header as='h4'>Affected Cells</Header></MenuItem>,
+                    menuItem: <MenuItem key='affected_cells' onClick={() => setEditMode('affected_cells')}>Affected Cells</MenuItem>,
                     render: () => <TabPane attached={false}>
                       {affectedCells && spatialDiscretization.affected_cells &&
                         <ModelAffectedCells

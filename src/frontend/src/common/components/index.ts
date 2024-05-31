@@ -53,6 +53,7 @@ import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
+import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
@@ -115,6 +116,7 @@ export {
   ShapeFileInput,
   SliderSwiper,
   SortDropdown,
+  SortButtons,
   Tab,
   TabPane,
   Toggle,

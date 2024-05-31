@@ -100,3 +100,25 @@
   }
 }
 
+.ui.button.icon.iconSort {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  color: @ref-color-grey;
+  padding: 0;
+
+  .icon {
+    opacity: 1;
+    height: 10px;
+    position: relative;
+
+    &:before {
+      font-size: 21px;
+      position: absolute;
+      top: calc(50% - 16px);
+      left: 1px;
+      right: unset;
+      bottom: unset;
+    }
+  }
+}

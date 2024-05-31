@@ -18,7 +18,6 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly}: IProps) => {
     if (value !== valueLocal) {
       setValueLocal(value);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
