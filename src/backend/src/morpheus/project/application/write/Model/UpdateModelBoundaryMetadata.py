@@ -21,8 +21,8 @@ class UpdateModelBoundaryMetadataCommandPayload(TypedDict):
     project_id: str
     model_id: str
     boundary_id: str
-    name: Optional[str]
-    tags: Optional[list[str]]
+    boundary_name: Optional[str]
+    boundary_tags: Optional[list[str]]
 
 
 @dataclasses.dataclass(frozen=True)

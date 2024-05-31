@@ -688,10 +688,10 @@ definitions:
             boundary_id:
               type: string
               example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            name:
+            boundary_name:
               type: string
               example: Boundary 1
-            tags:
+            boundary_tags:
               type: array
               items:
                 type: string
