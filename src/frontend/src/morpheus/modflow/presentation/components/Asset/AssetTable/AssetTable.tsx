@@ -9,12 +9,13 @@ interface IProps {
   style?: React.CSSProperties;
   className?: string;
   fileType: string;
-  assets: IAsset[];
+  assets: IAsset[] | null;
   loading: boolean;
   deleteAsset: (id: string) => void;
   isReadOnly: boolean;
   selectedAsset: string | null;
   onAssetSelect: (assetId: string | null) => void;
+  onAssetChecked: (assetId: string[] | null) => void;
 }
 
 interface IExtendedAsset extends IAsset {
@@ -22,21 +23,34 @@ interface IExtendedAsset extends IAsset {
   author: string;
 }
 
-const AssetTable = ({style, className, fileType, assets, loading, deleteAsset, isReadOnly, selectedAsset, onAssetSelect}: IProps) => {
+const AssetTable = ({
+  style,
+  className,
+  fileType,
+  assets,
+  loading,
+  deleteAsset,
+  isReadOnly,
+  selectedAsset,
+  onAssetSelect,
+  onAssetChecked,
+}: IProps) => {
   const [showAll, setShowAll] = useState(false);
-  const [checkedAssets, setCheckedAssets] = useState<string[]>([]);
+  const [checkedAssets, setCheckedAssets] = useState<string[] | null>(null);
 
+
+  useEffect(() => {
+    // Select asset by clicked checkbox
+    onAssetChecked(checkedAssets);
+  }, [checkedAssets]);
 
   /*
   * Mock data for testing
-  *
+  * Add new assets format with mock author and date
   * */
   const {format} = useDateTimeFormat();
   const [updatedAssets, setUpdatedAssets] = useState<IExtendedAsset[]>();
-  const usersList = [
-    'Alice Smith', 'Bob Johnson', 'Charlie Williams', 'David Brown', 'Emma Jones',
-    'Frank Miller', 'Grace Davis', 'Henry Garcia', 'Isabella Rodriguez', 'Jack Wilson',
-  ];
+  const usersList = ['Catalin Stefan', 'Ralf Junghanns', 'Jana Glass'];
   const generateRandomDate = () => {
     const startDate = new Date('2020-01-01').getTime();
     const endDate = new Date('2025-12-31').getTime();
@@ -48,9 +62,9 @@ const AssetTable = ({style, className, fileType, assets, loading, deleteAsset, i
     const randomIndex = Math.floor(Math.random() * usersList.length);
     return usersList[randomIndex];
   };
-
   useEffect(() => {
     setShowAll(false);
+    if (!assets) return;
     const refAssets = assets.map((asset) => ({
       ...asset,
       date: format(generateRandomDate().toISOString(), 'dd.MM.yyyy HH:mm'),
@@ -63,10 +77,11 @@ const AssetTable = ({style, className, fileType, assets, loading, deleteAsset, i
   *
   * */
 
+
   const handleSelectAll = () => {
     setShowAll(!showAll);
     const result: string[] = [];
-    if (!showAll) {
+    if (!showAll && assets) {
       assets.forEach((asset) => {
         result.push(asset.asset_id);
       });
@@ -78,9 +93,8 @@ const AssetTable = ({style, className, fileType, assets, loading, deleteAsset, i
     const sortedAssets = [...(updatedAssets || [])].sort((a, b) => {
       switch (name) {
       case 'upload_date': {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        console.log(dateA, dateB);
+        const dateA = new Date(a.date.split(' ')[0].split('.').reverse().join('-')).getTime();
+        const dateB = new Date(b.date.split(' ')[0].split('.').reverse().join('-')).getTime();
         return 'asc' === direction ? dateA - dateB : dateB - dateA;
       }
       case 'file_name':
@@ -137,12 +151,16 @@ const AssetTable = ({style, className, fileType, assets, loading, deleteAsset, i
       >
         <Table.Cell>
           <Checkbox
-            checked={checkedAssets.includes(asset.asset_id)}
+            checked={checkedAssets ? checkedAssets.includes(asset.asset_id) : false}
             onClick={(e) => {
               e.stopPropagation();
               setCheckedAssets(prev => {
+                if (!prev) {
+                  return [asset.asset_id];
+                }
                 if (prev.includes(asset.asset_id)) {
-                  return prev.filter(id => id !== asset.asset_id);
+                  const filtered = prev.filter(id => id !== asset.asset_id);
+                  return 0 < filtered.length ? filtered : null;
                 }
                 return [...prev, asset.asset_id];
               });

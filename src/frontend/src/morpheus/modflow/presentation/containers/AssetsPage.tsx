@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ContentWrapper, Grid, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
@@ -11,6 +11,7 @@ import {AssetButtonsGroup, AssetTable} from '../components/Asset';
 import MapExample from '../../../../common/components/Map/MapExample';
 import AssetsModalContainer from './AssetsModalContainter';
 import {FeatureCollection} from 'geojson';
+import {IAsset} from '../../types';
 
 interface IProps {
   basePath: string;
@@ -25,10 +26,18 @@ const AssetsPage = ({}: IProps) => {
   const {assets, loading, deleteAsset} = useAssets(projectId as string);
 
   const [fileType, setFileType] = useState<'Raster' | 'Shape' | 'CSV'>('Raster');
+  const [rasterAsset, setRasterAsset] = useState<IAsset[]>([]);
+  const [shapeAsset, setShapeAsset] = useState<IAsset[]>([]);
   const [selectedRasterFile, setSelectedRasterFile] = useState<string | null>(null);
   const [selectedShapeFile, setSelectedShapeFile] = useState<string | null>(null);
+  const [checkedRasterFile, setCheckedRasterFile] = useState<string[] | null>(null);
+  const [checkedShapeFile, setCheckedShapeFile] = useState<string[] | null>(null);
   const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
 
+  useEffect(() => {
+    setRasterAsset(assets.filter((item) => 'geo_tiff' === item.type));
+    setShapeAsset(assets.filter((item) => 'shapefile' === item.type));
+  }, [assets]);
 
   const getAssetNameById = (id: string | null): string | null => {
     if (!id) return null;
@@ -37,7 +46,7 @@ const AssetsPage = ({}: IProps) => {
   };
 
   const handleSelectShapeFile = (assetId: string, data: FeatureCollection) => {
-    console.warn('ShapeFile selected', assetId, data);
+    console.warn('ShapeFile checked', assetId, data);
   };
 
   const handleSelectRasterFile = (assetId: string) => {
@@ -66,19 +75,21 @@ const AssetsPage = ({}: IProps) => {
                     render: () => <TabPane attached={false}>
                       <AssetTable
                         fileType={fileType}
-                        assets={assets}
+                        assets={rasterAsset}
                         loading={loading}
                         deleteAsset={deleteAsset}
                         isReadOnly={isReadOnly}
                         selectedAsset={selectedRasterFile}
                         onAssetSelect={setSelectedRasterFile}
+                        onAssetChecked={setCheckedRasterFile}
                       />
                       <AssetButtonsGroup
+                        checkedAssets={checkedRasterFile}
                         isReadOnly={isReadOnly}
                         loading={loading}
                         onUploadFile={setShowFileUploadModal}
-                        onDownload={() => console.log('Download selected')}
-                        onDelete={() => console.log('Delete selected')}
+                        onDownload={() => console.log('Download selected ', checkedRasterFile)}
+                        onDelete={() => console.log('Delete selected ', checkedRasterFile)}
                       />
                     </TabPane>,
                   },
@@ -87,19 +98,21 @@ const AssetsPage = ({}: IProps) => {
                     render: () => <TabPane attached={false}>
                       <AssetTable
                         fileType={fileType}
-                        assets={assets}
+                        assets={shapeAsset}
                         loading={loading}
                         deleteAsset={deleteAsset}
                         isReadOnly={isReadOnly}
                         selectedAsset={selectedShapeFile}
                         onAssetSelect={setSelectedShapeFile}
+                        onAssetChecked={setCheckedShapeFile}
                       />
                       <AssetButtonsGroup
+                        checkedAssets={checkedShapeFile}
                         isReadOnly={isReadOnly}
                         loading={loading}
                         onUploadFile={setShowFileUploadModal}
-                        onDownload={() => console.log('Download selected')}
-                        onDelete={() => console.log('Delete selected')}
+                        onDownload={() => console.log('Download selected ', checkedShapeFile)}
+                        onDelete={() => console.log('Delete selected ', checkedShapeFile)}
                       />
 
                     </TabPane>,

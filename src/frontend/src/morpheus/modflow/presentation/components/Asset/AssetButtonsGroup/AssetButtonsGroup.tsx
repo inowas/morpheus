@@ -12,6 +12,7 @@ interface IProps {
   onUploadFile?: (value: boolean) => void;
   onDelete?: () => void;
   onDownload?: () => void;
+  checkedAssets: string[] | null;
 }
 
 const AssetButtonsGroup = ({
@@ -22,7 +23,9 @@ const AssetButtonsGroup = ({
   onUploadFile,
   onDownload,
   onDelete,
+  checkedAssets,
 }: IProps) => {
+
 
   if (isReadOnly) {
     return null;
@@ -41,7 +44,7 @@ const AssetButtonsGroup = ({
       {(onDelete || onDownload) && <div style={{marginLeft: 'auto'}}>
         {onDelete && <Button
           className='buttonLink'
-          disabled={isReadOnly || loading}
+          disabled={isReadOnly || loading || null === checkedAssets}
           onClick={onDelete}
         >
           Delete selected
@@ -49,7 +52,7 @@ const AssetButtonsGroup = ({
         </Button>}
         {onDownload && <Button
           className='buttonLink'
-          disabled={isReadOnly || loading}
+          disabled={isReadOnly || loading || null === checkedAssets}
           onClick={onDownload}
         >
           Download selected
