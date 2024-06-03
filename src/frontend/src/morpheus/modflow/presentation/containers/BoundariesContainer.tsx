@@ -18,7 +18,7 @@ const BoundariesContainer = () => {
   const {projectId, propertyId: boundaryId} = useParams();
 
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
-  const {boundaries, onAddBoundary, onCloneBoundary, onUpdateBoundary, onRemoveBoundary} = useBoundaries(projectId as string);
+  const {boundaries, onAddBoundary, onCloneBoundary, onRemoveBoundary, onUpdateBoundaryAffectedLayers, onUpdateBoundaryMetadata} = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
 
@@ -89,8 +89,9 @@ const BoundariesContainer = () => {
               selectedBoundary={selectedBoundary}
               onChangeSelectedBoundary={handleChangeSelectedBoundary}
               onCloneBoundary={onCloneBoundary}
+              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
+              onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onRemoveBoundary={onRemoveBoundary}
-              onUpdateBoundary={onUpdateBoundary}
             />
           </LeafletMapProvider>
         </DataGrid>

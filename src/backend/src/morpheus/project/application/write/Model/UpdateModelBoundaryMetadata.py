@@ -40,8 +40,8 @@ class UpdateModelBoundaryMetadataCommand(CommandBase):
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             boundary_id=BoundaryId.from_str(payload['boundary_id']),
-            boundary_name=BoundaryName.from_str(payload['name']) if payload['name'] else None,
-            boundary_tags=BoundaryTags.from_list(payload['tags']) if payload['tags'] else None
+            boundary_name=BoundaryName.from_str(payload['boundary_name']) if 'boundary_name' in payload and payload['boundary_name'] else None,
+            boundary_tags=BoundaryTags.from_list(payload['boundary_tags']) if 'boundary_tags' in payload and isinstance(payload['boundary_tags'], list) else None
         )
 
 
@@ -53,14 +53,16 @@ class UpdateModelBoundaryMetadataCommandHandler(CommandHandlerBase):
         permissions = PermissionsReader().get_permissions(project_id=project_id)
 
         if not permissions.member_can_edit(user_id=user_id):
-            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update the time discretization of {project_id.to_str()}')
+            raise InsufficientPermissionsException(
+                f'User {user_id.to_str()} does not have permission to update the time discretization of {project_id.to_str()}')
 
         model = ModelReader().get_latest_model(project_id=project_id)
         if model.model_id != command.model_id:
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
         if not model.boundaries.has_boundary(boundary_id=command.boundary_id):
-            raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+            raise ValueError(
+                f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
         event = ModelBoundaryMetadataUpdatedEvent.from_props(
             project_id=project_id,

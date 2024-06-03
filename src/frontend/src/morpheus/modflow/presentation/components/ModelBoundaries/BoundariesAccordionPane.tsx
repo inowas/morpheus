@@ -7,7 +7,7 @@ import {useDateTimeFormat} from "common/hooks";
 import {BoundariesForm} from "../BoundariesLayers/BoundariesForm";
 import {MenuItem, TabPane} from "semantic-ui-react";
 import {BoundariesTable} from "../BoundariesLayers/BoundariesTable";
-import {ILayer} from "../../../types/Layers.type";
+import {ILayer, ILayerId} from "../../../types/Layers.type";
 import {ISelectedBoundary} from "./types/SelectedBoundary.type";
 
 interface IProps {
@@ -18,7 +18,8 @@ interface IProps {
   onChangeSelectedBoundary: (selectedBoundary: ISelectedBoundary) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => void;
   onRemoveBoundary: (boundaryId: IBoundaryId) => void;
-  onUpdateBoundary: (boundary: IBoundary) => void;
+  onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   timeZone?: string;
   isReadOnly: boolean;
 }
@@ -31,7 +32,8 @@ const BoundariesAccordionPane = ({
                                    onChangeSelectedBoundary,
                                    onCloneBoundary,
                                    onRemoveBoundary,
-                                   onUpdateBoundary,
+                                   onUpdateBoundaryAffectedLayers,
+                                   onUpdateBoundaryMetadata,
                                    timeZone,
                                    isReadOnly
                                  }: IProps) => {
@@ -58,9 +60,9 @@ const BoundariesAccordionPane = ({
     console.log('Clone observation', boundaryId, observationId)
   }
 
-  const handleUpdateBoundary = (boundary: IBoundary) => {
-    onUpdateBoundary(boundary);
-  }
+  const handleChangeBoundaryName = (boundaryId: string, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
+  const handleChangeBoundaryTags = (boundaryId: string, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
+  const handleChangeBoundaryAffectedLayers = (boundaryId: string, affectedLayers: ILayerId[]) => onUpdateBoundaryAffectedLayers(boundaryId, affectedLayers);
 
   const handleUpdateObservation = (boundaryId: IBoundaryId, observationId: IObservationId) => {
     console.log('Update observation', boundaryId, observationId)
@@ -83,17 +85,17 @@ const BoundariesAccordionPane = ({
       >
         <Grid.Column width={9}>
           <BoundaryList
-            type={type}
             boundaries={boundaries}
+            isReadOnly={isReadOnly}
             selectedBoundary={getSelectedBoundary()}
-            onSelectBoundary={onChangeSelectedBoundary}
+            type={type}
+            onChangeBoundaryName={handleChangeBoundaryName}
             onCloneBoundary={handleCloneBoundary}
             onCloneObservation={handleCloneObservation}
-            onUpdateBoundary={handleUpdateBoundary}
-            onUpdateObservation={handleUpdateObservation}
             onRemoveBoundary={handleRemoveBoundary}
             onRemoveObservation={handleRemoveObservation}
-            isReadOnly={isReadOnly}
+            onSelectBoundary={onChangeSelectedBoundary}
+            onUpdateObservation={handleUpdateObservation}
           />
         </Grid.Column>
         <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -106,7 +108,8 @@ const BoundariesAccordionPane = ({
           />
           <BoundariesForm
             boundary={getSelectedBoundary().boundary}
-            onChangeBoundary={handleUpdateBoundary}
+            onChangeBoundaryTags={handleChangeBoundaryTags}
+            onChangeBoundaryAffectedLayers={handleChangeBoundaryAffectedLayers}
             isReadOnly={isReadOnly}
             layers={layers}
           />

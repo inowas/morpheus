@@ -1,7 +1,7 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerPropertyName, IZone} from '../types/Layers.type';
-import {IBoundaryType, IObservationId} from "../types/Boundaries.type";
+import {IBoundaryObservationData, IBoundaryType, IObservationId} from "../types/Boundaries.type";
 
 // Asset Commands
 export interface IDeleteAssetCommand {
@@ -77,12 +77,12 @@ export interface IAddModelBoundaryObservationCommand {
     boundary_id: string;
     observation_name: string;
     observation_geometry: Point;
-    observation_data: any[]
+    observation_data: IBoundaryObservationData[]
   }
 }
 
 export interface ICloneModelBoundaryCommand {
-  command_name: 'remove_model_boundary_observation_command';
+  command_name: 'clone_model_boundary_command';
   payload: {
     project_id: string;
     model_id: string;
@@ -237,6 +237,7 @@ export interface IUpdateModelBoundaryMetadataCommand {
     model_id: string;
     boundary_id?: string;
     boundary_name?: string;
+    boundary_tags?: string[];
   }
 }
 
@@ -250,7 +251,7 @@ export interface IUpdateModelBoundaryObservationCommand {
     observation_id: IObservationId;
     observation_name: string;
     observation_geometry: Point;
-    observation_data: any[];
+    observation_data: IBoundaryObservationData[];
   }
 }
 

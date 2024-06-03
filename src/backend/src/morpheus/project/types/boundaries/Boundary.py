@@ -126,11 +126,11 @@ class Boundary:
     def __eq__(self, other):
         return self.to_dict() == other.to_dict()
 
-    def __init__(self, boundary_id: BoundaryId, boundary_type: BoundaryType, name: BoundaryName, tags: BoundaryTags,
+    def __init__(self, boundary_id: BoundaryId, type: BoundaryType, name: BoundaryName, tags: BoundaryTags,
                  geometry: LineString | Point | Polygon, affected_cells: ActiveCells, affected_layers: Sequence[LayerId],
                  observations: Sequence[Observation], enabled: bool = True):
         self.boundary_id = boundary_id
-        self.type = boundary_type
+        self.type = type
         self.name = name
         self.tags = tags
         self.geometry = geometry
@@ -313,7 +313,7 @@ class ConstantHeadBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -337,7 +337,7 @@ class ConstantHeadBoundary(Boundary):
 
         return cls(
             boundary_id=BoundaryId.new(),
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -350,7 +350,7 @@ class ConstantHeadBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
@@ -373,7 +373,7 @@ class DrainBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -397,7 +397,7 @@ class DrainBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -410,7 +410,7 @@ class DrainBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
@@ -429,7 +429,7 @@ class EvapotranspirationBoundary(Boundary):
             data: list[EvapotranspirationRawDataItem], tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()):
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -445,7 +445,7 @@ class EvapotranspirationBoundary(Boundary):
                       tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()):
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -461,7 +461,7 @@ class EvapotranspirationBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Polygon.from_dict(obj['geometry']),
@@ -481,7 +481,7 @@ class FlowAndHeadBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -505,7 +505,7 @@ class FlowAndHeadBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -518,7 +518,7 @@ class FlowAndHeadBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
@@ -570,7 +570,7 @@ class GeneralHeadBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -594,7 +594,7 @@ class GeneralHeadBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -607,7 +607,7 @@ class GeneralHeadBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
@@ -627,7 +627,7 @@ class LakeBoundary(Boundary):
             tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()):
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -655,7 +655,7 @@ class LakeBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -672,7 +672,7 @@ class LakeBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Polygon.from_dict(obj['geometry']),
@@ -691,7 +691,7 @@ class RechargeBoundary(Boundary):
             data: list[RechargeRawDataItem], tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()):
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -707,7 +707,7 @@ class RechargeBoundary(Boundary):
                       tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()):
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -723,7 +723,7 @@ class RechargeBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=BoundaryType.recharge(),
+            type=BoundaryType.recharge(),
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Polygon.from_dict(obj['geometry']),
@@ -745,7 +745,7 @@ class RiverBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -769,7 +769,7 @@ class RiverBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -782,7 +782,7 @@ class RiverBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=LineString.from_dict(obj['geometry']),
@@ -804,7 +804,7 @@ class WellBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -817,7 +817,7 @@ class WellBoundary(Boundary):
 
     @classmethod
     def from_geometry(cls, name: BoundaryName, geometry: Point, grid: Grid, affected_layers: Sequence[LayerId], data: list[WellRawDataItem] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()):
+                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new()) -> object:
         if not isinstance(geometry, Point):
             raise ValueError('Well boundaries must be points')
 
@@ -827,7 +827,7 @@ class WellBoundary(Boundary):
 
         return cls(
             boundary_id=boundary_id,
-            boundary_type=cls.type,
+            type=cls.type,
             name=name,
             tags=tags,
             geometry=geometry,
@@ -840,7 +840,7 @@ class WellBoundary(Boundary):
     def from_dict(cls, obj):
         return cls(
             boundary_id=BoundaryId.from_value(obj['id']),
-            boundary_type=cls.type,
+            type=cls.type,
             name=BoundaryName.from_value(obj['name']),
             tags=BoundaryTags.from_value(obj['tags']) if 'tags' in obj else BoundaryTags.empty(),
             geometry=Point.from_dict(obj['geometry']),

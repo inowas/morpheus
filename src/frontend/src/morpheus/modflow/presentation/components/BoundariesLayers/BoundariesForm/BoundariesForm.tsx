@@ -2,7 +2,7 @@ import {Button, DataRow} from 'common/components';
 
 import React, {useEffect, useState} from 'react';
 import {Dropdown, Form, Icon, Label, Popup} from 'semantic-ui-react';
-import {IBoundary} from "../../../../types/Boundaries.type";
+import {IBoundary, IBoundaryId} from "../../../../types/Boundaries.type";
 import {ILayerId} from "../../../../types/Layers.type";
 import {DropdownItemProps} from "semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem";
 import isEqual from "lodash.isequal";
@@ -11,7 +11,8 @@ import {canHaveMultipleAffectedLayers} from "../../ModelBoundaries/helpers";
 
 interface IProps {
   boundary: IBoundary;
-  onChangeBoundary: (boundary: IBoundary) => void;
+  onChangeBoundaryTags: (boundaryId: IBoundaryId, boundaryTags: string[]) => Promise<void>;
+  onChangeBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   layers: ILayerMetadata[];
   isReadOnly: boolean;
 }
@@ -21,10 +22,11 @@ interface ILayerMetadata {
   name: string;
 }
 
-const BoundariesForm = ({boundary, onChangeBoundary, isReadOnly, layers}: IProps) => {
+const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, isReadOnly, layers}: IProps) => {
 
   const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
   const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const isDirty = () => {
     if (!isEqual(boundaryLocal.tags, boundary.tags)) {
@@ -34,13 +36,24 @@ const BoundariesForm = ({boundary, onChangeBoundary, isReadOnly, layers}: IProps
     return !isEqual(boundaryLocal.affected_layers, boundary.affected_layers);
   }
 
-  const handleSave = () => {
-    onChangeBoundary(boundaryLocal);
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    if (boundary.tags !== boundaryLocal.tags) {
+      await onChangeBoundaryTags(boundaryLocal.id, boundaryLocal.tags);
+    }
+
+    if (boundary.affected_layers !== boundaryLocal.affected_layers) {
+      await onChangeBoundaryAffectedLayers(boundaryLocal.id, boundaryLocal.affected_layers);
+    }
+    setSubmitting(false);
   }
 
   useEffect(() => {
     setBoundaryLocal(boundary);
+    setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
   }, [boundary]);
+
+  console.log(boundaryLocal)
 
   return (
     <Form>
@@ -100,7 +113,10 @@ const BoundariesForm = ({boundary, onChangeBoundary, isReadOnly, layers}: IProps
             fluid={true}
             multiple={true}
             onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
-            onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})}
+            onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
+              console.log(data.value)
+              setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})
+            }}
             options={tagOptions}
             search={true}
             selection={true}
@@ -111,8 +127,9 @@ const BoundariesForm = ({boundary, onChangeBoundary, isReadOnly, layers}: IProps
           <Form.Field>
             <Button
               primary={true}
-              onClick={() => onChangeBoundary(boundaryLocal)}
+              onClick={handleSubmit}
               disabled={!isDirty()}
+              loading={submitting}
               content={'Save'}
             />
           </Form.Field>

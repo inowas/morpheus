@@ -142,8 +142,18 @@ type IBoundary =
   | IRiverBoundary
   | IWellBoundary;
 
+type IBoundaryObservationData = IConstantHeadObservationData
+  | IDrainObservationData
+  | IEvapotranspirationObservationData
+  | IFlowAndHeadObservationData
+  | IGeneralHeadObservationData
+  | ILakeObservationData
+  | IRechargeObservationData
+  | IRiverObservationData
+  | IWellObservationData;
 
-export type {IBoundary, IBoundaryId}
+
+export type {IBoundary, IBoundaryId, IBoundaryObservationData}
 
 
 export const availableBoundaries: { title: string, type: IBoundaryType, keys: string[] }[] = [

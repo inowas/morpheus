@@ -1,19 +1,29 @@
-import {IError} from '../types';
+import {IAffectedCells, IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {IBoundary, IBoundaryId, IBoundaryType} from "../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType} from "../types/Boundaries.type";
 import {useApi} from "../incoming";
 import useProjectCommandBus, {Commands} from "./useProjectCommandBus";
 import {setBoundaries} from "../infrastructure/modelStore";
 import {LineString, Point, Polygon} from "geojson";
+import {ILayerId} from "../types/Layers.type";
 
 interface IUseBoundaries {
   boundaries: IBoundary[];
   onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<void>;
+  onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
-  onUpdateBoundary: (boundary: IBoundary) => Promise<void>;
+  onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
+  onUpdateBoundaryAffectedCells: (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => Promise<void>;
+  onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryGeometry: (boundaryId: IBoundaryId, geometry: Point | Polygon | LineString) => Promise<void>;
+  onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundaryName?: string, boundaryTags?: string[]) => Promise<void>;
+  onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observationId: string, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
+
   loading: boolean;
   error: IError | null;
 }
@@ -77,6 +87,9 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       return;
     }
 
+    if (!isMounted.current) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -92,6 +105,10 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       }
     });
 
+    if (!isMounted.current) {
+      return;
+    }
+
     setLoading(false);
 
     if (addBoundaryResult.err) {
@@ -104,51 +121,441 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     await fetchBoundaries();
   }
 
+  const onAddBoundaryObservation = async (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const addBoundaryObservationResult = await sendCommand<Commands.IAddModelBoundaryObservationCommand>({
+      command_name: 'add_model_boundary_observation_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        observation_name: observationName,
+        observation_geometry: observationGeometry,
+        observation_data: observationData,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (addBoundaryObservationResult.err) {
+      setError({
+        message: addBoundaryObservationResult.val.message,
+        code: addBoundaryObservationResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
   const onCloneBoundary = async (boundaryId: IBoundaryId) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const cloneBoundaryResult = await sendCommand<Commands.ICloneModelBoundaryCommand>({
+      command_name: 'clone_model_boundary_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (cloneBoundaryResult.err) {
+      setError({
+        message: cloneBoundaryResult.val.message,
+        code: cloneBoundaryResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onDisableBoundary = async (boundaryId: IBoundaryId) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const disableBoundaryResult = await sendCommand<Commands.IDisableModelBoundaryCommand>({
+      command_name: 'disable_model_boundary_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (disableBoundaryResult.err) {
+      setError({
+        message: disableBoundaryResult.val.message,
+        code: disableBoundaryResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onEnableBoundary = async (boundaryId: IBoundaryId) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const enableBoundaryResult = await sendCommand<Commands.IEnableModelBoundaryCommand>({
+      command_name: 'enable_model_boundary_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (enableBoundaryResult.err) {
+      setError({
+        message: enableBoundaryResult.val.message,
+        code: enableBoundaryResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
   }
 
   const onRemoveBoundary = async (boundaryId: IBoundaryId) => {
+    if (!model || !projectId) {
+      return;
+    }
 
-    return new Promise<void>(async (resolve, reject) => {
-      if (!model || !projectId) {
-        return;
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const removeBoundaryResult = await sendCommand<Commands.IRemoveModelBoundaryCommand>({
+      command_name: 'remove_model_boundary_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
       }
+    });
 
-      setLoading(true);
-      setError(null);
+    if (!isMounted.current) {
+      return;
+    }
 
+    setLoading(false);
 
-      const removeBoundaryResult = await sendCommand<Commands.IRemoveModelBoundaryCommand>({
-        command_name: 'remove_model_boundary_command',
-        payload: {
-          project_id: projectId,
-          model_id: model.model_id,
-          boundary_id: boundaryId,
-        }
+    if (removeBoundaryResult.err) {
+      setError({
+        message: removeBoundaryResult.val.message,
+        code: removeBoundaryResult.val.code,
       });
+    }
 
-      if (removeBoundaryResult.err) {
-        setError({
-          message: removeBoundaryResult.val.message,
-          code: removeBoundaryResult.val.code,
-        });
-      }
-
-      setLoading(false);
-      await fetchBoundaries();
-      resolve();
-    })
+    await fetchBoundaries();
   }
 
-  const onUpdateBoundary = async (boundary: IBoundary) => {
+  const onRemoveBoundaryObservation = async (boundaryId: IBoundaryId, observationId: string) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const removeBoundaryObservationResult = await sendCommand<Commands.IRemoveModelBoundaryObservationCommand>({
+      command_name: 'remove_model_boundary_observation_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        observation_id: observationId,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (removeBoundaryObservationResult.err) {
+      setError({
+        message: removeBoundaryObservationResult.val.message,
+        code: removeBoundaryObservationResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onUpdateBoundaryAffectedCells = async (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateBoundaryAffectedCellsResult = await sendCommand<Commands.IUpdateModelBoundaryAffectedCellsCommand>({
+      command_name: 'update_model_boundary_affected_cells_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        affected_cells: affectedCells,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateBoundaryAffectedCellsResult.err) {
+      setError({
+        message: updateBoundaryAffectedCellsResult.val.message,
+        code: updateBoundaryAffectedCellsResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onUpdateBoundaryAffectedLayers = async (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateBoundaryAffectedLayersResult = await sendCommand<Commands.IUpdateModelBoundaryAffectedLayersCommand>({
+      command_name: 'update_model_boundary_affected_layers_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        affected_layers: affectedLayers,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateBoundaryAffectedLayersResult.err) {
+      setError({
+        message: updateBoundaryAffectedLayersResult.val.message,
+        code: updateBoundaryAffectedLayersResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onUpdateBoundaryGeometry = async (boundaryId: IBoundaryId, geometry: Point | Polygon | LineString) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateBoundaryGeometryResult = await sendCommand<Commands.IUpdateModelBoundaryGeometryCommand>({
+      command_name: 'update_model_boundary_geometry_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        boundary_geometry: geometry,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateBoundaryGeometryResult.err) {
+      setError({
+        message: updateBoundaryGeometryResult.val.message,
+        code: updateBoundaryGeometryResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onUpdateBoundaryMetadata = async (boundaryId: IBoundaryId, boundaryName?: string, boundaryTags?: string[]) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateBoundaryMetadataResult = await sendCommand<Commands.IUpdateModelBoundaryMetadataCommand>({
+      command_name: 'update_model_boundary_metadata_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        boundary_name: boundaryName,
+        boundary_tags: boundaryTags,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateBoundaryMetadataResult.err) {
+      setError({
+        message: updateBoundaryMetadataResult.val.message,
+        code: updateBoundaryMetadataResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
+  }
+
+  const onUpdateBoundaryObservation = async (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observationId: string, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateBoundaryObservationResult = await sendCommand<Commands.IUpdateModelBoundaryObservationCommand>({
+      command_name: 'update_model_boundary_observation_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        boundary_type: boundaryType,
+        observation_id: observationId,
+        observation_name: observationName,
+        observation_geometry: observationGeometry,
+        observation_data: observationData,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateBoundaryObservationResult.err) {
+      setError({
+        message: updateBoundaryObservationResult.val.message,
+        code: updateBoundaryObservationResult.val.code,
+      });
+    }
+
+    await fetchBoundaries();
   }
 
   return {
     boundaries: model?.boundaries || [],
     onAddBoundary,
+    onAddBoundaryObservation,
     onCloneBoundary,
+    onDisableBoundary,
+    onEnableBoundary,
     onRemoveBoundary,
-    onUpdateBoundary,
+    onRemoveBoundaryObservation,
+    onUpdateBoundaryAffectedCells,
+    onUpdateBoundaryAffectedLayers,
+    onUpdateBoundaryGeometry,
+    onUpdateBoundaryMetadata,
+    onUpdateBoundaryObservation,
     loading,
     error,
   };

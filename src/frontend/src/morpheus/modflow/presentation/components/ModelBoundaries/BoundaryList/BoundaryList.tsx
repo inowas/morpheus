@@ -14,7 +14,7 @@ interface ISelectedListProps {
   onSelectBoundary: (selectedBoundary: ISelectedBoundary) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => void;
   onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => void;
-  onUpdateBoundary: (boundary: IBoundary) => void;
+  onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => void;
   onUpdateObservation: (boundaryId: IBoundaryId, observationId: IObservationId, observation: IObservation<any>) => void;
   onRemoveBoundary: (boundaryId: IBoundaryId) => void;
   onRemoveObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => void;
@@ -28,7 +28,7 @@ const BoundaryList = ({
                         onSelectBoundary,
                         onCloneBoundary,
                         onCloneObservation,
-                        onUpdateBoundary,
+                        onChangeBoundaryName,
                         onUpdateObservation,
                         onRemoveBoundary,
                         onRemoveObservation,
@@ -98,7 +98,7 @@ const BoundaryList = ({
                         setEditBoundaryName(null);
                         return;
                       }
-                      onUpdateBoundary({...boundary, name: inputValue});
+                      onChangeBoundaryName(boundary.id, inputValue);
                       setInputValue('');
                       setEditBoundaryName(null);
                     }}

@@ -268,10 +268,10 @@ class ModelBoundaryMetadataUpdatedEvent(EventBase):
         return BoundaryId.from_str(self.payload['boundary_id'])
 
     def get_name(self) -> BoundaryName | None:
-        return BoundaryName.from_str(self.payload['name'])
+        return BoundaryName.from_str(self.payload['name']) if self.payload['name'] else None
 
     def get_tags(self) -> BoundaryTags | None:
-        return BoundaryTags.from_list(self.payload['tags'])
+        return BoundaryTags.from_list(self.payload['tags']) if isinstance(self.payload['tags'], list) else None
 
     @staticmethod
     def get_event_name() -> EventName:

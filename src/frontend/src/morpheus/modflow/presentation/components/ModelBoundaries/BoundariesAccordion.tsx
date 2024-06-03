@@ -1,8 +1,8 @@
 import React from "react";
-import {BoundariesAccordionPane} from "./index";
-import {Accordion} from "../../../../../common/components";
+import BoundariesAccordionPane from "./BoundariesAccordionPane";
+import {Accordion} from "common/components";
 import {availableBoundaries, IBoundary, IBoundaryId} from "../../../types/Boundaries.type";
-import {ILayer} from "../../../types/Layers.type";
+import {ILayer, ILayerId} from "../../../types/Layers.type";
 import {ISelectedBoundary} from "./types/SelectedBoundary.type";
 
 const getPanelDetails = (boundaries: IBoundary[], selectedBoundary?: ISelectedBoundary) => availableBoundaries.map((b) => ({
@@ -18,11 +18,21 @@ interface IProps {
   selectedBoundary?: ISelectedBoundary;
   onChangeSelectedBoundary: (selectedBoundary: ISelectedBoundary) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => void;
+  onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => void;
-  onUpdateBoundary: (boundary: IBoundary) => void;
 }
 
-const BoundariesAccordion = ({boundaries, layers, selectedBoundary, onCloneBoundary, onUpdateBoundary, onRemoveBoundary, onChangeSelectedBoundary}: IProps) => {
+const BoundariesAccordion = ({
+                               boundaries,
+                               layers,
+                               selectedBoundary,
+                               onCloneBoundary,
+                               onUpdateBoundaryAffectedLayers,
+                               onUpdateBoundaryMetadata,
+                               onRemoveBoundary,
+                               onChangeSelectedBoundary
+                             }: IProps) => {
   const panelDetails = getPanelDetails(boundaries, selectedBoundary);
 
   return (
@@ -43,7 +53,8 @@ const BoundariesAccordion = ({boundaries, layers, selectedBoundary, onCloneBound
               type={panel.type}
               onCloneBoundary={onCloneBoundary}
               onRemoveBoundary={onRemoveBoundary}
-              onUpdateBoundary={onUpdateBoundary}
+              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
+              onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               isReadOnly={false}
               layers={layers}
               selectedBoundary={selectedBoundary?.boundary.type === panel.type ? selectedBoundary : undefined}
