@@ -103,8 +103,7 @@
   text-align: left;
   padding: 0;
   color: #000;
-
-
+  width: auto;
 }
 
 .ui.label > .close.icon, .ui.label > .delete.icon {

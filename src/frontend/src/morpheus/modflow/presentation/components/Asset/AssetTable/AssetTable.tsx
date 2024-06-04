@@ -15,7 +15,7 @@ interface IProps {
   isReadOnly: boolean;
   selectedAsset: string | null;
   onAssetSelect: (assetId: string | null) => void;
-  onAssetChecked: (assetId: string[] | null) => void;
+  onAssetChecked?: (assetId: string[] | null) => void;
 }
 
 interface IExtendedAsset extends IAsset {
@@ -40,8 +40,10 @@ const AssetTable = ({
 
 
   useEffect(() => {
-    // Select asset by clicked checkbox
-    onAssetChecked(checkedAssets);
+    if (onAssetChecked) {
+      // Select asset by clicked checkbox
+      onAssetChecked(checkedAssets);
+    }
   }, [checkedAssets]);
 
   /*
@@ -115,7 +117,7 @@ const AssetTable = ({
   const renderHeader = () => (
     <Table.Row>
       <Table.HeaderCell>
-        <Checkbox checked={showAll} onClick={handleSelectAll}/>
+        {onAssetChecked && <Checkbox checked={showAll} onClick={handleSelectAll}/>}
       </Table.HeaderCell>
       <Table.HeaderCell>
         <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
@@ -150,7 +152,7 @@ const AssetTable = ({
         onClick={() => onAssetSelect(asset.asset_id)}
       >
         <Table.Cell>
-          <Checkbox
+          {onAssetChecked && <Checkbox
             checked={checkedAssets ? checkedAssets.includes(asset.asset_id) : false}
             onClick={(e) => {
               e.stopPropagation();
@@ -165,7 +167,7 @@ const AssetTable = ({
                 return [...prev, asset.asset_id];
               });
             }}
-          />
+          />}
         </Table.Cell>
         <Table.Cell>
           {asset.date.split(' ')[0]}

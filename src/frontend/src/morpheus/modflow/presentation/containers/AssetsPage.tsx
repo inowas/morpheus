@@ -82,6 +82,7 @@ const AssetsPage = ({}: IProps) => {
                         selectedAsset={selectedRasterFile}
                         onAssetSelect={setSelectedRasterFile}
                         onAssetChecked={setCheckedRasterFile}
+
                       />
                       <AssetButtonsGroup
                         checkedAssets={checkedRasterFile}
@@ -104,15 +105,15 @@ const AssetsPage = ({}: IProps) => {
                         isReadOnly={isReadOnly}
                         selectedAsset={selectedShapeFile}
                         onAssetSelect={setSelectedShapeFile}
-                        onAssetChecked={setCheckedShapeFile}
+                        // onAssetChecked={setCheckedShapeFile}
                       />
                       <AssetButtonsGroup
                         checkedAssets={checkedShapeFile}
                         isReadOnly={isReadOnly}
                         loading={loading}
                         onUploadFile={setShowFileUploadModal}
-                        onDownload={() => console.log('Download selected ', checkedShapeFile)}
-                        onDelete={() => console.log('Delete selected ', checkedShapeFile)}
+                        // onDownload={() => console.log('Download selected ', checkedShapeFile)}
+                        // onDelete={() => console.log('Delete selected ', checkedShapeFile)}
                       />
 
                     </TabPane>,
