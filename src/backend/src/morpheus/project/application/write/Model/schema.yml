@@ -732,7 +732,7 @@ definitions:
             observation_geometry:
               "$ref": "#/definitions/components/Point"
             observation_data:
-              type: object
+              type: array
           required:
             - project_id
             - model_id

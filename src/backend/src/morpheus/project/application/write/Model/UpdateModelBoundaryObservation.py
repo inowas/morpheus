@@ -16,6 +16,7 @@ from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
 from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryType, IBoundaryTypeLiteral
 from morpheus.project.types.boundaries.Observation import ObservationId, ObservationName
+from morpheus.project.types.boundaries.ObservationFactory import ObservationFactory
 from morpheus.project.types.geometry import Point
 
 
@@ -88,14 +89,17 @@ class UpdateModelBoundaryObservationCommandHandler(CommandHandlerBase):
         if current_observation is None:
             raise ValueError(f'Observation {command.observation_id.to_str()} does not exist in boundary {command.boundary_id.to_str()}')
 
-        updated_observation = current_observation.with_updated_name(name=command.observation_name)
-        updated_observation = current_observation.with_updated_geometry(geometry=command.observation_geometry)
-        updated_observation = current_observation.with_updated_data(data=command.observation_data)
+        updated_observation = ObservationFactory.new(
+            boundary_type=command.boundary_type, observation_name=command.observation_name,
+            observation_geometry=command.observation_geometry, observation_data=command.observation_data,
+            observation_id=command.observation_id
+        )
 
         event = ModelBoundaryObservationUpdatedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
             boundary_id=command.boundary_id,
+            boundary_type=command.boundary_type,
             observation_id=command.observation_id,
             observation=updated_observation,
             occurred_at=DateTime.now()

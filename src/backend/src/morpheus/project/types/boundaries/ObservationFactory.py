@@ -17,7 +17,8 @@ class ObservationFactory:
     @staticmethod
     def new(boundary_type: BoundaryType, observation_name: ObservationName, observation_geometry: Point, observation_data: list, observation_id: ObservationId) -> Observation:
         if boundary_type == BoundaryType.constant_head():
-            return ConstantHeadObservation.new(name=observation_name, geometry=observation_geometry, data=[ConstantHeadRawDataItem.from_dict(item) for item in observation_data])
+            return ConstantHeadObservation.new(name=observation_name, geometry=observation_geometry, data=[ConstantHeadRawDataItem.from_dict(item) for item in observation_data],
+                                               observation_id=observation_id)
         if boundary_type == BoundaryType.drain():
             return DrainObservation.new(name=observation_name, geometry=observation_geometry, data=[DrainRawDataItem.from_dict(item) for item in observation_data])
         if boundary_type == BoundaryType.evapotranspiration():

@@ -6,8 +6,9 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryId, BoundaryName, BoundaryTags
+from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryId, BoundaryName, BoundaryTags, BoundaryType
 from morpheus.project.types.boundaries.Observation import Observation, ObservationId
+from morpheus.project.types.boundaries.ObservationFactory import ObservationFactory
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Polygon, LineString, Point, GeometryFactory
 from morpheus.project.types.layers import LayerId
@@ -366,13 +367,15 @@ class ModelBoundaryObservationRemovedEvent(EventBase):
 
 class ModelBoundaryObservationUpdatedEvent(EventBase):
     @classmethod
-    def from_props(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, observation_id: ObservationId, observation: Observation, occurred_at: DateTime):
+    def from_props(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, boundary_type: BoundaryType,
+                   observation_id: ObservationId, observation: Observation, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
                 'model_id': model_id.to_str(),
                 'boundary_id': boundary_id.to_str(),
+                'boundary_type': boundary_type.to_str(),
                 'observation_id': observation_id.to_str(),
                 'observation': observation.to_dict()
             }
@@ -387,11 +390,14 @@ class ModelBoundaryObservationUpdatedEvent(EventBase):
     def get_boundary_id(self) -> BoundaryId:
         return BoundaryId.from_str(self.payload['boundary_id'])
 
+    def get_boundary_type(self) -> BoundaryType:
+        return BoundaryType.from_str(self.payload['boundary_type'])
+
     def get_observation_id(self) -> ObservationId:
         return ObservationId.from_str(self.payload['observation_id'])
 
     def get_observation(self) -> Observation:
-        return Observation.from_dict(self.payload['observation'])
+        return ObservationFactory.from_dict(boundary_type=self.get_boundary_type(), data=self.payload['observation'])
 
     @staticmethod
     def get_event_name() -> EventName:

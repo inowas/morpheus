@@ -2,7 +2,7 @@ import {IAffectedCells, IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType} from "../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IObservation} from "../types/Boundaries.type";
 import {useApi} from "../incoming";
 import useProjectCommandBus, {Commands} from "./useProjectCommandBus";
 import {setBoundaries} from "../infrastructure/modelStore";
@@ -22,8 +22,7 @@ interface IUseBoundaries {
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryGeometry: (boundaryId: IBoundaryId, geometry: Point | Polygon | LineString) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundaryName?: string, boundaryTags?: string[]) => Promise<void>;
-  onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observationId: string, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
-
+  onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   loading: boolean;
   error: IError | null;
 }
@@ -500,7 +499,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     await fetchBoundaries();
   }
 
-  const onUpdateBoundaryObservation = async (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observationId: string, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
+  const onUpdateBoundaryObservation = async (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => {
     if (!model || !projectId) {
       return;
     }
@@ -519,10 +518,10 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_id: boundaryId,
         boundary_type: boundaryType,
-        observation_id: observationId,
-        observation_name: observationName,
-        observation_geometry: observationGeometry,
-        observation_data: observationData,
+        observation_id: observation.observation_id,
+        observation_name: observation.observation_name,
+        observation_geometry: observation.geometry,
+        observation_data: observation.data,
       }
     });
 
