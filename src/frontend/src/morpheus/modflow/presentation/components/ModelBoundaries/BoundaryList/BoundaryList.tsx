@@ -10,21 +10,23 @@ import {canHaveMultipleObservations} from "../helpers";
 interface ISelectedListProps {
   type: IBoundaryType;
   boundaries: IBoundary[];
-  selectedBoundary: ISelectedBoundary;
+  selectedBoundaryId: IBoundaryId;
+  selectedObservationId: IObservationId
   onSelectBoundary: (selectedBoundary: ISelectedBoundary) => void;
-  onCloneBoundary: (boundaryId: IBoundaryId) => void;
-  onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => void;
-  onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => void;
-  onUpdateObservation: (boundaryId: IBoundaryId, observationId: IObservationId, observation: IObservation<any>) => void;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => void;
-  onRemoveObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => void;
+  onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
+  onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => Promise<void>;
+  onUpdateObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
+  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   isReadOnly: boolean;
 }
 
 const BoundaryList = ({
                         type,
                         boundaries,
-                        selectedBoundary,
+                        selectedBoundaryId,
+                        selectedObservationId,
                         onSelectBoundary,
                         onCloneBoundary,
                         onCloneObservation,
@@ -52,7 +54,7 @@ const BoundaryList = ({
     return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
   }, [boundaries, search, type]);
 
-  const isSelected = (boundary: IBoundary) => selectedBoundary.boundary.id === boundary.id;
+  const isSelected = (boundary: IBoundary) => selectedBoundaryId === boundary.id;
 
   return (
     <>
@@ -93,12 +95,12 @@ const BoundaryList = ({
                         setInputValue(newTitle);
                       }}
                     />
-                    <button onClick={() => {
+                    <button onClick={async () => {
                       if (!inputValue) {
                         setEditBoundaryName(null);
                         return;
                       }
-                      onChangeBoundaryName(boundary.id, inputValue);
+                      await onChangeBoundaryName(boundary.id, inputValue);
                       setInputValue('');
                       setEditBoundaryName(null);
                     }}
@@ -144,11 +146,11 @@ const BoundaryList = ({
                       key={observation.observation_id}
                       onClick={() => handleSelectObservation(boundary, observation.observation_id)}
                     >
-                      <div className={`${styles.observationItem} ${selectedBoundary.observationId === observation.observation_id ? styles.selected : ''} `}>
+                      <div className={`${styles.observationItem} ${selectedObservationId === observation.observation_id ? styles.selected : ''} `}>
                           <span>
                             <Checkbox
                               className={styles.checkboxObservation}
-                              checked={selectedBoundary.observationId === observation.observation_id}
+                              checked={selectedObservationId === observation.observation_id}
                             />
                             {openEditingObservationTitle !== observation.observation_id && <div style={{
                               textOverflow: 'ellipsis',
@@ -170,12 +172,12 @@ const BoundaryList = ({
                                 setInputObservationValue(newTitle);
                               }}
                             />
-                            <button onClick={() => {
+                            <button onClick={async () => {
                               if (!inputObservationValue) {
                                 setOpenEditingObservationTitle(null);
                                 return;
                               }
-                              onUpdateObservation(boundary.id, observation.observation_id, {...observation, observation_name: inputObservationValue});
+                              await onUpdateObservation(boundary.id, boundary.type, {...observation, observation_name: inputObservationValue});
                               setInputObservationValue('');
                               setOpenEditingObservationTitle(null);
                             }}

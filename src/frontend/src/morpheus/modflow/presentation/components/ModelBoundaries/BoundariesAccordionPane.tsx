@@ -1,79 +1,66 @@
-import React from 'react';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservationId} from "../../../types/Boundaries.type";
+import React, {useEffect, useState} from 'react';
+import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId} from "../../../types/Boundaries.type";
 import BoundaryList from "./BoundaryList";
 import {Grid, InfoTitle, Tab} from 'common/components';
-import {useDateTimeFormat} from "common/hooks";
 
 import {BoundariesForm} from "../BoundariesLayers/BoundariesForm";
 import {MenuItem, TabPane} from "semantic-ui-react";
-import {BoundariesTable} from "../BoundariesLayers/BoundariesTable";
+import {ObservationDataTable} from "../BoundariesLayers/BoundariesTable";
 import {ILayer, ILayerId} from "../../../types/Layers.type";
 import {ISelectedBoundary} from "./types/SelectedBoundary.type";
+import ObservationDataChart from "../BoundariesLayers/BoundariesTable/ObservationDataChart";
+import {ITimeDiscretization} from "../../../types";
 
 interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
-  type: IBoundaryType;
+  boundaryType: IBoundaryType;
   selectedBoundary?: ISelectedBoundary;
   onChangeSelectedBoundary: (selectedBoundary: ISelectedBoundary) => void;
-  onCloneBoundary: (boundaryId: IBoundaryId) => void;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => void;
+  onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
-  timeZone?: string;
+  onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
+  timeDiscretization: ITimeDiscretization;
   isReadOnly: boolean;
 }
 
 const BoundariesAccordionPane = ({
-                                   type,
+                                   boundaryType,
                                    boundaries,
                                    layers,
-                                   selectedBoundary,
+                                   selectedBoundary: selectedBoundaryProp,
                                    onChangeSelectedBoundary,
                                    onCloneBoundary,
                                    onRemoveBoundary,
                                    onUpdateBoundaryAffectedLayers,
                                    onUpdateBoundaryMetadata,
-                                   timeZone,
-                                   isReadOnly
+                                   onUpdateBoundaryObservation,
+                                   isReadOnly,
+                                   timeDiscretization,
                                  }: IProps) => {
 
+  const [selectedBoundary, setSelectedBoundary] = useState<IBoundary | undefined>(undefined);
+  const [selectedBoundaryObservation, setSelectedBoundaryObservation] = useState<IObservation<any> | undefined>(undefined);
 
-  const {formatISODateTime} = useDateTimeFormat(timeZone);
+  useEffect(() => {
+    setSelectedBoundary(selectedBoundaryProp?.boundary?.type === boundaryType ? selectedBoundaryProp.boundary : boundaries[0])
+    setSelectedBoundaryObservation(selectedBoundaryProp?.boundary?.type === boundaryType ? selectedBoundaryProp.boundary.observations.find((o) => o.observation_id === selectedBoundaryProp.observationId) : boundaries[0].observations[0]);
+  }, [selectedBoundaryProp, boundaries]);
 
-  const getSelectedBoundary = (): ISelectedBoundary => {
-    if (selectedBoundary?.boundary.type === type) {
-      return selectedBoundary;
-    }
-
-    return {
-      boundary: boundaries[0],
-      observationId: boundaries[0].observations[0].observation_id,
-    }
+  const handleCloneObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
+    // add observation to boundary
   }
-
-  const handleCloneBoundary = (boundaryId: IBoundaryId) => {
-    onCloneBoundary(boundaryId);
-  }
-
-  const handleCloneObservation = (boundaryId: IBoundaryId, observationId: IObservationId) => {
-    console.log('Clone observation', boundaryId, observationId)
-  }
-
-  const handleChangeBoundaryName = (boundaryId: string, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
-  const handleChangeBoundaryTags = (boundaryId: string, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
-  const handleChangeBoundaryAffectedLayers = (boundaryId: string, affectedLayers: ILayerId[]) => onUpdateBoundaryAffectedLayers(boundaryId, affectedLayers);
-
-  const handleUpdateObservation = (boundaryId: IBoundaryId, observationId: IObservationId) => {
-    console.log('Update observation', boundaryId, observationId)
-  }
-
-  const handleRemoveBoundary = (boundaryId: IBoundaryId) => {
-    onRemoveBoundary(boundaryId);
-  }
-
-  const handleRemoveObservation = (boundaryId: IBoundaryId, observationId: IObservationId) => {
+  const handleChangeBoundaryName = (boundaryId: IBoundaryId, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
+  const handleChangeBoundaryTags = (boundaryId: IBoundaryId, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
+  const handleChangeBoundaryAffectedLayers = (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => onUpdateBoundaryAffectedLayers(boundaryId, affectedLayers);
+  const handleRemoveObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
     console.log('Remove observation', boundaryId, observationId)
+  }
+
+  if (!selectedBoundary || !selectedBoundaryObservation) {
+    return null;
   }
 
   return (
@@ -87,15 +74,16 @@ const BoundariesAccordionPane = ({
           <BoundaryList
             boundaries={boundaries}
             isReadOnly={isReadOnly}
-            selectedBoundary={getSelectedBoundary()}
-            type={type}
+            selectedBoundaryId={selectedBoundary.id}
+            selectedObservationId={selectedBoundaryObservation.observation_id}
+            type={boundaryType}
             onChangeBoundaryName={handleChangeBoundaryName}
-            onCloneBoundary={handleCloneBoundary}
+            onCloneBoundary={onCloneBoundary}
             onCloneObservation={handleCloneObservation}
-            onRemoveBoundary={handleRemoveBoundary}
+            onRemoveBoundary={onRemoveBoundary}
             onRemoveObservation={handleRemoveObservation}
             onSelectBoundary={onChangeSelectedBoundary}
-            onUpdateObservation={handleUpdateObservation}
+            onUpdateObservation={onUpdateBoundaryObservation}
           />
         </Grid.Column>
         <Grid.Column width={7} style={{marginTop: '12px'}}>
@@ -107,7 +95,7 @@ const BoundariesAccordionPane = ({
             ]}
           />
           <BoundariesForm
-            boundary={getSelectedBoundary().boundary}
+            boundary={selectedBoundary}
             onChangeBoundaryTags={handleChangeBoundaryTags}
             onChangeBoundaryAffectedLayers={handleChangeBoundaryAffectedLayers}
             isReadOnly={isReadOnly}
@@ -128,22 +116,17 @@ const BoundariesAccordionPane = ({
                 </MenuItem>
               ),
               render: () => <TabPane attached={false}>
-                <BoundariesTable
-                  selectedBoundary={getSelectedBoundary()}
-                  formatDateTime={formatISODateTime}
+                <ObservationDataTable
+                  boundaryType={boundaryType}
+                  observation={selectedBoundaryObservation}
+                  onChangeObservation={(observation: IObservation<any>) => onUpdateBoundaryObservation(selectedBoundary.id, boundaryType, observation)}
                 />
               </TabPane>,
             },
             {
-              menuItem: (
-                <MenuItem
-                  key='Chart'
-                >
-                  Chart
-                </MenuItem>
-              ),
+              menuItem: <MenuItem key='Chart'>Chart</MenuItem>,
               render: () => <TabPane attached={false}>
-                Chart
+                <ObservationDataChart observation={selectedBoundaryObservation} timeDiscretization={timeDiscretization}/>
               </TabPane>,
             },
           ]}

@@ -1,9 +1,10 @@
 import React from "react";
 import BoundariesAccordionPane from "./BoundariesAccordionPane";
 import {Accordion} from "common/components";
-import {availableBoundaries, IBoundary, IBoundaryId} from "../../../types/Boundaries.type";
+import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation} from "../../../types/Boundaries.type";
 import {ILayer, ILayerId} from "../../../types/Layers.type";
 import {ISelectedBoundary} from "./types/SelectedBoundary.type";
+import {ITimeDiscretization} from "../../../types";
 
 const getPanelDetails = (boundaries: IBoundary[], selectedBoundary?: ISelectedBoundary) => availableBoundaries.map((b) => ({
   title: b.title,
@@ -17,10 +18,12 @@ interface IProps {
   layers: ILayer[];
   selectedBoundary?: ISelectedBoundary;
   onChangeSelectedBoundary: (selectedBoundary: ISelectedBoundary) => void;
-  onCloneBoundary: (boundaryId: IBoundaryId) => void;
+  onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => void;
+  onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
+  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  timeDiscretization: ITimeDiscretization;
 }
 
 const BoundariesAccordion = ({
@@ -30,8 +33,10 @@ const BoundariesAccordion = ({
                                onCloneBoundary,
                                onUpdateBoundaryAffectedLayers,
                                onUpdateBoundaryMetadata,
+                               onUpdateBoundaryObservation,
                                onRemoveBoundary,
-                               onChangeSelectedBoundary
+                               onChangeSelectedBoundary,
+                               timeDiscretization
                              }: IProps) => {
   const panelDetails = getPanelDetails(boundaries, selectedBoundary);
 
@@ -50,15 +55,17 @@ const BoundariesAccordion = ({
           content: (
             <BoundariesAccordionPane
               boundaries={panel.boundaries}
-              type={panel.type}
+              boundaryType={panel.type}
               onCloneBoundary={onCloneBoundary}
               onRemoveBoundary={onRemoveBoundary}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+              onUpdateBoundaryObservation={onUpdateBoundaryObservation}
               isReadOnly={false}
               layers={layers}
               selectedBoundary={selectedBoundary?.boundary.type === panel.type ? selectedBoundary : undefined}
               onChangeSelectedBoundary={onChangeSelectedBoundary}
+              timeDiscretization={timeDiscretization}
             />
           ),
         }

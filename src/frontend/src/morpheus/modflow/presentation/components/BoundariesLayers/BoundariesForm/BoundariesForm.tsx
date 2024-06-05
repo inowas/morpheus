@@ -53,8 +53,6 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
     setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
   }, [boundary]);
 
-  console.log(boundaryLocal)
-
   return (
     <Form>
       <DataRow>

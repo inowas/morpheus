@@ -13,13 +13,17 @@ import {IBoundaryType} from '../../types/Boundaries.type';
 import {BoundariesMap} from '../components/ModelBoundaries';
 import BoundariesAccordion from "../components/ModelBoundaries/BoundariesAccordion";
 import {ISelectedBoundary} from "../components/ModelBoundaries/types/SelectedBoundary.type";
+import {useDateTimeFormat} from "../../../../common/hooks";
+import {useTimeDiscretization} from "../../application";
 
 const BoundariesContainer = () => {
   const {projectId, propertyId: boundaryId} = useParams();
 
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
-  const {boundaries, onAddBoundary, onCloneBoundary, onRemoveBoundary, onUpdateBoundaryAffectedLayers, onUpdateBoundaryMetadata} = useBoundaries(projectId as string);
+  const {timeDiscretization} = useTimeDiscretization(projectId as string);
+  const {boundaries, onAddBoundary, onCloneBoundary, onRemoveBoundary, onUpdateBoundaryAffectedLayers, onUpdateBoundaryMetadata, onUpdateBoundaryObservation} = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
+  const {formatISODateTime} = useDateTimeFormat('UTC');
   const {isReadOnly} = useProjectPermissions(projectId as string);
 
   const mapRef: IMapRef = useRef(null);
@@ -47,7 +51,7 @@ const BoundariesContainer = () => {
     }
   }, [boundaryId, boundaries]);
 
-  if (!spatialDiscretization || !boundaries || !layers) {
+  if (!spatialDiscretization || !boundaries || !layers || !timeDiscretization) {
     return null;
   }
 
@@ -92,6 +96,8 @@ const BoundariesContainer = () => {
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onRemoveBoundary={onRemoveBoundary}
+              onUpdateBoundaryObservation={onUpdateBoundaryObservation}
+              timeDiscretization={timeDiscretization}
             />
           </LeafletMapProvider>
         </DataGrid>
