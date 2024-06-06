@@ -440,7 +440,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         project_id: projectId,
         model_id: model.model_id,
         boundary_id: boundaryId,
-        boundary_geometry: geometry,
+        geometry: geometry,
       }
     });
 

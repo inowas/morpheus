@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId} from "../../../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
 import BoundaryList from "./BoundaryList";
 import {Grid, InfoTitle, Tab} from 'common/components';
 
@@ -7,7 +7,6 @@ import {BoundariesForm} from "../BoundariesLayers/BoundariesForm";
 import {MenuItem, TabPane} from "semantic-ui-react";
 import {ObservationDataTable} from "../BoundariesLayers/BoundariesTable";
 import {ILayer, ILayerId} from "../../../types/Layers.type";
-import {ISelectedBoundary} from "./types/SelectedBoundary.type";
 import ObservationDataChart from "../BoundariesLayers/BoundariesTable/ObservationDataChart";
 import {ITimeDiscretization} from "../../../types";
 
@@ -15,8 +14,8 @@ interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
   boundaryType: IBoundaryType;
-  selectedBoundary?: ISelectedBoundary;
-  onChangeSelectedBoundary: (selectedBoundary: ISelectedBoundary) => void;
+  selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
+  onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
@@ -30,8 +29,8 @@ const BoundariesAccordionPane = ({
                                    boundaryType,
                                    boundaries,
                                    layers,
-                                   selectedBoundary: selectedBoundaryProp,
-                                   onChangeSelectedBoundary,
+                                   selectedBoundaryAndObservation,
+                                   onSelectBoundaryAndObservation,
                                    onCloneBoundary,
                                    onRemoveBoundary,
                                    onUpdateBoundaryAffectedLayers,
@@ -45,9 +44,21 @@ const BoundariesAccordionPane = ({
   const [selectedBoundaryObservation, setSelectedBoundaryObservation] = useState<IObservation<any> | undefined>(undefined);
 
   useEffect(() => {
-    setSelectedBoundary(selectedBoundaryProp?.boundary?.type === boundaryType ? selectedBoundaryProp.boundary : boundaries[0])
-    setSelectedBoundaryObservation(selectedBoundaryProp?.boundary?.type === boundaryType ? selectedBoundaryProp.boundary.observations.find((o) => o.observation_id === selectedBoundaryProp.observationId) : boundaries[0].observations[0]);
-  }, [selectedBoundaryProp, boundaries]);
+    const boundary = boundaries.find((b) => b.id === selectedBoundaryAndObservation?.boundary.id);
+    if (boundary) {
+      setSelectedBoundary(boundary);
+      const observation = boundary.observations.find((o) => o.observation_id === selectedBoundaryAndObservation?.observationId);
+      if (observation) {
+        return setSelectedBoundaryObservation(observation);
+      }
+      return setSelectedBoundaryObservation(boundary.observations[0]);
+    }
+
+
+    setSelectedBoundary(boundaries[0]);
+    setSelectedBoundaryObservation(boundaries[0].observations[0]);
+
+  }, [selectedBoundaryAndObservation, boundaries]);
 
   const handleCloneObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
     // add observation to boundary
@@ -74,15 +85,14 @@ const BoundariesAccordionPane = ({
           <BoundaryList
             boundaries={boundaries}
             isReadOnly={isReadOnly}
-            selectedBoundaryId={selectedBoundary.id}
-            selectedObservationId={selectedBoundaryObservation.observation_id}
+            selectedBoundaryAndObservation={{boundary: selectedBoundary, observationId: selectedBoundaryObservation.observation_id}}
             type={boundaryType}
             onChangeBoundaryName={handleChangeBoundaryName}
+            onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
             onCloneBoundary={onCloneBoundary}
             onCloneObservation={handleCloneObservation}
             onRemoveBoundary={onRemoveBoundary}
             onRemoveObservation={handleRemoveObservation}
-            onSelectBoundary={onChangeSelectedBoundary}
             onUpdateObservation={onUpdateBoundaryObservation}
           />
         </Grid.Column>

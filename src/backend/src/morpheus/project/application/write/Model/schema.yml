@@ -665,6 +665,8 @@ definitions:
                 - "$ref": "#/definitions/components/Polygon"
           required:
             - project_id
+            - model_id
+            - boundary_id
             - geometry
       required:
         - command_name

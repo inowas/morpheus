@@ -2,20 +2,18 @@ import {Accordion, Checkbox, Icon, List, ListItem} from 'semantic-ui-react';
 import {DotsMenu} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import styles from './BoundaryList.module.less';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId} from "../../../../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from "../../../../types/Boundaries.type";
 import BoundaryListHeader from "./BoundaryListHeader";
-import {ISelectedBoundary} from "../types/SelectedBoundary.type";
 import {canHaveMultipleObservations} from "../helpers";
 
 interface ISelectedListProps {
   type: IBoundaryType;
   boundaries: IBoundary[];
-  selectedBoundaryId: IBoundaryId;
-  selectedObservationId: IObservationId
-  onSelectBoundary: (selectedBoundary: ISelectedBoundary) => void;
+  selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => Promise<void>;
+  onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onUpdateObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
@@ -25,12 +23,11 @@ interface ISelectedListProps {
 const BoundaryList = ({
                         type,
                         boundaries,
-                        selectedBoundaryId,
-                        selectedObservationId,
-                        onSelectBoundary,
+                        selectedBoundaryAndObservation,
+                        onChangeBoundaryName,
+                        onSelectBoundaryAndObservation,
                         onCloneBoundary,
                         onCloneObservation,
-                        onChangeBoundaryName,
                         onUpdateObservation,
                         onRemoveBoundary,
                         onRemoveObservation,
@@ -47,14 +44,11 @@ const BoundaryList = ({
   const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
   const [inputObservationValue, setInputObservationValue] = useState('');
 
-  const handleSelectBoundary = (boundary: IBoundary) => onSelectBoundary({boundary, observationId: boundary.observations[0].observation_id});
-  const handleSelectObservation = (boundary: IBoundary, observationId: IObservationId) => onSelectBoundary({boundary, observationId});
-
   const filteredBoundaries = useMemo(() => {
     return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
   }, [boundaries, search, type]);
 
-  const isSelected = (boundary: IBoundary) => selectedBoundaryId === boundary.id;
+  const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
 
   return (
     <>
@@ -78,7 +72,7 @@ const BoundaryList = ({
               // Title styles when item is selected
               className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}
             >
-              <div className={`${styles.titleInner}`} onClick={() => handleSelectBoundary(boundary)}>
+              <div className={`${styles.titleInner}`} onClick={() => onSelectBoundaryAndObservation({boundary})}>
                 {editBoundaryName !== boundary.id &&
                   <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
                     {boundary.name}
@@ -97,8 +91,7 @@ const BoundaryList = ({
                     />
                     <button onClick={async () => {
                       if (!inputValue) {
-                        setEditBoundaryName(null);
-                        return;
+                        return setEditBoundaryName(null);
                       }
                       await onChangeBoundaryName(boundary.id, inputValue);
                       setInputValue('');
@@ -128,7 +121,7 @@ const BoundaryList = ({
                 {canHaveMultipleObservations(boundary) && (
                   <Icon
                     name={`${isSelected(boundary) ? 'angle down' : 'angle right'}`}
-                    onClick={() => handleSelectBoundary(boundary)}
+                    onClick={() => onSelectBoundaryAndObservation({boundary})}
                   />
                 )}
               </div>
@@ -144,13 +137,13 @@ const BoundaryList = ({
                   {boundary.observations.map((observation) => (
                     <ListItem
                       key={observation.observation_id}
-                      onClick={() => handleSelectObservation(boundary, observation.observation_id)}
+                      onClick={() => onSelectBoundaryAndObservation({boundary, observationId: observation.observation_id})}
                     >
-                      <div className={`${styles.observationItem} ${selectedObservationId === observation.observation_id ? styles.selected : ''} `}>
+                      <div className={`${styles.observationItem} ${selectedBoundaryAndObservation?.observationId === observation.observation_id ? styles.selected : ''} `}>
                           <span>
                             <Checkbox
                               className={styles.checkboxObservation}
-                              checked={selectedObservationId === observation.observation_id}
+                              checked={selectedBoundaryAndObservation?.observationId === observation.observation_id}
                             />
                             {openEditingObservationTitle !== observation.observation_id && <div style={{
                               textOverflow: 'ellipsis',
@@ -190,21 +183,9 @@ const BoundaryList = ({
                           className={`${styles.dotsMenu}`}
                           disabled={openEditingObservationTitle === observation.observation_id}
                           actions={[
-                            {
-                              text: 'Rename Item',
-                              icon: 'edit',
-                              onClick: () => setOpenEditingObservationTitle(observation.observation_id),
-                            },
-                            {
-                              text: 'Clone',
-                              icon: 'copy',
-                              onClick: () => onCloneObservation(boundary.id, observation.observation_id),
-                            },
-                            {
-                              text: 'Delete',
-                              icon: 'remove',
-                              onClick: () => onRemoveObservation(boundary.id, observation.observation_id),
-                            },
+                            {text: 'Rename Item', icon: 'edit', onClick: () => setOpenEditingObservationTitle(observation.observation_id)},
+                            {text: 'Clone', icon: 'copy', onClick: () => onCloneObservation(boundary.id, observation.observation_id)},
+                            {text: 'Delete', icon: 'remove', onClick: () => onRemoveObservation(boundary.id, observation.observation_id)},
                           ]}
                         />
                       </div>

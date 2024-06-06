@@ -226,7 +226,7 @@ export interface IUpdateModelBoundaryGeometryCommand {
     project_id: string;
     model_id: string;
     boundary_id: string;
-    boundary_geometry: Point | LineString | Polygon;
+    geometry: Point | LineString | Polygon;
   }
 }
 

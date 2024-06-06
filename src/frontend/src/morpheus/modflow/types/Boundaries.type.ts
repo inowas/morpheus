@@ -131,6 +131,11 @@ export interface IWellBoundary extends IGenericBoundary<IWellObservationData> {
   geometry: Point;
 }
 
+interface ISelectedBoundaryAndObservation {
+  boundary: IBoundary;
+  observationId?: IObservationId;
+}
+
 type IBoundary =
   IConstantHeadBoundary
   | IDrainBoundary
@@ -153,7 +158,7 @@ type IBoundaryObservationData = IConstantHeadObservationData
   | IWellObservationData;
 
 
-export type {IBoundary, IBoundaryId, IBoundaryObservationData}
+export type {IBoundary, IBoundaryId, IBoundaryObservationData, ISelectedBoundaryAndObservation}
 
 
 export const availableBoundaries: { title: string, type: IBoundaryType, keys: string[] }[] = [
