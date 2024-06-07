@@ -1,5 +1,6 @@
 import {L, LatLngExpression} from 'common/infrastructure/leafletWrapper';
 import React, {useEffect, useRef} from 'react';
+import hash from 'object-hash';
 import {
   FeatureGroup,
   LayerGroup,
@@ -16,6 +17,7 @@ import {ISpatialDiscretization} from '../../../types';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservationId} from "../../../types/Boundaries.type";
 import {LineString, Point, Polygon} from "geojson";
 import {LeafletEventHandlerFnMap} from "leaflet";
+import objectHash from "object-hash";
 
 export interface ISelectedBoundary {
   boundary: IBoundary;
@@ -308,7 +310,8 @@ const BoundariesMap = ({
               const isViewMode = !isGlobalEditMode;
               const isSelected = selectedBoundary && selectedBoundary.boundary.id === boundary.id;
               const isEditable = isGlobalEditMode && isSelected;
-              const key = `${boundary.id}-${isSelected ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : ''}`;
+              const hash = objectHash(boundary.geometry);
+              const key = `${boundary.id}-${hash}-${isSelected ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : ''}`;
 
               const viewModeEventHandlers: LeafletEventHandlers = {click: () => handleSelectBoundary(boundary.id), mouseover: (event: any) => event.target.openPopup()}
               const editBoundaryEventHandlers: LeafletEventHandlers = {'pm:update': handleChangeBoundaryGeometry(boundary.id)}

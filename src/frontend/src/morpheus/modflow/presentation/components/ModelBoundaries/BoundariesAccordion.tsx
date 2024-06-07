@@ -1,7 +1,7 @@
 import React from "react";
 import BoundariesAccordionPane from "./BoundariesAccordionPane";
 import {Accordion} from "common/components";
-import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
+import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
 import {ILayer, ILayerId} from "../../../types/Layers.type";
 import {ITimeDiscretization} from "../../../types";
 
@@ -18,10 +18,12 @@ interface IProps {
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   timeDiscretization: ITimeDiscretization;
 }
 
@@ -30,10 +32,12 @@ const BoundariesAccordion = ({
                                layers,
                                selectedBoundaryAndObservation,
                                onCloneBoundary,
+                               onCloneBoundaryObservation,
                                onUpdateBoundaryAffectedLayers,
                                onUpdateBoundaryMetadata,
                                onUpdateBoundaryObservation,
                                onRemoveBoundary,
+                               onRemoveBoundaryObservation,
                                onSelectBoundaryAndObservation,
                                timeDiscretization
                              }: IProps) => {
@@ -56,7 +60,9 @@ const BoundariesAccordion = ({
               boundaries={panel.boundaries}
               boundaryType={panel.type}
               onCloneBoundary={onCloneBoundary}
+              onCloneBoundaryObservation={onCloneBoundaryObservation}
               onRemoveBoundary={onRemoveBoundary}
+              onRemoveBoundaryObservation={onRemoveBoundaryObservation}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onUpdateBoundaryObservation={onUpdateBoundaryObservation}

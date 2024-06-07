@@ -2,10 +2,10 @@ import {IAffectedCells, IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IObservation} from "../types/Boundaries.type";
+import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IObservation, IObservationId} from "../types/Boundaries.type";
 import {useApi} from "../incoming";
 import useProjectCommandBus, {Commands} from "./useProjectCommandBus";
-import {setBoundaries} from "../infrastructure/modelStore";
+import {setBoundaries, updateBoundary} from "../infrastructure/modelStore";
 import {LineString, Point, Polygon} from "geojson";
 import {ILayerId} from "../types/Layers.type";
 
@@ -14,6 +14,7 @@ interface IUseBoundaries {
   onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<void>;
   onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -41,7 +42,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
   const {httpGet} = useApi();
   const {sendCommand} = useProjectCommandBus();
 
-  const fetchBoundaries = async () => {
+  const fetchAllBoundaries = async () => {
     if (!isMounted.current) {
       return;
     }
@@ -72,7 +73,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       return;
     }
 
-    fetchBoundaries();
+    fetchAllBoundaries();
 
     return (): void => {
       isMounted.current = false;
@@ -80,6 +81,36 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
     // eslint-disable-next-line
   }, [projectId]);
+
+  const fetchSingleBoundary = async (boundaryId: IBoundaryId) => {
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const result = await httpGet<IBoundary>(`/projects/${projectId}/model/boundaries/${boundaryId}`);
+
+    console.log(result);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.ok) {
+      dispatch(updateBoundary(result.val));
+    }
+
+    if (result.err) {
+      setError({
+        message: result.val.message,
+        code: result.val.code,
+      });
+    }
+  }
 
   const onAddBoundary = async (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => {
     if (!model || !projectId) {
@@ -117,7 +148,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchAllBoundaries();
   }
 
   const onAddBoundaryObservation = async (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
@@ -157,7 +188,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onCloneBoundary = async (boundaryId: IBoundaryId) => {
@@ -194,7 +225,45 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
+  }
+
+  const onCloneBoundaryObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const cloneBoundaryObservationResult = await sendCommand<Commands.ICloneModelBoundaryObservationCommand>({
+      command_name: 'clone_model_boundary_observation_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        observation_id: observationId,
+      }
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (cloneBoundaryObservationResult.err) {
+      setError({
+        message: cloneBoundaryObservationResult.val.message,
+        code: cloneBoundaryObservationResult.val.code,
+      });
+    }
+
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onDisableBoundary = async (boundaryId: IBoundaryId) => {
@@ -231,7 +300,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onEnableBoundary = async (boundaryId: IBoundaryId) => {
@@ -268,7 +337,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onRemoveBoundary = async (boundaryId: IBoundaryId) => {
@@ -305,7 +374,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchAllBoundaries();
   }
 
   const onRemoveBoundaryObservation = async (boundaryId: IBoundaryId, observationId: string) => {
@@ -343,7 +412,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onUpdateBoundaryAffectedCells = async (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => {
@@ -381,7 +450,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onUpdateBoundaryAffectedLayers = async (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => {
@@ -419,7 +488,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onUpdateBoundaryGeometry = async (boundaryId: IBoundaryId, geometry: Point | Polygon | LineString) => {
@@ -457,7 +526,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onUpdateBoundaryMetadata = async (boundaryId: IBoundaryId, boundaryName?: string, boundaryTags?: string[]) => {
@@ -496,7 +565,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   const onUpdateBoundaryObservation = async (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => {
@@ -538,7 +607,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchBoundaries();
+    await fetchSingleBoundary(boundaryId);
   }
 
   return {
@@ -546,6 +615,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     onAddBoundary,
     onAddBoundaryObservation,
     onCloneBoundary,
+    onCloneBoundaryObservation,
     onDisableBoundary,
     onEnableBoundary,
     onRemoveBoundary,

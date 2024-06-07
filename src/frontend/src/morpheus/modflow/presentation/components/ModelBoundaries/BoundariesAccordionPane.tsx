@@ -17,7 +17,9 @@ interface IProps {
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
@@ -32,7 +34,9 @@ const BoundariesAccordionPane = ({
                                    selectedBoundaryAndObservation,
                                    onSelectBoundaryAndObservation,
                                    onCloneBoundary,
+                                   onCloneBoundaryObservation,
                                    onRemoveBoundary,
+                                   onRemoveBoundaryObservation,
                                    onUpdateBoundaryAffectedLayers,
                                    onUpdateBoundaryMetadata,
                                    onUpdateBoundaryObservation,
@@ -60,15 +64,9 @@ const BoundariesAccordionPane = ({
 
   }, [selectedBoundaryAndObservation, boundaries]);
 
-  const handleCloneObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
-    // add observation to boundary
-  }
   const handleChangeBoundaryName = (boundaryId: IBoundaryId, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
   const handleChangeBoundaryTags = (boundaryId: IBoundaryId, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
-  const handleChangeBoundaryAffectedLayers = (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => onUpdateBoundaryAffectedLayers(boundaryId, affectedLayers);
-  const handleRemoveObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
-    console.log('Remove observation', boundaryId, observationId)
-  }
+
 
   if (!selectedBoundary || !selectedBoundaryObservation) {
     return null;
@@ -90,9 +88,9 @@ const BoundariesAccordionPane = ({
             onChangeBoundaryName={handleChangeBoundaryName}
             onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
             onCloneBoundary={onCloneBoundary}
-            onCloneObservation={handleCloneObservation}
+            onCloneObservation={onCloneBoundaryObservation}
             onRemoveBoundary={onRemoveBoundary}
-            onRemoveObservation={handleRemoveObservation}
+            onRemoveObservation={onRemoveBoundaryObservation}
             onUpdateObservation={onUpdateBoundaryObservation}
           />
         </Grid.Column>
@@ -107,7 +105,7 @@ const BoundariesAccordionPane = ({
           <BoundariesForm
             boundary={selectedBoundary}
             onChangeBoundaryTags={handleChangeBoundaryTags}
-            onChangeBoundaryAffectedLayers={handleChangeBoundaryAffectedLayers}
+            onChangeBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
             isReadOnly={isReadOnly}
             layers={layers}
           />

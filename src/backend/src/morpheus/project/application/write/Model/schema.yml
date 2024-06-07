@@ -7,6 +7,7 @@ definitions:
       - "$ref": "#/definitions/commands/AddModelBoundaryCommand"
       - "$ref": "#/definitions/commands/AddModelBoundaryObservationCommand"
       - "$ref": "#/definitions/commands/CloneModelBoundaryCommand"
+      - "$ref": "#/definitions/commands/CloneModelBoundaryObservationCommand"
       - "$ref": "#/definitions/commands/CloneModelLayerCommand"
       - "$ref": "#/definitions/commands/CreateModelCommand"
       - "$ref": "#/definitions/commands/CreateModelVersionCommand"
@@ -121,6 +122,34 @@ definitions:
             - project_id
             - model_id
             - boundary_id
+    CloneModelBoundaryObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_boundary_observation_command
+          example: clone_model_boundary_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - observation_id
     CloneModelLayerCommand:
       type: object
       properties:

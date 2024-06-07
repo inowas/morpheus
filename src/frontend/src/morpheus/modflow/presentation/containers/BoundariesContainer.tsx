@@ -25,7 +25,9 @@ const BoundariesContainer = () => {
     boundaries,
     onAddBoundary,
     onCloneBoundary,
+    onCloneBoundaryObservation,
     onRemoveBoundary,
+    onRemoveBoundaryObservation,
     onUpdateBoundaryAffectedLayers,
     onUpdateBoundaryGeometry,
     onUpdateBoundaryMetadata,
@@ -119,9 +121,11 @@ const BoundariesContainer = () => {
               selectedBoundaryAndObservation={selectedBoundaryAndObservation}
               onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
               onCloneBoundary={onCloneBoundary}
+              onCloneBoundaryObservation={onCloneBoundaryObservation}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onRemoveBoundary={onRemoveBoundary}
+              onRemoveBoundaryObservation={onRemoveBoundaryObservation}
               onUpdateBoundaryObservation={onUpdateBoundaryObservation}
               timeDiscretization={timeDiscretization}
             />

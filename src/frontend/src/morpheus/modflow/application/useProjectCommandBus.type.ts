@@ -90,6 +90,16 @@ export interface ICloneModelBoundaryCommand {
   }
 }
 
+export interface ICloneModelBoundaryObservationCommand {
+  command_name: 'clone_model_boundary_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    observation_id: string;
+  }
+}
+
 export interface ICloneModelLayerCommand {
   command_name: 'clone_model_layer_command';
   payload: {
@@ -369,6 +379,7 @@ export interface IUpdateModelVersionDescriptionCommand {
 export type IModelCommand = IAddModelBoundaryCommand |
   IAddModelBoundaryObservationCommand |
   ICloneModelBoundaryCommand |
+  ICloneModelBoundaryObservationCommand |
   ICloneModelLayerCommand |
   ICreateModelCommand |
   ICreateModelLayerCommand |
