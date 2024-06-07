@@ -19,6 +19,7 @@ from .presentation.api.read.AssetReadRequestHandlers import ReadPreviewImageRequ
     ReadAssetDataRequestHandler
 from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadProjectEventLogRequestHandler
 from .presentation.api.write.AssetWriteRequestHandlers import UploadPreviewImageRequestHandler, DeletePreviewImageRequestHandler, UploadAssetRequestHandler
+from .types.boundaries.Boundary import BoundaryId
 from .types.layers.Layer import LayerPropertyName, LayerId
 from ..common.presentation.api.middleware.schema_validation import validate_request
 
@@ -128,10 +129,11 @@ def register_routes(blueprint: Blueprint):
         )
 
     @blueprint.route('/<project_id>/model/boundaries', methods=['GET'])
+    @blueprint.route('/<project_id>/model/boundaries/<boundary_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_boundaries(project_id: str):
-        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+    def project_model_get_boundaries(project_id: str, boundary_id: str | None = None):
+        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id), boundary_id=BoundaryId.try_from_str(boundary_id))
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

@@ -61,6 +61,9 @@ class Observation:
     def as_geojson(self):
         return self.geometry.as_geojson()
 
+    def clone(self):
+        return dataclasses.replace(self, observation_id=ObservationId.new())
+
     def with_updated_name(self, name: ObservationName):
         return dataclasses.replace(self, observation_name=name)
 

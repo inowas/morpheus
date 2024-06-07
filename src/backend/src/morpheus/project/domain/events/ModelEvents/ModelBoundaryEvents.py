@@ -402,3 +402,38 @@ class ModelBoundaryObservationUpdatedEvent(EventBase):
     @staticmethod
     def get_event_name() -> EventName:
         return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARY_OBSERVATION_UPDATED.to_str())
+
+
+class ModelBoundaryObservationGeometryRecalculatedEvent(EventBase):
+    @classmethod
+    def from_props(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId,
+                   observation_id: ObservationId, observation_geometry: Point, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'boundary_id': boundary_id.to_str(),
+                'observation_id': observation_id.to_str(),
+                'observation_geometry': observation_geometry.to_dict()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_boundary_id(self) -> BoundaryId:
+        return BoundaryId.from_str(self.payload['boundary_id'])
+
+    def get_observation_id(self) -> ObservationId:
+        return ObservationId.from_str(self.payload['observation_id'])
+
+    def get_observation_geometry(self) -> Point:
+        return Point.from_dict(self.payload['observation_geometry'])
+
+    @staticmethod
+    def get_event_name() -> EventName:
+        return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARY_OBSERVATION_GEOMETRY_RECALCULATED.to_str())

@@ -9,6 +9,15 @@ class Polygon:
     coordinates: list[list[tuple[float, float]]]
     type: Literal['Polygon'] = 'Polygon'
 
+    def __eq__(self, other):
+        return self.coordinates == other.coordinates and self.type == other.type
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        if str(obj['type']).lower() != 'Polygon'.lower():
+            raise ValueError('Geometry Type must be a Polygon')
+        return cls(coordinates=obj['coordinates'])
+
     def __geo_interface__(self):
         return {
             'type': self.type,
@@ -22,12 +31,6 @@ class Polygon:
     def bbox(self) -> list[list[float]]:
         shapely_polygon = ShapelyPolygon(self.coordinates[0])
         return list(shapely_polygon.bounds)
-
-    @classmethod
-    def from_dict(cls, obj: dict):
-        if str(obj['type']).lower() != 'Polygon'.lower():
-            raise ValueError('Geometry Type must be a Polygon')
-        return cls(coordinates=obj['coordinates'])
 
     def to_dict(self):
         return {

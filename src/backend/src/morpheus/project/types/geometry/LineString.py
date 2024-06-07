@@ -1,5 +1,8 @@
 import dataclasses
 from typing import Literal
+from shapely.geometry import LineString as ShapelyLineString, Point as ShapelyPoint
+
+from .Point import Point
 
 
 @dataclasses.dataclass
@@ -12,6 +15,9 @@ class LineString:
             'type': self.type,
             'coordinates': self.coordinates
         }
+
+    def __eq__(self, other):
+        return self.coordinates == other.coordinates and self.type == other.type
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -27,3 +33,10 @@ class LineString:
 
     def as_geojson(self):
         return self.__geo_interface__()
+
+    def nearest_point(self, point: Point) -> Point:
+        shapely_line = ShapelyLineString(self.coordinates)
+        shapely_point = ShapelyPoint(point.coordinates)
+        nearest_shapely_point_on_linestring = shapely_line.interpolate(shapely_line.project(shapely_point))
+        nearest_point = Point(coordinates=nearest_shapely_point_on_linestring.coords[0])
+        return nearest_point

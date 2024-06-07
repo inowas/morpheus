@@ -49,6 +49,7 @@ class ModelBoundaryEventName(StrEnum):
     MODEL_BOUNDARY_METADATA_UPDATED = 'Model Boundary Metadata Updated'
     MODEL_BOUNDARY_REMOVED = 'Model Boundary Removed'
     MODEL_BOUNDARY_OBSERVATION_ADDED = 'Model Boundary Observation Added'
+    MODEL_BOUNDARY_OBSERVATION_GEOMETRY_RECALCULATED = 'Model Boundary Observation Geometry Recalculated'
     MODEL_BOUNDARY_OBSERVATION_REMOVED = 'Model Boundary Observation Removed'
     MODEL_BOUNDARY_OBSERVATION_UPDATED = 'Model Boundary Observation Updated'
 

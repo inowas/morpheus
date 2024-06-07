@@ -9,7 +9,7 @@ from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryObservationRemovedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryObservationAddedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
@@ -18,7 +18,7 @@ from morpheus.project.types.boundaries.Boundary import BoundaryId
 from morpheus.project.types.boundaries.Observation import ObservationId
 
 
-class RemoveModelBoundaryObservationCommandPayload(TypedDict):
+class CloneModelBoundaryObservationCommandPayload(TypedDict):
     project_id: str
     model_id: str
     boundary_id: str
@@ -26,7 +26,7 @@ class RemoveModelBoundaryObservationCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class RemoveModelBoundaryObservationCommand(CommandBase):
+class CloneModelBoundaryObservationCommand(CommandBase):
     user_id: UserId
     project_id: ProjectId
     model_id: ModelId
@@ -34,7 +34,7 @@ class RemoveModelBoundaryObservationCommand(CommandBase):
     observation_id: ObservationId
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: RemoveModelBoundaryObservationCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: CloneModelBoundaryObservationCommandPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
@@ -44,37 +44,45 @@ class RemoveModelBoundaryObservationCommand(CommandBase):
         )
 
 
-class RemoveModelBoundaryObservationCommandHandler(CommandHandlerBase):
+class CloneModelBoundaryObservationCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: RemoveModelBoundaryObservationCommand):
+    def handle(command: CloneModelBoundaryObservationCommand):
         project_id = command.project_id
         user_id = command.user_id
         permissions = PermissionsReader().get_permissions(project_id=project_id)
 
         if not permissions.member_can_edit(user_id=user_id):
-            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to execute {command.command_name()} for {project_id.to_str()}')
+            raise InsufficientPermissionsException(
+                f'User {user_id.to_str()} does not have permission to execute {command.command_name()} for {project_id.to_str()}')
 
         model_reader = ModelReader()
         latest_model = model_reader.get_latest_model(project_id=project_id)
         if latest_model.model_id != command.model_id:
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
+        if not latest_model.boundaries.has_boundary(command.boundary_id):
+            raise ValueError(
+                f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+
         boundary = latest_model.boundaries.get_boundary(command.boundary_id)
         if boundary is None:
-            raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+            raise ValueError(
+                f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
-        observation = boundary.get_observation(command.observation_id)
+        observation = boundary.get_observation(observation_id=command.observation_id)
         if observation is None:
-            raise ValueError(f'Observation {command.observation_id.to_str()} does not exist in boundary {command.boundary_id.to_str()}')
+            raise ValueError(
+                f'Observation {command.observation_id.to_str()} does not exist in boundary {command.boundary_id.to_str()}'
+            )
 
-        if len(boundary.observations) == 1:
-            raise ValueError(f'Cannot remove last observation from boundary {command.boundary_id.to_str()}')
+        observation_clone = observation.clone()
+        boundary.with_added_observation(observation=observation_clone)
 
-        event = ModelBoundaryObservationRemovedEvent.from_props(
+        event = ModelBoundaryObservationAddedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
             boundary_id=command.boundary_id,
-            observation_id=command.observation_id,
+            observation=observation,
             occurred_at=DateTime.now()
         )
 

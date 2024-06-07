@@ -265,18 +265,22 @@ class BoundaryCollection:
     def add_boundary(self, boundary: Boundary) -> None:
         boundaries = list(self.boundaries)
         boundaries.append(boundary)
-        self.boundaries = boundaries
+        self.boundaries = sorted(boundaries, key=lambda b: b.name.to_lower())
 
     def with_added_boundary(self, boundary: Boundary):
         boundaries = list(self.boundaries)
         boundaries.append(boundary)
-        return dataclasses.replace(self, boundaries=boundaries)
+        sorted_boundaries = sorted(boundaries, key=lambda b: b.name.to_lower())
+        return dataclasses.replace(self, boundaries=sorted_boundaries)
 
     def update_boundary(self, update: Boundary):
-        self.boundaries = [boundary if boundary.boundary_id != update.boundary_id else update for boundary in self.boundaries]
+        updated_boundaries = [update if boundary.boundary_id == update.boundary_id else boundary for boundary in self.boundaries]
+        self.boundaries = sorted(updated_boundaries, key=lambda boundary: boundary.name.to_lower())
 
     def with_updated_boundary(self, update: Boundary):
-        return dataclasses.replace(self, boundaries=[boundary if boundary.boundary_id != update.boundary_id else update for boundary in self.boundaries])
+        updated_boundaries = [update if boundary.boundary_id == update.boundary_id else boundary for boundary in self.boundaries]
+        sorted_boundaries = sorted(updated_boundaries, key=lambda boundary: boundary.name.to_lower())
+        return dataclasses.replace(self, boundaries=sorted_boundaries)
 
     def with_added_or_updated_boundary(self, update: Boundary):
         if update.boundary_id in self.boundaries:

@@ -633,6 +633,42 @@ class ModelProjector(EventListenerBase):
 
         self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
+    @listen_to(ModelBoundaryEvents.ModelBoundaryObservationGeometryRecalculatedEvent)
+    def on_model_boundary_observation_geometry_recalculated(self, event: ModelBoundaryEvents.ModelBoundaryObservationGeometryRecalculatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        boundary_id = event.get_boundary_id()
+        observation_id = event.get_observation_id()
+        geometry = event.get_observation_geometry()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        boundaries = latest_model.boundaries
+        if boundaries is None:
+            return
+
+        boundary = boundaries.get_boundary(boundary_id=boundary_id)
+        if boundary is None:
+            return
+
+        observation = boundary.get_observation(observation_id=observation_id)
+        if observation is None:
+            return
+
+        updated_observation = observation.with_updated_geometry(geometry=geometry)
+        updated_boundary = boundary.with_updated_observation(observation_id=observation_id, update=updated_observation)
+
+        new_boundaries = boundaries.with_updated_boundary(update=updated_boundary)
+        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
     @listen_to(ModelBoundaryEvents.ModelBoundaryObservationRemovedEvent)
     def on_model_boundary_observation_removed(self, event: ModelBoundaryEvents.ModelBoundaryObservationRemovedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
