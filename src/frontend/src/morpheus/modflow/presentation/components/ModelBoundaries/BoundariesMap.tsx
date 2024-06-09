@@ -1,6 +1,6 @@
 import {L, LatLngExpression} from 'common/infrastructure/leafletWrapper';
 import React, {useEffect, useRef} from 'react';
-import hash from 'object-hash';
+import objectHash from 'object-hash';
 import {
   FeatureGroup,
   LayerGroup,
@@ -17,7 +17,6 @@ import {ISpatialDiscretization} from '../../../types';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservationId} from "../../../types/Boundaries.type";
 import {LineString, Point, Polygon} from "geojson";
 import {LeafletEventHandlerFnMap} from "leaflet";
-import objectHash from "object-hash";
 
 export interface ISelectedBoundary {
   boundary: IBoundary;
