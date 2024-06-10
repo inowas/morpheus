@@ -5,7 +5,7 @@ import styles from './Navbar.module.less';
 import useIsMobile from 'common/hooks/useIsMobile';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faGear} from '@fortawesome/free-solid-svg-icons';
-import {DropdownComponent} from 'common/components';
+import MenuDropdown from './MenuDropdown';
 
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;
@@ -118,7 +118,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
           >
             <span aria-hidden="true" className={styles.icon}></span>
           </button>}
-          <DropdownComponent.Dropdown
+          <MenuDropdown
             location={location}
             navigateTo={navigateTo}
             dropdown={dropdown}
