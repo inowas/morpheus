@@ -122,7 +122,7 @@ const SpatialDiscretizationContainer = () => {
     return null;
   }
 
-  if (!modelGeometry || !grid || !spatialDiscretization) {
+  if (!modelGeometry || !grid || !spatialDiscretization || !affectedCells) {
     return null;
   }
 
@@ -206,16 +206,10 @@ const SpatialDiscretizationContainer = () => {
       </SidebarContent>
       <BodyContent>
         <SpatialDiscretizationMap
+          affectedCells={affectedCells}
           editAffectedCells={'affected_cells' === editMode}
           affectedCellsGeometry={affectedCellsGeometry || undefined}
-          onChangeAffectedCell={(row: number, col: number, active: boolean) => {
-            if (!affectedCells) {
-              return;
-            }
-            const newAffectedCells = AffectedCells.fromObject(affectedCells);
-            newAffectedCells.setActive(row, col, active);
-            setAffectedCells(newAffectedCells.toObject() as IAffectedCells);
-          }}
+          onChangeAffectedCells={setAffectedCells}
           modelGeometry={modelGeometry}
           gridGeometry={gridGeometry || undefined}
           onChangeModelGeometry={(polygon: Polygon) => setModelGeometry(polygon)}

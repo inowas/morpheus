@@ -1,24 +1,19 @@
-import {L} from 'common/infrastructure/Leaflet';
+import React, {useEffect, useMemo, useState} from 'react';
 import * as turf from '@turf/turf';
-
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
-import {FeatureGroup, GeoJSON, Polygon as LeafletPolygon, useMap, useMapEvents} from 'react-leaflet';
-import {GeomanControls, Map} from 'common/components/Map';
+
+import {FeatureGroup, GeoJSON, useMap, useMapEvents} from 'common/infrastructure/React-Leaflet';
+import {Map} from 'common/components/Map';
 import cloneDeep from 'lodash.clonedeep';
 import {AffectedCells, IAffectedCells} from "../../../types";
 
 
 interface IProps {
   affectedCells: IAffectedCells;
-  editAffectedCells?: boolean
-  affectedCellsGeometry?: Feature<Polygon | MultiPolygon>;
-  onChangeAffectedCells?: (affectedCells: IAffectedCells) => void;
-  gridGeometry?: FeatureCollection
-  editModelGeometry?: boolean
-  modelGeometry?: Polygon
-  onChangeModelGeometry?: (polygon: Polygon) => void
+  affectedCellsGeometry: Feature<Polygon | MultiPolygon>;
+  editAffectedCells: boolean;
+  gridGeometry: FeatureCollection;
+  onChangeAffectedCells: (affectedCells: IAffectedCells) => void;
 }
 
 const emptyFeatureCollection: FeatureCollection = {
@@ -28,15 +23,12 @@ const emptyFeatureCollection: FeatureCollection = {
 
 const SpatialDiscretizationMap = ({
                                     affectedCells,
-                                    editAffectedCells,
                                     affectedCellsGeometry,
+                                    editAffectedCells,
                                     gridGeometry,
-                                    modelGeometry,
-                                    onChangeModelGeometry,
-                                    editModelGeometry,
                                     onChangeAffectedCells,
                                   }: IProps) => {
-  const editModelGeometryRef = useRef<L.FeatureGroup>(L.featureGroup());
+
   const map = useMap();
 
   const [newActiveCellGeometries, setNewActiveCellGeometries] = useState<FeatureCollection>(emptyFeatureCollection);
@@ -76,10 +68,9 @@ const SpatialDiscretizationMap = ({
   }, [affectedCellsGeometry, gridGeometry]);
 
   const handleChangeAffectedCell = (row: number, col: number, active: boolean) => {
-    if (!onChangeAffectedCells || !affectedCells) {
+    if (!affectedCells) {
       return;
     }
-
     const newAffectedCells = AffectedCells.fromObject(affectedCells);
     newAffectedCells.setActive(row, col, active);
     onChangeAffectedCells(newAffectedCells.toObject() as IAffectedCells);
@@ -87,14 +78,6 @@ const SpatialDiscretizationMap = ({
 
   useMapEvents({
     click: function (e) {
-
-      if (editModelGeometry) {
-        return;
-      }
-
-      if (!editAffectedCells) {
-        return;
-      }
 
       if (!affectedCellsGeometry || !gridGeometry || !onChangeAffectedCells) {
         return;
@@ -187,85 +170,8 @@ const SpatialDiscretizationMap = ({
     },
   });
 
-  useEffect(() => {
-    if (!modelGeometry) {
-      return;
-    }
-
-    const layer = L.geoJSON(modelGeometry);
-    map.fitBounds(layer.getBounds());
-  }, [modelGeometry]);
-
-  const handleChange = () => {
-    const featureGroup = editModelGeometryRef.current as L.FeatureGroup;
-    const layers = featureGroup.getLayers();
-
-    if (0 === layers.length) {
-      return;
-    }
-
-    if (1 < layers.length) {
-      throw new Error('More than one layer in FeatureGroup');
-    }
-
-    const layer = layers[0] as L.Layer;
-    if (layer instanceof L.Polygon) {
-      const feature = layer.toGeoJSON();
-      if (feature.geometry && 'Polygon' === feature.geometry.type) {
-        if (onChangeModelGeometry) {
-          onChangeModelGeometry(feature.geometry);
-          map.fitBounds(layer.getBounds());
-        }
-      }
-    }
-  };
-
-  const showGeometryOnly = !editModelGeometry && !editAffectedCells;
-
   return (
     <>
-      <FeatureGroup ref={editModelGeometryRef}>
-        {editModelGeometry && <GeomanControls
-          key={modelGeometry ? 'edit_controls' : 'create_controls'}
-          options={{
-            position: 'topleft',
-            drawText: false,
-            drawMarker: false,
-            drawCircle: false,
-            cutPolygon: false,
-            drawRectangle: false,
-            drawPolygon: !modelGeometry,
-            drawCircleMarker: false,
-            drawPolyline: false,
-            editMode: !!modelGeometry,
-            removalMode: false,
-          }}
-          globalOptions={{
-            continueDrawing: false,
-            editable: true,
-            draggable: true,
-          }}
-          //onMount={() => L.PM.setOptIn(false)}
-          //onUnmount={() => L.PM.setOptIn(true)}
-          onUpdate={handleChange}
-        />}
-        {modelGeometry && <LeafletPolygon
-          key={editModelGeometry ? 'edit_geometry' : 'view_geometry'}
-          positions={modelGeometry.coordinates[0].map((c) => [c[1], c[0]])}
-          fill={showGeometryOnly}
-          weight={(editModelGeometry || showGeometryOnly) ? 2 : 1}
-          opacity={(editModelGeometry) ? 1 : 0.5}
-        />}
-      </FeatureGroup>
-
-      <FeatureGroup>
-        {gridGeometry && <GeoJSON
-          key={JSON.stringify(gridGeometry)}
-          data={gridGeometry}
-          style={{fill: false, color: 'grey', weight: 0.5, opacity: editModelGeometry ? 0.1 : 0.5}}
-          pmIgnore={true}
-        />}
-      </FeatureGroup>
 
       <FeatureGroup>
         {affectedCellsLayerGeometry && <GeoJSON

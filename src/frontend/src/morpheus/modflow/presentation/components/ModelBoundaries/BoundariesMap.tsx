@@ -1,4 +1,4 @@
-import {L, LatLngExpression} from 'common/infrastructure/leafletWrapper';
+import {L, LatLngExpression} from 'common/infrastructure/Leaflet';
 import React, {useEffect, useRef} from 'react';
 import objectHash from 'object-hash';
 import {

@@ -30,12 +30,12 @@ class ActiveCell:
     @classmethod
     def from_tuple(cls, obj: tuple):
         return cls(
-            col=obj[0],
-            row=obj[1],
+            col=obj[1],
+            row=obj[0],
         )
 
     def to_tuple(self):
-        return self.col, self.row
+        return self.row, self.col
 
 
 @dataclasses.dataclass
@@ -180,7 +180,8 @@ class ActiveCells:
         if obj['type'] == 'sparse_inverse':
             raster_data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
             for cell in obj['data']:
-                raster_data[cell[1], cell[0]] = False
+                row, col = cell
+                raster_data[row, col] = False
 
             grid_cells = []
             for row in range(obj['shape'][0]):
