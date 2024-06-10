@@ -3,6 +3,7 @@ from typing import Type
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
+from morpheus.project.domain.events.CalculationEvents import get_calculation_event_list
 from morpheus.project.domain.events.ModelEvents import get_model_event_list
 from morpheus.project.domain.events.ProjectEvents import get_project_event_list
 from morpheus.project.domain.events.ProjectPermissionEvents import get_project_permissions_event_list
@@ -37,6 +38,8 @@ class ProjectEventFactory:
 
 event_registry = EventRegistry()
 
+for event in get_calculation_event_list():
+    event_registry.register_event(event)
 for event in get_model_event_list():
     event_registry.register_event(event)
 for event in get_project_event_list():

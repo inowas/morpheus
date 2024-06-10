@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 import {ISidebarMenuItem, SidebarMenu} from 'common/components/SidebarMenu';
-import {sidebarItems} from '../helpers/sidebarMenu';
+import {getSidebarItems} from '../helpers/sidebarMenu';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer} from '../components';
 import {Navbar} from 'common/components';
@@ -29,13 +29,13 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
 
   const {error, state} = useModel(projectId);
 
-  const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => sidebarItems.map((item) => ({
+  const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => getSidebarItems(basePath, section).map((item) => ({
     ...item,
     isActive: item.slug == property,
     onClick: () => navigate(`${basePath}/${projectId}/${section}/${item.slug}`),
     isDisabled: !(item.component || item.isTitle),
     // eslint-disable-next-line
-  })), [sidebarItems, projectId, property]);
+  })), [projectId, property]);
 
   const redirectToSpatialDiscretization = () => <Navigate to={`${basePath}/${projectId}/model/spatial-discretization`}/>;
 

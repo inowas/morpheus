@@ -1,34 +1,96 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import {BoundariesContent} from '../components/BoundariesLayers';
 import {useParams} from 'react-router-dom';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
-import useProjectPermissions from '../../application/useProjectPermissions';
 import {IMapRef, LeafletMapProvider} from 'common/components/Map';
-import BoundariesMap from '../components/ModelBoundaries/BoundariesMap';
 import {DataGrid, SearchInput, SectionTitle} from 'common/components';
-import useBoundaries from '../../application/useBoundaries';
-import {IBoundaryType} from '../../types/Boundaries.type';
 
+import useBoundaries from '../../application/useBoundaries';
+import useLayers from "../../application/useLayers";
+import useProjectPermissions from '../../application/useProjectPermissions';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
+
+import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
+import {BoundariesMap} from '../components/ModelBoundaries';
+import BoundariesAccordion from "../components/ModelBoundaries/BoundariesAccordion";
+import {useDateTimeFormat} from "../../../../common/hooks";
+import {useTimeDiscretization} from "../../application";
+import {LineString, Point, Polygon} from "geojson";
 
 const BoundariesContainer = () => {
+  const {projectId, propertyId: boundaryId} = useParams();
 
-  const {projectId} = useParams();
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
-  const {boundaries, onAddBoundary} = useBoundaries(projectId as string);
+  const {timeDiscretization} = useTimeDiscretization(projectId as string);
+  const {
+    boundaries,
+    onAddBoundary,
+    onCloneBoundary,
+    onCloneBoundaryObservation,
+    onRemoveBoundary,
+    onRemoveBoundaryObservation,
+    onUpdateBoundaryAffectedLayers,
+    onUpdateBoundaryGeometry,
+    onUpdateBoundaryMetadata,
+    onUpdateBoundaryObservation
+  } = useBoundaries(projectId as string);
+  const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
+
   const mapRef: IMapRef = useRef(null);
 
-  const [addBoundary, setAddBoundary] = useState<IBoundaryType | null>(null);
+  const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
+  const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
-  if (!spatialDiscretization || !boundaries) {
+
+  useEffect(() => {
+    if (!boundaries.length) {
+      return;
+    }
+
+    if (!boundaryId) {
+      const boundary = boundaries[0];
+      setSelectedBoundaryAndObservation({
+        boundary,
+        observationId: boundary.observations[0].observation_id
+      });
+    }
+
+    if (boundaryId && selectedBoundaryAndObservation?.boundary.id !== boundaryId) {
+      const boundary = boundaries.find((b) => b.id === boundaryId);
+      if (boundary) {
+        return setSelectedBoundaryAndObservation({
+          boundary,
+          observationId: boundary.observations[0].observation_id
+        });
+      }
+    }
+
+  }, [boundaryId, boundaries]);
+
+  if (!spatialDiscretization || !boundaries || !layers || !timeDiscretization) {
     return null;
   }
 
-  const handleAddBoundary = (type: IBoundaryType, geometry: any) => {
-    onAddBoundary(type, geometry);
-    setAddBoundary(null);
-  };
+  const handleAddBoundary = async (type: IBoundaryType, geometry: any) => {
+    await onAddBoundary(type, geometry);
+    setAddBoundaryOnMap(null)
+  }
+
+  const handleChangeBoundaryGeometry = async (boundaryId: IBoundaryId, geometry: Point | LineString | Polygon) => {
+    await onUpdateBoundaryGeometry(boundaryId, geometry);
+  }
+
+  const handleChangeBoundaryObservationGeometry = async (boundaryId: IBoundaryId, observationId: IObservationId, geometry: Point) => {
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (!boundary) {
+      return;
+    }
+    const observation = boundary.observations.find((o) => o.observation_id === observationId);
+    if (!observation) {
+      return;
+    }
+    await onUpdateBoundaryObservation(boundaryId, boundary.type, {...observation, geometry});
+  }
 
   return (
     <>
@@ -38,31 +100,49 @@ const BoundariesContainer = () => {
           <SearchInput
             dropDownText={'Add new boundary'}
             dropdownItems={[
-              {text: 'Constant head', action: () => setAddBoundary('constant_head')},
-              {text: 'Drain', action: () => setAddBoundary('drain')},
-              {text: 'Evapotranspiration', action: () => setAddBoundary('evapotranspiration')},
-              {text: 'Flow and head', action: () => setAddBoundary('flow_and_head')},
-              {text: 'General head', action: () => setAddBoundary('general_head')},
-              {text: 'Lake', action: () => setAddBoundary('lake')},
-              {text: 'Recharge', action: () => setAddBoundary('recharge')},
-              {text: 'River', action: () => setAddBoundary('river')},
-              {text: 'Well', action: () => setAddBoundary('well')},
+              {text: 'Constant head', action: () => setAddBoundaryOnMap('constant_head')},
+              {text: 'Drain', action: () => setAddBoundaryOnMap('drain')},
+              {text: 'Evapotranspiration', action: () => setAddBoundaryOnMap('evapotranspiration')},
+              {text: 'Flow and head', action: () => setAddBoundaryOnMap('flow_and_head')},
+              {text: 'General head', action: () => setAddBoundaryOnMap('general_head')},
+              {text: 'Lake', action: () => setAddBoundaryOnMap('lake')},
+              {text: 'Recharge', action: () => setAddBoundaryOnMap('recharge')},
+              {text: 'River', action: () => setAddBoundaryOnMap('river')},
+              {text: 'Well', action: () => setAddBoundaryOnMap('well')},
             ]}
             onChangeSearch={(search) => console.log(search)}
             searchPlaceholder={'Search boundaries'}
             isReadOnly={isReadOnly}
           />
           <LeafletMapProvider mapRef={mapRef}>
-            <BoundariesContent/>
+            <BoundariesAccordion
+              boundaries={boundaries}
+              layers={layers}
+              selectedBoundaryAndObservation={selectedBoundaryAndObservation}
+              onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
+              onCloneBoundary={onCloneBoundary}
+              onCloneBoundaryObservation={onCloneBoundaryObservation}
+              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
+              onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+              onRemoveBoundary={onRemoveBoundary}
+              onRemoveBoundaryObservation={onRemoveBoundaryObservation}
+              onUpdateBoundaryObservation={onUpdateBoundaryObservation}
+              timeDiscretization={timeDiscretization}
+            />
           </LeafletMapProvider>
         </DataGrid>
       </SidebarContent>
       <BodyContent>
         <BoundariesMap
+          boundaries={boundaries}
           spatialDiscretization={spatialDiscretization}
-          mapRef={mapRef}
-          addBoundary={addBoundary}
+          addBoundary={addBoundaryOnMap}
           onAddBoundary={handleAddBoundary}
+          onChangeBoundaryGeometry={handleChangeBoundaryGeometry}
+          onChangeBoundaryObservationGeometry={handleChangeBoundaryObservationGeometry}
+          mapRef={mapRef}
+          selectedBoundary={selectedBoundaryAndObservation}
+          isReadOnly={isReadOnly}
         />
       </BodyContent>
     </>

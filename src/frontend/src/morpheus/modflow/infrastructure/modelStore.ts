@@ -51,6 +51,16 @@ export const modelSlice = createSlice({
         state.model.boundaries = action.payload;
       }
     },
+    updateBoundary: (state, action: PayloadAction<IBoundary>) => {
+      if (state.model) {
+        state.model.boundaries = state.model.boundaries.map((b) => {
+          if (b.id === action.payload.id) {
+            return action.payload;
+          }
+          return b;
+        });
+      }
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
       if (action.payload) {
@@ -80,6 +90,7 @@ export const {
   setBoundaries,
   setLoading,
   setError,
+  updateBoundary,
 } = modelSlice.actions;
 
 export default modelSlice.reducer;

@@ -1,3 +1,3 @@
-import {AccordionRef as Accordion, AccordionItem} from './Accordion';
+import {Accordion as Accordion, AccordionItem} from './Accordion';
 
 export {Accordion, AccordionItem};

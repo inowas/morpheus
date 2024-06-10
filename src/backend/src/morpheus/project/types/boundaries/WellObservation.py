@@ -71,9 +71,9 @@ class WellObservation(Observation):
     data: Sequence[WellRawDataItem]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: Sequence[WellRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: Sequence[WellRawDataItem], observation_id: ObservationId | None = None):
         return cls(
-            observation_id=ObservationId.new(),
+            observation_id=observation_id or ObservationId.new(),
             observation_name=name,
             geometry=geometry,
             data=data

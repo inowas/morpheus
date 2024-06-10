@@ -1,0 +1,30 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for Calculation Commands
+definitions:
+  CalculationCommands:
+    oneOf:
+      - "$ref": "#/definitions/StartCalculationCommand"
+  StartCalculationCommand:
+    type: object
+    properties:
+      command_name:
+        type: string
+        enum:
+          - start_calculation_command
+        example: start_calculation_command
+      payload:
+        type: object
+        properties:
+          project_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          model_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          calculation_profile_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+        required:
+          - project_id
+          - model_id

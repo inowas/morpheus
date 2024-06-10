@@ -91,9 +91,9 @@ class EvapotranspirationObservation(Observation):
     data: list[EvapotranspirationRawDataItem]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[EvapotranspirationRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: list[EvapotranspirationRawDataItem], observation_id: ObservationId | None = None):
         return cls(
-            observation_id=ObservationId.new(),
+            observation_id=observation_id or ObservationId.new(),
             observation_name=name,
             geometry=geometry,
             data=data

@@ -26,14 +26,14 @@ const emptyFeatureCollection: FeatureCollection = {
 };
 
 const SpatialDiscretizationMap = ({
-  editAffectedCells,
-  affectedCellsGeometry,
-  gridGeometry,
-  modelGeometry,
-  onChangeModelGeometry,
-  editModelGeometry,
-  onChangeAffectedCell,
-}: IProps) => {
+                                    editAffectedCells,
+                                    affectedCellsGeometry,
+                                    gridGeometry,
+                                    modelGeometry,
+                                    onChangeModelGeometry,
+                                    editModelGeometry,
+                                    onChangeAffectedCell,
+                                  }: IProps) => {
   const editModelGeometryRef = useRef<L.FeatureGroup>(L.featureGroup());
   const map = useMap();
 
@@ -295,7 +295,7 @@ const SpatialDiscretizationMap = ({
 
 const MapWrapper = (props: IProps) => (
   <Map>
-    <SpatialDiscretizationMap{...props} />
+    <SpatialDiscretizationMap {...props} />
   </Map>
 );
 

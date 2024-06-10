@@ -47,13 +47,13 @@ class CalculationService:
                 calculation_profile=self.calculation.calculation_profile
             )
 
-            self.calculation.set_new_state(CalculationState.FINISHED)
+            self.calculation.set_new_state(CalculationState.COMPLETED)
             self.calculation.set_log(log)
             self.calculation.set_result(result)
             calculation_repository.update_calculation(self.calculation)
         except Exception as e:
             self.calculation.append_to_log(str(e))
-            self.calculation.set_new_state(CalculationState.ERROR)
+            self.calculation.set_new_state(CalculationState.FAILED)
             calculation_repository.update_calculation(self.calculation)
 
     def get_result(self):
