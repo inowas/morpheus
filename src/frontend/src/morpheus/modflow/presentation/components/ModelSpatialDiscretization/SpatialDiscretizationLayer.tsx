@@ -7,13 +7,14 @@ import {GeomanControls} from 'common/components/Map';
 
 
 interface IProps {
-  modelGeometry: Polygon;
-  onChangeModelGeometry: (polygon: Polygon) => void;
+  modelGeometry?: Polygon;
+  onChangeModelGeometry?: (polygon: Polygon) => void;
   editModelGeometry: boolean;
+  fill?: boolean;
 }
 
 
-const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editModelGeometry}: IProps) => {
+const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editModelGeometry, fill}: IProps) => {
 
   const editModelGeometryRef = useRef<L.FeatureGroup>(L.featureGroup());
   const map = useMap();
@@ -52,8 +53,6 @@ const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editM
     }
   };
 
-  const showGeometryOnly = !editModelGeometry;
-
   return (
     <>
       <FeatureGroup ref={editModelGeometryRef}>
@@ -82,9 +81,10 @@ const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editM
         {modelGeometry && <LeafletPolygon
           key={editModelGeometry ? 'edit_geometry' : 'view_geometry'}
           positions={modelGeometry.coordinates[0].map((c) => [c[1], c[0]])}
-          fill={showGeometryOnly}
-          weight={(editModelGeometry || showGeometryOnly) ? 2 : 1}
-          opacity={(editModelGeometry) ? 1 : 0.5}
+          fill={fill}
+          weight={editModelGeometry ? 2 : 1}
+          opacity={editModelGeometry ? 1 : 0.5}
+          pmIgnore={!editModelGeometry}
         />}
       </FeatureGroup>
     </>

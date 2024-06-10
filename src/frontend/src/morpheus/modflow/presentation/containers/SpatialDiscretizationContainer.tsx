@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
-import SpatialDiscretizationMap from '../components/ModelSpatialDiscretization/SpatialDiscretizationMap';
 import {useParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
@@ -15,6 +14,9 @@ import {Header, MenuItem} from 'semantic-ui-react';
 import ModelAffectedCells from '../components/ModelSpatialDiscretization/ModelAffectedCells';
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import useProjectPermissions from '../../application/useProjectPermissions';
+import {Map} from 'common/components/Map';
+import SpatialDiscretizationLayer from "../components/ModelSpatialDiscretization/SpatialDiscretizationLayer";
+import AffectedCellsLayer from "../components/ModelSpatialDiscretization/AffectedCellsLayer";
 
 
 const SpatialDiscretizationContainer = () => {
@@ -205,16 +207,20 @@ const SpatialDiscretizationContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <SpatialDiscretizationMap
-          affectedCells={affectedCells}
-          editAffectedCells={'affected_cells' === editMode}
-          affectedCellsGeometry={affectedCellsGeometry || undefined}
-          onChangeAffectedCells={setAffectedCells}
-          modelGeometry={modelGeometry}
-          gridGeometry={gridGeometry || undefined}
-          onChangeModelGeometry={(polygon: Polygon) => setModelGeometry(polygon)}
-          editModelGeometry={'geometry' === editMode}
-        />
+        <Map>
+          <SpatialDiscretizationLayer
+            modelGeometry={modelGeometry}
+            onChangeModelGeometry={setModelGeometry}
+            editModelGeometry={'geometry' === editMode}
+          />
+          <AffectedCellsLayer
+            affectedCells={affectedCells}
+            affectedCellsGeometry={affectedCellsGeometry || undefined}
+            editAffectedCells={'affected_cells' === editMode}
+            gridGeometry={gridGeometry || undefined}
+            onChangeAffectedCells={setAffectedCells}
+          />
+        </Map>
       </BodyContent>
     </>
   );

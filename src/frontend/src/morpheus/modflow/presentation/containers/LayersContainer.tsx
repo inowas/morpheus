@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import {Icon, MenuItem} from 'semantic-ui-react';
 import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
-import {IMapRef, LeafletMapProvider} from 'common/components/Map';
+import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 
 import useLayers from '../../application/useLayers';
 import useProjectPermissions from '../../application/useProjectPermissions';
@@ -10,7 +10,8 @@ import useSpatialDiscretization from '../../application/useSpatialDiscretization
 
 import {BodyContent, SidebarContent} from '../components';
 import LayersList from '../components/ModelLayers/LayersList';
-import LayersMap from '../components/ModelLayers/LayersMap';
+import SpatialDiscretizationLayer from "../components/ModelSpatialDiscretization/SpatialDiscretizationLayer";
+import {MapRef} from "../../../../common/components/Map/Map";
 
 
 const LayersContainer = () => {
@@ -71,7 +72,10 @@ const LayersContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <LayersMap spatialDiscretization={spatialDiscretization} mapRef={mapRef}/>
+        <Map>
+          <MapRef mapRef={mapRef}/>
+          <SpatialDiscretizationLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+        </Map>
       </BodyContent>
     </>
   );

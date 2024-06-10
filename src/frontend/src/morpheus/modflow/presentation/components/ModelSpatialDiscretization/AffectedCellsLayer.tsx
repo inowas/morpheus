@@ -3,16 +3,15 @@ import * as turf from '@turf/turf';
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 
 import {FeatureGroup, GeoJSON, useMap, useMapEvents} from 'common/infrastructure/React-Leaflet';
-import {Map} from 'common/components/Map';
 import cloneDeep from 'lodash.clonedeep';
 import {AffectedCells, IAffectedCells} from "../../../types";
 
 
 interface IProps {
   affectedCells: IAffectedCells;
-  affectedCellsGeometry: Feature<Polygon | MultiPolygon>;
   editAffectedCells: boolean;
-  gridGeometry: FeatureCollection;
+  affectedCellsGeometry?: Feature<Polygon | MultiPolygon>;
+  gridGeometry?: FeatureCollection;
   onChangeAffectedCells: (affectedCells: IAffectedCells) => void;
 }
 
@@ -21,13 +20,13 @@ const emptyFeatureCollection: FeatureCollection = {
   features: [],
 };
 
-const SpatialDiscretizationMap = ({
-                                    affectedCells,
-                                    affectedCellsGeometry,
-                                    editAffectedCells,
-                                    gridGeometry,
-                                    onChangeAffectedCells,
-                                  }: IProps) => {
+const AffectedCellsLayer = ({
+                              affectedCells,
+                              affectedCellsGeometry,
+                              editAffectedCells,
+                              gridGeometry,
+                              onChangeAffectedCells,
+                            }: IProps) => {
 
   const map = useMap();
 
@@ -79,7 +78,7 @@ const SpatialDiscretizationMap = ({
   useMapEvents({
     click: function (e) {
 
-      if (!affectedCellsGeometry || !gridGeometry || !onChangeAffectedCells) {
+      if (!affectedCellsGeometry || !gridGeometry || !editAffectedCells) {
         return;
       }
 
@@ -172,7 +171,14 @@ const SpatialDiscretizationMap = ({
 
   return (
     <>
-
+      <FeatureGroup>
+        {gridGeometry && <GeoJSON
+          key={JSON.stringify(gridGeometry)}
+          data={gridGeometry}
+          style={{fill: false, color: 'grey', weight: 0.5, opacity: editAffectedCells ? 0.5 : 0.1}}
+          pmIgnore={true}
+        />}
+      </FeatureGroup>
       <FeatureGroup>
         {affectedCellsLayerGeometry && <GeoJSON
           key={JSON.stringify(affectedCellsLayerGeometry)}
@@ -211,11 +217,4 @@ const SpatialDiscretizationMap = ({
   );
 };
 
-const MapWrapper = (props: IProps) => (
-  <Map>
-    <SpatialDiscretizationMap {...props} />
-  </Map>
-);
-
-
-export default MapWrapper;
+export default AffectedCellsLayer;
