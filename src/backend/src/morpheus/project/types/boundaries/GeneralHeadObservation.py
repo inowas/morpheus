@@ -61,9 +61,9 @@ class GeneralHeadObservation(Observation):
     data: list[GeneralHeadRawDataItem]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[GeneralHeadRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: list[GeneralHeadRawDataItem], observation_id: ObservationId | None = None):
         return cls(
-            observation_id=ObservationId.new(),
+            observation_id=observation_id or ObservationId.new(),
             observation_name=name,
             geometry=geometry,
             data=data

@@ -1,6 +1,6 @@
-import {IBoundaries} from '../type/BoundariesContent.type';
+import {IBoundary} from "../../../../types/Boundaries.type";
 
-const getBoundariesByType = (boundaries: IBoundaries[], boundaryType?: string): IBoundaries[] => {
+const getBoundariesByType = (boundaries: IBoundary[], boundaryType?: string): IBoundary[] => {
   if (!boundaries) {
     return boundaries;
   }

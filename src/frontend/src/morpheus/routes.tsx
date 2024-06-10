@@ -37,7 +37,7 @@ const Router = () => {
       <Route path="/projects" element={wrapPrivateComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>
       <Route path="/projects/:projectId" element={wrapPrivateComponent(<ProjectPage basePath={'/projects'}/>, true)}/>
       <Route
-        path="/projects/:projectId/model/:property?/:propertyId?"
+        path="/projects/:projectId/model/:property?/:propertyId?/:subProperty?/:subPropertyId?"
         element={wrapPrivateComponent(<ProjectBaseModelPage basePath={'/projects'} section={'model'}/>, true)}
       />
       <Route

@@ -26,7 +26,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
   const [firstRowIsHeader, setFirstRowIsHeader] = useState<boolean>(true);
   const [stressPeriods, setStressPeriods] = useState<IStressPeriod[] | null>(null);
 
-  const {format, isValid, parseUserInput} = useDateTimeFormat(timeZone);
+  const {formatDate, isValid, parseUserInput} = useDateTimeFormat(timeZone);
 
   useEffect(() => {
     const parsedData: IStressPeriod[] = [];
@@ -47,7 +47,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
           const value = rawDataRow[colIdx];
           const parsedDate = parseUserInput(value, dateTimeFormat);
           if (isValid(parsedDate)) {
-            parsedDataRow[column.value] = format(parsedDate, dateTimeFormat);
+            parsedDataRow[column.value] = formatDate(parsedDate, dateTimeFormat);
           } else {
             parsedDataRow[column.value] = column.default;
           }
@@ -283,10 +283,10 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
                 style={{backgroundColor: 'white', padding: '5px 10px'}}
                 value={dateTimeFormat}
                 options={[
-                  {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
-                  {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
-                  {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
-                  {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
+                  {key: 0, value: 'yyyy-MM-dd', text: formatDate(new Date().toISOString(), 'yyyy-MM-dd')},
+                  {key: 1, value: 'yyyy/MM/dd', text: formatDate(new Date().toISOString(), 'yyyy/MM/dd')},
+                  {key: 2, value: 'yyyyMMdd', text: formatDate(new Date().toISOString(), 'yyyyMMdd')},
+                  {key: 3, value: 'dd.MM.yyyy', text: formatDate(new Date().toISOString(), 'dd.MM.yyyy')},
                 ]}
                 onChange={(e, d) => setDateTimeFormat(d.value as string)}
               />

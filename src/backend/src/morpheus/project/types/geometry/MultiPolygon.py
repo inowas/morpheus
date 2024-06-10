@@ -9,6 +9,9 @@ class MultiPolygon:
     coordinates: list[list[list[tuple[float, float]]]]
     type: Literal['MultiPolygon'] = 'MultiPolygon'
 
+    def __eq__(self, other):
+        return self.coordinates == other.coordinates and self.type == other.type
+
     def __geo_interface__(self):
         return {
             'type': self.type,
