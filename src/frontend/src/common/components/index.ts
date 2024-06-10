@@ -20,7 +20,7 @@ import Button from './Button/Button';
 import ChartModal from './ChartModal';
 import Container from './Container/Container';
 import Divider from './Divider/Divider';
-import Dropdown from './Dropdown';
+import DropdownComponent from './Dropdown';
 import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
@@ -78,7 +78,7 @@ export {
   DataRow,
   Divider,
   DotsMenu,
-  Dropdown,
+  DropdownComponent,
   Form,
   Header,
   HeaderWrapper,

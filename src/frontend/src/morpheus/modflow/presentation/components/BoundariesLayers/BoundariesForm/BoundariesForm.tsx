@@ -1,7 +1,7 @@
-import {DataGrid, DataRow} from 'common/components';
+import {DataGrid, DataRow, DropdownComponent} from 'common/components';
 
 import React, {useEffect, useState} from 'react';
-import {Dropdown, Form, Icon, Input, Label, Popup} from 'semantic-ui-react';
+import {Form, Icon, Input, Label, Popup} from 'semantic-ui-react';
 import {IBoundaries} from '../type/BoundariesContent.type';
 import {getBoundariesByType} from '../helpers/BoundariesContent.helpers';
 
@@ -64,7 +64,7 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
 
             Select Layer
           </Label>
-          <Dropdown
+          <DropdownComponent.Dropdown
             disabled={0 === listItems.length}
             name="selectedLayer"
             clearable={true}
@@ -156,7 +156,7 @@ const BoundariesForm = ({boundaries, type, selectedItems, onSelect, onSelectObse
 
             Tags
           </Label>
-          <Dropdown
+          <DropdownComponent.Dropdown
             disabled={0 === listItems.length}
             className="dropdownTags"
             name="tags"

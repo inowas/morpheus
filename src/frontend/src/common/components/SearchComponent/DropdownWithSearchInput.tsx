@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {Dropdown, DropdownItem, DropdownMenu, Search, SearchProps} from 'semantic-ui-react';
+import {Search, SearchProps} from 'semantic-ui-react';
 import styles from './DropdownWithSearchInput.module.less';
+import {DropdownComponent} from 'common/components';
 
 interface ISearchComponentProps {
   dropDownText: string;
@@ -20,22 +21,22 @@ const DropdownWithSearchInput = ({onChangeSearch, dropdownItems, dropDownText, s
 
   return (
     <div className={styles.searchWrapper}>
-      <Dropdown
+      <DropdownComponent.Dropdown
         data-testid='test-search-component'
         text={dropDownText}
         icon='plus'
-        floating
-        labeled
-        button
+        floating={true}
+        labeled={true}
+        button={true}
         className='icon'
         disabled={isReadOnly}
       >
-        <DropdownMenu>
+        <DropdownComponent.Menu>
           {dropdownItems.map((item, key) => (
-            <DropdownItem key={key} onClick={item.action}>{item.text}</DropdownItem>
+            <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
           ))}
-        </DropdownMenu>
-      </Dropdown>
+        </DropdownComponent.Menu>
+      </DropdownComponent.Dropdown>
       <Search
         icon={false}
         className={styles.search}
