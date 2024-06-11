@@ -307,13 +307,14 @@ class ModelBoundaryRemovedEvent(EventBase):
 
 class ModelBoundaryObservationAddedEvent(EventBase):
     @classmethod
-    def from_props(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, observation: Observation, occurred_at: DateTime):
+    def from_props(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, boundary_type: BoundaryType, observation: Observation, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
                 'model_id': model_id.to_str(),
                 'boundary_id': boundary_id.to_str(),
+                'boundary_type': boundary_type.to_str(),
                 'observation': observation.to_dict()
             }
         )
@@ -327,8 +328,11 @@ class ModelBoundaryObservationAddedEvent(EventBase):
     def get_boundary_id(self) -> BoundaryId:
         return BoundaryId.from_str(self.payload['boundary_id'])
 
+    def get_boundary_type(self) -> BoundaryType:
+        return BoundaryType.from_str(self.payload['boundary_type'])
+
     def get_observation(self) -> Observation:
-        return Observation.from_dict(self.payload['observation'])
+        return ObservationFactory.from_dict(boundary_type=self.get_boundary_type(), data=self.payload['observation'])
 
     @staticmethod
     def get_event_name() -> EventName:
