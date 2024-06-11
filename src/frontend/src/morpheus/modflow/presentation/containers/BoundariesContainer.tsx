@@ -2,22 +2,22 @@ import React, {useEffect, useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
-import {MapRef} from "common/components/Map/Map";
+import {MapRef} from 'common/components/Map/Map';
 import {DataGrid, SearchInput, SectionTitle} from 'common/components';
 
 import useBoundaries from '../../application/useBoundaries';
-import useLayers from "../../application/useLayers";
+import useLayers from '../../application/useLayers';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
-import BoundariesAccordion from "../components/ModelBoundaries/BoundariesAccordion";
-import {useTimeDiscretization} from "../../application";
-import {LineString, Point, Polygon} from "geojson";
-import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
-import BoundariesLayer from "../components/ModelBoundaries/BoundariesLayer";
-import DrawBoundaryLayer from "../components/ModelBoundaries/DrawBoundaryLayer";
-import BoundaryAffectedCellsMapLayer from "../components/ModelBoundaries/BoundaryAffectedCellsMapLayer";
+import BoundariesAccordion from '../components/ModelBoundaries/BoundariesAccordion';
+import {useTimeDiscretization} from '../../application';
+import {LineString, Point, Polygon} from 'geojson';
+import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+import BoundariesLayer from '../components/ModelBoundaries/BoundariesLayer';
+import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
+import BoundaryAffectedCellsMapLayer from '../components/ModelBoundaries/BoundaryAffectedCellsMapLayer';
 
 
 const BoundariesContainer = () => {
@@ -37,7 +37,7 @@ const BoundariesContainer = () => {
     onUpdateBoundaryAffectedLayers,
     onUpdateBoundaryGeometry,
     onUpdateBoundaryMetadata,
-    onUpdateBoundaryObservation
+    onUpdateBoundaryObservation,
   } = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
@@ -48,6 +48,11 @@ const BoundariesContainer = () => {
   const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
   useEffect(() => {
+    console.log(selectedBoundaryAndObservation);
+  }, [selectedBoundaryAndObservation]);
+
+
+  useEffect(() => {
     if (!boundaries.length) {
       return;
     }
@@ -56,7 +61,7 @@ const BoundariesContainer = () => {
       const boundary = boundaries[0];
       setSelectedBoundaryAndObservation({
         boundary,
-        observationId: boundary.observations[0].observation_id
+        observationId: boundary.observations[0].observation_id,
       });
     }
 
@@ -65,7 +70,7 @@ const BoundariesContainer = () => {
       if (boundary) {
         return setSelectedBoundaryAndObservation({
           boundary,
-          observationId: boundary.observations[0].observation_id
+          observationId: boundary.observations[0].observation_id,
         });
       }
     }
@@ -77,12 +82,12 @@ const BoundariesContainer = () => {
 
   const handleAddBoundary = async (type: IBoundaryType, geometry: any) => {
     await onAddBoundary(type, geometry);
-    setAddBoundaryOnMap(null)
-  }
+    setAddBoundaryOnMap(null);
+  };
 
   const handleChangeBoundaryGeometry = async (boundaryId: IBoundaryId, geometry: Point | LineString | Polygon) => {
     await onUpdateBoundaryGeometry(boundaryId, geometry);
-  }
+  };
 
   const handleChangeBoundaryObservationGeometry = async (boundaryId: IBoundaryId, observationId: IObservationId, geometry: Point) => {
     const boundary = boundaries.find((b) => b.id === boundaryId);
@@ -94,7 +99,7 @@ const BoundariesContainer = () => {
       return;
     }
     await onUpdateBoundaryObservation(boundaryId, boundary.type, {...observation, geometry});
-  }
+  };
 
   return (
     <>
@@ -147,7 +152,8 @@ const BoundariesContainer = () => {
             onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
             onChangeBoundaryGeometry={handleChangeBoundaryGeometry}
             onChangeBoundaryObservationGeometry={handleChangeBoundaryObservationGeometry}
-            isReadOnly={isReadOnly}/>
+            isReadOnly={isReadOnly}
+          />
           {selectedBoundaryAndObservation &&
             <BoundaryAffectedCellsMapLayer
               affectedCells={selectedBoundaryAndObservation.boundary.affected_cells}

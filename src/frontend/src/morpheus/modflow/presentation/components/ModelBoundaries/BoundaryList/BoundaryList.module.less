@@ -69,17 +69,17 @@
     }
 
     &.titleSelected {
-      width: 100%;
-      background-color: @ref-color-lightGrey;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.7);
     }
 
   }
 
   .titleInner {
-    width: calc(100% - 80px);
+    width: 100%;
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    padding-right: 10px;
+    height: 100%;
 
     & > [class*="checkbox"] {
       width: 15px;
@@ -91,6 +91,7 @@
   }
 
   .renameField {
+    width: 100%;
     display: flex;
     align-items: stretch;
 
@@ -141,7 +142,7 @@
         min-width: 12px;
         line-height: 12px;
         max-height: 12px;
-        margin-right: 5px;
+        margin-right: 10px;
 
         label:before {
           border-radius: 50%;

@@ -63,9 +63,6 @@ const BoundariesAccordion = ({
     onSelectBoundaryAndObservation({boundary: firstBoundary});
   };
 
-  console.log(panelDetails.findIndex((panel) => console.log(panel.active)));
-
-
   return (
     <Accordion
       defaultActiveIndex={panelDetails.findIndex((panel) => panel.active)}
