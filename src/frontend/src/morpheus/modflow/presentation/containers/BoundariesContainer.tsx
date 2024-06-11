@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
-import {IMapRef, LeafletMapProvider} from 'common/components/Map';
+import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
+import {MapRef} from "common/components/Map/Map";
 import {DataGrid, SearchInput, SectionTitle} from 'common/components';
 
 import useBoundaries from '../../application/useBoundaries';
@@ -10,24 +11,29 @@ import useProjectPermissions from '../../application/useProjectPermissions';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
-import {BoundariesMap} from '../components/ModelBoundaries';
 import BoundariesAccordion from "../components/ModelBoundaries/BoundariesAccordion";
-import {useDateTimeFormat} from "../../../../common/hooks";
 import {useTimeDiscretization} from "../../application";
 import {LineString, Point, Polygon} from "geojson";
+import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
+import BoundariesLayer from "../components/ModelBoundaries/BoundariesLayer";
+import DrawBoundaryLayer from "../components/ModelBoundaries/DrawBoundaryLayer";
+import BoundaryAffectedCellsMapLayer from "../components/ModelBoundaries/BoundaryAffectedCellsMapLayer";
+
 
 const BoundariesContainer = () => {
   const {projectId, propertyId: boundaryId} = useParams();
 
-  const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
+  const {spatialDiscretization, fetchGridGeometry} = useSpatialDiscretization(projectId as string);
   const {timeDiscretization} = useTimeDiscretization(projectId as string);
   const {
     boundaries,
+    fetchAffectedCellsGeometry,
     onAddBoundary,
     onCloneBoundary,
     onCloneBoundaryObservation,
     onRemoveBoundary,
     onRemoveBoundaryObservation,
+    onUpdateBoundaryAffectedCells,
     onUpdateBoundaryAffectedLayers,
     onUpdateBoundaryGeometry,
     onUpdateBoundaryMetadata,
@@ -40,7 +46,6 @@ const BoundariesContainer = () => {
 
   const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
   const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
-
 
   useEffect(() => {
     if (!boundaries.length) {
@@ -64,7 +69,6 @@ const BoundariesContainer = () => {
         });
       }
     }
-
   }, [boundaryId, boundaries]);
 
   if (!spatialDiscretization || !boundaries || !layers || !timeDiscretization) {
@@ -133,17 +137,26 @@ const BoundariesContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <BoundariesMap
-          boundaries={boundaries}
-          spatialDiscretization={spatialDiscretization}
-          addBoundary={addBoundaryOnMap}
-          onAddBoundary={handleAddBoundary}
-          onChangeBoundaryGeometry={handleChangeBoundaryGeometry}
-          onChangeBoundaryObservationGeometry={handleChangeBoundaryObservationGeometry}
-          mapRef={mapRef}
-          selectedBoundary={selectedBoundaryAndObservation}
-          isReadOnly={isReadOnly}
-        />
+        <Map>
+          <MapRef mapRef={mapRef}/>;
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry}/>
+          <DrawBoundaryLayer boundaryType={addBoundaryOnMap} onAddBoundary={handleAddBoundary}/>
+          <BoundariesLayer
+            boundaries={boundaries}
+            selectedBoundaryAndObservation={selectedBoundaryAndObservation}
+            onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
+            onChangeBoundaryGeometry={handleChangeBoundaryGeometry}
+            onChangeBoundaryObservationGeometry={handleChangeBoundaryObservationGeometry}
+            isReadOnly={isReadOnly}/>
+          {selectedBoundaryAndObservation &&
+            <BoundaryAffectedCellsMapLayer
+              affectedCells={selectedBoundaryAndObservation.boundary.affected_cells}
+              editAffectedCells={!isReadOnly}
+              fetchAffectedCellsGeometry={() => fetchAffectedCellsGeometry(selectedBoundaryAndObservation.boundary.id)}
+              fetchGridGeometry={fetchGridGeometry}
+              onChangeAffectedCells={(affectedCells) => console.log(affectedCells)}
+            />}
+        </Map>
       </BodyContent>
     </>
   );

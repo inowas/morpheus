@@ -5,11 +5,18 @@ import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation
 import {ILayer, ILayerId} from "../../../types/Layers.type";
 import {ITimeDiscretization} from "../../../types";
 
-const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation) => availableBoundaries.map((b) => ({
+interface IPanelDetails {
+  title: string;
+  type: IBoundaryType;
+  boundaries: IBoundary[];
+  active: boolean;
+}
+
+const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation): IPanelDetails[] => availableBoundaries.map((b) => ({
   title: b.title,
   type: b.type,
   boundaries: boundaries.filter((boundary) => boundary.type === b.type),
-  active: selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.type === b.type
+  active: !!(selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.type === b.type)
 })).filter((panel) => 0 < panel.boundaries.length)
 
 interface IProps {
@@ -43,6 +50,19 @@ const BoundariesAccordion = ({
                              }: IProps) => {
   const panelDetails = getPanelDetails(boundaries, selectedBoundaryAndObservation);
 
+  const handlePanelChange = (panel: IPanelDetails) => {
+    if (!panel.boundaries.length) {
+      return;
+    }
+
+    const firstBoundary = panel.boundaries[0];
+    if (firstBoundary.type === selectedBoundaryAndObservation?.boundary.type) {
+      return;
+    }
+
+    onSelectBoundaryAndObservation({boundary: firstBoundary});
+  }
+
   return (
     <Accordion
       defaultActiveIndex={panelDetails.findIndex((panel) => panel.active)}
@@ -53,7 +73,9 @@ const BoundariesAccordion = ({
         title: {
           content: <span>{`${panel.title} (${panel.boundaries.length})`}</span>,
           icon: false,
+          onClick: () => handlePanelChange(panel)
         },
+        active: panel.active,
         content: {
           content: (
             <BoundariesAccordionPane

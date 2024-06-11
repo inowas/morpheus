@@ -1,14 +1,12 @@
 from typing import Literal
-
 from ....application.read.ModelReader import ModelReader
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
 from ....types.Project import ProjectId
+from ....types.boundaries.Boundary import BoundaryId
 
-format_type = Literal['json', 'geojson', 'geojson_outline'] | str
 
-
-class ReadModelAffectedCellsRequestHandler:
-    def handle(self, project_id: ProjectId, format: format_type = 'json'):
+class ReadModelBoundaryAffectedCellsRequestHandler:
+    def handle(self, project_id: ProjectId, boundary_id: BoundaryId, format: Literal['json', 'geojson', 'geojson_outline'] | str = 'json'):
         model_reader = ModelReader()
 
         try:
@@ -17,12 +15,14 @@ class ReadModelAffectedCellsRequestHandler:
             return {'message': 'Model not found'}, 404
 
         spatial_discretization = model.spatial_discretization
-
         if spatial_discretization is None:
             return {'message': 'Spatial discretization not found'}, 404
 
-        affected_cells = spatial_discretization.affected_cells
+        boundary = model.boundaries.get_boundary(boundary_id)
+        if boundary is None:
+            return {'message': 'Boundary not found'}, 404
 
+        affected_cells = boundary.affected_cells
         if affected_cells is None:
             return {'message': 'Affected cells not found'}, 404
 

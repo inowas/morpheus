@@ -1,4 +1,4 @@
-import {L, LatLngTuple} from 'common/infrastructure/leafletWrapper';
+import {L, LatLngTuple} from 'common/infrastructure/Leaflet';
 import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
 import React, {useEffect, useRef} from 'react';
