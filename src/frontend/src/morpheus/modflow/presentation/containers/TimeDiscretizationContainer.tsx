@@ -14,7 +14,7 @@ import {StressperiodsUpload} from '../components/ModelTimeDiscretization/Stressp
 import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import {Map} from 'common/components/Map';
-import SpatialDiscretizationLayer from "../components/ModelSpatialDiscretization/SpatialDiscretizationLayer";
+import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
 
 const TimeDiscretizationContainer = () => {
 
@@ -109,7 +109,7 @@ const TimeDiscretizationContainer = () => {
       </SidebarContent>
       <BodyContent>
         <Map>
-          <SpatialDiscretizationLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
         </Map>
       </BodyContent>
     </>

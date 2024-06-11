@@ -10,7 +10,7 @@ import useSpatialDiscretization from '../../application/useSpatialDiscretization
 
 import {BodyContent, SidebarContent} from '../components';
 import LayersList from '../components/ModelLayers/LayersList';
-import SpatialDiscretizationLayer from "../components/ModelSpatialDiscretization/SpatialDiscretizationLayer";
+import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
 import {MapRef} from "../../../../common/components/Map/Map";
 
 
@@ -74,7 +74,7 @@ const LayersContainer = () => {
       <BodyContent>
         <Map>
           <MapRef mapRef={mapRef}/>
-          <SpatialDiscretizationLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
         </Map>
       </BodyContent>
     </>

@@ -9,4 +9,4 @@ import "leaflet/dist/images/marker-icon.png";
 import "leaflet/dist/images/marker-icon-2x.png";
 
 export { L };
-export type { LatLngExpression, LatLngTuple } from 'leaflet';
+export type { LatLngExpression, LatLngTuple, LeafletEventHandlerFnMap } from 'leaflet';

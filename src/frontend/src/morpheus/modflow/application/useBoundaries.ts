@@ -6,11 +6,12 @@ import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IObserv
 import {useApi} from "../incoming";
 import useProjectCommandBus, {Commands} from "./useProjectCommandBus";
 import {setBoundaries, updateBoundary} from "../infrastructure/modelStore";
-import {LineString, Point, Polygon} from "geojson";
+import {Feature, LineString, MultiPolygon, Point, Polygon} from "geojson";
 import {ILayerId} from "../types/Layers.type";
 
 interface IUseBoundaries {
   boundaries: IBoundary[];
+  fetchAffectedCellsGeometry: (boundaryId: IBoundaryId) => Promise<Feature<Polygon | MultiPolygon> | null>;
   onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<void>;
   onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -111,6 +112,16 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
   }
+
+  const fetchAffectedCellsGeometry = async (boundaryId: IBoundaryId): Promise<Feature<Polygon | MultiPolygon> | null> => {
+    const result = await httpGet<Feature<Polygon | MultiPolygon>>(`/projects/${projectId}/model/boundaries/${boundaryId}/affected_cells?format=geojson_outline`);
+
+    if (result.ok) {
+      return result.val;
+    }
+
+    return null;
+  };
 
   const onAddBoundary = async (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => {
     if (!model || !projectId) {
@@ -612,6 +623,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
   return {
     boundaries: model?.boundaries || [],
+    fetchAffectedCellsGeometry,
     onAddBoundary,
     onAddBoundaryObservation,
     onCloneBoundary,

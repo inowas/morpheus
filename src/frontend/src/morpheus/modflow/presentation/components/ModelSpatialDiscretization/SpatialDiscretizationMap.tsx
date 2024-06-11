@@ -2,8 +2,8 @@ import React from 'react';
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 import {Map} from 'common/components/Map';
 import {IAffectedCells} from "../../../types";
-import SpatialDiscretizationLayer from "./SpatialDiscretizationLayer";
-import AffectedCellsLayer from "./AffectedCellsLayer";
+import ModelGeometryMapLayer from "./ModelGeometryMapLayer";
+import ModelAffectedCellsMapLayer from "./ModelAffectedCellsMapLayer";
 
 
 interface IProps {
@@ -20,9 +20,9 @@ interface IProps {
 const MapWrapper = (props: IProps) => {
   return (
     <Map>
-      <SpatialDiscretizationLayer modelGeometry={props.modelGeometry} onChangeModelGeometry={props.onChangeModelGeometry} editModelGeometry={props.editModelGeometry}/>
-      <AffectedCellsLayer affectedCells={props.affectedCells} affectedCellsGeometry={props.affectedCellsGeometry} editAffectedCells={props.editAffectedCells}
-                          gridGeometry={props.gridGeometry} onChangeAffectedCells={props.onChangeAffectedCells}/>
+      <ModelGeometryMapLayer modelGeometry={props.modelGeometry} onChangeModelGeometry={props.onChangeModelGeometry} editModelGeometry={props.editModelGeometry}/>
+      <ModelAffectedCellsMapLayer affectedCells={props.affectedCells} getAffectedCellsGeometry={props.affectedCellsGeometry} editAffectedCells={props.editAffectedCells}
+                                  gridGeometry={props.gridGeometry} onChangeAffectedCells={props.onChangeAffectedCells}/>
     </Map>
   );
 };

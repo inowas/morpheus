@@ -9,12 +9,12 @@ import {GeomanControls} from 'common/components/Map';
 interface IProps {
   modelGeometry?: Polygon;
   onChangeModelGeometry?: (polygon: Polygon) => void;
-  editModelGeometry: boolean;
+  editModelGeometry?: boolean;
   fill?: boolean;
 }
 
 
-const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editModelGeometry, fill}: IProps) => {
+const ModelGeometryMapLayer = ({modelGeometry, onChangeModelGeometry, editModelGeometry, fill}: IProps) => {
 
   const editModelGeometryRef = useRef<L.FeatureGroup>(L.featureGroup());
   const map = useMap();
@@ -28,6 +28,7 @@ const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editM
     const layer = L.geoJSON(modelGeometry);
     map.fitBounds(layer.getBounds());
   }, [modelGeometry]);
+
 
   const handleChange = () => {
     const featureGroup = editModelGeometryRef.current as L.FeatureGroup;
@@ -91,4 +92,4 @@ const SpatialDiscretizationLayer = ({modelGeometry, onChangeModelGeometry, editM
   );
 };
 
-export default SpatialDiscretizationLayer;
+export default ModelGeometryMapLayer;

@@ -15,8 +15,8 @@ import ModelAffectedCells from '../components/ModelSpatialDiscretization/ModelAf
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import {Map} from 'common/components/Map';
-import SpatialDiscretizationLayer from "../components/ModelSpatialDiscretization/SpatialDiscretizationLayer";
-import AffectedCellsLayer from "../components/ModelSpatialDiscretization/AffectedCellsLayer";
+import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
+import ModelAffectedCellsMapLayer from "../components/ModelSpatialDiscretization/ModelAffectedCellsMapLayer";
 
 
 const SpatialDiscretizationContainer = () => {
@@ -208,12 +208,12 @@ const SpatialDiscretizationContainer = () => {
       </SidebarContent>
       <BodyContent>
         <Map>
-          <SpatialDiscretizationLayer
+          <ModelGeometryMapLayer
             modelGeometry={modelGeometry}
             onChangeModelGeometry={setModelGeometry}
             editModelGeometry={'geometry' === editMode}
           />
-          <AffectedCellsLayer
+          <ModelAffectedCellsMapLayer
             affectedCells={affectedCells}
             affectedCellsGeometry={affectedCellsGeometry || undefined}
             editAffectedCells={'affected_cells' === editMode}
