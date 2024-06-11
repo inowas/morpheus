@@ -4,7 +4,6 @@ import useTimeDiscretization from '../../application/useTimeDiscretization';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import {useParams} from 'react-router-dom';
 import Error from 'common/components/Error';
-import SpatialDiscretizationMap from '../components/ModelSpatialDiscretization/SpatialDiscretizationMap';
 import {Button, DataGrid, SectionTitle} from '../../../../common/components';
 import {Accordion, AccordionContent} from '../components/Content';
 import TimeDiscretizationGeneralParameters from '../components/ModelTimeDiscretization/GeneralParameters';
@@ -14,6 +13,8 @@ import {useDateTimeFormat} from 'common/hooks';
 import {StressperiodsUpload} from '../components/ModelTimeDiscretization/StressperiodsUpload';
 import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
 import useProjectPermissions from '../../application/useProjectPermissions';
+import {Map} from 'common/components/Map';
+import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
 
 const TimeDiscretizationContainer = () => {
 
@@ -107,7 +108,9 @@ const TimeDiscretizationContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <SpatialDiscretizationMap modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+        <Map>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+        </Map>
       </BodyContent>
     </>
   );
