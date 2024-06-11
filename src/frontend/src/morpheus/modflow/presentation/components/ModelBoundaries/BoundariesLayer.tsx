@@ -9,7 +9,6 @@ import {
   Polygon as LeafletPolygon,
   Polyline as LeafletPolyline,
   Popup as LeafletPopup,
-  useMap
 } from 'common/infrastructure/React-Leaflet';
 import {GeomanControls} from 'common/components/Map';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
@@ -54,8 +53,6 @@ const BoundariesLayer = ({
                            onChangeBoundaryObservationGeometry,
                            isReadOnly,
                          }: IProps) => {
-
-  const map = useMap();
 
   const handleChangeBoundaryGeometry = (boundaryId: IBoundaryId) => (e: any) => {
     const boundary = boundaries.find((b) => b.id === boundaryId);
