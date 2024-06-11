@@ -1,6 +1,7 @@
 from .AddModelBoundary import AddModelBoundaryCommand, AddModelBoundaryCommandHandler
 from .AddModelBoundaryObservation import AddModelBoundaryObservationCommand, AddModelBoundaryObservationCommandHandler
 from .CloneModelBoundary import CloneModelBoundaryCommand, CloneModelBoundaryCommandHandler
+from .CloneModelBoundaryObservation import CloneModelBoundaryObservationCommand, CloneModelBoundaryObservationCommandHandler
 from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
 from .CreateModel import CreateModelCommand, CreateModelCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
@@ -32,6 +33,7 @@ model_command_handler_map = {
     AddModelBoundaryCommand: AddModelBoundaryCommandHandler,
     AddModelBoundaryObservationCommand: AddModelBoundaryObservationCommandHandler,
     CloneModelBoundaryCommand: CloneModelBoundaryCommandHandler,
+    CloneModelBoundaryObservationCommand: CloneModelBoundaryObservationCommandHandler,
     CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelCommand: CreateModelCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,

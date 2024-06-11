@@ -236,7 +236,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchSingleBoundary(boundaryId);
+    await fetchAllBoundaries();
   }
 
   const onCloneBoundaryObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
