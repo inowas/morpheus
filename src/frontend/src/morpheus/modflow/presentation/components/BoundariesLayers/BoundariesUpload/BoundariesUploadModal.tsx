@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import styles from './StressperiodsUpload.module.less';
-import {ECsvColumnType, IColumn} from './types/StressperiodsUpload.type';
+import styles from './BoundariesUpload.module.less';
+import {ECsvColumnType} from './types/BoundariesUpload.type';
+import {IColumn} from '../BoundariesTable/DataTable';
 import {Button, Modal, Notification} from 'common/components';
-import {Checkbox, Form, Icon, Table} from 'semantic-ui-react';
+import {Form, Icon, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';
 import {IStressPeriod} from '../../../../types';
 import {useDateTimeFormat} from 'common/hooks';
@@ -20,13 +21,30 @@ interface IIndexedColumn extends IColumn {
   colIdx: number;
 }
 
-const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZone}: IProps) => {
+const BoundariesUploadModal = ({columns, rawData, onSubmit, onCancel, timeZone}: IProps) => {
   const [columnOrder, setColumnOrder] = useState<IIndexedColumn[]>(columns.map((c, idx) => ({...c, colIdx: idx})));
   const [dateTimeFormat, setDateTimeFormat] = useState<string>('dd.MM.yyyy');
   const [firstRowIsHeader, setFirstRowIsHeader] = useState<boolean>(true);
   const [stressPeriods, setStressPeriods] = useState<IStressPeriod[] | null>(null);
-
   const {formatDate, isValid, parseUserInput} = useDateTimeFormat(timeZone);
+
+  console.log(' columns ', columns);
+  //   (2) [{…}, {…}]
+  //   0
+  // :
+  //   {title: 'Start date', key: 'date_time', defaultValue: 0, format: ƒ, parse: ƒ, …}
+  //   1
+  // :
+  //   {title: 'Head', key: 'head', defaultValue: 0, format: ƒ, parse: ƒ, …}
+  //   length
+  //     :
+  //     2
+  //       [[Prototype]]
+  // :
+  //   Array(0)
+
+  console.log(' rawData ', rawData); // my csv data
+
 
   useEffect(() => {
     const parsedData: IStressPeriod[] = [];
@@ -139,7 +157,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
   const renderHeader = () => (
     <Table.Row>
       {columns.map((c, cKey) =>
-        <Table.HeaderCell key={cKey}>{c.text}</Table.HeaderCell>,
+        <Table.HeaderCell key={cKey}>{c.title}</Table.HeaderCell>,
       )}
     </Table.Row>
   );
@@ -158,25 +176,29 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
     return emptyTable;
   };
 
-  const renderStressPeriods = () => {
-    if (!stressPeriods) {
+  const renderBody = () => {
+    console.log(rawData);
+
+    rawData.map(row => console.log(row));
+
+    if (!rawData) {
       return null;
     }
 
-    if (0 === stressPeriods.length) {
+    if (0 === rawData.length) {
       return renderEmptyTable();
     }
 
-    return stressPeriods.map((row, rKey) => (
-      <Table.Row key={rKey}>
-        <Table.Cell style={{padding: '5px 20px'}}>{row.start_date_time}</Table.Cell>
-        <Table.Cell style={{padding: '5px 20px'}}>{row.number_of_time_steps}</Table.Cell>
-        <Table.Cell style={{padding: '5px 20px'}}>{row.time_step_multiplier}</Table.Cell>
-        <Table.Cell style={{padding: '5px 20px'}}>{row.steady_state ? 'true' : 'false'}</Table.Cell>
-      </Table.Row>
-    ));
+
+    // return stressPeriods.map((row, rKey) => (
+    //   <Table.Row key={rKey}>
+    //     <Table.Cell style={{padding: '5px 20px'}}>{row.start_date_time}</Table.Cell>
+    //     <Table.Cell style={{padding: '5px 20px'}}>{row.number_of_time_steps}</Table.Cell>
+    //     <Table.Cell style={{padding: '5px 20px'}}>{row.time_step_multiplier}</Table.Cell>
+    //     <Table.Cell style={{padding: '5px 20px'}}>{row.steady_state ? 'true' : 'false'}</Table.Cell>
+    //   </Table.Row>
+    // ));
   };
-  
   const renderContent = () => {
     return (
       <DataGrid>
@@ -199,15 +221,15 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
                 onChange={(e, d) => setDateTimeFormat(d.value as string)}
               />
             </Form.Field>
-            <Form.Field>
-              <Checkbox
-                style={{textAlign: 'left', fontWeight: 600}}
-                label="First row is header"
-                checked={firstRowIsHeader}
-                onChange={handleChange(setFirstRowIsHeader)}
-                data-value={firstRowIsHeader ? 'true' : 'false'}
-              />
-            </Form.Field>
+            {/*<Form.Field>*/}
+            {/*  <Checkbox*/}
+            {/*    style={{textAlign: 'left', fontWeight: 600}}*/}
+            {/*    label="First row is header"*/}
+            {/*    checked={firstRowIsHeader}*/}
+            {/*    onChange={handleChange(setFirstRowIsHeader)}*/}
+            {/*    data-value={firstRowIsHeader ? 'true' : 'false'}*/}
+            {/*  />*/}
+            {/*</Form.Field>*/}
           </DataGrid>
         </DataRow>
         <DataGrid columns={4}>
@@ -215,11 +237,11 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
             <Form.Field key={key}>
               <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
                 <Icon className={'dateIcon'} name="info circle"/>
-                {c.text}
+                {c.title}
               </label>
               <Form.Dropdown
                 key={key}
-                name={c.value}
+                name={c.key}
                 selection={true}
                 value={columnOrder[key].colIdx}
                 onChange={(e, d) => {
@@ -242,7 +264,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
           ))}
         </DataGrid>
         <DataRow>
-          {stressPeriods && 0 === stressPeriods.length && <Notification warning={true}>
+          {rawData && 0 === rawData.length && <Notification warning={true}>
             The CSV file cannot be empty
           </Notification>}
           <div className={styles.scrollContainer}>
@@ -254,7 +276,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
                 {renderHeader()}
               </Table.Header>
               <Table.Body>
-                {stressPeriods && renderStressPeriods()}
+                {rawData && renderBody()}
               </Table.Body>
             </Table>
           </div>
@@ -298,4 +320,4 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
   );
 };
 
-export default StressperiodsUploadModal;
+export default BoundariesUploadModal;

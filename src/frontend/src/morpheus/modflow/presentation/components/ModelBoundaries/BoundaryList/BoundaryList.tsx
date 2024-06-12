@@ -80,7 +80,6 @@ const BoundaryList = ({
                   <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
                     {boundary.name}
                   </div>}
-
                 {editBoundaryName === boundary.id && (
                   <div className={styles.renameField}>
                     <input
@@ -111,6 +110,12 @@ const BoundaryList = ({
                 className={styles.buttonsWrapper}
                 style={{paddingRight: `${!boundary.observations[0].observation_name && '21px'}`}}
               >
+                <Checkbox
+                  disabled={isReadOnly}
+                  toggle={true}
+                  // checked={!checkedItems.includes(item.id)}
+                  // onChange={() => handleItemDisabled(item.id, index)}
+                />
                 <DotsMenu
                   disabled={isReadOnly}
                   className={`${styles.dotsMenu}`}
@@ -211,20 +216,6 @@ const BoundaryList = ({
           </ListItem>
         ))}
       </List>
-      {/*<div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>*/}
-      {/*  <Button*/}
-      {/*    className='buttonLink'*/}
-      {/*    disabled={0 === checkedBoundaries.length}*/}
-      {/*    onClick={handleDeleteSelected}*/}
-      {/*  >*/}
-      {/*    Delete selected <FontAwesomeIcon icon={faTrashCan}/>*/}
-      {/*  </Button>*/}
-      {/*  <Button*/}
-      {/*    className='buttonLink'*/}
-      {/*    disabled={0 === checkedBoundaries.length}*/}
-      {/*  >*/}
-      {/*    Download selected <FontAwesomeIcon icon={faDownload}/></Button>*/}
-      {/*</div>*/}
     </>
   );
 };
