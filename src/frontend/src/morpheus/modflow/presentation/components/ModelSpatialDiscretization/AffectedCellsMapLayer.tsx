@@ -1,18 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import * as turf from '@turf/turf';
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 
 import {FeatureGroup, GeoJSON, useMapEvents} from 'common/infrastructure/React-Leaflet';
 import {AffectedCells, IAffectedCells} from "../../../types";
 import objectHash from "object-hash";
+import AffectedCellsMapLayerControl from "./AffectedCellsMapLayerControl";
+import cloneDeep from "lodash.clonedeep";
 
 
 interface IProps {
   affectedCells: IAffectedCells;
-  editAffectedCells: boolean;
   fetchAffectedCellsGeometry: () => Promise<Feature<Polygon | MultiPolygon> | null>;
   fetchGridGeometry: () => Promise<FeatureCollection | null>;
   onChangeAffectedCells: (affectedCells: IAffectedCells) => void;
+  isReadOnly: boolean;
+  inverted?: boolean;
+  showAffectedCellsByDefault?: boolean;
+  expectSingleCell?: boolean;
 }
 
 const emptyFeatureCollection: FeatureCollection = {
@@ -20,7 +25,16 @@ const emptyFeatureCollection: FeatureCollection = {
   features: [],
 };
 
-const BoundaryAffectedCellsMapLayer = ({affectedCells, editAffectedCells, fetchAffectedCellsGeometry, fetchGridGeometry, onChangeAffectedCells}: IProps) => {
+const AffectedCellsMapLayer = ({
+                                 affectedCells,
+                                 fetchAffectedCellsGeometry,
+                                 fetchGridGeometry,
+                                 onChangeAffectedCells,
+                                 isReadOnly,
+                                 inverted = false,
+                                 showAffectedCellsByDefault = false,
+                                 expectSingleCell = false
+                               }: IProps) => {
 
   const [newActiveCellGeometries, setNewActiveCellGeometries] = useState<FeatureCollection>(emptyFeatureCollection);
   const [newInactiveCellGeometries, setNewInactiveCellGeometries] = useState<FeatureCollection>(emptyFeatureCollection);
@@ -28,27 +42,108 @@ const BoundaryAffectedCellsMapLayer = ({affectedCells, editAffectedCells, fetchA
   const [gridGeometry, setGridGeometry] = useState<FeatureCollection | null>();
   const [affectedCellsGeometry, setAffectedCellsGeometry] = useState<Feature<Polygon | MultiPolygon> | null>();
 
-  useEffect(() => {
-    fetchGridGeometry().then(setGridGeometry);
-  }, [fetchGridGeometry]);
+  const [showAffectedCells, setShowAffectedCells] = useState<boolean>(showAffectedCellsByDefault);
+  const [editAffectedCells, setEditAffectedCells] = useState<boolean>(false);
+  const [affectedCellsLocal, setAffectedCellsLocal] = useState<IAffectedCells>(affectedCells);
+
+
+  // we need a ref here to keep the affectedCellsLocal in sync when executing the handleChangeAffectedCells
+  // passing the handler to the ModelAffectedCellsMapLayerControl component sends the wrong values because of closure issues
+  // The approach useRef ensures that you always have access to the most recent state value without needing to worry about the closure issues
+  const affectedCellsRef = useRef<IAffectedCells>(affectedCells);
+  const expectSingleCellRef = useRef<boolean>(expectSingleCell);
+  const onChangeAffectedCellsRef = useRef<(affectedCells: IAffectedCells) => void>(onChangeAffectedCells);
 
   useEffect(() => {
-    fetchAffectedCellsGeometry().then(setAffectedCellsGeometry);
-  }, [fetchAffectedCellsGeometry]);
-
+    expectSingleCellRef.current = expectSingleCell;
+  }, [expectSingleCell]);
 
   useEffect(() => {
-    setNewActiveCellGeometries(emptyFeatureCollection);
-    setNewInactiveCellGeometries(emptyFeatureCollection);
-  }, [affectedCellsGeometry, gridGeometry]);
+    if (affectedCells) {
+      setAffectedCellsLocal(AffectedCells.fromObject(affectedCells).toObject() as IAffectedCells);
+      setNewActiveCellGeometries(emptyFeatureCollection);
+      setNewInactiveCellGeometries(emptyFeatureCollection);
+      onChangeAffectedCellsRef.current = onChangeAffectedCells;
+      fetchGridGeometry().then(setGridGeometry);
+      fetchAffectedCellsGeometry().then(setAffectedCellsGeometry);
+    }
+  }, [affectedCells]);
 
-  const handleChangeAffectedCell = (row: number, col: number, active: boolean) => {
-    if (!affectedCells) {
+  useEffect(() => {
+    affectedCellsRef.current = affectedCellsLocal;
+  }, [affectedCellsLocal]);
+
+  // A Polygon feature is created with the second coordinates array (the hole) of the affected cells
+  const affectedCellsLayerGeometry = useMemo(() => {
+
+    if (!inverted) {
+      return affectedCellsGeometry;
+    }
+
+    if (!affectedCellsGeometry || !gridGeometry) {
       return;
     }
-    const newAffectedCells = AffectedCells.fromObject(affectedCells);
+
+    const boundingBox = gridGeometry.features.find((f: Feature) => {
+      return 'Polygon' === f.geometry.type && 'bounding_box' === f.properties?.type;
+    });
+
+    if (!boundingBox || 'Polygon' !== boundingBox.geometry.type) {
+      return;
+    }
+
+    const feature = cloneDeep(boundingBox as Feature<Polygon>);
+    if ('Polygon' === affectedCellsGeometry.geometry.type) {
+      feature.geometry.coordinates.push(affectedCellsGeometry.geometry.coordinates[0]);
+    }
+
+    if ('MultiPolygon' === affectedCellsGeometry.geometry.type) {
+      affectedCellsGeometry.geometry.coordinates.forEach((coordinates) => {
+        feature.geometry.coordinates.push(coordinates[0]);
+      });
+    }
+
+    return feature;
+
+  }, [affectedCellsGeometry, gridGeometry, inverted]);
+
+  // this function cannot use the affectedCellsLocal state because it is not updated in time
+  // here only refs and setter used to keep the state in sync
+  const handleChangeAffectedCell = (row: number, col: number, active: boolean) => {
+    if (!affectedCellsLocal) {
+      return;
+    }
+
+    const newAffectedCells = AffectedCells.fromObject(affectedCellsRef.current);
+    if (expectSingleCellRef.current) {
+      if (!active) {
+        return;
+      }
+
+      setNewActiveCellGeometries(prevState => ({
+        type: 'FeatureCollection',
+        features: prevState.features.filter((f) => f.properties?.row === row && f.properties?.col === col),
+      }));
+
+      if (affectedCellsLayerGeometry) {
+        setNewInactiveCellGeometries({...emptyFeatureCollection, features: [affectedCellsLayerGeometry]})
+      }
+
+      newAffectedCells.setActiveOnlyOneCell(row, col);
+      setAffectedCellsLocal(newAffectedCells.toObject() as IAffectedCells);
+      return;
+    }
+
     newAffectedCells.setActive(row, col, active);
-    onChangeAffectedCells(newAffectedCells.toObject() as IAffectedCells);
+    setAffectedCellsLocal(newAffectedCells.toObject() as IAffectedCells);
+  }
+
+  const handleChangeEditAffectedCells = (edit: boolean) => {
+    if (!edit) {
+      onChangeAffectedCellsRef.current(affectedCellsRef.current);
+    }
+
+    setEditAffectedCells(edit);
   }
 
   useMapEvents({
@@ -148,7 +243,7 @@ const BoundaryAffectedCellsMapLayer = ({affectedCells, editAffectedCells, fetchA
   return (
     <>
       <FeatureGroup>
-        {gridGeometry && <GeoJSON
+        {gridGeometry && showAffectedCells && <GeoJSON
           key={objectHash(gridGeometry)}
           data={gridGeometry}
           style={{fill: false, color: 'grey', weight: 0.2, opacity: 0.4}}
@@ -156,9 +251,9 @@ const BoundaryAffectedCellsMapLayer = ({affectedCells, editAffectedCells, fetchA
         />}
       </FeatureGroup>
       <FeatureGroup>
-        {affectedCellsGeometry && <GeoJSON
-          key={objectHash(affectedCellsGeometry)}
-          data={affectedCellsGeometry}
+        {affectedCellsLayerGeometry && showAffectedCells && <GeoJSON
+          key={objectHash(affectedCellsLayerGeometry)}
+          data={affectedCellsLayerGeometry}
           style={{
             weight: 0,
             fillOpacity: editAffectedCells ? 0.5 : 0.15,
@@ -167,30 +262,37 @@ const BoundaryAffectedCellsMapLayer = ({affectedCells, editAffectedCells, fetchA
           pmIgnore={true}
         />}
 
-        {affectedCellsGeometry && <GeoJSON
+        {affectedCellsLayerGeometry && showAffectedCells && <GeoJSON
           key={`newInactiveCellGeometries-${objectHash(newInactiveCellGeometries)}`}
           data={newInactiveCellGeometries}
           style={{
             weight: 0,
             fillOpacity: 0.6,
-            fillColor: 'white',
+            fillColor: inverted ? 'grey' : 'white'
           }}
           pmIgnore={true}
         />}
 
-        {affectedCellsGeometry && <GeoJSON
+        {affectedCellsLayerGeometry && showAffectedCells && <GeoJSON
           key={`newActiveCellGeometries-${objectHash(newActiveCellGeometries)}`}
           data={newActiveCellGeometries}
           style={{
             weight: 0,
             fillOpacity: 0.4,
-            fillColor: 'grey',
+            fillColor: inverted ? 'white' : 'grey'
           }}
           pmIgnore={true}
         />}
       </FeatureGroup>
+      <AffectedCellsMapLayerControl
+        showAffectedCells={showAffectedCells}
+        onChangeShowAffectedCells={setShowAffectedCells}
+        editAffectedCells={editAffectedCells}
+        onChangeEditAffectedCells={handleChangeEditAffectedCells}
+        isReadOnly={isReadOnly}
+      />
     </>
   );
 };
 
-export default BoundaryAffectedCellsMapLayer;
+export default AffectedCellsMapLayer;

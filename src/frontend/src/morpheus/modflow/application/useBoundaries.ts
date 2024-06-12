@@ -93,8 +93,6 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
     const result = await httpGet<IBoundary>(`/projects/${projectId}/model/boundaries/${boundaryId}`);
 
-    console.log(result);
-
     if (!isMounted.current) {
       return;
     }

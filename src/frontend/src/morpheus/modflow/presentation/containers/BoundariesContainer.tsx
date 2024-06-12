@@ -17,7 +17,7 @@ import {LineString, Point, Polygon} from 'geojson';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import BoundariesLayer from '../components/ModelBoundaries/BoundariesLayer';
 import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
-import BoundaryAffectedCellsMapLayer from '../components/ModelBoundaries/BoundaryAffectedCellsMapLayer';
+import AffectedCellsMapLayer from "../components/ModelSpatialDiscretization/AffectedCellsMapLayer";
 
 
 const BoundariesContainer = () => {
@@ -48,9 +48,8 @@ const BoundariesContainer = () => {
   const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
   useEffect(() => {
-    console.log(selectedBoundaryAndObservation);
+    console.log(selectedBoundaryAndObservation)
   }, [selectedBoundaryAndObservation]);
-
 
   useEffect(() => {
     if (!boundaries.length) {
@@ -155,12 +154,13 @@ const BoundariesContainer = () => {
             isReadOnly={isReadOnly}
           />
           {selectedBoundaryAndObservation &&
-            <BoundaryAffectedCellsMapLayer
+            <AffectedCellsMapLayer
               affectedCells={selectedBoundaryAndObservation.boundary.affected_cells}
-              editAffectedCells={!isReadOnly}
               fetchAffectedCellsGeometry={() => fetchAffectedCellsGeometry(selectedBoundaryAndObservation.boundary.id)}
               fetchGridGeometry={fetchGridGeometry}
-              onChangeAffectedCells={(affectedCells) => console.log(affectedCells)}
+              onChangeAffectedCells={(affectedCells) => onUpdateBoundaryAffectedCells(selectedBoundaryAndObservation.boundary.id, affectedCells)}
+              isReadOnly={isReadOnly}
+              expectSingleCell={selectedBoundaryAndObservation.boundary.type === 'well'}
             />}
         </Map>
       </BodyContent>
