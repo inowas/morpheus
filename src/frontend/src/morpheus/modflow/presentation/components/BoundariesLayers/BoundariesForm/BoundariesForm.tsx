@@ -1,12 +1,12 @@
-import {Button, DataRow} from 'common/components';
+import {Button, DataRow, DropdownComponent} from 'common/components';
 
 import React, {useEffect, useState} from 'react';
 import {Dropdown, Form, Icon, Label, Popup} from 'semantic-ui-react';
-import {IBoundary, IBoundaryId} from "../../../../types/Boundaries.type";
-import {ILayerId} from "../../../../types/Layers.type";
-import {DropdownItemProps} from "semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem";
-import isEqual from "lodash.isequal";
-import {canHaveMultipleAffectedLayers} from "../../ModelBoundaries/helpers";
+import {IBoundary, IBoundaryId} from '../../../../types/Boundaries.type';
+import {ILayerId} from '../../../../types/Layers.type';
+import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
+import isEqual from 'lodash.isequal';
+import {canHaveMultipleAffectedLayers} from '../../ModelBoundaries/helpers';
 
 
 interface IProps {
@@ -34,7 +34,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
     }
 
     return !isEqual(boundaryLocal.affected_layers, boundary.affected_layers);
-  }
+  };
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -46,7 +46,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
       await onChangeBoundaryAffectedLayers(boundaryLocal.id, boundaryLocal.affected_layers);
     }
     setSubmitting(false);
-  }
+  };
 
   useEffect(() => {
     setBoundaryLocal(boundary);
@@ -90,7 +90,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
                 value = [value];
               }
 
-              setBoundaryLocal({...boundaryLocal, affected_layers: value as ILayerId[]})
+              setBoundaryLocal({...boundaryLocal, affected_layers: value as ILayerId[]});
             }}
           />
         </Form.Field>
@@ -105,15 +105,15 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             Tags
           </Label>
 
-          <Dropdown
+          <DropdownComponent.Dropdown
             disabled={isReadOnly}
             allowAdditions={true}
             fluid={true}
             multiple={true}
             onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
             onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
-              console.log(data.value)
-              setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})
+              console.log(data.value);
+              setBoundaryLocal({...boundaryLocal, tags: data.value as string[]});
             }}
             options={tagOptions}
             search={true}
@@ -134,7 +134,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
         )}
       </DataRow>
     </Form>
-  )
+  );
 };
 
 export default BoundariesForm;
