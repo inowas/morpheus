@@ -16,7 +16,7 @@ const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation
   title: b.title,
   type: b.type,
   boundaries: boundaries.filter((boundary) => boundary.type === b.type),
-  active: !!(selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.type === b.type),
+  active: selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.type === b.type || false,
 })).filter((panel) => 0 < panel.boundaries.length);
 
 interface IProps {
@@ -48,6 +48,7 @@ const BoundariesAccordion = ({
   onSelectBoundaryAndObservation,
   timeDiscretization,
 }: IProps) => {
+
   const panelDetails = getPanelDetails(boundaries, selectedBoundaryAndObservation);
 
   const handlePanelChange = (panel: IPanelDetails) => {
@@ -65,7 +66,6 @@ const BoundariesAccordion = ({
 
   return (
     <Accordion
-      defaultActiveIndex={panelDetails.findIndex((panel) => panel.active)}
       className='accordionPrimary'
       exclusive={true}
       panels={panelDetails.map((panel) => ({
@@ -75,6 +75,7 @@ const BoundariesAccordion = ({
           icon: false,
           onClick: () => handlePanelChange(panel),
         },
+        active: panel.active,
         content: {
           content: (
             <BoundariesAccordionPane
