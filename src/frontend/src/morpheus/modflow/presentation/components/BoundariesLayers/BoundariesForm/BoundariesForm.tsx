@@ -1,7 +1,7 @@
 import {Button, DataRow, DropdownComponent} from 'common/components';
 
 import React, {useEffect, useState} from 'react';
-import {Dropdown, Form, Icon, Label, Popup} from 'semantic-ui-react';
+import {Form, Icon, Label, Popup} from 'semantic-ui-react';
 import {IBoundary, IBoundaryId} from '../../../../types/Boundaries.type';
 import {ILayerId} from '../../../../types/Layers.type';
 import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
@@ -70,7 +70,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             Select Layer
           </Label>
 
-          <Dropdown
+          <DropdownComponent.Dropdown
             disabled={isReadOnly}
             name="selectedLayer"
             multiple={canHaveMultipleAffectedLayers(boundaryLocal)}
