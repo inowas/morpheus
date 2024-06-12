@@ -11,9 +11,9 @@ import {
   Popup as LeafletPopup,
 } from 'common/infrastructure/React-Leaflet';
 import {GeomanControls} from 'common/components/Map';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
-import {LineString, Point, Polygon} from "geojson";
-import {LeafletEventHandlerFnMap} from "leaflet";
+import {IBoundary, IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
+import {LineString, Point, Polygon} from 'geojson';
+import {LeafletEventHandlerFnMap} from 'leaflet';
 
 interface IProps {
   boundaries: IBoundary[];
@@ -29,30 +29,30 @@ interface LeafletEventHandlers extends LeafletEventHandlerFnMap {
 }
 
 const isPointBoundary = (boundaryType: IBoundaryType | null) => {
-  return boundaryType === 'well';
-}
+  return 'well' === boundaryType;
+};
 
 const isLineBoundary = (boundaryType: IBoundaryType | null) => {
   if (!boundaryType) {
     return false;
   }
   return ['constant_head', 'drain', 'flow_and_head', 'general_head', 'river'].includes(boundaryType);
-}
+};
 
 const isPolygonBoundary = (boundaryType: IBoundaryType | null) => {
   if (!boundaryType) {
     return false;
   }
   return ['recharge', 'evapotranspiration', 'lake'].includes(boundaryType);
-}
+};
 const BoundariesLayer = ({
-                           boundaries,
-                           selectedBoundaryAndObservation,
-                           onSelectBoundaryAndObservation,
-                           onChangeBoundaryGeometry,
-                           onChangeBoundaryObservationGeometry,
-                           isReadOnly,
-                         }: IProps) => {
+  boundaries,
+  selectedBoundaryAndObservation,
+  onSelectBoundaryAndObservation,
+  onChangeBoundaryGeometry,
+  onChangeBoundaryObservationGeometry,
+  isReadOnly,
+}: IProps) => {
 
   const handleChangeBoundaryGeometry = (boundaryId: IBoundaryId) => (e: any) => {
     const boundary = boundaries.find((b) => b.id === boundaryId);
@@ -89,7 +89,7 @@ const BoundariesLayer = ({
       onChangeBoundaryGeometry(boundaryId, newGeometry);
       return;
     }
-  }
+  };
 
   const handleChangeBoundaryObservationPointGeometry = (boundaryId: IBoundaryId, observationId: IObservationId) => (e: any) => {
     const boundary = boundaries.find((b) => b.id === boundaryId);
@@ -109,38 +109,21 @@ const BoundariesLayer = ({
     };
 
     onChangeBoundaryObservationGeometry(boundaryId, observationId, newGeometry);
-  }
+  };
 
   const handleSelectBoundary = (boundary: IBoundary, observationId?: IObservationId) => onSelectBoundaryAndObservation({boundary, observationId});
 
-  const renderBoundaries = () => {
-    if (!boundaries) {
-      return null;
-    }
-
-    return (
-      <LayersControl position="topright">
-        {renderBoundariesByType(boundaries, 'drain')}
-        {renderBoundariesByType(boundaries, 'general_head')}
-        {renderBoundariesByType(boundaries, 'constant_head')}
-        {renderBoundariesByType(boundaries, 'evapotranspiration')}
-        {renderBoundariesByType(boundaries, 'flow_and_head')}
-        {renderBoundariesByType(boundaries, 'lake')}
-        {renderBoundariesByType(boundaries, 'recharge')}
-        {renderBoundariesByType(boundaries, 'river')}
-        {renderBoundariesByType(boundaries, 'well')}
-      </LayersControl>
-    )
-  }
-
-  const renderBoundariesByType = (boundaries: IBoundary[], boundaryType: IBoundaryType) => {
-    const filteredBoundaries = boundaries.filter((b) => b.type === boundaryType);
+  const renderBoundariesByType = (boundariesToRender: IBoundary[], boundaryType: IBoundaryType) => {
+    const filteredBoundaries = boundariesToRender.filter((b) => b.type === boundaryType);
     if (!filteredBoundaries.length) {
       return null;
     }
 
     return (
-      <LayersControl.Overlay checked={true} key={boundaryType} name={boundaryType}>
+      <LayersControl.Overlay
+        checked={true} key={boundaryType}
+        name={boundaryType}
+      >
         <LayerGroup>
           {filteredBoundaries.map((boundary) => {
             const isEditable = !isReadOnly && selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id;
@@ -148,8 +131,8 @@ const BoundariesLayer = ({
             const hash = objectHash(boundary.geometry);
             const key = `${boundary.id}-${hash}-${isSelected ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : ''}`;
 
-            const viewModeEventHandlers: LeafletEventHandlers = {click: () => handleSelectBoundary(boundary)}
-            const editBoundaryEventHandlers: LeafletEventHandlers = {'pm:update': handleChangeBoundaryGeometry(boundary.id)}
+            let viewModeEventHandlers: LeafletEventHandlers = {click: () => handleSelectBoundary(boundary)};
+            const editBoundaryEventHandlers: LeafletEventHandlers = {'pm:update': handleChangeBoundaryGeometry(boundary.id)};
 
             if (isPointBoundary(boundary.type)) {
               const geometry = boundary.geometry as Point;
@@ -172,7 +155,7 @@ const BoundariesLayer = ({
                     </LeafletPopup>
                   </LeafletCircleMarker>
                 </FeatureGroup>
-              )
+              );
             }
 
             if (isLineBoundary(boundary.type)) {
@@ -198,8 +181,8 @@ const BoundariesLayer = ({
                     const keyObservation = `${observation.observation_id}-${isSelectedObservation ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : 'view'}`;
                     const geometry = observation.geometry as Point;
                     const position = [geometry.coordinates[1], geometry.coordinates[0]] as LatLngExpression;
-                    const viewModeEventHandlers: LeafletEventHandlers = {click: () => handleSelectBoundary(boundary, observation.observation_id)}
-                    const editBoundaryObservationEventHandlers: LeafletEventHandlers = {'pm:update': handleChangeBoundaryObservationPointGeometry(boundary.id, observation.observation_id)}
+                    viewModeEventHandlers = {click: () => handleSelectBoundary(boundary, observation.observation_id)};
+                    const editBoundaryObservationEventHandlers: LeafletEventHandlers = {'pm:update': handleChangeBoundaryObservationPointGeometry(boundary.id, observation.observation_id)};
                     return (
                       <LeafletCircleMarker
                         key={`${keyObservation}`}
@@ -215,10 +198,10 @@ const BoundariesLayer = ({
                           {observation.observation_name}
                         </LeafletPopup>
                       </LeafletCircleMarker>
-                    )
+                    );
                   })}
                 </FeatureGroup>
-              )
+              );
             }
 
             if (isPolygonBoundary(boundary.type)) {
@@ -241,13 +224,33 @@ const BoundariesLayer = ({
                     </LeafletPopup>
                   </LeafletPolygon>
                 </FeatureGroup>
-              )
+              );
             }
           })}
         </LayerGroup>
       </LayersControl.Overlay>
-    )
-  }
+    );
+  };
+
+  const renderBoundaries = () => {
+    if (!boundaries) {
+      return null;
+    }
+
+    return (
+      <LayersControl position="topright">
+        {renderBoundariesByType(boundaries, 'drain')}
+        {renderBoundariesByType(boundaries, 'general_head')}
+        {renderBoundariesByType(boundaries, 'constant_head')}
+        {renderBoundariesByType(boundaries, 'evapotranspiration')}
+        {renderBoundariesByType(boundaries, 'flow_and_head')}
+        {renderBoundariesByType(boundaries, 'lake')}
+        {renderBoundariesByType(boundaries, 'recharge')}
+        {renderBoundariesByType(boundaries, 'river')}
+        {renderBoundariesByType(boundaries, 'well')}
+      </LayersControl>
+    );
+  };
 
   const renderEditBoundary = () => {
     if (isReadOnly || !selectedBoundaryAndObservation) {
@@ -289,8 +292,8 @@ const BoundariesLayer = ({
           }}
         />
       </FeatureGroup>
-    )
-  }
+    );
+  };
 
   return (
     <FeatureGroup>

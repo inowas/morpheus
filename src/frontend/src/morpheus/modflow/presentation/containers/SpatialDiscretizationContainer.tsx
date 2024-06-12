@@ -11,11 +11,12 @@ import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {Header, MenuItem} from 'semantic-ui-react';
-import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import {Map} from 'common/components/Map';
-import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
-import AffectedCellsMapLayer from "../components/ModelSpatialDiscretization/AffectedCellsMapLayer";
+
+import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
+import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
 
 
 const SpatialDiscretizationContainer = () => {
@@ -53,6 +54,7 @@ const SpatialDiscretizationContainer = () => {
   } = useSpatialDiscretization(projectId as string);
 
   const {processShapefile} = useAssets(projectId as string);
+
 
   useEffect(() => {
     if (spatialDiscretization?.geometry) {
@@ -134,7 +136,7 @@ const SpatialDiscretizationContainer = () => {
                         readOnly={isReadOnly}
                       />
                     </TabPane>,
-                  }
+                  },
                 ]}
               />
             </AccordionContent>

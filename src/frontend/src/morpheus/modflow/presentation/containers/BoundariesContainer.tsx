@@ -17,11 +17,11 @@ import {LineString, Point, Polygon} from 'geojson';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import BoundariesLayer from '../components/ModelBoundaries/BoundariesLayer';
 import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
-import AffectedCellsMapLayer from "../components/ModelSpatialDiscretization/AffectedCellsMapLayer";
+import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
 
 
 const BoundariesContainer = () => {
-  const {projectId, propertyId: boundaryId} = useParams();
+  const {projectId} = useParams();
 
   const {spatialDiscretization, fetchGridGeometry} = useSpatialDiscretization(projectId as string);
   const {timeDiscretization} = useTimeDiscretization(projectId as string);
@@ -48,32 +48,34 @@ const BoundariesContainer = () => {
   const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
   useEffect(() => {
-    console.log(selectedBoundaryAndObservation)
-  }, [selectedBoundaryAndObservation]);
-
-  useEffect(() => {
     if (!boundaries.length) {
       return;
     }
 
-    if (!boundaryId) {
-      const boundary = boundaries[0];
-      setSelectedBoundaryAndObservation({
-        boundary,
-        observationId: boundary.observations[0].observation_id,
+    if (!selectedBoundaryAndObservation) {
+      return setSelectedBoundaryAndObservation({
+        boundary: boundaries[0],
+        observationId: boundaries[0].observations[0].observation_id,
       });
     }
 
-    if (boundaryId && selectedBoundaryAndObservation?.boundary.id !== boundaryId) {
-      const boundary = boundaries.find((b) => b.id === boundaryId);
-      if (boundary) {
-        return setSelectedBoundaryAndObservation({
-          boundary,
-          observationId: boundary.observations[0].observation_id,
-        });
-      }
+    // update selectedBoundaryAndObservation
+    const boundary = boundaries.find((b) => b.id === selectedBoundaryAndObservation.boundary.id);
+    if (!boundary) {
+      return setSelectedBoundaryAndObservation({
+        boundary: boundaries[0],
+        observationId: boundaries[0].observations[0].observation_id,
+      });
     }
-  }, [boundaryId, boundaries]);
+
+    const observation = boundary.observations.find((o) => o.observation_id === selectedBoundaryAndObservation.observationId);
+    return setSelectedBoundaryAndObservation({
+      boundary,
+      observationId: observation ? observation.observation_id : boundary.observations[0].observation_id,
+    });
+  },
+  [boundaries],
+  );
 
   if (!spatialDiscretization || !boundaries || !layers || !timeDiscretization) {
     return null;
@@ -160,7 +162,7 @@ const BoundariesContainer = () => {
               fetchGridGeometry={fetchGridGeometry}
               onChangeAffectedCells={(affectedCells) => onUpdateBoundaryAffectedCells(selectedBoundaryAndObservation.boundary.id, affectedCells)}
               isReadOnly={isReadOnly}
-              expectSingleCell={selectedBoundaryAndObservation.boundary.type === 'well'}
+              expectSingleCell={'well' === selectedBoundaryAndObservation.boundary.type}
             />}
         </Map>
       </BodyContent>

@@ -14,10 +14,9 @@ import {StressperiodsUpload} from '../components/ModelTimeDiscretization/Stressp
 import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import {Map} from 'common/components/Map';
-import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
+import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 
 const TimeDiscretizationContainer = () => {
-
   const {projectId} = useParams();
   const {timeDiscretization, updateTimeDiscretization, loading, error} = useTimeDiscretization(projectId as string);
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
