@@ -135,9 +135,9 @@ class LakeObservation(Observation):
 
     @classmethod
     def new(cls, name: ObservationName, geometry: Point, data: list[LakeRawDataItem], bed_leakance: BedLeakance,
-            initial_stage: InitialStage, stage_range: StageRange):
+            initial_stage: InitialStage, stage_range: StageRange, observation_id: ObservationId | None = None):
         return cls(
-            observation_id=ObservationId.new(),
+            observation_id=observation_id or ObservationId.new(),
             observation_name=name,
             geometry=geometry,
             data=data,

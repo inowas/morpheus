@@ -43,7 +43,7 @@ const ProjectListPage = ({basePath}: IProps) => {
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
 
   const {userProfile} = useAuthentication();
-  const {format} = useDateTimeFormat();
+  const {formatDate} = useDateTimeFormat();
   const myUserId = userProfile?.sub || '';
 
   const cards = useMemo(() => {
@@ -58,7 +58,7 @@ const ProjectListPage = ({basePath}: IProps) => {
         description: project.description,
         image: project.image,
         status: 'green',
-        date_time: format(project.created_at, 'dd.MM.yyyy'),
+        date_time: formatDate(project.created_at, 'dd.MM.yyyy'),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
         onDeleteClick: canBeDeleted ? () => onDeleteClick(project.project_id) : undefined,
         onCopyClick: canBeCopied ? () => console.log('Copy project') : undefined,

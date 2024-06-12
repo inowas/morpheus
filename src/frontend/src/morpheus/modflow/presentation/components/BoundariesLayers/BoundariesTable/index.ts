@@ -1,5 +1,5 @@
-import BoundariesTable from './BoundariesTable';
+import ObservationDataTable from './ObservationDataTable';
 
 export {
-  BoundariesTable,
+  ObservationDataTable,
 };

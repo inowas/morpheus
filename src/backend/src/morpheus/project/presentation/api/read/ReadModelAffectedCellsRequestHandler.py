@@ -4,11 +4,11 @@ from ....application.read.ModelReader import ModelReader
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
 from ....types.Project import ProjectId
 
-type format = Literal['json', 'geojson', 'geojson_outline'] | str
+format_type = Literal['json', 'geojson', 'geojson_outline'] | str
 
 
 class ReadModelAffectedCellsRequestHandler:
-    def handle(self, project_id: ProjectId, format: format = 'json'):
+    def handle(self, project_id: ProjectId, format: format_type = 'json'):
         model_reader = ModelReader()
 
         try:

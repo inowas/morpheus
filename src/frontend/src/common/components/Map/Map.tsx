@@ -1,9 +1,4 @@
-import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
-import * as L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-smooth-wheel-zoom';
-
-import {LatLngTuple} from 'leaflet';
+import {L, LatLngTuple} from 'common/infrastructure/Leaflet';
 import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
 import React, {useEffect, useRef} from 'react';

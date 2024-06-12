@@ -66,9 +66,9 @@ class FlowAndHeadObservation(Observation):
     data: list[FlowAndHeadRawDataItem]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[FlowAndHeadRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: list[FlowAndHeadRawDataItem], observation_id: ObservationId | None = None):
         return cls(
-            observation_id=ObservationId.new(),
+            observation_id=observation_id or ObservationId.new(),
             observation_name=name,
             geometry=geometry,
             data=data

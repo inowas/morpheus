@@ -1,27 +1,9 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
-import {ILayerPropertyName, IZone} from '../types/Layers.type';
-import {IBoundaryType} from "../types/Boundaries.type";
+import {ILayerId, ILayerPropertyName, IZone} from '../types/Layers.type';
+import {IBoundaryObservationData, IBoundaryType, IObservationId} from "../types/Boundaries.type";
 
-export interface IAddModelBoundaryCommand {
-  command_name: 'add_model_boundary_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    boundary_type: IBoundaryType;
-    boundary_geometry: Point | LineString | Polygon;
-  }
-}
-
-export interface IRemoveModelBoundaryCommand {
-  command_name: 'remove_model_boundary_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    boundary_id: string;
-  }
-}
-
+// Asset Commands
 export interface IDeleteAssetCommand {
   command_name: 'delete_asset_command';
   payload: {
@@ -39,7 +21,7 @@ export interface IUpdateAssetDescriptionCommand {
   }
 }
 
-export interface UpdateAssetFileNameCommand {
+export interface IUpdateAssetFileNameCommand {
   command_name: 'update_asset_file_name_command';
   payload: {
     project_id: string;
@@ -48,7 +30,7 @@ export interface UpdateAssetFileNameCommand {
   }
 }
 
-export interface UpdateRasterAssetNoDataValueCommand {
+export interface IUpdateRasterAssetNoDataValueCommand {
   command_name: 'update_raster_asset_no_data_value_command';
   payload: {
     project_id: string;
@@ -57,37 +39,73 @@ export interface UpdateRasterAssetNoDataValueCommand {
   }
 }
 
-export interface ICreateProjectCommand {
-  command_name: 'create_project_command';
+export type IAssetCommand = IDeleteAssetCommand |
+  IUpdateAssetDescriptionCommand |
+  IUpdateAssetFileNameCommand |
+  IUpdateRasterAssetNoDataValueCommand;
+
+
+// Calculation Commands
+export interface IStartCalculationCommand {
+  command_name: 'start_calculation_command';
   payload: {
-    name: string;
-    description: string;
-    tags: string[];
+    project_id: string;
+    model_id: string;
+    calculation_profile_id: string;
   }
 }
 
-export interface IDeleteProjectCommand {
-  command_name: 'delete_project_command';
+type ICalculationCommand = IStartCalculationCommand;
+
+
+// Model Commands
+export interface IAddModelBoundaryCommand {
+  command_name: 'add_model_boundary_command';
   payload: {
     project_id: string;
+    model_id: string;
+    boundary_type: IBoundaryType;
+    boundary_geometry: Point | LineString | Polygon;
   }
 }
 
-export interface IUpdateProjectMetadataCommand {
-  command_name: 'update_project_metadata_command';
+export interface IAddModelBoundaryObservationCommand {
+  command_name: 'add_model_boundary_observation_command';
   payload: {
     project_id: string;
-    name: string;
-    description: string;
-    tags: string[];
+    model_id: string;
+    boundary_id: string;
+    observation_name: string;
+    observation_geometry: Point;
+    observation_data: IBoundaryObservationData[]
   }
 }
 
-export interface IUpdateProjectVisibilityCommand {
-  command_name: 'update_project_visibility_command';
+export interface ICloneModelBoundaryCommand {
+  command_name: 'clone_model_boundary_command';
   payload: {
     project_id: string;
-    visibility: 'public' | 'private';
+    model_id: string;
+    boundary_id: string;
+  }
+}
+
+export interface ICloneModelBoundaryObservationCommand {
+  command_name: 'clone_model_boundary_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    observation_id: string;
+  }
+}
+
+export interface ICloneModelLayerCommand {
+  command_name: 'clone_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
   }
 }
 
@@ -99,6 +117,151 @@ export interface ICreateModelCommand {
     n_cols: number;
     n_rows: number;
     rotation: number;
+  }
+}
+
+export interface ICreateModelLayerCommand {
+  command_name: 'create_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    name: string;
+    description: string;
+    confinement: 'confined' | 'convertible' | 'unconfined';
+    hk: number;
+    hani: number;
+    vka: number;
+    specific_storage: number;
+    specific_yield: number;
+    initial_head: number;
+    top?: number;
+    bottom: number;
+  }
+}
+
+export interface ICreateModelVersionCommand {
+  command_name: 'create_model_version_command';
+  payload: {
+    project_id: string;
+    version_tag: string;
+    version_description: string;
+  }
+}
+
+export interface IDeleteModelLayerCommand {
+  command_name: 'delete_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+  }
+}
+
+export interface IDeleteModelVersionCommand {
+  command_name: 'delete_model_version_command';
+  payload: {
+    project_id: string;
+    version_id: string;
+  }
+}
+
+export interface IDisableModelBoundaryCommand {
+  command_name: 'disable_model_boundary_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+  }
+}
+
+export interface IEnableModelBoundaryCommand {
+  command_name: 'enable_model_boundary_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+  }
+}
+
+export interface IRemoveModelBoundaryCommand {
+  command_name: 'remove_model_boundary_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+  }
+}
+
+export interface IRemoveModelBoundaryObservationCommand {
+  command_name: 'remove_model_boundary_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    observation_id: string;
+  }
+}
+
+export interface IUpdateModelAffectedCellsCommand {
+  command_name: 'update_model_affected_cells_command';
+  payload: {
+    project_id: string;
+    affected_cells: IAffectedCells;
+  }
+}
+
+export interface IUpdateModelBoundaryAffectedCellsCommand {
+  command_name: 'update_model_boundary_affected_cells_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    affected_cells: IAffectedCells;
+  }
+}
+
+export interface IUpdateModelBoundaryAffectedLayersCommand {
+  command_name: 'update_model_boundary_affected_layers_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    affected_layers: ILayerId[];
+  }
+}
+
+export interface IUpdateModelBoundaryGeometryCommand {
+  command_name: 'update_model_boundary_geometry_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    geometry: Point | LineString | Polygon;
+  }
+}
+
+export interface IUpdateModelBoundaryMetadataCommand {
+  command_name: 'update_model_boundary_metadata_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id?: string;
+    boundary_name?: string;
+    boundary_tags?: string[];
+  }
+}
+
+export interface IUpdateModelBoundaryObservationCommand {
+  command_name: 'update_model_boundary_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    boundary_type: IBoundaryType;
+    observation_id: IObservationId;
+    observation_name: string;
+    observation_geometry: Point;
+    observation_data: IBoundaryObservationData[];
   }
 }
 
@@ -123,62 +286,6 @@ export interface IUpdateModelGridCommand {
     total_height?: number;
     rotation?: number;
     length_unit?: ILengthUnit;
-  }
-}
-
-export interface IUpdateModelAffectedCellsCommand {
-  command_name: 'update_model_affected_cells_command';
-  payload: {
-    project_id: string;
-    affected_cells: IAffectedCells;
-  }
-}
-
-export interface IUpdateModelTimeDiscretizationCommand {
-  command_name: 'update_model_time_discretization_command';
-  payload: {
-    project_id: string;
-    start_date_time: ITimeDiscretization['start_date_time'];
-    end_date_time: ITimeDiscretization['end_date_time'];
-    stress_periods: ITimeDiscretization['stress_periods'];
-    time_unit: ITimeDiscretization['time_unit'];
-  }
-}
-
-export interface ICloneModelLayerCommand {
-  command_name: 'clone_model_layer_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    layer_id: string;
-  }
-}
-
-export interface ICreateModelLayerCommand {
-  command_name: 'create_model_layer_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    name: string;
-    description: string;
-    confinement: 'confined' | 'convertible' | 'unconfined';
-    hk: number;
-    hani: number;
-    vka: number;
-    specific_storage: number;
-    specific_yield: number;
-    initial_head: number;
-    top?: number;
-    bottom: number;
-  }
-}
-
-export interface IDeleteModelLayerCommand {
-  command_name: 'delete_model_layer_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    layer_id: string;
   }
 }
 
@@ -212,6 +319,17 @@ export interface IUpdateModelLayerOrderCommand {
   }
 }
 
+export interface IUpdateModelLayerPropertyDefaultValueCommand {
+  command_name: 'update_model_layer_property_default_value_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+    property_name: ILayerPropertyName;
+    property_default_value: number;
+  }
+}
+
 export interface IUpdateModelLayerPropertyRasterReferenceCommand {
   command_name: 'update_model_layer_property_raster_reference_command';
   payload: {
@@ -226,17 +344,6 @@ export interface IUpdateModelLayerPropertyRasterReferenceCommand {
   }
 }
 
-export interface IUpdateModelLayerPropertyDefaultValueCommand {
-  command_name: 'update_model_layer_property_default_value_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    layer_id: string;
-    property_name: ILayerPropertyName;
-    property_default_value: number;
-  }
-}
-
 export interface IUpdateModelLayerPropertyZonesCommand {
   command_name: 'update_model_layer_property_zones_command';
   payload: {
@@ -248,20 +355,14 @@ export interface IUpdateModelLayerPropertyZonesCommand {
   }
 }
 
-export interface ICreateModelVersionCommand {
-  command_name: 'create_model_version_command';
+export interface IUpdateModelTimeDiscretizationCommand {
+  command_name: 'update_model_time_discretization_command';
   payload: {
     project_id: string;
-    version_tag: string;
-    version_description: string;
-  }
-}
-
-export interface IDeleteModelVersionCommand {
-  command_name: 'delete_model_version_command';
-  payload: {
-    project_id: string;
-    version_id: string;
+    start_date_time: ITimeDiscretization['start_date_time'];
+    end_date_time: ITimeDiscretization['end_date_time'];
+    stress_periods: ITimeDiscretization['stress_periods'];
+    time_unit: ITimeDiscretization['time_unit'];
   }
 }
 
@@ -274,12 +375,62 @@ export interface IUpdateModelVersionDescriptionCommand {
   }
 }
 
+
+export type IModelCommand = IAddModelBoundaryCommand |
+  IAddModelBoundaryObservationCommand |
+  ICloneModelBoundaryCommand |
+  ICloneModelBoundaryObservationCommand |
+  ICloneModelLayerCommand |
+  ICreateModelCommand |
+  ICreateModelLayerCommand |
+  ICreateModelVersionCommand |
+  IDeleteModelLayerCommand |
+  IDeleteModelVersionCommand |
+  IDisableModelBoundaryCommand |
+  IEnableModelBoundaryCommand |
+  IRemoveModelBoundaryCommand |
+  IRemoveModelBoundaryObservationCommand |
+  IUpdateModelAffectedCellsCommand |
+  IUpdateModelBoundaryAffectedCellsCommand |
+  IUpdateModelBoundaryAffectedLayersCommand |
+  IUpdateModelBoundaryGeometryCommand |
+  IUpdateModelBoundaryMetadataCommand |
+  IUpdateModelBoundaryObservationCommand |
+  IUpdateModelGeometryCommand |
+  IUpdateModelGridCommand |
+  IUpdateModelLayerConfinementCommand |
+  IUpdateModelLayerMetadataCommand |
+  IUpdateModelLayerOrderCommand |
+  IUpdateModelLayerPropertyDefaultValueCommand |
+  IUpdateModelLayerPropertyRasterReferenceCommand |
+  IUpdateModelLayerPropertyZonesCommand |
+  IUpdateModelTimeDiscretizationCommand |
+  IUpdateModelVersionDescriptionCommand;
+
+
+// Project Commands
 export interface IAddProjectMemberCommand {
   command_name: 'add_project_member_command';
   payload: {
     project_id: string;
     new_member_id: string;
     new_member_role: 'viewer' | 'editor' | 'admin' | 'owner';
+  }
+}
+
+export interface ICreateProjectCommand {
+  command_name: 'create_project_command';
+  payload: {
+    name: string;
+    description: string;
+    tags: string[];
+  }
+}
+
+export interface IDeleteProjectCommand {
+  command_name: 'delete_project_command';
+  payload: {
+    project_id: string;
   }
 }
 
@@ -300,33 +451,31 @@ export interface IUpdateProjectMemberRoleCommand {
   }
 }
 
-export type ICommand = IAddModelBoundaryCommand
-  | IRemoveModelBoundaryCommand
-  | IDeleteAssetCommand
-  | IUpdateAssetDescriptionCommand
-  | UpdateAssetFileNameCommand
-  | UpdateRasterAssetNoDataValueCommand
-  | ICreateProjectCommand
-  | IDeleteProjectCommand
-  | IUpdateProjectMetadataCommand
-  | IUpdateProjectVisibilityCommand
-  | ICreateModelCommand
-  | IUpdateModelGeometryCommand
-  | IUpdateModelGridCommand
-  | IUpdateModelAffectedCellsCommand
-  | IUpdateModelTimeDiscretizationCommand
-  | ICloneModelLayerCommand
-  | ICreateModelLayerCommand
-  | IDeleteModelLayerCommand
-  | IUpdateModelLayerConfinementCommand
-  | IUpdateModelLayerMetadataCommand
-  | IUpdateModelLayerOrderCommand
-  | IUpdateModelLayerPropertyDefaultValueCommand
-  | IUpdateModelLayerPropertyRasterReferenceCommand
-  | IUpdateModelLayerPropertyZonesCommand
-  | ICreateModelVersionCommand
-  | IDeleteModelVersionCommand
-  | IUpdateModelVersionDescriptionCommand
-  | IAddProjectMemberCommand
-  | IRemoveProjectMemberCommand
-  | IUpdateProjectMemberRoleCommand;
+export interface IUpdateProjectMetadataCommand {
+  command_name: 'update_project_metadata_command';
+  payload: {
+    project_id: string;
+    name: string;
+    description: string;
+    tags: string[];
+  }
+}
+
+export interface IUpdateProjectVisibilityCommand {
+  command_name: 'update_project_visibility_command';
+  payload: {
+    project_id: string;
+    visibility: 'public' | 'private';
+  }
+}
+
+export type IProjectCommand = IAddProjectMemberCommand |
+  ICreateProjectCommand |
+  IDeleteProjectCommand |
+  IRemoveProjectMemberCommand |
+  IUpdateProjectMemberRoleCommand |
+  IUpdateProjectMetadataCommand |
+  IUpdateProjectVisibilityCommand;
+
+
+export type ICommand = IAssetCommand | ICalculationCommand | IModelCommand | IProjectCommand;

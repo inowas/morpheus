@@ -96,21 +96,19 @@ export class AffectedCells {
     }
 
     if ('sparse' === this.type) {
-      let sparseData = cloneDeep(this.data as Array<[number, number]>);
-      sparseData = sparseData.filter((c) => c[0] !== row && c[1] !== col);
+      const newSparseData = this.data.filter((c) => c[0] !== row || c[1] !== col) as Array<[number, number]>;
       if (active) {
-        sparseData.push([row, col]);
+        newSparseData.push([row, col]);
       }
-      this.data = sparseData;
+      this.data = newSparseData;
     }
 
     if ('sparse_inverse' === this.type) {
-      let sparseInverseData = cloneDeep(this.data as Array<[number, number]>);
-      sparseInverseData = sparseInverseData.filter((c) => c[0] !== row && c[1] !== col);
+      const newSparseInverseData = this.data.filter((c) => c[0] !== row || c[1] !== col) as Array<[number, number]>;
       if (!active) {
-        sparseInverseData.push([row, col]);
+        newSparseInverseData.push([row, col]);
       }
-      this.data = sparseInverseData;
+      this.data = newSparseInverseData;
     }
   }
 

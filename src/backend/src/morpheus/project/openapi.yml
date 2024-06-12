@@ -69,6 +69,7 @@ paths:
             schema:
               oneOf:
                 - $ref: './application/write/Asset/schema.yml#/definitions/AssetCommands'
+                - $ref: './application/write/Calculation/schema.yml#/definitions/CalculationCommands'
                 - $ref: './application/write/Model/schema.yml#/definitions/ModelCommands'
                 - $ref: './application/write/Project/schema.yml#/definitions/ProjectCommands'
 

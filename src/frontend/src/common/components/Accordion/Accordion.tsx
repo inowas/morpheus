@@ -22,7 +22,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({title, children, active, o
   );
 };
 
-const AccordionRef: React.FC<AccordionProps> = ({children, ...props}) => {
+const Accordion: React.FC<AccordionProps> = ({children, ...props}) => {
 
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
 
@@ -53,4 +53,4 @@ const AccordionRef: React.FC<AccordionProps> = ({children, ...props}) => {
   );
 };
 
-export {AccordionRef, AccordionItem};
+export {Accordion, AccordionItem};
