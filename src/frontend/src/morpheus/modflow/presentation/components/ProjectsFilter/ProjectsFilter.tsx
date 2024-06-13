@@ -1,7 +1,8 @@
-import {Button, DatePicker} from 'common/components';
+import {Button, DatePicker, DropdownComponent} from 'common/components';
+// import Dropdown from 'common/components/Dropdown/Dropdown';
 import Slider from 'common/components/Slider/SimpleSlider';
 import {MapContainer, TileLayer} from 'react-leaflet';
-import {Checkbox, Dropdown, Form, Icon, Radio} from 'semantic-ui-react';
+import {Checkbox, Form, Icon, Radio} from 'semantic-ui-react';
 import React from 'react';
 import styles from './ProjectsFilter.module.less';
 import {IFilterOptions, IFilterParams} from 'morpheus/modflow/application/useProjectList';
@@ -102,7 +103,7 @@ const ProjectsFilter = ({
           <span className={styles.count}>(<span>{filterOptions.number_of_my_group_projects}</span>)</span>
         </div>
         <label className={styles.labelSmall}>Owners</label>
-        <Dropdown
+        <DropdownComponent.Dropdown
           className={styles.dropdown}
           name="selectedOwners"
           clearable={true}
@@ -487,7 +488,7 @@ const ProjectsFilter = ({
       {/*// By Keywords*/}
       <Form.Field className={styles.field}>
         <label className={styles.label}>By keywords</label>
-        <Dropdown
+        <DropdownComponent.Dropdown
           className={styles.dropdown}
           name="selectedKeywords"
           placeholder="Select keywords"
