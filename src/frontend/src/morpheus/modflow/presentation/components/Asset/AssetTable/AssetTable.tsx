@@ -1,27 +1,37 @@
 import React, {useEffect, useState} from 'react';
-import {Button, SortButtons} from 'common/components';
 import {Checkbox, Segment, Table} from 'semantic-ui-react';
+import {Button, SortButtons} from 'common/components';
 import styles from './AssetTable.module.less';
-import {IAsset} from '../../../../types';
-import {useDateTimeFormat} from '../../../../../../common/hooks';
+
+import {IAsset, IAssetId} from '../../../../types';
 
 interface IProps {
   style?: React.CSSProperties;
   className?: string;
   fileType: string;
-  assets: IAsset[] | null;
+  assets: IAsset[];
   loading: boolean;
   deleteAsset: (id: string) => void;
   isReadOnly: boolean;
-  selectedAsset: string | null;
-  onAssetSelect: (assetId: string | null) => void;
-  onAssetChecked?: (assetId: string[] | null) => void;
+  selectedAsset: IAsset | null;
+  onSelectAsset: (asset: IAsset) => void;
+  onChangeCheckedAssets?: (assetId: IAssetId[] | null) => void;
 }
 
-interface IExtendedAsset extends IAsset {
-  date: string;
-  author: string;
+interface ISortBy {
+  name: 'file_name' | 'file_size';
+  direction: 'asc' | 'desc';
 }
+
+const calculateFileSize = (size_in_bytes: number) => {
+  if (1024 > size_in_bytes) {
+    return `${size_in_bytes} B`;
+  }
+  if (size_in_bytes < 1024 * 1024) {
+    return `${(size_in_bytes / 1024).toFixed(1)} KB`;
+  }
+  return `${(size_in_bytes / 1024 / 1024).toFixed(1)} MB`;
+};
 
 const AssetTable = ({
   style,
@@ -32,109 +42,69 @@ const AssetTable = ({
   deleteAsset,
   isReadOnly,
   selectedAsset,
-  onAssetSelect,
-  onAssetChecked,
+  onSelectAsset,
+  onChangeCheckedAssets,
 }: IProps) => {
-  const [showAll, setShowAll] = useState(false);
-  const [checkedAssets, setCheckedAssets] = useState<string[] | null>(null);
 
+  const [checkedAssets, setCheckedAssets] = useState<string[]>([]);
+
+  const [sortedAssets, setSortedAssets] = useState<IAsset[]>(assets);
+  const [sortBy, setSortBy] = useState<ISortBy>({name: 'file_name', direction: 'asc'});
 
   useEffect(() => {
-    if (onAssetChecked) {
-      // Select asset by clicked checkbox
-      onAssetChecked(checkedAssets);
+    if (onChangeCheckedAssets) {
+      onChangeCheckedAssets(checkedAssets);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedAssets]);
 
-  /*
-  * Mock data for testing
-  * Add new assets format with mock author and date
-  * */
-  const {format} = useDateTimeFormat();
-  const [updatedAssets, setUpdatedAssets] = useState<IExtendedAsset[]>();
-  const usersList = ['Catalin Stefan', 'Ralf Junghanns', 'Jana Glass'];
-  const generateRandomDate = () => {
-    const startDate = new Date('2020-01-01').getTime();
-    const endDate = new Date('2025-12-31').getTime();
-    const randomTime = startDate + Math.random() * (endDate - startDate);
-    return new Date(randomTime);
-  };
-
-  const generateRandomFullName = () => {
-    const randomIndex = Math.floor(Math.random() * usersList.length);
-    return usersList[randomIndex];
-  };
-  useEffect(() => {
-    setShowAll(false);
-    if (!assets) return;
-    const refAssets = assets.map((asset) => ({
-      ...asset,
-      date: format(generateRandomDate().toISOString(), 'dd.MM.yyyy HH:mm'),
-      author: generateRandomFullName(),
-    }));
-    setUpdatedAssets(refAssets);
-  }, [fileType, assets]);
-  /*
-  * End mock data for testing
-  *
-  * */
-
-
-  const handleSelectAll = () => {
-    setShowAll(!showAll);
-    const result: string[] = [];
-    if (!showAll && assets) {
-      assets.forEach((asset) => {
-        result.push(asset.asset_id);
-      });
-    }
-    setCheckedAssets(result);
-  };
-
-  const handleSort = (direction: 'asc' | 'desc', name: string | undefined) => {
-    const sortedAssets = [...(updatedAssets || [])].sort((a, b) => {
-      switch (name) {
-      case 'upload_date': {
-        const dateA = new Date(a.date.split(' ')[0].split('.').reverse().join('-')).getTime();
-        const dateB = new Date(b.date.split(' ')[0].split('.').reverse().join('-')).getTime();
-        return 'asc' === direction ? dateA - dateB : dateB - dateA;
-      }
+  const handleSort = (assetsToSort: IAsset[], sort: ISortBy) => (
+    assetsToSort.toSorted((a, b) => {
+      switch (sort.name) {
       case 'file_name':
-        return 'asc' === direction
-          ? a.file.file_name.localeCompare(b.file.file_name)
-          : b.file.file_name.localeCompare(a.file.file_name);
-      case 'author':
-        return 'asc' === direction
-          ? a.author.localeCompare(b.author)
-          : b.author.localeCompare(a.author);
+        const fileNameCompareResult = a.file.file_name.localeCompare(b.file.file_name);
+        return 'asc' === sort.direction ? fileNameCompareResult : -fileNameCompareResult;
+      case 'file_size':
+        const sizeCompareResult = a.file.size_in_bytes - b.file.size_in_bytes;
+        return 'asc' === sort.direction ? sizeCompareResult : -sizeCompareResult;
       default :
         return 0;
       }
-    });
-    setUpdatedAssets(sortedAssets);
+    }));
+
+  useEffect(() => {
+    const newSortedAssets = handleSort(assets, sortBy);
+    setSortedAssets(newSortedAssets);
+    if (0 === newSortedAssets.length) {
+      return;
+    }
+
+    if (!selectedAsset || !newSortedAssets.find((asset) => asset.asset_id === selectedAsset.asset_id)) {
+      onSelectAsset(newSortedAssets[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assets]);
+
+  const handleSelectAll = () => {
+    if (checkedAssets.length === assets.length) {
+      return setCheckedAssets([]);
+    }
+    return setCheckedAssets(assets.map((asset) => asset.asset_id));
   };
 
   const renderHeader = () => (
     <Table.Row>
-      <Table.HeaderCell>
-        {onAssetChecked && <Checkbox checked={showAll} onClick={handleSelectAll}/>}
-      </Table.HeaderCell>
-      <Table.HeaderCell>
-        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
-          Upload date
-          <SortButtons name={'upload_date'} onSort={handleSort}/>
-        </div>
-      </Table.HeaderCell>
+      {onChangeCheckedAssets && <Table.HeaderCell><Checkbox checked={checkedAssets.length === assets.length} onClick={handleSelectAll}/></Table.HeaderCell>}
       <Table.HeaderCell>
         <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
           File name
-          <SortButtons name={'file_name'} onSort={handleSort}/>
+          <SortButtons onClick={(direction) => setSortBy({name: 'file_name', direction})} direction={'file_name' === sortBy.name ? sortBy.direction : null}/>
         </div>
       </Table.HeaderCell>
       <Table.HeaderCell>
         <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
-          Uploaded by
-          <SortButtons name={'author'} onSort={handleSort}/>
+          File size
+          <SortButtons onClick={(direction) => setSortBy({name: 'file_size', direction})} direction={'file_size' === sortBy.name ? sortBy.direction : null}/>
         </div>
       </Table.HeaderCell>
       {!isReadOnly && <Table.HeaderCell></Table.HeaderCell>}
@@ -142,38 +112,30 @@ const AssetTable = ({
   );
 
   const renderContent = () => {
-    if (!updatedAssets) {
-      return null;
-    }
-    return updatedAssets.map((asset: any) => (
+    return sortedAssets.map((asset: IAsset) => (
       <Table.Row
         key={asset.asset_id}
-        className={selectedAsset === asset.asset_id ? styles.selected : ''}
-        onClick={() => onAssetSelect(asset.asset_id)}
+        className={selectedAsset?.asset_id === asset.asset_id ? styles.selected : ''}
+        onClick={() => onSelectAsset(asset)}
       >
-        <Table.Cell>
-          {onAssetChecked && <Checkbox
-            checked={checkedAssets ? checkedAssets.includes(asset.asset_id) : false}
+
+        {onChangeCheckedAssets && <Table.Cell>
+          <Checkbox
+            checked={checkedAssets.includes(asset.asset_id)}
             onClick={(e) => {
               e.stopPropagation();
               setCheckedAssets(prev => {
-                if (!prev) {
-                  return [asset.asset_id];
-                }
                 if (prev.includes(asset.asset_id)) {
-                  const filtered = prev.filter(id => id !== asset.asset_id);
-                  return 0 < filtered.length ? filtered : null;
+                  return prev.filter(id => id !== asset.asset_id);
                 }
                 return [...prev, asset.asset_id];
               });
             }}
-          />}
-        </Table.Cell>
-        <Table.Cell>
-          {asset.date.split(' ')[0]}
-          <span style={{marginLeft: 10}}>{asset.date.split(' ')[1]}</span></Table.Cell>
+          />
+        </Table.Cell>}
+
         <Table.Cell>{asset.file.file_name}</Table.Cell>
-        <Table.Cell>{asset.author}</Table.Cell>
+        <Table.Cell>{calculateFileSize(asset.file.size_in_bytes)}</Table.Cell>
         {!isReadOnly && (
           <Table.Cell style={{textAlign: 'right'}}>
             <Button

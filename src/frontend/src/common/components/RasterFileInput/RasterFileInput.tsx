@@ -46,6 +46,7 @@ const RasterFileInput = ({onSubmit, error, readOnly, icon, content}: IRasterFile
           const files = e.target.files;
           if (files) {
             await handleAcceptedFiles(Array.from(files));
+            e.target.value = '';
           }
         }}
         accept={'.geotiff,.tif,.tiff'}

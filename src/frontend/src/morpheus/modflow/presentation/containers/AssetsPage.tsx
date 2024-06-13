@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ContentWrapper, Grid, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
+import {ContentWrapper, Grid, ImageRenderer, Loader, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
@@ -8,14 +8,20 @@ import useProjectPermissions from '../../application/useProjectPermissions';
 import useAssets from '../../application/useAssets';
 import {MenuItem, Radio} from 'semantic-ui-react';
 import {AssetButtonsGroup, AssetTable} from '../components/Asset';
-import MapExample from '../../../../common/components/Map/MapExample';
-import AssetsModalContainer from './AssetsModalContainter';
-import {FeatureCollection} from 'geojson';
-import {IAsset} from '../../types';
+import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
+import JSZip from 'jszip';
+import {Map, GeoJsonLayer} from 'common/components/Map';
+import {GeoJSON} from 'geojson';
 
 interface IProps {
   basePath: string;
 }
+
+const isRasterAsset = (asset: IAsset | null): asset is IRasterAsset => 'geo_tiff' === asset?.type;
+const isShapeAsset = (asset: IAsset | null): asset is IShapefileAsset => 'shapefile' === asset?.type;
+
+const isRasterAssetData = (data: IAssetData | null): data is IAssetRasterData => 'geo_tiff' === data?.type;
+const isShapeAssetData = (data: IAssetData | null): data is IAssetShapefileData => 'shapefile' === data?.type;
 
 const AssetsPage = ({}: IProps) => {
   const {projectId} = useParams();
@@ -23,36 +29,86 @@ const AssetsPage = ({}: IProps) => {
   const location = useLocation();
   const {isReadOnly} = useProjectPermissions(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
-  const {assets, loading, deleteAsset} = useAssets(projectId as string);
+  const {assets, loading, deleteAsset, uploadAsset, fetchAssetData} = useAssets(projectId as string);
 
-  const [fileType, setFileType] = useState<'Raster' | 'Shape' | 'CSV'>('Raster');
-  const [rasterAsset, setRasterAsset] = useState<IAsset[]>([]);
-  const [shapeAsset, setShapeAsset] = useState<IAsset[]>([]);
-  const [selectedRasterFile, setSelectedRasterFile] = useState<string | null>(null);
-  const [selectedShapeFile, setSelectedShapeFile] = useState<string | null>(null);
-  const [checkedRasterFile, setCheckedRasterFile] = useState<string[] | null>(null);
-  const [checkedShapeFile, setCheckedShapeFile] = useState<string[] | null>(null);
-  const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
+  const [selectedAssetType, setSelectedAssetType] = useState<'shape' | 'raster' | 'csv'>('raster');
+  const [rasterAssets, setRasterAssets] = useState<IAsset[]>([]);
+  const [shapeAssets, setShapeAssets] = useState<IAsset[]>([]);
+
+  const [selectedAsset, setSelectedAsset] = useState<IAsset | null>(null);
+  const [selectedAssetData, setSelectedAssetData] = useState<IAssetData | null>(null);
 
   useEffect(() => {
-    setRasterAsset(assets.filter((item) => 'geo_tiff' === item.type));
-    setShapeAsset(assets.filter((item) => 'shapefile' === item.type));
+    setRasterAssets(assets.filter((item) => isRasterAsset(item)));
+    setShapeAssets(assets.filter((item) => isShapeAsset(item)));
   }, [assets]);
 
-  const getAssetNameById = (id: string | null): string | null => {
-    if (!id) return null;
-    const foundAsset = assets.find((a) => a.asset_id === id);
-    return foundAsset ? foundAsset.file.file_name : null;
+  useEffect(() => {
+    if (!selectedAsset) {
+      return setSelectedAssetData(null);
+    }
+
+    fetchAssetData(selectedAsset.asset_id).then((data) => data && setSelectedAssetData(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAsset]);
+
+  const handleUploadSelectedRasterFiles = async (files: File[]) => {
+    for (const file of files) {
+      if (file.name.endsWith('.tif') || file.name.endsWith('.tiff') || file.name.endsWith('.geotiff')) {
+        await uploadAsset(file);
+      }
+    }
   };
 
-  const handleSelectShapeFile = (assetId: string, data: FeatureCollection) => {
-    console.warn('ShapeFile checked', assetId, data);
+  const handleUploadSelectedShapeFiles = async (files: File[]) => {
+    // Check if the file is a zip file and return this file directly
+    const zipFile = files.find((file) => file.name.endsWith('.zip'));
+    if (zipFile) {
+      uploadAsset(zipFile);
+    }
+
+    // if no zip file is found, compress the files and upload the zip file
+    if (!zipFile) {
+      const zip = new JSZip();
+      files.forEach((file) => zip.file(`${file.name}`, file));
+      const zipContent = await zip.generateAsync({type: 'blob'});
+      const file = new File([zipContent], 'shapefile.zip', {type: 'application/zip'});
+      await uploadAsset(file);
+    }
   };
 
-  const handleSelectRasterFile = (assetId: string) => {
-    console.warn('RasterFile selected', assetId);
-  };
+  const renderData = (asset: IAsset | null, data: IAssetData | null) => {
 
+    if (loading) {
+      return <Loader
+        style={{marginTop: '50px'}}
+        inline={'centered'}
+        size={'large'}
+        active={true}
+      />;
+    }
+
+    if (!asset || !data) {
+      return null;
+    }
+
+    if (asset.type !== data.type) {
+      return null;
+    }
+
+    if (isRasterAssetData(data)) {
+      return <ImageRenderer data={data.data}/>;
+    }
+
+    if (isShapeAssetData(selectedAssetData)) {
+      return (
+        <Map>
+          <GeoJsonLayer geoJson={selectedAssetData.data as GeoJSON}/>
+        </Map>
+      );
+    }
+    return null;
+  };
 
   return (
     <>
@@ -62,101 +118,84 @@ const AssetsPage = ({}: IProps) => {
         navigateTo={navigateTo}
       />
       <ModflowContainer>
-        <ContentWrapper style={{paddingTop: '90px', paddingBottom: '60px'}}>
-          <Grid.Grid style={{minHeight: '590px'}}>
-            <Grid.Column width={11}>
+        <ContentWrapper>
+          <Grid.Grid style={{paddingTop: '50px', minHeight: 'calc(100vh - 200px)'}}>
+            <Grid.Column width={10}>
               <SectionTitle title='Assets' style={{marginBottom: '30px'}}/>
               <Tab
                 variant='primary'
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem key='model_domain' onClick={() => setFileType('Raster')}>Raster File</MenuItem>,
+                    menuItem: <MenuItem key='model_domain' onClick={() => setSelectedAssetType('raster')}>Raster File</MenuItem>,
                     render: () => <TabPane attached={false}>
                       <AssetTable
-                        fileType={fileType}
-                        assets={rasterAsset}
+                        fileType={selectedAssetType}
+                        assets={rasterAssets}
                         loading={loading}
                         deleteAsset={deleteAsset}
                         isReadOnly={isReadOnly}
-                        selectedAsset={selectedRasterFile}
-                        onAssetSelect={setSelectedRasterFile}
-                        onAssetChecked={setCheckedRasterFile}
-
+                        selectedAsset={isRasterAsset(selectedAsset) ? selectedAsset : null}
+                        onSelectAsset={setSelectedAsset}
                       />
                       <AssetButtonsGroup
-                        checkedAssets={checkedRasterFile}
+                        acceptFiles={'.geotiff,.tif,.tiff'}
+                        buttonContent={'Upload Raster Files'}
                         isReadOnly={isReadOnly}
                         loading={loading}
-                        onUploadFile={setShowFileUploadModal}
-                        onDownload={() => console.log('Download selected ', checkedRasterFile)}
-                        onDelete={() => console.log('Delete selected ', checkedRasterFile)}
+                        onSelectFiles={handleUploadSelectedRasterFiles}
                       />
                     </TabPane>,
                   },
                   {
-                    menuItem: <MenuItem key='affected_cells' onClick={() => setFileType('Shape')}>Shape File</MenuItem>,
+                    menuItem: <MenuItem key='affected_cells' onClick={() => setSelectedAssetType('shape')}>Shape File</MenuItem>,
                     render: () => <TabPane attached={false}>
                       <AssetTable
-                        fileType={fileType}
-                        assets={shapeAsset}
+                        fileType={selectedAssetType}
+                        assets={shapeAssets}
                         loading={loading}
                         deleteAsset={deleteAsset}
                         isReadOnly={isReadOnly}
-                        selectedAsset={selectedShapeFile}
-                        onAssetSelect={setSelectedShapeFile}
-                        // onAssetChecked={setCheckedShapeFile}
+                        selectedAsset={isShapeAsset(selectedAsset) ? selectedAsset : null}
+                        onSelectAsset={setSelectedAsset}
                       />
                       <AssetButtonsGroup
-                        checkedAssets={checkedShapeFile}
+                        acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
+                        buttonContent={'Upload Shapefiles'}
                         isReadOnly={isReadOnly}
                         loading={loading}
-                        onUploadFile={setShowFileUploadModal}
-                        // onDownload={() => console.log('Download selected ', checkedShapeFile)}
-                        // onDelete={() => console.log('Delete selected ', checkedShapeFile)}
+                        onSelectFiles={handleUploadSelectedShapeFiles}
                       />
-
                     </TabPane>,
                   },
                 ]}
               />
             </Grid.Column>
-            <Grid.Column width={5} style={{display: 'flex', flexDirection: 'column'}}>
-              <SectionTitle title='Preview' style={{marginBottom: '30px'}}/>
-              {'Shape' === fileType && selectedShapeFile && <p style={{marginBottom: '10px', fontWeight: '600'}}>{getAssetNameById(selectedShapeFile)}</p>}
-              {'Raster' === fileType && selectedRasterFile && <p style={{marginBottom: '10px', fontWeight: '600'}}>{getAssetNameById(selectedRasterFile)}</p>}
-              <MapExample
-                editable={false}
-                geojson={{
-                  type: 'FeatureCollection',
-                  features: [],
-                }}
-                onChangeGeojson={() => console.log('changed')}
-                coords={[51.051772741784625, 13.72531677893111]}
-              />
 
-              {'Raster' === fileType && <div style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
-                <Radio
-                  label="Band 1"
-                  value={'band_1'}
-                />
-                <Radio
-                  label="Band 2"
-                  value={'band_2'}
-                />
-                <Radio
-                  label="Band 3"
-                  value={'band_3'}
-                />
-              </div>}
+            {/* Preview */}
+            <Grid.Column width={6} style={{display: 'flex', flexDirection: 'column'}}>
+              <SectionTitle title='Preview'/>
+              <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+                <p style={{fontWeight: '600', padding: '10px'}}>{selectedAsset?.file.file_name}</p>
+                {isRasterAsset(selectedAsset) &&
+                  <div style={{display: 'flex', gap: 10, margin: 10}}>
+                    {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
+                      <Radio
+                        key={index}
+                        label={`Band ${index + 1}`}
+                        value={`band_${index + 1}`}
+                        checked={0 === index}
+                      />
+                    ))}
+                  </div>}
+              </div>
+
+              {renderData(selectedAsset, selectedAssetData)}
+
             </Grid.Column>
           </Grid.Grid>
         </ContentWrapper>
       </ModflowContainer>
-      {showFileUploadModal && !isReadOnly && 'Raster' === fileType &&
-        <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectRasterFile={handleSelectRasterFile}/>}
-      {showFileUploadModal && !isReadOnly && 'Shape' === fileType &&
-        <AssetsModalContainer onClose={() => setShowFileUploadModal(false)} onSelectShapefile={handleSelectShapeFile}/>}
     </>
   );
 };
