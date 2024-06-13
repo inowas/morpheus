@@ -76,13 +76,14 @@ class CloneModelBoundaryObservationCommandHandler(CommandHandlerBase):
             )
 
         observation_clone = observation.clone()
-        boundary.with_added_observation(observation=observation_clone)
+        assert boundary.with_added_observation(observation=observation_clone)
 
         event = ModelBoundaryObservationAddedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
             boundary_id=command.boundary_id,
-            observation=observation,
+            boundary_type=boundary.type,
+            observation=observation_clone,
             occurred_at=DateTime.now()
         )
 

@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
-import BoundaryList from "./BoundaryList";
+import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
+import BoundaryList from './BoundaryList';
 import {Grid, InfoTitle, Tab} from 'common/components';
 
-import {BoundariesForm} from "../BoundariesLayers/BoundariesForm";
-import {MenuItem, TabPane} from "semantic-ui-react";
-import {ObservationDataTable} from "../BoundariesLayers/BoundariesTable";
-import {ILayer, ILayerId} from "../../../types/Layers.type";
-import ObservationDataChart from "../BoundariesLayers/BoundariesTable/ObservationDataChart";
-import {ITimeDiscretization} from "../../../types";
+import {BoundariesForm} from '../BoundariesLayers/BoundariesForm';
+import {MenuItem, TabPane} from 'semantic-ui-react';
+import {ObservationDataTable} from '../BoundariesLayers/BoundariesTable';
+import {ILayer, ILayerId} from '../../../types/Layers.type';
+import ObservationDataChart from '../BoundariesLayers/BoundariesTable/ObservationDataChart';
+import {ITimeDiscretization} from '../../../types';
 
 interface IProps {
   boundaries: IBoundary[];
@@ -28,21 +28,21 @@ interface IProps {
 }
 
 const BoundariesAccordionPane = ({
-                                   boundaryType,
-                                   boundaries,
-                                   layers,
-                                   selectedBoundaryAndObservation,
-                                   onSelectBoundaryAndObservation,
-                                   onCloneBoundary,
-                                   onCloneBoundaryObservation,
-                                   onRemoveBoundary,
-                                   onRemoveBoundaryObservation,
-                                   onUpdateBoundaryAffectedLayers,
-                                   onUpdateBoundaryMetadata,
-                                   onUpdateBoundaryObservation,
-                                   isReadOnly,
-                                   timeDiscretization,
-                                 }: IProps) => {
+  boundaryType,
+  boundaries,
+  layers,
+  selectedBoundaryAndObservation,
+  onSelectBoundaryAndObservation,
+  onCloneBoundary,
+  onCloneBoundaryObservation,
+  onRemoveBoundary,
+  onRemoveBoundaryObservation,
+  onUpdateBoundaryAffectedLayers,
+  onUpdateBoundaryMetadata,
+  onUpdateBoundaryObservation,
+  isReadOnly,
+  timeDiscretization,
+}: IProps) => {
 
   const [selectedBoundary, setSelectedBoundary] = useState<IBoundary | undefined>(undefined);
   const [selectedBoundaryObservation, setSelectedBoundaryObservation] = useState<IObservation<any> | undefined>(undefined);
@@ -142,6 +142,6 @@ const BoundariesAccordionPane = ({
       </Grid.Grid>
     </>
   );
-}
+};
 
 export default BoundariesAccordionPane;

@@ -1,9 +1,9 @@
-import React from "react";
-import BoundariesAccordionPane from "./BoundariesAccordionPane";
-import {Accordion} from "common/components";
-import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from "../../../types/Boundaries.type";
-import {ILayer, ILayerId} from "../../../types/Layers.type";
-import {ITimeDiscretization} from "../../../types";
+import React from 'react';
+import BoundariesAccordionPane from './BoundariesAccordionPane';
+import {Accordion} from 'common/components';
+import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
+import {ILayer, ILayerId} from '../../../types/Layers.type';
+import {ITimeDiscretization} from '../../../types';
 
 interface IPanelDetails {
   title: string;
@@ -16,8 +16,8 @@ const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation
   title: b.title,
   type: b.type,
   boundaries: boundaries.filter((boundary) => boundary.type === b.type),
-  active: !!(selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.type === b.type)
-})).filter((panel) => 0 < panel.boundaries.length)
+  active: selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.type === b.type || false,
+})).filter((panel) => 0 < panel.boundaries.length);
 
 interface IProps {
   boundaries: IBoundary[];
@@ -35,19 +35,20 @@ interface IProps {
 }
 
 const BoundariesAccordion = ({
-                               boundaries,
-                               layers,
-                               selectedBoundaryAndObservation,
-                               onCloneBoundary,
-                               onCloneBoundaryObservation,
-                               onUpdateBoundaryAffectedLayers,
-                               onUpdateBoundaryMetadata,
-                               onUpdateBoundaryObservation,
-                               onRemoveBoundary,
-                               onRemoveBoundaryObservation,
-                               onSelectBoundaryAndObservation,
-                               timeDiscretization
-                             }: IProps) => {
+  boundaries,
+  layers,
+  selectedBoundaryAndObservation,
+  onCloneBoundary,
+  onCloneBoundaryObservation,
+  onUpdateBoundaryAffectedLayers,
+  onUpdateBoundaryMetadata,
+  onUpdateBoundaryObservation,
+  onRemoveBoundary,
+  onRemoveBoundaryObservation,
+  onSelectBoundaryAndObservation,
+  timeDiscretization,
+}: IProps) => {
+
   const panelDetails = getPanelDetails(boundaries, selectedBoundaryAndObservation);
 
   const handlePanelChange = (panel: IPanelDetails) => {
@@ -61,11 +62,10 @@ const BoundariesAccordion = ({
     }
 
     onSelectBoundaryAndObservation({boundary: firstBoundary});
-  }
+  };
 
   return (
     <Accordion
-      defaultActiveIndex={panelDetails.findIndex((panel) => panel.active)}
       className='accordionPrimary'
       exclusive={true}
       panels={panelDetails.map((panel) => ({
@@ -73,7 +73,7 @@ const BoundariesAccordion = ({
         title: {
           content: <span>{`${panel.title} (${panel.boundaries.length})`}</span>,
           icon: false,
-          onClick: () => handlePanelChange(panel)
+          onClick: () => handlePanelChange(panel),
         },
         active: panel.active,
         content: {
@@ -95,10 +95,10 @@ const BoundariesAccordion = ({
               timeDiscretization={timeDiscretization}
             />
           ),
-        }
+        },
       }))}
     />
   );
-}
+};
 
 export default BoundariesAccordion;
