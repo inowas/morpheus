@@ -85,6 +85,7 @@ class AddModelBoundaryObservationCommandHandler(CommandHandlerBase):
             project_id=project_id,
             model_id=command.model_id,
             boundary_id=command.boundary_id,
+            boundary_type=boundary_type,
             observation=observation,
             occurred_at=DateTime.now()
         )

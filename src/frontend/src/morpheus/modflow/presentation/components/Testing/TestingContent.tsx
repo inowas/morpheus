@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Slider from 'common/components/Slider/SimpleSlider';
-import {Button, DataGrid, DataRow, SectionTitle, UploadFile} from 'common/components';
-import {Dropdown, Form, Icon, Radio, Tab, TabPane, TextArea} from 'semantic-ui-react';
+import {Button, DataGrid, DataRow, DropdownComponent, SectionTitle, UploadFile} from 'common/components';
+import {Form, Icon, Radio, Tab, TabPane, TextArea} from 'semantic-ui-react';
 import DatePicker from 'react-datepicker';
 import styles from './TestingContent.module.less';
 
@@ -86,7 +86,7 @@ const TestingContent: React.FC = () => {
             </Form.Field>
             <Form.Field className={styles.field}>
               <label className={'h4'}>Model Keywords</label>
-              <Dropdown
+              <DropdownComponent.Dropdown
                 name="selectedKeywords"
                 placeholder="Select keywords"
                 fluid={true}
@@ -131,7 +131,7 @@ const TestingContent: React.FC = () => {
               <div className="fieldGrid">
                 <div className="fieldRow">
                   <label className="labelSmall">Length unit</label>
-                  <Dropdown
+                  <DropdownComponent.Dropdown
                     placeholder="meters"
                     selection={true}
                     options={lengthUnitOptions}
@@ -139,7 +139,7 @@ const TestingContent: React.FC = () => {
                 </div>
                 <div className="fieldRow">
                   <label className="labelSmall">Time unit</label>
-                  <Dropdown
+                  <DropdownComponent.Dropdown
                     placeholder="days"
                     selection={true}
                     options={timeUnitOptions}

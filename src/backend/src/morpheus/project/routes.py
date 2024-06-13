@@ -141,9 +141,13 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/model/boundaries/<boundary_id>/affected_cells', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_boundary_affected_cells(project_id: str, boundary_id: str | None = None):
+    def project_model_get_boundary_affected_cells(project_id: str, boundary_id: str):
         output_format: Literal['json', 'geojson', 'geojson_outline'] | str = request.args.get('format', 'json')  # default to json
-        return ReadModelBoundaryAffectedCellsRequestHandler().handle(project_id=ProjectId.from_str(project_id), boundary_id=BoundaryId.try_from_str(boundary_id), format=output_format)
+        return ReadModelBoundaryAffectedCellsRequestHandler().handle(
+            project_id=ProjectId.from_str(project_id),
+            boundary_id=BoundaryId.from_str(boundary_id),
+            format=output_format
+        )
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

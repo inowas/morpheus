@@ -57,6 +57,7 @@ const ShapeFileInput = ({onSubmit, error, readOnly, icon, content}: IShapeFileIn
           const files = e.target.files;
           if (files) {
             await handleAcceptedFiles(Array.from(files));
+            e.target.value = '';
           }
         }}
         accept={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}

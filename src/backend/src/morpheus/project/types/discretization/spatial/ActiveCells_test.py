@@ -49,13 +49,13 @@ def test_grid_cells_to_sparse_inverse_dict() -> None:
     assert grid_cells.to_dict() == {
         'type': 'sparse_inverse',
         'shape': (5, 2),
-        'data': [(1, 0)]
+        'data': [(0, 1)]
     }
 
     assert ActiveCells.from_dict({
         'type': 'sparse_inverse',
         'shape': (5, 2),
-        'data': [(1, 0)]
+        'data': [(0, 1)]
     }) == grid_cells
 
 
@@ -149,5 +149,5 @@ def test_grid_cells_filter() -> None:
     assert boundary_cells_filtered.to_dict(auto_detect=True) == {
         'type': 'sparse',
         'shape': (5, 15),
-        'data': [(0, 1), (0, 2), (0, 3), (0, 4)]
+        'data': [(1, 0), (2, 0), (3, 0), (4, 0)]
     }
