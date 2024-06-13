@@ -81,6 +81,7 @@ const BoundariesUpload = ({stressPeriods, columns, onSubmit}: IProps) => {
       justifyContent: 'space-between',
       gap: '20px',
       flexWrap: 'wrap',
+      marginBottom: '20px',
     }}
     >
       {/*// Component to upload and parse a CSV file*/}
@@ -88,7 +89,6 @@ const BoundariesUpload = ({stressPeriods, columns, onSubmit}: IProps) => {
       <CsvFileInput
         onChange={handleCsvFileInputChange}
         content={'Upload CSV'}
-        style={{marginLeft: 'auto'}}
       />
 
       {/*// Button to download a template CSV file*/}

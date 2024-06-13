@@ -148,15 +148,16 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation}: 
 
   return (
     <>
+      <BoundariesUpload
+        onSubmit={() => console.log('Submit from ObservationDataTable')}
+        columns={getColumns(boundaryType, formatDate, parseUserInput)}
+      />
       <DataTable
-        columns={getColumns(boundaryType, formatDate, parseUserInput)} data={data}
+        columns={getColumns(boundaryType, formatDate, parseUserInput)}
+        data={data}
         onChangeData={handleChangedData}
       />
       <div className={styles.buttonsGroup}>
-        <BoundariesUpload
-          onSubmit={() => console.log('Submit from ObservationDataTable')}
-          columns={getColumns(boundaryType, formatDate, parseUserInput)}
-        />
         <Button className='buttonLink' onClick={() => addUniqueDataPoint(newRow(boundaryType, addDays(latestDate, 1)))}>
           <Icon name="add"/> 1 day
         </Button>

@@ -45,12 +45,15 @@ const BoundaryList = ({
   const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
   const [inputObservationValue, setInputObservationValue] = useState('');
 
+  const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
   const filteredBoundaries = useMemo(() => {
     return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
   }, [boundaries, search, type]);
-
-  const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
-
 
   return (
     <>
@@ -62,7 +65,7 @@ const BoundaryList = ({
         allSelected={undefined}
         onChangeAllSelected={undefined}
         searchInput={search}
-        onChangeSearchInput={setSearch}
+        onChangeSearchInput={handleSearchChange}
       />
       {/**/}
       {/*Body with list items*/}
@@ -139,7 +142,6 @@ const BoundaryList = ({
                 )}
               </div>
             </div>
-
             {canHaveMultipleObservations(boundary) && (
               <Accordion.Content
                 className={styles.accordionContent}
