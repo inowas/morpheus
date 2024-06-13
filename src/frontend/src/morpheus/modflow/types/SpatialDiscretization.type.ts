@@ -49,7 +49,7 @@ export enum ILengthUnit {
 
 export class AffectedCells {
 
-  private readonly _type: 'raster' | 'sparse' | 'sparse_inverse';
+  private _type: 'raster' | 'sparse' | 'sparse_inverse';
 
   private _data: boolean[][] | Array<[number, number]>;
 
@@ -71,6 +71,9 @@ export class AffectedCells {
     return this._type;
   }
 
+  set type(type: 'raster' | 'sparse' | 'sparse_inverse') {
+    this._type = type;
+  }
 
   private constructor(cells: IAffectedCells) {
     this._type = cells.type;
@@ -83,7 +86,6 @@ export class AffectedCells {
   }
 
   public setActive(row: number, col: number, active: boolean) {
-
 
     if (0 > row || row >= this.shape[0] || 0 > col || col >= this.shape[1]) {
       return;
@@ -110,6 +112,11 @@ export class AffectedCells {
       }
       this.data = newSparseInverseData;
     }
+  }
+
+  public setActiveOnlyOneCell(row: number, col: number) {
+    this.type = 'sparse';
+    this.data = [[row, col]];
   }
 
   public toRaster(): boolean[][] {

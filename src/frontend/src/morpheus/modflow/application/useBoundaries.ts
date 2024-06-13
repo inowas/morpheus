@@ -93,8 +93,6 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
     const result = await httpGet<IBoundary>(`/projects/${projectId}/model/boundaries/${boundaryId}`);
 
-    console.log(result);
-
     if (!isMounted.current) {
       return;
     }
@@ -236,7 +234,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
       });
     }
 
-    await fetchSingleBoundary(boundaryId);
+    await fetchAllBoundaries();
   }
 
   const onCloneBoundaryObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
