@@ -1,10 +1,10 @@
-import {Button, Dropdown, Form, TextArea} from 'semantic-ui-react';
+import {Button, Form, TextArea} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
 import RandomImage from 'common/components/RandomImage';
 import styles from './CreateProjectModal.module.less';
 import Images from './images';
-import {Modal} from 'common/components';
+import {DropdownComponent, Modal} from 'common/components';
 import {IError} from '../../../../types';
 
 interface IProps {
@@ -72,7 +72,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
             </Form.Field>
             <Form.Field className={styles.field}>
               <label className={`${styles.label} h4`}>Project keywords</label>
-              <Dropdown
+              <DropdownComponent.Dropdown
                 allowAdditions={true}
                 name="selectedKeywords"
                 fluid={true}

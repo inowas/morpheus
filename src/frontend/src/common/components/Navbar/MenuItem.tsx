@@ -1,12 +1,11 @@
 import {IDropdownItem, IMenuItem} from './types/navbar.type';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-
-import Dropdown from './Dropdown';
 import {Menu} from 'semantic-ui-react';
 import styles from './Navbar.module.less';
 import useIsMobile from 'common/hooks/useIsMobile';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faGear} from '@fortawesome/free-solid-svg-icons';
+import MenuDropdown from './MenuDropdown';
 
 interface ListItemProps {
   items: IMenuItem | IDropdownItem;
@@ -119,7 +118,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
           >
             <span aria-hidden="true" className={styles.icon}></span>
           </button>}
-          <Dropdown
+          <MenuDropdown
             location={location}
             navigateTo={navigateTo}
             dropdown={dropdown}

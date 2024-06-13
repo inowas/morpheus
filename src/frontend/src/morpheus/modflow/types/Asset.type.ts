@@ -1,12 +1,22 @@
 import {GeoJSON} from 'geojson';
 
-interface IAsset {
+interface IRasterAsset {
   asset_id: IAssetId;
   project_id: string;
-  type: IAssetType;
+  type: 'geo_tiff';
   file: IFile;
-  metadata: IAssetMetadata;
+  metadata: IGeoTiffMetadata;
 }
+
+interface IShapefileAsset {
+  asset_id: IAssetId;
+  project_id: string;
+  type: 'shapefile';
+  file: IFile;
+  metadata: IShapefileMetadata;
+}
+
+type IAsset = IRasterAsset | IShapefileAsset;
 
 type IAssetId = string;
 
@@ -75,4 +85,4 @@ interface IAssetShapefileData {
   }
 }
 
-export type {IAsset, IAssetId, IAssetData, IAssetRasterData, IAssetShapefileData, IAssetType, IFile, IAssetMetadata, IImageMetadata, IGeoTiffMetadata, IShapefileMetadata};
+export type {IAsset, IAssetId, IAssetData, IRasterAsset, IShapefileAsset, IAssetRasterData, IAssetShapefileData, IAssetType, IFile, IAssetMetadata, IImageMetadata, IGeoTiffMetadata, IShapefileMetadata};

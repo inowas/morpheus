@@ -9,7 +9,7 @@ import {IDeleteAssetCommand} from './useProjectCommandBus.type';
 
 interface IUseAssets {
   assets: IAsset[];
-  uploadAsset: (file: File, description: string | undefined) => Promise<IAssetId | undefined>;
+  uploadAsset: (file: File, description?: string) => Promise<IAssetId | undefined>;
   fetchAssets: () => Promise<IAsset[] | undefined>;
   fetchAssetData: (assetId: IAssetId) => Promise<IAssetData | undefined>;
   fetchAssetMetadata: (assetId: IAssetId) => Promise<IAsset | undefined>;
@@ -118,7 +118,7 @@ const useAssets = (projectId: string): IUseAssets => {
     }
   };
 
-  const uploadAsset = async (file: File, description: string | undefined): Promise<IAssetId | undefined> => {
+  const uploadAsset = async (file: File, description?: string): Promise<IAssetId | undefined> => {
 
     dispatch(setLoading(true));
     dispatch(setError(null));
@@ -145,10 +145,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const processShapefile = async (zipFile: File): Promise<IAssetShapefileData> => {
     // upload shape file to server
-    // when successfully uploaded, get shape file metadata from server
-    // load shapefile data from server as geojson and show in a modal
-    // select polygon geometry in the model and return it as model geometry
-    // put this logic in a child component
+    // return shapefile data from server as geojson
     const assetId = await uploadAsset(zipFile, 'shapefile');
 
     if (!assetId) {
@@ -164,6 +161,8 @@ const useAssets = (projectId: string): IUseAssets => {
   };
 
   const processRasterFile = async (rasterFile: File): Promise<IAssetRasterData> => {
+    // upload raster file to server
+    // return raster file data from server
     const assetId = await uploadAsset(rasterFile, 'rasterfile');
 
     if (!assetId) {

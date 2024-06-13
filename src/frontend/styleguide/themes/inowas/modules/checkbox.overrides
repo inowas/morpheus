@@ -10,6 +10,11 @@
 
 
 /* Checkmark */
+
+.ui.checkbox {
+  display: flex;
+}
+
 .ui.checkbox label:after,
 .ui.checkbox .box:after {
   font-family: 'Checkbox';

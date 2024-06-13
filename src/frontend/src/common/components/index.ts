@@ -20,7 +20,7 @@ import Button from './Button/Button';
 import ChartModal from './ChartModal';
 import Container from './Container/Container';
 import Divider from './Divider/Divider';
-import Dropdown from './Dropdown';
+import DropdownComponent from './Dropdown';
 import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
@@ -53,6 +53,7 @@ import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
+import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
@@ -77,7 +78,7 @@ export {
   DataRow,
   Divider,
   DotsMenu,
-  Dropdown,
+  DropdownComponent,
   Form,
   Header,
   HeaderWrapper,
@@ -115,6 +116,7 @@ export {
   ShapeFileInput,
   SliderSwiper,
   SortDropdown,
+  SortButtons,
   Tab,
   TabPane,
   Toggle,
