@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Literal
 
-from morpheus.project.types.calculation.CalculationEngineSettingsBase import CalculationEngineSettingsBase
+from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import De4PackageData
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import GmgPackageData
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.OcPackageWrapper import OcPackageData
@@ -45,8 +45,7 @@ class SolverPackageData:
     SIP: https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/sip.html
     """
     type: Literal['de4', 'gmg', 'pcg', 'pcgn', 'sip'] = 'pcg'
-    data: De4PackageData | GmgPackageData | PcgPackageData | PcgnPackageData | SipPackageData = dataclasses.field(
-        default_factory=PcgPackageData)
+    data: De4PackageData | GmgPackageData | PcgPackageData | PcgnPackageData | SipPackageData = dataclasses.field(default_factory=PcgPackageData)
 
     def to_dict(self) -> dict:
         return {

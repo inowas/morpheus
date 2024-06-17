@@ -9,5 +9,5 @@ class CalculationProfilesReader:
     def __init__(self):
         self._calculation_profiles_repository = get_calculation_profiles_repository()
 
-    def get_selected_calculation_profile(self, project_id: ProjectId) -> CalculationProfile:
+    def get_selected_calculation_profile(self, project_id: ProjectId) -> CalculationProfile | None:
         return self._calculation_profiles_repository.get_selected_calculation_profile(project_id=project_id)
