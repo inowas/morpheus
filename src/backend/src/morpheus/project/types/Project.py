@@ -2,7 +2,7 @@ import dataclasses
 
 from morpheus.common.types import Uuid, String, DateTime
 from .Permissions import Permissions, Visibility
-from .calculation.CalculationProfile import CalculationProfile, CalculationProfileCollection
+from .calculation.CalculationProfile import CalculationProfile, CalculationProfileMap, CalculationEngineType
 from .Model import Model
 from .Scenarios import ScenarioCollection
 from .User import UserId
@@ -84,7 +84,7 @@ class Project:
     metadata: Metadata
     permissions: Permissions
     model: Model | None
-    calculation_profile: CalculationProfile
+    calculation_profiles: CalculationProfileMap
     scenarios: ScenarioCollection
 
     @classmethod
@@ -94,7 +94,7 @@ class Project:
             metadata=Metadata.new(),
             permissions=Permissions.new(owner_id=user_id),
             model=None,
-            calculation_profile=CalculationProfileCollection.new().get_selected_profile(),
+            calculation_profiles=CalculationProfileMap.mf2005(),
             scenarios=ScenarioCollection.new(),
         )
 
@@ -105,7 +105,7 @@ class Project:
             metadata=Metadata.from_dict(obj['metadata']),
             permissions=Permissions.from_dict(obj['permissions']),
             model=Model.from_dict(obj['model']) if obj['model'] is not None else None,
-            calculation_profile=CalculationProfile.from_dict(obj['calculation_profile']),
+            calculation_profiles=CalculationProfileMap.from_dict(obj['calculation_profile']),
             scenarios=ScenarioCollection.from_dict(obj['scenarios']),
         )
 
@@ -115,7 +115,7 @@ class Project:
             'metadata': self.metadata.to_dict(),
             'permissions': self.permissions.to_dict(),
             'model': self.model.to_dict() if self.model is not None else None,
-            'calculation_profile': self.calculation_profile.to_dict(),
+            'calculation_profile': self.calculation_profiles.to_dict(),
             'scenarios': self.scenarios.to_dict(),
         }
 
@@ -128,8 +128,17 @@ class Project:
     def with_updated_model(self, model: Model):
         return dataclasses.replace(self, model=model)
 
+    def with_selected_calculation_profile(self, calculation_engine_type: CalculationEngineType):
+        calculation_profiles = self.calculation_profiles.with_selected_profile(calculation_engine_type)
+        return dataclasses.replace(self, calculation_profiles=calculation_profiles)
+
     def with_updated_calculation_profile(self, calculation_profile: CalculationProfile):
-        return dataclasses.replace(self, calculation_profile=calculation_profile)
+        calculation_profiles = self.calculation_profiles.with_updated_profile(calculation_profile)
+        return dataclasses.replace(self, calculation_profiles=calculation_profiles)
+
+    def with_updated_calculation_profile_selected(self, calculation_profile: CalculationProfile):
+        calculation_profiles = self.calculation_profiles.with_updated_profile_selected(calculation_profile)
+        return dataclasses.replace(self, calculation_profiles=calculation_profiles)
 
     def with_updated_scenarios(self, scenarios: ScenarioCollection):
         return dataclasses.replace(self, scenarios=scenarios)
