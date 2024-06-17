@@ -26,4 +26,4 @@ class CalculationProfileAddedEvent(EventBase):
 
     @staticmethod
     def get_event_name() -> EventName:
-        return EventName.from_str(CalculationEventName.CALCULATION_PROFILE_CREATED.to_str())
+        return EventName.from_str(CalculationEventName.CALCULATION_PROFILE_ADDED.to_str())

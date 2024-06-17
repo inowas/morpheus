@@ -62,7 +62,7 @@ class SolverPackageData:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        ptype = obj.get('type', None)
+        ptype = obj['type']
         if ptype not in list(cls.available_solver_packages().keys()):
             raise ValueError(f'Unknown solver package type: {obj["type"]}')
 
@@ -136,9 +136,12 @@ class PackageData:
         )
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class Mf2005CalculationEngineSettings(CalculationEngineSettingsBase):
-    packages: PackageData = dataclasses.field(default_factory=PackageData)
+    packages: PackageData
+
+    def __init__(self, packages: PackageData | None = None):
+        self.packages = packages or PackageData()
 
     def get_oc_package_data(self) -> OcPackageData:
         return self.packages.oc

@@ -1,7 +1,7 @@
 import dataclasses
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class CalculationEngineSettingsBase:
     def to_dict(self) -> dict:
         raise NotImplementedError

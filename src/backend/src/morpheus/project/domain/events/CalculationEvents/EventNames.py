@@ -8,9 +8,9 @@ class CalculationEventName(StrEnum):
     CALCULATION_QUEUED = 'Calculation Queued'
     CALCULATION_STARTED = 'Calculation Started'
 
-    CALCULATION_PROFILE_CREATED = 'Calculation Profile Created'
+    CALCULATION_PROFILE_ADDED = 'Calculation Profile Added'
     CALCULATION_PROFILE_DELETED = 'Calculation Profile Deleted'
-    CALCULATION_PROFILE_UPDATED = 'Calculation Profile Updated'
+    CALCULATION_PROFILE_REMOVED = 'Calculation Profile Removed'
 
     def to_str(self):
         return self.value

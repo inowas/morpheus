@@ -71,6 +71,16 @@ class CalculationProfilesRepository(RepositoryBase):
         return document.get_selected_profile()
 
     def add_calculation_profile(self, project_id: ProjectId, calculation_profile: CalculationProfile) -> None:
+        if not self.has_calculation_profiles(project_id):
+            self.collection.insert_one({
+                'project_id': project_id.to_str(),
+                'selected_calculation_profile_id': calculation_profile.id.to_str(),
+                'calculation_profiles': {
+                    calculation_profile.id.to_str(): calculation_profile.to_dict()
+                }
+            })
+            return
+
         document = self.get_document(project_id)
         document.add_calculation_profile(calculation_profile)
 
