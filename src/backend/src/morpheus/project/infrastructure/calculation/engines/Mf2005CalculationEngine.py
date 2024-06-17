@@ -16,7 +16,7 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.H
     create_hob_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import \
     create_lak_package
-from morpheus.project.types.calculation.Calculation import CalculationLog
+from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.project.types.Model import Model
@@ -70,11 +70,12 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         if not isinstance(calculation_engine_settings, Mf2005CalculationEngineSettings):
             raise Exception('Calculation profile is not for Mf2005')
 
-        self.trigger_start_preprocessing()
+        self.trigger_calculation_state_change(CalculationState.PREPROCESSING)
         flopy_model = self.__prepare_packages(model, calculation_engine_settings)
         flopy_model.write_input()
+        self.trigger_calculation_state_change(CalculationState.PREPROCESSED)
 
-        self.trigger_start_running()
+        self.trigger_calculation_state_change(CalculationState.CALCULATING)
         return self.__calculate(flopy_model)
 
     def __prepare_packages(self, model: Model, calculation_profile: Mf2005CalculationEngineSettings) -> FlopyModflow:
