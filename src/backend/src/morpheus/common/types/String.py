@@ -28,3 +28,10 @@ class String:
 
     def to_value(self):
         return self.to_str()
+
+
+@dataclasses.dataclass(frozen=True)
+class NonEmptyString(String):
+    def __post_init__(self):
+        if len(self.value) == 0:
+            raise ValueError('Value cannot be empty')

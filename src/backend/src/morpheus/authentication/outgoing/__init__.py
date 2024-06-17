@@ -2,8 +2,10 @@ import functools
 from typing import Callable
 from flask import request, g as request_global_context
 
+from morpheus.authentication.incoming import create_or_update_user_from_keycloak
 from morpheus.authentication.infrastructure import keycloak_openid_provider
 from morpheus.authentication.infrastructure.bearer_token import extract_bearer_token_from
+from morpheus.settings import settings
 
 
 def authenticate(requires_logged_in_user: bool = True):
@@ -20,11 +22,20 @@ def authenticate(requires_logged_in_user: bool = True):
                 return route_handler(*args, **kwargs)
 
             if token is not None:
-                user_id = keycloak_openid_provider.get_user_id_from_token(token)
-                if user_id is None:
+                keycloak_user_data = keycloak_openid_provider.parse_user_data_from_token(token)
+                if keycloak_user_data is None:
                     return 'Unauthorized', 401
 
-                request_global_context.user_id = user_id
+                create_or_update_user_from_keycloak(
+                    keycloak_user_data.user_id,
+                    settings.KEYCLOAK_MORPHEUS_ADMIN_ROLE in keycloak_user_data.roles,
+                    keycloak_user_data.email,
+                    keycloak_user_data.username,
+                    keycloak_user_data.first_name,
+                    keycloak_user_data.last_name
+                )
+
+                request_global_context.user_id = keycloak_user_data.user_id
                 return route_handler(*args, **kwargs)
 
         return decorated_function

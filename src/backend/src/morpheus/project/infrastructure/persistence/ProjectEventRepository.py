@@ -3,12 +3,13 @@ import dataclasses
 import pymongo
 from pymongo.collection import Collection
 
+from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFactory
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.event_sourcing.EventName import EventName
-from morpheus.project.domain.events.EventFactory import ProjectEventFactory, project_event_factory
+from morpheus.project.domain.events.EventFactory import project_event_factory
 from morpheus.settings import settings
 
 
@@ -46,6 +47,7 @@ class ProjectEventStoreDocument:
 
     def to_envelope(self) -> EventEnvelope:
         return EventEnvelope(
+            # the event factory should not be used here, instead it should be used in the repository
             event=project_event_factory.create_event(
                 event_name=EventName.from_str(self.event_name),
                 entity_uuid=Uuid.from_str(self.entity_uuid),
@@ -68,7 +70,7 @@ class ProjectEventStoreDocument:
 
 class ProjectEventRepository(RepositoryBase):
 
-    def __init__(self, collection: Collection, event_factory: ProjectEventFactory):
+    def __init__(self, collection: Collection, event_factory: EventFactory):
         super().__init__(collection)
         self.event_factory = event_factory
 

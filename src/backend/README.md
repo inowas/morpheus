@@ -95,8 +95,7 @@ If you don't use PyCharm, you can run the celery worker from command line. Just 
 
 ## Keycloak Development Credentials
 
-* username: `dev@inowas.localhost`
-* password: `dev`
+see [main README](../../Readme.md#keycloak)
 
 
 ## RabbitMQ Management

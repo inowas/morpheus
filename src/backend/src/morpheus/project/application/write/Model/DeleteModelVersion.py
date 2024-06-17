@@ -45,6 +45,6 @@ class DeleteModelVersionCommandHandler(CommandHandlerBase):
             raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to remove a version from {project_id.to_str()}')
 
         event = VersionDeletedEvent.from_version_id(project_id=project_id, version_id=command.version_id, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

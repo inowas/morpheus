@@ -45,6 +45,14 @@
   "failureFactor" : 30,
   "roles" : {
     "realm" : [ {
+      "id" : "591bc5a1-8dc7-4f57-abf6-2ce2e1ce0629",
+      "name" : "morpheus_admin",
+      "description" : "Grants admin status in morpheus",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "78c28149-1d49-4081-900d-719fb9942dd8",
+      "attributes" : { }
+    }, {
       "id" : "6fd88895-1314-4ab5-9040-5d1e124bac8c",
       "name" : "uma_authorization",
       "description" : "${role_uma_authorization}",
@@ -107,7 +115,7 @@
         "composite" : true,
         "composites" : {
           "client" : {
-            "realm-management" : [ "view-events", "query-clients", "view-users", "manage-events", "view-identity-providers", "manage-identity-providers", "manage-authorization", "manage-clients", "view-authorization", "view-realm", "manage-users", "impersonation", "query-users", "view-clients", "create-client", "manage-realm", "query-groups", "query-realms" ]
+            "realm-management" : [ "view-events", "query-clients", "manage-events", "view-identity-providers", "view-users", "manage-identity-providers", "manage-authorization", "manage-clients", "view-authorization", "view-realm", "manage-users", "impersonation", "query-users", "view-clients", "create-client", "manage-realm", "query-groups", "query-realms" ]
           }
         },
         "clientRole" : true,
@@ -245,6 +253,7 @@
         "attributes" : { }
       } ],
       "security-admin-console" : [ ],
+      "geonode" : [ ],
       "admin" : [ ],
       "admin-cli" : [ ],
       "account-console" : [ ],
@@ -336,11 +345,11 @@
     }
   },
   "groups" : [ {
-    "id" : "17a4965d-aca3-42db-a8ca-1025e06198c4",
-    "name" : "InowasDev",
-    "path" : "/InowasDev",
+    "id" : "78f85100-74b5-4f2b-8146-e80213518971",
+    "name" : "MorpheusAdmins",
+    "path" : "/MorpheusAdmins",
     "attributes" : { },
-    "realmRoles" : [ ],
+    "realmRoles" : [ "morpheus_admin" ],
     "clientRoles" : { },
     "subGroups" : [ ]
   } ],
@@ -382,6 +391,29 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
   "users" : [ {
+    "id" : "32756e62-c8cb-4e51-91a5-010872c2d411",
+    "createdTimestamp" : 1714717234353,
+    "username" : "admin@inowas.localhost",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Morpheus",
+    "lastName" : "Admin",
+    "email" : "admin@inowas.localhost",
+    "credentials" : [ {
+      "id" : "3fd115cd-a4f7-40d4-ae5d-34b586024c2e",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1714717247728,
+      "secretData" : "{\"value\":\"b0diZn8ZiSxwUKJfcow7zUkxW1sqomO1RZrPEIlxTQA=\",\"salt\":\"LXJmrGqbIthpE3bIF+dVeQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-inowas" ],
+    "notBefore" : 1714719148,
+    "groups" : [ "/MorpheusAdmins" ]
+  }, {
     "id" : "40c8daab-adb3-4d10-9ad9-12224a7a3ef2",
     "createdTimestamp" : 1695137876809,
     "username" : "dev@inowas.localhost",
@@ -402,8 +434,8 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-inowas" ],
-    "notBefore" : 0,
-    "groups" : [ "/InowasDev" ]
+    "notBefore" : 1714718447,
+    "groups" : [ ]
   }, {
     "id" : "622ceeff-b6a1-46e7-90e4-09f5419a9e27",
     "createdTimestamp" : 1696937023193,
@@ -637,6 +669,49 @@
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
+    "id" : "f82b409b-fe47-4832-8a7a-d3c677be0818",
+    "clientId" : "geonode",
+    "name" : "GeoNode Client",
+    "description" : "",
+    "rootUrl" : "",
+    "adminUrl" : "",
+    "baseUrl" : "",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : false,
+    "clientAuthenticatorType" : "client-secret",
+    "redirectUris" : [ "http://127.0.0.1:8081/*" ],
+    "webOrigins" : [ "http://127.0.0.1:8081" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : true,
+    "serviceAccountsEnabled" : false,
+    "publicClient" : true,
+    "frontchannelLogout" : true,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "post.logout.redirect.uris" : "+",
+      "oauth2.device.authorization.grant.enabled" : "false",
+      "backchannel.logout.revoke.offline.tokens" : "false",
+      "use.refresh.tokens" : "true",
+      "oidc.ciba.grant.enabled" : "false",
+      "backchannel.logout.session.required" : "true",
+      "client_credentials.use_refresh_token" : "false",
+      "acr.loa.map" : "{}",
+      "require.pushed.authorization.requests" : "false",
+      "tls.client.certificate.bound.access.tokens" : "false",
+      "display.on.consent.screen" : "false",
+      "token.response.type.bearer.lower-case" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
+    "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+  }, {
     "id" : "8d66a7e9-63c2-4a80-ae65-99270de36ce2",
     "clientId" : "morpheus-frontend",
     "name" : "Morpheus Frontend",
@@ -649,7 +724,7 @@
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "redirectUris" : [ "http://morpheus.inowas.localhost/*", "http://localhost:4000/*" ],
-    "webOrigins" : [ "http://morpheus.inowas.localhost", "http://localhost:4000" ],
+    "webOrigins" : [ "http://localhost:4000", "http://morpheus.inowas.localhost" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -1307,7 +1382,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "oidc-full-name-mapper", "saml-user-property-mapper", "oidc-address-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "saml-user-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-attribute-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "saml-user-property-mapper", "saml-role-list-mapper" ]
       }
     }, {
       "id" : "a06c417e-aaf3-49f5-8f09-6e64c5e7390a",
@@ -1335,7 +1410,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper", "oidc-address-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-usermodel-property-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper" ]
       }
     }, {
       "id" : "a5f46086-9506-4ff6-b986-9b4e7219a016",
@@ -1946,7 +2021,7 @@
     "clientSessionMaxLifespan" : "0",
     "shortVerificationUri" : ""
   },
-  "keycloakVersion" : "22.0.3",
+  "keycloakVersion" : "22.0.5",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : [ ]

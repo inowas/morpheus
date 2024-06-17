@@ -6,6 +6,10 @@ import uuid
 class Uuid:
     value: str
 
+    def __post_init__(self):
+        if len(self.value) == 0:
+            raise ValueError('Uuid value cannot be empty')
+
     def __eq__(self, other):
         return self.value == other.value
 

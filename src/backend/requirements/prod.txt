@@ -22,3 +22,4 @@ python-keycloak==3.7.0
 scipy==1.12.0
 shapely==2.0.2
 simplejson==3.19.2
+requests==2.31.0
