@@ -4,20 +4,21 @@ title: Schema for ModelCommands
 definitions:
   ProjectCommands:
     oneOf:
-    - "$ref": "#/definitions/AddProjectMemberCommand"
-    - "$ref": "#/definitions/CreateProjectCommand"
-    - "$ref": "#/definitions/DeleteProjectCommand"
-    - "$ref": "#/definitions/RemoveProjectMemberCommand"
-    - "$ref": "#/definitions/UpdateProjectMemberRoleCommand"
-    - "$ref": "#/definitions/UpdateProjectMetadataCommand"
-    - "$ref": "#/definitions/UpdateProjectVisibilityCommand"
+      - "$ref": "#/definitions/AddProjectMemberCommand"
+      - "$ref": "#/definitions/CreateProjectCommand"
+      - "$ref": "#/definitions/DeleteProjectCommand"
+      - "$ref": "#/definitions/RemoveProjectMemberCommand"
+      - "$ref": "#/definitions/UpdateProjectCalculationProfileIdCommand"
+      - "$ref": "#/definitions/UpdateProjectMemberRoleCommand"
+      - "$ref": "#/definitions/UpdateProjectMetadataCommand"
+      - "$ref": "#/definitions/UpdateProjectVisibilityCommand"
   AddProjectMemberCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - add_project_member_command
+          - add_project_member_command
         example: add_project_member_command
       payload:
         type: object
@@ -31,21 +32,21 @@ definitions:
           new_member_role:
             type: string
             enum:
-            - owner
-            - admin
-            - editor
-            - viewer
+              - owner
+              - admin
+              - editor
+              - viewer
         required:
-        - project_id
-        - new_member_id
-        - new_member_role
+          - project_id
+          - new_member_id
+          - new_member_role
   CreateProjectCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - create_project_command
+          - create_project_command
         example: create_project_command
       payload:
         type: object
@@ -61,16 +62,16 @@ definitions:
             items:
               type: string
         required:
-        - name
-        - description
-        - tags
+          - name
+          - description
+          - tags
   DeleteProjectCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - delete_project_command
+          - delete_project_command
         example: delete_project_command
       payload:
         type: object
@@ -79,14 +80,14 @@ definitions:
             type: string
             example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
         required:
-        - project_id
+          - project_id
   RemoveProjectMemberCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - remove_project_member_command
+          - remove_project_member_command
         example: remove_project_member_command
       payload:
         type: object
@@ -98,15 +99,35 @@ definitions:
             type: string
             example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
         required:
-        - project_id
-        - member_id
+          - project_id
+          - member_id
+  UpdateProjectCalculationProfileIdCommand:
+    type: object
+    properties:
+      command_name:
+        type: string
+        enum:
+          - update_project_calculation_profile_id_command
+        example: update_project_calculation_profile_id_command
+      payload:
+        type: object
+        properties:
+          project_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          calculation_profile_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+        required:
+          - project_id
+          - calculation_profile_id
   UpdateProjectMemberRoleCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - update_project_member_role_command
+          - update_project_member_role_command
         example: update_project_member_role_command
       payload:
         type: object
@@ -120,21 +141,21 @@ definitions:
           new_role:
             type: string
             enum:
-            - owner
-            - admin
-            - editor
-            - viewer
+              - owner
+              - admin
+              - editor
+              - viewer
         required:
-        - project_id
-        - member_id
-        - new_role
+          - project_id
+          - member_id
+          - new_role
   UpdateProjectMetadataCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - update_project_metadata_command
+          - update_project_metadata_command
         example: update_project_metadata_command
       payload:
         type: object
@@ -153,14 +174,14 @@ definitions:
             items:
               type: string
         required:
-        - project_id
+          - project_id
   UpdateProjectVisibilityCommand:
     type: object
     properties:
       command_name:
         type: string
         enum:
-        - update_project_visibility_command
+          - update_project_visibility_command
         example: update_project_visibility_command
       payload:
         type: object
@@ -171,8 +192,8 @@ definitions:
           visibility:
             type: string
             enum:
-            - public
-            - private
+              - public
+              - private
         required:
-        - project_id
-        - visibility
+          - project_id
+          - visibility

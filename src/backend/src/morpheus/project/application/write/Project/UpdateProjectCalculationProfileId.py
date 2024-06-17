@@ -1,5 +1,5 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import TypedDict
 
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
@@ -8,43 +8,44 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import VisibilityUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Permissions import Visibility
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
 
 
-class UpdateProjectVisibilityCommandPayload(TypedDict):
+class UpdateProjectCalculationProfileIdCommandPayload(TypedDict):
     project_id: str
-    visibility: Literal['public', 'private']
+    calculation_profile_id: str
 
 
 @dataclasses.dataclass(frozen=True)
-class UpdateProjectVisibilityCommand(CommandBase):
+class UpdateProjectCalculationProfileIdCommand(CommandBase):
     project_id: ProjectId
-    visibility: Visibility
+    calculation_profile_id: CalculationProfileId
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: UpdateProjectVisibilityCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: UpdateProjectCalculationProfileIdCommandPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
-            visibility=Visibility.from_str(payload['visibility']),
+            calculation_profile_id=CalculationProfileId.from_str(payload['calculation_profile_id']),
         )
 
 
-class UpdateProjectVisibilityCommandHandler(CommandHandlerBase):
+class UpdateProjectCalculationProfileIdCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: UpdateProjectVisibilityCommand):
+    def handle(command: UpdateProjectCalculationProfileIdCommand):
         project_id = command.project_id
+        calculation_profile_id = command.calculation_profile_id
         user_id = command.user_id
 
         permissions = PermissionsReader().get_permissions(project_id=project_id)
-        if not permissions.members.member_can_edit_members_and_permissions(user_id):
-            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to remove a member from the project {project_id.to_str()}')
+        if not permissions.members.member_can_edit(user_id=user_id):
+            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update a calculation profile of the project {project_id.to_str()}')
 
-        event = VisibilityUpdatedEvent.from_visibility(project_id=project_id, visibility=command.visibility, occurred_at=DateTime.now())
+        event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=calculation_profile_id, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)
