@@ -14,7 +14,8 @@ class CalculationId(Uuid):
 class CalculationState(StrEnum):
     CREATED = 'created'
     PREPROCESSING = 'preprocessing'
-    RUNNING = 'running'
+    PREPROCESSED = 'preprocessed'
+    CALCULATING = 'calculating'
     COMPLETED = 'completed'
     FAILED = 'failed'
 
