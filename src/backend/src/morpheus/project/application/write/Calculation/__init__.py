@@ -1,5 +1,5 @@
-from .StartCalculation import StartCalculationCommand, StartCalculationCommandHandler
+from .Calculate import CalculateCommand, CalculateCommandHandler
 
 calculation_command_handler_map = {
-    StartCalculationCommand: StartCalculationCommandHandler,
+    CalculateCommand: CalculateCommandHandler,
 }

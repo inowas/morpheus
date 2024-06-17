@@ -2,7 +2,7 @@ import dataclasses
 from enum import StrEnum
 from typing import Mapping
 
-from morpheus.common.types import Uuid, Bool
+from morpheus.common.types import Uuid, Bool, String
 from morpheus.project.types.calculation.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import \
     Mf2005CalculationEngineSettings
@@ -16,6 +16,7 @@ class CalculationEngineType(StrEnum):
     MF2005 = 'mf2005'
     MF6 = 'mf6'
     MT3DMS = 'mt3dms'
+    SEAWAT = 'seawat'
 
 
 class CalculationProfileId(Uuid):
@@ -61,6 +62,10 @@ class CalculationProfileMap:
     calculation_profiles: Mapping[CalculationEngineType, CalculationProfile]
 
     @classmethod
+    def default(cls):
+        return cls.mf2005()
+
+    @classmethod
     def mf2005(cls):
         return cls(
             selected_calculation_engine=CalculationEngineType.MF2005,
@@ -103,3 +108,41 @@ class CalculationProfileMap:
 
     def with_updated_profile_selected(self, profile: CalculationProfile) -> 'CalculationProfileMap':
         return self.with_updated_profile(profile).with_selected_profile(profile.engine_type)
+
+
+class CalculationProfileTemplateId(Uuid):
+    pass
+
+
+class CalculationProfileTemplateName(String):
+    pass
+
+
+@dataclasses.dataclass(frozen=True)
+class CalculationProfileTemplate:
+    id: CalculationProfileTemplateId
+    name: CalculationProfileTemplateName
+    profile: CalculationProfile
+
+    @classmethod
+    def new(cls, name: CalculationProfileTemplateName, profile: CalculationProfile):
+        return cls(
+            id=CalculationProfileTemplateId.new(),
+            name=name,
+            profile=profile,
+        )
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(
+            id=CalculationProfileTemplateId.from_str(obj['id']),
+            name=CalculationProfileTemplateName.from_str(obj['name']),
+            profile=CalculationProfile.from_dict(obj['profile']),
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id.to_str(),
+            'name': self.name.to_str(),
+            'profile': self.profile.to_dict(),
+        }

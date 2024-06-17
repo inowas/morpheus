@@ -21,9 +21,7 @@ class CalculationEngineBase:
     def on_start_running(self, callback):
         self.on_start_running_callback = callback
 
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[
-        CalculationLog, CalculationResult
-    ]:
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
         raise NotImplementedError
 
     def trigger_start_preprocessing(self):

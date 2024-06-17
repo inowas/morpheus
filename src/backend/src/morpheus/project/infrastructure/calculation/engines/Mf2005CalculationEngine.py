@@ -62,9 +62,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
 
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[
-        CalculationLog, CalculationResult
-    ]:
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
         if calculation_profile.engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
@@ -79,11 +77,9 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         self.trigger_start_running()
         return self.__calculate(flopy_model)
 
-    def __prepare_packages(self, model: Model,
-                           calculation_profile: Mf2005CalculationEngineSettings) -> FlopyModflow:
+    def __prepare_packages(self, model: Model, calculation_profile: Mf2005CalculationEngineSettings) -> FlopyModflow:
 
         # general packages
-
         # mf
         flopy_model = create_mf_package(model, model_ws=self.workspace_path)
         # dis
