@@ -26,9 +26,9 @@ class PcgnPackageSettings:
     rate_c: float
     ipunit: int
 
-    def __init__(self, iter_mo=50, iter_mi=30, close_r=1e-5, close_h=1e-5, relax=1.0, ifill=0, unit_pc=0, unit_ts=0,
-                 adamp=0, damp=1.0, damp_lb=0.001, rate_d=0.1, chglimit=0.0, acnvg=0, cnvg_lb=0.001, mcnvg=2, rate_c=-1.0, ipunit=0):
-        iter_mo: int
+    def __init__(self, iter_mo=50, iter_mi=30, close_r=1e-5, close_h=1e-5, relax=1.0, ifill=0,
+                 unit_pc=0, unit_ts=0, adamp=0, damp=1.0, damp_lb=0.001, rate_d=0.1, chglimit=0.0,
+                 acnvg=0, cnvg_lb=0.001, mcnvg=2, rate_c=-1.0, ipunit=0):
         self.iter_mo = iter_mo
         self.iter_mi = iter_mi
         self.close_r = close_r

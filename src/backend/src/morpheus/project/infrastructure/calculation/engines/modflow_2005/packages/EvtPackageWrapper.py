@@ -40,8 +40,8 @@ class EvtPackageData:
     filenames: None | str | list[str]
     external: bool
 
-    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1, ipakcb: int = None, extension: Literal["evt"] = 'evt', unitnumber: int | None = None,
-                 filenames: list[str] | str | None = None, external: bool = False):
+    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1, ipakcb: int = 0,
+                 extension: Literal["evt"] = 'evt', unitnumber: int | None = None, filenames: list[str] | str | None = None, external: bool = False):
         self.stress_period_data = stress_period_data
         self.ievt = ievt
         self.nevtop = nevtop

@@ -33,17 +33,23 @@ class Mf2005CalculationEngineSettings(CalculationEngineSettingsBase):
 
     # boundary packages
     chd: ChdPackageSettings = dataclasses.field(default_factory=ChdPackageSettings)
-    fhb: FhbPackageSettings = dataclasses.field(default_factory=FhbPackageSettings)
-    rch: RchPackageSettings = dataclasses.field(default_factory=RchPackageSettings)
-    wel: WelPackageSettings = dataclasses.field(default_factory=WelPackageSettings)
     drn: DrnPackageSettings = dataclasses.field(default_factory=DrnPackageSettings)
     evt: EvtPackageSettings = dataclasses.field(default_factory=EvtPackageSettings)
+    fhb: FhbPackageSettings = dataclasses.field(default_factory=FhbPackageSettings)
     ghb: GhbPackageSettings = dataclasses.field(default_factory=GhbPackageSettings)
     lak: LakPackageSettings = dataclasses.field(default_factory=LakPackageSettings)
+    rch: RchPackageSettings = dataclasses.field(default_factory=RchPackageSettings)
     riv: RivPackageSettings = dataclasses.field(default_factory=RivPackageSettings)
+    wel: WelPackageSettings = dataclasses.field(default_factory=WelPackageSettings)
 
     # observation package
     hob: HobPackageSettings = dataclasses.field(default_factory=HobPackageSettings)
+
+    # flow packages
+    selected_flow_package: str = dataclasses.field(default='lpf')
+    available_flow_packages: list[str] = dataclasses.field(default_factory=lambda: ['lpf', 'bcf'])
+    bcf: BcfPackageSettings = dataclasses.field(default_factory=BcfPackageSettings)
+    lpf: LpfPackageSettings = dataclasses.field(default_factory=LpfPackageSettings)
 
     # solver packages
     selected_solver_package: str = dataclasses.field(default='pcg')
@@ -53,12 +59,6 @@ class Mf2005CalculationEngineSettings(CalculationEngineSettingsBase):
     pcg: PcgPackageSettings = dataclasses.field(default_factory=PcgPackageSettings)
     pcgn: PcgnPackageSettings = dataclasses.field(default_factory=PcgnPackageSettings)
     sip: SipPackageSettings = dataclasses.field(default_factory=SipPackageSettings)
-
-    # flow packages
-    selected_flow_package: str = dataclasses.field(default='lpf')
-    available_flow_packages: list[str] = dataclasses.field(default_factory=lambda: ['lpf', 'bcf'])
-    bcf: BcfPackageSettings = dataclasses.field(default_factory=BcfPackageSettings)
-    lpf: LpfPackageSettings = dataclasses.field(default_factory=LpfPackageSettings)
 
     # output control package
     oc: OcPackageSettings = dataclasses.field(default_factory=OcPackageSettings)

@@ -37,7 +37,7 @@ class DrnPackageData:
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: DrnStressPeriodData, ipakcb: int = None, dtype: None | list = None,
+    def __init__(self, stress_period_data: DrnStressPeriodData, ipakcb: int = 0, dtype: None | list = None,
                  options: None | list = None, extension: Literal["drn"] = "drn", unitnumber: int | None = None,
                  filenames: list[str] | str | None = None):
         self.stress_period_data = stress_period_data

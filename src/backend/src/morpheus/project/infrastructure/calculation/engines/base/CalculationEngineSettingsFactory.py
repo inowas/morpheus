@@ -10,3 +10,10 @@ class CalculationEngineSettingsFactory:
             return Mf2005CalculationEngineSettings.from_dict(data)
 
         raise NotImplementedError(f'No engine settings found for {engine_type.value}')
+
+    @classmethod
+    def create_default_engine_settings(cls, engine_type: CalculationEngineType) -> CalculationEngineSettingsBase:
+        if engine_type == CalculationEngineType.MF2005:
+            return Mf2005CalculationEngineSettings.default()
+
+        raise NotImplementedError(f'No engine settings found for {engine_type.value}')

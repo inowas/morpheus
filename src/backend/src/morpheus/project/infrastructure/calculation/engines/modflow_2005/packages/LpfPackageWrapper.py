@@ -13,7 +13,7 @@ class LpfPackageSettings:
     ihdwet: int
     wetfct: float
     iwetit: int
-    wetdry: float
+    wetdry: float | list[float | list[list[float]]]
     hdry: float
     storagecoefficient: bool
     nocvcorrection: bool
@@ -21,7 +21,7 @@ class LpfPackageSettings:
     novfc: bool
     thickstrt: bool
 
-    def __init__(self, ipakcb: int | None = None, hdry: float = -1e30, iwdflg: int | list[int] = 0, wetfct: float = 0.1, iwetit: int = 1,
+    def __init__(self, ipakcb: int = 0, hdry: float = -1e30, iwdflg: int | list[int] = 0, wetfct: float = 0.1, iwetit: int = 1,
                  ihdwet: int = 0, wetdry: float | list[float | list[list[float]]] = -0.01, storagecoefficient: bool = False, constantcv: bool = False, thickstrt: bool = False,
                  nocvcorrection: bool = False, novfc: bool = False):
         self.ipakcb = ipakcb

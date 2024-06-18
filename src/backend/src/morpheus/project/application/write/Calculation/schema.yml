@@ -53,14 +53,10 @@ definitions:
               - seawat
               - mt3dms
             example: mf2005
-          calculation_profile_settings:
-            type: object
-            example: { }
         required:
           - project_id
           - calculation_profile_name
           - calculation_profile_engine
-          - calculation_profile_settings
   RemoveCalculationProfileCommand:
     type: object
     properties:
@@ -96,8 +92,425 @@ definitions:
             type: string
             example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
           calculation_profile:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            oneOf:
+              - "$ref": "#/components/Mf2005CalculationProfile"
         required:
           - project_id
           - calculation_profile
+components:
+  Mf2005CalculationProfile:
+    type: object
+    properties:
+      id:
+        type: string
+        example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+      name:
+        type: string
+        example: calculation_profile_name
+      engine_type:
+        type: string
+        enum:
+          - mf2005
+        example: mf2005
+      engine_settings:
+        type: object
+        properties:
+          mf:
+            type: object
+            properties:
+              verbose:
+                type: boolean
+                example: false
+          dis:
+            type: object
+          bas:
+            type: object
+            properties:
+              ichflg:
+                type: boolean
+                example: false
+              hnoflo:
+                type: number
+                example: -999.99
+              stoper:
+                oneOf:
+                  - type: null
+                  - type: float
+          chd:
+            type: object
+          drn:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+          evt:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+              nevtop:
+                type: integer
+                example: 1
+          fhb:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+              ifhbss:
+                type: integer
+                example: 0
+              ifhbpt:
+                type: integer
+                example: 0
+          ghb:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+          lak:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+              theta:
+                type: float
+                example: 1.0
+          rch:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+          riv:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+          wel:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+          hob:
+            type: object
+            properties:
+              iuhobsv:
+                type: integer
+                example: 0
+              hobdry:
+                type: float
+                example: 0.0
+          selected_flow_package:
+            type: string
+            enum:
+              - bcf
+              - lpf
+            example: lpf
+          bcf:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+              iwdflg:
+                type: integer
+                example: 0
+              ihdwet:
+                type: integer
+                example: 0
+              wetfct:
+                type: float
+                example: 0.1
+              iwetit:
+                type: integer
+                example: 1
+              wetdry:
+                type: float
+                example: -0.01
+              hdry:
+                type: float
+                example: -1e+30
+          lpf:
+            type: object
+            properties:
+              ipakcb:
+                type: integer
+                example: 0
+              iwdflg:
+                oneOf:
+                  - type: integer
+                  - type: array
+                    items:
+                      type: integer
+                example: 0
+              ihdwet:
+                type: integer
+                example: 0
+              wetfct:
+                type: float
+                example: 0.1
+              iwetit:
+                type: integer
+                example: 1
+              wetdry:
+                type: float
+                example: -0.01
+              hdry:
+                type: float
+                example: -1e+30
+              storagecoefficient:
+                type: boolean
+                example: false
+              nocvcorrection:
+                type: boolean
+                example: false
+              constantcv:
+                type: boolean
+                example: false
+              novfc:
+                type: boolean
+                example: false
+              thickstrt:
+                type: boolean
+                example: false
+          selected_solver_package:
+            type: string
+            enum:
+              - de4
+              - gmg
+              - pcg
+              - pcgn
+              - sip
+            example: pcg
+          de4:
+            type: object
+            properties:
+              itmx:
+                type: integer
+                example: 50
+              mxup:
+                type: integer
+                example: 0
+              mxlow:
+                type: integer
+                example: 0
+              mxbw:
+                type: integer
+                example: 0
+              ifreq:
+                type: integer
+                example: 3
+              mutd4:
+                type: integer
+                example: 0
+              accl:
+                type: integer
+                example: 1
+              hclose:
+                type: float
+                example: 1e-05
+              iprd4:
+                type: integer
+                example: 1
+          gmg:
+            type: object
+            properties:
+              mxiter:
+                type: integer
+                example: 50
+              iiter:
+                type: integer
+                example: 30
+              iadamp:
+                type: integer
+                example: 0
+              hclose:
+                type: float
+                example: 1e-05
+              rclose:
+                type: float
+                example: 1e-05
+              relax:
+                type: float
+                example: 1.0
+              ioutgmg:
+                type: integer
+                example: 0
+              iunitmhc:
+                type: integer
+                example: 0
+              ism:
+                type: integer
+                example: 0
+              isc:
+                type: integer
+                example: 0
+              damp:
+                type: float
+                example: 1.0
+              dup:
+                type: float
+                example: 0.75
+              dlow:
+                type: float
+                example: 0.01
+              chglimit:
+                type: float
+                example: 1.0
+          pcg:
+            type: object
+            properties:
+              mxiter:
+                type: integer
+                example: 50
+              iter1:
+                type: integer
+                example: 30
+              npcond:
+                type: integer
+                example: 1
+              hclose:
+                type: float
+                example: 1e-05
+              rclose:
+                type: float
+                example: 1e-05
+              relax:
+                type: float
+                example: 1.0
+              nbpol:
+                type: integer
+                example: 0
+              iprpcg:
+                type: integer
+                example: 0
+              mutpcg:
+                type: integer
+                example: 3
+              damp:
+                type: float
+                example: 1.0
+              dampt:
+                type: float
+                example: 1.0
+              ihcofadd:
+                type: integer
+                example: 0
+          pcgn:
+            type: object
+            properties:
+              iter_mo:
+                type: integer
+                example: 50
+              iter_mi:
+                type: integer
+                example: 30
+              close_r:
+                type: float
+                example: 1e-05
+              close_h:
+                type: float
+                example: 1e-05
+              relax:
+                type: float
+                example: 1.0
+              ifill:
+                type: integer
+                example: 0
+              unit_pc:
+                type: integer
+                example: 0
+              unit_ts:
+                type: integer
+                example: 3
+              adamp:
+                type: integer
+                example: 0
+              damp:
+                type: float
+                example: 1.0
+              damp_lb:
+                type: float
+                example: 0.001
+              rate_d:
+                type: float
+                example: 0.1
+              chglimit:
+                type: float
+                example: 0.0
+              acnvg:
+                type: integer
+                example: 0
+              cnvg_lb:
+                type: float
+                example: 0.001
+              mcnvg:
+                type: integer
+                example: 2
+              rate_c:
+                type: float
+                example: -1.0
+              ipunit:
+                type: integer
+                example: 0
+          sip:
+            type: object
+            properties:
+              mxiter:
+                type: integer
+                example: 200
+              nparm:
+                type: integer
+                example: 5
+              accl:
+                type: float
+                example: 1.0
+              hclose:
+                type: float
+                example: 1e-05
+              ipcalc:
+                type: integer
+                example: 1
+              wseed:
+                type: float
+                example: 0.0
+              iprsip:
+                type: integer
+                example: 0
+          oc:
+            type: object
+            properties:
+              ihedfm:
+                type: integer
+                example: 0
+              iddnfm:
+                type: integer
+                example: 0
+              chedfm:
+                oneOf:
+                  - type: null
+                  - type: string
+                example: null
+              cddnfm:
+                oneOf:
+                  - type: null
+                  - type: string
+                example: null
+              cboufm:
+                oneOf:
+                  - type: null
+                  - type: string
+                example: null
+              compact:
+                type: boolean
+                example: true
+              label:
+                type: string
+                example: "OC"

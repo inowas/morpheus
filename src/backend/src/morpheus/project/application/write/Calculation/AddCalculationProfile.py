@@ -23,7 +23,6 @@ class AddCalculationProfileCommandPayload(TypedDict):
     project_id: str
     calculation_profile_name: str
     calculation_profile_engine: Literal['mf2005', 'mf6', 'seawat', 'mt3dms']
-    calculation_profile_settings: dict
 
 
 @dataclasses.dataclass(frozen=True)
@@ -41,7 +40,7 @@ class AddCalculationProfileCommand(CommandBase):
                 id=CalculationProfileId.new(),
                 name=CalculationProfileName.from_str(payload['calculation_profile_name']),
                 engine_type=engine_type,
-                engine_settings=CalculationEngineSettingsFactory.create_engine_settings(engine_type=engine_type, data=payload['calculation_profile_settings'])
+                engine_settings=CalculationEngineSettingsFactory.create_default_engine_settings(engine_type=engine_type)
             )
         )
 

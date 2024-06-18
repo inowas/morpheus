@@ -59,7 +59,7 @@ class BcfPackageData:
     filenames: list[str] | str | None
     add_package: bool
 
-    def __init__(self, ipakcb: int | None = None, intercellt: list[int] | int = 0, laycon: list[int] | int = 3,
+    def __init__(self, ipakcb: int = 0, intercellt: list[int] | int = 0, laycon: list[int] | int = 3,
                  trpy: list[float] | float = 1.0, hdry: float = -1e+30, iwdflg: int = 0, wetfct: float = 0.1,
                  iwetit: int = 1, ihdwet: int = 0, tran: list[list[list[float]]] | float = 1.0,
                  hy: list[list[list[float]]] | float = 1.0, vcont: list[list[list[float]]] | float = 1.0,
