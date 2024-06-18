@@ -13,8 +13,9 @@ class EvtPackageSettings:
     ipakcb: int
     nevtop: int
 
-    def __init__(self):
-        pass
+    def __init__(self, ipakcb: int = 0, nevtop: int = 1):
+        self.ipakcb = ipakcb
+        self.nevtop = nevtop
 
     @classmethod
     def default(cls):
@@ -22,10 +23,10 @@ class EvtPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass

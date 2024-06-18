@@ -14,7 +14,6 @@ class SipPackageSettings:
     ipcalc: int
     wseed: float
     iprsip: int
-    extension: str
 
     def __init__(self, mxiter=200, nparm=5, accl=1, hclose=1e-5, ipcalc=1, wseed=0, iprsip=0):
         self.mxiter = mxiter

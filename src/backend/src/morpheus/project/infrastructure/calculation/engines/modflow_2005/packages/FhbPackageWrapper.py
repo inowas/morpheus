@@ -14,8 +14,10 @@ class FhbPackageSettings:
     ifhbss: int
     ifhbpt: int
 
-    def __init__(self):
-        pass
+    def __init__(self, ipakcb: int = 0, ifhbss: int = 0, ifhbpt: int = 0):
+        self.ipakcb = ipakcb
+        self.ifhbss = ifhbss
+        self.ifhbpt = ifhbpt
 
     @classmethod
     def default(cls):
@@ -23,10 +25,10 @@ class FhbPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
