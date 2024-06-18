@@ -78,7 +78,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         self.trigger_calculation_state_change(CalculationState.CALCULATING)
         return self.__calculate(flopy_model)
 
-    def __prepare_packages(self, model: Model, calculation_profile: Mf2005CalculationEngineSettings) -> FlopyModflow:
+    def __prepare_packages(self, model: Model, calculation_engine_settings: Mf2005CalculationEngineSettings) -> FlopyModflow:
 
         # general packages
         # mf
@@ -131,7 +131,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # Not implemented yet
 
         # solvers are defined in the calculation profile
-        solver_package = calculation_profile.get_solver_package_data()
+        solver_package = calculation_engine_settings.get_solver_package_data()
         solver_package_type = solver_package.type
         solver_package_data = solver_package.data
 
@@ -160,7 +160,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 raise ValueError(f'Unknown solver package type: {solver_package_type}')
 
         # flow packages
-        flow_package_data = calculation_profile.get_flow_package_data()
+        flow_package_data = calculation_engine_settings.get_flow_package_data()
         bcf = None
         lpf = None
         match flow_package_data.type:
@@ -180,7 +180,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 raise ValueError(f'Unknown flow package type: {flow_package_data.type}')
 
         # output control packages
-        create_oc_package(flopy_model, calculation_profile.get_oc_package_data())
+        create_oc_package(flopy_model, calculation_engine_settings.get_oc_package_data())
 
         # observation packages
         create_hob_package(flopy_model, model)

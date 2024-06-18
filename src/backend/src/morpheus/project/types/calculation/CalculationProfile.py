@@ -2,6 +2,7 @@ import dataclasses
 from enum import StrEnum
 
 from morpheus.common.types import Uuid, String
+from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
 
 
@@ -25,7 +26,7 @@ class CalculationProfile:
     id: CalculationProfileId
     name: CalculationProfileName
     engine_type: CalculationEngineType
-    engine_settings: Mf2005CalculationEngineSettings
+    engine_settings: CalculationEngineSettingsBase
 
     @classmethod
     def default(cls):

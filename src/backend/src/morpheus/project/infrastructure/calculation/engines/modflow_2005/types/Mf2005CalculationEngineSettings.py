@@ -108,9 +108,14 @@ class SolverPackageData:
 
 @dataclasses.dataclass
 class PackageData:
-    oc: OcPackageData = dataclasses.field(default_factory=OcPackageData)
-    flow_package: FlowPackage = dataclasses.field(default_factory=FlowPackage)
-    solver_package: SolverPackageData = dataclasses.field(default_factory=SolverPackageData)
+    oc: OcPackageData
+    flow_package: FlowPackage
+    solver_package: SolverPackageData
+
+    def __init__(self, oc: OcPackageData | None = None, flow_package: FlowPackage | None = None, solver_package: SolverPackageData | None = None):
+        self.oc = oc or OcPackageData()
+        self.flow_package = flow_package or FlowPackage()
+        self.solver_package = solver_package or SolverPackageData()
 
     def to_dict(self) -> dict:
         return {
