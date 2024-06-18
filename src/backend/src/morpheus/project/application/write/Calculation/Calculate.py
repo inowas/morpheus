@@ -5,8 +5,8 @@ from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.application.read.CalculationProfilesReader import CalculationProfilesReader
-from morpheus.project.application.read.ModelReader import ModelReader
+from morpheus.project.application.read.CalculationProfilesReader import get_calculation_profiles_reader
+from morpheus.project.application.read.ModelReader import get_model_reader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
@@ -54,12 +54,11 @@ class CalculateCommandHandler(CommandHandlerBase):
             raise InsufficientPermissionsException(
                 f'User {user_id.to_str()} does not have permission to create a model of {project_id.to_str()}')
 
-        calculation_profile = CalculationProfilesReader().get_selected_calculation_profile(project_id=project_id)
+        calculation_profile = get_calculation_profiles_reader().get_selected_calculation_profile(project_id=project_id)
         if not isinstance(calculation_profile, CalculationProfile):
             raise ValueError('Calculation profile not found')
 
-        model = ModelReader().get_latest_model(project_id=project_id)
-
+        model = get_model_reader().get_latest_model(project_id=project_id)
         calculation = Calculation.new(model=model, calculation_profile=calculation_profile, calculation_id=command.new_calculation_id)
         calculation_repository.save_calculation(calculation)
         run_calculation_by_id.delay(calculation.calculation_id.to_str())  # type: ignore

@@ -9,6 +9,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class FhbPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class FhbPackageData:
     nbdtim: int
     nflw: int
@@ -39,7 +57,6 @@ class FhbPackageData:
                  extension: Literal["fhb"] = "fhb",
                  unitnumber: int | None = None,
                  filenames: list[str] | str | None = None):
-
         ds5 = fhb_stress_period_data.get_ds5()
         ds7 = fhb_stress_period_data.get_ds7()
 
@@ -83,7 +100,7 @@ class FhbPackageData:
         }
 
 
-def calculate_fhb_package_data(model: Model) -> FhbPackageData | None:
+def calculate_fhb_package_data(model: Model, settings: FhbPackageSettings) -> FhbPackageData | None:
     fhb_stress_period_data = calculate_fhb_boundary_stress_period_data(model)
     if fhb_stress_period_data is None:
         return None
@@ -91,8 +108,8 @@ def calculate_fhb_package_data(model: Model) -> FhbPackageData | None:
     return FhbPackageData(fhb_stress_period_data=fhb_stress_period_data)
 
 
-def create_fhb_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowFhb | None:
-    package_data = calculate_fhb_package_data(model)
+def create_fhb_package(flopy_modflow: FlopyModflow, model: Model, settings: FhbPackageSettings) -> FlopyModflowFhb | None:
+    package_data = calculate_fhb_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

@@ -9,6 +9,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class DrnPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class DrnPackageData:
     stress_period_data: DrnStressPeriodData
     ipakcb: None | int
@@ -45,15 +63,15 @@ class DrnPackageData:
         return cls(**obj)
 
 
-def calculate_drn_package_data(model: Model) -> DrnPackageData | None:
+def calculate_drn_package_data(model: Model, settings: DrnPackageSettings) -> DrnPackageData | None:
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
     return DrnPackageData(stress_period_data=stress_period_data)
 
 
-def create_drn_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowDrn | None:
-    package_data = calculate_drn_package_data(model)
+def create_drn_package(flopy_modflow: FlopyModflow, model: Model, settings: DrnPackageSettings) -> FlopyModflowDrn | None:
+    package_data = calculate_drn_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

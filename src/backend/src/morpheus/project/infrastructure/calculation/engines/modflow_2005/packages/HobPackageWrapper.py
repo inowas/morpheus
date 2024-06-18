@@ -10,6 +10,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class HobPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class HobPackageData:
     head_observation_data: HeadObservationData
     # if greater than zero, then hob.out will be written
@@ -52,7 +70,7 @@ class HobPackageData:
         }
 
 
-def calculate_hob_package_data(model: Model) -> HobPackageData | None:
+def calculate_hob_package_data(model: Model, settings: HobPackageSettings) -> HobPackageData | None:
     if len(model.observations) == 0:
         return None
 
@@ -63,8 +81,8 @@ def calculate_hob_package_data(model: Model) -> HobPackageData | None:
     return HobPackageData(head_observation_data=head_observation_data)
 
 
-def create_hob_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowHob | None:
-    package_data = calculate_hob_package_data(model)
+def create_hob_package(flopy_modflow: FlopyModflow, model: Model, settings: HobPackageSettings) -> FlopyModflowHob | None:
+    package_data = calculate_hob_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

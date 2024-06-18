@@ -7,6 +7,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class ChdPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class ChdPackageData:
     stress_period_data: ChdStressPeriodData
     dtype: None | list
@@ -39,15 +57,15 @@ class ChdPackageData:
         return cls(**obj)
 
 
-def calculate_chd_package_data(model: Model) -> ChdPackageData | None:
+def calculate_chd_package_data(model: Model, settings: ChdPackageSettings) -> ChdPackageData | None:
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
     return ChdPackageData(stress_period_data=stress_period_data)
 
 
-def create_chd_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowChd | None:
-    package_data = calculate_chd_package_data(model)
+def create_chd_package(flopy_modflow: FlopyModflow, model: Model, settings: ChdPackageSettings) -> FlopyModflowChd | None:
+    package_data = calculate_chd_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

@@ -13,6 +13,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class LakPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class LakPackageData:
     nlakes: int
     ipakcb: None | int
@@ -33,8 +51,7 @@ class LakPackageData:
 
     def __init__(self, flux_data: dict[int, list], lakarr: np.ndarray, bdlknc: np.ndarray, stages: list[float],
                  stage_range: list[Tuple[float, float]], sill_data: dict[int, list] | None = None, nlakes: int = 1,
-                 theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001, surfdep: float = 0.0
-                 ):
+                 theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001, surfdep: float = 0.0):
         self.nlakes = nlakes
         self.ipakcb = None
         self.theta = theta
@@ -75,7 +92,7 @@ class LakPackageData:
         }
 
 
-def calculate_lak_package_data(model: Model) -> LakPackageData | None:
+def calculate_lak_package_data(model: Model, settings: LakPackageSettings) -> LakPackageData | None:
     lake_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.lake())
 
     nx = model.spatial_discretization.grid.n_cols()
@@ -135,8 +152,8 @@ def calculate_lak_package_data(model: Model) -> LakPackageData | None:
                           bdlknc=bdlknc, sill_data=None, flux_data=lak_flux_data.to_dict())
 
 
-def create_lak_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowLak | None:
-    package_data = calculate_lak_package_data(model)
+def create_lak_package(flopy_modflow: FlopyModflow, model: Model, settings: LakPackageSettings) -> FlopyModflowLak | None:
+    package_data = calculate_lak_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

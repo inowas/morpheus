@@ -66,7 +66,15 @@ class CalculationProfilesRepository(RepositoryBase):
 
         return CalculationProfilesRepositoryDocument.from_dict(dict(data))
 
+    def get_calculation_profiles(self, project_id: ProjectId) -> list[CalculationProfile]:
+        if not self.has_calculation_profiles(project_id):
+            return []
+        document = self.get_document(project_id)
+        return [CalculationProfile.from_dict(profile) for profile in document.calculation_profiles.values()]
+
     def get_selected_calculation_profile(self, project_id: ProjectId) -> CalculationProfile | None:
+        if not self.has_calculation_profiles(project_id):
+            return None
         document = self.get_document(project_id)
         return document.get_selected_profile()
 

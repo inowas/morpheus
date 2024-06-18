@@ -6,54 +6,32 @@ import numpy as np
 import os
 from flopy.utils.mflistfile import MfListBudget
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import \
-    create_drn_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import \
-    create_evt_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import \
-    create_fhb_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import \
-    create_hob_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import \
-    create_lak_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import create_drn_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import create_evt_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import create_fhb_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
 from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.project.types.Model import Model
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import \
-    Mf2005CalculationEngineSettings
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import \
-    create_ghb_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import \
-    create_gmg_package, GmgPackageData
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import \
-    create_pcgn_package, PcgnPackageData
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import \
-    create_rch_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import \
-    create_riv_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import \
-    create_sip_package, SipPackageData
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.WelPackageWrapper import \
-    create_wel_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import \
-    create_mf_package, \
-    FlopyModflow
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BasPackageWrapper import \
-    create_bas_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.ChdPackageWrapper import \
-    create_chd_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DisPackageWrapper import \
-    create_dis_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import create_gmg_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import create_rch_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import create_riv_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import create_sip_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.WelPackageWrapper import create_wel_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import create_mf_package, FlopyModflow
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BasPackageWrapper import create_bas_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.ChdPackageWrapper import create_chd_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DisPackageWrapper import create_dis_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.OcPackageWrapper import create_oc_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import \
-    create_lpf_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import \
-    create_bcf_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import \
-    create_de4_package, De4PackageData
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import \
-    create_pcg_package, PcgPackageData
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import create_lpf_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import create_bcf_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import create_de4_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import create_pcg_package
 
 
 class Mf2005CalculationEngine(CalculationEngineBase):
@@ -82,39 +60,38 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         # general packages
         # mf
-        flopy_model = create_mf_package(model, model_ws=self.workspace_path)
+        flopy_model = create_mf_package(model=model, model_ws=self.workspace_path, settings=calculation_engine_settings.mf)
         # dis
-        create_dis_package(flopy_model, model)
+        create_dis_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.dis)
         # bas
-        bas = create_bas_package(flopy_model, model)
+        bas = create_bas_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.bas)
 
         # boundary condition packages
-
         # specified head and flux packages
 
         # chd
-        create_chd_package(flopy_model, model)
+        create_chd_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.chd)
         # fhb
-        create_fhb_package(flopy_model, model)
+        create_fhb_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.fhb)
         # rch
-        create_rch_package(flopy_model, model)
+        create_rch_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.rch)
         # wel
-        create_wel_package(flopy_model, model)
+        create_wel_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.wel)
 
         # head-dependent flux packages
 
         # drn
-        create_drn_package(flopy_model, model)
+        create_drn_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.drn)
         # drt
         # Not implemented yet
         # ets
         # Not implemented yet
         # evt
-        create_evt_package(flopy_model, model)
+        create_evt_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.evt)
         # ghb
-        create_ghb_package(flopy_model, model)
+        create_ghb_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.ghb)
         # lak
-        lak = create_lak_package(flopy_model, model)
+        lak = create_lak_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.lak)
         # mnw1
         # Not implemented yet
         # mnw2
@@ -122,7 +99,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # res
         # Not implemented yet
         # riv
-        create_riv_package(flopy_model, model)
+        create_riv_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.riv)
         # sfr
         # Not implemented yet
         # str
@@ -130,44 +107,31 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         # uzf
         # Not implemented yet
 
-        # solvers are defined in the calculation profile
-        solver_package = calculation_engine_settings.get_solver_package_data()
-        solver_package_type = solver_package.type
-        solver_package_data = solver_package.data
-
-        match solver_package_type:
+        # solver packages
+        selected_solver_package = calculation_engine_settings.selected_solver_package
+        match selected_solver_package:
             case 'de4':
-                if not isinstance(solver_package_data, De4PackageData):
-                    raise ValueError(f'Expected {De4PackageData.__name__} but got {type(solver_package_data)}')
-                create_de4_package(flopy_model, solver_package_data)
+                create_de4_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.de4)
             case 'gmg':
-                if not isinstance(solver_package_data, GmgPackageData):
-                    raise ValueError(f'Expected {GmgPackageData.__name__} but got {type(solver_package_data)}')
-                create_gmg_package(flopy_model, solver_package_data)
+                create_gmg_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.gmg)
             case 'pcg':
-                if not isinstance(solver_package_data, PcgPackageData):
-                    raise ValueError(f'Expected {PcgPackageData.__name__} but got {type(solver_package_data)}')
-                create_pcg_package(flopy_model, solver_package_data)
+                create_pcg_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.pcg)
             case 'pcgn':
-                if not isinstance(solver_package_data, PcgnPackageData):
-                    raise ValueError(f'Expected {PcgnPackageData.__name__} but got {type(solver_package_data)}')
-                create_pcgn_package(flopy_model, solver_package_data)
+                create_pcgn_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.pcgn)
             case 'sip':
-                if not isinstance(solver_package_data, SipPackageData):
-                    raise ValueError(f'Expected {SipPackageData.__name__} but got {type(solver_package_data)}')
-                create_sip_package(flopy_model, solver_package_data)
+                create_sip_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.sip)
             case _:
-                raise ValueError(f'Unknown solver package type: {solver_package_type}')
+                raise ValueError(f'Unknown solver package type: {selected_solver_package}')
 
         # flow packages
-        flow_package_data = calculation_engine_settings.get_flow_package_data()
         bcf = None
         lpf = None
-        match flow_package_data.type:
+        selected_flow_package = calculation_engine_settings.selected_flow_package
+        match selected_flow_package:
             case 'bcf':
-                bcf = create_bcf_package(flopy_model, model)
+                bcf = create_bcf_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.bcf)
             case 'lpf':
-                lpf = create_lpf_package(flopy_model, model)
+                lpf = create_lpf_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.lpf)
             case 'huf':
                 raise NotImplementedError()
             case 'hfb6':
@@ -177,13 +141,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             case 'swi2':
                 raise NotImplementedError()
             case _:
-                raise ValueError(f'Unknown flow package type: {flow_package_data.type}')
+                raise ValueError(f'Unknown flow package type: {selected_flow_package}')
 
         # output control packages
-        create_oc_package(flopy_model, calculation_engine_settings.get_oc_package_data())
+        create_oc_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.oc)
 
         # observation packages
-        create_hob_package(flopy_model, model)
+        create_hob_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.hob)
 
         # preprocess lake package
         if lak is not None:

@@ -7,6 +7,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class BcfPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class BcfPackageData:
     ipakcb: int | None
     intercellt: list[int] | int
@@ -67,7 +85,7 @@ class BcfPackageData:
         return cls()
 
 
-def calculate_bcf_package_data(model: Model) -> BcfPackageData:
+def calculate_bcf_package_data(model: Model, settings: BcfPackageSettings) -> BcfPackageData:
     transmissivity = []
     for layer_idx, layer in enumerate(model.layers):
         if layer_idx == 0:
@@ -103,6 +121,6 @@ def calculate_bcf_package_data(model: Model) -> BcfPackageData:
     return bcf_package_data
 
 
-def create_bcf_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowBcf:
-    package_data = calculate_bcf_package_data(model)
+def create_bcf_package(flopy_modflow: FlopyModflow, model: Model, settings: BcfPackageSettings) -> FlopyModflowBcf:
+    package_data = calculate_bcf_package_data(model=model, settings=settings)
     return FlopyModflowBcf(model=flopy_modflow, **package_data.to_dict())

@@ -7,6 +7,24 @@ from morpheus.project.types.layers.Layer import LayerConfinement
 
 
 @dataclasses.dataclass
+class LpfPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class LpfPackageData:
     laytyp: int | list[int]
     layavg: int | list[int]
@@ -88,7 +106,7 @@ class LpfPackageData:
         return cls(**obj)
 
 
-def calculate_lpf_package_data(model: Model) -> LpfPackageData:
+def calculate_lpf_package_data(model: Model, settings: LpfPackageSettings) -> LpfPackageData:
     laytyp = [0 for _ in model.layers.layers]
     for idx, layer in enumerate(model.layers.layers):
         if LayerConfinement.confined() == layer.confinement:
@@ -130,6 +148,6 @@ def calculate_lpf_package_data(model: Model) -> LpfPackageData:
     return package_data
 
 
-def create_lpf_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowLpf:
-    lpf_package_data = calculate_lpf_package_data(model)
+def create_lpf_package(flopy_modflow: FlopyModflow, model: Model, settings: LpfPackageSettings) -> FlopyModflowLpf:
+    lpf_package_data = calculate_lpf_package_data(model=model, settings=settings)
     return FlopyModflowLpf(model=flopy_modflow, **lpf_package_data.to_dict())

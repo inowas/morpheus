@@ -2,6 +2,25 @@ import dataclasses
 
 from flopy.modflow import ModflowPcgn as FlopyModflowPcgn
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
+from morpheus.project.types.Model import Model
+
+
+@dataclasses.dataclass
+class PcgnPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
 
 
 @dataclasses.dataclass
@@ -69,5 +88,6 @@ class PcgnPackageData:
         return cls(**obj)
 
 
-def create_pcgn_package(flopy_modflow: FlopyModflow, package_data: PcgnPackageData) -> FlopyModflowPcgn:
+def create_pcgn_package(flopy_modflow: FlopyModflow, model: Model, settings: PcgnPackageSettings) -> FlopyModflowPcgn:
+    package_data = PcgnPackageData(**settings.to_dict())
     return FlopyModflowPcgn(model=flopy_modflow, **package_data.to_dict())

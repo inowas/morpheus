@@ -3,6 +3,25 @@ import dataclasses
 from flopy.modflow import ModflowDe4 as FlopyModflowDe4
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
+from morpheus.project.types.Model import Model
+
+
+@dataclasses.dataclass
+class De4PackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
 
 
 @dataclasses.dataclass
@@ -47,5 +66,6 @@ class De4PackageData:
         return cls(**obj)
 
 
-def create_de4_package(flopy_modflow: FlopyModflow, package_data: De4PackageData) -> FlopyModflowDe4:
+def create_de4_package(flopy_modflow: FlopyModflow, model: Model, settings: De4PackageSettings) -> FlopyModflowDe4:
+    package_data = De4PackageData(**settings.to_dict())
     return FlopyModflowDe4(model=flopy_modflow, **package_data.to_dict())

@@ -6,6 +6,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class DisPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class DisPackageData:
     nlay: int
     nrow: int
@@ -74,7 +92,7 @@ class DisPackageData:
         return cls(**obj)
 
 
-def calculate_dis_package_data(model: Model) -> DisPackageData:
+def calculate_dis_package_data(model: Model, settings: DisPackageSettings) -> DisPackageData:
     dis_package_data = DisPackageData(
         nlay=model.layers.number_of_layers(),
         nrow=model.spatial_discretization.grid.n_rows(),
@@ -101,6 +119,6 @@ def calculate_dis_package_data(model: Model) -> DisPackageData:
     return dis_package_data
 
 
-def create_dis_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowDis:
-    package_data = calculate_dis_package_data(model)
+def create_dis_package(flopy_modflow: FlopyModflow, model: Model, settings: DisPackageSettings) -> FlopyModflowDis:
+    package_data = calculate_dis_package_data(model=model, settings=settings)
     return FlopyModflowDis(model=flopy_modflow, **package_data.to_dict())

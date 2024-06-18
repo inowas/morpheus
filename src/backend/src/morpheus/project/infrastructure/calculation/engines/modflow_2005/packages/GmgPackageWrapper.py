@@ -2,6 +2,25 @@ import dataclasses
 
 from flopy.modflow import ModflowGmg as FlopyModflowGmg
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
+from morpheus.project.types.Model import Model
+
+
+@dataclasses.dataclass
+class GmgPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
 
 
 @dataclasses.dataclass
@@ -57,5 +76,6 @@ class GmgPackageData:
         return cls(**obj)
 
 
-def create_gmg_package(flopy_modflow: FlopyModflow, package_data: GmgPackageData) -> FlopyModflowGmg:
+def create_gmg_package(flopy_modflow: FlopyModflow, model: Model, settings: GmgPackageSettings) -> FlopyModflowGmg:
+    package_data = GmgPackageData(**settings.to_dict())
     return FlopyModflowGmg(model=flopy_modflow, **package_data.to_dict())

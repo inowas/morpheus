@@ -9,6 +9,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class WelPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class WelPackageData:
     stress_period_data: WelStressPeriodData
     ipakcb: int
@@ -61,15 +79,15 @@ class WelPackageData:
         )
 
 
-def calculate_wel_package_data(model: Model) -> WelPackageData | None:
+def calculate_wel_package_data(model: Model, settings: WelPackageSettings) -> WelPackageData | None:
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
     return WelPackageData(stress_period_data=stress_period_data)
 
 
-def create_wel_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowWel | None:
-    package_data = calculate_wel_package_data(model)
+def create_wel_package(flopy_modflow: FlopyModflow, model: Model, settings: WelPackageSettings) -> FlopyModflowWel | None:
+    package_data = calculate_wel_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

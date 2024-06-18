@@ -8,6 +8,24 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class BasPackageSettings:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls()
+
+    def to_dict(self) -> dict:
+        return {}
+
+
+@dataclasses.dataclass
 class BasPackageData:
     ibound: int | list[list[list[int]]]
     strt: float | list[float | list[list[float]]]
@@ -47,7 +65,7 @@ class BasPackageData:
         return cls(**obj)
 
 
-def calculate_bas_package_data(model: Model) -> BasPackageData:
+def calculate_bas_package_data(model: Model, settings: BasPackageSettings) -> BasPackageData:
     cells = model.spatial_discretization.affected_cells
     number_of_layers = model.layers.number_of_layers()
     if len(cells) == cells.shape[0] * cells.shape[1]:
@@ -64,6 +82,6 @@ def calculate_bas_package_data(model: Model) -> BasPackageData:
     return BasPackageData(ibound=ibound, strt=initial_heads)
 
 
-def create_bas_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowBas:
-    package_data = calculate_bas_package_data(model)
+def create_bas_package(flopy_modflow: FlopyModflow, model: Model, settings: BasPackageSettings) -> FlopyModflowBas:
+    package_data = calculate_bas_package_data(model=model, settings=settings)
     return FlopyModflowBas(model=flopy_modflow, **package_data.to_dict())
