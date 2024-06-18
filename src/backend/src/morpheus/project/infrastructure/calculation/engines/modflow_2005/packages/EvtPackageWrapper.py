@@ -10,6 +10,8 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class EvtPackageSettings:
+    ipakcb: int
+    nevtop: int
 
     def __init__(self):
         pass
@@ -31,14 +33,13 @@ class EvtPackageData:
     stress_period_data: EvtStressPeriodData
     ievt: int
     nevtop: int
-    ipakcb: None | int
+    ipakcb: int
     extension: Literal["evt"]
     unitnumber: None | int
     filenames: None | str | list[str]
     external: bool
 
-    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1,
-                 ipakcb: None | int = None, extension: Literal["evt"] = 'evt', unitnumber: int | None = None,
+    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1, ipakcb: int = None, extension: Literal["evt"] = 'evt', unitnumber: int | None = None,
                  filenames: list[str] | str | None = None, external: bool = False):
         self.stress_period_data = stress_period_data
         self.ievt = ievt
@@ -68,7 +69,7 @@ def calculate_evt_package_data(model: Model, settings: EvtPackageSettings) -> Ev
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
-    return EvtPackageData(stress_period_data=stress_period_data)
+    return EvtPackageData(stress_period_data=stress_period_data, ipakcb=settings.ipakcb, nevtop=settings.nevtop)
 
 
 def create_evt_package(flopy_modflow: FlopyModflow, model: Model, settings: EvtPackageSettings) -> FlopyModflowEvt | None:

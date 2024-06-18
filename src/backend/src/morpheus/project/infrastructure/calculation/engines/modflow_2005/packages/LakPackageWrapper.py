@@ -14,9 +14,12 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class LakPackageSettings:
+    ipakcb: int
+    theta: float
 
-    def __init__(self):
-        pass
+    def __init__(self, ipakcb: int = 0, theta: float = 1.0):
+        self.ipakcb = ipakcb
+        self.theta = theta
 
     @classmethod
     def default(cls):
@@ -24,16 +27,16 @@ class LakPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
 class LakPackageData:
     nlakes: int
-    ipakcb: None | int
+    ipakcb: int
     theta: float
     nssitr: int
     surfdep: float
@@ -49,11 +52,10 @@ class LakPackageData:
     options: None | list[str]
     lwrt: int
 
-    def __init__(self, flux_data: dict[int, list], lakarr: np.ndarray, bdlknc: np.ndarray, stages: list[float],
-                 stage_range: list[Tuple[float, float]], sill_data: dict[int, list] | None = None, nlakes: int = 1,
-                 theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001, surfdep: float = 0.0):
+    def __init__(self, flux_data: dict[int, list], lakarr: np.ndarray, bdlknc: np.ndarray, stages: list[float], stage_range: list[Tuple[float, float]], sill_data: dict[int, list] | None = None,
+                 nlakes: int = 1, ipakcb: int = 0, theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001, surfdep: float = 0.0):
         self.nlakes = nlakes
-        self.ipakcb = None
+        self.ipakcb = ipakcb
         self.theta = theta
         self.nssitr = nssitr
         self.sscncr = sscncr
@@ -148,8 +150,17 @@ def calculate_lak_package_data(model: Model, settings: LakPackageSettings) -> La
     if lak_flux_data is None:
         return None
 
-    return LakPackageData(nlakes=nlakes, stages=stages, stage_range=stage_range, lakarr=lakarr,
-                          bdlknc=bdlknc, sill_data=None, flux_data=lak_flux_data.to_dict())
+    return LakPackageData(
+        nlakes=nlakes,
+        stages=stages,
+        stage_range=stage_range,
+        lakarr=lakarr,
+        bdlknc=bdlknc,
+        sill_data=None,
+        flux_data=lak_flux_data.to_dict(),
+        ipakcb=settings.ipakcb,
+        theta=settings.theta
+    )
 
 
 def create_lak_package(flopy_modflow: FlopyModflow, model: Model, settings: LakPackageSettings) -> FlopyModflowLak | None:

@@ -10,9 +10,10 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class DrnPackageSettings:
+    ipakcb: int
 
-    def __init__(self):
-        pass
+    def __init__(self, ipakcb: int = 0):
+        self.ipakcb = ipakcb
 
     @classmethod
     def default(cls):
@@ -20,23 +21,23 @@ class DrnPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
 class DrnPackageData:
     stress_period_data: DrnStressPeriodData
-    ipakcb: None | int
+    ipakcb: int
     dtype: None | list
     options: None | list
     extension: Literal["drn"]
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: DrnStressPeriodData, ipakcb: None | int = None, dtype: None | list = None,
+    def __init__(self, stress_period_data: DrnStressPeriodData, ipakcb: int = None, dtype: None | list = None,
                  options: None | list = None, extension: Literal["drn"] = "drn", unitnumber: int | None = None,
                  filenames: list[str] | str | None = None):
         self.stress_period_data = stress_period_data
@@ -67,7 +68,7 @@ def calculate_drn_package_data(model: Model, settings: DrnPackageSettings) -> Dr
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
-    return DrnPackageData(stress_period_data=stress_period_data)
+    return DrnPackageData(stress_period_data=stress_period_data, ipakcb=settings.ipakcb)
 
 
 def create_drn_package(flopy_modflow: FlopyModflow, model: Model, settings: DrnPackageSettings) -> FlopyModflowDrn | None:

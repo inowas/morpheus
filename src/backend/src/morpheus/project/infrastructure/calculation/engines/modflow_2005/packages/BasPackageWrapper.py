@@ -9,9 +9,14 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class BasPackageSettings:
+    ichflg: bool
+    hnoflo: float
+    stoper: None | float
 
-    def __init__(self):
-        pass
+    def __init__(self, ichflg: bool = False, hnoflo: float = -999.99, stoper: None | float = None):
+        self.ichflg = ichflg
+        self.hnoflo = hnoflo
+        self.stoper = stoper
 
     @classmethod
     def default(cls):
@@ -19,10 +24,10 @@ class BasPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
@@ -79,7 +84,13 @@ def calculate_bas_package_data(model: Model, settings: BasPackageSettings) -> Ba
 
     initial_heads = model.layers.initial_heads()
 
-    return BasPackageData(ibound=ibound, strt=initial_heads)
+    return BasPackageData(
+        ibound=ibound,
+        strt=initial_heads,
+        ichflg=settings.ichflg,
+        hnoflo=settings.hnoflo,
+        stoper=settings.stoper
+    )
 
 
 def create_bas_package(flopy_modflow: FlopyModflow, model: Model, settings: BasPackageSettings) -> FlopyModflowBas:

@@ -10,9 +10,10 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class GhbPackageSettings:
+    ipakcb: int
 
-    def __init__(self):
-        pass
+    def __init__(self, ipakcb: int = 0):
+        self.ipakcb = ipakcb
 
     @classmethod
     def default(cls):
@@ -20,10 +21,10 @@ class GhbPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
@@ -79,7 +80,7 @@ def calculate_ghb_package_data(model: Model, settings: GhbPackageSettings) -> Gh
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
-    return GhbPackageData(stress_period_data=stress_period_data)
+    return GhbPackageData(stress_period_data=stress_period_data, ipakcb=settings.ipakcb)
 
 
 def create_ghb_package(flopy_modflow: FlopyModflow, model: Model, settings: GhbPackageSettings) -> FlopyModflowGhb | None:

@@ -7,9 +7,39 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class GmgPackageSettings:
+    mxiter: int
+    iiter: int
+    iadamp: int
+    hclose: float
+    rclose: float
+    relax: float
+    ioutgmg: int
+    iunitmhc: int
+    ism: int
+    isc: int
+    damp: float
+    dup: float
+    dlow: float
+    chglimit: float
 
-    def __init__(self):
-        pass
+    def __init__(self, mxiter=50, iiter=30, iadamp=0, hclose=1e-5, rclose=1e-5, relax=1.0, ioutgmg=0, iunitmhc=0, ism=0, isc=0, damp=1.0, dup=0.75, dlow=0.01, chglimit=1.0):
+        self.mxiter = mxiter
+        self.iiter = iiter
+        self.iadamp = iadamp
+        self.hclose = hclose
+        self.rclose = rclose
+        self.relax = relax
+        self.ioutgmg = ioutgmg
+        self.iunitmhc = iunitmhc
+        self.ism = ism
+        self.isc = isc
+        self.damp = damp
+        self.dup = dup
+        self.dlow = dlow
+        self.chglimit = chglimit
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)
 
     @classmethod
     def default(cls):
@@ -17,10 +47,7 @@ class GmgPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
-
-    def to_dict(self) -> dict:
-        return {}
+        return cls(**obj)
 
 
 @dataclasses.dataclass

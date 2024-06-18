@@ -66,6 +66,7 @@ class OcPackageSettings:
 
 @dataclasses.dataclass
 class OcPackageData:
+    # https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/oc.html
     ihedfm: int
     iddnfm: int
     chedfm: str | None

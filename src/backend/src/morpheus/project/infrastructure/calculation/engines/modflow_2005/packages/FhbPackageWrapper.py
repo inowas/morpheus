@@ -10,6 +10,9 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class FhbPackageSettings:
+    ipakcb: int
+    ifhbss: int
+    ifhbpt: int
 
     def __init__(self):
         pass
@@ -32,7 +35,7 @@ class FhbPackageData:
     nflw: int
     nhed: int
     ifhbss: int
-    ipakcb: None | int
+    ipakcb: int
     nfhbx1: int
     nfhbx2: int
     ifhbpt: int
@@ -49,7 +52,7 @@ class FhbPackageData:
     def __init__(self,
                  fhb_stress_period_data: FhbStressPeriodData,
                  ifhbss: int = 0,
-                 ipakcb: None | int = None,
+                 ipakcb: int = 0,
                  ifhbpt: int = 0,
                  bdtimecnstm: float = 0.0,
                  cnstm5: float = 1.0,
@@ -105,7 +108,7 @@ def calculate_fhb_package_data(model: Model, settings: FhbPackageSettings) -> Fh
     if fhb_stress_period_data is None:
         return None
 
-    return FhbPackageData(fhb_stress_period_data=fhb_stress_period_data)
+    return FhbPackageData(fhb_stress_period_data=fhb_stress_period_data, ifhbss=settings.ifhbss, ipakcb=settings.ipakcb, ifhbpt=settings.ifhbpt)
 
 
 def create_fhb_package(flopy_modflow: FlopyModflow, model: Model, settings: FhbPackageSettings) -> FlopyModflowFhb | None:

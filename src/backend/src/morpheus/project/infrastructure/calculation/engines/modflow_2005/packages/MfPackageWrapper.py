@@ -5,9 +5,10 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class MfPackageSettings:
+    verbose: bool
 
-    def __init__(self):
-        pass
+    def __init__(self, verbose: bool = False):
+        self.verbose = verbose
 
     @classmethod
     def default(cls):
@@ -15,10 +16,10 @@ class MfPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
@@ -59,7 +60,12 @@ class MfPackageData:
 
 
 def create_mf_package_data(model: Model, model_ws: str, settings: MfPackageSettings) -> MfPackageData:
-    return MfPackageData(modelname=model.model_id.to_str(), exe_name='mf2005', model_ws=model_ws)
+    return MfPackageData(
+        modelname=model.model_id.to_str(),
+        exe_name='mf2005',
+        model_ws=model_ws,
+        verbose=settings.verbose
+    )
 
 
 def create_mf_package(model: Model, model_ws: str, settings: MfPackageSettings) -> FlopyModflow:

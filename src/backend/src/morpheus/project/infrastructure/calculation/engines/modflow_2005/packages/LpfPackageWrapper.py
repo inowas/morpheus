@@ -8,9 +8,34 @@ from morpheus.project.types.layers.Layer import LayerConfinement
 
 @dataclasses.dataclass
 class LpfPackageSettings:
+    ipakcb: int
+    iwdflg: int | list[int]
+    ihdwet: int
+    wetfct: float
+    iwetit: int
+    wetdry: float
+    hdry: float
+    storagecoefficient: bool
+    nocvcorrection: bool
+    constantcv: bool
+    novfc: bool
+    thickstrt: bool
 
-    def __init__(self):
-        pass
+    def __init__(self, ipakcb: int | None = None, hdry: float = -1e30, iwdflg: int | list[int] = 0, wetfct: float = 0.1, iwetit: int = 1,
+                 ihdwet: int = 0, wetdry: float | list[float | list[list[float]]] = -0.01, storagecoefficient: bool = False, constantcv: bool = False, thickstrt: bool = False,
+                 nocvcorrection: bool = False, novfc: bool = False):
+        self.ipakcb = ipakcb
+        self.iwdflg = iwdflg
+        self.ihdwet = ihdwet
+        self.wetfct = wetfct
+        self.iwetit = iwetit
+        self.wetdry = wetdry
+        self.hdry = hdry
+        self.storagecoefficient = storagecoefficient
+        self.nocvcorrection = nocvcorrection
+        self.constantcv = constantcv
+        self.novfc = novfc
+        self.thickstrt = thickstrt
 
     @classmethod
     def default(cls):
@@ -18,10 +43,10 @@ class LpfPackageSettings:
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls()
+        return cls(**obj)
 
     def to_dict(self) -> dict:
-        return {}
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
@@ -122,24 +147,24 @@ def calculate_lpf_package_data(model: Model, settings: LpfPackageSettings) -> Lp
         chani=[0 for _ in model.layers.layers],
         layvka=[0 for _ in model.layers.layers],
         laywet=[int(layer.properties.is_wetting_active()) for layer in model.layers.layers],
-        ipakcb=0,  # 53 in the current frontend
-        hdry=-1e30,
-        iwdflg=0,
-        wetfct=0.1,
-        iwetit=1,
-        ihdwet=0,
+        ipakcb=settings.ipakcb,
+        hdry=settings.hdry,
+        iwdflg=settings.iwdflg,
+        wetfct=settings.wetfct,
+        iwetit=settings.iwetit,
+        ihdwet=settings.ihdwet,
         hk=[layer.properties.hk.get_data() for layer in model.layers.layers],
         hani=[layer.properties.get_horizontal_anisotropy() for layer in model.layers.layers],
         vka=[layer.properties.get_vka().get_data() for layer in model.layers.layers],
         ss=[layer.properties.specific_storage.get_data() for layer in model.layers.layers],
         sy=[layer.properties.specific_yield.get_data() for layer in model.layers.layers],
         vkcb=0.0,
-        wetdry=-0.01,
-        storagecoefficient=False,
-        constantcv=False,
-        thickstrt=False,
-        nocvcorrection=False,
-        novfc=False,
+        wetdry=settings.wetdry,
+        storagecoefficient=settings.storagecoefficient,
+        constantcv=settings.constantcv,
+        thickstrt=settings.thickstrt,
+        nocvcorrection=settings.nocvcorrection,
+        novfc=settings.novfc,
         extension="lpf",
         unitnumber=None,
         filenames=None,
