@@ -1,8 +1,9 @@
 import './LanguageSelector.less';
 
-import {Dropdown, DropdownProps} from 'semantic-ui-react';
+import {DropdownProps} from 'semantic-ui-react';
 import {ILanguage, ILanguageOption} from './types/languageSelector.type';
 import React, {SyntheticEvent} from 'react';
+import {DropdownComponent} from 'common/components';
 
 import {getFlagByLanguageCode} from './flags';
 
@@ -32,7 +33,7 @@ const LanguageSelector = ({language, languageList, onChangeLanguage}: IProps) =>
   }));
 
   return (
-    <Dropdown
+    <DropdownComponent.Dropdown
       className="languageSelector"
       selection={true}
       icon={false}

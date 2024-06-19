@@ -2,6 +2,7 @@ from enum import StrEnum
 
 
 class ProjectEventName(StrEnum):
+    PROJECT_CALCULATION_PROFILE_ID_UPDATED = 'Project Calculation Profile ID Updated'
     PROJECT_CREATED = 'Project Created'
     PROJECT_DELETED = 'Project Deleted'
     PROJECT_METADATA_UPDATED = 'Project Metadata Updated'

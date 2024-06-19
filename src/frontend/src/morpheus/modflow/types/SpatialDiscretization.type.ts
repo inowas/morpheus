@@ -49,7 +49,7 @@ export enum ILengthUnit {
 
 export class AffectedCells {
 
-  private readonly _type: 'raster' | 'sparse' | 'sparse_inverse';
+  private _type: 'raster' | 'sparse' | 'sparse_inverse';
 
   private _data: boolean[][] | Array<[number, number]>;
 
@@ -71,6 +71,9 @@ export class AffectedCells {
     return this._type;
   }
 
+  set type(type: 'raster' | 'sparse' | 'sparse_inverse') {
+    this._type = type;
+  }
 
   private constructor(cells: IAffectedCells) {
     this._type = cells.type;
@@ -84,7 +87,6 @@ export class AffectedCells {
 
   public setActive(row: number, col: number, active: boolean) {
 
-
     if (0 > row || row >= this.shape[0] || 0 > col || col >= this.shape[1]) {
       return;
     }
@@ -96,22 +98,25 @@ export class AffectedCells {
     }
 
     if ('sparse' === this.type) {
-      let sparseData = cloneDeep(this.data as Array<[number, number]>);
-      sparseData = sparseData.filter((c) => c[0] !== row && c[1] !== col);
+      const newSparseData = this.data.filter((c) => c[0] !== row || c[1] !== col) as Array<[number, number]>;
       if (active) {
-        sparseData.push([row, col]);
+        newSparseData.push([row, col]);
       }
-      this.data = sparseData;
+      this.data = newSparseData;
     }
 
     if ('sparse_inverse' === this.type) {
-      let sparseInverseData = cloneDeep(this.data as Array<[number, number]>);
-      sparseInverseData = sparseInverseData.filter((c) => c[0] !== row && c[1] !== col);
+      const newSparseInverseData = this.data.filter((c) => c[0] !== row || c[1] !== col) as Array<[number, number]>;
       if (!active) {
-        sparseInverseData.push([row, col]);
+        newSparseInverseData.push([row, col]);
       }
-      this.data = sparseInverseData;
+      this.data = newSparseInverseData;
     }
+  }
+
+  public setActiveOnlyOneCell(row: number, col: number) {
+    this.type = 'sparse';
+    this.data = [[row, col]];
   }
 
   public toRaster(): boolean[][] {

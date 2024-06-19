@@ -91,9 +91,9 @@ class RiverObservation(Observation):
     data: list[RiverRawDataItem]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[RiverRawDataItem]):
+    def new(cls, name: ObservationName, geometry: Point, data: list[RiverRawDataItem], observation_id: ObservationId | None = None):
         return cls(
-            observation_id=ObservationId.new(),
+            observation_id=observation_id or ObservationId.new(),
             observation_name=name,
             geometry=geometry,
             data=data

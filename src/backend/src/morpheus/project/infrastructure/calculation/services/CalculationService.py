@@ -30,16 +30,11 @@ class CalculationService:
         if not self.calculation.calculation_state == CalculationState.CREATED:
             raise Exception('Calculation was already run or is still in progress')
 
-        def on_start_preprocessing():
-            self.calculation.set_new_state(CalculationState.PREPROCESSING)
+        def on_change_calculation_state(new_state: CalculationState):
+            self.calculation.set_new_state(new_state)
             calculation_repository.update_calculation(self.calculation)
 
-        def on_start_running():
-            self.calculation.set_new_state(CalculationState.RUNNING)
-            calculation_repository.update_calculation(self.calculation)
-
-        self.engine.on_start_preprocessing(on_start_preprocessing)
-        self.engine.on_start_running(on_start_running)
+        self.engine.on_change_calulation_state(on_change_calculation_state)
 
         try:
             log, result = self.engine.run(
@@ -47,13 +42,13 @@ class CalculationService:
                 calculation_profile=self.calculation.calculation_profile
             )
 
-            self.calculation.set_new_state(CalculationState.FINISHED)
+            self.calculation.set_new_state(CalculationState.COMPLETED)
             self.calculation.set_log(log)
             self.calculation.set_result(result)
             calculation_repository.update_calculation(self.calculation)
         except Exception as e:
             self.calculation.append_to_log(str(e))
-            self.calculation.set_new_state(CalculationState.ERROR)
+            self.calculation.set_new_state(CalculationState.FAILED)
             calculation_repository.update_calculation(self.calculation)
 
     def get_result(self):

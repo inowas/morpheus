@@ -1,7 +1,8 @@
 import './SortDropdown.less';
 
-import {Dropdown, DropdownProps} from 'semantic-ui-react';
+import {DropdownProps} from 'semantic-ui-react';
 import React, {SyntheticEvent} from 'react';
+import {DropdownComponent} from 'common/components';
 
 interface IProps<T> {
   sortOptions: T[];
@@ -27,7 +28,7 @@ const SortDropdown = <T extends { value: string, text: string }>({sortOptions, o
       className={`sortDropdownContainer ${className ? className : ''}`}
       style={style}
     >
-      <Dropdown
+      <DropdownComponent.Dropdown
         data-testid="sort-dropdown"
         className='sortDropdown'
         selection={true}

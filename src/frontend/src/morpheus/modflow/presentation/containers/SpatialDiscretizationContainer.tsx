@@ -1,28 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
-import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
-import SpatialDiscretizationMap from '../components/ModelSpatialDiscretization/SpatialDiscretizationMap';
+import type {Polygon} from 'geojson';
 import {useParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
-import {AffectedCells, IAffectedCells, IGrid} from '../../types';
+import {IGrid} from '../../types';
 import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
 import {Accordion, AccordionContent} from '../components/Content';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {Header, MenuItem} from 'semantic-ui-react';
-import ModelAffectedCells from '../components/ModelSpatialDiscretization/ModelAffectedCells';
-import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import useProjectPermissions from '../../application/useProjectPermissions';
+import {Map} from 'common/components/Map';
+
+import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
+import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
 
 
 const SpatialDiscretizationContainer = () => {
 
-  const [affectedCellsGeometry, setAffectedCellsGeometry] = useState<Feature<Polygon | MultiPolygon> | null>();
-  const [gridGeometry, setGridGeometry] = useState<FeatureCollection | null>();
   const [modelGeometry, setModelGeometry] = useState<Polygon | undefined>();
-  const [affectedCells, setAffectedCells] = useState<IAffectedCells | undefined>();
   const [grid, setGrid] = useState<IGrid | undefined>();
   const [locked, setLocked] = useState<boolean>(false);
 
@@ -56,11 +55,6 @@ const SpatialDiscretizationContainer = () => {
 
   const {processShapefile} = useAssets(projectId as string);
 
-  useEffect(() => {
-    if (spatialDiscretization?.affected_cells) {
-      setAffectedCells(spatialDiscretization.affected_cells);
-    }
-  }, [spatialDiscretization?.affected_cells]);
 
   useEffect(() => {
     if (spatialDiscretization?.geometry) {
@@ -71,27 +65,9 @@ const SpatialDiscretizationContainer = () => {
   useEffect(() => {
     if (spatialDiscretization?.grid) {
       setGrid(spatialDiscretization.grid);
-      fetchGridGeometry().then(setGridGeometry);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spatialDiscretization?.grid]);
-
-  useEffect(() => {
-    if (spatialDiscretization?.affected_cells) {
-      fetchAffectedCellsGeometry().then(setAffectedCellsGeometry);
-    }
-    // eslint-disable-next-line
-  }, [spatialDiscretization?.affected_cells]);
-
-  const handleSubmitAffectedCells = async () => {
-    if (!projectId || !affectedCells) {
-      return;
-    }
-
-    if (JSON.stringify(affectedCells) !== JSON.stringify(spatialDiscretization?.affected_cells)) {
-      updateAffectedCells(affectedCells);
-    }
-  };
 
   const handleSubmitGeometry = async () => {
     if (!projectId || !modelGeometry) {
@@ -122,7 +98,7 @@ const SpatialDiscretizationContainer = () => {
     return null;
   }
 
-  if (!modelGeometry || !grid || !spatialDiscretization) {
+  if (!modelGeometry || !grid || !spatialDiscretization || !spatialDiscretization.affected_cells) {
     return null;
   }
 
@@ -161,20 +137,6 @@ const SpatialDiscretizationContainer = () => {
                       />
                     </TabPane>,
                   },
-                  {
-                    menuItem: <MenuItem key='affected_cells' onClick={() => setEditMode('affected_cells')}><Header as='h4'>Affected Cells</Header></MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      {affectedCells && spatialDiscretization.affected_cells &&
-                        <ModelAffectedCells
-                          isDirty={!AffectedCells.fromObject(affectedCells).isEqual(AffectedCells.fromObject(spatialDiscretization.affected_cells))}
-                          isLoading={loading}
-                          isLocked={locked}
-                          onReset={() => setAffectedCells(spatialDiscretization.affected_cells)}
-                          onSubmit={handleSubmitAffectedCells}
-                          readOnly={isReadOnly}
-                        />}
-                    </TabPane>,
-                  },
                 ]}
               />
             </AccordionContent>
@@ -205,22 +167,22 @@ const SpatialDiscretizationContainer = () => {
         </DataGrid>
       </SidebarContent>
       <BodyContent>
-        <SpatialDiscretizationMap
-          editAffectedCells={'affected_cells' === editMode}
-          affectedCellsGeometry={affectedCellsGeometry || undefined}
-          onChangeAffectedCell={(row: number, col: number, active: boolean) => {
-            if (!affectedCells) {
-              return;
-            }
-            const newAffectedCells = AffectedCells.fromObject(affectedCells);
-            newAffectedCells.setActive(row, col, active);
-            setAffectedCells(newAffectedCells.toObject() as IAffectedCells);
-          }}
-          modelGeometry={modelGeometry}
-          gridGeometry={gridGeometry || undefined}
-          onChangeModelGeometry={(polygon: Polygon) => setModelGeometry(polygon)}
-          editModelGeometry={'geometry' === editMode}
-        />
+        <Map>
+          <ModelGeometryMapLayer
+            modelGeometry={modelGeometry}
+            onChangeModelGeometry={setModelGeometry}
+            editModelGeometry={'geometry' === editMode}
+          />
+          <AffectedCellsMapLayer
+            affectedCells={spatialDiscretization.affected_cells}
+            fetchAffectedCellsGeometry={fetchAffectedCellsGeometry}
+            fetchGridGeometry={fetchGridGeometry}
+            onChangeAffectedCells={updateAffectedCells}
+            isReadOnly={isReadOnly}
+            inverted={true}
+            showAffectedCellsByDefault={true}
+          />
+        </Map>
       </BodyContent>
     </>
   );

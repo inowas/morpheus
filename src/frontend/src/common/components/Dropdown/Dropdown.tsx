@@ -1,4 +1,4 @@
-import {DropdownProps, Dropdown as SemanticDropdown} from 'semantic-ui-react';
+import {Dropdown as SemanticDropdown, DropdownProps} from 'semantic-ui-react';
 import {HtmlSpanProps, SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
 
 import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
@@ -11,6 +11,7 @@ import React from 'react';
 import styles from './Dropdown.module.less';
 
 export interface IDropdownProps {
+  name?: string
   as?: any
   additionLabel?: number | string | React.ReactNode
   additionPosition?: 'top' | 'bottom'

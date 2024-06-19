@@ -7,13 +7,11 @@ interface IProps {
 }
 
 
-const GeoTiffAssetData = ({data}: IProps) => {
-  return (
-    <div>
-      <p>RasterAssetData</p>
-      <ImageRenderer data={data.data}/>
-    </div>
-  );
-};
+const GeoTiffAssetData = ({data}: IProps) => (
+  <div>
+    <p>RasterAssetData</p>
+    <ImageRenderer data={data.data}/>
+  </div>
+);
 
 export default GeoTiffAssetData;

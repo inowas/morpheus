@@ -29,6 +29,9 @@ class String:
     def to_value(self):
         return self.to_str()
 
+    def to_lower(self):
+        return self.value.lower()
+
 
 @dataclasses.dataclass(frozen=True)
 class NonEmptyString(String):

@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict, Literal
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
@@ -52,7 +52,7 @@ class AddProjectMemberCommandHandler(CommandHandlerBase):
         if permissions.members.has_member(new_member_id):
             return
 
-        event = MemberAddedEvent.from_user_id_and_role(project_id=project_id, user_id=new_member_id, role=new_member_role)
+        event = MemberAddedEvent.from_user_id_and_role(project_id=project_id, user_id=new_member_id, role=new_member_role, occurred_at=DateTime.now())
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

@@ -1,6 +1,7 @@
 from . import ProjectEvents
 
 event_list = [
+    ProjectEvents.ProjectCalculationProfileIdUpdatedEvent,
     ProjectEvents.ProjectCreatedEvent,
     ProjectEvents.ProjectDeletedEvent,
     ProjectEvents.ProjectMetadataUpdatedEvent,

@@ -1,9 +1,13 @@
+from typing import Literal
+
 from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
+from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
+from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
 from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ReadModelLayerPropertyImageRequestHandler, ImageOutputFormat
 from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler, DataOutputFormat
@@ -12,6 +16,7 @@ from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandl
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
 from .presentation.api.read.ReadPermissionsRequestHandler import ReadPermissionsRequestHandler
+from .presentation.api.read.ReadSelectedCalculationProfileRequestHandler import ReadSelectedCalculationProfileRequestHandler
 from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequestHandler
 from .types.Asset import AssetId
 from .types.Project import ProjectId
@@ -19,6 +24,7 @@ from .presentation.api.read.AssetReadRequestHandlers import ReadPreviewImageRequ
     ReadAssetDataRequestHandler
 from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadProjectEventLogRequestHandler
 from .presentation.api.write.AssetWriteRequestHandlers import UploadPreviewImageRequestHandler, DeletePreviewImageRequestHandler, UploadAssetRequestHandler
+from .types.boundaries.Boundary import BoundaryId
 from .types.layers.Layer import LayerPropertyName, LayerId
 from ..common.presentation.api.middleware.schema_validation import validate_request
 
@@ -41,6 +47,20 @@ def register_routes(blueprint: Blueprint):
     @validate_request
     def upload_project_asset(project_id: str):
         return UploadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/calculation-profile', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    @validate_request
+    def get_project_selected_calculation_profile(project_id: str):
+        return ReadSelectedCalculationProfileRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/calculation-profiles', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    @validate_request
+    def get_project_calculation_profiles(project_id: str):
+        return ReadCalculationProfilesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['PUT'])
     @cross_origin()
@@ -79,8 +99,8 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_model_spatial_discretization_get_affected_cells(project_id: str):
-        format = request.args.get('format', 'json')  # default to json
-        return ReadModelAffectedCellsRequestHandler().handle(project_id=ProjectId.from_str(project_id), format=format)
+        output_format: Literal['json', 'geojson', 'geojson_outline'] | str = request.args.get('format', 'json')  # default to json
+        return ReadModelAffectedCellsRequestHandler().handle(project_id=ProjectId.from_str(project_id), format=output_format)
 
     @blueprint.route('/<project_id>/model/spatial-discretization/grid', methods=['GET'])
     @cross_origin()
@@ -128,10 +148,22 @@ def register_routes(blueprint: Blueprint):
         )
 
     @blueprint.route('/<project_id>/model/boundaries', methods=['GET'])
+    @blueprint.route('/<project_id>/model/boundaries/<boundary_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_boundaries(project_id: str):
-        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+    def project_model_get_boundaries(project_id: str, boundary_id: str | None = None):
+        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id), boundary_id=BoundaryId.try_from_str(boundary_id))
+
+    @blueprint.route('/<project_id>/model/boundaries/<boundary_id>/affected_cells', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_get_boundary_affected_cells(project_id: str, boundary_id: str):
+        output_format: Literal['json', 'geojson', 'geojson_outline'] | str = request.args.get('format', 'json')  # default to json
+        return ReadModelBoundaryAffectedCellsRequestHandler().handle(
+            project_id=ProjectId.from_str(project_id),
+            boundary_id=BoundaryId.from_str(boundary_id),
+            format=output_format
+        )
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

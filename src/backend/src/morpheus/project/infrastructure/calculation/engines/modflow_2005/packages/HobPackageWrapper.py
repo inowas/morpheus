@@ -10,6 +10,29 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class HobPackageSettings:
+    iuhobsv: int
+    hobdry: float
+    tomulth: float
+
+    def __init__(self, iuhobsv: int = 1, hobdry: float = 0.0, tomulth: float = 1.0):
+        self.iuhobsv = iuhobsv
+        self.hobdry = hobdry
+        self.tomulth = tomulth
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(**obj)
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)
+
+
+@dataclasses.dataclass
 class HobPackageData:
     head_observation_data: HeadObservationData
     # if greater than zero, then hob.out will be written
@@ -52,7 +75,7 @@ class HobPackageData:
         }
 
 
-def calculate_hob_package_data(model: Model) -> HobPackageData | None:
+def calculate_hob_package_data(model: Model, settings: HobPackageSettings) -> HobPackageData | None:
     if len(model.observations) == 0:
         return None
 
@@ -60,11 +83,11 @@ def calculate_hob_package_data(model: Model) -> HobPackageData | None:
     if head_observation_data.is_empty():
         return None
 
-    return HobPackageData(head_observation_data=head_observation_data)
+    return HobPackageData(head_observation_data=head_observation_data, iuhobsv=settings.iuhobsv, hobdry=settings.hobdry, tomulth=settings.tomulth)
 
 
-def create_hob_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowHob | None:
-    package_data = calculate_hob_package_data(model)
+def create_hob_package(flopy_modflow: FlopyModflow, model: Model, settings: HobPackageSettings) -> FlopyModflowHob | None:
+    package_data = calculate_hob_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 

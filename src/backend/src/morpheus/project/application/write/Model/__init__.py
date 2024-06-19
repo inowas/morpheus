@@ -1,11 +1,22 @@
 from .AddModelBoundary import AddModelBoundaryCommand, AddModelBoundaryCommandHandler
+from .AddModelBoundaryObservation import AddModelBoundaryObservationCommand, AddModelBoundaryObservationCommandHandler
+from .CloneModelBoundary import CloneModelBoundaryCommand, CloneModelBoundaryCommandHandler
+from .CloneModelBoundaryObservation import CloneModelBoundaryObservationCommand, CloneModelBoundaryObservationCommandHandler
 from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
 from .CreateModel import CreateModelCommand, CreateModelCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
 from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
+from .DisableModelBoundary import DisableModelBoundaryCommandHandler, DisableModelBoundaryCommand
+from .EnableModelBoundary import EnableModelBoundaryCommand, EnableModelBoundaryCommandHandler
 from .RemoveModelBoundary import RemoveModelBoundaryCommand, RemoveModelBoundaryCommandHandler
+from .RemoveModelBoundaryObservation import RemoveModelBoundaryObservationCommandHandler, RemoveModelBoundaryObservationCommand
+from .UpdateModelBoundaryAffectedCells import UpdateModelBoundaryAffectedCellsCommand, UpdateModelBoundaryAffectedCellsCommandHandler
+from .UpdateModelBoundaryAffectedLayers import UpdateModelBoundaryAffectedLayersCommandHandler, UpdateModelBoundaryAffectedLayersCommand
+from .UpdateModelBoundaryGeometry import UpdateModelBoundaryGeometryCommandHandler, UpdateModelBoundaryGeometryCommand
+from .UpdateModelBoundaryMetadata import UpdateModelBoundaryMetadataCommandHandler, UpdateModelBoundaryMetadataCommand
+from .UpdateModelBoundaryObservation import UpdateModelBoundaryObservationCommandHandler, UpdateModelBoundaryObservationCommand
 from .UpdateModelLayerConfinement import UpdateModelLayerConfinementCommand, UpdateModelLayerConfinementCommandHandler
 from .UpdateModelLayerMetadata import UpdateModelLayerMetadataCommand, UpdateModelLayerMetadataCommandHandler
 from .UpdateModelLayerOrder import UpdateModelLayerOrderCommand, UpdateModelLayerOrderCommandHandler
@@ -20,22 +31,33 @@ from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand,
 
 model_command_handler_map = {
     AddModelBoundaryCommand: AddModelBoundaryCommandHandler,
+    AddModelBoundaryObservationCommand: AddModelBoundaryObservationCommandHandler,
+    CloneModelBoundaryCommand: CloneModelBoundaryCommandHandler,
+    CloneModelBoundaryObservationCommand: CloneModelBoundaryObservationCommandHandler,
     CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelCommand: CreateModelCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,
     CreateModelVersionCommand: CreateModelVersionCommandHandler,
-    DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
+    DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
+    DisableModelBoundaryCommand: DisableModelBoundaryCommandHandler,
+    EnableModelBoundaryCommand: EnableModelBoundaryCommandHandler,
     RemoveModelBoundaryCommand: RemoveModelBoundaryCommandHandler,
+    RemoveModelBoundaryObservationCommand: RemoveModelBoundaryObservationCommandHandler,
+    UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
+    UpdateModelBoundaryAffectedCellsCommand: UpdateModelBoundaryAffectedCellsCommandHandler,
+    UpdateModelBoundaryAffectedLayersCommand: UpdateModelBoundaryAffectedLayersCommandHandler,
+    UpdateModelBoundaryGeometryCommand: UpdateModelBoundaryGeometryCommandHandler,
+    UpdateModelBoundaryMetadataCommand: UpdateModelBoundaryMetadataCommandHandler,
+    UpdateModelBoundaryObservationCommand: UpdateModelBoundaryObservationCommandHandler,
+    UpdateModelGeometryCommand: UpdateModelGeometryCommandHandler,
+    UpdateModelGridCommand: UpdateModelGridCommandHandler,
     UpdateModelLayerConfinementCommand: UpdateModelLayerConfinementCommandHandler,
     UpdateModelLayerMetadataCommand: UpdateModelLayerMetadataCommandHandler,
     UpdateModelLayerOrderCommand: UpdateModelLayerOrderCommandHandler,
     UpdateModelLayerPropertyDefaultValueCommand: UpdateModelLayerPropertyDefaultValueCommandHandler,
     UpdateModelLayerPropertyRasterReferenceCommand: UpdateModelLayerPropertyRasterReferenceCommandHandler,
     UpdateModelLayerPropertyZonesCommand: UpdateModelLayerPropertyZonesCommandHandler,
-    UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
-    UpdateModelGeometryCommand: UpdateModelGeometryCommandHandler,
-    UpdateModelGridCommand: UpdateModelGridCommandHandler,
     UpdateModelTimeDiscretizationCommand: UpdateModelTimeDiscretizationCommandHandler,
     UpdateModelVersionDescriptionCommand: UpdateModelVersionDescriptionCommandHandler,
 }

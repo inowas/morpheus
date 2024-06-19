@@ -7,6 +7,9 @@ class Point:
     coordinates: tuple[float, float]
     type: Literal['Point'] = 'Point'
 
+    def __eq__(self, other):
+        return self.coordinates == other.coordinates and self.type == other.type
+
     def __geo_interface__(self):
         return {
             'type': self.type,

@@ -26,7 +26,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
   const [firstRowIsHeader, setFirstRowIsHeader] = useState<boolean>(true);
   const [stressPeriods, setStressPeriods] = useState<IStressPeriod[] | null>(null);
 
-  const {format, isValid, parseUserInput} = useDateTimeFormat(timeZone);
+  const {formatDate, isValid, parseUserInput} = useDateTimeFormat(timeZone);
 
   useEffect(() => {
     const parsedData: IStressPeriod[] = [];
@@ -47,7 +47,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
           const value = rawDataRow[colIdx];
           const parsedDate = parseUserInput(value, dateTimeFormat);
           if (isValid(parsedDate)) {
-            parsedDataRow[column.value] = format(parsedDate, dateTimeFormat);
+            parsedDataRow[column.value] = formatDate(parsedDate, dateTimeFormat);
           } else {
             parsedDataRow[column.value] = column.default;
           }
@@ -177,98 +177,6 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
     ));
   };
 
-  // const renderContent = () => {
-  //   return (
-  //     <>
-  //       <DataGrid>
-  //         <SectionTitle title={'UPLOAD DATASET'}/>
-  //         {stressPeriods && 0 < stressPeriods.length &&
-  //           <>
-  //             <DataRow>
-  //               <DataGrid columns={2}>
-  //                 <Form.Field className={styles.dateFormat}>
-  //                   <label className={`${styles.dateFormatLabel} labelSmall`} style={{textAlign: 'left', fontWeight: 600}}>
-  //                     <Icon className={'dateIcon'} name="info circle"/>
-  //                     Date format
-  //                   </label>
-  //                   <Form.Dropdown
-  //                     style={{backgroundColor: 'white', padding: '5px 10px'}}
-  //                     value={dateTimeFormat}
-  //                     options={[
-  //                       {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
-  //                       {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
-  //                       {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
-  //                       {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
-  //                     ]}
-  //                     onChange={(e, d) => setDateTimeFormat(d.value as string)}
-  //                   />
-  //                 </Form.Field>
-  //                 <Form.Field>
-  //                   <Checkbox
-  //                     style={{textAlign: 'left', fontWeight: 600}}
-  //                     label="First row is header"
-  //                     checked={firstRowIsHeader}
-  //                     onChange={handleChange(setFirstRowIsHeader)}
-  //                     data-value={firstRowIsHeader ? 'true' : 'false'}
-  //                   />
-  //                 </Form.Field>
-  //               </DataGrid>
-  //             </DataRow>
-  //             <DataGrid columns={4}>
-  //               {columns.map((c, key) => (
-  //                 <Form.Field key={key}>
-  //                   <label className="labelSmall" style={{textAlign: 'left', fontWeight: 600}}>
-  //                     <Icon className={'dateIcon'} name="info circle"/>
-  //                     {c.text}
-  //                   </label>
-  //                   <Form.Dropdown
-  //                     key={key}
-  //                     name={c.value}
-  //                     selection={true}
-  //                     value={columnOrder[key].colIdx}
-  //                     onChange={(e, d) => {
-  //                       const newColumnOrder = columnOrder.map((co, idx) => {
-  //                         if (idx === key) {
-  //                           return {...co, colIdx: d.value as number};
-  //                         }
-  //
-  //                         return co;
-  //                       });
-  //                       setColumnOrder(newColumnOrder);
-  //                     }}
-  //                     options={rawData[0].map((value: string, idx) => ({
-  //                       key: idx,
-  //                       value: idx,
-  //                       text: firstRowIsHeader ? value : `Column ${idx + 1}`,
-  //                     }))}
-  //                   />
-  //                 </Form.Field>
-  //               ))}
-  //             </DataGrid>
-  //             <DataRow>
-  //               {stressPeriods && 0 === stressPeriods.length && <Notification warning={true}>
-  //                 The CSV file cannot be empty
-  //               </Notification>}
-  //               <div className={styles.scrollContainer}>
-  //                 <Table
-  //                   celled={true} structured={true}
-  //                   className={styles.table}
-  //                 >
-  //                   <Table.Header>
-  //                     {renderHeader()}
-  //                   </Table.Header>
-  //                   <Table.Body>
-  //                     {stressPeriods && renderStressPeriods()}
-  //                   </Table.Body>
-  //                 </Table>
-  //               </div>
-  //             </DataRow>
-  //           </>
-  //         }
-  //       </DataGrid>
-  //     </>);
-  // };
-
   const renderContent = () => {
     return (
       <DataGrid>
@@ -283,10 +191,10 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
                 style={{backgroundColor: 'white', padding: '5px 10px'}}
                 value={dateTimeFormat}
                 options={[
-                  {key: 0, value: 'yyyy-MM-dd', text: format(new Date().toISOString(), 'yyyy-MM-dd')},
-                  {key: 1, value: 'yyyy/MM/dd', text: format(new Date().toISOString(), 'yyyy/MM/dd')},
-                  {key: 2, value: 'yyyyMMdd', text: format(new Date().toISOString(), 'yyyyMMdd')},
-                  {key: 3, value: 'dd.MM.yyyy', text: format(new Date().toISOString(), 'dd.MM.yyyy')},
+                  {key: 0, value: 'yyyy-MM-dd', text: formatDate(new Date().toISOString(), 'yyyy-MM-dd')},
+                  {key: 1, value: 'yyyy/MM/dd', text: formatDate(new Date().toISOString(), 'yyyy/MM/dd')},
+                  {key: 2, value: 'yyyyMMdd', text: formatDate(new Date().toISOString(), 'yyyyMMdd')},
+                  {key: 3, value: 'dd.MM.yyyy', text: formatDate(new Date().toISOString(), 'dd.MM.yyyy')},
                 ]}
                 onChange={(e, d) => setDateTimeFormat(d.value as string)}
               />

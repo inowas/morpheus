@@ -12,7 +12,7 @@ interface ItemProps {
   navigateTo: (path: string) => void;
 }
 
-const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseMobileMenu, location, navigateTo}) => {
+const MenuDropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseMobileMenu, location, navigateTo}) => {
   depthLevel = depthLevel + 1;
 
   return (
@@ -33,4 +33,4 @@ const Dropdown: React.FC<ItemProps> = ({submenus, dropdown, depthLevel, onCloseM
   );
 };
 
-export default Dropdown;
+export default MenuDropdown;

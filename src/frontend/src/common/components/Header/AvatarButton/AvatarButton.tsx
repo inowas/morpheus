@@ -1,7 +1,7 @@
-import {Dropdown, Image} from 'semantic-ui-react';
-
+import {Image} from 'semantic-ui-react';
 import React from 'react';
 import styles from './AvatarButton.module.less';
+import {DropdownComponent} from 'common/components';
 
 interface IProps {
   title?: string;
@@ -26,7 +26,7 @@ const AvatarButton = (props: IProps) => {
   );
 
 
-  return (<Dropdown
+  return (<DropdownComponent.Dropdown
     data-testid="avatar-button"
     className={styles.avatarButton}
     trigger={trigger}
