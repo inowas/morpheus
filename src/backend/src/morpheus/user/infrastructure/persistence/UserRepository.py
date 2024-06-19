@@ -77,6 +77,9 @@ class UserRepository(RepositoryBase):
             update={'$set': {'is_admin': is_admin}}
         )
 
+    def find_all_users(self) -> list[User]:
+        return [UserRepositoryDocument.from_raw_document(raw_document).get_user() for raw_document in self.collection.find({}, {'_id': 0})]
+
 
 def __create_indices_for_repository(collection: pymongo.collection.Collection):
     collection.create_index(
@@ -102,12 +105,14 @@ def __create_indices_for_repository(collection: pymongo.collection.Collection):
             ('keycloak_user_id', pymongo.ASCENDING),
         ],
         unique=True,
+        partialFilterExpression={'geo_node_user_id': {'$type': 'string'}}
     ),
     collection.create_index(
         [
             ('geo_node_user_id', pymongo.ASCENDING),
         ],
         unique=True,
+        partialFilterExpression={'geo_node_user_id': {'$type': 'number'}}
     )
 
 

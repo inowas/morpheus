@@ -1,6 +1,6 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.user.domain.events.UserEvents.UserEvents import UserCreatedEvent, UserLinkedToKeycloakEvent, UserDataUpdatedEvent, UserPromotedToAdminEvent, UserDemotedFromAdminEvent
+from morpheus.user.domain.events.UserEvents import UserCreatedEvent, UserLinkedToKeycloakEvent, UserDataUpdatedEvent, UserPromotedToAdminEvent, UserDemotedFromAdminEvent
 from morpheus.user.infrastructure.persistence.UserRepository import UserRepository, user_repository
 from morpheus.user.types.User import User
 

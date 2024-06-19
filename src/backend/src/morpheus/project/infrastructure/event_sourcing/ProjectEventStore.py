@@ -1,13 +1,11 @@
-from morpheus.common.infrastructure.event_sourcing.EventStore import EventStoreBase
 from morpheus.common.types import Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.project.infrastructure.persistence.ProjectEventRepository import project_event_repository, ProjectEventRepository
 
 
-class ProjectEventStore(EventStoreBase):
+class ProjectEventStore:
     def __init__(self, repository: ProjectEventRepository):
         self.repository = repository
-        super().__init__()
 
     def store(self, event_envelope: EventEnvelope):
         self.repository.insert(event_envelope=event_envelope)

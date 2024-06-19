@@ -2,7 +2,7 @@ import functools
 from typing import Callable
 from flask import request, g as request_global_context
 
-from morpheus.authentication.incoming import create_or_update_user_from_keycloak
+from morpheus.authentication.incoming import create_or_update_user_from_keycloak, get_identity_by_keycloak_id
 from morpheus.authentication.infrastructure import keycloak_openid_provider
 from morpheus.authentication.infrastructure.bearer_token import extract_bearer_token_from
 from morpheus.settings import settings
@@ -34,8 +34,10 @@ def authenticate(requires_logged_in_user: bool = True):
                     keycloak_user_data.first_name,
                     keycloak_user_data.last_name
                 )
+                identity = get_identity_by_keycloak_id(keycloak_user_data.user_id)
 
                 request_global_context.user_id = keycloak_user_data.user_id
+                request_global_context.identity = identity.to_dict() if identity is not None else None
                 return route_handler(*args, **kwargs)
 
         return decorated_function
@@ -45,3 +47,6 @@ def authenticate(requires_logged_in_user: bool = True):
 
 def get_logged_in_user_id() -> str | None:
     return request_global_context.get('user_id', None)
+
+def get_identity() -> dict | None:
+    return request_global_context.get('identity', None)
