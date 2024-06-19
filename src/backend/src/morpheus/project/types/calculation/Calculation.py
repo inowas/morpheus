@@ -17,6 +17,7 @@ class CalculationState(StrEnum):
     PREPROCESSED = 'preprocessed'
     CALCULATING = 'calculating'
     COMPLETED = 'completed'
+    STOPPED = 'stopped'
     FAILED = 'failed'
 
 

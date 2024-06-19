@@ -4,8 +4,9 @@ from enum import StrEnum
 class CalculationEventName(StrEnum):
     CALCULATION_CANCELED = 'Calculation Canceled'
     CALCULATION_COMPLETED = 'Calculation Completed'
+    CALCULATION_CREATED = 'Calculation Created'
+    CALCULATION_DELETED = 'Calculation Deleted'
     CALCULATION_FAILED = 'Calculation Failed'
-    CALCULATION_QUEUED = 'Calculation Queued'
     CALCULATION_STARTED = 'Calculation Started'
 
     CALCULATION_PROFILE_ADDED = 'Calculation Profile Added'

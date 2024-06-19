@@ -1,26 +1,31 @@
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
+from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState, Calculation
 from morpheus.project.infrastructure.persistence.CalculationRepository import calculation_repository
 
 
 class CalculationService:
+    project_id: ProjectId | None
     calculation: Calculation
     engine: CalculationEngineBase
 
-    def __init__(self, calculation: Calculation):
-        if not calculation_repository.has_calculation(calculation_id=calculation.calculation_id):
-            calculation_repository.save_calculation(calculation)
+    def __init__(self, calculation: Calculation, project_id: ProjectId | None = None):
+        self.project_id = project_id
         self.calculation = calculation
         self.engine = CalculationEngineFactory.create_engine(calculation)
 
-    @classmethod
-    def from_calculation(cls, calculation: Calculation):
-        return cls(calculation=calculation)
+        # persist calculation if it does not exist and a project_id is provided
+        if project_id and not calculation_repository.has_calculation(project_id=project_id, calculation_id=calculation.calculation_id):
+            calculation_repository.save_calculation(project_id=project_id, calculation=calculation)
 
     @classmethod
-    def from_calculation_id(cls, calculation_id: CalculationId):
-        calculation = calculation_repository.get_calculation(calculation_id=calculation_id)
+    def from_calculation(cls, calculation: Calculation, project_id: ProjectId | None = None):
+        return cls(calculation=calculation, project_id=project_id)
+
+    @classmethod
+    def from_calculation_id(cls, project_id: ProjectId, calculation_id: CalculationId):
+        calculation = calculation_repository.get_calculation(project_id=project_id, calculation_id=calculation_id)
         if calculation is None:
             raise Exception('Calculation does not exist')
 
@@ -32,7 +37,8 @@ class CalculationService:
 
         def on_change_calculation_state(new_state: CalculationState):
             self.calculation.set_new_state(new_state)
-            calculation_repository.update_calculation(self.calculation)
+            if self.project_id:
+                calculation_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
 
         self.engine.on_change_calulation_state(on_change_calculation_state)
 
@@ -45,11 +51,13 @@ class CalculationService:
             self.calculation.set_new_state(CalculationState.COMPLETED)
             self.calculation.set_log(log)
             self.calculation.set_result(result)
-            calculation_repository.update_calculation(self.calculation)
+            if self.project_id:
+                calculation_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
         except Exception as e:
             self.calculation.append_to_log(str(e))
             self.calculation.set_new_state(CalculationState.FAILED)
-            calculation_repository.update_calculation(self.calculation)
+            if self.project_id:
+                calculation_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
 
     def get_result(self):
         return self.calculation.calculation_result
