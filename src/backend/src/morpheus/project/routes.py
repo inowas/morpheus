@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
+from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
 from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
@@ -15,6 +16,7 @@ from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandl
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
 from .presentation.api.read.ReadPermissionsRequestHandler import ReadPermissionsRequestHandler
+from .presentation.api.read.ReadSelectedCalculationProfileRequestHandler import ReadSelectedCalculationProfileRequestHandler
 from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequestHandler
 from .types.Asset import AssetId
 from .types.Project import ProjectId
@@ -45,6 +47,20 @@ def register_routes(blueprint: Blueprint):
     @validate_request
     def upload_project_asset(project_id: str):
         return UploadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/calculation-profile', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    @validate_request
+    def get_project_selected_calculation_profile(project_id: str):
+        return ReadSelectedCalculationProfileRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/calculation-profiles', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    @validate_request
+    def get_project_calculation_profiles(project_id: str):
+        return ReadCalculationProfilesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['PUT'])
     @cross_origin()

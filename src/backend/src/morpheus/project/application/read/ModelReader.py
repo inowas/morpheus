@@ -14,3 +14,7 @@ class ModelReader:
 
     def get_version_by_tag(self, project_id: ProjectId, tag: VersionTag) -> ModelVersion:
         return model_version_tag_repository.get_version_by_tag(project_id=project_id, tag=tag)
+
+
+def get_model_reader() -> ModelReader:
+    return ModelReader()

@@ -1,5 +1,11 @@
-from .StartCalculation import StartCalculationCommand, StartCalculationCommandHandler
+from .AddCalculationProfile import AddCalculationProfileCommand, AddCalculationProfileCommandHandler
+from .Calculate import CalculateCommand, CalculateCommandHandler
+from .RemoveCalculationProfile import RemoveCalculationProfileCommand, RemoveCalculationProfileCommandHandler
+from .UpdateCalculationProfile import UpdateCalculationProfileCommand, UpdateCalculationProfileCommandHandler
 
 calculation_command_handler_map = {
-    StartCalculationCommand: StartCalculationCommandHandler,
+    AddCalculationProfileCommand: AddCalculationProfileCommandHandler,
+    CalculateCommand: CalculateCommandHandler,
+    RemoveCalculationProfileCommand: RemoveCalculationProfileCommandHandler,
+    UpdateCalculationProfileCommand: UpdateCalculationProfileCommandHandler,
 }

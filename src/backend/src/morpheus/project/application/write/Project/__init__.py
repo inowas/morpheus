@@ -2,6 +2,7 @@ from .AddProjectMember import AddProjectMemberCommand, AddProjectMemberCommandHa
 from .CreateProject import CreateProjectCommand, CreateProjectCommandHandler
 from .DeleteProject import DeleteProjectCommand, DeleteProjectCommandHandler
 from .RemoveProjectMember import RemoveProjectMemberCommand, RemoveProjectMemberCommandHandler
+from .UpdateProjectCalculationProfileId import UpdateProjectCalculationProfileIdCommand, UpdateProjectCalculationProfileIdCommandHandler
 from .UpdateProjectMemberRole import UpdateProjectMemberRoleCommand, UpdateProjectMemberRoleCommandHandler
 from .UpdateProjectMetadata import UpdateProjectMetadataCommand, UpdateProjectMetadataCommandHandler
 from .UpdateProjectVisibiliy import UpdateProjectVisibilityCommand, UpdateProjectVisibilityCommandHandler
@@ -11,6 +12,7 @@ project_command_handler_map = {
     CreateProjectCommand: CreateProjectCommandHandler,
     DeleteProjectCommand: DeleteProjectCommandHandler,
     RemoveProjectMemberCommand: RemoveProjectMemberCommandHandler,
+    UpdateProjectCalculationProfileIdCommand: UpdateProjectCalculationProfileIdCommandHandler,
     UpdateProjectMetadataCommand: UpdateProjectMetadataCommandHandler,
     UpdateProjectMemberRoleCommand: UpdateProjectMemberRoleCommandHandler,
     UpdateProjectVisibilityCommand: UpdateProjectVisibilityCommandHandler,

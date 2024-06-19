@@ -1,11 +1,11 @@
 import dataclasses
 
 from morpheus.common.types import Uuid, String, DateTime
-from .Permissions import Permissions, Visibility
-from .calculation.CalculationProfile import CalculationProfile, CalculationProfileCollection
 from .Model import Model
+from .Permissions import Permissions, Visibility
 from .Scenarios import ScenarioCollection
 from .User import UserId
+from .calculation.CalculationProfile import CalculationProfileId
 
 
 class ProjectId(Uuid):
@@ -84,7 +84,7 @@ class Project:
     metadata: Metadata
     permissions: Permissions
     model: Model | None
-    calculation_profile: CalculationProfile
+    selected_calculation_profile_id: CalculationProfileId | None
     scenarios: ScenarioCollection
 
     @classmethod
@@ -94,7 +94,7 @@ class Project:
             metadata=Metadata.new(),
             permissions=Permissions.new(owner_id=user_id),
             model=None,
-            calculation_profile=CalculationProfileCollection.new().get_selected_profile(),
+            selected_calculation_profile_id=None,
             scenarios=ScenarioCollection.new(),
         )
 
@@ -105,7 +105,7 @@ class Project:
             metadata=Metadata.from_dict(obj['metadata']),
             permissions=Permissions.from_dict(obj['permissions']),
             model=Model.from_dict(obj['model']) if obj['model'] is not None else None,
-            calculation_profile=CalculationProfile.from_dict(obj['calculation_profile']),
+            selected_calculation_profile_id=CalculationProfileId.try_from_str(obj['selected_calculation_profile_id']) if 'selected_calculation_profile_id' in obj else None,
             scenarios=ScenarioCollection.from_dict(obj['scenarios']),
         )
 
@@ -115,7 +115,7 @@ class Project:
             'metadata': self.metadata.to_dict(),
             'permissions': self.permissions.to_dict(),
             'model': self.model.to_dict() if self.model is not None else None,
-            'calculation_profile': self.calculation_profile.to_dict(),
+            'selected_calculation_profile_id': self.selected_calculation_profile_id.to_str() if self.selected_calculation_profile_id is not None else None,
             'scenarios': self.scenarios.to_dict(),
         }
 
@@ -128,8 +128,8 @@ class Project:
     def with_updated_model(self, model: Model):
         return dataclasses.replace(self, model=model)
 
-    def with_updated_calculation_profile(self, calculation_profile: CalculationProfile):
-        return dataclasses.replace(self, calculation_profile=calculation_profile)
+    def with_selected_calculation_profile_id(self, calculation_profile_id: CalculationProfileId):
+        return dataclasses.replace(self, selected_calculation_profile_id=calculation_profile_id)
 
     def with_updated_scenarios(self, scenarios: ScenarioCollection):
         return dataclasses.replace(self, scenarios=scenarios)

@@ -9,12 +9,15 @@ from morpheus.project.application.read.PermissionsReader import PermissionsReade
 
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
+from morpheus.project.domain.events.CalculationEvents.CalculationProfileAddedEvent import CalculationProfileAddedEvent
 from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import ModelCreatedEvent, VersionCreatedEvent, VersionAssignedToModelEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId, Model
 from morpheus.project.types.ModelVersion import VersionDescription, VersionTag, ModelVersion
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.discretization import SpatialDiscretization
 from morpheus.project.types.discretization.spatial import Rotation, ActiveCells, Grid
 from morpheus.project.types.geometry import Polygon
@@ -93,3 +96,14 @@ class CreateModelCommandHandler(CommandHandlerBase):
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)
+
+        default_calculation_profile = CalculationProfile.default()
+        event = CalculationProfileAddedEvent.from_calculation_profile(project_id=project_id, calculation_profile=default_calculation_profile, occurred_at=DateTime.now())
+        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
+        project_event_bus.record(event_envelope=envelope)
+
+        event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=default_calculation_profile.id, occurred_at=DateTime.now())
+        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        envelope = EventEnvelope(event=event, metadata=event_metadata)
+        project_event_bus.record(event_envelope=envelope)

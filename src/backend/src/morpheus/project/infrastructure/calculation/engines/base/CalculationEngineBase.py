@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Tuple
 
 from morpheus.project.types.Model import Model
-from morpheus.project.types.calculation.Calculation import CalculationLog
+from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, Observation
 
@@ -12,31 +12,21 @@ class CalculationEngineType(StrEnum):
 
 
 class CalculationEngineBase:
-    on_start_preprocessing_callback = None
+    on_change_calculation_state_callback = None
+    on_finish_preprocessing_callback = None
     on_start_running_callback = None
 
-    def on_start_preprocessing(self, callback):
-        self.on_start_preprocessing_callback = callback
+    def on_change_calulation_state(self, callback):
+        self.on_change_calculation_state_callback = callback
 
-    def on_start_running(self, callback):
-        self.on_start_running_callback = callback
-
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[
-        CalculationLog, CalculationResult
-    ]:
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
         raise NotImplementedError
 
-    def trigger_start_preprocessing(self):
-        if self.on_start_preprocessing_callback is None:
+    def trigger_calculation_state_change(self, new_state: CalculationState):
+        if self.on_change_calculation_state_callback is None:
             return
 
-        self.on_start_preprocessing_callback()
-
-    def trigger_start_running(self):
-        if self.on_start_running_callback is None:
-            return
-
-        self.on_start_running_callback()
+        self.on_change_calculation_state_callback(new_state)
 
     def read_budget(
         self,
