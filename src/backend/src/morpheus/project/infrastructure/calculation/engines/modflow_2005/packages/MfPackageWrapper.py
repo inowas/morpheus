@@ -4,6 +4,25 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class MfPackageSettings:
+    verbose: bool
+
+    def __init__(self, verbose: bool = False):
+        self.verbose = verbose
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(**obj)
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)
+
+
+@dataclasses.dataclass
 class MfPackageData:
     modelname: str
     namefile_ext: str
@@ -40,10 +59,15 @@ class MfPackageData:
         return cls(**obj)
 
 
-def create_mf_package_data(model: Model, model_ws: str) -> MfPackageData:
-    return MfPackageData(modelname=model.model_id.to_str(), exe_name='mf2005', model_ws=model_ws)
+def create_mf_package_data(model: Model, model_ws: str, settings: MfPackageSettings) -> MfPackageData:
+    return MfPackageData(
+        modelname=model.model_id.to_str(),
+        exe_name='mf2005',
+        model_ws=model_ws,
+        verbose=settings.verbose
+    )
 
 
-def create_mf_package(model: Model, model_ws: str) -> FlopyModflow:
-    package_data = create_mf_package_data(model, model_ws)
+def create_mf_package(model: Model, model_ws: str, settings: MfPackageSettings) -> FlopyModflow:
+    package_data = create_mf_package_data(model=model, settings=settings, model_ws=model_ws)
     return FlopyModflow(**package_data.to_dict())

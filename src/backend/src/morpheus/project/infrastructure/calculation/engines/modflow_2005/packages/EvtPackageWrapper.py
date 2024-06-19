@@ -9,19 +9,39 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class EvtPackageSettings:
+    ipakcb: int
+    nevtop: int
+
+    def __init__(self, ipakcb: int = 0, nevtop: int = 1):
+        self.ipakcb = ipakcb
+        self.nevtop = nevtop
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(**obj)
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)
+
+
+@dataclasses.dataclass
 class EvtPackageData:
     stress_period_data: EvtStressPeriodData
     ievt: int
     nevtop: int
-    ipakcb: None | int
+    ipakcb: int
     extension: Literal["evt"]
     unitnumber: None | int
     filenames: None | str | list[str]
     external: bool
 
-    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1,
-                 ipakcb: None | int = None, extension: Literal["evt"] = 'evt', unitnumber: int | None = None,
-                 filenames: list[str] | str | None = None, external: bool = False):
+    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1, ipakcb: int = 0,
+                 extension: Literal["evt"] = 'evt', unitnumber: int | None = None, filenames: list[str] | str | None = None, external: bool = False):
         self.stress_period_data = stress_period_data
         self.ievt = ievt
         self.nevtop = nevtop
@@ -46,15 +66,15 @@ class EvtPackageData:
         }
 
 
-def calculate_evt_package_data(model: Model) -> EvtPackageData | None:
+def calculate_evt_package_data(model: Model, settings: EvtPackageSettings) -> EvtPackageData | None:
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
-    return EvtPackageData(stress_period_data=stress_period_data)
+    return EvtPackageData(stress_period_data=stress_period_data, ipakcb=settings.ipakcb, nevtop=settings.nevtop)
 
 
-def create_evt_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowEvt | None:
-    package_data = calculate_evt_package_data(model)
+def create_evt_package(flopy_modflow: FlopyModflow, model: Model, settings: EvtPackageSettings) -> FlopyModflowEvt | None:
+    package_data = calculate_evt_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 
