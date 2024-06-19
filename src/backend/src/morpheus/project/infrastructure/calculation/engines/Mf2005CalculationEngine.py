@@ -202,11 +202,11 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         return CalculationResult.success(
             message="Calculation finished successfully",
             files=os.listdir(self.workspace_path),
-            head_results=self.__read_head_results(),
-            drawdown_results=self.__read_drawdown_results(),
-            budget_results=self.__read_budget_results(),
-            concentration_results=self.__read_concentration_results(),
-
+            flow_head_results=self.__read_flow_head_results(),
+            flow_drawdown_results=self.__read_flow_drawdown_results(),
+            flow_budget_results=self.__read_flow_budget_results(),
+            transport_concentration_results=self.__read_transport_concentration_results(),
+            transport_budget_results=self.__read_transport_concentration_budget_results(),
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -215,7 +215,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 return os.path.join(self.workspace_path, file)
         return None
 
-    def __read_head_results(self) -> AvailableResults | None:
+    def __read_flow_head_results(self) -> AvailableResults | None:
         file = self.__get_file_with_extension_from_workspace(".hds")
         if file is None:
             return None
@@ -228,7 +228,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_observations=len(self.read_head_observations()),
         )
 
-    def __read_drawdown_results(self) -> AvailableResults | None:
+    def __read_flow_drawdown_results(self) -> AvailableResults | None:
         file = self.__get_file_with_extension_from_workspace(".ddn")
         if file is None:
             return None
@@ -241,7 +241,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_observations=0,
         )
 
-    def __read_budget_results(self) -> AvailableResults | None:
+    def __read_flow_budget_results(self) -> AvailableResults | None:
         budget_file = self.__get_file_with_extension_from_workspace(".list")
         if budget_file is None:
             return None
@@ -258,10 +258,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_observations=0,
         )
 
-    def __read_concentration_results(self) -> AvailableResults | None:
+    def __read_transport_concentration_results(self) -> AvailableResults | None:
         return None
 
-    def read_budget(
+    def __read_transport_concentration_budget_results(self) -> AvailableResults | None:
+        return None
+
+    def read_flow_budget(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -285,7 +288,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             values[param] = float(str(x[1]))
         return values
 
-    def read_concentration(
+    def read_transport_concentration(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -294,7 +297,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     ):
         return []
 
-    def read_drawdown(
+    def read_flow_drawdown(
         self, totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
@@ -314,7 +317,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data[data < -999] = None
         return data.tolist()
 
-    def read_head(
+    def read_flow_head(
         self,
         totim: float | None = None,
         idx: int | None = None,

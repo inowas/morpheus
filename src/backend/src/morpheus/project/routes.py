@@ -165,6 +165,12 @@ def register_routes(blueprint: Blueprint):
             format=output_format
         )
 
+    @blueprint.route('/<project_id>/calculations', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_get_calculations(project_id: str):
+        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()
     @authenticate()

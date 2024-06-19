@@ -10,7 +10,7 @@ from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.CalculationEvents import CalculationCanceledEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.infrastructure.persistence.CalculationRepository import get_calculation_repository
+from morpheus.project.infrastructure.persistence.CalculationsRepository import get_calculations_repository
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
 from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState
@@ -47,7 +47,7 @@ class StopCalculationCommandHandler(CommandHandlerBase):
             raise InsufficientPermissionsException(
                 f'User {user_id.to_str()} does not have permission to create a model of {project_id.to_str()}')
 
-        calculation_repository = get_calculation_repository()
+        calculation_repository = get_calculations_repository()
         calculation = calculation_repository.get_calculation(project_id=project_id, calculation_id=command.calculation_id)
         if calculation is None:
             raise ValueError(f'Calculation {command.calculation_id.to_str()} for project {project_id.to_str()} not found')

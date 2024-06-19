@@ -12,7 +12,7 @@ from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.CalculationEvents import CalculationCreatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.infrastructure.persistence.CalculationRepository import calculation_repository
+from morpheus.project.infrastructure.persistence.CalculationsRepository import calculations_repository
 from morpheus.project.tasks import run_calculation_by_id
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
@@ -60,7 +60,7 @@ class StartCalculationCommandHandler(CommandHandlerBase):
 
         model = get_model_reader().get_latest_model(project_id=project_id)
         calculation = Calculation.new(model=model, calculation_profile=calculation_profile, calculation_id=command.new_calculation_id)
-        calculation_repository.save_calculation(project_id=project_id, calculation=calculation)
+        calculations_repository.save_calculation(project_id=project_id, calculation=calculation)
 
         run_calculation_by_id.delay(project_id=project_id.to_str(), calculation_id=calculation.calculation_id.to_str())  # type: ignore
         # see: https://github.com/microsoft/pylance-release/issues/4220#issuecomment-1501942176

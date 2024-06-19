@@ -2,7 +2,7 @@ from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineB
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState, Calculation
-from morpheus.project.infrastructure.persistence.CalculationRepository import calculation_repository
+from morpheus.project.infrastructure.persistence.CalculationsRepository import calculations_repository
 
 
 class CalculationService:
@@ -16,8 +16,8 @@ class CalculationService:
         self.engine = CalculationEngineFactory.create_engine(calculation)
 
         # persist calculation if it does not exist and a project_id is provided
-        if project_id and not calculation_repository.has_calculation(project_id=project_id, calculation_id=calculation.calculation_id):
-            calculation_repository.save_calculation(project_id=project_id, calculation=calculation)
+        if project_id and not calculations_repository.has_calculation(project_id=project_id, calculation_id=calculation.calculation_id):
+            calculations_repository.save_calculation(project_id=project_id, calculation=calculation)
 
     @classmethod
     def from_calculation(cls, calculation: Calculation, project_id: ProjectId | None = None):
@@ -25,7 +25,7 @@ class CalculationService:
 
     @classmethod
     def from_calculation_id(cls, project_id: ProjectId, calculation_id: CalculationId):
-        calculation = calculation_repository.get_calculation(project_id=project_id, calculation_id=calculation_id)
+        calculation = calculations_repository.get_calculation(project_id=project_id, calculation_id=calculation_id)
         if calculation is None:
             raise Exception('Calculation does not exist')
 
@@ -38,7 +38,7 @@ class CalculationService:
         def on_change_calculation_state(new_state: CalculationState):
             self.calculation.set_new_state(new_state)
             if self.project_id:
-                calculation_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
+                calculations_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
 
         self.engine.on_change_calulation_state(on_change_calculation_state)
 
@@ -52,12 +52,12 @@ class CalculationService:
             self.calculation.set_log(log)
             self.calculation.set_result(result)
             if self.project_id:
-                calculation_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
+                calculations_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
         except Exception as e:
             self.calculation.append_to_log(str(e))
             self.calculation.set_new_state(CalculationState.FAILED)
             if self.project_id:
-                calculation_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
+                calculations_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
 
     def get_result(self):
         return self.calculation.calculation_result
@@ -68,17 +68,20 @@ class CalculationService:
     def get_calculation(self):
         return self.calculation
 
-    def read_budget(self, idx: int, incremental: bool = False):
-        return self.engine.read_budget(idx=idx, incremental=incremental)
+    def read_flow_budget(self, idx: int, incremental: bool = False):
+        return self.engine.read_flow_budget(idx=idx, incremental=incremental)
 
-    def read_concentration(self, idx: int, layer: int):
-        return self.engine.read_concentration(idx=idx, layer=layer)
+    def read_flow_drawdown(self, idx: int, layer: int):
+        return self.engine.read_flow_drawdown(idx=idx, layer=layer)
 
-    def read_drawdown(self, idx: int, layer: int):
-        return self.engine.read_drawdown(idx=idx, layer=layer)
+    def read_flow_head(self, idx: int, layer: int):
+        return self.engine.read_flow_head(idx=idx, layer=layer)
 
-    def read_head(self, idx: int, layer: int):
-        return self.engine.read_head(idx=idx, layer=layer)
+    def read_transport_concentration(self, idx: int, layer: int):
+        return self.engine.read_transport_concentration(idx=idx, layer=layer)
+
+    def read_transport_budget(self, idx: int, layer: int):
+        raise NotImplementedError()
 
     def read_head_observations(self):
         return self.engine.read_head_observations()

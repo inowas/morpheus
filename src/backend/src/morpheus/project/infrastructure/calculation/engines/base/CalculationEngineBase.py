@@ -28,7 +28,7 @@ class CalculationEngineBase:
 
         self.on_change_calculation_state_callback(new_state)
 
-    def read_budget(
+    def read_flow_budget(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -37,7 +37,7 @@ class CalculationEngineBase:
     ):
         raise NotImplementedError
 
-    def read_concentration(
+    def read_transport_concentration(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -46,7 +46,7 @@ class CalculationEngineBase:
     ):
         raise NotImplementedError
 
-    def read_drawdown(
+    def read_flow_drawdown(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -55,7 +55,7 @@ class CalculationEngineBase:
     ):
         raise NotImplementedError
 
-    def read_head(
+    def read_flow_head(
         self,
         totim: float | None = None,
         idx: int | None = None,
