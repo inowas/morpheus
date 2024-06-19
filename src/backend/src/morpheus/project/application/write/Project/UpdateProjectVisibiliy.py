@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict, Literal
 
-from morpheus.common.types import Uuid
+from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
@@ -44,7 +44,7 @@ class UpdateProjectVisibilityCommandHandler(CommandHandlerBase):
         if not permissions.members.member_can_edit_members_and_permissions(user_id):
             raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to remove a member from the project {project_id.to_str()}')
 
-        event = VisibilityUpdatedEvent.from_visibility(project_id=project_id, visibility=command.visibility)
+        event = VisibilityUpdatedEvent.from_visibility(project_id=project_id, visibility=command.visibility, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

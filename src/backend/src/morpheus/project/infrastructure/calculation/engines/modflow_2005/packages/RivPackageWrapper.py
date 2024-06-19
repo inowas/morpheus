@@ -9,6 +9,25 @@ from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
+class RivPackageSettings:
+    ipakcb: int
+
+    def __init__(self, ipakcb: int = 0):
+        self.ipakcb = ipakcb
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(**obj)
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)
+
+
+@dataclasses.dataclass
 class RivPackageData:
     stress_period_data: RivStressPeriodData
     ipakcb: int
@@ -53,15 +72,15 @@ class RivPackageData:
         )
 
 
-def calculate_riv_package_data(model: Model) -> RivPackageData | None:
+def calculate_riv_package_data(model: Model, settings: RivPackageSettings) -> RivPackageData | None:
     stress_period_data = calculate_stress_period_data(model)
     if stress_period_data is None:
         return None
-    return RivPackageData(stress_period_data=stress_period_data)
+    return RivPackageData(stress_period_data=stress_period_data, ipakcb=settings.ipakcb)
 
 
-def create_riv_package(flopy_modflow: FlopyModflow, model: Model) -> FlopyModflowRiv | None:
-    package_data = calculate_riv_package_data(model)
+def create_riv_package(flopy_modflow: FlopyModflow, model: Model, settings: RivPackageSettings) -> FlopyModflowRiv | None:
+    package_data = calculate_riv_package_data(model=model, settings=settings)
     if package_data is None:
         return None
 
