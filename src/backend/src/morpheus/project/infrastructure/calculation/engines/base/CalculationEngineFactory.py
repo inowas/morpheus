@@ -11,7 +11,6 @@ class CalculationEngineFactory:
     @classmethod
     def create_engine(cls, calculation: Calculation) -> CalculationEngineBase:
         if calculation.calculation_profile.engine_type == CalculationEngineType.MF2005:
-            return Mf2005CalculationEngine(
-                workspace_path=os.path.join(settings.MORPHEUS_PROJECT_CALCULATION_DATA, calculation.calculation_id.to_str()))
+            return Mf2005CalculationEngine(workspace_path=os.path.join(settings.MORPHEUS_PROJECT_CALCULATION_DATA, calculation.calculation_id.to_str()))
 
         raise Exception(f'No engine found for {calculation.calculation_profile.engine_type.value}')

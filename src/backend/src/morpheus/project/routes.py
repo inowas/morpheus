@@ -4,7 +4,10 @@ from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from .incoming import authenticate
+from .presentation.api.read.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
+from .presentation.api.read.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
 from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
+from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
 from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
@@ -25,6 +28,7 @@ from .presentation.api.read.AssetReadRequestHandlers import ReadPreviewImageRequ
 from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadProjectEventLogRequestHandler
 from .presentation.api.write.AssetWriteRequestHandlers import UploadPreviewImageRequestHandler, DeletePreviewImageRequestHandler, UploadAssetRequestHandler
 from .types.boundaries.Boundary import BoundaryId
+from .types.calculation.Calculation import CalculationId
 from .types.layers.Layer import LayerPropertyName, LayerId
 from ..common.presentation.api.middleware.schema_validation import validate_request
 
@@ -169,7 +173,20 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_get_calculations(project_id: str):
-        return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        return ReadCalculationsRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/calculation/<calculation_id>', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_get_calculation_details(project_id: str, calculation_id: str):
+        return ReadCalculationDetailsRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id))
+
+    @blueprint.route('/<project_id>/calculation/<calculation_id>/file', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_get_calculation_file(project_id: str, calculation_id: str):
+        file_name = request.args.get('file_name', '')
+        return ReadCalculationFileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), file_name=file_name)
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

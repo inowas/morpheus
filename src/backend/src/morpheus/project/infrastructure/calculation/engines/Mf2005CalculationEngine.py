@@ -196,7 +196,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         if not success:
             return CalculationResult.failure(
                 message="Calculation failed",
-                files=os.listdir(self.workspace_path)
+                files=os.listdir(self.workspace_path),
+                package_list=self.get_package_list()
             )
 
         return CalculationResult.success(
@@ -207,6 +208,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             flow_budget_results=self.__read_flow_budget_results(),
             transport_concentration_results=self.__read_transport_concentration_results(),
             transport_budget_results=self.__read_transport_concentration_budget_results(),
+            package_list=self.get_package_list()
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -263,6 +265,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
     def __read_transport_concentration_budget_results(self) -> AvailableResults | None:
         return None
+
+    def __load_flopy_model(self) -> FlopyModflow | None:
+        namefile = self.__get_file_with_extension_from_workspace('.nam')
+        if namefile is None:
+            return None
+
+        return FlopyModflow.load(f=namefile, verbose=False, check=False, exe_name='mf2005', version='mf2005', model_ws=self.workspace_path)
 
     def read_flow_budget(
         self,
@@ -362,3 +371,23 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             ))
 
         return observations
+
+    def read_file(self, file_name: str) -> str | None:
+        file = os.path.join(self.workspace_path, file_name)
+        if not os.path.exists(file):
+            return None
+
+        with open(file, 'r') as f:
+            return f.read()
+
+    def get_package_list(self) -> list[str]:
+        flopy_model = self.__load_flopy_model()
+        if flopy_model is None:
+            return []
+        return flopy_model.get_package_list()
+
+    def get_package(self, package_name: str):
+        flopy_model = self.__load_flopy_model()
+        if flopy_model is None:
+            return None
+        return flopy_model.get_package(package_name)

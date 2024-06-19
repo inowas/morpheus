@@ -85,3 +85,12 @@ class CalculationService:
 
     def read_head_observations(self):
         return self.engine.read_head_observations()
+
+    def read_file(self, file_name: str):
+        return self.engine.read_file(file_name)
+
+    def get_package_list(self):
+        return self.engine.get_package_list()
+
+    def get_package(self, package_name: str):
+        return self.engine.get_package(package_name)
