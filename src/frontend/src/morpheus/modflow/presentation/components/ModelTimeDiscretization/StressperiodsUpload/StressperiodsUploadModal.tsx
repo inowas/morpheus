@@ -176,7 +176,7 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
       </Table.Row>
     ));
   };
-  
+
   const renderContent = () => {
     return (
       <DataGrid>
