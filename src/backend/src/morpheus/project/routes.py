@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 from .incoming import authenticate
 from .presentation.api.read.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
 from .presentation.api.read.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
+from .presentation.api.read.ReadCalculationResultsRequestHandler import ReadCalculationResultsRequestHandler
 from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
 from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
@@ -187,6 +188,22 @@ def register_routes(blueprint: Blueprint):
     def project_get_calculation_file(project_id: str, calculation_id: str):
         file_name = request.args.get('file_name', '')
         return ReadCalculationFileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), file_name=file_name)
+
+    @blueprint.route('/<project_id>/calculation/<calculation_id>/results/<result_type>', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_get_calculation_results(project_id: str, calculation_id: str, result_type: str = 'flow_head'):
+        idx = int(request.args.get('idx', 0))
+        layer = int(request.args.get('layer', 0))
+        incremental = request.args.get('incremental', 'false').lower() == 'true'
+        return ReadCalculationResultsRequestHandler().handle(
+            project_id=ProjectId.from_str(project_id),
+            calculation_id=CalculationId.from_str(calculation_id),
+            result_type=result_type,
+            idx=idx,
+            layer=layer,
+            incremental=incremental
+        )
 
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()

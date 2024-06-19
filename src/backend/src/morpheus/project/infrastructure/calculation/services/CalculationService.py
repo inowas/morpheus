@@ -80,7 +80,7 @@ class CalculationService:
     def read_transport_concentration(self, idx: int, layer: int):
         return self.engine.read_transport_concentration(idx=idx, layer=layer)
 
-    def read_transport_budget(self, idx: int, layer: int):
+    def read_transport_budget(self, idx: int, incremental: bool = False):
         raise NotImplementedError()
 
     def read_head_observations(self):
