@@ -13,6 +13,8 @@ interface ISelectedListProps {
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => Promise<void>;
+  onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onUpdateObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -29,6 +31,8 @@ const BoundaryList = ({
   onSelectBoundaryAndObservation,
   onCloneBoundary,
   onCloneObservation,
+  onDisableBoundary,
+  onEnableBoundary,
   onUpdateObservation,
   onRemoveBoundary,
   onRemoveObservation,
@@ -36,6 +40,13 @@ const BoundaryList = ({
 }: ISelectedListProps) => {
 
   const [search, setSearch] = useState<string>('');
+
+  // Disabled boundaries
+  const [disabledBoundaries, setDisabledBoundaries] = useState<IBoundaryId[]>([]);
+
+  React.useEffect(() => {
+    console.log(disabledBoundaries);
+  }, [disabledBoundaries]);
 
   // Rename boundaries title
   const [editBoundaryName, setEditBoundaryName] = useState<IBoundaryId | null>(null);
@@ -50,6 +61,10 @@ const BoundaryList = ({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
+
+  // console.log('onDisableBoundary', onDisableBoundary('454df8cd-d0f9-4a28-9d07-2b40cd6f7003'));
+  // console.log('onEnableBoundary', onEnableBoundary('454df8cd-d0f9-4a28-9d07-2b40cd6f7003'));
+
 
   const filteredBoundaries = useMemo(() => {
     return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
@@ -72,7 +87,10 @@ const BoundaryList = ({
       {/**/}
       <List className={styles.list}>
         {filteredBoundaries.map((boundary) => (
-          <ListItem key={boundary.id} className={styles.item}>
+          <ListItem
+            key={boundary.id} className={styles.item}
+            disabled={disabledBoundaries.includes(boundary.id)}
+          >
             <div
               // Title styles when item is selected
               className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}
@@ -116,8 +134,17 @@ const BoundaryList = ({
                 <Checkbox
                   disabled={isReadOnly}
                   toggle={true}
-                  // checked={!checkedItems.includes(item.id)}
-                  // onChange={() => handleItemDisabled(item.id, index)}
+                  checked={!disabledBoundaries.includes(boundary.id)}
+                  style={{position: 'relative', pointerEvents: 'all'}}
+                  onChange={() => {
+                    if (disabledBoundaries.includes(boundary.id)) {
+                      setDisabledBoundaries(disabledBoundaries.filter((id) => id !== boundary.id));
+                      onEnableBoundary(boundary.id);
+                    } else {
+                      setDisabledBoundaries([...disabledBoundaries, boundary.id]);
+                      onDisableBoundary(boundary.id);
+                    }
+                  }}
                 />
                 <DotsMenu
                   disabled={isReadOnly}
