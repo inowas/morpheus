@@ -76,7 +76,6 @@ class CreateOrUpdateUserFromKeycloakCommandHandler:
             )
             user_event_bus.record(demote_admin_event_envelope)
 
-
         if existing_user.is_admin is False and command.is_admin is True:
             promote_admin_event_envelope = EventEnvelope(
                 UserPromotedToAdminEvent.new(existing_user.user_id, DateTime.now()),

@@ -1,4 +1,8 @@
 import morpheus.authentication.outgoing as authentication_outgoing
+from morpheus.common.types.identity.Identity import Identity
 
 authenticate = authentication_outgoing.authenticate
-get_logged_in_user_id = authentication_outgoing.get_logged_in_user_id
+
+
+def get_identity() -> Identity | None:
+    return Identity.try_from_dict(authentication_outgoing.get_identity())

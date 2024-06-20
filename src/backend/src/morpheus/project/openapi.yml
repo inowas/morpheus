@@ -48,7 +48,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectSummary'
+                  $ref: '#/components/schemas/ProjectSummaryWithUserRole'
         401:
           description: Unauthorized
         403:
@@ -650,7 +650,7 @@ components:
               number_of_time_steps: 1
               time_step_multiplier: 1
 
-    ProjectSummary:
+    ProjectSummaryWithUserRole:
       type: object
       description: "A project."
       properties:
@@ -685,6 +685,19 @@ components:
           format: date-time
           description: "The creation date time of the project."
           example: "2020-01-01T00:00:00Z"
+        user_role:
+          $ref: '#/components/schemas/ProjectUseRole'
+
+    ProjectUseRole:
+      type: string
+      description: "The role of the user in the project."
+      enum:
+        - "owner"
+        - "manager"
+        - "editor"
+        - "viewer"
+      example: "owner"
+      nullable: true
 
     LineString:
       type: object

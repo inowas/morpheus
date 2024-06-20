@@ -30,7 +30,7 @@ class Role(StrEnum):
     VIEWER = 'viewer'
 
     @classmethod
-    def from_str(cls, role: Literal['owner', 'admin', 'editor', 'viewer']):
+    def from_str(cls, role: str):
         if role == 'owner':
             return Role.OWNER
         elif role == 'admin':
@@ -154,6 +154,9 @@ class GroupCollection:
         return {
             group_id.to_value(): role.value for group_id, role in self.groups.items()
         }
+
+    def get_groups(self):
+        return self.groups
 
 
 @dataclasses.dataclass(frozen=True)

@@ -67,4 +67,3 @@ class Group:
         new_admins = self.admins.copy()
         new_admins.discard(user_id)
         return dataclasses.replace(self, admins=new_admins)
-

@@ -34,8 +34,9 @@ def create_or_update_user_from_keycloak(
     )
     return
 
+
 def get_identity_by_keycloak_id(keycloak_user_id: str) -> dict | None:
-    user = user_reader.get_user_linked_to_keycloak(KeycloakUserId.from_str(keycloak_user_id));
+    user = user_reader.get_user_linked_to_keycloak(KeycloakUserId.from_str(keycloak_user_id))
     if user is None:
         return None
 
@@ -43,6 +44,3 @@ def get_identity_by_keycloak_id(keycloak_user_id: str) -> dict | None:
         'user_id': user.user_id.to_str(),
         'is_admin': user.is_admin,
     }
-
-
-

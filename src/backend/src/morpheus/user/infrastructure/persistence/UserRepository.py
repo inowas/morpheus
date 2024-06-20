@@ -1,10 +1,10 @@
 import dataclasses
 from typing import Mapping, Any
 import pymongo
-
+from pymongo.collection import Collection
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.settings import settings as app_settings
-from ...types.User import UserId, KeycloakUserId, User, GeoNodeUserId, UserEmail, UserFirstName, UserLastName, UserData
+from ...types.User import UserId, KeycloakUserId, User, GeoNodeUserId, UserData
 
 
 @dataclasses.dataclass(frozen=True)
@@ -81,7 +81,7 @@ class UserRepository(RepositoryBase):
         return [UserRepositoryDocument.from_raw_document(raw_document).get_user() for raw_document in self.collection.find({}, {'_id': 0})]
 
 
-def __create_indices_for_repository(collection: pymongo.collection.Collection):
+def __create_indices_for_repository(collection: Collection):
     collection.create_index(
         [
             ('user_id', pymongo.ASCENDING),
@@ -106,7 +106,7 @@ def __create_indices_for_repository(collection: pymongo.collection.Collection):
         ],
         unique=True,
         partialFilterExpression={'geo_node_user_id': {'$type': 'string'}}
-    ),
+    )
     collection.create_index(
         [
             ('geo_node_user_id', pymongo.ASCENDING),

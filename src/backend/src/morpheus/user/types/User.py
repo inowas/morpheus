@@ -71,6 +71,7 @@ class UserData:
 
         return self.email == other.email and self.username == other.username and self.first_name == other.first_name and self.last_name == other.last_name
 
+
 @dataclasses.dataclass(frozen=True)
 class User:
     user_id: UserId

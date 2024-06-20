@@ -18,13 +18,18 @@ class CreateGroupRequestHandler:
         if not identity.is_admin:
             return '', 403
 
+        request_body = request.json
+        if request_body is None:
+            return 'Missing request body', 400
+
         command = CreateGroupCommand(
             group_id=GroupId.new(),
-            name=GroupName.from_str(request.json.get('name')),
-            creator_id=identity.user_id
+            name=GroupName.from_str(request_body.get('name')),
+            creator_id=UserId.from_str(identity.user_id.to_str()),
         )
         CreateGroupCommandHandler.handle(command)
         return '', 204
+
 
 class AddMembersToGroupRequestHandler:
     @staticmethod
@@ -44,7 +49,7 @@ class AddMembersToGroupRequestHandler:
             command = AddMembersToGroupCommand(
                 group_id=group_id,
                 members=set([UserId.from_str(member) for member in member_list_from_request]),
-                creator_id=identity.user_id
+                creator_id=UserId.from_str(identity.user_id.to_str()),
             )
             AddMembersToGroupCommandHandler.handle(command)
             return '', 204

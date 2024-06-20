@@ -1,16 +1,26 @@
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.application.read.ProjectEventLogReader import project_event_log_reader
+from morpheus.project.incoming import get_identity
 from morpheus.project.types.Project import ProjectId
+from morpheus.project.types.User import UserId
 
 
 class ReadProjectListRequestHandler:
     @staticmethod
     def handle():
-        project_summaries = project_reader.get_project_summaries()
+        identity = get_identity()
+
+        if identity is None:
+            return '', 401
+
+        if identity.is_admin:
+            project_summaries_with_user_role = project_reader.get_project_summaries_with_role_for_admin_user()
+        else:
+            project_summaries_with_user_role = project_reader.get_project_summaries_with_role_for_user(UserId.from_str(identity.user_id.to_str()))
 
         result = []
-        for project_summary in project_summaries:
+        for (project_summary, user_role) in project_summaries_with_user_role:
             result.append({
                 'project_id': project_summary.project_id.to_str(),
                 'name': project_summary.project_name.to_str(),
@@ -20,6 +30,7 @@ class ReadProjectListRequestHandler:
                 'is_public': True if project_summary.visibility == project_summary.visibility.PUBLIC else False,
                 'created_at': project_summary.created_at.to_str(),
                 'updated_at': project_summary.updated_at.to_str(),
+                'user_role': user_role.to_str() if user_role is not None else None,
             })
 
         return result, 200

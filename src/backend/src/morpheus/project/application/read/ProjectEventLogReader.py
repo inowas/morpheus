@@ -1,10 +1,11 @@
+from morpheus.common.infrastructure.persistence.event_sourcing.EventRepository import EventRepository
 from morpheus.common.types.event_sourcing.EventBase import EventBase
-from ...infrastructure.persistence.ProjectEventRepository import project_event_repository, ProjectEventRepository
+from ...infrastructure.persistence.ProjectEventRepository import project_event_repository
 from ...types.Project import ProjectId
 
 
 class ProjectEventLogReader:
-    def __init__(self, _project_event_repository: ProjectEventRepository):
+    def __init__(self, _project_event_repository: EventRepository):
         self._project_event_repository = _project_event_repository
 
     def get_project_event_log(self, project_id: ProjectId) -> list[EventBase]:

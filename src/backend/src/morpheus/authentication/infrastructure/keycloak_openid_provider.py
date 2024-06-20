@@ -1,5 +1,4 @@
 from keycloak import KeycloakOpenID
-
 from morpheus.authentication.types.KeycloakUserData import KeycloakUserData
 from morpheus.settings import settings
 
@@ -21,11 +20,18 @@ def parse_user_data_from_token(token: str) -> KeycloakUserData | None:
     if user_id is None or username is None or email is None:
         return None
 
+    realm_access = token_info.get('realm_access', {})
+    roles = []
+    if isinstance(realm_access, dict):
+        roles = realm_access.get('roles', [])
+    if not isinstance(roles, list):
+        roles = []
+
     return KeycloakUserData(
         user_id=user_id,
         username=username,
         email=email,
         first_name=token_info.get('given_name', None),
         last_name=token_info.get('family_name', None),
-        roles=token_info.get('realm_access', {}).get('roles', [])
+        roles=roles
     )

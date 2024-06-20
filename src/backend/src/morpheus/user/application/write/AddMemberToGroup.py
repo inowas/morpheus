@@ -5,9 +5,9 @@ from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.user.application.read.GroupReader import group_reader
-from morpheus.user.domain.events.GroupEvents import GroupCreatedEvent, MemberAddedEvent
+from morpheus.user.domain.events.GroupEvents import MemberAddedEvent
 from morpheus.user.infrastructure.event_sourcing.GroupEventBus import group_event_bus
-from morpheus.user.types.Group import GroupId, Group, GroupName
+from morpheus.user.types.Group import GroupId
 from morpheus.user.types.User import UserId
 
 

@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Mapping, Any
 import pymongo
-
+from pymongo.collection import Collection
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.settings import settings as app_settings
 from ...types.Group import Group, GroupId, GroupName
@@ -84,7 +84,7 @@ class GroupRepository(RepositoryBase):
         return GroupRepositoryDocument.from_raw_document(raw_document).get_group()
 
 
-def __create_indices_for_repository(collection: pymongo.collection.Collection):
+def __create_indices_for_repository(collection: Collection):
     collection.create_index(
         [
             ('group_id', pymongo.ASCENDING),

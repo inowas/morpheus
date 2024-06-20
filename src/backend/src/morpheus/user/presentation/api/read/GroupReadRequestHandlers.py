@@ -1,5 +1,4 @@
 from morpheus.user.application.read.GroupReader import group_reader
-from morpheus.user.application.read.UserReader import user_reader
 from morpheus.user.incoming import get_identity
 
 

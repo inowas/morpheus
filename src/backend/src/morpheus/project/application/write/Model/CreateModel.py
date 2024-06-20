@@ -99,11 +99,11 @@ class CreateModelCommandHandler(CommandHandlerBase):
 
         default_calculation_profile = CalculationProfile.default()
         event = CalculationProfileAddedEvent.from_calculation_profile(project_id=project_id, calculation_profile=default_calculation_profile, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)
 
         event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=default_calculation_profile.id, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

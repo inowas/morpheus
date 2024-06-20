@@ -5,7 +5,7 @@ from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFact
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-from morpheus.user.types.User import User, UserId, GeoNodeUserId, KeycloakUserId, Username, UserEmail, UserFirstName, UserLastName, UserData
+from morpheus.user.types.User import UserId, GeoNodeUserId, KeycloakUserId, UserData
 
 
 class UserEventName(StrEnum):
