@@ -39,6 +39,24 @@ class CalculationLog:
         return self.log
 
 
+@dataclasses.dataclass(frozen=True)
+class ModelCheck:
+    log: list[str]
+
+    @classmethod
+    def try_from_list(cls, log: list[str] | None):
+        if log is None:
+            return None
+        return cls.from_list(log)
+
+    @classmethod
+    def from_list(cls, log: list[str]):
+        return cls(log=log)
+
+    def to_list(self) -> list[str]:
+        return self.log
+
+
 @dataclasses.dataclass
 class Calculation:
     calculation_id: CalculationId
