@@ -2,6 +2,7 @@ import dataclasses
 from typing import TypedDict
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+from morpheus.common.types.identity.Identity import UserId
 
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
@@ -10,7 +11,6 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.infrastructure.assets.AssetHandlingService import get_asset_handling_service
 from morpheus.project.types.Asset import AssetId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
 
 
 class DeleteAssetCommandPayload(TypedDict):

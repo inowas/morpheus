@@ -42,5 +42,6 @@ def get_identity_by_keycloak_id(keycloak_user_id: str) -> dict | None:
 
     return {
         'user_id': user.user_id.to_str(),
+        'group_ids': [],
         'is_admin': user.is_admin,
     }

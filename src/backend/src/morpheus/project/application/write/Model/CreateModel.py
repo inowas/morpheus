@@ -16,7 +16,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId, Model
 from morpheus.project.types.ModelVersion import VersionDescription, VersionTag, ModelVersion
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.discretization import SpatialDiscretization
 from morpheus.project.types.discretization.spatial import Rotation, ActiveCells, Grid

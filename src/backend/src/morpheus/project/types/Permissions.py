@@ -1,9 +1,7 @@
 import dataclasses
 from enum import Enum, StrEnum
 from typing import Literal
-
-from morpheus.project.types.Group import GroupId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 class Visibility(Enum):

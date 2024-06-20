@@ -14,7 +14,3 @@ class PermissionsReader:
 
 
 permissions_reader = PermissionsReader()
-
-
-def get_permissions_reader() -> PermissionsReader:
-    return PermissionsReader()

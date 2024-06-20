@@ -1,6 +1,6 @@
-from morpheus.project.types.Permissions import Role
+from morpheus.project.types.Permissions import Role, Permissions
 from morpheus.project.types.Project import ProjectSummary
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.permissions.UserRoleAssignmentCollection import UserRoleAssignmentCollection
 
 
@@ -19,3 +19,7 @@ class PermissionService:
             return None
 
         return role_assignment.role
+
+    @staticmethod
+    def user_can_view_event_log(user_id: UserId, permissions: Permissions) -> bool:
+        return permissions.member_can_view(user_id)

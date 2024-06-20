@@ -4,7 +4,7 @@ from morpheus.common.infrastructure.persistence.mongodb import get_database_clie
 from morpheus.common.types import DateTime
 from morpheus.project.types.Model import Model, Sha1Hash
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.ModelVersion import ModelVersion, VersionId
 from morpheus.settings import settings as app_settings
 

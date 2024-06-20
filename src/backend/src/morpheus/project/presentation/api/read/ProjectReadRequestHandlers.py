@@ -3,7 +3,7 @@ from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.application.read.ProjectEventLogReader import project_event_log_reader
 from morpheus.project.incoming import get_identity
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class ReadProjectListRequestHandler:
@@ -14,10 +14,7 @@ class ReadProjectListRequestHandler:
         if identity is None:
             return '', 401
 
-        if identity.is_admin:
-            project_summaries_with_user_role = project_reader.get_project_summaries_with_role_for_admin_user()
-        else:
-            project_summaries_with_user_role = project_reader.get_project_summaries_with_role_for_user(UserId.from_str(identity.user_id.to_str()))
+        project_summaries_with_user_role = project_reader.get_project_summaries_with_role_for_identity(identity)
 
         result = []
         for (project_summary, user_role) in project_summaries_with_user_role:

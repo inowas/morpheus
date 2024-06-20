@@ -2,11 +2,11 @@ import dataclasses
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.common.types import DateTime
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.settings import settings as app_settings
 from ...types.Permissions import Visibility
 
 from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags
-from ...types.User import UserId
 
 
 @dataclasses.dataclass

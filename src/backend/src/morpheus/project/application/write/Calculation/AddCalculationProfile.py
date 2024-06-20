@@ -5,6 +5,7 @@ from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
@@ -14,7 +15,6 @@ from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineS
     CalculationEngineSettingsFactory
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId, \
     CalculationProfileName, CalculationEngineType
 
