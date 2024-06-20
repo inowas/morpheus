@@ -10,11 +10,13 @@ from morpheus.common.presentation.api.middleware.schema_validation import Schema
 from morpheus.settings import settings
 from morpheus.project.bootstrap import bootstrap_project_module
 from morpheus.sensor.bootstrap import bootstrap_sensor_module
+from morpheus.user.bootstrap import bootstrap_user_module
 
 
 def bootstrap(app: Flask):
     bootstrap_project_module(app)
     bootstrap_sensor_module(app)
+    bootstrap_user_module(app)
 
     @app.route('/schema', methods=['GET'])
     @cross_origin()
