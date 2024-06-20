@@ -3,9 +3,11 @@ from morpheus.project.domain.events.CalculationEvents.CalculationCompletedEvent 
 from morpheus.project.domain.events.CalculationEvents.CalculationCreatedEvent import CalculationCreatedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationDeletedEvent import CalculationDeletedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationFailedEvent import CalculationFailedEvent
+from morpheus.project.domain.events.CalculationEvents.CalculationPreprocessedEvent import CalculationPreprocessedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileAddedEvent import CalculationProfileAddedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileRemovedEvent import CalculationProfileRemovedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileUpdatedEvent import CalculationProfileUpdatedEvent
+from morpheus.project.domain.events.CalculationEvents.CalculationQueuedEvent import CalculationQueuedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationStartedEvent import CalculationStartedEvent
 
 calculation_event_list = [
@@ -14,9 +16,11 @@ calculation_event_list = [
     CalculationCreatedEvent,
     CalculationDeletedEvent,
     CalculationFailedEvent,
+    CalculationPreprocessedEvent,
     CalculationProfileAddedEvent,
     CalculationProfileRemovedEvent,
     CalculationProfileUpdatedEvent,
+    CalculationQueuedEvent,
     CalculationStartedEvent,
 ]
 

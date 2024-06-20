@@ -10,7 +10,7 @@ from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.CalculationEvents import CalculationCanceledEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.infrastructure.persistence.CalculationsRepository import get_calculations_repository
+from morpheus.project.infrastructure.persistence.CalculationRepository import get_calculation_repository
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
 from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState
@@ -47,15 +47,15 @@ class StopCalculationCommandHandler(CommandHandlerBase):
             raise InsufficientPermissionsException(
                 f'User {user_id.to_str()} does not have permission to create a model of {project_id.to_str()}')
 
-        calculation_repository = get_calculations_repository()
-        calculation = calculation_repository.get_calculation(project_id=project_id, calculation_id=command.calculation_id)
+        calculation = get_calculation_repository().get_calculation(calculation_id=command.calculation_id, project_id=project_id)
         if calculation is None:
-            raise ValueError(f'Calculation {command.calculation_id.to_str()} for project {project_id.to_str()} not found')
+            raise ValueError(f'Calculation {command.calculation_id.to_str()} not found')
 
-        calculation.set_new_state(new_state=CalculationState.STOPPED)
-        calculation_repository.save_calculation(project_id=project_id, calculation=calculation)
+        is_already_stopped = calculation.state in {CalculationState.CANCELED, CalculationState.COMPLETED, CalculationState.FAILED}
+        if is_already_stopped:
+            return
 
-        event = CalculationCanceledEvent.from_calculation_id(project_id=project_id, calculation_id=calculation.calculation_id, occurred_at=DateTime.now())
+        event = CalculationCanceledEvent.from_calculation_id(project_id=project_id, calculation_id=command.calculation_id, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

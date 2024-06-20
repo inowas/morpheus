@@ -76,8 +76,6 @@ def calculate_evt_boundary_stress_period_data(
 
 
 def calculate_stress_period_data(model: Model) -> EvtStressPeriodData | None:
-    print(model)
-
     grid = model.spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.evapotranspiration())

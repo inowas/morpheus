@@ -10,14 +10,14 @@ from morpheus.project.application.read.ModelReader import get_model_reader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.CalculationEvents import CalculationCreatedEvent
+from morpheus.project.domain.events.CalculationEvents import CalculationCreatedEvent, CalculationQueuedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.infrastructure.persistence.CalculationsRepository import calculations_repository
+from morpheus.project.infrastructure.persistence.CalculationInputRepository import get_calculation_input_repository
 from morpheus.project.tasks import run_calculation_by_id
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.User import UserId
-from morpheus.project.types.calculation.Calculation import Calculation, CalculationId
+from morpheus.project.types.calculation.Calculation import CalculationId, CalculationInput
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 
 
@@ -58,14 +58,32 @@ class StartCalculationCommandHandler(CommandHandlerBase):
         if not isinstance(calculation_profile, CalculationProfile):
             raise ValueError('Calculation profile not found')
 
-        model = get_model_reader().get_latest_model(project_id=project_id)
-        calculation = Calculation.new(model=model, calculation_profile=calculation_profile, calculation_id=command.new_calculation_id)
-        calculations_repository.save_calculation(project_id=project_id, calculation=calculation)
+        model_reader = get_model_reader()
+        model = model_reader.get_latest_model(project_id=project_id)
+        version = model_reader.get_latest_model_version_string(project_id=project_id)
 
-        run_calculation_by_id.delay(project_id=project_id.to_str(), calculation_id=calculation.calculation_id.to_str())  # type: ignore
+        calculation_input = CalculationInput(project_id=project_id, calculation_id=command.new_calculation_id, model=model, profile=calculation_profile)
+
+        calculation_input_repository = get_calculation_input_repository()
+        calculation_input_repository.save_calculation_input(calculation_input)
+
+        event = CalculationCreatedEvent.from_props(
+            project_id=project_id,
+            calculation_id=calculation_input.calculation_id,
+            model=model,
+            model_version=version,
+            profile=calculation_profile,
+            occurred_at=DateTime.now()
+        )
+
+        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_envelope = EventEnvelope(event=event, metadata=event_metadata)
+        project_event_bus.record(event_envelope=event_envelope)
+
+        run_calculation_by_id.delay(project_id=project_id.to_str(), calculation_id=calculation_input.calculation_id.to_str())  # type: ignore
         # see: https://github.com/microsoft/pylance-release/issues/4220#issuecomment-1501942176
 
-        event = CalculationCreatedEvent.from_calculation_id(project_id=project_id, calculation_id=calculation.calculation_id, occurred_at=DateTime.now())
+        event = CalculationQueuedEvent.from_calculation_id(project_id=project_id, calculation_id=calculation_input.calculation_id, occurred_at=DateTime.now())
         event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

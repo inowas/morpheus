@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Tuple
 
 from morpheus.project.types.Model import Model
-from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState
+from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState, CheckModelLog
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, Observation
 
@@ -16,8 +16,11 @@ class CalculationEngineBase:
     on_finish_preprocessing_callback = None
     on_start_running_callback = None
 
-    def on_change_calulation_state(self, callback):
+    def on_change_calculation_state(self, callback):
         self.on_change_calculation_state_callback = callback
+
+    def preprocess(self, model: Model, calculation_profile: CalculationProfile) -> CheckModelLog:
+        raise NotImplementedError
 
     def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
         raise NotImplementedError
@@ -43,6 +46,15 @@ class CalculationEngineBase:
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
         layer=0
+    ):
+        raise NotImplementedError
+
+    def read_transport_budget(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        incremental=False
     ):
         raise NotImplementedError
 

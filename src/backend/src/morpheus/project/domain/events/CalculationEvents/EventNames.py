@@ -7,6 +7,8 @@ class CalculationEventName(StrEnum):
     CALCULATION_CREATED = 'Calculation Created'
     CALCULATION_DELETED = 'Calculation Deleted'
     CALCULATION_FAILED = 'Calculation Failed'
+    CALCULATION_PREPROCESSED = 'Calculation Preprocessed'
+    CALCULATION_QUEUED = 'Calculation Queued'
     CALCULATION_STARTED = 'Calculation Started'
 
     CALCULATION_PROFILE_ADDED = 'Calculation Profile Added'

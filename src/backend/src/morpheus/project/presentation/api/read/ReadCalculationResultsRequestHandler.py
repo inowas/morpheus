@@ -1,5 +1,6 @@
 from morpheus.common.types.Exceptions import NotFoundException
-from ....infrastructure.calculation.services.CalculationService import CalculationService
+from ....infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
+from ....infrastructure.persistence.CalculationRepository import get_calculation_repository
 from ....types.Project import ProjectId
 from ....types.calculation.Calculation import CalculationId
 
@@ -11,21 +12,25 @@ class ReadCalculationResultsRequestHandler:
         if result_type not in available_result_types:
             raise NotFoundException(f'Result type not found, available types are: {", ".join(available_result_types)}')
 
-        calculation_service = CalculationService.from_calculation_id(project_id=project_id, calculation_id=calculation_id)
+        calculation = get_calculation_repository().get_calculation(project_id=project_id, calculation_id=calculation_id)
+        if calculation is None:
+            raise NotFoundException(f'Calculation {calculation_id.to_str()} not found in project {project_id.to_str()}')
+
+        engine = CalculationEngineFactory.create_engine(calculation_id=calculation_id, profile=calculation.profile)
 
         if result_type == 'flow_head':
-            return calculation_service.read_flow_head(idx=idx, layer=layer), 200
+            return engine.read_flow_head(idx=idx, layer=layer), 200
 
         if result_type == 'flow_drawdown':
-            return calculation_service.read_flow_drawdown(idx=idx, layer=layer), 200
+            return engine.read_flow_drawdown(idx=idx, layer=layer), 200
 
         if result_type == 'flow_budget':
-            return calculation_service.read_flow_budget(idx=idx, incremental=incremental), 200
+            return engine.read_flow_budget(idx=idx, incremental=incremental), 200
 
         if result_type == 'transport_concentration':
-            return calculation_service.read_transport_concentration(idx=idx, layer=layer), 200
+            return engine.read_transport_concentration(idx=idx, layer=layer), 200
 
         if result_type == 'transport_budget':
-            return calculation_service.read_transport_budget(idx=idx, incremental=incremental), 200
+            return engine.read_transport_budget(idx=idx, incremental=incremental), 200
 
         raise NotFoundException(f'Result type not found, available types are: {", ".join(available_result_types)}')

@@ -9,7 +9,7 @@ from .EventNames import CalculationEventName
 
 class CalculationStartedEvent(EventBase):
     @classmethod
-    def from_model(cls, project_id: ProjectId, calculation_id: CalculationId, occurred_at: DateTime):
+    def from_calculation_id(cls, project_id: ProjectId, calculation_id: CalculationId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
