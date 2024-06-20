@@ -30,4 +30,4 @@ class CalculationPreprocessedEvent(EventBase):
 
     @staticmethod
     def get_event_name() -> EventName:
-        return EventName.from_str(CalculationEventName.CALCULATION_COMPLETED.to_str())
+        return EventName.from_str(CalculationEventName.CALCULATION_PREPROCESSED.to_str())

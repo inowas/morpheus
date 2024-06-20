@@ -4,7 +4,7 @@ from enum import StrEnum
 from morpheus.common.types import Uuid
 from morpheus.project.types.Model import Model, ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId, CalculationEngineType
 from morpheus.project.types.calculation.CalculationResult import CalculationResult
 
 
@@ -94,7 +94,10 @@ class Calculation:
     calculation_id: CalculationId
     model_id: ModelId
     model_hash: str
-    profile: CalculationProfile
+    model_version: str
+    profile_id: CalculationProfileId
+    profile_hash: str
+    engine_type: CalculationEngineType
     lifecycle: list[CalculationState]
     state: CalculationState
     check_model_log: CheckModelLog | None
@@ -102,13 +105,16 @@ class Calculation:
     result: CalculationResult | None
 
     @classmethod
-    def new(cls, project_id: ProjectId, model: Model, profile: CalculationProfile, calculation_id: CalculationId | None = None):
+    def new(cls, project_id: ProjectId, model: Model, profile: CalculationProfile, calculation_id: CalculationId | None = None, model_version: str = ''):
         return cls(
             project_id=project_id,
             calculation_id=calculation_id or CalculationId.new(),
             model_id=model.model_id,
             model_hash=model.get_sha1_hash().to_str(),
-            profile=profile,
+            model_version=model_version,
+            profile_id=profile.id,
+            profile_hash=profile.get_sha1_hash().to_str(),
+            engine_type=profile.engine_type,
             lifecycle=[CalculationState.CREATED],
             state=CalculationState.CREATED,
             check_model_log=None,
@@ -123,7 +129,10 @@ class Calculation:
             calculation_id=CalculationId.from_str(obj['calculation_id']),
             model_id=ModelId.from_str(obj['model_id']),
             model_hash=obj['model_hash'],
-            profile=CalculationProfile.from_dict(obj['profile']),
+            model_version=obj['model_version'],
+            profile_id=CalculationProfileId.from_str(obj['profile_id']),
+            profile_hash=obj['profile_hash'],
+            engine_type=CalculationEngineType(obj['engine_type']),
             lifecycle=[CalculationState(state) for state in obj['lifecycle']],
             state=CalculationState(obj['state']),
             check_model_log=CheckModelLog.try_from_list(obj['check_model_log']) if obj['check_model_log'] is not None else None,
@@ -137,7 +146,10 @@ class Calculation:
             'calculation_id': self.calculation_id.to_str(),
             'model_id': self.model_id.to_str(),
             'model_hash': self.model_hash,
-            'profile': self.profile.to_dict(),
+            'model_version': self.model_version,
+            'profile_id': self.profile_id.to_str(),
+            'profile_hash': self.profile_hash,
+            'engine_type': self.engine_type.value,
             'lifecycle': [state.value for state in self.lifecycle],
             'state': self.state.value,
             'check_model_log': self.check_model_log.to_list() if self.check_model_log is not None else None,
@@ -169,5 +181,14 @@ class Calculation:
     def get_model_hash(self) -> str:
         return self.model_hash
 
-    def get_profile(self) -> CalculationProfile:
-        return self.profile
+    def get_profile_id(self) -> CalculationProfileId:
+        return self.profile_id
+
+    def get_profile_hash(self) -> str:
+        return self.profile_hash
+
+    def get_engine_type(self) -> CalculationEngineType:
+        return self.engine_type
+
+    def get_model_version(self) -> str:
+        return self.model_version

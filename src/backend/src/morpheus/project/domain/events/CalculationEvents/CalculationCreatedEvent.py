@@ -4,7 +4,7 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 from morpheus.project.types.Model import Model, ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.Calculation import CalculationId
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId, CalculationEngineType
 
 from .EventNames import CalculationEventName
 
@@ -21,7 +21,9 @@ class CalculationCreatedEvent(EventBase):
                 'model_id': model.model_id.to_str(),
                 'model_hash': model.get_sha1_hash(),
                 'model_version': model_version,
-                'profile': profile.to_dict(),
+                'profile_id': profile.id.to_str(),
+                'profile_hash': profile.get_sha1_hash().to_str(),
+                'engine_type': profile.engine_type.value,
             },
         )
 
@@ -40,8 +42,14 @@ class CalculationCreatedEvent(EventBase):
     def get_model_version(self) -> str:
         return self.payload['model_version']
 
-    def get_profile(self) -> CalculationProfile:
-        return CalculationProfile.from_dict(self.payload['profile'])
+    def get_profile_id(self) -> CalculationProfileId:
+        return CalculationProfileId.from_str(self.payload['profile_id'])
+
+    def get_profile_hash(self) -> str:
+        return self.payload['profile_hash']
+
+    def get_engine_type(self) -> CalculationEngineType:
+        return CalculationEngineType(self.payload['engine_type'])
 
     @staticmethod
     def get_event_name() -> EventName:

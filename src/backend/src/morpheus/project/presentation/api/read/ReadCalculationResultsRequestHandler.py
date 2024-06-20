@@ -16,7 +16,7 @@ class ReadCalculationResultsRequestHandler:
         if calculation is None:
             raise NotFoundException(f'Calculation {calculation_id.to_str()} not found in project {project_id.to_str()}')
 
-        engine = CalculationEngineFactory.create_engine(calculation_id=calculation_id, profile=calculation.profile)
+        engine = CalculationEngineFactory.create_engine(calculation_id=calculation_id, engine_type=calculation.get_engine_type())
 
         if result_type == 'flow_head':
             return engine.read_flow_head(idx=idx, layer=layer), 200

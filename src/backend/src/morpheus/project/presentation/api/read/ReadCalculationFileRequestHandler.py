@@ -12,9 +12,7 @@ class ReadCalculationFileRequestHandler:
         if calculation is None:
             raise NotFoundException(f'Calculation {calculation_id.to_str()} not found in project {project_id.to_str()}')
 
-        profile = calculation.profile
-
-        engine = CalculationEngineFactory.create_engine(calculation_id=calculation_id, profile=profile)
+        engine = CalculationEngineFactory.create_engine(calculation_id=calculation_id, engine_type=calculation.get_engine_type())
         file_content = engine.read_file(file_name=file_name)
 
         if file_content is None:

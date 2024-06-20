@@ -23,7 +23,9 @@ class CalculationProjector(EventListenerBase):
             model_id=event.get_model_id(),
             model_hash=event.get_model_hash(),
             model_version=event.get_model_version(),
-            profile=event.get_profile(),
+            profile_id=event.get_profile_id(),
+            profile_hash=event.get_profile_hash(),
+            engine_type=event.get_engine_type(),
             created_at=occurred_at
         )
 

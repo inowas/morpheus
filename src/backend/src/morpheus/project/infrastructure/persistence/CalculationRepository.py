@@ -5,7 +5,7 @@ from morpheus.common.infrastructure.persistence.mongodb import get_database_clie
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.Calculation import CalculationId, Calculation, CalculationState, CalculationLog, CheckModelLog
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId, CalculationEngineType
 from morpheus.project.types.calculation.CalculationResult import CalculationResult
 from morpheus.settings import settings
 
@@ -17,7 +17,9 @@ class CalculationRepositoryDocument:
     model_id: str
     model_hash: str
     model_version: str
-    profile: dict
+    profile_id: str
+    profile_hash: str
+    engine_type: str
     lifecycle: list[CalculationState]
     state: CalculationState
     check_model_log: list[str] | None
@@ -27,21 +29,24 @@ class CalculationRepositoryDocument:
     updated_at: datetime
 
     @classmethod
-    def create(cls, project_id: ProjectId, calculation_id: CalculationId, model_id: ModelId, model_hash: str, model_version: str, profile: CalculationProfile, created_at: datetime):
+    def create(cls, project_id: ProjectId, calculation_id: CalculationId, model_id: ModelId, model_hash: str, model_version: str, profile_id: CalculationProfileId, profile_hash: str,
+               engine_type: CalculationEngineType, created_at: datetime) -> 'CalculationRepositoryDocument':
         return cls(
             project_id=project_id.to_str(),
             calculation_id=calculation_id.to_str(),
             model_id=model_id.to_str(),
             model_hash=model_hash,
             model_version=model_version,
-            profile=profile.to_dict(),
+            profile_id=profile_id.to_str(),
+            profile_hash=profile_hash,
+            engine_type=engine_type,
             lifecycle=[CalculationState.CREATED],
             state=CalculationState.CREATED,
             check_model_log=None,
             calculation_log=None,
             result=None,
             created_at=created_at,
-            updated_at=created_at,
+            updated_at=created_at
         )
 
     @classmethod
@@ -52,7 +57,9 @@ class CalculationRepositoryDocument:
             model_id=raw_document['model_id'],
             model_hash=raw_document['model_hash'],
             model_version=raw_document['model_version'],
-            profile=raw_document['profile'],
+            profile_id=raw_document['profile_id'],
+            profile_hash=raw_document['profile_hash'],
+            engine_type=raw_document['engine_type'],
             lifecycle=raw_document['lifecycle'],
             state=raw_document['state'],
             check_model_log=raw_document['check_model_log'],
@@ -68,7 +75,10 @@ class CalculationRepositoryDocument:
             calculation_id=CalculationId.from_str(self.calculation_id),
             model_id=ModelId.from_str(self.model_id),
             model_hash=self.model_hash,
-            profile=CalculationProfile.from_dict(self.profile),
+            model_version=self.model_version,
+            profile_id=CalculationProfileId.from_str(self.profile_id),
+            profile_hash=self.profile_hash,
+            engine_type=CalculationEngineType(self.engine_type),
             lifecycle=self.lifecycle,
             state=self.state,
             check_model_log=CheckModelLog.from_list(self.check_model_log) if self.check_model_log is not None else None,
@@ -79,9 +89,6 @@ class CalculationRepositoryDocument:
     def to_dict(self):
         return dataclasses.asdict(self)
 
-    def get_calculation_profile(self) -> CalculationProfile:
-        return CalculationProfile.from_dict(self.profile)
-
 
 class CalculationRepository(RepositoryBase):
     def has_calculation(self, project_id: ProjectId, calculation_id: CalculationId) -> bool:
@@ -90,8 +97,8 @@ class CalculationRepository(RepositoryBase):
             'calculation_id': calculation_id.to_str()
         }) is not None
 
-    def create_calculation(self, project_id: ProjectId, calculation_id: CalculationId, model_id: ModelId, model_hash: str, model_version: str, profile: CalculationProfile,
-                           created_at: datetime) -> None:
+    def create_calculation(self, project_id: ProjectId, calculation_id: CalculationId, model_id: ModelId, model_hash: str, model_version: str, profile_id: CalculationProfileId, profile_hash: str,
+                           engine_type: CalculationEngineType, created_at: datetime) -> None:
         if self.has_calculation(project_id=project_id, calculation_id=calculation_id):
             raise Exception(f'Calculation {calculation_id.to_str()} already exists.')
 
@@ -101,7 +108,9 @@ class CalculationRepository(RepositoryBase):
             model_id=model_id,
             model_hash=model_hash,
             model_version=model_version,
-            profile=profile,
+            profile_id=profile_id,
+            profile_hash=profile_hash,
+            engine_type=engine_type,
             created_at=created_at
         )
         self.collection.insert_one(document.to_dict())

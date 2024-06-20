@@ -51,15 +51,13 @@ class RunCalculationCommandHandler(CommandHandlerBase):
             raise Exception('Calculation was already run or is still in progress')
 
         event = CalculationStartedEvent.from_calculation_id(project_id=project_id, calculation_id=calculation_id, occurred_at=DateTime.now())
-
-        #  Todo! here we need a metadata object without user_id
         event_metadata = EventMetadata.without_creator()
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)
 
         model = calculation_input.model
         profile = calculation_input.profile
-        engine = CalculationEngineFactory().create_engine(calculation_id=calculation_id, profile=profile)
+        engine = CalculationEngineFactory().create_engine(calculation_id=calculation_id, engine_type=profile.engine_type)
 
         # Preprocessing
         try:

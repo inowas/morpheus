@@ -15,7 +15,7 @@ class ReadCalculationsRequestHandler:
         return [{
             'calculation_id': calculation.calculation_id.to_str(),
             'model_id': calculation.model_id.to_str(),
-            'calculation_profile_id': calculation.profile.id.to_str(),
+            'calculation_profile_id': calculation.profile_id.to_str(),
             'calculation_state': calculation.state,
             'calculation_log': calculation.calculation_log.to_list() if calculation.calculation_log is not None else None,
         } for calculation in calculations], 200
