@@ -1,0 +1,4 @@
+from morpheus.common.infrastructure.event_sourcing.EventStore import EventStore
+from morpheus.user.infrastructure.persistence.UserEventRepository import user_event_repository
+
+user_event_store = EventStore(repository=user_event_repository)

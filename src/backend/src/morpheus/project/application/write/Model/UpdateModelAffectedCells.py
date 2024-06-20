@@ -44,6 +44,6 @@ class UpdateModelAffectedCellsCommandHandler(CommandHandlerBase):
             raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update the affected cells of {project_id.to_str()}')
 
         event = ModelAffectedCellsUpdatedEvent.from_affected_cells(project_id=project_id, affected_cells=command.affected_cells, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

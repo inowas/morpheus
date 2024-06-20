@@ -1,8 +1,8 @@
 from flask import request
-from morpheus.authentication.outgoing import get_logged_in_user_id
 from morpheus.common.presentation.api.helpers.pagination import create_pagination_parameters_from_request
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.ProjectReader import project_reader
+from morpheus.project.incoming import get_identity
 from morpheus.project.presentation.api.helpers.asset import asset_file_response, default_preview_image_response, create_filter_for_asset_list
 from morpheus.project.types.Asset import AssetId, AssetType
 from morpheus.project.types.Project import ProjectId
@@ -12,9 +12,9 @@ class ReadPreviewImageRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId):
         # for now without authentication (see https://redmine.junghanns.it/issues/2388)
-        # user_id = get_logged_in_user_id()
-        # if user_id is None:
-        #     abort(401, 'Unauthorized')
+        # identity = get_identity()
+        # if identity is None:
+        #     return '', 401
 
         if not project_reader.project_exists(project_id):
             return '', 404
@@ -30,8 +30,8 @@ class ReadPreviewImageRequestHandler:
 class ReadAssetListRequestHandler:
     @classmethod
     def handle(cls, project_id: ProjectId):
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             return '', 401
 
         if not project_reader.project_exists(project_id):
@@ -59,8 +59,8 @@ class ReadAssetListRequestHandler:
 class ReadAssetRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId, asset_id: AssetId):
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             return '', 401
 
         if not project_reader.project_exists(project_id):
@@ -77,8 +77,8 @@ class ReadAssetRequestHandler:
 class DownloadAssetRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId, asset_id: AssetId):
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             return '', 401
 
         if not project_reader.project_exists(project_id):
@@ -95,8 +95,8 @@ class DownloadAssetRequestHandler:
 class ReadAssetDataRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId, asset_id: AssetId, band: int | None = None):
-        user_id = get_logged_in_user_id()
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             return '', 401
 
         if not project_reader.project_exists(project_id):
