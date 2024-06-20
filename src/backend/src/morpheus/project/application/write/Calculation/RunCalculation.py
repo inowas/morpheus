@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
@@ -53,7 +53,7 @@ class RunCalculationCommandHandler(CommandHandlerBase):
         event = CalculationStartedEvent.from_calculation_id(project_id=project_id, calculation_id=calculation_id, occurred_at=DateTime.now())
 
         #  Todo! here we need a metadata object without user_id
-        event_metadata = EventMetadata.new(user_id=Uuid.new())
+        event_metadata = EventMetadata.without_creator()
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)
 
@@ -71,7 +71,7 @@ class RunCalculationCommandHandler(CommandHandlerBase):
                 occurred_at=DateTime.now()
             )
 
-            event_metadata = EventMetadata.new(user_id=Uuid.new())
+            event_metadata = EventMetadata.without_creator()
             event_envelope = EventEnvelope(event=event, metadata=event_metadata)
             project_event_bus.record(event_envelope=event_envelope)
         except Exception as e:
@@ -81,7 +81,7 @@ class RunCalculationCommandHandler(CommandHandlerBase):
                 message=str(e),
                 occurred_at=DateTime.now()
             )
-            event_metadata = EventMetadata.new(user_id=Uuid.new())
+            event_metadata = EventMetadata.without_creator()
             event_envelope = EventEnvelope(event=event, metadata=event_metadata)
             project_event_bus.record(event_envelope=event_envelope)
 
@@ -96,7 +96,7 @@ class RunCalculationCommandHandler(CommandHandlerBase):
                 occurred_at=DateTime.now()
             )
 
-            event_metadata = EventMetadata.new(user_id=Uuid.new())
+            event_metadata = EventMetadata.without_creator()
             event_envelope = EventEnvelope(event=event, metadata=event_metadata)
             project_event_bus.record(event_envelope=event_envelope)
         except Exception as e:
@@ -106,6 +106,6 @@ class RunCalculationCommandHandler(CommandHandlerBase):
                 message=str(e),
                 occurred_at=DateTime.now()
             )
-            event_metadata = EventMetadata.new(user_id=Uuid.new())
+            event_metadata = EventMetadata.without_creator()
             event_envelope = EventEnvelope(event=event, metadata=event_metadata)
             project_event_bus.record(event_envelope=event_envelope)
