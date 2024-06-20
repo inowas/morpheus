@@ -15,6 +15,13 @@ class Integer:
         return cls(value=value)
 
     @classmethod
+    def try_from_int(cls, value: int | None):
+        if value is None:
+            return None
+
+        return cls.from_int(value=value)
+
+    @classmethod
     def from_value(cls, value: int):
         return cls.from_int(value=value)
 

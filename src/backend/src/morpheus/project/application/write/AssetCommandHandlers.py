@@ -60,7 +60,7 @@ class UpdatePreviewImageCommandHandler:
 
         # set asset as preview image for project
         event = ProjectPreviewImageUpdatedEvent.occurred_now(command.project_id, command.asset_id)
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.updated_by.to_str()))
         project_event_bus.record(EventEnvelope(event=event, metadata=event_metadata))
 
 
@@ -83,7 +83,7 @@ class DeletePreviewImageCommandHandler:
 
         # remove asset preview image for project
         event = ProjectPreviewImageDeletedEvent.occurred_now(command.project_id)
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.updated_by.to_str()))
         project_event_bus.record(EventEnvelope(event=event, metadata=event_metadata))
 
         # delete existing asset

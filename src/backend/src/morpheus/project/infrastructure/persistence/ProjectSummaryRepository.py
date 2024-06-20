@@ -90,6 +90,16 @@ class ProjectSummaryRepository(RepositoryBase):
         documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find()]
         return [document.to_summary() for document in documents]
 
+    def find_all_public_or_owned_by_user_or_by_project_id(self, owner_id: UserId, project_ids: list[ProjectId]) -> list[ProjectSummary]:
+        documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find({
+            '$or': [
+                {'owner_id': owner_id.to_str()},
+                {'is_public': True},
+                {'project_id': {'$in': [project_id.to_str() for project_id in project_ids]}}
+            ]
+        })]
+        return [document.to_summary() for document in documents]
+
     def get_summary(self, project_id: ProjectId) -> ProjectSummary | None:
         document = self.collection.find_one({'project_id': project_id.to_str()})
         if document is None:

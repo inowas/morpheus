@@ -4,7 +4,7 @@ from morpheus.common.presentation.api.helpers.file_upload import remove_uploaded
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
 from ....application.write.AssetCommandHandlers import UpdatePreviewImageCommand, UpdatePreviewImageCommandHandler, DeletePreviewImageCommand, DeletePreviewImageCommandHandler, \
     UploadAssetCommand, UploadAssetCommandHandler
-from ....incoming import get_logged_in_user_id
+from ....incoming import get_identity
 from ....types.Asset import AssetId, AssetDescription
 from ....types.Exceptions import InvalidMimeTypeException, InvalidShapefileException, InvalidGeoTiffException
 from ....types.Project import ProjectId
@@ -14,8 +14,8 @@ from ....types.User import UserId
 class UploadPreviewImageRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId):
-        user_id = UserId.try_from_str(get_logged_in_user_id())
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             abort(401, 'Unauthorized')
 
         if not request.mimetype == 'multipart/form-data':
@@ -29,7 +29,7 @@ class UploadPreviewImageRequestHandler:
                 project_id=project_id,
                 file_name=file_name,
                 file_path=file_path,
-                updated_by=user_id
+                updated_by=UserId.from_str(identity.user_id.to_str())
             )
             UpdatePreviewImageCommandHandler.handle(command)
         except NotFoundException as e:
@@ -47,13 +47,13 @@ class UploadPreviewImageRequestHandler:
 class DeletePreviewImageRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId):
-        user_id = UserId.try_from_str(get_logged_in_user_id())
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             abort(401, 'Unauthorized')
 
         command = DeletePreviewImageCommand(
             project_id=project_id,
-            updated_by=user_id
+            updated_by=UserId.from_str(identity.user_id.to_str())
         )
 
         try:
@@ -69,8 +69,8 @@ class DeletePreviewImageRequestHandler:
 class UploadAssetRequestHandler:
     @staticmethod
     def handle(project_id: ProjectId):
-        user_id = UserId.try_from_str(get_logged_in_user_id())
-        if user_id is None:
+        identity = get_identity()
+        if identity is None:
             abort(401, 'Unauthorized')
 
         if not request.mimetype == 'multipart/form-data':
@@ -85,7 +85,7 @@ class UploadAssetRequestHandler:
                 file_name=file_name,
                 file_path=file_path,
                 description=AssetDescription.try_from_str(request.form.get('description')),
-                updated_by=user_id
+                updated_by=UserId.from_str(identity.user_id.to_str())
             )
             UploadAssetCommandHandler.handle(command)
 
