@@ -1,4 +1,4 @@
-FROM keycloak/keycloak:25.0 as builder_base
+FROM keycloak/keycloak:22.0 as builder_base
 
 ENV KC_HEALTH_ENABLED=true
 ENV KC_DB=postgres
