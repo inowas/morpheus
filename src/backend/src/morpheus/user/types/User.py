@@ -49,8 +49,8 @@ class UserData:
         return cls(
             email=UserEmail.from_str(obj['email']),
             username=Username.from_str(obj['username']),
-            first_name=UserFirstName.from_str(obj['first_name']) if obj['first_name'] else None,
-            last_name=UserLastName.from_str(obj['last_name']) if obj['last_name'] else None,
+            first_name=UserFirstName.try_from_str(obj['first_name']),
+            last_name=UserLastName.try_from_str(obj['last_name']),
         )
 
     def to_dict(self):
