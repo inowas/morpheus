@@ -9,7 +9,6 @@ import DisPackageProperties from '../components/Packages/DisPackageProperties';
 const CalculationProfile = () => {
   const {projectId} = useParams();
   const {isReadOnly} = useProjectPermissions(projectId as string);
-
   const {isMobile} = useIsMobile();
 
   return (
@@ -18,7 +17,7 @@ const CalculationProfile = () => {
         <Tab
           variant='secondary'
           title={true}
-          defaultActiveIndex={1}
+          defaultActiveIndex={2}
           menu={{fluid: true, vertical: isMobile ? false : true, tabular: true}}
           renderActiveOnly={true}
           panes={[

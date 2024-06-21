@@ -20,26 +20,35 @@ interface Settings {
 
 const profile: CalculationProfile = calculationProfile as unknown as CalculationProfile;
 
-const usePackages = (packageKey: string): Settings => {
+const usePackages = (packageKey: string) => {
+
   const [settings, setSettings] = useState<Settings>({
     engineType: '',
     name: '',
     values: null,
   });
+  // TODO remove loading state if we don't need it
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setLoading(true);
     if (profile) {
       setSettings({
         engineType: profile.engine_type,
         name: profile.name,
         values: profile.engine_settings[packageKey] || null,
       });
+      setLoading(false);
     }
   }, [packageKey]);
 
 
-  return settings;
+  return {
+    settings,
+    loading,
+  };
 };
 
 export default usePackages;
+export type {Settings};
 

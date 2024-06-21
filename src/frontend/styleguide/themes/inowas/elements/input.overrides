@@ -48,9 +48,12 @@ label.labelSmall,
   }
 }
 
-
 .field .ui.input {
   width: 100%;
+}
+
+.ui.disabled.input, .ui.input:not(.disabled) input[disabled] {
+  opacity: 0.65;
 }
 
 input[type="text"],
@@ -136,7 +139,7 @@ textarea {
     opacity: inherit !important;
     background-color: inherit !important;
   }
-  
+
   .icon {
     display: none;
   }
