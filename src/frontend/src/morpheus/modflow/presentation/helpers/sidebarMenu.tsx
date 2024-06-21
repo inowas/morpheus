@@ -7,10 +7,8 @@ import {
   faCircle,
   faClock,
   faCompress,
-  faDatabase,
   faFlag,
   faFolder,
-  faInfo,
   faLayerGroup,
   faLocationCrosshairs,
   faMap,
@@ -19,12 +17,13 @@ import {
   faSquareCheck,
 } from '@fortawesome/free-solid-svg-icons';
 
+import BoundariesContainer from '../containers/BoundariesContainer';
+import CalculationProfile from '../containers/CalculationProfile';
 import LayersContainer from '../containers/LayersContainer';
+import ModelSetupContainer from '../containers/ModelSetupContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
-import ModelSetupContainer from '../containers/ModelSetupContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import BoundariesContainer from '../containers/BoundariesContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -100,6 +99,7 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       name: 'Calculation Profile',
       isTitle: false,
       slug: 'calculation-profiles',
+      component: <CalculationProfile/>,
     },
     {
       icon: <FontAwesomeIcon icon={faFolder}/>,
