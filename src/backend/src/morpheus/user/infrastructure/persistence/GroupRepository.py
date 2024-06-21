@@ -3,9 +3,9 @@ from typing import Mapping, Any
 import pymongo
 from pymongo.collection import Collection
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.types.identity.Identity import UserId, GroupId
 from morpheus.settings import settings as app_settings
-from ...types.Group import Group, GroupId, GroupName
-from ...types.User import UserId
+from ...types.Group import Group, GroupName
 
 
 @dataclasses.dataclass(frozen=True)

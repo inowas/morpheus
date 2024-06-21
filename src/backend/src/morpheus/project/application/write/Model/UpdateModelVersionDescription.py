@@ -12,7 +12,7 @@ from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import Versio
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.ModelVersion import VersionId, VersionDescription
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class UpdateModelVersionDescriptionCommandPayload(TypedDict):

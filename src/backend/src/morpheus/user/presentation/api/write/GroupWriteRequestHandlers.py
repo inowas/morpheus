@@ -1,11 +1,11 @@
 from flask import Request
 from morpheus.authentication.outgoing import get_identity
 from morpheus.common.types.Exceptions import NotFoundException
-from morpheus.common.types.identity.Identity import Identity
+from morpheus.common.types.identity.Identity import Identity, GroupId
 from morpheus.user.application.write.AddMemberToGroup import AddMembersToGroupCommand, AddMembersToGroupCommandHandler
 from morpheus.user.application.write.CreateGroup import CreateGroupCommand, CreateGroupCommandHandler
-from morpheus.user.types.Group import GroupId, GroupName
-from morpheus.user.types.User import UserId
+from morpheus.user.types.Group import GroupName
+from morpheus.common.types.identity.Identity import UserId
 
 
 class CreateGroupRequestHandler:
@@ -25,7 +25,7 @@ class CreateGroupRequestHandler:
         command = CreateGroupCommand(
             group_id=GroupId.new(),
             name=GroupName.from_str(request_body.get('name')),
-            creator_id=UserId.from_str(identity.user_id.to_str()),
+            creator_id=identity.user_id,
         )
         CreateGroupCommandHandler.handle(command)
         return '', 204
@@ -49,7 +49,7 @@ class AddMembersToGroupRequestHandler:
             command = AddMembersToGroupCommand(
                 group_id=group_id,
                 members=set([UserId.from_str(member) for member in member_list_from_request]),
-                creator_id=UserId.from_str(identity.user_id.to_str()),
+                creator_id=identity.user_id,
             )
             AddMembersToGroupCommandHandler.handle(command)
             return '', 204

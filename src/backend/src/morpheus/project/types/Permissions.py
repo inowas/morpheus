@@ -1,9 +1,7 @@
 import dataclasses
 from enum import Enum, StrEnum
 from typing import Literal
-
-from morpheus.project.types.Group import GroupId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 class Visibility(Enum):
@@ -78,9 +76,9 @@ class MemberCollection:
         del members[user_id]
         return dataclasses.replace(self, members=members)
 
-    def get_member_role(self, user_id: UserId) -> Role:
+    def get_member_role(self, user_id: UserId) -> Role | None:
         if user_id not in self.members:
-            raise ValueError(f'User {user_id} is not a member of this project')
+            return None
         return self.members[user_id]
 
     def get_members(self) -> dict[UserId, Role]:

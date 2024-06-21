@@ -5,8 +5,8 @@ from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 
-from morpheus.user.types.Group import GroupId, Group
-from morpheus.user.types.User import UserId
+from morpheus.user.types.Group import Group
+from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 class GroupEventName:

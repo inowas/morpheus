@@ -2,12 +2,12 @@ import dataclasses
 from typing import TypedDict
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.persistence.CalculationRepository import get_calculation_repository
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
 from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState
 
 

@@ -11,7 +11,6 @@ from ....application.write.Model.CreateModelLayer import CreateModelLayerCommand
 from ....application.write.Model.CreateModelVersion import CreateModelVersionCommand
 from ....application.write.Project import CreateProjectCommand
 from ....incoming import get_identity
-from ....types.User import UserId
 
 
 class MessageBoxRequestHandler:
@@ -23,7 +22,7 @@ class MessageBoxRequestHandler:
         identity = get_identity()
         if identity is None:
             abort(401, 'Unauthorized')
-        user_id = UserId.from_str(identity.user_id.to_str())
+        user_id = identity.user_id
 
         # for the sake of simplicity, we make the mapping between the request path and the command explicit here
         body = request.json

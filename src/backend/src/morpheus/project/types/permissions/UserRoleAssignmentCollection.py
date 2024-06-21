@@ -2,7 +2,7 @@ import dataclasses
 
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.permissions.UserRoleAssignment import UserRoleAssignment
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass()

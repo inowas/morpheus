@@ -5,6 +5,7 @@ from morpheus.common.types import Uuid
 from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from ..read.ProjectReader import project_reader
 from ...domain.AssetService import AssetService
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
@@ -16,7 +17,6 @@ from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository
 from ...types.Asset import AssetId, Asset, AssetType, AssetDescription
 from ...types.Project import ProjectId
-from ...types.User import UserId
 
 
 @dataclasses.dataclass(frozen=True)

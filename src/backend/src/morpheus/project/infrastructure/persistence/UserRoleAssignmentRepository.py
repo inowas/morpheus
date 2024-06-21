@@ -3,11 +3,11 @@ from typing import Mapping, Any
 
 import pymongo
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.settings import settings as app_settings
 from ...types.Project import ProjectId
 from ...types.Permissions import Role
 from ...types.permissions.UserRoleAssignment import UserRoleAssignment
-from ...types.User import UserId
 from ...types.permissions.UserRoleAssignmentCollection import UserRoleAssignmentCollection
 
 
@@ -87,7 +87,7 @@ class UserRoleAssignmentRepository(RepositoryBase):
 user_role_assignment_repository = UserRoleAssignmentRepository(
     collection=create_or_get_collection(
         get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'project_user_roles',
+        'user_role_assignments',
         lambda collection: collection.create_index(
             [
                 ('project_id', pymongo.ASCENDING),

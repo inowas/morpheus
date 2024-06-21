@@ -9,7 +9,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
 from morpheus.project.types.Project import Name, Description, Tags, ProjectId, Project
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class CreateProjectPayload(TypedDict):

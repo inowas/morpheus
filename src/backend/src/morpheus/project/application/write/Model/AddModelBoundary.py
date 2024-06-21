@@ -13,7 +13,7 @@ from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import Model
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, IBoundaryTypeLiteral, BoundaryId
 from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.discretization.spatial import ActiveCells

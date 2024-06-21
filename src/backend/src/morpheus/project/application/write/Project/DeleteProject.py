@@ -12,7 +12,7 @@ from morpheus.project.infrastructure.assets.AssetHandlingService import asset_ha
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectDeletedEvent
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass(frozen=True)

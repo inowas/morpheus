@@ -2,7 +2,7 @@ import dataclasses
 
 from morpheus.project.types.Permissions import Role
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass(frozen=True)
