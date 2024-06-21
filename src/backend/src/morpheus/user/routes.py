@@ -5,7 +5,7 @@ from morpheus.common.presentation.api.middleware.schema_validation import valida
 from morpheus.common.types.identity.Identity import GroupId
 from morpheus.user.incoming import authenticate
 from morpheus.user.presentation.api.read.GroupReadRequestHandlers import ReadGroupListRequestHandler
-from morpheus.user.presentation.api.read.UserReadRequestHandlers import ReadUserListRequestHandler
+from morpheus.user.presentation.api.read.UserReadRequestHandlers import ReadUserListRequestHandler, ReadAuthenticatedUserRequestHandler
 from morpheus.user.presentation.api.write.GroupWriteRequestHandlers import CreateGroupRequestHandler, AddMembersToGroupRequestHandler
 
 
@@ -15,14 +15,18 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def read_user_list():
         return ReadUserListRequestHandler().handle()
+
+    @blueprint.route('/me', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def read_authenticated_user():
+        return ReadAuthenticatedUserRequestHandler().handle()
 
     @blueprint.route('/groups', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def read_group_list():
         return ReadGroupListRequestHandler().handle()
 
