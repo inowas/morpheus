@@ -10,7 +10,7 @@ import {Accordion, AccordionContent} from '../components/Content';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
-import {Header, MenuItem} from 'semantic-ui-react';
+import {MenuItem} from 'semantic-ui-react';
 import useProjectPermissions from '../../application/useProjectPermissions';
 import {Map} from 'common/components/Map';
 
@@ -123,7 +123,14 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem key='model_domain' onClick={() => setEditMode('geometry')}><Header as='h4'>Model Domain</Header></MenuItem>,
+                    menuItem: <MenuItem
+                      role='tabitem'
+                      as='span'
+                      key='model_domain'
+                      onClick={() => setEditMode('geometry')}
+                    >
+                      Model Domain
+                    </MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelDomain
                         isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
@@ -146,7 +153,13 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: 'Grid Properties',
+                    menuItem: <MenuItem
+                      role='tabitem'
+                      as='span'
+                      key='grid_properties'
+                    >
+                      Grid Properties
+                    </MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelGrid
                         grid={grid}
