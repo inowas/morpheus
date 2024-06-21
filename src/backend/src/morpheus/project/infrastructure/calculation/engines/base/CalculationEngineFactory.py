@@ -12,9 +12,6 @@ class CalculationEngineFactory:
     @classmethod
     def create_engine(cls, engine_type: CalculationEngineType, calculation_id: CalculationId | None = None) -> CalculationEngineBase:
         if engine_type == CalculationEngineType.MF2005:
-
-            # We should provide a temporary directory for the workspace and delete it after the calculation is done
-            # tmp_folder = settings.MORPHEUS_PROJECT_TMP_FOLDER
             workspace_path = tempfile.TemporaryDirectory().name
             if calculation_id:
                 workspace_path = os.path.join(settings.MORPHEUS_PROJECT_CALCULATION_DATA, calculation_id.to_str())
