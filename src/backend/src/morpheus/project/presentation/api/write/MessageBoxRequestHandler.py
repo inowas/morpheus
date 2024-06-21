@@ -1,7 +1,6 @@
 from flask import Request, abort, Response
 
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
-from morpheus.common.types.identity.Identity import UserId
 from ....application.write import project_command_bus
 from ....application.write.Calculation import CalculateCommand
 from ....application.write.CommandFactory import command_factory

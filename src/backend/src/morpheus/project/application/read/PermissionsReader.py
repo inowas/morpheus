@@ -1,7 +1,10 @@
-from morpheus.common.types.Exceptions import NotFoundException
+from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from morpheus.common.types.identity.Identity import Identity
+from ...domain.PermissionService import PermissionService
 from ...infrastructure.persistence.PermissionsRepository import permissions_repository
 from ...types.Permissions import Permissions
 from ...types.Project import ProjectId
+from ...types.permissions.Privilege import Privilege
 
 
 class PermissionsReader:
@@ -11,6 +14,12 @@ class PermissionsReader:
             raise NotFoundException(f'Could not find permissions for project with id {project_id.to_str()}')
 
         return permissions
+
+    def assert_identity_can(self, privilege: Privilege, identity: Identity, project_id: ProjectId):
+        permissions = self.get_permissions(project_id)
+
+        if not PermissionService.identity_can(privilege, identity, permissions):
+            raise InsufficientPermissionsException(f'User "{identity.user_id.to_str()}" does not have privilege "{privilege.value}" on project "{project_id.to_str()}"')
 
 
 permissions_reader = PermissionsReader()

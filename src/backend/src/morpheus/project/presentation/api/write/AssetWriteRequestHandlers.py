@@ -2,7 +2,6 @@ from flask import abort, request, Response
 
 from morpheus.common.presentation.api.helpers.file_upload import remove_uploaded_file, move_uploaded_files_to_tmp_dir
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
-from morpheus.common.types.identity.Identity import UserId
 from ....application.write.AssetCommandHandlers import UpdatePreviewImageCommand, UpdatePreviewImageCommandHandler, DeletePreviewImageCommand, DeletePreviewImageCommandHandler, \
     UploadAssetCommand, UploadAssetCommandHandler
 from ....incoming import get_identity
