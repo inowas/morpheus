@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.Mf2005CalculationEngine import Mf2005CalculationEngine
@@ -9,9 +10,15 @@ from morpheus.settings import settings
 
 class CalculationEngineFactory:
     @classmethod
-    def create_engine(cls, calculation_id: CalculationId, engine_type: CalculationEngineType) -> CalculationEngineBase:
+    def create_engine(cls, engine_type: CalculationEngineType, calculation_id: CalculationId | None = None) -> CalculationEngineBase:
         if engine_type == CalculationEngineType.MF2005:
-            workspace_path = os.path.join(settings.MORPHEUS_PROJECT_CALCULATION_DATA, calculation_id.to_str())
+
+            # We should provide a temporary directory for the workspace and delete it after the calculation is done
+            # tmp_folder = settings.MORPHEUS_PROJECT_TMP_FOLDER
+            workspace_path = tempfile.TemporaryDirectory().name
+            if calculation_id:
+                workspace_path = os.path.join(settings.MORPHEUS_PROJECT_CALCULATION_DATA, calculation_id.to_str())
+
             return Mf2005CalculationEngine(workspace_path=workspace_path)
 
         raise Exception(f'No engine found for {engine_type.value}')

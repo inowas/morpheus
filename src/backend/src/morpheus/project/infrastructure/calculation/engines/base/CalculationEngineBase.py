@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Tuple
 
 from morpheus.project.types.Model import Model
-from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState, CheckModelLog
+from morpheus.project.types.calculation.Calculation import Log, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, Observation
 
@@ -19,10 +19,10 @@ class CalculationEngineBase:
     def on_change_calculation_state(self, callback):
         self.on_change_calculation_state_callback = callback
 
-    def preprocess(self, model: Model, calculation_profile: CalculationProfile) -> CheckModelLog:
+    def preprocess(self, model: Model, calculation_profile: CalculationProfile) -> Log:
         raise NotImplementedError
 
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[Log, CalculationResult]:
         raise NotImplementedError
 
     def trigger_calculation_state_change(self, new_state: CalculationState):

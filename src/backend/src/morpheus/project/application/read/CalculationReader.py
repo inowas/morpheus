@@ -17,7 +17,7 @@ class CalculationReader:
         return calculation
 
     def get_calculations(self, project_id: ProjectId) -> list[Calculation]:
-        calculations = self._repository.get_calculations(project_id=project_id)
+        calculations = self._repository.get_calculations_by_project_id(project_id=project_id)
         if calculations is None:
             raise NotFoundException(f'Calculations for project {project_id} not found.')
         return calculations
