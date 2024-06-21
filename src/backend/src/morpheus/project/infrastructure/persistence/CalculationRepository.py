@@ -97,11 +97,15 @@ class CalculationRepository(RepositoryBase):
     def update_calculation_state(self, calculation_id: CalculationId, state: CalculationState) -> None:
         self.collection.update_one(
             {'calculation_id': calculation_id.to_str()},
-            {'$set': {
-                'lifecycle': {'$push': state},
-                'state': state,
-                'last_modified_at': datetime.now()
-            }}
+            {
+                '$set': {
+                    'state': state,
+                    'last_modified_at': datetime.now()
+                },
+                '$push': {
+                    'lifecycle': state
+                }
+            }
         )
 
     def update_calculation_check_model_log(self, calculation_id: CalculationId, check_model_log: Log) -> None:
