@@ -61,14 +61,12 @@ class CreateOrUpdateUserFromKeycloakCommandHandler:
             last_name=command.last_name,
         )
 
-        if existing_user.user_data == user_data:
-            return
-
-        user_data_updated_event_envelope = EventEnvelope(
-            event=UserDataUpdatedEvent.from_user_data(existing_user.user_id, user_data, DateTime.now()),
-            metadata=EventMetadata.without_creator(),
-        )
-        user_event_bus.record(user_data_updated_event_envelope)
+        if existing_user.user_data != user_data:
+            user_data_updated_event_envelope = EventEnvelope(
+                event=UserDataUpdatedEvent.from_user_data(existing_user.user_id, user_data, DateTime.now()),
+                metadata=EventMetadata.without_creator(),
+            )
+            user_event_bus.record(user_data_updated_event_envelope)
 
         if existing_user.is_admin is True and command.is_admin is False:
             demote_admin_event_envelope = EventEnvelope(
