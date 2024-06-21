@@ -12,7 +12,7 @@ from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents imp
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Permissions import Role
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class AddProjectMemberCommandPayload(TypedDict):

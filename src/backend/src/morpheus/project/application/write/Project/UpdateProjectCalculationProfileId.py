@@ -11,7 +11,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
 
 

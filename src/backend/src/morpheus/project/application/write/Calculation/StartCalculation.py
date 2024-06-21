@@ -2,6 +2,7 @@ import dataclasses
 from typing import TypedDict
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.CalculationProfilesReader import get_calculation_profiles_reader
 from morpheus.project.application.read.ModelReader import get_model_reader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
@@ -11,7 +12,6 @@ from morpheus.project.infrastructure.calculation.services.AsnycCalculationServic
 from morpheus.project.tasks import run_calculation_by_id
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
 from morpheus.project.types.calculation.Calculation import CalculationId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 

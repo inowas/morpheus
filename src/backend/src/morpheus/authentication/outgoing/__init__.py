@@ -1,7 +1,6 @@
 import functools
 from typing import Callable
 from flask import request, g as request_global_context
-
 from morpheus.authentication.incoming import create_or_update_user_from_keycloak, get_identity_by_keycloak_id
 from morpheus.authentication.infrastructure import keycloak_openid_provider
 from morpheus.authentication.infrastructure.bearer_token import extract_bearer_token_from

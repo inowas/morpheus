@@ -1,13 +1,6 @@
 import dataclasses
-
-from morpheus.common.types import Uuid
 from morpheus.common.types.String import NonEmptyString
-from morpheus.user.types.User import UserId
-
-
-@dataclasses.dataclass(frozen=True)
-class GroupId(Uuid):
-    pass
+from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 @dataclasses.dataclass(frozen=True)

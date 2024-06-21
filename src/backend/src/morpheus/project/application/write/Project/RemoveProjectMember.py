@@ -11,7 +11,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import MemberRemovedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class RemoveProjectMemberCommandPayload(TypedDict):

@@ -4,8 +4,8 @@ from morpheus.common.types import Uuid, String, DateTime
 from .Model import Model
 from .Permissions import Permissions, Visibility
 from .Scenarios import ScenarioCollection
-from .User import UserId
 from .calculation.CalculationProfile import CalculationProfileId
+from ...common.types.identity.Identity import UserId
 
 
 class ProjectId(Uuid):

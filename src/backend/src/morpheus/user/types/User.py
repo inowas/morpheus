@@ -2,11 +2,7 @@ import dataclasses
 
 from morpheus.common.types import Uuid, Integer
 from morpheus.common.types.String import NonEmptyString
-
-
-@dataclasses.dataclass(frozen=True)
-class UserId(Uuid):
-    pass
+from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass(frozen=True)

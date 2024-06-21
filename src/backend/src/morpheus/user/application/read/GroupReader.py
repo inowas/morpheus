@@ -1,5 +1,6 @@
+from morpheus.common.types.identity.Identity import GroupId
 from morpheus.user.infrastructure.persistence.GroupRepository import GroupRepository, group_repository
-from morpheus.user.types.Group import Group, GroupId
+from morpheus.user.types.Group import Group
 
 
 class GroupReader:

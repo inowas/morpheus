@@ -6,7 +6,7 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.Permissions import Role, Visibility
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 from .PermissionEventName import PermissionEventName
 

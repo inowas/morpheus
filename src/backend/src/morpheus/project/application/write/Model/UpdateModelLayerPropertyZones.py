@@ -13,7 +13,7 @@ from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLay
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.discretization.spatial import ActiveCells, Grid
 from morpheus.project.types.geometry import Polygon
 from morpheus.project.types.geometry.MultiPolygon import MultiPolygon

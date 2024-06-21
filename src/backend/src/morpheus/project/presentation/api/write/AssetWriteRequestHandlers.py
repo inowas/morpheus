@@ -8,7 +8,6 @@ from ....incoming import get_identity
 from ....types.Asset import AssetId, AssetDescription
 from ....types.Exceptions import InvalidMimeTypeException, InvalidShapefileException, InvalidGeoTiffException
 from ....types.Project import ProjectId
-from ....types.User import UserId
 
 
 class UploadPreviewImageRequestHandler:
@@ -29,7 +28,7 @@ class UploadPreviewImageRequestHandler:
                 project_id=project_id,
                 file_name=file_name,
                 file_path=file_path,
-                updated_by=UserId.from_str(identity.user_id.to_str())
+                updated_by=identity.user_id
             )
             UpdatePreviewImageCommandHandler.handle(command)
         except NotFoundException as e:
@@ -53,7 +52,7 @@ class DeletePreviewImageRequestHandler:
 
         command = DeletePreviewImageCommand(
             project_id=project_id,
-            updated_by=UserId.from_str(identity.user_id.to_str())
+            updated_by=identity.user_id
         )
 
         try:
@@ -85,7 +84,7 @@ class UploadAssetRequestHandler:
                 file_name=file_name,
                 file_path=file_path,
                 description=AssetDescription.try_from_str(request.form.get('description')),
-                updated_by=UserId.from_str(identity.user_id.to_str())
+                updated_by=identity.user_id
             )
             UploadAssetCommandHandler.handle(command)
 
