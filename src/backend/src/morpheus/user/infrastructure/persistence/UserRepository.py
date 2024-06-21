@@ -81,6 +81,13 @@ class UserRepository(RepositoryBase):
     def find_all_users(self) -> list[User]:
         return [UserRepositoryDocument.from_raw_document(raw_document).get_user() for raw_document in self.collection.find({}, {'_id': 0})]
 
+    def get_user_by_id(self, user_id: UserId) -> User | None:
+        raw_document = self.collection.find_one({'user_id': user_id.to_str()}, {'_id': 0})
+        if raw_document is None:
+            return None
+
+        return UserRepositoryDocument.from_raw_document(raw_document).get_user()
+
 
 def __create_indices_for_repository(collection: Collection):
     collection.create_index(
@@ -93,7 +100,7 @@ def __create_indices_for_repository(collection: Collection):
         [
             ('user_data.email', pymongo.ASCENDING),
         ],
-        unique=True,
+        unique=False,
     )
     collection.create_index(
         [

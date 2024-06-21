@@ -1,3 +1,4 @@
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.user.infrastructure.persistence.UserRepository import UserRepository, user_repository
 from morpheus.user.types.User import KeycloakUserId, User
 
@@ -11,6 +12,9 @@ class UserReader:
 
     def get_all_users(self) -> list[User]:
         return self.user_repository.find_all_users()
+
+    def get_user_by_id(self, user_id: UserId) -> User | None:
+        return self.user_repository.get_user_by_id(user_id)
 
 
 user_reader = UserReader(user_repository)
