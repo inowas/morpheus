@@ -1,5 +1,6 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import VersionDeletedEvent, VersionAssignedToModelEvent, VersionDescriptionUpdatedEvent, VersionCreatedEvent, \
     ModelCreatedEvent
 import morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents as ModelBoundaryEvents
@@ -10,7 +11,6 @@ from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLay
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
-from morpheus.project.types.User import UserId
 from morpheus.project.types.layers.Layer import LayerPropertyValues, Layer
 
 

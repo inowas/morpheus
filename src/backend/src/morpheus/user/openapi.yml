@@ -1,0 +1,256 @@
+openapi: 3.1.0
+info:
+  title: INOWAS API - User Module
+  version: 2.0.0
+paths:
+  /users:
+    get:
+      operationId: readUsers
+      tags:
+        - User
+      summary: Read list of users
+      description: Read list of users.
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+
+  /users/me:
+    get:
+      operationId: readMe
+      tags:
+        - User
+      summary: Read authenticated user
+      description: Read authenticated user
+      responses:
+        200:
+          description: The users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /users/groups:
+    get:
+      operationId: readGroups
+      tags:
+        - User
+      summary: Read list of groups
+      description: Read list of groups.
+      responses:
+        200:
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+    post:
+        operationId: createGroup
+        tags:
+            - User
+        summary: Create a group
+        description: Create a group.
+        requestBody:
+          content:
+              application/json:
+                  schema:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: "The name of the group."
+                        example: "Example Group"
+        responses:
+            201:
+              description: Group was successfully created
+            401:
+              $ref: '#/components/responses/UnauthorizedError'
+            403:
+              $ref: '#/components/responses/ForbiddenError'
+
+  /users/groups/{group_id}/members:
+        get:
+            operationId: readGroupMembers
+            tags:
+              - User
+            summary: Read group members
+            description: Read group members.
+            parameters:
+              - $ref: '#/components/parameters/GroupId'
+            responses:
+              200:
+                description: List of group members
+                content:
+                  application/json:
+                    schema:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserId'
+              401:
+                $ref: '#/components/responses/UnauthorizedError'
+              403:
+                $ref: '#/components/responses/ForbiddenError'
+              404:
+                $ref: '#/components/responses/NotFoundError'
+        post:
+            operationId: addGroupMembers
+            tags:
+              - User
+            summary: Add a group member
+            description: Add a group member.
+            parameters:
+              - $ref: '#/components/parameters/GroupId'
+            requestBody:
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserId'
+                    minItems: 1
+            responses:
+              201:
+                description: Group member was successfully added
+              401:
+                $ref: '#/components/responses/UnauthorizedError'
+              403:
+                $ref: '#/components/responses/ForbiddenError'
+              404:
+                $ref: '#/components/responses/NotFoundError'
+
+  /users/groups/{group_id}/members/{user_id}:
+        delete:
+            operationId: removeGroupMember
+            tags:
+              - User
+            summary: Remove a group member
+            description: Remove a group member.
+            parameters:
+              - $ref: '#/components/parameters/GroupId'
+              - $ref: '#/components/parameters/UserId'
+            responses:
+              204:
+                description: Group member was successfully removed
+              401:
+                $ref: '#/components/responses/UnauthorizedError'
+              403:
+                $ref: '#/components/responses/ForbiddenError'
+              404:
+                $ref: '#/components/responses/NotFoundError'
+
+components:
+  parameters:
+    GroupId:
+      name: group_id
+      in: path
+      description: "The id of a group."
+      required: true
+      schema:
+        $ref: '#/components/schemas/GroupId'
+    UserId:
+      name: user_id
+      in: path
+      description: "The id of a user."
+      required: true
+      schema:
+        $ref: '#/components/schemas/UserId'
+
+  schemas:
+    GroupId:
+      type: string
+      format: uuid
+      description: "The id of a group."
+      example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+
+    GroupName:
+      type: string
+      minLength: 1
+      description: "The name of the group."
+      example: "Example Group"
+
+    UserId:
+      type: string
+      format: uuid
+      description: "The id of a user."
+      example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+
+    Group:
+      type: object
+      description: "A group"
+      properties:
+        group_id:
+          $ref: '#/components/schemas/GroupId'
+        name:
+          $ref: '#/components/schemas/GroupName'
+        members:
+          type: array
+          description: "The members of the group."
+          items:
+            $ref: '#/components/schemas/UserId'
+        admins:
+          type: array
+          description: "The admins of the group."
+          items:
+            $ref: '#/components/schemas/UserId'
+
+    User:
+        type: object
+        description: "A user"
+        properties:
+            user_id:
+              $ref: '#/components/schemas/UserId'
+            username:
+              type: string
+              description: "The username of the user."
+              example: "user_123"
+            email:
+              type: string
+              description: "The email of the user."
+              example: "example@inowas.com"
+            first_name:
+              type: string
+              description: "The first name of the user."
+              example: "John"
+            last_name:
+              type: string
+              description: "The last name of the user."
+              example: "Doe"
+            keycloak_user_id:
+              type: string
+              description: "The keycloak user id of the user."
+              example: "5f1b0b9e-0b0b-4b0b-8b0b-0b0b0b0b0b0b"
+            geo_node_user_id:
+              type: integer
+              description: "The geo node user id of the user."
+              example: 123
+            is_admin:
+              type: boolean
+              description: "A flag to indicate if the user is an admin."
+              example: true
+
+  responses:
+    UnauthorizedError:
+      description: "The request lacks valid authentication"
+
+    ForbiddenError:
+      description: "Missing or insufficient permissions to perform the request"
+
+    NotFoundError:
+      description: "The requested resource could not be found"

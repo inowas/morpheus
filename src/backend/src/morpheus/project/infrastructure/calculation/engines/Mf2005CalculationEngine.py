@@ -1,3 +1,4 @@
+import tempfile
 from typing import Tuple
 
 import flopy.utils.binaryfile as bf
@@ -11,7 +12,7 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.E
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import create_fhb_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
-from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState
+from morpheus.project.types.calculation.Calculation import Log, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.project.types.Model import Model
@@ -40,7 +41,28 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
 
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
+    def preprocess(self, model: Model, calculation_profile: CalculationProfile) -> Log:
+        if calculation_profile.engine_type != CalculationEngineType.MF2005:
+            raise Exception('Calculation profile is not for Mf2005')
+
+        calculation_engine_settings = calculation_profile.engine_settings
+        if not isinstance(calculation_engine_settings, Mf2005CalculationEngineSettings):
+            raise Exception('Calculation profile is not for Mf2005')
+
+        self.trigger_calculation_state_change(CalculationState.PREPROCESSING)
+        flopy_model = self.__prepare_packages(model, calculation_engine_settings)
+
+        check_log = []
+        with tempfile.NamedTemporaryFile() as tmp:
+            flopy_model.check(verbose=False, level=1, f=tmp.name)
+            tmp.seek(0)
+            for line in tmp:
+                check_log.append(line.decode('utf-8').strip())
+
+        self.trigger_calculation_state_change(CalculationState.PREPROCESSED)
+        return Log.from_list(check_log)
+
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[Log, CalculationResult]:
         if calculation_profile.engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
@@ -188,9 +210,9 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         return flopy_model
 
-    def __calculate(self, flopy_model: FlopyModflow) -> Tuple[CalculationLog, CalculationResult]:
+    def __calculate(self, flopy_model: FlopyModflow) -> Tuple[Log, CalculationResult]:
         success, report = flopy_model.run_model(report=True)
-        return CalculationLog.from_list(report), self.__build_results(success)
+        return Log.from_list(report), self.__build_results(success)
 
     def __build_results(self, success: bool) -> CalculationResult:
         if not success:

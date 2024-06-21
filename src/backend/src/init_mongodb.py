@@ -1,6 +1,7 @@
 import os
 
 from pymongo import MongoClient
+from morpheus.settings import settings
 
 
 def read_env_var(name: str) -> str:
@@ -13,15 +14,16 @@ def read_env_var(name: str) -> str:
 
 print('creating users for mongodb')
 
-host = read_env_var('BACKEND_MONGO_HOST')
-port = read_env_var('BACKEND_MONGO_PORT')
+host = settings.MONGO_HOST
+port = settings.MONGO_PORT
 root_user = read_env_var('BACKEND_MONGO_INITDB_ROOT_USERNAME')
 root_password = read_env_var('BACKEND_MONGO_INITDB_ROOT_PASSWORD')
-db_user = read_env_var('BACKEND_MONGO_USER')
-db_password = read_env_var('BACKEND_MONGO_PASSWORD')
+db_user = settings.MONGO_USER
+db_password = settings.MONGO_PASSWORD
 databases = [
-    read_env_var('BACKEND_MONGO_PROJECT_DATABASE'),
-    read_env_var('BACKEND_MONGO_SENSOR_DATABASE'),
+    settings.MONGO_PROJECT_DATABASE,
+    settings.MONGO_SENSOR_DATABASE,
+    settings.MONGO_USER_DATABASE
 ]
 
 client = MongoClient(host=host, port=int(port), username=root_user, password=root_password)

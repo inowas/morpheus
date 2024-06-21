@@ -5,6 +5,7 @@ from morpheus.common.types import Uuid
 from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from ..read.ProjectReader import project_reader
 from ...domain.AssetService import AssetService
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
@@ -16,7 +17,6 @@ from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository
 from ...types.Asset import AssetId, Asset, AssetType, AssetDescription
 from ...types.Project import ProjectId
-from ...types.User import UserId
 
 
 @dataclasses.dataclass(frozen=True)
@@ -60,7 +60,7 @@ class UpdatePreviewImageCommandHandler:
 
         # set asset as preview image for project
         event = ProjectPreviewImageUpdatedEvent.occurred_now(command.project_id, command.asset_id)
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.updated_by.to_str()))
         project_event_bus.record(EventEnvelope(event=event, metadata=event_metadata))
 
 
@@ -83,7 +83,7 @@ class DeletePreviewImageCommandHandler:
 
         # remove asset preview image for project
         event = ProjectPreviewImageDeletedEvent.occurred_now(command.project_id)
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.updated_by.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.updated_by.to_str()))
         project_event_bus.record(EventEnvelope(event=event, metadata=event_metadata))
 
         # delete existing asset

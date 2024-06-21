@@ -10,8 +10,7 @@ from ....application.write.Model.CreateModel import CreateModelCommand
 from ....application.write.Model.CreateModelLayer import CreateModelLayerCommand
 from ....application.write.Model.CreateModelVersion import CreateModelVersionCommand
 from ....application.write.Project import CreateProjectCommand
-from ....incoming import get_logged_in_user_id
-from ....types.User import UserId
+from ....incoming import get_identity
 
 
 class MessageBoxRequestHandler:
@@ -20,10 +19,10 @@ class MessageBoxRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        user_id_str = get_logged_in_user_id()
-        if user_id_str is None:
+        identity = get_identity()
+        if identity is None:
             abort(401, 'Unauthorized')
-        user_id = UserId.from_str(user_id_str)
+        user_id = identity.user_id
 
         # for the sake of simplicity, we make the mapping between the request path and the command explicit here
         body = request.json

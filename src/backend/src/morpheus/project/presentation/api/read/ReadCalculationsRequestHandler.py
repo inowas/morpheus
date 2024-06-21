@@ -1,11 +1,11 @@
 from morpheus.common.types.Exceptions import NotFoundException
-from ....application.read.CalculationsReader import get_calculations_reader
+from ....application.read.CalculationReader import get_calculation_reader
 from ....types.Project import ProjectId
 
 
 class ReadCalculationsRequestHandler:
     def handle(self, project_id: ProjectId):
-        calculations_reader = get_calculations_reader()
+        calculations_reader = get_calculation_reader()
 
         try:
             calculations = calculations_reader.get_calculations(project_id=project_id)
@@ -14,8 +14,8 @@ class ReadCalculationsRequestHandler:
 
         return [{
             'calculation_id': calculation.calculation_id.to_str(),
-            'model_id': calculation.model.model_id.to_str(),
-            'calculation_profile_id': calculation.calculation_profile.id.to_str(),
-            'calculation_state': calculation.calculation_state,
-            'calculation_log': calculation.calculation_log,
+            'model_id': calculation.model_id.to_str(),
+            'calculation_profile_id': calculation.profile_id.to_str(),
+            'calculation_state': calculation.state,
+            'calculation_log': calculation.calculation_log.to_list() if calculation.calculation_log is not None else None,
         } for calculation in calculations], 200

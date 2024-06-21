@@ -62,7 +62,7 @@ class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
         if project_summary is None:
             raise Exception(f'Could not find project summary for project with id {project_id.to_str()}')
 
-        self.repository.update_owner_id(project_id=project_id, owner_id=event.get_owner_id())
+        self.repository.update_owner_id(project_id=project_id, owner_id=event.get_new_owner_id())
 
     @listen_to(VisibilityUpdatedEvent)
     def on_visibility_updated(self, event: VisibilityUpdatedEvent, metadata: EventMetadata):

@@ -90,28 +90,26 @@ class CalculationResult:
         )
 
     @classmethod
-    def try_from_dict(cls, obj):
-        if obj is None:
-            return None
-
-        flow_head_results = AvailableResults.from_dict(obj['flow_head_results']) if 'flow_head_results' in obj else None
-        flow_drawdown_results = AvailableResults.from_dict(obj['flow_drawdown_results']) if 'flow_drawdown_results' in obj else None
-        flow_budget_results = AvailableResults.from_dict(obj['flow_budget_results']) if 'flow_budget_results' in obj else None
-        transport_concentration_results = AvailableResults.from_dict(obj['transport_concentration_results']) if 'transport_concentration_results' in obj else None
-        transport_budget_results = AvailableResults.from_dict(obj['transport_budget_results']) if 'transport_budget_results' in obj else None
-        package_list = obj['package_list'] if 'package_list' in obj and obj['package_list'] is not None else []
-
+    def from_dict(cls, obj):
         return cls(
             type=CalculationResultType(obj['type']),
             message=obj['message'],
             files=obj['files'],
-            flow_head_results=flow_head_results,
-            flow_drawdown_results=flow_drawdown_results,
-            flow_budget_results=flow_budget_results,
-            transport_concentration_results=transport_concentration_results,
-            transport_budget_results=transport_budget_results,
-            package_list=package_list,
+            flow_head_results=AvailableResults.from_dict(obj['flow_head_results']) if 'flow_head_results' in obj and obj['flow_head_results'] is not None else None,
+            flow_drawdown_results=AvailableResults.from_dict(obj['flow_drawdown_results']) if 'flow_drawdown_results' in obj and obj['flow_drawdown_results'] is not None else None,
+            flow_budget_results=AvailableResults.from_dict(obj['flow_budget_results']) if 'flow_budget_results' in obj and obj['flow_budget_results'] is not None else None,
+            transport_concentration_results=AvailableResults.from_dict(obj['transport_concentration_results']) if 'transport_concentration_results' in obj and obj[
+                'transport_concentration_results'] is not None else None,
+            transport_budget_results=AvailableResults.from_dict(obj['transport_budget_results']) if 'transport_budget_results' in obj and obj['transport_budget_results'] is not None else None,
+            package_list=obj['package_list'] if 'package_list' in obj and obj['package_list'] is not None and obj['package_list'] != '' else [],
         )
+
+    @classmethod
+    def try_from_dict(cls, obj):
+        if obj is None:
+            return None
+
+        return cls.from_dict(obj)
 
     def to_dict(self) -> dict:
         return {

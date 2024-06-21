@@ -61,6 +61,18 @@ paths:
   /sensors:
     $ref: './sensor/openapi.yml#/paths/~1sensors'
 
+  /users:
+    $ref: './user/openapi.yml#/paths/~1users'
+
+  /users/groups:
+    $ref: './user/openapi.yml#/paths/~1users~1groups'
+
+  /users/groups/{group_id}/members:
+    $ref: './user/openapi.yml#/paths/~1users~1groups~1{group_id}~1members'
+
+  /users/groups/{group_id}/members/{user_id}:
+    $ref: './user/openapi.yml#/paths/~1users~1groups~1{group_id}~1members~1{user_id}'
+
 components:
   securitySchemes:
     bearerAuth:

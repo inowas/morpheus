@@ -2,11 +2,11 @@ import dataclasses
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.common.types import DateTime
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.settings import settings as app_settings
 from ...types.Permissions import Visibility
 
 from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags
-from ...types.User import UserId
 
 
 @dataclasses.dataclass
@@ -88,6 +88,16 @@ class ProjectSummaryRepository(RepositoryBase):
 
     def find_all(self) -> list[ProjectSummary]:
         documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find()]
+        return [document.to_summary() for document in documents]
+
+    def find_all_public_or_owned_by_user_or_by_project_id(self, owner_id: UserId, project_ids: list[ProjectId]) -> list[ProjectSummary]:
+        documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find({
+            '$or': [
+                {'owner_id': owner_id.to_str()},
+                {'is_public': True},
+                {'project_id': {'$in': [project_id.to_str() for project_id in project_ids]}}
+            ]
+        })]
         return [document.to_summary() for document in documents]
 
     def get_summary(self, project_id: ProjectId) -> ProjectSummary | None:

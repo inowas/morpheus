@@ -1,72 +1,39 @@
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
-from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState, Calculation
-from morpheus.project.infrastructure.persistence.CalculationsRepository import calculations_repository
+from morpheus.project.types.Model import Model
+from morpheus.project.types.calculation.Calculation import Log
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.project.types.calculation.CalculationResult import CalculationResult
 
 
 class CalculationService:
-    project_id: ProjectId | None
-    calculation: Calculation
     engine: CalculationEngineBase
-
-    def __init__(self, calculation: Calculation, project_id: ProjectId | None = None):
-        self.project_id = project_id
-        self.calculation = calculation
-        self.engine = CalculationEngineFactory.create_engine(calculation)
-
-        # persist calculation if it does not exist and a project_id is provided
-        if project_id and not calculations_repository.has_calculation(project_id=project_id, calculation_id=calculation.calculation_id):
-            calculations_repository.save_calculation(project_id=project_id, calculation=calculation)
+    check_model_log: Log | None
+    calculation_log: Log | None
+    calculation_result: CalculationResult | None
 
     @classmethod
-    def from_calculation(cls, calculation: Calculation, project_id: ProjectId | None = None):
-        return cls(calculation=calculation, project_id=project_id)
-
-    @classmethod
-    def from_calculation_id(cls, project_id: ProjectId, calculation_id: CalculationId):
-        calculation = calculations_repository.get_calculation(project_id=project_id, calculation_id=calculation_id)
-        if calculation is None:
-            raise Exception('Calculation does not exist')
-
-        return cls(calculation=calculation)
-
-    def calculate(self):
-        if not self.calculation.calculation_state == CalculationState.CREATED:
-            raise Exception('Calculation was already run or is still in progress')
-
-        def on_change_calculation_state(new_state: CalculationState):
-            self.calculation.set_new_state(new_state)
-            if self.project_id:
-                calculations_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
-
-        self.engine.on_change_calulation_state(on_change_calculation_state)
-
+    def calculate(cls, model: Model, profile: CalculationProfile):
+        instance = cls()
+        instance.engine = CalculationEngineFactory().create_engine(engine_type=profile.engine_type)
         try:
-            log, result = self.engine.run(
-                model=self.calculation.model,
-                calculation_profile=self.calculation.calculation_profile
-            )
+            instance.check_model_log = instance.engine.preprocess(model=model, calculation_profile=profile)
+            instance.calculation_log, instance.calculation_result = instance.engine.run(model=model, calculation_profile=profile)
 
-            self.calculation.set_new_state(CalculationState.COMPLETED)
-            self.calculation.set_log(log)
-            self.calculation.set_result(result)
-            if self.project_id:
-                calculations_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
         except Exception as e:
-            self.calculation.append_to_log(str(e))
-            self.calculation.set_new_state(CalculationState.FAILED)
-            if self.project_id:
-                calculations_repository.update_calculation(project_id=self.project_id, calculation=self.calculation)
+            calculation_log = Log.from_str(str(e))
+            instance.calculation_log = calculation_log
+
+        return instance
 
     def get_result(self):
-        return self.calculation.calculation_result
+        return self.calculation_result
 
-    def get_log(self):
-        return self.calculation.calculation_log
+    def get_calculation_log(self):
+        return self.calculation_log
 
-    def get_calculation(self):
-        return self.calculation
+    def get_check_model_log(self):
+        return self.check_model_log
 
     def read_flow_budget(self, idx: int, incremental: bool = False):
         return self.engine.read_flow_budget(idx=idx, incremental=incremental)
@@ -81,16 +48,7 @@ class CalculationService:
         return self.engine.read_transport_concentration(idx=idx, layer=layer)
 
     def read_transport_budget(self, idx: int, incremental: bool = False):
-        raise NotImplementedError()
+        return self.engine.read_transport_budget(idx=idx, incremental=incremental)
 
     def read_head_observations(self):
         return self.engine.read_head_observations()
-
-    def read_file(self, file_name: str):
-        return self.engine.read_file(file_name)
-
-    def get_package_list(self):
-        return self.engine.get_package_list()
-
-    def get_package(self, package_name: str):
-        return self.engine.get_package(package_name)
