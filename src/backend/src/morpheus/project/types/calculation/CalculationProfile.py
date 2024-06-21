@@ -1,9 +1,12 @@
 import dataclasses
+import hashlib
+import json
 from enum import StrEnum
 
 from morpheus.common.types import Uuid, String
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineSettingsBase import CalculationEngineSettingsBase
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
+from morpheus.project.types.Model import Sha1Hash
 
 
 class CalculationEngineType(StrEnum):
@@ -69,3 +72,10 @@ class CalculationProfile:
             'engine_type': self.engine_type.value,
             'engine_settings': self.engine_settings.to_dict(),
         }
+
+    def get_sha1_hash(self) -> Sha1Hash:
+        dictionary = self.to_dict()
+        dictionary.pop('id')
+        dictionary.pop('name')
+        encoded = json.dumps(dictionary, sort_keys=True, ensure_ascii=True).encode()
+        return Sha1Hash.from_str(hashlib.sha1(encoded).hexdigest())

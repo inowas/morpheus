@@ -21,17 +21,16 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: st
     to: '/projects/' + projectId + '/scenarios',
   },
   {
+    name: 'calculations',
+    label: translate('Calculations'),
+    admin: false,
+    to: '/projects/' + projectId + '/calculations',
+  },
+  {
     name: 'assets',
     label: translate('Assets'),
     admin: false,
     to: '/projects/' + projectId + '/assets',
-  },
-  {
-    name: 'event-log',
-    label: translate('Event Log'),
-    admin: false,
-    to: '/projects/' + projectId + '/event-log',
-    disabled: !isReadOnly,
   },
   {
     name: 'settings',
@@ -50,6 +49,13 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: st
         label: translate('Permissions'),
         admin: false,
         to: '/projects/' + projectId + '/settings/permissions',
+      },
+      {
+        name: 'event-log',
+        label: translate('Event Log'),
+        admin: false,
+        to: '/projects/' + projectId + '/event-log',
+        disabled: !isReadOnly,
       },
     ],
   },

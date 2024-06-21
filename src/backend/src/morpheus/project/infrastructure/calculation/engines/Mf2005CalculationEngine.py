@@ -1,3 +1,4 @@
+import tempfile
 from typing import Tuple
 
 import flopy.utils.binaryfile as bf
@@ -11,7 +12,7 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.E
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import create_fhb_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
-from morpheus.project.types.calculation.Calculation import CalculationLog, CalculationState
+from morpheus.project.types.calculation.Calculation import Log, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
 from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
 from morpheus.project.types.Model import Model
@@ -40,7 +41,28 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
 
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[CalculationLog, CalculationResult]:
+    def preprocess(self, model: Model, calculation_profile: CalculationProfile) -> Log:
+        if calculation_profile.engine_type != CalculationEngineType.MF2005:
+            raise Exception('Calculation profile is not for Mf2005')
+
+        calculation_engine_settings = calculation_profile.engine_settings
+        if not isinstance(calculation_engine_settings, Mf2005CalculationEngineSettings):
+            raise Exception('Calculation profile is not for Mf2005')
+
+        self.trigger_calculation_state_change(CalculationState.PREPROCESSING)
+        flopy_model = self.__prepare_packages(model, calculation_engine_settings)
+
+        check_log = []
+        with tempfile.NamedTemporaryFile() as tmp:
+            flopy_model.check(verbose=False, level=1, f=tmp.name)
+            tmp.seek(0)
+            for line in tmp:
+                check_log.append(line.decode('utf-8').strip())
+
+        self.trigger_calculation_state_change(CalculationState.PREPROCESSED)
+        return Log.from_list(check_log)
+
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[Log, CalculationResult]:
         if calculation_profile.engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
@@ -188,25 +210,27 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         return flopy_model
 
-    def __calculate(self, flopy_model: FlopyModflow) -> Tuple[CalculationLog, CalculationResult]:
+    def __calculate(self, flopy_model: FlopyModflow) -> Tuple[Log, CalculationResult]:
         success, report = flopy_model.run_model(report=True)
-        return CalculationLog.from_list(report), self.__build_results(success)
+        return Log.from_list(report), self.__build_results(success)
 
     def __build_results(self, success: bool) -> CalculationResult:
         if not success:
             return CalculationResult.failure(
                 message="Calculation failed",
-                files=os.listdir(self.workspace_path)
+                files=os.listdir(self.workspace_path),
+                package_list=self.get_package_list()
             )
 
         return CalculationResult.success(
             message="Calculation finished successfully",
             files=os.listdir(self.workspace_path),
-            head_results=self.__read_head_results(),
-            drawdown_results=self.__read_drawdown_results(),
-            budget_results=self.__read_budget_results(),
-            concentration_results=self.__read_concentration_results(),
-
+            flow_head_results=self.__read_flow_head_results(),
+            flow_drawdown_results=self.__read_flow_drawdown_results(),
+            flow_budget_results=self.__read_flow_budget_results(),
+            transport_concentration_results=self.__read_transport_concentration_results(),
+            transport_budget_results=self.__read_transport_concentration_budget_results(),
+            package_list=self.get_package_list()
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -215,7 +239,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 return os.path.join(self.workspace_path, file)
         return None
 
-    def __read_head_results(self) -> AvailableResults | None:
+    def __read_flow_head_results(self) -> AvailableResults | None:
         file = self.__get_file_with_extension_from_workspace(".hds")
         if file is None:
             return None
@@ -228,7 +252,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_observations=len(self.read_head_observations()),
         )
 
-    def __read_drawdown_results(self) -> AvailableResults | None:
+    def __read_flow_drawdown_results(self) -> AvailableResults | None:
         file = self.__get_file_with_extension_from_workspace(".ddn")
         if file is None:
             return None
@@ -241,7 +265,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_observations=0,
         )
 
-    def __read_budget_results(self) -> AvailableResults | None:
+    def __read_flow_budget_results(self) -> AvailableResults | None:
         budget_file = self.__get_file_with_extension_from_workspace(".list")
         if budget_file is None:
             return None
@@ -258,10 +282,20 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_observations=0,
         )
 
-    def __read_concentration_results(self) -> AvailableResults | None:
+    def __read_transport_concentration_results(self) -> AvailableResults | None:
         return None
 
-    def read_budget(
+    def __read_transport_concentration_budget_results(self) -> AvailableResults | None:
+        return None
+
+    def __load_flopy_model(self) -> FlopyModflow | None:
+        namefile = self.__get_file_with_extension_from_workspace('.nam')
+        if namefile is None:
+            return None
+
+        return FlopyModflow.load(f=namefile, verbose=False, check=False, exe_name='mf2005', version='mf2005', model_ws=self.workspace_path)
+
+    def read_flow_budget(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -285,7 +319,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             values[param] = float(str(x[1]))
         return values
 
-    def read_concentration(
+    def read_transport_concentration(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -294,7 +328,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
     ):
         return []
 
-    def read_drawdown(
+    def read_flow_drawdown(
         self, totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
@@ -314,7 +348,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data[data < -999] = None
         return data.tolist()
 
-    def read_head(
+    def read_flow_head(
         self,
         totim: float | None = None,
         idx: int | None = None,
@@ -359,3 +393,23 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             ))
 
         return observations
+
+    def read_file(self, file_name: str) -> str | None:
+        file = os.path.join(self.workspace_path, file_name)
+        if not os.path.exists(file):
+            return None
+
+        with open(file, 'r') as f:
+            return f.read()
+
+    def get_package_list(self) -> list[str]:
+        flopy_model = self.__load_flopy_model()
+        if flopy_model is None:
+            return []
+        return flopy_model.get_package_list()
+
+    def get_package(self, package_name: str):
+        flopy_model = self.__load_flopy_model()
+        if flopy_model is None:
+            return None
+        return flopy_model.get_package(package_name)

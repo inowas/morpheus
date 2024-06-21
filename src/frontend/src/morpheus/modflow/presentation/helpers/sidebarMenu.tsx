@@ -20,8 +20,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import LayersContainer from '../containers/LayersContainer';
-import TestingContainer from '../containers/TestingContainer';
-import ProjectMetadataContainer from '../containers/ProjectMetadataContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 import ModelSetupContainer from '../containers/ModelSetupContainer';
@@ -39,7 +37,7 @@ export interface IMenuItem {
 const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
   return [
     {
-      name: 'Setup',
+      name: 'Model',
       slug: 'setup',
       icon: <FontAwesomeIcon icon={faPenToSquare}/>,
       isTitle: true,
@@ -71,7 +69,7 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       name: 'Boundary conditions',
       isTitle: false,
       slug: 'boundary-conditions',
-      component: <BoundariesContainer basePath={basePath} section={section}/>,
+      component: <BoundariesContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faLocationCrosshairs}/>,
@@ -92,46 +90,26 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       slug: 'variable-density-flow',
     },
     {
-      icon: <FontAwesomeIcon icon={faDatabase}/>,
-      name: 'Project Metadata',
-      isTitle: false,
-      slug: 'meta-data',
-      component: <ProjectMetadataContainer/>,
-    },
-    {
-      icon: <FontAwesomeIcon icon={faInfo}/>,
-      name: 'Testing',
-      isTitle: false,
-      slug: 'test',
-      component: <TestingContainer/>,
-    },
-    {
       icon: <FontAwesomeIcon icon={faSliders}/>,
-      name: 'PACKAGES',
+      name: 'Calculation',
       isTitle: true,
-      slug: 'packages',
+      slug: 'calculation',
     },
     {
       icon: <FontAwesomeIcon icon={faFolder}/>,
-      name: 'MODFLOW packages',
+      name: 'Calculation Profile',
       isTitle: false,
-      slug: 'modflow-packages',
+      slug: 'calculation-profiles',
     },
     {
-      icon: <FontAwesomeIcon icon={faCompress}/>,
-      name: 'MT3DMS packages',
+      icon: <FontAwesomeIcon icon={faFolder}/>,
+      name: 'Calculation',
       isTitle: false,
-      slug: 'mt3dms-packages',
-    },
-    {
-      icon: <FontAwesomeIcon icon={faBarsStaggered}/>,
-      name: 'SEAWAT packages',
-      isTitle: false,
-      slug: 'seawat-packages',
+      slug: 'calculation',
     },
     {
       icon: <FontAwesomeIcon icon={faSquareCheck}/>,
-      name: 'RESULTS',
+      name: 'Results',
       isTitle: true,
       slug: 'results',
     },
@@ -207,6 +185,6 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
     //   slug: 'download-modflow-files',
     // },
   ];
-}
+};
 
 export {getSidebarItems};
