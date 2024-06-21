@@ -23,6 +23,24 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         403:
           $ref: '#/components/responses/ForbiddenError'
+
+  /users/me:
+    get:
+      operationId: readMe
+      tags:
+        - User
+      summary: Read authenticated user
+      description: Read authenticated user
+      responses:
+        200:
+          description: The users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
   /users/groups:
     get:
       operationId: readGroups
