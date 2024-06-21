@@ -2,8 +2,8 @@ from flask import Request, abort, Response
 
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
 from ....application.write import project_command_bus
-from ....application.write.Calculation import CalculateCommand
 from ....application.write.CommandFactory import command_factory
+from ....application.write.Calculation import AddCalculationProfileCommand, StartCalculationCommand
 from ....application.write.Model import AddModelBoundaryCommand, AddModelBoundaryObservationCommand, CloneModelBoundaryCommand
 from ....application.write.Model.CloneModelLayer import CloneModelLayerCommand
 from ....application.write.Model.CreateModel import CreateModelCommand
@@ -40,6 +40,9 @@ class MessageBoxRequestHandler:
             if isinstance(command, CreateProjectCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}'})
 
+            if isinstance(command, AddCalculationProfileCommand):
+                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/calculation-profiles/{command.calculation_profile.id.to_str()}'})
+
             if isinstance(command, CreateModelCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model'})
 
@@ -58,7 +61,7 @@ class MessageBoxRequestHandler:
             if isinstance(command, CloneModelBoundaryCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.new_boundary_id.to_str()}'})
 
-            if isinstance(command, CalculateCommand):
+            if isinstance(command, StartCalculationCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/calculations/{command.new_calculation_id.to_str()}'})
 
             if isinstance(command, AddModelBoundaryObservationCommand):

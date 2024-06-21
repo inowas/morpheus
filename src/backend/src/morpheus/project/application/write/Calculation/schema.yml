@@ -4,30 +4,12 @@ title: Schema for Calculation Commands
 definitions:
   CalculationCommands:
     oneOf:
-      - "$ref": "#/definitions/CalculateCommand"
       - "$ref": "#/definitions/AddCalculationProfileCommand"
+      - "$ref": "#/definitions/DeleteCalculationCommand"
       - "$ref": "#/definitions/RemoveCalculationProfileCommand"
+      - "$ref": "#/definitions/StartCalculationCommand"
+      - "$ref": "#/definitions/StopCalculationCommand"
       - "$ref": "#/definitions/UpdateCalculationProfileCommand"
-  CalculateCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - calculate_command
-        example: calculate_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          model_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-        required:
-          - project_id
-          - model_id
   AddCalculationProfileCommand:
     type: object
     properties:
@@ -57,6 +39,26 @@ definitions:
           - project_id
           - calculation_profile_name
           - calculation_profile_engine
+  DeleteCalculationCommand:
+    type: object
+    properties:
+      command_name:
+        type: string
+        enum:
+          - delete_calculation_command
+        example: delete_calculation_command
+      payload:
+        type: object
+        properties:
+          project_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          calculation_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+        required:
+          - project_id
+          - calculation_id
   RemoveCalculationProfileCommand:
     type: object
     properties:
@@ -77,6 +79,46 @@ definitions:
         required:
           - project_id
           - calculation_profile_id
+  StartCalculationCommand:
+    type: object
+    properties:
+      command_name:
+        type: string
+        enum:
+          - start_calculation_command
+        example: start_calculation_command
+      payload:
+        type: object
+        properties:
+          project_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          model_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+        required:
+          - project_id
+          - model_id
+  StopCalculationCommand:
+    type: object
+    properties:
+      command_name:
+        type: string
+        enum:
+          - stop_calculation_command
+        example: stop_calculation_command
+      payload:
+        type: object
+        properties:
+          project_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          calculation_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+        required:
+          - project_id
+          - calculation_id
   UpdateCalculationProfileCommand:
     type: object
     properties:

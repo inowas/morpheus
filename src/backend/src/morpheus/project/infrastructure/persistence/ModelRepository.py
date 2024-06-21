@@ -46,6 +46,9 @@ class ModelRepositoryDocument:
     def get_sha1_hash(self) -> Sha1Hash:
         return Sha1Hash.from_str(value=self.sha1_hash)
 
+    def get_version_string(self) -> str:
+        return self.version_string if self.version_string is not None else ''
+
     def with_updated_model(self, model: Model, changed_at: DateTime, changed_by: UserId):
         version = self.version_string.split('-')[0] if self.version_string is not None else None
         version_string = f'{version}-{self.number_of_changes + 1}' if version is not None else None
@@ -169,6 +172,13 @@ class ModelRepository(RepositoryBase):
             raise ModelNotFoundException(f'Model for project with id {project_id} does not exist')
 
         return document.get_sha1_hash()
+
+    def get_latest_model_version_string(self, project_id: ProjectId) -> str:
+        document = self.get_latest_document(project_id=project_id)
+        if document is None:
+            raise ModelNotFoundException(f'Model for project with id {project_id} does not exist')
+
+        return document.get_version_string()
 
     def switch_to_version(self, project_id: ProjectId, version: ModelVersion, changed_by: UserId, changed_at: DateTime) -> None:
         data = self.collection.find_one({'project_id': project_id.to_str(), 'version_id': version.version_id.to_str(), 'number_of_changes': 0})
