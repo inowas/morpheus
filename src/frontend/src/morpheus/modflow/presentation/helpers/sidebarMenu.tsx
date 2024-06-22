@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import BoundariesContainer from '../containers/BoundariesContainer';
-import CalculationProfile from '../containers/CalculationProfile';
+import CalculationProfileContainer from '../containers/CalculationProfileContainer';
 import LayersContainer from '../containers/LayersContainer';
 import ModelSetupContainer from '../containers/ModelSetupContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
@@ -99,7 +99,7 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       name: 'Calculation Profile',
       isTitle: false,
       slug: 'calculation-profiles',
-      component: <CalculationProfile/>,
+      component: <CalculationProfileContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faFolder}/>,
