@@ -12,7 +12,7 @@ from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import Versio
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.ModelVersion import VersionId, VersionDescription
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class UpdateModelVersionDescriptionCommandPayload(TypedDict):
@@ -49,6 +49,6 @@ class UpdateModelVersionDescriptionCommandHandler(CommandHandlerBase):
 
         event = VersionDescriptionUpdatedEvent.from_version_id(project_id=project_id, version_id=command.version_id, description=command.version_description,
                                                                occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

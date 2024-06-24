@@ -12,7 +12,7 @@ from morpheus.project.infrastructure.assets.AssetHandlingService import asset_ha
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectDeletedEvent
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass(frozen=True)
@@ -49,6 +49,6 @@ class DeleteProjectCommandHandler(CommandHandlerBase):
         asset_handling_service.delete_all_assets_for_project(command.project_id)
 
         event = ProjectDeletedEvent.from_project_id(project_id=command.project_id, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

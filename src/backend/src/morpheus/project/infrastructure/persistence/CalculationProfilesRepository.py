@@ -72,6 +72,14 @@ class CalculationProfilesRepository(RepositoryBase):
         document = self.get_document(project_id)
         return [CalculationProfile.from_dict(profile) for profile in document.calculation_profiles.values()]
 
+    def get_calculation_profile(self, project_id: ProjectId, calculation_profile_id: CalculationProfileId) -> CalculationProfile | None:
+        if not self.has_calculation_profiles(project_id):
+            return None
+        document = self.get_document(project_id)
+        if calculation_profile_id.to_str() not in document.calculation_profiles:
+            return None
+        return CalculationProfile.from_dict(document.calculation_profiles[calculation_profile_id.to_str()])
+
     def get_selected_calculation_profile(self, project_id: ProjectId) -> CalculationProfile | None:
         if not self.has_calculation_profiles(project_id):
             return None

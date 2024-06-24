@@ -16,7 +16,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId, Model
 from morpheus.project.types.ModelVersion import VersionDescription, VersionTag, ModelVersion
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.discretization import SpatialDiscretization
 from morpheus.project.types.discretization.spatial import Rotation, ActiveCells, Grid
@@ -82,28 +82,28 @@ class CreateModelCommandHandler(CommandHandlerBase):
         model = model.with_updated_spatial_discretization(spatial_discretization)
 
         event = ModelCreatedEvent.from_model(project_id=project_id, model=model, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)
 
         initial_version = ModelVersion.new(tag=VersionTag.from_str('v0.0.0'), description=VersionDescription.from_str('Initial version'))
         event = VersionCreatedEvent.from_version(project_id=project_id, version=initial_version, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)
 
         event = VersionAssignedToModelEvent.from_version(project_id=project_id, version=initial_version, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)
 
         default_calculation_profile = CalculationProfile.default()
         event = CalculationProfileAddedEvent.from_calculation_profile(project_id=project_id, calculation_profile=default_calculation_profile, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)
 
         event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=default_calculation_profile.id, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

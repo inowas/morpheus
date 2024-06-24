@@ -31,3 +31,17 @@ class String:
 
     def to_lower(self):
         return self.value.lower()
+
+
+@dataclasses.dataclass(frozen=True)
+class NonEmptyString(String):
+    def __post_init__(self):
+        if len(self.value) == 0:
+            raise ValueError('Value cannot be empty')
+
+    @classmethod
+    def try_from_str(cls, value: str | None):
+        if value is None or value.strip() == '':
+            return None
+
+        return cls.from_str(value=value)

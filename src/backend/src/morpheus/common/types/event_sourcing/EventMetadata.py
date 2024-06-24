@@ -7,7 +7,13 @@ class EventMetadata:
     obj: dict
 
     @classmethod
-    def new(cls, user_id: Uuid, obj: dict | None = None):
+    def without_creator(cls, obj: dict | None = None):
+        if obj is None:
+            obj = {}
+        return cls(obj)
+
+    @classmethod
+    def with_creator(cls, user_id: Uuid, obj: dict | None = None):
         if obj is None:
             obj = {}
         return cls(

@@ -1,22 +1,4 @@
-from morpheus.common.infrastructure.event_sourcing.EventStore import EventStoreBase
-from morpheus.common.types import Uuid
-from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
-from morpheus.project.infrastructure.persistence.ProjectEventRepository import project_event_repository, ProjectEventRepository
+from morpheus.common.infrastructure.event_sourcing.EventStore import EventStore
+from morpheus.project.infrastructure.persistence.ProjectEventRepository import project_event_repository
 
-
-class ProjectEventStore(EventStoreBase):
-    def __init__(self, repository: ProjectEventRepository):
-        self.repository = repository
-        super().__init__()
-
-    def store(self, event_envelope: EventEnvelope):
-        self.repository.insert(event_envelope=event_envelope)
-
-    def get_all_events_ordered_by_version(self) -> list[EventEnvelope]:
-        return self.repository.find_all_ordered_by_version()
-
-    def get_all_by_entity_uuid_ordered_by_version(self, entity_uuid: Uuid) -> list[EventEnvelope]:
-        return self.repository.find_all_by_entity_uuid_ordered_by_version(entity_uuid=entity_uuid)
-
-
-project_event_store = ProjectEventStore(repository=project_event_repository)
+project_event_store = EventStore(repository=project_event_repository)

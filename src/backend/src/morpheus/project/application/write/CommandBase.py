@@ -1,9 +1,7 @@
 import dataclasses
 from typing import Any
-
 import inflection
-
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass(frozen=True)

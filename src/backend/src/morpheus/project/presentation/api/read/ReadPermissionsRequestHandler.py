@@ -1,22 +1,17 @@
 from flask import abort
-
 from morpheus.common.types.Exceptions import NotFoundException
-
-from ....incoming import get_logged_in_user_id
-from ....application.read.PermissionsReader import get_permissions_reader
+from ....incoming import get_identity
+from ....application.read.PermissionsReader import permissions_reader
 from ....types.Project import ProjectId
-from ....types.User import UserId
 
 
 class ReadPermissionsRequestHandler:
     def handle(self, project_id: ProjectId):
 
-        user_id_str = get_logged_in_user_id()
-        if user_id_str is None:
+        identity = get_identity()
+        if identity is None:
             abort(401, 'Unauthorized')
-        user_id = UserId.from_str(user_id_str)
-
-        permissions_reader = get_permissions_reader()
+        user_id = identity.user_id
 
         try:
             permissions = permissions_reader.get_permissions(project_id)

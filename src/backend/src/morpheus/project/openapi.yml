@@ -48,7 +48,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectSummary'
+                  $ref: '#/components/schemas/ProjectSummaryWithUserPrivileges'
         401:
           description: Unauthorized
         403:
@@ -342,28 +342,13 @@ paths:
         - $ref: '#/components/parameters/ProjectId'
       responses:
         200:
-          description: Permissions of the project
+          description: A list of the privileges for the project
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  is_owner:
-                    type: boolean
-                    description: "A flag to indicate if the user is the owner of the project."
-                    example: true
-                  can_manage:
-                    type: boolean
-                    description: "A flag to indicate if the user can manage the project."
-                    example: true
-                  can_edit:
-                    type: boolean
-                    description: "A flag to indicate if the user can read the project."
-                    example: true
-                  can_read:
-                    type: boolean
-                    description: "A flag to indicate if the user can read the project."
-                    example: true
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectUserPrivilege'
         401:
           description: Unauthorized
         403:
@@ -650,7 +635,7 @@ components:
               number_of_time_steps: 1
               time_step_multiplier: 1
 
-    ProjectSummary:
+    ProjectSummaryWithUserPrivileges:
       type: object
       description: "A project."
       properties:
@@ -685,6 +670,20 @@ components:
           format: date-time
           description: "The creation date time of the project."
           example: "2020-01-01T00:00:00Z"
+        user_privileges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectUserPrivilege'
+          description: "The user privileges of the project."
+
+    ProjectUserPrivilege:
+      type: string
+      description: "A privilege of the user in the project."
+      enum:
+        - "Full Access"
+        - "View Project"
+        - "View Project Event Log"
+      example: "Full Access"
 
     LineString:
       type: object

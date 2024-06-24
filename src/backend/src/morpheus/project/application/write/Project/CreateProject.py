@@ -9,7 +9,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
 from morpheus.project.types.Project import Name, Description, Tags, ProjectId, Project
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class CreateProjectPayload(TypedDict):
@@ -44,6 +44,6 @@ class CreateProjectCommandHandler(CommandHandlerBase):
         project = project.with_updated_metadata(metadata)
 
         event = ProjectCreatedEvent.from_project(project=project, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(command.user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

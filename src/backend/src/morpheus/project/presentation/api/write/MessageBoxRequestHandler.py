@@ -2,16 +2,15 @@ from flask import Request, abort, Response
 
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
 from ....application.write import project_command_bus
-from ....application.write.Calculation import CalculateCommand
 from ....application.write.CommandFactory import command_factory
+from ....application.write.Calculation import AddCalculationProfileCommand, StartCalculationCommand
 from ....application.write.Model import AddModelBoundaryCommand, AddModelBoundaryObservationCommand, CloneModelBoundaryCommand
 from ....application.write.Model.CloneModelLayer import CloneModelLayerCommand
 from ....application.write.Model.CreateModel import CreateModelCommand
 from ....application.write.Model.CreateModelLayer import CreateModelLayerCommand
 from ....application.write.Model.CreateModelVersion import CreateModelVersionCommand
 from ....application.write.Project import CreateProjectCommand
-from ....incoming import get_logged_in_user_id
-from ....types.User import UserId
+from ....incoming import get_identity
 
 
 class MessageBoxRequestHandler:
@@ -20,10 +19,10 @@ class MessageBoxRequestHandler:
         if not request.is_json:
             abort(400, 'Request body must be JSON')
 
-        user_id_str = get_logged_in_user_id()
-        if user_id_str is None:
+        identity = get_identity()
+        if identity is None:
             abort(401, 'Unauthorized')
-        user_id = UserId.from_str(user_id_str)
+        user_id = identity.user_id
 
         # for the sake of simplicity, we make the mapping between the request path and the command explicit here
         body = request.json
@@ -40,6 +39,9 @@ class MessageBoxRequestHandler:
 
             if isinstance(command, CreateProjectCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}'})
+
+            if isinstance(command, AddCalculationProfileCommand):
+                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/calculation-profiles/{command.calculation_profile.id.to_str()}'})
 
             if isinstance(command, CreateModelCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model'})
@@ -59,7 +61,7 @@ class MessageBoxRequestHandler:
             if isinstance(command, CloneModelBoundaryCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.new_boundary_id.to_str()}'})
 
-            if isinstance(command, CalculateCommand):
+            if isinstance(command, StartCalculationCommand):
                 return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/calculations/{command.new_calculation_id.to_str()}'})
 
             if isinstance(command, AddModelBoundaryObservationCommand):

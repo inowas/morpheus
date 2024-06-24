@@ -6,7 +6,7 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.Permissions import Role, Visibility
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 from .PermissionEventName import PermissionEventName
 
@@ -14,7 +14,7 @@ from .PermissionEventName import PermissionEventName
 @dataclasses.dataclass(frozen=True)
 class MemberAddedEvent(EventBase):
     @classmethod
-    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role = Role.VIEWER, occurred_at=DateTime.now()):
+    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -41,7 +41,7 @@ class MemberAddedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class MemberRemovedEvent(EventBase):
     @classmethod
-    def from_user_id(cls, project_id: ProjectId, user_id: UserId, occurred_at=DateTime.now()):
+    def from_user_id(cls, project_id: ProjectId, user_id: UserId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -64,7 +64,7 @@ class MemberRemovedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class MemberRoleUpdatedEvent(EventBase):
     @classmethod
-    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, new_role: Role, occurred_at=DateTime.now()):
+    def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, new_role: Role, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -91,17 +91,21 @@ class MemberRoleUpdatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class OwnershipUpdatedEvent(EventBase):
     @classmethod
-    def from_user_id(cls, project_id: ProjectId, user_id: UserId, occurred_at=DateTime.now()):
+    def from_old_and_new_owner(cls, project_id: ProjectId, old_owner: UserId, new_owner: UserId, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
-                'owner_id': user_id.to_str(),
+                'old_owner_id': old_owner.to_str(),
+                'new_owner_id': new_owner.to_str(),
             }
         )
 
-    def get_owner_id(self) -> UserId:
-        return UserId.from_str(self.payload['owner_id'])
+    def get_old_owner_id(self) -> UserId:
+        return UserId.from_str(self.payload['old_owner_id'])
+
+    def get_new_owner_id(self) -> UserId:
+        return UserId.from_str(self.payload['new_owner_id'])
 
     @staticmethod
     def get_event_name() -> EventName:
@@ -114,7 +118,7 @@ class OwnershipUpdatedEvent(EventBase):
 @dataclasses.dataclass(frozen=True)
 class VisibilityUpdatedEvent(EventBase):
     @classmethod
-    def from_visibility(cls, project_id: ProjectId, visibility: Visibility, occurred_at=DateTime.now()):
+    def from_visibility(cls, project_id: ProjectId, visibility: Visibility, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,

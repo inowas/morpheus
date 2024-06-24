@@ -1,76 +1,54 @@
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
-from morpheus.project.types.calculation.Calculation import CalculationId, CalculationState, Calculation
-from morpheus.project.infrastructure.persistence.CalculationRepository import calculation_repository
+from morpheus.project.types.Model import Model
+from morpheus.project.types.calculation.Calculation import Log
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.project.types.calculation.CalculationResult import CalculationResult
 
 
 class CalculationService:
-    calculation: Calculation
     engine: CalculationEngineBase
-
-    def __init__(self, calculation: Calculation):
-        if not calculation_repository.has_calculation(calculation_id=calculation.calculation_id):
-            calculation_repository.save_calculation(calculation)
-        self.calculation = calculation
-        self.engine = CalculationEngineFactory.create_engine(calculation)
+    check_model_log: Log | None
+    calculation_log: Log | None
+    calculation_result: CalculationResult | None
 
     @classmethod
-    def from_calculation(cls, calculation: Calculation):
-        return cls(calculation=calculation)
-
-    @classmethod
-    def from_calculation_id(cls, calculation_id: CalculationId):
-        calculation = calculation_repository.get_calculation(calculation_id=calculation_id)
-        if calculation is None:
-            raise Exception('Calculation does not exist')
-
-        return cls(calculation=calculation)
-
-    def calculate(self):
-        if not self.calculation.calculation_state == CalculationState.CREATED:
-            raise Exception('Calculation was already run or is still in progress')
-
-        def on_change_calculation_state(new_state: CalculationState):
-            self.calculation.set_new_state(new_state)
-            calculation_repository.update_calculation(self.calculation)
-
-        self.engine.on_change_calulation_state(on_change_calculation_state)
-
+    def calculate(cls, model: Model, profile: CalculationProfile):
+        instance = cls()
+        instance.engine = CalculationEngineFactory().create_engine(engine_type=profile.engine_type)
         try:
-            log, result = self.engine.run(
-                model=self.calculation.model,
-                calculation_profile=self.calculation.calculation_profile
-            )
+            instance.check_model_log = instance.engine.preprocess(model=model, calculation_profile=profile)
+            instance.calculation_log, instance.calculation_result = instance.engine.run(model=model, calculation_profile=profile)
 
-            self.calculation.set_new_state(CalculationState.COMPLETED)
-            self.calculation.set_log(log)
-            self.calculation.set_result(result)
-            calculation_repository.update_calculation(self.calculation)
         except Exception as e:
-            self.calculation.append_to_log(str(e))
-            self.calculation.set_new_state(CalculationState.FAILED)
-            calculation_repository.update_calculation(self.calculation)
+            calculation_log = Log.from_str(str(e))
+            instance.calculation_log = calculation_log
+
+        return instance
 
     def get_result(self):
-        return self.calculation.calculation_result
+        return self.calculation_result
 
-    def get_log(self):
-        return self.calculation.calculation_log
+    def get_calculation_log(self):
+        return self.calculation_log
 
-    def get_calculation(self):
-        return self.calculation
+    def get_check_model_log(self):
+        return self.check_model_log
 
-    def read_budget(self, idx: int, incremental: bool = False):
-        return self.engine.read_budget(idx=idx, incremental=incremental)
+    def read_flow_budget(self, idx: int, incremental: bool = False):
+        return self.engine.read_flow_budget(idx=idx, incremental=incremental)
 
-    def read_concentration(self, idx: int, layer: int):
-        return self.engine.read_concentration(idx=idx, layer=layer)
+    def read_flow_drawdown(self, idx: int, layer: int):
+        return self.engine.read_flow_drawdown(idx=idx, layer=layer)
 
-    def read_drawdown(self, idx: int, layer: int):
-        return self.engine.read_drawdown(idx=idx, layer=layer)
+    def read_flow_head(self, idx: int, layer: int):
+        return self.engine.read_flow_head(idx=idx, layer=layer)
 
-    def read_head(self, idx: int, layer: int):
-        return self.engine.read_head(idx=idx, layer=layer)
+    def read_transport_concentration(self, idx: int, layer: int):
+        return self.engine.read_transport_concentration(idx=idx, layer=layer)
+
+    def read_transport_budget(self, idx: int, incremental: bool = False):
+        return self.engine.read_transport_budget(idx=idx, incremental=incremental)
 
     def read_head_observations(self):
         return self.engine.read_head_observations()

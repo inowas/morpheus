@@ -44,21 +44,25 @@ class CalculationResult:
     type: CalculationResultType
     message: str
     files: list[str]
-    head_results: AvailableResults | None
-    drawdown_results: AvailableResults | None
-    budget_results: AvailableResults | None
-    concentration_results: AvailableResults | None
+    flow_head_results: AvailableResults | None
+    flow_drawdown_results: AvailableResults | None
+    flow_budget_results: AvailableResults | None
+    transport_concentration_results: AvailableResults | None
+    transport_budget_results: AvailableResults | None
+    package_list: list[str]
 
     @classmethod
-    def failure(cls, message: str, files: list[str]):
+    def failure(cls, message: str, files: list[str], package_list: list[str] | None = None):
         return cls(
             type=CalculationResultType.FAILURE,
             message=message,
             files=files,
-            head_results=None,
-            drawdown_results=None,
-            budget_results=None,
-            concentration_results=None,
+            flow_head_results=None,
+            flow_drawdown_results=None,
+            flow_budget_results=None,
+            transport_concentration_results=None,
+            transport_budget_results=None,
+            package_list=package_list or [],
         )
 
     @classmethod
@@ -66,19 +70,38 @@ class CalculationResult:
         cls,
         message: str,
         files: list[str],
-        head_results: AvailableResults | None,
-        drawdown_results: AvailableResults | None,
-        budget_results: AvailableResults | None,
-        concentration_results: AvailableResults | None
+        flow_head_results: AvailableResults | None = None,
+        flow_drawdown_results: AvailableResults | None = None,
+        flow_budget_results: AvailableResults | None = None,
+        transport_concentration_results: AvailableResults | None = None,
+        transport_budget_results: AvailableResults | None = None,
+        package_list: list[str] | None = None,
     ):
         return cls(
             type=CalculationResultType.SUCCESS,
             message=message if message is not None else '',
             files=files,
-            head_results=head_results,
-            drawdown_results=drawdown_results,
-            budget_results=budget_results,
-            concentration_results=concentration_results,
+            flow_head_results=flow_head_results,
+            flow_drawdown_results=flow_drawdown_results,
+            flow_budget_results=flow_budget_results,
+            transport_concentration_results=transport_concentration_results,
+            transport_budget_results=transport_budget_results,
+            package_list=package_list or [],
+        )
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            type=CalculationResultType(obj['type']),
+            message=obj['message'],
+            files=obj['files'],
+            flow_head_results=AvailableResults.from_dict(obj['flow_head_results']) if 'flow_head_results' in obj and obj['flow_head_results'] is not None else None,
+            flow_drawdown_results=AvailableResults.from_dict(obj['flow_drawdown_results']) if 'flow_drawdown_results' in obj and obj['flow_drawdown_results'] is not None else None,
+            flow_budget_results=AvailableResults.from_dict(obj['flow_budget_results']) if 'flow_budget_results' in obj and obj['flow_budget_results'] is not None else None,
+            transport_concentration_results=AvailableResults.from_dict(obj['transport_concentration_results']) if 'transport_concentration_results' in obj and obj[
+                'transport_concentration_results'] is not None else None,
+            transport_budget_results=AvailableResults.from_dict(obj['transport_budget_results']) if 'transport_budget_results' in obj and obj['transport_budget_results'] is not None else None,
+            package_list=obj['package_list'] if 'package_list' in obj and obj['package_list'] is not None and obj['package_list'] != '' else [],
         )
 
     @classmethod
@@ -86,37 +109,17 @@ class CalculationResult:
         if obj is None:
             return None
 
-        head_results = AvailableResults.from_dict(obj['head_results']) \
-            if ('flow_results' in obj and obj['flow_results'] is not None) \
-            else None
-        drawdown_results = AvailableResults.from_dict(obj['drawdown_results']) \
-            if ('drawdown_results' in obj and obj['drawdown_results'] is not None) \
-            else None
-        budget_results = AvailableResults.from_dict(obj['budget_results']) \
-            if ('budget_results' in obj and obj['budget_results'] is not None) \
-            else None
-        transport_results = AvailableResults.from_dict(obj['concentration_results']) \
-            if ('transport_results' in obj and obj['concentration_results'] is not None) \
-            else None
-
-        return cls(
-            type=CalculationResultType(obj['type']),
-            message=obj['message'],
-            files=obj['files'],
-            head_results=head_results,
-            drawdown_results=drawdown_results,
-            budget_results=budget_results,
-            concentration_results=transport_results,
-        )
+        return cls.from_dict(obj)
 
     def to_dict(self) -> dict:
         return {
             'type': self.type.value,
             'message': self.message if self.message is not None else '',
             'files': self.files if self.files is not None else [],
-            'head_results': self.head_results.to_dict() if self.head_results is not None else None,
-            'drawdown_results': self.drawdown_results.to_dict() if self.drawdown_results is not None else None,
-            'budget_results': self.budget_results.to_dict() if self.budget_results is not None else None,
-            'concentration_results':
-                self.concentration_results.to_dict() if self.concentration_results is not None else None
+            'flow_head_results': self.flow_head_results.to_dict() if self.flow_head_results is not None else None,
+            'flow_drawdown_results': self.flow_drawdown_results.to_dict() if self.flow_drawdown_results is not None else None,
+            'flow_budget_results': self.flow_budget_results.to_dict() if self.flow_budget_results is not None else None,
+            'transport_concentration_results': self.transport_concentration_results.to_dict() if self.transport_concentration_results is not None else None,
+            'transport_budget_results': self.transport_budget_results.to_dict() if self.transport_budget_results is not None else None,
+            'package_list': self.package_list,
         }

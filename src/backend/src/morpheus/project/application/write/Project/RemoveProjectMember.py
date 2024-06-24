@@ -11,7 +11,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import MemberRemovedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 
 
 class RemoveProjectMemberCommandPayload(TypedDict):
@@ -48,6 +48,6 @@ class RemoveProjectMemberCommandHandler(CommandHandlerBase):
             return
 
         event = MemberRemovedEvent.from_user_id(project_id=project_id, user_id=member_id, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

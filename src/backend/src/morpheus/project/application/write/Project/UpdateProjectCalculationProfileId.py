@@ -11,7 +11,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.User import UserId
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
 
 
@@ -46,6 +46,6 @@ class UpdateProjectCalculationProfileIdCommandHandler(CommandHandlerBase):
             raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update a calculation profile of the project {project_id.to_str()}')
 
         event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=calculation_profile_id, occurred_at=DateTime.now())
-        event_metadata = EventMetadata.new(user_id=Uuid.from_str(user_id.to_str()))
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)
