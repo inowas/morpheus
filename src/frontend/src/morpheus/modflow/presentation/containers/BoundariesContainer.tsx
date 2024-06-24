@@ -38,6 +38,8 @@ const BoundariesContainer = () => {
     onUpdateBoundaryGeometry,
     onUpdateBoundaryMetadata,
     onUpdateBoundaryObservation,
+    onDisableBoundary,
+    onEnableBoundary,
   } = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPermissions(projectId as string);
@@ -132,6 +134,8 @@ const BoundariesContainer = () => {
               onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
               onCloneBoundary={onCloneBoundary}
               onCloneBoundaryObservation={onCloneBoundaryObservation}
+              onDisableBoundary={onDisableBoundary}
+              onEnableBoundary={onEnableBoundary}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onRemoveBoundary={onRemoveBoundary}
