@@ -83,6 +83,7 @@ class RasterInterpolationService:
         grid_xx = np.array(grid_xx)
         grid_yy = np.array(grid_yy)
         grid_data = interp((grid_xx, grid_yy))
+        grid_data.astype(np.float32)
         grid_data = np.around(grid_data, precision)
 
         grid_data = RasterInterpolationService.expand_island(grid_data, 1)
@@ -121,6 +122,7 @@ class RasterInterpolationService:
 
         no_data_value = -9999
         target_data[np.isnan(target_data)] = no_data_value
+        target_data.astype(np.float32)
         target_data = np.around(target_data, precision)
 
         return RasterData(
@@ -155,6 +157,7 @@ class RasterInterpolationService:
         target_xx, target_yy = np.meshgrid(np.linspace(0, 1, target_resolution_x), np.linspace(0, 1, target_resolution_y))
 
         target_data = interp((target_yy, target_xx))
+        target_data.astype(np.float32)
         target_data = np.around(target_data, precision)
 
         if expand > 0:
