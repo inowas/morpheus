@@ -41,6 +41,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
       };
 
       legend.addTo(map);
+      setLegend(legend);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, grades]);
@@ -51,6 +52,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         map.removeControl(legend);
       }
     };
+    // eslint-disable-next-line
   }, []);
 
   return null;
