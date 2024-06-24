@@ -18,6 +18,8 @@ interface IProps {
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
+  onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
@@ -35,6 +37,8 @@ const BoundariesAccordionPane = ({
   onSelectBoundaryAndObservation,
   onCloneBoundary,
   onCloneBoundaryObservation,
+  onDisableBoundary,
+  onEnableBoundary,
   onRemoveBoundary,
   onRemoveBoundaryObservation,
   onUpdateBoundaryAffectedLayers,
@@ -86,6 +90,8 @@ const BoundariesAccordionPane = ({
             selectedBoundaryAndObservation={{boundary: selectedBoundary, observationId: selectedBoundaryObservation.observation_id}}
             type={boundaryType}
             onChangeBoundaryName={handleChangeBoundaryName}
+            onDisableBoundary={onDisableBoundary}
+            onEnableBoundary={onEnableBoundary}
             onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
             onCloneBoundary={onCloneBoundary}
             onCloneObservation={onCloneBoundaryObservation}
