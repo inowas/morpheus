@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import L from 'leaflet';
 import './Legend.less';
 import {useMap} from 'react-leaflet';
@@ -15,6 +15,12 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
 
+  const valueRef = useRef<number | null>(value);
+
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
   useEffect(() => {
     if (map) {
       map.removeControl(legend);
@@ -23,10 +29,10 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         div.innerHTML = '<h4>Legend</h4>';
         const ul = document.createElement('ul');
         ul.setAttribute('class', 'horizontal' === direction ? 'legend_list_horizontal' : 'legend_list');
-        for (var i = 0; i < grades.length; i++) {
+        for (let i = 0; i < grades.length; i++) {
           const li = document.createElement('li');
           li.setAttribute('class', 'legend_item');
-          if (value === grades[i]) {
+          if (valueRef.current === grades[i]) {
             li.classList.add('active'); // Add highlighted class if value matches grade
           }
           const currentColor = getRgbColor(grades[i]);

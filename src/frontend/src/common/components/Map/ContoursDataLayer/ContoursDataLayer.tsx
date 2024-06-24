@@ -56,7 +56,6 @@ const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor
 
   }, [data, rotation, outline, minVal, maxVal]);
 
-
   return (
     <FeatureGroup key={'contourLayer'}>
       {contourMultiPolygons.map((mp, key) => {
@@ -66,7 +65,7 @@ const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor
             key={JSON.stringify(mp) + key}
             data={mp}
             onEachFeature={(feature, layer) => {
-              layer.on('mouseover', () => setValue(value));
+              layer.on('mouseover', () => setValue(mp.value));
               layer.on('mouseout', () => setValue(null));
             }}
             pmIgnore={true}
