@@ -15,12 +15,6 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
 
-  const valueRef = useRef<number | null>(value);
-
-  useEffect(() => {
-    valueRef.current = value;
-  }, [value]);
-
   useEffect(() => {
     if (map) {
       map.removeControl(legend);
@@ -32,7 +26,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         for (let i = 0; i < grades.length; i++) {
           const li = document.createElement('li');
           li.setAttribute('class', 'legend_item');
-          if (valueRef.current === grades[i]) {
+          if (value === grades[i]) {
             li.classList.add('active'); // Add highlighted class if value matches grade
           }
           const currentColor = getRgbColor(grades[i]);
@@ -50,7 +44,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
       setLegend(legend);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, grades]);
+  }, [grades, getRgbColor, value]);
 
   useEffect(() => {
     return () => {

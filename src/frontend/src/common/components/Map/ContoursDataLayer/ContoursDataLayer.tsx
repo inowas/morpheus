@@ -9,14 +9,11 @@ interface IProps {
   data: number[][];
   rotation: number;
   outline: Feature<Polygon>;
-  minVal: number;
-  maxVal: number;
-  getRgbColor: (v: number, min: number, max: number) => string;
+  getRgbColor: (value: number) => string;
   onHover?: (value: number | null) => void;
-  getGrades?: () => number[];
 }
 
-const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor, onHover}: IProps) => {
+const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover}: IProps) => {
 
   const [value, setValue] = useState<number | null>(null);
 
@@ -36,10 +33,6 @@ const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor
     const normalizedOutlineBBox = bbox(normalizedOutline);
     const [xMin, yMin, xMax, yMax] = normalizedOutlineBBox;
 
-    if (minVal == maxVal) {
-      contoursFunction.thresholds([minVal]);
-    }
-
     const multiPolygons = contoursFunction(data.reduce((acc, row) => acc.concat(row), []));
     const cellSizeX = (xMax - xMin) / data[0].length;
     const cellSizeY = (yMax - yMin) / data.length;
@@ -54,12 +47,11 @@ const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor
       return transformRotate(mp, -rotation, {mutate: true, pivot: centerOfMassOutline});
     });
 
-  }, [data, rotation, outline, minVal, maxVal]);
+  }, [data, rotation, outline]);
 
   return (
     <FeatureGroup key={'contourLayer'}>
       {contourMultiPolygons.map((mp, key) => {
-        const rgbColor = getRgbColor(mp.value, minVal, maxVal);
         return (
           <GeoJSON
             key={JSON.stringify(mp) + key}
@@ -73,8 +65,8 @@ const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor
               fillOpacity: .5,
               weight: .25,
               opacity: 1,
-              color: rgbColor,
-              fillColor: rgbColor,
+              color: getRgbColor(mp.value),
+              fillColor: getRgbColor(mp.value),
             }}
           />
         );
@@ -83,7 +75,7 @@ const ContoursDataLayer = ({data, rotation, outline, minVal, maxVal, getRgbColor
         direction={'horizontal'}
         value={value}
         grades={contourMultiPolygons.map(mp => mp.value)}
-        getRgbColor={(v) => getRgbColor(v, minVal, maxVal)}
+        getRgbColor={(v) => getRgbColor(v)}
       />
     </FeatureGroup>
   );
