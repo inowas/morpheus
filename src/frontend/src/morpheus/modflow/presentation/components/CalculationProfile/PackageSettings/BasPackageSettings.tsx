@@ -1,9 +1,10 @@
 import React from 'react';
-import {Form, Header} from 'semantic-ui-react';
+import {Form} from 'semantic-ui-react';
 import {IBasPackageSettings} from '../../../../types/CalculationProfile.type';
 import PackageWrapper from './PackageWrapper';
 import {CheckBox} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
+import {SectionTitle} from '../../../../../../common/components';
 
 interface IProps {
   settings: IBasPackageSettings
@@ -14,7 +15,11 @@ interface IProps {
 
 const BasPackageSettings = ({settings, onChange, isReadOnly}: IProps) => (
   <>
-    <Header as={'h3'} dividing={true}>Bas Package Settings</Header>
+    <SectionTitle
+      as={'h5'}
+      title={'Mf Package Settings'}
+      style={{marginBottom: 15}}
+    />
     <PackageWrapper>
       <Form>
         <Form.Group>

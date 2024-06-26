@@ -1,7 +1,6 @@
-import {Header} from 'semantic-ui-react';
 import React from 'react';
 import {ICalculationProfile} from '../../../../types/CalculationProfile.type';
-import descriptions from './PackagePropsDescriptions';
+import {SectionTitle} from '../../../../../../common/components';
 
 interface IProps {
   settings: ICalculationProfile['engine_settings']
@@ -12,8 +11,10 @@ interface IProps {
 
 const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
   return (
-    <Header as={'h3'} dividing={true}>Boundary Packages</Header>
-
+    <SectionTitle
+      as={'h5'} title={'Boundary Packages'}
+      style={{marginBottom: 15}}
+    />
   );
 };
 

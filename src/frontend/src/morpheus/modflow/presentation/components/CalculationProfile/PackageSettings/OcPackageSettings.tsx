@@ -1,7 +1,6 @@
-import {Header} from 'semantic-ui-react';
 import React from 'react';
 import {IOcPackageSettings} from '../../../../types/CalculationProfile.type';
-import descriptions from './PackagePropsDescriptions';
+import {SectionTitle} from '../../../../../../common/components';
 
 interface IProps {
   settings: IOcPackageSettings
@@ -11,7 +10,10 @@ interface IProps {
 
 
 const OcPackageSettings = ({settings, onChange, isReadOnly}: IProps) => (
-  <Header as={'h3'} dividing={true}>Oc Package Settings</Header>
+  <SectionTitle
+    as={'h5'} title={'Oc Package Settings'}
+    style={{marginBottom: 15}}
+  />
 );
 
 export default OcPackageSettings;

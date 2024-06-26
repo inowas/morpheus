@@ -7,16 +7,17 @@ interface IProps {
   value: any;
   onChange: (value: any) => void;
   options: { key: string, value: any, text: string }[];
-  label: string;
+  label?: string;
   isReadOnly: boolean;
   description?: string | JSX.Element;
+  style?: React.CSSProperties;
 }
 
 
-const DropdownInput = ({value, isReadOnly, onChange, label, description, options}: IProps) => {
+const DropdownInput = ({value, isReadOnly, onChange, label, description, options, style}: IProps) => {
   return (
-    <Form.Field>
-      <Label htmlFor={label} className="labelSmall">
+    <Form.Field style={style}>
+      {label && <Label htmlFor={label} className="labelSmall">
         {description && <Popup
           trigger={<Icon name="info circle"/>}
           content={description}
@@ -24,7 +25,7 @@ const DropdownInput = ({value, isReadOnly, onChange, label, description, options
           size="tiny"
         />}
         {label}
-      </Label>
+      </Label>}
       <DropdownComponent.Dropdown
         disabled={isReadOnly}
         name={label}

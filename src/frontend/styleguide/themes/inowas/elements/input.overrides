@@ -57,6 +57,7 @@ label.labelSmall,
 }
 
 input[type="text"],
+input[type="strung"],
 input[type="email"],
 input[type="search"],
 input[type="number"],

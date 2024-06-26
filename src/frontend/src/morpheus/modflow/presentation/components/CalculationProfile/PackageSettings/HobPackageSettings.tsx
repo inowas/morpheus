@@ -1,9 +1,10 @@
-import {Form, Header} from 'semantic-ui-react';
+import {Form} from 'semantic-ui-react';
 import React from 'react';
 import {IHobPackageSettings} from '../../../../types/CalculationProfile.type';
 import PackageWrapper from './PackageWrapper';
 import {FloatInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
+import {SectionTitle} from '../../../../../../common/components';
 
 interface IProps {
   settings: IHobPackageSettings
@@ -14,10 +15,13 @@ interface IProps {
 
 const HobPackageSettings = ({settings, onChange, isReadOnly}: IProps) => (
   <>
-    <Header as={'h3'} dividing={true}>Head Observation Package Settings</Header>
+    <SectionTitle
+      as={'h5'} title={'Head Observation Package Settings'}
+      style={{marginBottom: 15}}
+    />
     <PackageWrapper>
       <Form>
-        <Form.Group>
+        <Form.Group widths={2}>
           <FloatInput
             value={settings.hobdry}
             onChange={(value: number) => onChange({...settings, hobdry: value})}

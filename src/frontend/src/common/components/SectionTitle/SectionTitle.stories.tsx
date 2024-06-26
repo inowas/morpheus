@@ -26,11 +26,14 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
       />
       <SectionTitle
         title={'Model Geometry'}
+        as={'h1'}
       />
       <SectionTitle
-        subTitle={'Model Geometry'}
+        title={'Model Geometry'}
+        as={'h2'}
       />
       <SectionTitle
+        as={'h1'}
         title={'Model Geometry'}
         faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
         faIconText={locked ? 'Locked' : 'Unlocked'}
@@ -39,7 +42,8 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
         }}
       />
       <SectionTitle
-        subTitle={'Model Geometry'}
+        title={'Model Geometry'}
+        as={'h2'}
         faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
         faIconText={locked ? 'Locked' : 'Unlocked'}
         faIconOnClick={() => {
@@ -48,13 +52,7 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
       />
       <SectionTitle
         title={'Model Geometry'}
-        btnTitle={'Edit'}
-        onClick={() => {
-          console.log('some action');
-        }}
-      />
-      <SectionTitle
-        subTitle={'Model Geometry'}
+        as={'h3'}
         btnTitle={'Edit'}
         onClick={() => {
           console.log('some action');
@@ -62,6 +60,15 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
       />
       <SectionTitle
         title={'Model Geometry'}
+        as={'h2'}
+        btnTitle={'Edit'}
+        onClick={() => {
+          console.log('some action');
+        }}
+      />
+      <SectionTitle
+        title={'Model Geometry'}
+        as={'h1'}
         btnTitle={'Edit'}
         onClick={() => {
           console.log('some action');
@@ -73,7 +80,8 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
         }}
       />
       <SectionTitle
-        subTitle={'Model Geometry'}
+        title={'Model Geometry'}
+        as={'h2'}
         btnTitle={'Edit'}
         onClick={() => {
           console.log('some action');

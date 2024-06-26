@@ -15,6 +15,8 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
 
+  console.log(grades);
+
   useEffect(() => {
     if (map) {
       map.removeControl(legend);
@@ -32,7 +34,8 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
           const currentColor = getRgbColor(grades[i]);
           // Use next color or current color if it's the last item
           const nextColor = getRgbColor(grades[i + 1] || grades[i] + 1);
-          li.innerHTML = `<span>${grades[i]}</span> <i style="background: linear-gradient(${'horizontal' === direction ? 'to right' : 'to bottom'}, ${currentColor}, ${nextColor})"></i>`;
+          // li.innerHTML = `<span>${grades[i]}</span> <i style="background: linear-gradient(${'horizontal' === direction ? 'to right' : 'to bottom'}, ${currentColor}, ${nextColor})"></i>`;
+          li.innerHTML = `<i style="background: linear-gradient(${'horizontal' === direction ? 'to right' : 'to bottom'}, ${currentColor}, ${nextColor}); width: 10px;"></i>`;
           ul.appendChild(li);
         }
 

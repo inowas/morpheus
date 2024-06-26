@@ -33,7 +33,10 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
 
   return (
     <Form.Field>
-      <Label htmlFor={label} className="labelSmall">
+      <Label
+        htmlFor={label}
+        className="labelSmall"
+      >
         {description && <Popup
           trigger={<Icon name="info circle"/>}
           content={description}
@@ -46,7 +49,7 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
         id={label}
         precision={precision}
         disabled={isReadOnly}
-        type="string"
+        type="text"
         value={valueLocal}
         onChange={(_, data) => setValueLocal(data.value)}
         onBlur={() => handleChange(valueLocal)}

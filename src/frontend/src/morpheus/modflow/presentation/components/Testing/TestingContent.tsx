@@ -169,7 +169,7 @@ const TestingContent: React.FC = () => {
       <DataGrid>
         <SectionTitle title={'Model Grid'}/>
         <DataRow>
-          <SectionTitle subTitle={'Grid resolution'}/>
+          <SectionTitle title={'Grid resolution'} as={'h2'}/>
           <DataGrid columns={2}>
             <div>
               <Radio
@@ -253,7 +253,7 @@ const TestingContent: React.FC = () => {
         </DataRow>
         {/*// ButtonGroup*/}
         <DataRow>
-          <SectionTitle subTitle={'Edit active cells'}/>
+          <SectionTitle title={'Edit active cells'} as={'h2'}/>
           <div className={styles.buttonGroup} style={{display: 'flex', gap: '15px'}}>
             <Button
               primary={true} size={'small'}
@@ -269,7 +269,7 @@ const TestingContent: React.FC = () => {
         </DataRow>
         {/*// SliderGroup*/}
         <DataRow>
-          <SectionTitle subTitle={'Grid rotation'}/>
+          <SectionTitle title={'Grid rotation'} as={'h2'}/>
           <div className="fieldGridSlider">
             <div className="field">
               <label className="labelSmall">
@@ -319,7 +319,7 @@ const TestingContent: React.FC = () => {
         </DataRow>
         {/*// ButtonGroup*/}
         <DataRow className="borderBottom">
-          <SectionTitle subTitle={'Grid refinement'}/>
+          <SectionTitle title={'Grid refinement'} as={'h2'}/>
           <div className={styles.buttonGroup}>
             <Button
               primary={true} size={'small'}

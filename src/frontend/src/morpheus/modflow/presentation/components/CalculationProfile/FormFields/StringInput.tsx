@@ -8,12 +8,13 @@ interface IProps {
   onChange: (value: string) => void;
   label: string;
   description?: string | JSX.Element;
+  style?: React.CSSProperties;
 }
 
 
-const StringInput = ({value, isReadOnly, onChange, label, description}: IProps) => {
+const StringInput = ({value, isReadOnly, onChange, label, description, style}: IProps) => {
   return (
-    <Form.Field>
+    <Form.Field style={style}>
       <Label htmlFor={label} className="labelSmall">
         {description && <Popup
           trigger={<Icon name="info circle"/>}
@@ -26,7 +27,7 @@ const StringInput = ({value, isReadOnly, onChange, label, description}: IProps) 
       <Input
         id={label}
         disabled={isReadOnly}
-        type='string'
+        type='text'
         value={value}
         onChange={(_, data) => onChange(data.value)}
         readOnly={isReadOnly}

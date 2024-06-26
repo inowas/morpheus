@@ -36,6 +36,14 @@ const IntegerInput = ({value, isReadOnly, onChange, label, description}: IProps)
         onChange={(_, data) => handleChange(data.value)}
         readOnly={isReadOnly}
       />
+      {/*<Input*/}
+      {/*  id={label}*/}
+      {/*  disabled={isReadOnly}*/}
+      {/*  type='text'*/}
+      {/*  value={value.toExponential()}*/}
+      {/*  onChange={(_, data) => handleChange(data.value)}*/}
+      {/*  readOnly={isReadOnly}*/}
+      {/*/>*/}
     </Form.Field>
   );
 };

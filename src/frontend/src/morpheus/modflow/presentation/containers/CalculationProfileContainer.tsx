@@ -18,7 +18,7 @@ const CalculationProfileContainer = () => {
   }
 
   return (
-    <ContentWrapper style={{marginTop: 20}}>
+    <ContentWrapper style={{marginTop: 20, overflowX: 'auto'}}>
       <CalculationProfile
         calculationProfile={calculationProfile}
         onChange={updateCalculationProfile}
