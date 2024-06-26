@@ -66,11 +66,10 @@ def register_routes(blueprint: Blueprint):
     def project_get_calculation_details(project_id: str, calculation_id: str):
         return ReadCalculationDetailsRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id))
 
-    @blueprint.route('/<project_id>/calculations/<calculation_id>/file', methods=['GET'])
+    @blueprint.route('/<project_id>/calculations/<calculation_id>/files/<file_name>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_get_calculation_file(project_id: str, calculation_id: str):
-        file_name = request.args.get('file_name', '')
+    def project_get_calculation_file(project_id: str, calculation_id: str, file_name: str):
         return ReadCalculationFileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), file_name=file_name)
 
     @blueprint.route('/<project_id>/calculations/<calculation_id>/results/<result_type>', methods=['GET'])
