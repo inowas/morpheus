@@ -295,6 +295,7 @@ class LeafletCanvasDataLayer extends L.GridLayer {
     // calculate inner rectangle dimensions
     const [relWidth, relHeight] = this._calculateRelativeInnerRectangleDimensions(angle);
 
+
     // calculate scaling factor
     // There is an inaccuracy in the scaling factor calculation, and it is not clear why
     // The calculated scaling factor is slightly off, which causes inconsistencies in the mouse position calculation
