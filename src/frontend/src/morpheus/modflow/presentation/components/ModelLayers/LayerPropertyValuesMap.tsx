@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {ILayerPropertyData} from '../../../types/Layers.type';
 import {FeatureGroup} from 'react-leaflet';
 import {IColorMap, useColorMap} from 'common/hooks';
-import ContoursDataLayer from 'common/components/Map/ContoursDataLayer';
 import CanvasDataLayer from 'common/components/Map/CanvasDataLayer';
 
 interface IProps {
@@ -49,16 +48,6 @@ const LayerPropertyValuesMap = ({data, colorMap = 'gist_earth', minValue: minVal
         getRgbColor={(value: number) => getRgbColor(value, minValue, maxValue)}
       />
     </FeatureGroup>
-    // <FeatureGroup key={'contourLayer'}>
-    //   <ContoursDataLayer
-    //     data={data.data}
-    //     rotation={data.rotation}
-    //     outline={data.outline}
-    //     minVal={minValue}
-    //     maxVal={maxValue}
-    //     getRgbColor={(value: number) => getRgbColor(value, minValue, maxValue)}
-    //   />
-    // </FeatureGroup>
   );
 };
 
