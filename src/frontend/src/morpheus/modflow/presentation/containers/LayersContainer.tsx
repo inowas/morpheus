@@ -10,8 +10,8 @@ import useSpatialDiscretization from '../../application/useSpatialDiscretization
 
 import {BodyContent, SidebarContent} from '../components';
 import LayersList from '../components/ModelLayers/LayersList';
-import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
-import {MapRef} from "../../../../common/components/Map/Map";
+import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+import {MapRef} from 'common/components/Map/Map';
 
 
 const LayersContainer = () => {

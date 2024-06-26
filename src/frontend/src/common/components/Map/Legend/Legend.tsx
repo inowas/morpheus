@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import L from 'leaflet';
 import './Legend.less';
 import {useMap} from 'react-leaflet';
@@ -23,7 +23,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         div.innerHTML = '<h4>Legend</h4>';
         const ul = document.createElement('ul');
         ul.setAttribute('class', 'horizontal' === direction ? 'legend_list_horizontal' : 'legend_list');
-        for (var i = 0; i < grades.length; i++) {
+        for (let i = 0; i < grades.length; i++) {
           const li = document.createElement('li');
           li.setAttribute('class', 'legend_item');
           if (value === grades[i]) {
@@ -41,9 +41,10 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
       };
 
       legend.addTo(map);
+      setLegend(legend);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, grades]);
+  }, [grades, getRgbColor, value]);
 
   useEffect(() => {
     return () => {
@@ -51,6 +52,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         map.removeControl(legend);
       }
     };
+    // eslint-disable-next-line
   }, []);
 
   return null;
