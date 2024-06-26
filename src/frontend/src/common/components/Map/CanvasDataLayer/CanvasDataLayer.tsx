@@ -3,11 +3,12 @@ import {Feature, Polygon} from 'geojson';
 import ReactLeafletCanvasDataLayer from './ReactLeafletCanvasDataLayer';
 import {LatLngExpression} from 'leaflet';
 import {bbox} from '@turf/turf';
-import Legend from '../Legend';
-import {calculateQuantileThresholds} from './helpers';
+import {ContinuousLegend} from '../Legend';
 
 interface IProps {
   data: number[][];
+  minVal: number;
+  maxVal: number;
   rotation: number;
   outline: Feature<Polygon>
   getRgbColor: (value: number) => string;
@@ -15,7 +16,7 @@ interface IProps {
 }
 
 
-const CanvasDataLayer = ({data, rotation, outline, getRgbColor}: IProps) => {
+const CanvasDataLayer = ({data, rotation, outline, getRgbColor, minVal, maxVal}: IProps) => {
 
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
@@ -27,10 +28,6 @@ const CanvasDataLayer = ({data, rotation, outline, getRgbColor}: IProps) => {
     const boundingBox = bbox(outline);
     return [[boundingBox[1], boundingBox[0]], [boundingBox[3], boundingBox[2]]];
   }, [outline]);
-
-  const grades = useMemo(() => {
-    return calculateQuantileThresholds(data, 5);
-  }, [data]);
 
 
   if (!bounds) {
@@ -46,10 +43,11 @@ const CanvasDataLayer = ({data, rotation, outline, getRgbColor}: IProps) => {
         getRgbColor={getRgbColor}
         onHover={setHoveredValue}
       />
-      <Legend
+      <ContinuousLegend
         direction={'horizontal'}
         value={hoveredValue}
-        grades={grades}
+        minValue={minVal}
+        maxValue={maxVal}
         getRgbColor={getRgbColor}
       />
     </>
