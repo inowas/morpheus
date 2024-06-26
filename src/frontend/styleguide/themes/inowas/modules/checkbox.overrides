@@ -105,6 +105,12 @@ div.ui.toggle.checkbox input:checked ~ label:before {
   height: 100%;
 }
 
+.disabled div.ui.toggle.checkbox input ~ .box:before,
+.disabled div.ui.toggle.checkbox input ~ label:before,
+.disabled div.ui.toggle.checkbox input:checked ~ .box:before,
+.disabled div.ui.toggle.checkbox input:checked ~ label:before {
+  background-color: #000 !important;
+}
 
 div.ui.toggle.checkbox input ~ .box:after,
 div.ui.toggle.checkbox input ~ label:after,
