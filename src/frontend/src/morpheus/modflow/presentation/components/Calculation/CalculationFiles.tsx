@@ -51,8 +51,7 @@ const CalculationFiles = ({files, fetchFile}: IProps) => {
           </List>
         </Grid.Column>
         <Grid.Column width={12}>
-          <h3>File Content</h3>
-          <pre>
+          <pre style={{backgroundColor: '#f7f7f7', padding: 10}}>
             {content}
           </pre>
         </Grid.Column>
