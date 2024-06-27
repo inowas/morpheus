@@ -1,10 +1,10 @@
+@import '../../site.variables';
+
 .legend {
   color: #555;
   width: auto;
   background: rgba(255, 255, 255, 0.6);
-
 }
-
 
 .legend_info {
   padding: 6px 8px;
@@ -16,61 +16,87 @@
   text-align: center;
 }
 
-.legend_list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+
+.legend_inner_vertical,
+.legend_inner_horizontal {
+  position: relative;
+  overflow: visible;
+}
+
+.legend_inner_vertical {
   display: flex;
-  flex-direction: column;
-  align-items: end;
+  width: 100%;
+  justify-content: end;
 
-  .legend_item {
-    align-items: stretch;
+  .legend_line {
+    height: 320px;
+    width: 20px;
+  }
 
-    i {
-      height: auto;
-      width: 18px;
-      margin-left: 8px;
+  .legend_indicator {
+    top: -12px;
+    right: 25px;
+    transition: top 1000ms;
+
+    &:before {
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 18px solid @black;
+      right: -16px;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }
 
-.legend_list_horizontal {
+.legend_inner_horizontal {
+  .legend_line {
+    width: 320px;
+    height: 20px;
+  }
+
+  .legend_indicator {
+    top: -26px;
+    left: 0;
+    transition: left 1000ms;
+
+    &:before {
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 18px solid @black;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+}
+
+.legend_line {
   border-radius: 10px;
-  list-style: none;
-  margin: auto;
-  padding: 0;
-  display: flex;
-  max-width: calc(100vw - 140px);
-  width: fit-content;
-  overflow: auto;
-
-  .legend_item {
-    flex-direction: column;
-
-    span {
-      padding: 0 10px;
-    }
-
-    i {
-      height: 18px;
-      width: 100%;
-    }
-  }
 }
 
-.legend_item {
+.legend_indicator {
+  position: absolute;
+  background: @black;
+  color: @white;
+  border-radius: 8px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 7px;
+  min-width: 30px;
+  height: 22px;
+  //top: -22px;
+  //left: 0;
+  //transition: left 1000ms;
+  box-shadow: @ref-box-shadow;
+  z-index: 1;
 
-  i {
-    display: flex;
-    opacity: 0.7;
-  }
-}
-
-.legend_item.active {
-  i {
-    opacity: 1;
+  &:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
   }
 }
 

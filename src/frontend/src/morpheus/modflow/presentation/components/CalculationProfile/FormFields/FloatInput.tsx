@@ -16,19 +16,35 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
 
   const [valueLocal, setValueLocal] = useState<string>(value.toString());
 
+  const isScientificNotation = (inputValue: string) => {
+    // Regular expression to match scientific notation format
+    return /^-?\d+(\.\d+)?([eE][-+]?\d+)?$/.test(inputValue);
+  };
   const round = (v: number, p: number) => {
     const d = Math.pow(10, p);
     return Math.round(v * d) / d;
   };
 
   const handleChange = (v: string) => {
-    const parsed = parseFloat(v);
-    if (isNaN(parsed)) {
-      setValueLocal(value.toString());
-      return;
+
+    if (isScientificNotation(v)) {
+      const parsedValue = parseFloat(v);
+      if (isNaN(parsedValue)) {
+        setValueLocal(value.toString());
+        return;
+      } else {
+        setValueLocal(v);
+        onChange(parsedValue);
+      }
+    } else {
+      const parsed = parseFloat(v);
+      if (isNaN(parsed)) {
+        setValueLocal(value.toString());
+        return;
+      }
+      setValueLocal(round(parsed, precision).toString());
+      onChange(round(parseFloat(v) || 0, precision));
     }
-    setValueLocal(round(parsed, precision).toString());
-    onChange(round(parseFloat(v) || 0, precision));
   };
 
   return (
