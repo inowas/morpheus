@@ -24,6 +24,7 @@ import ModelSetupContainer from '../containers/ModelSetupContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import CalculationContainer from '../containers/CalculationContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -92,7 +93,7 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       icon: <FontAwesomeIcon icon={faSliders}/>,
       name: 'Calculation',
       isTitle: true,
-      slug: 'calculation',
+      slug: 'calculation-header',
     },
     {
       icon: <FontAwesomeIcon icon={faFolder}/>,
@@ -106,6 +107,7 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       name: 'Calculation',
       isTitle: false,
       slug: 'calculation',
+      component: <CalculationContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faSquareCheck}/>,

@@ -4,7 +4,7 @@ import {ICalculationProfile} from '../../../../types/CalculationProfile.type';
 import {DropdownInput} from '../FormFields';
 
 import {BcfPackageSettings, LpfPackageSettings} from '../PackageSettings';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import PackageWrapper from './PackageWrapper';
 
 

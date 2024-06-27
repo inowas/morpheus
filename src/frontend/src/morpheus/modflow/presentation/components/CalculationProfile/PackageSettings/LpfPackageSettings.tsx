@@ -13,10 +13,6 @@ interface IProps {
 
 const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
 
-  React.useEffect(() => {
-    console.log(settings);
-  }, [settings]);
-
   return (
     <>
       <SectionTitle
@@ -81,8 +77,8 @@ const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
+            isReadOnly={true}
             onChange={(value: number) => onChange({...settings, hdry: value})}
-            isReadOnly={isReadOnly}
             description={descriptions.lpf.hdry}
           />
           <CheckBox

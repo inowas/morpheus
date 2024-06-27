@@ -197,4 +197,4 @@ const useAssets = (projectId: string): IUseAssets => {
 };
 
 export default useAssets;
-export type {IUseAssets};
+export type {IUseAssets, IAssetId};
