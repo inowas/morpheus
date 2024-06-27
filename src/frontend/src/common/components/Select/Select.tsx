@@ -9,6 +9,7 @@ import styles from './Select.module.less';
 export type ISelectProps = {
   options: DropdownItemProps[];
   style?: React.CSSProperties;
+  name?: string
   as?: any
   additionLabel?: number | string | React.ReactNode
   additionPosition?: 'top' | 'bottom'

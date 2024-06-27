@@ -1,7 +1,7 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerPropertyName, IZone} from '../types/Layers.type';
-import {IBoundaryObservationData, IBoundaryType, IObservationId} from "../types/Boundaries.type";
+import {IBoundaryObservationData, IBoundaryType, IObservationId} from '../types/Boundaries.type';
 
 // Asset Commands
 export interface IDeleteAssetCommand {
@@ -51,7 +51,6 @@ export interface IStartCalculationCommand {
   payload: {
     project_id: string;
     model_id: string;
-    calculation_profile_id: string;
   }
 }
 

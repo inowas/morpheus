@@ -11,12 +11,10 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class HobPackageSettings:
-    iuhobsv: int
     hobdry: float
     tomulth: float
 
-    def __init__(self, iuhobsv: int = 1, hobdry: float = 0.0, tomulth: float = 1.0):
-        self.iuhobsv = iuhobsv
+    def __init__(self, hobdry: float = 0.0, tomulth: float = 1.0, **_):
         self.hobdry = hobdry
         self.tomulth = tomulth
 

@@ -104,7 +104,8 @@
     padding: 0;
   }
 
-  .ui[class*="two column"].grid > .column {
+  .ui[class*="two column"].grid > .column,
+  .ui.grid > .column {
     padding: 26px 0;
 
     &.stretched {
@@ -142,8 +143,10 @@
     margin: 0;
   }
 
+  .ui.tabular.menu,
   .ui.vertical.tabular.menu {
     border: none;
+    flex-direction: column;
 
     .item {
       border: none;

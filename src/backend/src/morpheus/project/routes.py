@@ -12,6 +12,7 @@ from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculatio
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
 from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
+from .presentation.api.read.ReadModelCalculationDetailsRequestHandler import ReadModelCalculationDetailsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
 from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ReadModelLayerPropertyImageRequestHandler, ImageOutputFormat
 from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler, DataOutputFormat
@@ -54,29 +55,34 @@ def register_routes(blueprint: Blueprint):
     def upload_project_asset(project_id: str):
         return UploadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
+    @blueprint.route('/<project_id>/model/calculation', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_latest_model_calculation_details(project_id: str):
+        return ReadModelCalculationDetailsRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
     @blueprint.route('/<project_id>/calculations', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_get_calculations(project_id: str):
+    def project_calculations(project_id: str):
         return ReadCalculationsRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/calculations/<calculation_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_get_calculation_details(project_id: str, calculation_id: str):
+    def project_calculation_details(project_id: str, calculation_id: str):
         return ReadCalculationDetailsRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id))
 
-    @blueprint.route('/<project_id>/calculations/<calculation_id>/file', methods=['GET'])
+    @blueprint.route('/<project_id>/calculations/<calculation_id>/files/<file_name>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_get_calculation_file(project_id: str, calculation_id: str):
-        file_name = request.args.get('file_name', '')
+    def project_calculation_read_file(project_id: str, calculation_id: str, file_name: str):
         return ReadCalculationFileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), file_name=file_name)
 
     @blueprint.route('/<project_id>/calculations/<calculation_id>/results/<result_type>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_get_calculation_results(project_id: str, calculation_id: str, result_type: str = 'flow_head'):
+    def project_calculation_results(project_id: str, calculation_id: str, result_type: str = 'flow_head'):
         idx = int(request.args.get('idx', 0))
         layer = int(request.args.get('layer', 0))
         incremental = request.args.get('incremental', 'false').lower() == 'true'
@@ -89,12 +95,13 @@ def register_routes(blueprint: Blueprint):
             incremental=incremental
         )
 
+    @blueprint.route('/<project_id>/model/calculation-profile', methods=['GET'])
     @blueprint.route('/<project_id>/calculation-profiles/selected', methods=['GET'])
     @blueprint.route('/<project_id>/calculation-profiles/<calculation_profile_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
     @validate_request
-    def get_project_selected_calculation_profile(project_id: str, calculation_profile_id: str | None = None):
+    def project_selected_calculation_profile(project_id: str, calculation_profile_id: str | None = None):
         return ReadSelectedCalculationProfileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_profile_id=CalculationProfileId.try_from_str(calculation_profile_id))
 
     @blueprint.route('/<project_id>/calculation-profiles', methods=['GET'])
@@ -156,7 +163,7 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/model/time-discretization', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_time_discretization(project_id: str):
+    def project_model_time_discretization(project_id: str):
         return ReadModelTimeDiscretizationRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/model/layers', methods=['GET'])
@@ -168,7 +175,7 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/model/layers/<layer_id>/properties/<property_name>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_layers_property(project_id: str, layer_id: str, property_name: str):
+    def project_model_layer_property(project_id: str, layer_id: str, property_name: str):
         output_format = DataOutputFormat(request.args.get('format', DataOutputFormat.raster))
         return ReadModelLayerPropertyDataRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),
@@ -180,7 +187,7 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/model/layers/<layer_id>/properties/<property_name>/image', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_layers_property_image(project_id: str, layer_id: str, property_name: str):
+    def project_model_layer_property_image(project_id: str, layer_id: str, property_name: str):
         output_format = ImageOutputFormat(request.args.get('format', ImageOutputFormat.raster))
         return ReadModelLayerPropertyImageRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),
@@ -193,13 +200,13 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/model/boundaries/<boundary_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_boundaries(project_id: str, boundary_id: str | None = None):
+    def project_model_boundaries(project_id: str, boundary_id: str | None = None):
         return ReadModelBoundariesRequestHandler().handle(project_id=ProjectId.from_str(project_id), boundary_id=BoundaryId.try_from_str(boundary_id))
 
     @blueprint.route('/<project_id>/model/boundaries/<boundary_id>/affected_cells', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_model_get_boundary_affected_cells(project_id: str, boundary_id: str):
+    def project_model_boundary_affected_cells(project_id: str, boundary_id: str):
         output_format: Literal['json', 'geojson', 'geojson_outline'] | str = request.args.get('format', 'json')  # default to json
         return ReadModelBoundaryAffectedCellsRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),
@@ -210,7 +217,7 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/permissions', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_get_permissions(project_id: str):
+    def project_permissions(project_id: str):
         return ReadPermissionsRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['GET'])
@@ -232,14 +239,14 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     @validate_request
-    def list_project_assets(project_id: str):
+    def project_assets(project_id: str):
         return ReadAssetListRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/assets/<asset_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
     @validate_request
-    def read_project_asset(project_id: str, asset_id: str):
+    def project_asset(project_id: str, asset_id: str):
         return ReadAssetRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),
             asset_id=AssetId.from_str(asset_id)
@@ -259,7 +266,7 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     @validate_request
-    def read_project_asset_data(project_id: str, asset_id: str):
+    def project_asset_data(project_id: str, asset_id: str):
         band = request.args.get('band', None)
         return ReadAssetDataRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),

@@ -1,4 +1,5 @@
 import useAssets, {IAssetId} from './useAssets';
+import useCalculation from './useCalculation';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useProject from './useProject';
@@ -13,6 +14,7 @@ import useTranslate from './useTranslate';
 
 export {
   useAssets,
+  useCalculation,
   useModel,
   useModelSetup,
   useProject,

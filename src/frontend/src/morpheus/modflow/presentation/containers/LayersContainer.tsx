@@ -13,7 +13,6 @@ import LayersList from '../components/ModelLayers/LayersList';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import {MapRef} from 'common/components/Map/Map';
 
-
 const LayersContainer = () => {
 
   const {projectId} = useParams();

@@ -57,6 +57,7 @@ class StartCalculationCommandHandler(CommandHandlerBase):
         model = model_reader.get_latest_model(project_id=project_id)
         version = model_reader.get_latest_model_version_string(project_id=project_id)
 
-        calculation_id = AsyncCalculationService.create_async_calculation(project_id=project_id, model=model, model_version=version, profile=calculation_profile)
+        calculation_id = AsyncCalculationService.create_async_calculation(project_id=project_id, model=model, model_version=version, profile=calculation_profile,
+                                                                          calculation_id=command.new_calculation_id)
         run_calculation_by_id.delay(calculation_id=calculation_id.to_str())  # type: ignore
         # see: https://github.com/microsoft/pylance-release/issues/4220#issuecomment-1501942176

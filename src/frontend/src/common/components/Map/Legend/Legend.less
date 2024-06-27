@@ -2,6 +2,7 @@
   color: #555;
   width: auto;
   background: rgba(255, 255, 255, 0.6);
+
 }
 
 
@@ -35,10 +36,14 @@
 }
 
 .legend_list_horizontal {
+  border-radius: 10px;
   list-style: none;
-  margin: 0;
+  margin: auto;
   padding: 0;
   display: flex;
+  max-width: calc(100vw - 140px);
+  width: fit-content;
+  overflow: auto;
 
   .legend_item {
     flex-direction: column;

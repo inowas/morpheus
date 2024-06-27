@@ -1,13 +1,16 @@
 from ...infrastructure.persistence.ModelRepository import model_repository
 from ...infrastructure.persistence.ModelVersionTagRepository import model_version_tag_repository
 from ...types.ModelVersion import ModelVersion, VersionTag
-from ...types.Model import Model
+from ...types.Model import Model, Sha1Hash
 from ...types.Project import ProjectId
 
 
 class ModelReader:
     def get_latest_model(self, project_id: ProjectId) -> Model:
         return model_repository.get_latest_model(project_id=project_id)
+
+    def get_latest_model_hash(self, project_id: ProjectId) -> Sha1Hash:
+        return model_repository.get_latest_model_hash(project_id=project_id)
 
     def get_latest_model_version_string(self, project_id: ProjectId) -> str:
         return model_repository.get_latest_model_version_string(project_id=project_id)

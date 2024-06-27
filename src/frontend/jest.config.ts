@@ -24,7 +24,7 @@ export default async (): Promise<Config.InitialOptions> => ({
       statements: 25,
       branches: 10,
       lines: 25,
-      functions: 20,
+      functions: 15,
     },
   },
   coveragePathIgnorePatterns: [

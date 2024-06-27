@@ -82,7 +82,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         # general packages
         # mf
-        flopy_model = create_mf_package(model=model, model_ws=self.workspace_path, settings=calculation_engine_settings.mf)
+        flopy_model = create_mf_package(model=model, model_name='mf2005', model_ws=self.workspace_path, settings=calculation_engine_settings.mf)
         # dis
         create_dis_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.dis)
         # bas
@@ -219,7 +219,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return CalculationResult.failure(
                 message="Calculation failed",
                 files=os.listdir(self.workspace_path),
-                package_list=self.get_package_list()
+                packages=self.get_packages()
             )
 
         return CalculationResult.success(
@@ -230,7 +230,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             flow_budget_results=self.__read_flow_budget_results(),
             transport_concentration_results=self.__read_transport_concentration_results(),
             transport_budget_results=self.__read_transport_concentration_budget_results(),
-            package_list=self.get_package_list()
+            packages=self.get_packages()
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -399,10 +399,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         if not os.path.exists(file):
             return None
 
-        with open(file, 'r') as f:
-            return f.read()
+        try:
+            with open(file, 'r') as f:
+                return f.read()
+        except UnicodeError:
+            return "Binary file"
 
-    def get_package_list(self) -> list[str]:
+    def get_packages(self) -> list[str]:
         flopy_model = self.__load_flopy_model()
         if flopy_model is None:
             return []
