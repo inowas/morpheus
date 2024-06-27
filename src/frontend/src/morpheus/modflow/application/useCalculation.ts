@@ -10,7 +10,8 @@ import {IStartCalculationCommand} from './useProjectCommandBus.type';
 
 
 interface IUseCalculation {
-  fetchCalculation: (calculationId: string) => Promise<ICalculation | undefined>;
+  fetchCalculationById: (calculationId: string) => Promise<ICalculation | undefined>;
+  fetchLatestCalculation: () => Promise<ICalculation | undefined>;
   fetchFile: (calculationId: string, file: string) => Promise<string | undefined>;
   startCalculation: () => Promise<ICalculationId | undefined>;
   loading: boolean;
@@ -121,11 +122,32 @@ const useCalculation = (projectId: string): IUseCalculation => {
     }
   };
 
-  const fetchCalculation = async (calculationId: string): Promise<ICalculation | undefined> => {
+  const fetchCalculationById = async (calculationId: string): Promise<ICalculation | undefined> => {
     setLoading(true);
     setError(null);
 
     const response = await httpGet<ICalculationResponse>(`/projects/${projectId}/calculations/${calculationId}`);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (response.ok) {
+      return response.val;
+    }
+
+    if (response.err) {
+      setError(response.val);
+    }
+  };
+
+  const fetchLatestCalculation = async (): Promise<ICalculation | undefined> => {
+    setLoading(true);
+    setError(null);
+
+    const response = await httpGet<ICalculationResponse>(`/projects/${projectId}/model/calculation`);
 
     if (!isMounted.current) {
       return;
@@ -164,9 +186,10 @@ const useCalculation = (projectId: string): IUseCalculation => {
   };
 
   return {
-    startCalculation,
-    fetchCalculation,
+    fetchCalculationById,
+    fetchLatestCalculation,
     fetchFile,
+    startCalculation,
     loading,
     error: error || undefined,
   };
