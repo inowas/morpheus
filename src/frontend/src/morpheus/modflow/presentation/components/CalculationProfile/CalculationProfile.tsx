@@ -19,8 +19,6 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
 
   useEffect(() => {
     setProfile(calculationProfile);
-    console.log(calculationProfile);
-
   }, [calculationProfile]);
 
   const calculationOptions = [

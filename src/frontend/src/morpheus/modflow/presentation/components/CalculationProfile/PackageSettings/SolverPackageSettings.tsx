@@ -4,7 +4,8 @@ import {SectionTitle} from '../../../../../../common/components';
 import PackageWrapper from './PackageWrapper';
 import {DropdownInput} from '../FormFields';
 import {Form} from 'semantic-ui-react';
-import {De4PackageSettings} from './index';
+import {De4PackageSettings, GmgPackageSettings, PcgnPackageSettings, PcgPackageSettings} from './index';
+import SipPackageSettings from './SipPackageSettings';
 
 interface IProps {
   settings: ICalculationProfile['engine_settings']
@@ -51,6 +52,34 @@ const SolverPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <De4PackageSettings
             settings={settings.de4}
             onChange={(value) => onChange({...settings, de4: value})}
+            isReadOnly={isReadOnly}
+          />
+        )}
+        {'gmg' === settings.selected_solver_package && (
+          <GmgPackageSettings
+            settings={settings.gmg}
+            onChange={(value) => onChange({...settings, gmg: value})}
+            isReadOnly={isReadOnly}
+          />
+        )}
+        {'pcg' === settings.selected_solver_package && (
+          <PcgPackageSettings
+            settings={settings.pcg}
+            onChange={(value) => onChange({...settings, pcg: value})}
+            isReadOnly={isReadOnly}
+          />
+        )}
+        {'pcgn' === settings.selected_solver_package && (
+          <PcgnPackageSettings
+            settings={settings.pcgn}
+            onChange={(value) => onChange({...settings, pcgn: value})}
+            isReadOnly={isReadOnly}
+          />
+        )}
+        {'sip' === settings.selected_solver_package && (
+          <SipPackageSettings
+            settings={settings.sip}
+            onChange={(value) => onChange({...settings, sip: value})}
             isReadOnly={isReadOnly}
           />
         )}
