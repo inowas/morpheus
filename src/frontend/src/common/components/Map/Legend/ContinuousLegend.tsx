@@ -4,11 +4,12 @@ import './Legend.less';
 import {useMap} from 'react-leaflet';
 
 interface IProps {
+  title?: string;
   value: number | null;
   minValue: number;
   maxValue: number;
   numberOfGrades?: number;
-  getRgbColor: (value: number) => string;
+  getRgbColor: (value: number, minVal: number, maxVal: number) => string;
   direction?: 'horizontal' | 'vertical';
 }
 
@@ -21,26 +22,32 @@ const calculateGrades = (numberOfSteps: number, minValue: number, maxValue: numb
   return grades;
 };
 
-const Legend = ({value, getRgbColor, minValue, maxValue, numberOfGrades = 25, direction = 'vertical'}: IProps) => {
+const ContinuousLegend = ({title, value, getRgbColor, minValue, maxValue, numberOfGrades = 25, direction = 'vertical'}: IProps) => {
 
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
   const [previousValue, setPreviousValue] = React.useState<number | null>(null);
-  const legendIndicatorPosition = value ? `calc(${value && (value / maxValue) * 100}% - 18px)` : `calc(${previousValue && (previousValue / maxValue) * 100}% - 18px)`;
-
   const isFloat = (n: number) => 0 !== n % 1;
 
-  useEffect(() => {
+  const getLegendIndicatorPosition = (value: number | null) => {
+    if (value) {
+      return `calc(${(value - minValue) / (maxValue - minValue) * 100}% - 18px)`;
+    }
 
+    return `calc(${previousValue && (previousValue - minValue) / (maxValue - minValue) * 100}% - 18px)`;
+  };
+
+  useEffect(() => {
     if (map) {
       map.removeControl(legend);
       legend.onAdd = () => {
 
         const grades = calculateGrades(numberOfGrades, minValue, maxValue);
-        const colors = grades.map((grade) => getRgbColor(grade));
+        const colors = grades.map((grade) => getRgbColor(grade, minValue, maxValue));
 
         const div = L.DomUtil.create('div', 'legend_info legend');
-        div.innerHTML = '<h4>Legend</h4>';
+        div.innerHTML = title ? `<h4 style="margin-bottom: 10px">${title}</h4>` : '';
+
         const divInner = document.createElement('div');
         divInner.setAttribute('class', 'horizontal' === direction ? 'legend_inner_horizontal' : 'legend_inner_vertical');
         const divLine = document.createElement('div');
@@ -53,7 +60,6 @@ const Legend = ({value, getRgbColor, minValue, maxValue, numberOfGrades = 25, di
 
         divInner.appendChild(divLine);
         divInner.appendChild(divIndicator);
-
         div.appendChild(divInner);
         return div;
       };
@@ -68,9 +74,9 @@ const Legend = ({value, getRgbColor, minValue, maxValue, numberOfGrades = 25, di
     if (indicatorElement) {
       indicatorElement.setAttribute('class', 'legend_indicator');
       if ('horizontal' === direction) {
-        indicatorElement.style.left = legendIndicatorPosition;
+        indicatorElement.style.left = getLegendIndicatorPosition(value);
       } else {
-        indicatorElement.style.top = legendIndicatorPosition;
+        indicatorElement.style.top = getLegendIndicatorPosition(value);
       }
       setPreviousValue(value);
       indicatorElement.style.opacity = `${null !== value ? '1' : '0'}`;
@@ -90,4 +96,4 @@ const Legend = ({value, getRgbColor, minValue, maxValue, numberOfGrades = 25, di
   return null;
 };
 
-export default Legend;
+export default ContinuousLegend;

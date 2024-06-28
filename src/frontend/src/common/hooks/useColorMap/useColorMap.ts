@@ -17,13 +17,13 @@ const useColorMap = (name: IColorMap): IUseColorMap => {
   }, [name]);
 
   const getX = (value: number, minValue: number, maxValue: number) => {
-    if (value < minValue) return 0;
-    if (value > maxValue) return 1;
-
     // round min and max values to 6 decimal places
     minValue = Math.round(minValue * 1e6) / 1e6;
     maxValue = Math.round(maxValue * 1e6) / 1e6;
     if (minValue === maxValue) return 0.5;
+
+    if (value <= minValue) return 0;
+    if (value >= maxValue) return 1;
 
     return (value - minValue) / (maxValue - minValue);
   };

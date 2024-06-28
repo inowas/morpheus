@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
 import {IError} from '../../types';
 import {ICalculation, ICalculationId, ICalculationResultType, ICalculationState} from '../types/Calculation.type';
@@ -39,30 +39,40 @@ interface ICalculationResponse {
       kstpkper: [number, number][];
       number_of_layers: number;
       number_of_observations: number;
+      min_value: number | null;
+      max_value: number | null;
     };
     flow_drawdown_results: {
       times: number[];
       kstpkper: [number, number][];
       number_of_layers: number;
       number_of_observations: number;
+      min_value: number | null;
+      max_value: number | null;
     };
     flow_budget_results: {
       times: number[];
       kstpkper: [number, number][];
       number_of_layers: number;
       number_of_observations: number;
+      min_value: number | null;
+      max_value: number | null;
     };
     transport_concentration_results: {
       times: number[];
       kstpkper: [number, number][];
       number_of_layers: number;
       number_of_observations: number;
+      min_value: number | null;
+      max_value: number | null;
     };
     transport_budget_results: {
       times: number[];
       kstpkper: [number, number][];
       number_of_layers: number;
       number_of_observations: number;
+      min_value: number | null;
+      max_value: number | null;
     };
     packages: string[];
   } | null;
@@ -81,6 +91,12 @@ const useCalculation = (projectId: string): IUseCalculation => {
   const isMounted = useRef(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const {httpGet} = useApi();
   const {sendCommand} = useProjectCommandBus();

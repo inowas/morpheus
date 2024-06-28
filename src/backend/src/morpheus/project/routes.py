@@ -83,15 +83,15 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_calculation_results(project_id: str, calculation_id: str, result_type: str = 'flow_head'):
-        idx = int(request.args.get('idx', 0))
-        layer = int(request.args.get('layer', 0))
+        time_idx = int(request.args.get('time_idx', 0))
+        layer_idx = int(request.args.get('layer_idx', 0))
         incremental = request.args.get('incremental', 'false').lower() == 'true'
         return ReadCalculationResultsRequestHandler().handle(
             project_id=ProjectId.from_str(project_id),
             calculation_id=CalculationId.from_str(calculation_id),
             result_type=result_type,
-            idx=idx,
-            layer=layer,
+            time_idx=time_idx,
+            layer_idx=layer_idx,
             incremental=incremental
         )
 
@@ -100,21 +100,18 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/calculation-profiles/<calculation_profile_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def project_selected_calculation_profile(project_id: str, calculation_profile_id: str | None = None):
         return ReadSelectedCalculationProfileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_profile_id=CalculationProfileId.try_from_str(calculation_profile_id))
 
     @blueprint.route('/<project_id>/calculation-profiles', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def get_project_calculation_profiles(project_id: str):
         return ReadCalculationProfilesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['PUT'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def project_preview_image_upload(project_id: str):
         return UploadPreviewImageRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 

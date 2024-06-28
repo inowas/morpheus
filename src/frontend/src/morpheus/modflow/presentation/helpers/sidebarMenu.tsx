@@ -25,6 +25,7 @@ import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationC
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import CalculationContainer from '../containers/CalculationContainer';
+import FlowResultsContainer from '../containers/FlowResultsContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -117,9 +118,10 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
     },
     {
       icon: <FontAwesomeIcon icon={faMap}/>,
-      name: 'Groundwater heads',
+      name: 'Flow Results',
       isTitle: false,
-      slug: 'groundwater-heads',
+      slug: 'flow-results',
+      component: <FlowResultsContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faChartSimple}/>,

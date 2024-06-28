@@ -12,7 +12,7 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileUpdatedEvent import CalculationProfileUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
+from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId
 
 
 class UpdateCalculationProfileCommandPayload(TypedDict):
@@ -23,6 +23,7 @@ class UpdateCalculationProfileCommandPayload(TypedDict):
 @dataclasses.dataclass(frozen=True)
 class UpdateCalculationProfileCommand(CommandBase):
     project_id: ProjectId
+    calculation_profile_id: CalculationProfileId
     calculation_profile: CalculationProfile
 
     @classmethod
@@ -30,6 +31,7 @@ class UpdateCalculationProfileCommand(CommandBase):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
+            calculation_profile_id=CalculationProfileId.from_str(payload['calculation_profile_id']),
             calculation_profile=CalculationProfile.from_dict(payload['calculation_profile'])
         )
 
@@ -49,6 +51,9 @@ class UpdateCalculationProfileCommandHandler(CommandHandlerBase):
         calculation_profile = command.calculation_profile
         if not isinstance(calculation_profile, CalculationProfile):
             raise ValueError('Calculation profile not found')
+
+        if calculation_profile.id != command.calculation_profile_id:
+            raise ValueError('Calculation profile id does not match the id in the command')
 
         event = CalculationProfileUpdatedEvent.from_calculation_profile(calculation_profile=calculation_profile, project_id=project_id, occurred_at=DateTime.now())
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

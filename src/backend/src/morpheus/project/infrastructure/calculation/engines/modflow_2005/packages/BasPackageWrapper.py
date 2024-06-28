@@ -45,7 +45,7 @@ class BasPackageData:
 
     def __init__(self, ibound: int | list[list[list[int]]] = 1, strt: float | list[float | list[list[float]]] = 1.0,
                  ifrefm: bool = True, ixsec: bool = False, ichflg: bool = False, stoper: None | float = None,
-                 hnoflo: float = -999.99, extension: str = "bas", unitnumber: None | int = None,
+                 hnoflo: float = -9999, extension: str = "bas", unitnumber: None | int = None,
                  filenames: None | str | list[str] = None):
         self.ibound = ibound
         self.strt = strt
@@ -73,10 +73,10 @@ class BasPackageData:
 def calculate_bas_package_data(model: Model, settings: BasPackageSettings) -> BasPackageData:
     cells = model.spatial_discretization.affected_cells
     number_of_layers = model.layers.number_of_layers()
-    if len(cells) == cells.shape[0] * cells.shape[1]:
+    if len(cells) == cells.n_rows() * cells.n_cols():
         ibound = 1
     else:
-        ibound = np.zeros((number_of_layers, cells.shape[1], cells.shape[0]), dtype=int)
+        ibound = np.zeros((number_of_layers, cells.n_rows(), cells.n_cols()), dtype=int)
         for layer_index in range(number_of_layers):
             for cell in cells:
                 ibound[layer_index, cell.row, cell.col] = 1
