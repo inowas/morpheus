@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import L from 'leaflet';
 import './Legend.less';
 import {useMap} from 'react-leaflet';
@@ -15,6 +15,8 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
 
+  console.log(grades);
+
   useEffect(() => {
     if (map) {
       map.removeControl(legend);
@@ -23,7 +25,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         div.innerHTML = '<h4>Legend</h4>';
         const ul = document.createElement('ul');
         ul.setAttribute('class', 'horizontal' === direction ? 'legend_list_horizontal' : 'legend_list');
-        for (var i = 0; i < grades.length; i++) {
+        for (let i = 0; i < grades.length; i++) {
           const li = document.createElement('li');
           li.setAttribute('class', 'legend_item');
           if (value === grades[i]) {
@@ -32,7 +34,8 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
           const currentColor = getRgbColor(grades[i]);
           // Use next color or current color if it's the last item
           const nextColor = getRgbColor(grades[i + 1] || grades[i] + 1);
-          li.innerHTML = `<span>${grades[i]}</span> <i style="background: linear-gradient(${'horizontal' === direction ? 'to right' : 'to bottom'}, ${currentColor}, ${nextColor})"></i>`;
+          // li.innerHTML = `<span>${grades[i]}</span> <i style="background: linear-gradient(${'horizontal' === direction ? 'to right' : 'to bottom'}, ${currentColor}, ${nextColor})"></i>`;
+          li.innerHTML = `<i style="background: linear-gradient(${'horizontal' === direction ? 'to right' : 'to bottom'}, ${currentColor}, ${nextColor}); width: 10px;"></i>`;
           ul.appendChild(li);
         }
 
@@ -41,9 +44,10 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
       };
 
       legend.addTo(map);
+      setLegend(legend);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, grades]);
+  }, [grades, getRgbColor, value]);
 
   useEffect(() => {
     return () => {
@@ -51,6 +55,7 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
         map.removeControl(legend);
       }
     };
+    // eslint-disable-next-line
   }, []);
 
   return null;

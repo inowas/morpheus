@@ -1,5 +1,6 @@
 from morpheus.common.types.Exceptions import NotFoundException
 from ...infrastructure.persistence.CalculationRepository import CalculationRepository, calculation_repository
+from ...types.Model import Sha1Hash
 from ...types.Project import ProjectId
 from ...types.calculation.Calculation import Calculation, CalculationId
 
@@ -21,6 +22,12 @@ class CalculationReader:
         if calculations is None:
             raise NotFoundException(f'Calculations for project {project_id} not found.')
         return calculations
+
+    def get_calculation_by_model_hash_and_profile_hash(self, project_id: ProjectId, model_hash: Sha1Hash, profile_hash: Sha1Hash) -> Calculation:
+        calculation = self._repository.get_calculation_by_project_id_model_hash_and_profile_hash(project_id=project_id, model_hash=model_hash, profile_hash=profile_hash)
+        if calculation is None:
+            raise NotFoundException(f'Calculation for project {project_id} with model hash {model_hash} and profile hash {profile_hash} not found.')
+        return calculation
 
 
 calculation_reader = CalculationReader(repository=calculation_repository)

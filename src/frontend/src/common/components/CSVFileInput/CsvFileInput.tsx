@@ -2,10 +2,12 @@ import React, {ChangeEvent, useState} from 'react';
 import styles from './CsvFileInput.module.less';
 
 interface ICsvFileInput {
+  content?: string;
+  style?: React.CSSProperties;
   onChange: (csvFile: File) => void;
 }
 
-const CsvFileInput = ({onChange}: ICsvFileInput) => {
+const CsvFileInput = ({onChange, style, content}: ICsvFileInput) => {
 
   const [error, setError] = useState<string | null>(null);
   const [filename, setFilename] = useState<string | null>(null);
@@ -25,8 +27,8 @@ const CsvFileInput = ({onChange}: ICsvFileInput) => {
   };
 
   return (
-    <div className={styles.updateCSV}>
-      <label htmlFor="fileUploadId">Upload file</label>
+    <div className={styles.updateCSV} style={{...style}}>
+      <label htmlFor="fileUploadId">{content || 'Upload file'}</label>
       <input
         id="fileUploadId"
         onChange={handleOnChangeFile}

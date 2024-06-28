@@ -82,7 +82,7 @@ class CalculationEngineBase:
     def read_file(self, file_name: str) -> str | None:
         raise NotImplementedError
 
-    def get_package_list(self) -> list[str]:
+    def get_packages(self) -> list[str]:
         raise NotImplementedError
 
     def get_package(self, package_name: str):

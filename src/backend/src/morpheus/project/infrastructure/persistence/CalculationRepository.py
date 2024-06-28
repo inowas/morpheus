@@ -2,7 +2,7 @@ import dataclasses
 from datetime import datetime
 
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.project.types.Model import Model
+from morpheus.project.types.Model import Model, Sha1Hash
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.Calculation import CalculationId, Calculation, CalculationState, Log
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
@@ -15,8 +15,10 @@ class CalculationRepositoryDocument:
     calculation_id: str
     project_id: str
     model: dict
+    model_hash: str
     model_version: str
     profile: dict
+    profile_hash: str
     lifecycle: list[CalculationState]
     state: CalculationState
     check_model_log: list[str] | None
@@ -31,8 +33,10 @@ class CalculationRepositoryDocument:
             calculation_id=obj['calculation_id'],
             project_id=obj['project_id'],
             model=obj['model'],
+            model_hash=obj['model_hash'],
             model_version=obj['model_version'],
             profile=obj['profile'],
+            profile_hash=obj['profile_hash'],
             lifecycle=[CalculationState(state) for state in obj['lifecycle']],
             state=CalculationState(obj['state']),
             check_model_log=obj['check_model_log'],
@@ -81,8 +85,10 @@ class CalculationRepository(RepositoryBase):
             calculation_id=calculation_id.to_str(),
             project_id=project_id.to_str(),
             model=model.to_dict(),
+            model_hash=model.get_sha1_hash().to_str(),
             model_version=model_version,
             profile=profile.to_dict(),
+            profile_hash=profile.get_sha1_hash().to_str(),
             lifecycle=[CalculationState.CREATED],
             state=CalculationState.CREATED,
             check_model_log=None,
@@ -171,6 +177,19 @@ class CalculationRepository(RepositoryBase):
     def get_calculations_by_project_id(self, project_id: ProjectId) -> list[Calculation]:
         raw_documents = self.collection.find({'project_id': project_id.to_str()})
         return [CalculationRepositoryDocument.from_dict(raw_document).to_calculation() for raw_document in raw_documents]
+
+    def get_calculation_by_project_id_model_hash_and_profile_hash(self, project_id: ProjectId, model_hash: Sha1Hash, profile_hash: Sha1Hash) -> Calculation | None:
+        raw_document = self.collection.find_one({
+            'project_id': project_id.to_str(),
+            'model_hash': model_hash.to_str(),
+            'profile_hash': profile_hash.to_str()
+        })
+
+        if raw_document is None:
+            return None
+
+        document = CalculationRepositoryDocument.from_dict(raw_document)
+        return document.to_calculation()
 
     def delete_calculations_by_project_id(self, project_id: ProjectId) -> None:
         self.collection.delete_many({'project_id': project_id.to_str()})
