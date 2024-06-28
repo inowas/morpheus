@@ -19,8 +19,6 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
 
   useEffect(() => {
     setProfile(calculationProfile);
-    console.log(calculationProfile);
-
   }, [calculationProfile]);
 
   const calculationOptions = [
@@ -68,7 +66,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
             key: 'modflow-package-1',
             content: <span>Modflow Package</span>,
           },
-          render: () => null, // No content for the first tab because it's we use it as a Title
+          render: () => null, // No content for the first tab because we use it as a Title
         },
         {
           menuItem: 'Modflow Package',
