@@ -74,8 +74,7 @@ const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             isReadOnly={true}
             description={descriptions.lpf.wetdry}
           />
-          {/* TODO - update hdry for scientific number using FloatInput and toExponential  */}
-          <IntegerInput
+          <FloatInput
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
             isReadOnly={true}
