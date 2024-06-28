@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {Feature, Polygon} from 'geojson';
 import ReactLeafletCanvasDataLayer from './ReactLeafletCanvasDataLayer';
-import {LatLngExpression} from 'leaflet';
+import {GridLayerOptions, LatLngExpression} from 'leaflet';
 import {bbox} from '@turf/turf';
 import {ContinuousLegend} from '../Legend';
 
@@ -13,10 +13,11 @@ interface IProps {
   outline: Feature<Polygon>
   getRgbColor: (value: number) => string;
   onHover?: (value: number | null) => void;
+  options?: GridLayerOptions;
 }
 
 
-const CanvasDataLayer = ({data, rotation, outline, getRgbColor, minVal, maxVal}: IProps) => {
+const CanvasDataLayer = ({data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
 
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
@@ -42,6 +43,7 @@ const CanvasDataLayer = ({data, rotation, outline, getRgbColor, minVal, maxVal}:
         bounds={bounds}
         getRgbColor={getRgbColor}
         onHover={setHoveredValue}
+        options={options}
       />
       <ContinuousLegend
         direction={'horizontal'}

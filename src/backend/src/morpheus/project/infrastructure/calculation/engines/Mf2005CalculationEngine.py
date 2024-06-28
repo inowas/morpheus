@@ -324,7 +324,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         return []
 
@@ -332,7 +333,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         self, totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
@@ -344,8 +346,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
         if data is None:
             return []
-        data = np.round(data, 3)
-        data[data < -999] = None
+        data = np.round(data, precision)
         return data.tolist()
 
     def read_flow_head(
@@ -353,7 +354,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
@@ -365,8 +367,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
         if data is None:
             return []
-        data = np.round(data, 3)
-        data[data <= -999] = None
+        data = np.round(data, precision)
         return data.tolist()
 
     def read_head_observations(self) -> list[Observation]:

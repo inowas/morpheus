@@ -253,6 +253,12 @@ class ActiveCells:
             'data': data.tolist()
         }
 
+    def n_cols(self) -> int:
+        return self.shape[1]
+
+    def n_rows(self) -> int:
+        return self.shape[0]
+
     def is_active(self, col: int, row: int) -> bool:
         if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
             return False

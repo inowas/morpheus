@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useLeafletContext} from '@react-leaflet/core';
 import LeafletCanvasDataLayer from './LeafletCanvasDataLayer';
-import {LatLngExpression} from 'leaflet';
+import {GridLayerOptions, LatLngExpression} from 'leaflet';
 
 interface IProps {
   data: number[][];
@@ -9,9 +9,10 @@ interface IProps {
   bounds: LatLngExpression[];
   getRgbColor: (value: number) => string;
   onHover?: (value: number | null) => void;
+  options?: GridLayerOptions;
 }
 
-const CanvasDataLayer = ({data, rotation, bounds, getRgbColor, onHover}: IProps) => {
+const CanvasDataLayer = ({data, rotation, bounds, getRgbColor, onHover, options}: IProps) => {
 
   const context = useLeafletContext();
 
@@ -24,6 +25,7 @@ const CanvasDataLayer = ({data, rotation, bounds, getRgbColor, onHover}: IProps)
   };
 
   useEffect(() => {
+
     if (!data || !bounds) {
       return;
     }
@@ -32,7 +34,7 @@ const CanvasDataLayer = ({data, rotation, bounds, getRgbColor, onHover}: IProps)
     const nRows = data.length;
 
     const scalingFactor = (200 < nCols + nRows) ? 1 : 10;
-    const dataLayer = new LeafletCanvasDataLayer(data, bounds, rotation, getRgbColor, handleHover, scalingFactor);
+    const dataLayer = new LeafletCanvasDataLayer(data, bounds, rotation, getRgbColor, handleHover, scalingFactor, options);
     dataLayer.setData(data);
     const container = context.layerContainer || context.map;
     container.addLayer(dataLayer);
@@ -48,6 +50,12 @@ const CanvasDataLayer = ({data, rotation, bounds, getRgbColor, onHover}: IProps)
       layer.setData(data);
     }
   }, [data, rotation, bounds, getRgbColor, onHover]);
+
+  useEffect(() => {
+    if (layer) {
+      layer.setOpacity(options?.opacity || 1);
+    }
+  }, [options?.opacity]);
 
   return null;
 };

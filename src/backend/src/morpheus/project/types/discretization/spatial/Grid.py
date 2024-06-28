@@ -107,8 +107,7 @@ class Grid:
         )
 
     @classmethod
-    def from_polygon_with_relative_coordinates(cls, polygon: Polygon, rotation: Rotation, relative_col_coordinates: list[float],
-                                               relative_row_coordinates: list[float]) -> "Grid":
+    def from_polygon_with_relative_coordinates(cls, polygon: Polygon, rotation: Rotation, relative_col_coordinates: list[float], relative_row_coordinates: list[float]) -> "Grid":
 
         if len(relative_col_coordinates) < 1 or len(relative_row_coordinates) < 1:
             raise ValueError('percentages must have at least one element')
@@ -356,7 +355,7 @@ class Grid:
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
         geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
-        return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box', **self.to_dict()})
+        return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box'})
 
     def get_wgs_width_height(self) -> Tuple[float, float]:
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
@@ -467,3 +466,6 @@ class Grid:
             relative_col_coordinates=col_coordinates_relative,
             relative_row_coordinates=row_coordinates_relative
         )
+
+    def is_regular(self) -> bool:
+        return all([width == self.col_widths[0] for width in self.col_widths]) and all([height == self.row_heights[0] for height in self.row_heights])
