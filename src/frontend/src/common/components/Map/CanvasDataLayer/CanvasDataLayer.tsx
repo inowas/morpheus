@@ -6,18 +6,19 @@ import {bbox} from '@turf/turf';
 import {ContinuousLegend} from '../Legend';
 
 interface IProps {
+  title?: string;
   data: number[][];
   minVal: number;
   maxVal: number;
   rotation: number;
   outline: Feature<Polygon>
-  getRgbColor: (value: number) => string;
+  getRgbColor: (value: number, minVal: number, maxVal: number) => string;
   onHover?: (value: number | null) => void;
   options?: GridLayerOptions;
 }
 
 
-const CanvasDataLayer = ({data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
+const CanvasDataLayer = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
 
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
@@ -41,11 +42,12 @@ const CanvasDataLayer = ({data, rotation, outline, getRgbColor, minVal, maxVal, 
         data={data}
         rotation={rotation}
         bounds={bounds}
-        getRgbColor={getRgbColor}
+        getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
         onHover={setHoveredValue}
         options={options}
       />
       <ContinuousLegend
+        title={title}
         direction={'horizontal'}
         value={hoveredValue}
         minValue={minVal}

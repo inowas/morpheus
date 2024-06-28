@@ -84,7 +84,6 @@ const useCalculationData = (projectId: string): IUseCalculationData => {
     setLoading(false);
 
     if (response.ok) {
-      console.log(response.val, response.val.data);
       return {
         type,
         layer_idx: response.val.layer_idx,

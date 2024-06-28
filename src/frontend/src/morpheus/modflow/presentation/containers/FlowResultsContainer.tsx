@@ -76,8 +76,6 @@ const FlowResultsContainer = () => {
     setData(result);
   };
 
-  console.log(data);
-
   return (
     <>
       <SidebarContent maxWidth={500}>
@@ -125,15 +123,20 @@ const FlowResultsContainer = () => {
           <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
 
           {data && showContours && <ContoursDataLayer
-            data={data.data.values} rotation={data.data.rotation}
+            data={data.data.values}
+            rotation={data.data.rotation}
             outline={data.data.outline}
             getRgbColor={(value: number) => getRgbColor(value, data?.data.min_value, data?.data.max_value)}
           />}
 
           {data && !showContours && <CanvasDataLayer
-            data={data.data.values} minVal={data.data.min_value}
-            maxVal={data.data.max_value} rotation={data.data.rotation}
-            outline={data.data.outline} getRgbColor={(value: number) => getRgbColor(value, data?.data.min_value, data?.data.max_value)}
+            title={'Head [m]'}
+            data={data.data.values}
+            minVal={data.data.min_value}
+            maxVal={data.data.max_value}
+            outline={data.data.outline}
+            getRgbColor={(value: number) => getRgbColor(value, data?.data.min_value, data?.data.max_value)}
+            rotation={data.data.rotation}
             options={{opacity: opacity}}
           />}
         </Map>
