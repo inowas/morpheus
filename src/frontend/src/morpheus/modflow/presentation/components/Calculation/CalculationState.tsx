@@ -5,7 +5,6 @@ import {Button, Progress} from 'common/components';
 
 interface IProps {
   calculation?: ICalculation;
-  isLoading: boolean;
   isReadOnly: boolean;
   onStartCalculation?: () => void;
 }
@@ -33,7 +32,7 @@ const calculateProgress = (state: ICalculationState) => {
   }
 };
 
-const CalculationState = ({calculation, isLoading, isReadOnly, onStartCalculation}: IProps) => {
+const CalculationState = ({calculation, isReadOnly, onStartCalculation}: IProps) => {
 
 
   const renderProgress = (calculationState: ICalculationState) => {
@@ -61,7 +60,7 @@ const CalculationState = ({calculation, isLoading, isReadOnly, onStartCalculatio
   };
 
   return (
-    <Segment basic={true} loading={isLoading}>
+    <Segment basic={true}>
       <h1>Calculation Status</h1>
       {calculation ? renderProgress(calculation.state) : null}
       {calculation?.calculation_log ? <pre style={{backgroundColor: '#f9f9f9'}}>{calculation.calculation_log.join('\n')}</pre> : null}

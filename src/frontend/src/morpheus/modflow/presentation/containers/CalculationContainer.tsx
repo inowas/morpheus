@@ -21,7 +21,7 @@ const CalculationContainer = () => {
       return setCalculation(undefined);
     }
 
-    if (!['completed', 'failed', 'canceled'].includes(latestCalculation.state)) {
+    if (['created', 'queued', 'preprocessing', 'preprocessed', 'calculating'].includes(latestCalculation.state)) {
       setTimeout(() => handleFetchLatestCalculation(), 1000);
     }
 
