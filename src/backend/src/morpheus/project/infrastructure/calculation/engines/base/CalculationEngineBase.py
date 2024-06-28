@@ -45,7 +45,8 @@ class CalculationEngineBase:
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         raise NotImplementedError
 
@@ -63,7 +64,8 @@ class CalculationEngineBase:
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         raise NotImplementedError
 
@@ -72,7 +74,8 @@ class CalculationEngineBase:
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         raise NotImplementedError
 

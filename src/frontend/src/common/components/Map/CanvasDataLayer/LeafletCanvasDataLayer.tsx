@@ -50,6 +50,8 @@ class LeafletCanvasDataLayer extends L.GridLayer {
     this._onHover = onHover;
     this._zoomAnimated = true;
 
+    this.options = options || {};
+
     if (options) {
       Util.setOptions(this, options);
     }
@@ -359,7 +361,7 @@ class LeafletCanvasDataLayer extends L.GridLayer {
       row.forEach((value, nCol) => {
         const x = nCol * this._scalingFactor;
         const y = nRow * this._scalingFactor;
-        ctx.fillStyle = this._getRGBColor(value);
+        ctx.fillStyle = null === value ? 'transparent' : this._getRGBColor(value);
         ctx.fillRect(x, y, this._scalingFactor, this._scalingFactor);
       });
     });
@@ -367,6 +369,8 @@ class LeafletCanvasDataLayer extends L.GridLayer {
     if (this._rotation) {
       ctx.restore();
     }
+
+    this._updateOpacity();
   }
 
   _updateOpacity() {
@@ -375,6 +379,15 @@ class LeafletCanvasDataLayer extends L.GridLayer {
     }
 
     DomUtil.setOpacity(this._canvas, this.options.opacity || 1);
+  }
+
+  setOpacity(opacity: number): this {
+    if (!this._canvas) {
+      return this;
+    }
+    DomUtil.setOpacity(this._canvas, opacity);
+    this.options.opacity = opacity;
+    return this;
   }
 
   _updateZIndex() {

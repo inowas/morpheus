@@ -1,6 +1,9 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
 import {IError} from '../../types';
+import useProjectCommandBus from './useProjectCommandBus';
+import {IUpdateCalculationProfileCommand} from './useProjectCommandBus.type';
+import {useApi} from '../incoming';
 
 const calculationProfileData: ICalculationProfile = {
   'id': '7013a8ae-c059-4b8e-9f51-a8323817dc1c',
@@ -206,20 +209,93 @@ const calculationProfileData: ICalculationProfile = {
 };
 
 interface IUseCalculationProfile {
-  calculationProfile: ICalculationProfile;
+  calculationProfile: ICalculationProfile | null;
   updateCalculationProfile: (calculationProfile: ICalculationProfile) => void;
   loading: boolean;
-  error?: IError;
+  error: IError | null;
 }
 
 const useCalculationProfile = (projectId: string): IUseCalculationProfile => {
-  const [calculationProfile, setCalculationProfile] = useState<ICalculationProfile>(calculationProfileData);
+
+  const isMounted = useRef(true);
+  const [calculationProfile, setCalculationProfile] = useState<ICalculationProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<IError | undefined>(undefined);
+  const [error, setError] = useState<IError | null>(null);
+
+  const {httpGet} = useApi();
+  const {sendCommand} = useProjectCommandBus();
+
+  useEffect(() => {
+    fetchCalculationProfile();
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const fetchCalculationProfile = async () => {
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const response = await httpGet<ICalculationProfile>(`/projects/${projectId}/calculation-profiles/selected`);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (response.ok) {
+      setCalculationProfile(response.val);
+    }
+
+    if (response.err) {
+      setError(response.val);
+    }
+  };
+
+  const updateCalculationProfile = async (calculationProfile: ICalculationProfile) => {
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const command: IUpdateCalculationProfileCommand = {
+      command_name: 'update_calculation_profile_command',
+      payload: {
+        project_id: projectId,
+        calculation_profile_id: calculationProfile.id,
+        calculation_profile: calculationProfile,
+      },
+    };
+
+    const result = await sendCommand(command);
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.ok) {
+      setCalculationProfile(calculationProfile);
+    }
+
+    if (result.err) {
+      setError(result.val);
+    }
+
+  };
+
 
   return {
     calculationProfile,
-    updateCalculationProfile: setCalculationProfile,
+    updateCalculationProfile,
     loading,
     error,
   };

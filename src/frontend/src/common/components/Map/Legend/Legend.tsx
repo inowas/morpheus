@@ -15,7 +15,6 @@ const Legend = ({value, getRgbColor, grades, direction = 'vertical'}: IProps) =>
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
 
-
   useEffect(() => {
     if (map) {
       map.removeControl(legend);
