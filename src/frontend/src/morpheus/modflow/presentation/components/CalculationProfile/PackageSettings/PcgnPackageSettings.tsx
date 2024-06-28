@@ -15,7 +15,7 @@ const PcgnPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
   return (
     <>
       <SectionTitle
-        as={'h5'} title={'Pcgn Package Settings'}
+        as={'h5'} title={'PCGN: Preconditioned Conjugate Gradient Solver with Improved Nonlinear Control Package'}
         style={{marginBottom: 15}}
       />
       <Form>

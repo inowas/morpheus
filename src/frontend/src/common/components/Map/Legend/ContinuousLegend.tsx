@@ -25,8 +25,8 @@ const Legend = ({value, getRgbColor, minValue, maxValue, numberOfGrades = 25, di
 
   const map = useMap();
   const [legend, setLegend] = React.useState<L.Control>(new L.Control({position: 'bottomright'}));
-
-  const legendIndicatorPosition = value ? `calc(${value && (value / maxValue) * 100}% - 18px)` : '-10px';
+  const [previousValue, setPreviousValue] = React.useState<number | null>(null);
+  const legendIndicatorPosition = value ? `calc(${value && (value / maxValue) * 100}% - 18px)` : `calc(${previousValue && (previousValue / maxValue) * 100}% - 18px)`;
 
   const isFloat = (n: number) => 0 !== n % 1;
 
@@ -67,13 +67,14 @@ const Legend = ({value, getRgbColor, minValue, maxValue, numberOfGrades = 25, di
     const indicatorElement = document.getElementById('legend_indicator');
     if (indicatorElement) {
       indicatorElement.setAttribute('class', 'legend_indicator');
-
       if ('horizontal' === direction) {
         indicatorElement.style.left = legendIndicatorPosition;
       } else {
         indicatorElement.style.top = legendIndicatorPosition;
       }
-      indicatorElement.innerHTML = `${null !== value ? (isFloat(value) ? value.toFixed(2) : value) : '0'}`;
+      setPreviousValue(value);
+      indicatorElement.style.opacity = `${null !== value ? '1' : '0'}`;
+      indicatorElement.innerHTML = `${null !== value ? (isFloat(value) ? value.toFixed(2) : value) : ''}`;
     }
   }, [value]);
 

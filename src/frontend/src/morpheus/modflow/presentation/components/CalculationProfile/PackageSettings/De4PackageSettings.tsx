@@ -15,7 +15,7 @@ const De4PackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
   return (
     <>
       <SectionTitle
-        as={'h5'} title={'De4 Package Settings'}
+        as={'h5'} title={'DE4: Direct Solver Package'}
         style={{marginBottom: 15}}
       />
       <Form>

@@ -15,7 +15,6 @@ interface IProps {
 
 
 const SolverPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
-  console.log(settings);
 
   const flopPackageOptions = settings.available_solver_packages.map((p) => {
     return {key: p, value: p, text: `${p.toUpperCase()} 'Package`};

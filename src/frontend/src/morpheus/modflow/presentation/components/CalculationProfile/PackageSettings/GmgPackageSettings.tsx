@@ -15,7 +15,7 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
   return (
     <>
       <SectionTitle
-        as={'h5'} title={'Gmg Package Settings'}
+        as={'h5'} title={'GMG: Geometric Multigrid Solver Package'}
         style={{marginBottom: 15}}
       />
       <Form>

@@ -15,7 +15,7 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
   return (
     <>
       <SectionTitle
-        as={'h5'} title={'Pcg Package Settings'}
+        as={'h5'} title={'PCG: Preconditioned Conjugate-Gradient Package'}
         style={{marginBottom: 15}}
       />
       <Form>
