@@ -8,13 +8,24 @@ from morpheus.project.types.permissions.UserRoleAssignmentCollection import User
 
 class PermissionService:
     PUBLIC_PROJECT_PRIVILEGES: list[Privilege] = [Privilege.VIEW_PROJECT]
-    SUPER_ADMIN_PROJECT_PRIVILEGES: list[Privilege] = [Privilege.FULL_ACCESS]
-    OWNER_PROJECT_PRIVILEGES: list[Privilege] = [Privilege.FULL_ACCESS]
+    SUPER_ADMIN_PROJECT_PRIVILEGES: list[Privilege] = [
+        Privilege.VIEW_PROJECT,
+        Privilege.EDIT_PROJECT,
+        Privilege.MANAGE_PROJECT,
+        Privilege.FULL_ACCESS,
+    ]
+    OWNER_PROJECT_PRIVILEGES: list[Privilege] = [
+        Privilege.VIEW_PROJECT,
+        Privilege.EDIT_PROJECT,
+        Privilege.MANAGE_PROJECT,
+        Privilege.FULL_ACCESS,
+    ]
 
     PRIVILEGE_ROLE_MAP: dict[Privilege, list[Role]] = {
         Privilege.VIEW_PROJECT: [Role.VIEWER, Role.EDITOR, Role.ADMIN, Role.OWNER],
         Privilege.EDIT_PROJECT: [Role.EDITOR, Role.ADMIN, Role.OWNER],
         Privilege.MANAGE_PROJECT: [Role.ADMIN, Role.OWNER],
+        Privilege.FULL_ACCESS: [Role.OWNER]
     }
 
     # will be calculated on first access

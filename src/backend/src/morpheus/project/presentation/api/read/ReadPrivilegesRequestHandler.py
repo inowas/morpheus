@@ -11,7 +11,6 @@ class ReadPrivilegesRequestHandler:
         identity = get_identity()
         if identity is None:
             abort(401, 'Unauthorized')
-        user_id = identity.user_id
 
         try:
             permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)

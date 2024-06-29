@@ -4,11 +4,10 @@ from morpheus.common.types.identity.Identity import Identity
 from morpheus.project.application.read.PermissionsReader import permissions_reader
 from morpheus.project.application.write.Calculation import AddCalculationProfileCommand, StartCalculationCommand
 from morpheus.project.application.write.CommandBase import CommandBase, ProjectCommandBase
-from morpheus.project.application.write.Model import CreateModelCommand, CreateModelVersionCommand, CreateModelLayerCommand, CloneModelLayerCommand, AddModelBoundaryCommand, CloneModelBoundaryCommand, \
-    AddModelBoundaryObservationCommand
+from morpheus.project.application.write.Model import CreateModelCommand, CreateModelVersionCommand, CreateModelLayerCommand, CloneModelLayerCommand, AddModelBoundaryCommand, \
+    CloneModelBoundaryCommand, AddModelBoundaryObservationCommand
 from morpheus.project.application.write.Project import CreateProjectCommand, AddProjectMemberCommand, RemoveProjectMemberCommand, UpdateProjectMemberRoleCommand, UpdateProjectVisibilityCommand, \
     DeleteProjectCommand
-from morpheus.project.incoming import get_identity
 from morpheus.project.types.permissions.Privilege import Privilege
 
 
@@ -68,7 +67,7 @@ def assert_identity_can_execute_command(identity: Identity, command: CommandBase
         or isinstance(command, UpdateProjectMemberRoleCommand)
         or isinstance(command, UpdateProjectVisibilityCommand)
     ):
-        permissions_reader.assert_identity_can(Privilege.MANAGE_PROJECT, identity)
+        permissions_reader.assert_identity_can(Privilege.MANAGE_PROJECT, identity, command.project_id)
         return
 
     # you need edit privilege to execute any other project related command

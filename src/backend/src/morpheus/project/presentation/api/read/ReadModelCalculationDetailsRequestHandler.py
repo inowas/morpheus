@@ -25,5 +25,5 @@ class ReadModelCalculationDetailsRequestHandler:
             calculation = get_calculation_reader().get_calculation_by_model_hash_and_profile_hash(project_id=project_id, model_hash=model_hash, profile_hash=calculation_profile_hash)
 
             return calculation.to_dict(), 200
-        except NotFoundException:
-            return {'message': f'No calculation found for latest model.'}, 404
+        except NotFoundException as e:
+            return {'message': str(e)}, 404
