@@ -33,7 +33,7 @@ class ProjectReader:
         )
 
         project_summaries = self._project_summary_repository.find_all_public_or_owned_by_user_or_by_project_id(identity.user_id, role_assignments.get_all_project_ids())
-        return [(project_summary, PermissionService.get_privileges_for_project_for_identity(identity, role_assignments, project_summary)) for project_summary in project_summaries]
+        return [(project_summary, PermissionService.get_privileges_for_identity_by_role_assignment_and_summary(identity, role_assignments, project_summary)) for project_summary in project_summaries]
 
 
 project_reader = ProjectReader(project_summary_repository, user_role_assignment_repository)

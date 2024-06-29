@@ -10,7 +10,7 @@ class ReadCalculationProfilesRequestHandler:
     def handle(self, project_id: ProjectId):
         identity = get_identity()
         if identity is None:
-            return 'Unauthorized', 401
+            return '', 401
 
         try:
             permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)

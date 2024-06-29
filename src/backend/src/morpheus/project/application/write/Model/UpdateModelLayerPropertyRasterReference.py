@@ -8,7 +8,7 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent
 from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod, RasterData
@@ -34,8 +34,7 @@ class UpdateModelLayerPropertyRasterReferenceCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class UpdateModelLayerPropertyRasterReferenceCommand(CommandBase):
-    project_id: ProjectId
+class UpdateModelLayerPropertyRasterReferenceCommand(ProjectCommandBase):
     model_id: ModelId
     layer_id: LayerId
     property_name: LayerPropertyName
@@ -70,10 +69,6 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
     def handle(command: UpdateModelLayerPropertyRasterReferenceCommand):
         project_id = command.project_id
         user_id = command.user_id
-        permissions = PermissionsReader().get_permissions(project_id=project_id)
-
-        if not permissions.member_can_edit(user_id=user_id):
-            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update the time discretization of {project_id.to_str()}')
 
         event = ModelLayerPropertyUpdatedEvent.from_raster(
             project_id=project_id,

@@ -1,12 +1,11 @@
 import dataclasses
 
 from morpheus.common.types import DateTime, Uuid
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.application.read.PermissionsReader import permissions_reader
 from morpheus.project.application.read.ProjectReader import project_reader
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.assets.AssetHandlingService import asset_handling_service
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
@@ -16,8 +15,7 @@ from morpheus.common.types.identity.Identity import UserId
 
 
 @dataclasses.dataclass(frozen=True)
-class DeleteProjectCommand(CommandBase):
-    project_id: ProjectId
+class DeleteProjectCommand(ProjectCommandBase):
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: dict):
@@ -32,16 +30,6 @@ class DeleteProjectCommandHandler(CommandHandlerBase):
     def handle(command: DeleteProjectCommand):
         if not project_reader.project_exists(command.project_id):
             raise NotFoundException(f'Project with id {command.project_id.to_str()} does not exist')
-
-        user_id = command.user_id
-
-        # todo assert user has access to project
-        permissions = permissions_reader.get_permissions(command.project_id)
-        if permissions.owner_id != user_id:
-            raise InsufficientPermissionsException('User does not have owner-permissions to delete project')
-
-        # read user with groups (from user module)
-        # pass permissions and user with groups to domain service that checks permission
 
         # delete project from filesystem
         # delete project from mongo db

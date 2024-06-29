@@ -1,6 +1,8 @@
 from flask import Request, abort, Response
 
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from ..helpers.message_box import generate_response_for, assert_identity_can_execute_command
+from ....application.read.PermissionsReader import permissions_reader
 from ....application.write import project_command_bus
 from ....application.write.CommandFactory import command_factory
 from ....application.write.Calculation import AddCalculationProfileCommand, StartCalculationCommand
@@ -11,6 +13,7 @@ from ....application.write.Model.CreateModelLayer import CreateModelLayerCommand
 from ....application.write.Model.CreateModelVersion import CreateModelVersionCommand
 from ....application.write.Project import CreateProjectCommand
 from ....incoming import get_identity
+from ....types.permissions.Privilege import Privilege
 
 
 class MessageBoxRequestHandler:
@@ -35,45 +38,9 @@ class MessageBoxRequestHandler:
             abort(400, str(e))
 
         try:
+            assert_identity_can_execute_command(identity, command)
             project_command_bus.dispatch(command)
-
-            if isinstance(command, CreateProjectCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}'})
-
-            if isinstance(command, AddCalculationProfileCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/calculation-profiles/{command.calculation_profile.id.to_str()}'})
-
-            if isinstance(command, CreateModelCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model'})
-
-            if isinstance(command, CreateModelVersionCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/versions/{command.version_tag.to_str()}'})
-
-            if isinstance(command, CreateModelLayerCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/layers/{command.layer_id.to_str()}'})
-
-            if isinstance(command, CloneModelLayerCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/layers/{command.new_layer_id.to_str()}'})
-
-            if isinstance(command, AddModelBoundaryCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.boundary_id.to_str()}'})
-
-            if isinstance(command, CloneModelBoundaryCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.new_boundary_id.to_str()}'})
-
-            if isinstance(command, StartCalculationCommand):
-                return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/calculations/{command.new_calculation_id.to_str()}'})
-
-            if isinstance(command, AddModelBoundaryObservationCommand):
-                return Response(
-                    status=201,
-                    headers={
-                        'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.boundary_id.to_str()}/observations/{command.observation_id.to_str()}'
-                    }
-                )
-
-            return Response(status=204)
-
+            return generate_response_for(command)
         except NotFoundException as e:
             abort(404, str(e))
         except InsufficientPermissionsException as e:
