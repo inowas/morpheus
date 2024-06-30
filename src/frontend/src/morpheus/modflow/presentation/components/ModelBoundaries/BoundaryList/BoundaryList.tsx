@@ -41,13 +41,6 @@ const BoundaryList = ({
 
   const [search, setSearch] = useState<string>('');
 
-  // Disabled boundaries
-  const [disabledBoundaries, setDisabledBoundaries] = useState<IBoundaryId[]>([]);
-
-  React.useEffect(() => {
-    console.log(disabledBoundaries);
-  }, [disabledBoundaries]);
-
   // Rename boundaries title
   const [editBoundaryName, setEditBoundaryName] = useState<IBoundaryId | null>(null);
   const [inputValue, setInputValue] = useState('');
@@ -85,7 +78,7 @@ const BoundaryList = ({
         {filteredBoundaries.map((boundary) => (
           <ListItem
             key={boundary.id} className={styles.item}
-            disabled={disabledBoundaries.includes(boundary.id)}
+            disabled={!boundary.enabled}
           >
             <div
               // Title styles when item is selected
