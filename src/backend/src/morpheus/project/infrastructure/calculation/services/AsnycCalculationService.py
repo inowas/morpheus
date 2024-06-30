@@ -1,3 +1,5 @@
+import traceback
+
 from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
@@ -60,8 +62,8 @@ class AsyncCalculationService:
             repository.update_calculation_result(calculation_id=calculation_id, result=calculation_result)
             repository.update_calculation_log(calculation_id=calculation_id, calculation_log=calculation_log)
             repository.update_calculation_state(calculation_id=calculation_id, state=CalculationState.COMPLETED)
-        except Exception as e:
-            calculation_log = Log.from_str(str(e))
+        except Exception:
+            calculation_log = Log.from_str(traceback.format_exc())
             repository.update_calculation_log(calculation_id=calculation_id, calculation_log=calculation_log)
             repository.update_calculation_state(calculation_id=calculation_id, state=CalculationState.FAILED)
 

@@ -11,9 +11,10 @@ interface IProps {
   outline: Feature<Polygon>;
   getRgbColor: (value: number) => string;
   onHover?: (value: number | null) => void;
+  numberOfGrades?: number;
 }
 
-const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover}: IProps) => {
+const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50}: IProps) => {
 
   const [value, setValue] = useState<number | null>(null);
 
@@ -25,7 +26,7 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover}: IPro
   }, [value]);
 
   const contourMultiPolygons = useMemo(() => {
-    const contoursFunction = contours().size([data[0].length, data.length]);
+    const contoursFunction = contours().size([data[0].length, data.length]).thresholds(numberOfGrades);
 
     // rotate grid outline
     const centerOfMassOutline = centerOfMass(outline);

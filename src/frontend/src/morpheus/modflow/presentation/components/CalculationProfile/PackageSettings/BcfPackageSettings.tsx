@@ -75,8 +75,7 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             isReadOnly={true}
             description={descriptions.bcf.wetdry}
           />
-          {/* TODO - update hdry for scientific number using FloatInput and toExponential  */}
-          <IntegerInput
+          <FloatInput
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
             isReadOnly={true}
@@ -89,13 +88,5 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
   );
 };
 
-
-// ipakcb:0
-// iwdflg:0
-// ihdwet:0
-// wetfct:0.1
-// iwetit:1
-// wetdry:-0.01
-// hdry: -1e+30
 
 export default BcfPackageSettings;

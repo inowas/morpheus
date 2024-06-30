@@ -1,5 +1,4 @@
 import React from 'react';
-import {Button} from 'semantic-ui-react';
 import {SectionTitle, Tab, TabPane} from 'common/components';
 import {ICalculation} from '../../../types/Calculation.type';
 import CalculationFiles from './CalculationFiles';
@@ -32,7 +31,6 @@ const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onF
         menuItem: 'Calculation Status',
         render: () => <TabPane>
           <CalculationState
-            isLoading={isLoading}
             isReadOnly={isReadOnly}
             calculation={calculation}
             onStartCalculation={onStartCalculation}

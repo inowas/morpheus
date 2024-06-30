@@ -1,3 +1,4 @@
+import math
 from enum import StrEnum
 from typing import Any
 
@@ -162,8 +163,8 @@ class RasterInterpolationService:
 
         if expand > 0:
             target_data = RasterInterpolationService.expand_island(target_data, expand)
-        target_data[np.isnan(target_data)] = no_data_value
 
+        target_data = np.where(np.isnan(target_data), no_data_value, target_data)
         return target_data.tolist()
 
     @staticmethod

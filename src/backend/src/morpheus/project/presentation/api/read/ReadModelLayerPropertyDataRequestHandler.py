@@ -81,8 +81,8 @@ class ReadModelLayerPropertyDataRequestHandler:
 
         if output_format == DataOutputFormat.grid:
             no_data_value = None
-            raster_interpolator = RasterInterpolationService()
 
+            raster_interpolator = RasterInterpolationService()
             target_resolution_x = grid.n_cols() if grid.n_cols() < 200 else int(grid.n_cols() / 2)
             result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, no_data_value=no_data_value, expand=1)
 

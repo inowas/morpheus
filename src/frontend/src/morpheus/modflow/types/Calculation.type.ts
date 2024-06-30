@@ -20,20 +20,22 @@ interface ICalculationResult {
   type: ICalculationResultType;
   message: string;
   files: string[];
-  flow_head_results: IAvailableResult;
-  flow_drawdown_results: IAvailableResult;
-  flow_budget_results: IAvailableResult;
-  transport_concentration_results: IAvailableResult;
-  transport_budget_results: IAvailableResult;
+  flow_head_results: IAvailableResults;
+  flow_drawdown_results: IAvailableResults;
+  flow_budget_results: IAvailableResults;
+  transport_concentration_results: IAvailableResults;
+  transport_budget_results: IAvailableResults;
   packages: string[];
 }
 
-interface IAvailableResult {
+interface IAvailableResults {
   times: number[];
   kstpkper: [number, number][];
   number_of_layers: number;
   number_of_observations: number;
+  min_value: number | null;
+  max_value: number | null;
 }
 
 
-export type {ICalculation, ICalculationId, ICalculationState, ICalculationResult, ICalculationResultType, IAvailableResult};
+export type {ICalculation, ICalculationId, ICalculationState, ICalculationResult, ICalculationResultType, IAvailableResults};
