@@ -7,7 +7,7 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryDisabledEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryEnabledEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
@@ -49,7 +49,7 @@ class EnableModelBoundaryCommandHandler(CommandHandlerBase):
         if not model.boundaries.has_boundary(boundary_id=command.boundary_id):
             raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
-        event = ModelBoundaryDisabledEvent.from_props(
+        event = ModelBoundaryEnabledEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
             boundary_id=command.boundary_id,

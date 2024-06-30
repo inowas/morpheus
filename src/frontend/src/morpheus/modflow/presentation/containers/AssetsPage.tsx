@@ -4,7 +4,7 @@ import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
 import {useParams} from 'react-router-dom';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useAssets from '../../application/useAssets';
 import {MenuItem, Radio} from 'semantic-ui-react';
 import {AssetButtonsGroup, AssetTable} from '../components/Asset';
@@ -27,7 +27,7 @@ const AssetsPage = ({}: IProps) => {
   const {projectId} = useParams();
   const navigateTo = useNavigate();
   const location = useLocation();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
   const {assets, loading, deleteAsset, uploadAsset, fetchAssetData} = useAssets(projectId as string);
 

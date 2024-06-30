@@ -1,27 +1,27 @@
-import {IError, IProjectPermissions} from '../types';
+import {IError, IProjectPrivileges} from '../types';
 
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
 
 
-export interface IPermissionsStoreState {
-  permissions: IProjectPermissions | null;
+export interface IPrivilegesStoreState {
+  privileges: IProjectPrivileges | null;
   error: IError | null;
   loading: boolean;
 }
 
-const initialState: IPermissionsStoreState = {
-  permissions: null,
+const initialState: IPrivilegesStoreState = {
+  privileges: null,
   loading: false,
   error: null,
 };
 
-export const permissionsSlice = createSlice({
-  name: 'permissions',
+export const privilegesSlice = createSlice({
+  name: 'privileges',
   initialState,
   reducers: {
-    setPermissions: (state, action: PayloadAction<IProjectPermissions>) => {
-      state.permissions = action.payload;
+    setPrivileges: (state, action: PayloadAction<IProjectPrivileges>) => {
+      state.privileges = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -34,9 +34,9 @@ export const permissionsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  setPermissions,
+  setPrivileges,
   setLoading,
   setError,
-} = permissionsSlice.actions;
+} = privilegesSlice.actions;
 
-export default permissionsSlice.reducer;
+export default privilegesSlice.reducer;

@@ -62,10 +62,6 @@ const BoundaryList = ({
     setSearch(e.target.value);
   };
 
-  // console.log('onDisableBoundary', onDisableBoundary('454df8cd-d0f9-4a28-9d07-2b40cd6f7003'));
-  // console.log('onEnableBoundary', onEnableBoundary('454df8cd-d0f9-4a28-9d07-2b40cd6f7003'));
-
-
   const filteredBoundaries = useMemo(() => {
     return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
   }, [boundaries, search, type]);
@@ -134,15 +130,13 @@ const BoundaryList = ({
                 <Checkbox
                   disabled={isReadOnly}
                   toggle={true}
-                  checked={!disabledBoundaries.includes(boundary.id)}
+                  checked={boundary.enabled}
                   style={{position: 'relative', pointerEvents: 'all'}}
                   onChange={() => {
-                    if (disabledBoundaries.includes(boundary.id)) {
-                      setDisabledBoundaries(disabledBoundaries.filter((id) => id !== boundary.id));
-                      onEnableBoundary(boundary.id);
-                    } else {
-                      setDisabledBoundaries([...disabledBoundaries, boundary.id]);
+                    if (boundary.enabled) {
                       onDisableBoundary(boundary.id);
+                    } else {
+                      onEnableBoundary(boundary.id);
                     }
                   }}
                 />
