@@ -81,7 +81,7 @@ def calculate_hob_package_data(model: Model, settings: HobPackageSettings) -> Ho
     if head_observation_data.is_empty():
         return None
 
-    return HobPackageData(head_observation_data=head_observation_data, iuhobsv=settings.iuhobsv, hobdry=settings.hobdry, tomulth=settings.tomulth)
+    return HobPackageData(head_observation_data=head_observation_data, hobdry=settings.hobdry, tomulth=settings.tomulth)
 
 
 def create_hob_package(flopy_modflow: FlopyModflow, model: Model, settings: HobPackageSettings) -> FlopyModflowHob | None:

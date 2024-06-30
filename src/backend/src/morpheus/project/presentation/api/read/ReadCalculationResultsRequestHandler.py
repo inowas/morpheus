@@ -21,12 +21,12 @@ class ReadCalculationResultsRequestHandler:
     def _get_result_data_object(self, data: list[list[float | None]], grid: Grid):
         min_value = math.inf
         max_value = -math.inf
-        for rowIdx, row in enumerate(data):
-            for cellIdx, cell in enumerate(row):
+        for row_idx, row in enumerate(data):
+            for cell_idx, cell in enumerate(row):
                 if cell is not None:
                     min_value = min(min_value, cell)
                     max_value = max(max_value, cell)
-                    data[rowIdx][cellIdx] = round(cell, 4)
+                    data[row_idx][cell_idx] = round(cell, 4)
 
         return {
             'n_cols': len(data[0]),
