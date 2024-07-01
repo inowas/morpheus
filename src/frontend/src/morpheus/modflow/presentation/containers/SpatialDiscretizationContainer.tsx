@@ -11,7 +11,7 @@ import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {MenuItem} from 'semantic-ui-react';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
 
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
@@ -26,7 +26,7 @@ const SpatialDiscretizationContainer = () => {
   const [locked, setLocked] = useState<boolean>(false);
 
   const {projectId} = useParams();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const getInitialEditMode = () => {
     if (locked) {

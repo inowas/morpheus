@@ -244,9 +244,12 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
     def __read_min_max_values_from_binary_file(self, head_file: bf.HeadFile) -> Tuple[float | None, float | None]:
         try:
-            min_value = float(np.nanmin(head_file.get_alldata(nodata=self.no_data_value)))
+            all_data = head_file.get_alldata(nodata=self.no_data_value)  # type: ignore # noqa # nodata is expected to be float, intrisic type is int
+            if not isinstance(all_data, np.ndarray):
+                all_data = np.array(all_data)
+            min_value = float(np.nanmin(all_data))
             min_value = min_value if not np.isnan(min_value) else None
-            max_value = float(np.nanmax(head_file.get_alldata(nodata=self.no_data_value)))
+            max_value = float(np.nanmax(all_data))
             max_value = max_value if not np.isnan(max_value) else None
         except ValueError:
             min_value = None

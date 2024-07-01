@@ -4,7 +4,7 @@ import {ContentWrapper, Navbar} from 'common/components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer} from '../components';
 import {useNavbarItems} from '../../../application/application';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {useParams} from 'react-router-dom';
 
 interface IProps {
@@ -16,7 +16,7 @@ const ProjectPage = ({}: IProps) => {
   const navigateTo = useNavigate();
   const location = useLocation();
   const {projectId} = useParams();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
 
   return (

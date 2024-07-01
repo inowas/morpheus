@@ -7,7 +7,7 @@ import {DataGrid, SearchInput, SectionTitle} from 'common/components';
 
 import useBoundaries from '../../application/useBoundaries';
 import useLayers from '../../application/useLayers';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
@@ -42,7 +42,7 @@ const BoundariesContainer = () => {
     onEnableBoundary,
   } = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const mapRef: IMapRef = useRef(null);
 

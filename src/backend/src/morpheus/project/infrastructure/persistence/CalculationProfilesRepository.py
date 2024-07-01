@@ -91,7 +91,10 @@ class CalculationProfilesRepository(RepositoryBase):
         if not self.has_calculation_profiles(project_id):
             return None
         document = self.get_document(project_id)
-        return document.get_selected_profile().get_sha1_hash()
+        selected_profile = document.get_selected_profile()
+        if selected_profile is None:
+            return None
+        return selected_profile.get_sha1_hash()
 
     def add_calculation_profile(self, project_id: ProjectId, calculation_profile: CalculationProfile) -> None:
         if not self.has_calculation_profiles(project_id):
