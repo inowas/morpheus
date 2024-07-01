@@ -78,21 +78,21 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Head change criterion (hclose)'}
             value={settings.hclose}
-            onChange={(value: number) => onChange({...settings, hclose: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.hclose}
           />
           <FloatInput
             label={'Residual criterion (rclose)'}
             value={settings.rclose}
-            onChange={(value: number) => onChange({...settings, rclose: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, rclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.rclose}
           />
           <FloatInput
             label={'Relaxation parameter (relax)'}
             value={settings.relax}
-            onChange={(value: number) => onChange({...settings, relax: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, relax: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.relax}
           />
@@ -126,14 +126,14 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Steady-state damping factor (damp)'}
             value={settings.damp}
-            onChange={(value: number) => onChange({...settings, damp: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, damp: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.damp}
           />
           <FloatInput
             label={'Transient damping factor (dampt)'}
             value={settings.dampt}
-            onChange={(value: number) => onChange({...settings, dampt: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, dampt: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.dampt}
           />

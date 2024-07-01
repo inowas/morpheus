@@ -57,7 +57,7 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Wetting factor (WETFCT)'}
             value={settings.wetfct}
-            onChange={(value: number) => onChange({...settings, wetfct: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, wetfct: value})}
             isReadOnly={isReadOnly}
             description={descriptions.bcf.wetfct}
           />
@@ -71,7 +71,7 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Wetting threshold and flag (WETDRY)'}
             value={settings.wetdry}
-            onChange={(value: number) => onChange({...settings, wetdry: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, wetdry: value})}
             isReadOnly={true}
             description={descriptions.bcf.wetdry}
           />
@@ -79,7 +79,7 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
             isReadOnly={true}
-            onChange={(value: number) => onChange({...settings, hdry: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hdry: value})}
             description={descriptions.bcf.hdry}
           />
         </Form.Group>

@@ -91,7 +91,7 @@ const De4PackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Head change closure criterion (HCLOSE)'}
             value={settings.hclose}
-            onChange={(value: number) => onChange({...settings, hclose: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.hclose}
           />

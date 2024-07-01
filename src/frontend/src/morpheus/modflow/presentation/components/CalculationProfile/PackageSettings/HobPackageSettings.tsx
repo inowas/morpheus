@@ -24,14 +24,14 @@ const HobPackageSettings = ({settings, onChange, isReadOnly}: IProps) => (
         <Form.Group widths={2}>
           <FloatInput
             value={settings.hobdry}
-            onChange={(value: number) => onChange({...settings, hobdry: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hobdry: value})}
             isReadOnly={isReadOnly}
             label={'HOBDRY'}
             description={descriptions.hob.hobdry}
           />
           <FloatInput
             value={settings.tomulth}
-            onChange={(value: number) => onChange({...settings, hobdry: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hobdry: value})}
             isReadOnly={isReadOnly}
             label={'TOMULTH'}
             description={descriptions.hob.tomulth}

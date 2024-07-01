@@ -45,14 +45,14 @@ const SipPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Acceleration parameter (ACCL)'}
             value={settings.accl}
-            onChange={(value: number) => onChange({...settings, accl: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, accl: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.accl}
           />
           <FloatInput
             label={'Head change criterion for convergence (HCLOSE)'}
             value={settings.hclose}
-            onChange={(value: number) => onChange({...settings, hclose: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.hclose}
           />
@@ -78,7 +78,7 @@ const SipPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'(WSEED)'}
             value={settings.wseed}
-            onChange={(value: number) => onChange({...settings, wseed: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, wseed: value})}
             isReadOnly={true}
             description={descriptions.sip.wseed}
           />

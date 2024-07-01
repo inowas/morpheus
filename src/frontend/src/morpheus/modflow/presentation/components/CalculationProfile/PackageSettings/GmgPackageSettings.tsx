@@ -30,7 +30,7 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Inner convergence residual (RCLOSE)'}
             value={settings.rclose}
-            onChange={(value: number) => onChange({...settings, rclose: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, rclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.rclose}
           />
@@ -44,7 +44,7 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Outer convergence residual (HCLOSE)'}
             value={settings.hclose}
-            onChange={(value: number) => onChange({...settings, hclose: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.hclose}
           />
@@ -58,7 +58,7 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Relocation parameter (RELAX)'}
             value={settings.relax}
-            onChange={(value: number) => onChange({...settings, relax: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, relax: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.relax}
           />
@@ -128,28 +128,28 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <FloatInput
             label={'Maximum damping (DUP)'}
             value={settings.dup}
-            onChange={(value: number) => onChange({...settings, dup: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, dup: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.dup}
           />
           <FloatInput
             label={'Minimum damping (DLOW)'}
             value={settings.dlow}
-            onChange={(value: number) => onChange({...settings, dlow: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, dlow: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.dlow}
           />
           <FloatInput
             label={'Damping parameter (DAMP)'}
             value={settings.damp}
-            onChange={(value: number) => onChange({...settings, damp: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, damp: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.damp}
           />
           <FloatInput
             label={'Minimum damping (CHGLIMIT)'}
             value={settings.chglimit}
-            onChange={(value: number) => onChange({...settings, chglimit: value})}
+            onChange={(value: number | null) => null !== value && onChange({...settings, chglimit: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.chglimit}
           />

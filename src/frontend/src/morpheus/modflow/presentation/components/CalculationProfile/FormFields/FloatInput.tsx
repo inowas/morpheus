@@ -3,9 +3,9 @@ import React, {useState} from 'react';
 
 
 interface IProps {
-  value: number;
+  value: number | null;
   isReadOnly: boolean;
-  onChange: (value: number) => void;
+  onChange: (value: number | null) => void;
   label: string;
   description?: string | JSX.Element;
   precision?: number;
@@ -14,7 +14,7 @@ interface IProps {
 
 const FloatInput = ({value, isReadOnly, onChange, label, description, precision = 3}: IProps) => {
 
-  const [valueLocal, setValueLocal] = useState<string>(value.toString());
+  const [valueLocal, setValueLocal] = useState<string>(null === value ? '' : value.toString());
 
   const isScientificNotation = (inputValue: string) => {
     // Regular expression to match scientific notation format
@@ -30,7 +30,7 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
     if (isScientificNotation(v)) {
       const parsedValue = parseFloat(v);
       if (isNaN(parsedValue)) {
-        setValueLocal(value.toString());
+        setValueLocal(null === value ? '' : value.toString());
         return;
       } else {
         setValueLocal(v);
@@ -39,7 +39,7 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
     } else {
       const parsed = parseFloat(v);
       if (isNaN(parsed)) {
-        setValueLocal(value.toString());
+        setValueLocal(null === value ? '' : value.toString());
         return;
       }
       setValueLocal(round(parsed, precision).toString());
