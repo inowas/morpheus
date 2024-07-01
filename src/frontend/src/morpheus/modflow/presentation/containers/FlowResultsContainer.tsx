@@ -1,24 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import {ContentWrapper, DataGrid, SectionTitle} from 'common/components';
 import {useParams} from 'react-router-dom';
-import {useCalculation, useCalculationData} from '../../application';
+import {useCalculation, useCalculationData, useTimeDiscretization} from '../../application';
 import {ICalculation} from '../../types/Calculation.type';
 import {BodyContent, SidebarContent} from '../components';
 import {Map} from 'common/components/Map';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import {MenuItem, Tab, TabPane} from 'semantic-ui-react';
 import CrossSectionParameterSelector from '../components/Results/CrossSectionParameterSelector';
 import CanvasDataLayer from 'common/components/Map/CanvasDataLayer';
 import {IFlowData} from '../../application/useCalculationData';
 import {useColorMap} from 'common/hooks';
 import ContoursDataLayer from 'common/components/Map/ContoursDataLayer';
+
 import useLayers from '../../application/useLayers';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 const FlowResultsContainer = () => {
   const {projectId} = useParams();
   const {layers} = useLayers(projectId as string);
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
+  const {timeDiscretization} = useTimeDiscretization(projectId as string);
 
   const {fetchLatestCalculation, loading: loadingCalculation, error} = useCalculation(projectId as string);
   const {fetchFlowResult, loading: loadingData} = useCalculationData(projectId as string);
@@ -65,6 +67,14 @@ const FlowResultsContainer = () => {
     );
   }
 
+  if (!spatialDiscretization || !timeDiscretization) {
+    return (
+      <ContentWrapper style={{marginTop: 20, overflowX: 'auto'}}>
+        <p>No spatial or time discretization available.</p>
+      </ContentWrapper>
+    );
+  }
+
   const handleFetchParameters = async (layerIdx: number, timeStepIdx: number) => {
     if (!calculation?.result) {
       return;
@@ -100,6 +110,7 @@ const FlowResultsContainer = () => {
                             results={calculation.result.flow_head_results}
                             onFetchFlowResult={handleFetchParameters}
                             isLoading={false}
+                            timeDiscretization={timeDiscretization}
                           />}
                     </>
                   </TabPane>,
