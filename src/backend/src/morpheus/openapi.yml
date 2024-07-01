@@ -40,8 +40,8 @@ paths:
   /projects/{project_id}/model/time-discretization:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1time-discretization'
 
-  /projects/{project_id}/permissions:
-    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1preview_image'
+  /projects/{project_id}/privileges:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1privileges'
 
   /projects/{project_id}/preview_image:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1preview_image'

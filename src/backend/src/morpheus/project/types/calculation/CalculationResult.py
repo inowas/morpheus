@@ -15,6 +15,8 @@ class AvailableResults:
     kstpkper: list[(tuple[int, int])]
     number_of_layers: int
     number_of_observations: int
+    min_value: float | None = None
+    max_value: float | None = None
 
     @classmethod
     def from_dict(cls, obj):
@@ -23,6 +25,8 @@ class AvailableResults:
             kstpkper=obj['kstpkper'],
             number_of_layers=obj['number_of_layers'],
             number_of_observations=obj['number_of_observations'],
+            min_value=obj['min_value'] if 'min_value' in obj and obj['min_value'] is not None else None,
+            max_value=obj['max_value'] if 'max_value' in obj and obj['max_value'] is not None else None,
         )
 
     def to_dict(self) -> dict:
@@ -31,6 +35,8 @@ class AvailableResults:
             'kstpkper': self.kstpkper,
             'number_of_layers': self.number_of_layers,
             'number_of_observations': self.number_of_observations,
+            'min_value': self.min_value,
+            'max_value': self.max_value,
         }
 
 

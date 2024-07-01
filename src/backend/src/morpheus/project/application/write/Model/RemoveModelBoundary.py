@@ -2,12 +2,10 @@ import dataclasses
 from typing import TypedDict
 
 from morpheus.common.types import Uuid, DateTime
-from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.ModelReader import ModelReader
-from morpheus.project.application.read.PermissionsReader import PermissionsReader
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryRemovedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
@@ -24,9 +22,7 @@ class RemoveModelBoundaryCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class RemoveModelBoundaryCommand(CommandBase):
-    user_id: UserId
-    project_id: ProjectId
+class RemoveModelBoundaryCommand(ProjectCommandBase):
     model_id: ModelId
     boundary_id: BoundaryId
 
@@ -45,10 +41,6 @@ class RemoveModelBoundaryCommandHandler(CommandHandlerBase):
     def handle(command: RemoveModelBoundaryCommand):
         project_id = command.project_id
         user_id = command.user_id
-        permissions = PermissionsReader().get_permissions(project_id=project_id)
-
-        if not permissions.member_can_edit(user_id=user_id):
-            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to execute {command.command_name()} for {project_id.to_str()}')
 
         model_reader = ModelReader()
         latest_model = model_reader.get_latest_model(project_id=project_id)

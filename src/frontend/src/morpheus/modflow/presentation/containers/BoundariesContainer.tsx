@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
@@ -7,7 +7,7 @@ import {DataGrid, SearchInput, SectionTitle} from 'common/components';
 
 import useBoundaries from '../../application/useBoundaries';
 import useLayers from '../../application/useLayers';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
@@ -18,13 +18,15 @@ import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/Mode
 import BoundariesLayer from '../components/ModelBoundaries/BoundariesLayer';
 import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
 import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
+import {useNavigate} from 'common/hooks';
 
 
 const BoundariesContainer = () => {
-  const {projectId} = useParams();
+  const {projectId, propertyId: boundaryId, subPropertyId: observationId} = useParams();
 
   const {spatialDiscretization, fetchGridGeometry} = useSpatialDiscretization(projectId as string);
   const {timeDiscretization} = useTimeDiscretization(projectId as string);
+  const navigate = useNavigate();
   const {
     boundaries,
     fetchAffectedCellsGeometry,
@@ -42,66 +44,76 @@ const BoundariesContainer = () => {
     onEnableBoundary,
   } = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const mapRef: IMapRef = useRef(null);
 
   const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
-  const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
-  useEffect(() => {
+  const selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | undefined = useMemo(() => {
     if (!boundaries.length) {
-      return;
+      return undefined;
     }
 
-    if (!selectedBoundaryAndObservation) {
-      return setSelectedBoundaryAndObservation({
-        boundary: boundaries[0],
-        observationId: boundaries[0].observations[0].observation_id,
-      });
+    if (!boundaryId) {
+      return undefined;
     }
 
-    // update selectedBoundaryAndObservation
-    const boundary = boundaries.find((b) => b.id === selectedBoundaryAndObservation.boundary.id);
+    const boundary = boundaries.find((b) => b.id === boundaryId);
     if (!boundary) {
-      return setSelectedBoundaryAndObservation({
-        boundary: boundaries[0],
-        observationId: boundaries[0].observations[0].observation_id,
-      });
+      return undefined;
     }
 
-    const observation = boundary.observations.find((o) => o.observation_id === selectedBoundaryAndObservation.observationId);
-    return setSelectedBoundaryAndObservation({
-      boundary,
-      observationId: observation ? observation.observation_id : boundary.observations[0].observation_id,
-    });
-  },
-  [boundaries],
-  );
+    if (!observationId) {
+      return {boundary, observationId: boundary.observations[0].observation_id};
+    }
+
+    if (!(boundary.observations.find((o) => o.observation_id === observationId))) {
+      return {boundary, observationId: boundary.observations[0].observation_id};
+    }
+
+    return {boundary, observationId};
+
+  }, [boundaryId, observationId, boundaries]);
+
+  const handleSelectBoundaryAndObservation = (selected: ISelectedBoundaryAndObservation | null) => {
+    if (!selected) {
+      return navigate(`/projects/${projectId}/model/boundary-conditions`);
+    }
+
+    if (!selected.observationId) {
+      return navigate(`/projects/${projectId}/model/boundary-conditions/${selected.boundary.id}`);
+    }
+
+    navigate(`/projects/${projectId}/model/boundary-conditions/${selected.boundary.id}/observations/${selected.observationId}`);
+  };
 
   if (!spatialDiscretization || !boundaries || !layers || !timeDiscretization) {
     return null;
   }
 
   const handleAddBoundary = async (type: IBoundaryType, geometry: any) => {
-    await onAddBoundary(type, geometry);
     setAddBoundaryOnMap(null);
+    const newBoundaryId = await onAddBoundary(type, geometry);
+    if (newBoundaryId) {
+      navigate(`/projects/${projectId}/model/boundary-conditions/${newBoundaryId}`);
+    }
   };
 
-  const handleChangeBoundaryGeometry = async (boundaryId: IBoundaryId, geometry: Point | LineString | Polygon) => {
-    await onUpdateBoundaryGeometry(boundaryId, geometry);
+  const handleChangeBoundaryGeometry = async (bId: IBoundaryId, geometry: Point | LineString | Polygon) => {
+    await onUpdateBoundaryGeometry(bId, geometry);
   };
 
-  const handleChangeBoundaryObservationGeometry = async (boundaryId: IBoundaryId, observationId: IObservationId, geometry: Point) => {
-    const boundary = boundaries.find((b) => b.id === boundaryId);
+  const handleChangeBoundaryObservationGeometry = async (bId: IBoundaryId, obsId: IObservationId, geometry: Point) => {
+    const boundary = boundaries.find((b) => b.id === bId);
     if (!boundary) {
       return;
     }
-    const observation = boundary.observations.find((o) => o.observation_id === observationId);
+    const observation = boundary.observations.find((o) => o.observation_id === obsId);
     if (!observation) {
       return;
     }
-    await onUpdateBoundaryObservation(boundaryId, boundary.type, {...observation, geometry});
+    await onUpdateBoundaryObservation(bId, boundary.type, {...observation, geometry});
   };
 
   return (
@@ -131,7 +143,7 @@ const BoundariesContainer = () => {
               boundaries={boundaries}
               layers={layers}
               selectedBoundaryAndObservation={selectedBoundaryAndObservation}
-              onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
+              onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
               onCloneBoundary={onCloneBoundary}
               onCloneBoundaryObservation={onCloneBoundaryObservation}
               onDisableBoundary={onDisableBoundary}
@@ -154,7 +166,7 @@ const BoundariesContainer = () => {
           <BoundariesLayer
             boundaries={boundaries}
             selectedBoundaryAndObservation={selectedBoundaryAndObservation}
-            onSelectBoundaryAndObservation={setSelectedBoundaryAndObservation}
+            onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
             onChangeBoundaryGeometry={handleChangeBoundaryGeometry}
             onChangeBoundaryObservationGeometry={handleChangeBoundaryObservationGeometry}
             isReadOnly={isReadOnly}

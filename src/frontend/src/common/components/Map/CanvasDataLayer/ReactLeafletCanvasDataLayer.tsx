@@ -48,6 +48,7 @@ const CanvasDataLayer = ({data, rotation, bounds, getRgbColor, onHover, options}
   useEffect(() => {
     if (layer) {
       layer.setData(data);
+      layer.setGetRGBColor(getRgbColor);
     }
   }, [data, rotation, bounds, getRgbColor, onHover]);
 

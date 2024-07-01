@@ -2,12 +2,16 @@ from enum import StrEnum
 
 from flask import send_file
 
+from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from ....application.read.ModelReader import ModelReader
+from ....application.read.PermissionsReader import permissions_reader
+from ....incoming import get_identity
 from ....infrastructure.assets.ImageCreationService import ImageCreationService
 from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
 from ....types.Project import ProjectId
 from ....types.layers.Layer import LayerPropertyName, LayerId, Layer
+from ....types.permissions.Privilege import Privilege
 
 
 class ImageOutputFormat(StrEnum):
@@ -23,10 +27,15 @@ class ImageOutputFormat(StrEnum):
 
 class ReadModelLayerPropertyImageRequestHandler:
     def handle(self, project_id: ProjectId, layer_id: LayerId, property_name: LayerPropertyName, output_format: ImageOutputFormat):
-        model_reader = ModelReader()
+        identity = get_identity()
+        if identity is None:
+            return '', 401
 
         try:
-            model = model_reader.get_latest_model(project_id)
+            permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)
+            model = ModelReader().get_latest_model(project_id)
+        except InsufficientPermissionsException as e:
+            return str(e), 403
         except ModelNotFoundException:
             return {'message': 'Model not found'}, 404
 
@@ -50,7 +59,6 @@ class ReadModelLayerPropertyImageRequestHandler:
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
 
             result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x,
-                                                                                      method=InterpolationMethod.linear,
                                                                                       no_data_value=no_data_value)
 
             image = image_creation_service.create_image_from_data(data=result_data, cmap='jet_r', no_data_value=no_data_value)

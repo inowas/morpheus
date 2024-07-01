@@ -33,6 +33,8 @@ interface IAvailableResults {
   kstpkper: [number, number][];
   number_of_layers: number;
   number_of_observations: number;
+  min_value: number | null;
+  max_value: number | null;
 }
 
 

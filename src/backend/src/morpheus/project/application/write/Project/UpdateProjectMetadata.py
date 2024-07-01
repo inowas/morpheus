@@ -6,7 +6,7 @@ from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.ProjectReader import project_reader
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectMetadataUpdatedEvent
@@ -22,8 +22,7 @@ class UpdateProjectMetadataPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class UpdateProjectMetadataCommand(CommandBase):
-    project_id: ProjectId
+class UpdateProjectMetadataCommand(ProjectCommandBase):
     name: Name | None
     description: Description | None
     tags: Tags | None
@@ -53,7 +52,6 @@ class UpdateProjectMetadataCommandHandler(CommandHandlerBase):
         if not project_reader.project_exists(project_id):
             raise NotFoundException(f'Project with id {project_id.to_str()} does not exist')
 
-        # todo assert user has access to project
         event = ProjectMetadataUpdatedEvent.from_props(project_id=project_id, name=command.name, description=command.description, tags=command.tags, occurred_at=DateTime.now())
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)

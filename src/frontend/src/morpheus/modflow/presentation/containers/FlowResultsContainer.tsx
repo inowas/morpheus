@@ -9,10 +9,10 @@ import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/Mode
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import {MenuItem, Tab, TabPane} from 'semantic-ui-react';
 import CrossSectionParameterSelector from '../components/Results/CrossSectionParameterSelector';
-import CanvasDataLayer from '../../../../common/components/Map/CanvasDataLayer';
+import CanvasDataLayer from 'common/components/Map/CanvasDataLayer';
 import {IFlowData} from '../../application/useCalculationData';
-import {useColorMap} from '../../../../common/hooks';
-import ContoursDataLayer from '../../../../common/components/Map/ContoursDataLayer';
+import {useColorMap} from 'common/hooks';
+import ContoursDataLayer from 'common/components/Map/ContoursDataLayer';
 import useLayers from '../../application/useLayers';
 
 const FlowResultsContainer = () => {
@@ -27,6 +27,7 @@ const FlowResultsContainer = () => {
   const [data, setData] = useState<IFlowData | null>(null);
   const [showContours, setShowContours] = useState<boolean>(false);
   const [opacity, setOpacity] = useState<number>(0.8);
+  const [useGlobalMinMax, setUseGlobalMinMax] = useState<boolean>(true);
 
   const {getRgbColor} = useColorMap('jet_r');
 
@@ -75,6 +76,9 @@ const FlowResultsContainer = () => {
     }
     setData(result);
   };
+
+  const minVal = useGlobalMinMax ? calculation.result.flow_head_results.min_value || 0 : data?.data.min_value || 0;
+  const maxVal = useGlobalMinMax ? calculation.result.flow_head_results.max_value || 1 : data?.data.max_value || 1;
 
   return (
     <>
@@ -126,16 +130,16 @@ const FlowResultsContainer = () => {
             data={data.data.values}
             rotation={data.data.rotation}
             outline={data.data.outline}
-            getRgbColor={(value: number) => getRgbColor(value, data?.data.min_value, data?.data.max_value)}
+            getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
           />}
 
           {data && !showContours && <CanvasDataLayer
             title={'Head [m]'}
             data={data.data.values}
-            minVal={data.data.min_value}
-            maxVal={data.data.max_value}
+            minVal={minVal}
+            maxVal={maxVal}
             outline={data.data.outline}
-            getRgbColor={(value: number) => getRgbColor(value, data?.data.min_value, data?.data.max_value)}
+            getRgbColor={getRgbColor}
             rotation={data.data.rotation}
             options={{opacity: opacity}}
           />}

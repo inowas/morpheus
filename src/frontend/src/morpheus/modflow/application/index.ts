@@ -5,7 +5,7 @@ import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useProject from './useProject';
 import useProjectList from './useProjectList';
-import useProjectPermissions from './useProjectPermissions';
+import useProjectPrivileges from './useProjectPrivileges';
 import useProjectCommandBus from './useProjectCommandBus';
 import useProjectEventLog from './useProjectEventLog';
 import useProjectMetadata from './useProjectMetadata';
@@ -23,7 +23,7 @@ export {
   useProjectCommandBus,
   useProjectEventLog,
   useProjectList,
-  useProjectPermissions,
+  useProjectPrivileges,
   useProjectMetadata,
   useSpatialDiscretization,
   useTimeDiscretization,

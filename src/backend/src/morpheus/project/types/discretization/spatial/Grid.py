@@ -468,4 +468,8 @@ class Grid:
         )
 
     def is_regular(self) -> bool:
-        return all([width == self.col_widths[0] for width in self.col_widths]) and all([height == self.row_heights[0] for height in self.row_heights])
+        # Check if all columns and rows does not differ more than 10% from the average
+        average_col_width = sum(self.col_widths) / len(self.col_widths)
+        average_row_height = sum(self.row_heights) / len(self.row_heights)
+        return all([abs(width - average_col_width) / average_col_width < 0.1 for width in self.col_widths]) and all(
+            [abs(height - average_row_height) / average_row_height < 0.1 for height in self.row_heights])

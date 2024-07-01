@@ -20,7 +20,7 @@ from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayers
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
-from .presentation.api.read.ReadPermissionsRequestHandler import ReadPermissionsRequestHandler
+from .presentation.api.read.ReadPrivilegesRequestHandler import ReadPrivilegesRequestHandler
 from .presentation.api.read.ReadSelectedCalculationProfileRequestHandler import ReadSelectedCalculationProfileRequestHandler
 from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequestHandler
 from .types.Asset import AssetId
@@ -100,21 +100,18 @@ def register_routes(blueprint: Blueprint):
     @blueprint.route('/<project_id>/calculation-profiles/<calculation_profile_id>', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def project_selected_calculation_profile(project_id: str, calculation_profile_id: str | None = None):
         return ReadSelectedCalculationProfileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_profile_id=CalculationProfileId.try_from_str(calculation_profile_id))
 
     @blueprint.route('/<project_id>/calculation-profiles', methods=['GET'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def get_project_calculation_profiles(project_id: str):
         return ReadCalculationProfilesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['PUT'])
     @cross_origin()
     @authenticate()
-    @validate_request
     def project_preview_image_upload(project_id: str):
         return UploadPreviewImageRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
@@ -214,11 +211,11 @@ def register_routes(blueprint: Blueprint):
             format=output_format
         )
 
-    @blueprint.route('/<project_id>/permissions', methods=['GET'])
+    @blueprint.route('/<project_id>/privileges', methods=['GET'])
     @cross_origin()
     @authenticate()
-    def project_permissions(project_id: str):
-        return ReadPermissionsRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+    def project_privileges(project_id: str):
+        return ReadPrivilegesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['GET'])
     @cross_origin()

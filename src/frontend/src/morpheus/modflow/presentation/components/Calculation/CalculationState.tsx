@@ -38,7 +38,7 @@ const CalculationState = ({calculation, isReadOnly, onStartCalculation}: IProps)
   const renderProgress = (calculationState: ICalculationState) => {
     return (
       <Progress
-        indicating={true}
+        active={true}
         percent={calculateProgress(calculationState)} autoSuccess={true}
         success={'completed' == calculationState}
         error={'failed' == calculationState}
