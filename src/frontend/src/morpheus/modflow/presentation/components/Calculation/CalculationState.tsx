@@ -6,7 +6,8 @@ import {Button, Progress} from 'common/components';
 interface IProps {
   calculation?: ICalculation;
   isReadOnly: boolean;
-  onStartCalculation?: () => void;
+  onStartCalculation: () => void;
+  onNavigateToResults: () => void;
 }
 
 const calculateProgress = (state: ICalculationState) => {
@@ -32,20 +33,37 @@ const calculateProgress = (state: ICalculationState) => {
   }
 };
 
-const CalculationState = ({calculation, isReadOnly, onStartCalculation}: IProps) => {
+const CalculationState = ({calculation, isReadOnly, onStartCalculation, onNavigateToResults}: IProps) => {
 
 
-  const renderProgress = (calculationState: ICalculationState) => {
+  const renderProgress = (c: ICalculation) => {
+    const isFailed = 'failed' === c.state;
+    const isSuccess = 'completed' === c.state && 'success' === c.result?.type;
+    const isWarning = 'canceled' === c.state || ('completed' === c.state && 'failure' === c.result?.type);
     return (
       <Progress
         active={true}
-        percent={calculateProgress(calculationState)} autoSuccess={true}
-        success={'completed' == calculationState}
-        error={'failed' == calculationState}
-        warning={'canceled' == calculationState}
+        percent={calculateProgress(c.state)} autoSuccess={true}
+        success={isSuccess}
+        error={isFailed}
+        warning={isWarning}
       >
-        {calculationState}
+        {`${c.state[0].toUpperCase() + c.state.slice(1)} ${isWarning ? 'with warning' : ''}`}
       </Progress>
+    );
+  };
+
+  const renderButtonToResults = () => {
+    if (!calculation || !calculation.result) {
+      return null;
+    }
+    return (
+      <Button
+        primary={true} onClick={onNavigateToResults}
+        floated={'right'}
+      >
+        Go to Results
+      </Button>
     );
   };
 
@@ -62,7 +80,8 @@ const CalculationState = ({calculation, isReadOnly, onStartCalculation}: IProps)
   return (
     <Segment basic={true}>
       <h1>Calculation Status</h1>
-      {calculation ? renderProgress(calculation.state) : null}
+      {calculation ? renderProgress(calculation) : null}
+      {calculation ? renderButtonToResults() : null}
       {calculation?.calculation_log ? <pre style={{backgroundColor: '#f9f9f9'}}>{calculation.calculation_log.join('\n')}</pre> : null}
       {!calculation ? renderCalculateButton() : null}
     </Segment>

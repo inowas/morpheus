@@ -12,11 +12,12 @@ interface IProps {
   isMobile: boolean;
   isReadOnly: boolean;
   onStartCalculation: () => void;
+  onNavigateToResults: () => void;
   onFetchFile: (file: string) => Promise<string | undefined>;
   isLoading: boolean;
 }
 
-const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onFetchFile, isLoading}: IProps) => {
+const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onNavigateToResults, onFetchFile, isLoading}: IProps) => {
 
 
   const getPanes = () => {
@@ -34,6 +35,7 @@ const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onF
             isReadOnly={isReadOnly}
             calculation={calculation}
             onStartCalculation={onStartCalculation}
+            onNavigateToResults={onNavigateToResults}
           />
         </TabPane>,
       }];

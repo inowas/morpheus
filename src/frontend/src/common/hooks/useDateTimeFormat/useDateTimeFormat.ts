@@ -17,8 +17,8 @@ interface IUseDateTimeFormat {
 const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFormat => {
 
   // these formats will be saved in the user preferences
-  const user_date_time_format = 'yyyy-MM-dd HH:mm:ss';
-  const user_date_format = 'yyyy-MM-dd';
+  const USER_DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+  const USER_DATE_FORMAT = 'yyyy-MM-dd';
 
 
   const addDays = (dateString: string, days: number): string => {
@@ -27,15 +27,15 @@ const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFo
 
   const addWeeks = (dateString: string, weeks: number): string => {
     return DateTime.fromISO(dateString).setZone(timezone).plus({weeks}).toISO() as string;
-  }
+  };
 
   const addMonths = (dateString: string, months: number): string => {
     return DateTime.fromISO(dateString).setZone(timezone).plus({months}).toISO() as string;
-  }
+  };
 
   const addYears = (dateString: string, years: number): string => {
     return DateTime.fromISO(dateString).setZone(timezone).plus({years}).toISO() as string;
-  }
+  };
 
   // returns the Unix timestamp of the given date string in milliseconds
   const getUnixTimestamp = (dateString: string): number => {
@@ -51,11 +51,11 @@ const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFo
   };
 
   const formatISODate = (dateString: string): string => {
-    return DateTime.fromISO(dateString).setZone(timezone).toFormat(user_date_format);
+    return DateTime.fromISO(dateString).setZone(timezone).toFormat(USER_DATE_FORMAT);
   };
 
   const formatISODateTime = (dateString: string): string => {
-    return DateTime.fromISO(dateString).setZone(timezone).toFormat(user_date_time_format);
+    return DateTime.fromISO(dateString).setZone(timezone).toFormat(USER_DATE_TIME_FORMAT);
   };
 
   const isValid = (dateString: string): boolean => {

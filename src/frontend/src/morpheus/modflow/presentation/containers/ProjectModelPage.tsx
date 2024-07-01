@@ -29,7 +29,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
 
   const {error, state} = useModel(projectId);
 
-  const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => getSidebarItems(basePath, section).map((item) => ({
+  const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => getSidebarItems().map((item) => ({
     ...item,
     isActive: item.slug == property,
     onClick: () => navigate(`${basePath}/${projectId}/${section}/${item.slug}`),

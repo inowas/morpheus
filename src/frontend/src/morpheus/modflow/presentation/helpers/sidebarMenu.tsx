@@ -2,13 +2,14 @@ import React from 'react';
 import {
   faBarsStaggered,
   faBorderAll,
+  faCalculator,
   faChartLine,
   faChartSimple,
   faCircle,
   faClock,
   faCompress,
   faFlag,
-  faFolder,
+  faGear,
   faLayerGroup,
   faLocationCrosshairs,
   faMap,
@@ -35,7 +36,7 @@ export interface IMenuItem {
   component?: React.ReactNode;
 }
 
-const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
+const getSidebarItems = (): IMenuItem[] => {
   return [
     {
       name: 'Model',
@@ -91,20 +92,20 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       slug: 'variable-density-flow',
     },
     {
-      icon: <FontAwesomeIcon icon={faSliders}/>,
+      icon: <FontAwesomeIcon icon={faGear}/>,
       name: 'Calculation',
       isTitle: true,
       slug: 'calculation-header',
     },
     {
-      icon: <FontAwesomeIcon icon={faFolder}/>,
-      name: 'Calculation Profile',
+      icon: <FontAwesomeIcon icon={faSliders}/>,
+      name: 'Settings',
       isTitle: false,
-      slug: 'calculation-profiles',
+      slug: 'calculation-profile',
       component: <CalculationProfileContainer/>,
     },
     {
-      icon: <FontAwesomeIcon icon={faFolder}/>,
+      icon: <FontAwesomeIcon icon={faCalculator}/>,
       name: 'Calculation',
       isTitle: false,
       slug: 'calculation',
