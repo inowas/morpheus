@@ -2,12 +2,14 @@ from flask import abort, request, Response
 
 from morpheus.common.presentation.api.helpers.file_upload import remove_uploaded_file, move_uploaded_files_to_tmp_dir
 from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from ....application.read.PermissionsReader import permissions_reader
 from ....application.write.AssetCommandHandlers import UpdatePreviewImageCommand, UpdatePreviewImageCommandHandler, DeletePreviewImageCommand, DeletePreviewImageCommandHandler, \
     UploadAssetCommand, UploadAssetCommandHandler
 from ....incoming import get_identity
 from ....types.Asset import AssetId, AssetDescription
 from ....types.Exceptions import InvalidMimeTypeException, InvalidShapefileException, InvalidGeoTiffException
 from ....types.Project import ProjectId
+from ....types.permissions.Privilege import Privilege
 
 
 class UploadPreviewImageRequestHandler:
@@ -23,6 +25,7 @@ class UploadPreviewImageRequestHandler:
         file_name, file_path = move_uploaded_files_to_tmp_dir('file', 1)[0]
 
         try:
+            permissions_reader.assert_identity_can(Privilege.EDIT_PROJECT, identity, project_id)
             command = UpdatePreviewImageCommand(
                 asset_id=AssetId.new(),
                 project_id=project_id,
@@ -50,13 +53,14 @@ class DeletePreviewImageRequestHandler:
         if identity is None:
             abort(401, 'Unauthorized')
 
-        command = DeletePreviewImageCommand(
-            project_id=project_id,
-            updated_by=identity.user_id
-        )
-
         try:
-            DeletePreviewImageCommandHandler.handle(command)
+            permissions_reader.assert_identity_can(Privilege.EDIT_PROJECT, identity, project_id)
+            DeletePreviewImageCommandHandler.handle(
+                DeletePreviewImageCommand(
+                    project_id=project_id,
+                    updated_by=identity.user_id
+                )
+            )
         except NotFoundException as e:
             abort(404, str(e))
         except InsufficientPermissionsException as e:
@@ -78,13 +82,13 @@ class UploadAssetRequestHandler:
         file_name, file_path = move_uploaded_files_to_tmp_dir('file', 1)[0]
 
         try:
+            permissions_reader.assert_identity_can(Privilege.EDIT_PROJECT, identity, project_id)
             command = UploadAssetCommand(
                 asset_id=AssetId.new(),
                 project_id=project_id,
                 file_name=file_name,
                 file_path=file_path,
                 description=AssetDescription.try_from_str(request.form.get('description')),
-                updated_by=identity.user_id
             )
             UploadAssetCommandHandler.handle(command)
 

@@ -33,8 +33,6 @@ class UpdatePreviewImageCommandHandler:
     def handle(command: UpdatePreviewImageCommand) -> None:
         project_reader.assert_project_exists(command.project_id)
 
-        # TODO check permissions
-
         # check if file can be used as preview image
         file = FileService.build_file_info(command.file_path, command.file_name)
         AssetService.assert_file_can_be_used_as_preview_image(file)
@@ -75,8 +73,6 @@ class DeletePreviewImageCommandHandler:
     def handle(command: DeletePreviewImageCommand) -> None:
         project_reader.assert_project_exists(command.project_id)
 
-        # TODO check permissions
-
         existing_asset_id = preview_image_repository.get_preview_image(command.project_id)
         if existing_asset_id is None:
             return
@@ -98,15 +94,12 @@ class UploadAssetCommand:
     file_name: FileName
     file_path: FilePath
     description: AssetDescription | None
-    updated_by: UserId
 
 
 class UploadAssetCommandHandler:
     @staticmethod
     def handle(command: UploadAssetCommand) -> None:
         project_reader.assert_project_exists(command.project_id)
-
-        # TODO check permissions
 
         file = FileService.build_file_info(command.file_path, command.file_name)
         asset_type = AssetService.guess_asset_type_for_file(file)

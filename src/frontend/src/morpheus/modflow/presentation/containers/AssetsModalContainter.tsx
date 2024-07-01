@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Modal} from 'common/components';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useAssets from '../../application/useAssets';
 import {Button, Tab, TabPane} from 'semantic-ui-react';
 import {useParams} from 'react-router-dom';
@@ -17,7 +17,7 @@ interface IProps {
 
 const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: IProps) => {
   const {projectId} = useParams();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {assets, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
   const [selectedAsset, setSelectedAsset] = useState<IAsset | null>(null);
 

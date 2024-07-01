@@ -21,5 +21,8 @@ class PermissionsReader:
         if not PermissionService.identity_can(privilege, identity, permissions):
             raise InsufficientPermissionsException(f'User "{identity.user_id.to_str()}" does not have privilege "{privilege.value}" on project "{project_id.to_str()}"')
 
+    def get_privileges_for_identity(self, identity: Identity, project_id: ProjectId) -> list[Privilege]:
+        return PermissionService.get_privileges_for_identity_by_permissions(identity=identity, permissions=self.get_permissions(project_id))
+
 
 permissions_reader = PermissionsReader()

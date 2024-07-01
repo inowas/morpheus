@@ -332,12 +332,12 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 
-  /projects/{project_id}/permissions:
+  /projects/{project_id}/privileges:
     get:
       tags:
         - Project
-      summary: Read the permissions of a project
-      description: Read the permissions of a project
+      summary: Read the privileges the user has for a project
+      description: Read the privileges the user has for a project
       parameters:
         - $ref: '#/components/parameters/ProjectId'
       responses:
@@ -680,10 +680,11 @@ components:
       type: string
       description: "A privilege of the user in the project."
       enum:
-        - "Full Access"
-        - "View Project"
-        - "View Project Event Log"
-      example: "Full Access"
+        - "full_access"
+        - "view_project"
+        - "edit_project"
+        - "manage_project"
+      example: "full_access"
 
     LineString:
       type: object
