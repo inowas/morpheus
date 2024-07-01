@@ -59,6 +59,9 @@ const BoundariesAccordionPane = ({
       if (observation) {
         return setSelectedBoundaryObservation(observation);
       }
+
+      console.debug({selectedBoundaryAndObservation, boundary, observation});
+
       return setSelectedBoundaryObservation(boundary.observations[0]);
     }
 
@@ -66,7 +69,7 @@ const BoundariesAccordionPane = ({
     setSelectedBoundary(boundaries[0]);
     setSelectedBoundaryObservation(boundaries[0].observations[0]);
 
-  }, [selectedBoundaryAndObservation, boundaries]);
+  }, [selectedBoundaryAndObservation, selectedBoundaryAndObservation?.boundary, selectedBoundaryAndObservation?.observationId, boundaries]);
 
   const handleChangeBoundaryName = (boundaryId: IBoundaryId, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
   const handleChangeBoundaryTags = (boundaryId: IBoundaryId, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
