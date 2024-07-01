@@ -12,7 +12,7 @@ import {ILayerId} from '../types/Layers.type';
 interface IUseBoundaries {
   boundaries: IBoundary[];
   fetchAffectedCellsGeometry: (boundaryId: IBoundaryId) => Promise<Feature<Polygon | MultiPolygon> | null>;
-  onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<void>;
+  onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<IBoundaryId | undefined>;
   onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
@@ -150,14 +150,20 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
     setLoading(false);
 
+    if (addBoundaryResult.ok) {
+      await fetchAllBoundaries();
+      const location = addBoundaryResult.val;
+      if (location) {
+        return location.split('/').pop() || undefined;
+      }
+    }
+
     if (addBoundaryResult.err) {
       setError({
         message: addBoundaryResult.val.message,
         code: addBoundaryResult.val.code,
       });
     }
-
-    await fetchAllBoundaries();
   };
 
   const onAddBoundaryObservation = async (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
