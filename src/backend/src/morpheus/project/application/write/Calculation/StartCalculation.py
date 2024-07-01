@@ -1,12 +1,10 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.CalculationProfilesReader import get_calculation_profiles_reader
 from morpheus.project.application.read.ModelReader import get_model_reader
-from morpheus.project.application.read.PermissionsReader import PermissionsReader
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.calculation.services.AsnycCalculationService import AsyncCalculationService
 from morpheus.project.tasks import run_calculation_by_id
@@ -22,8 +20,7 @@ class StartCalculationCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class StartCalculationCommand(CommandBase):
-    project_id: ProjectId
+class StartCalculationCommand(ProjectCommandBase):
     model_id: ModelId
     new_calculation_id: CalculationId
 
@@ -41,13 +38,6 @@ class StartCalculationCommandHandler(CommandHandlerBase):
     @staticmethod
     def handle(command: StartCalculationCommand):
         project_id = command.project_id
-        user_id = command.user_id
-
-        permissions = PermissionsReader().get_permissions(project_id=project_id)
-
-        if not permissions.member_can_edit(user_id=user_id):
-            raise InsufficientPermissionsException(
-                f'User {user_id.to_str()} does not have permission to create a model of {project_id.to_str()}')
 
         calculation_profile = get_calculation_profiles_reader().get_selected_calculation_profile(project_id=project_id)
         if not isinstance(calculation_profile, CalculationProfile):

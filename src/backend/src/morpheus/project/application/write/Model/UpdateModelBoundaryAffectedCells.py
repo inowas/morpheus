@@ -2,12 +2,10 @@ import dataclasses
 from typing import TypedDict
 
 from morpheus.common.types import Uuid, DateTime
-from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.ModelReader import ModelReader
-from morpheus.project.application.read.PermissionsReader import PermissionsReader
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryAffectedCellsUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
@@ -26,8 +24,7 @@ class UpdateModelBoundaryAffectedCellsCommandPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class UpdateModelBoundaryAffectedCellsCommand(CommandBase):
-    project_id: ProjectId
+class UpdateModelBoundaryAffectedCellsCommand(ProjectCommandBase):
     model_id: ModelId
     boundary_id: BoundaryId
     affected_cells: ActiveCells
@@ -48,10 +45,6 @@ class UpdateModelBoundaryAffectedCellsCommandHandler(CommandHandlerBase):
     def handle(command: UpdateModelBoundaryAffectedCellsCommand):
         project_id = command.project_id
         user_id = command.user_id
-        permissions = PermissionsReader().get_permissions(project_id=project_id)
-
-        if not permissions.member_can_edit(user_id=user_id):
-            raise InsufficientPermissionsException(f'User {user_id.to_str()} does not have permission to update the affected cells of {project_id.to_str()}')
 
         model = ModelReader().get_latest_model(project_id=project_id)
         if model.model_id != command.model_id:

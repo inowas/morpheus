@@ -4,7 +4,7 @@ from typing import TypedDict, List
 from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.application.write.CommandBase import CommandBase
+from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
@@ -19,8 +19,7 @@ class CreateProjectPayload(TypedDict):
 
 
 @dataclasses.dataclass(frozen=True)
-class CreateProjectCommand(CommandBase):
-    project_id: ProjectId
+class CreateProjectCommand(ProjectCommandBase):
     name: Name
     description: Description
     tags: Tags

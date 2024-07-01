@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ContentWrapper} from 'common/components';
 import {useParams} from 'react-router-dom';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useIsMobile from 'common/hooks/useIsMobile';
 import {useCalculation} from '../../application';
 import Calculation from '../components/Calculation/Calculation';
@@ -9,7 +9,7 @@ import {ICalculation} from '../../types/Calculation.type';
 
 const CalculationContainer = () => {
   const {projectId} = useParams();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {isMobile} = useIsMobile();
 
   const {startCalculation, fetchLatestCalculation, fetchFile, loading, error} = useCalculation(projectId as string);

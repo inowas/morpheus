@@ -1,14 +1,14 @@
 import React from 'react';
 import {ContentWrapper} from 'common/components';
 import {useParams} from 'react-router-dom';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useIsMobile from 'common/hooks/useIsMobile';
 import useCalculationProfile from '../../application/useCalculationProfile';
 import CalculationProfile from '../components/CalculationProfile/CalculationProfile';
 
 const CalculationProfileContainer = () => {
   const {projectId} = useParams();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {isMobile} = useIsMobile();
 
   const {calculationProfile, updateCalculationProfile} = useCalculationProfile(projectId as string);

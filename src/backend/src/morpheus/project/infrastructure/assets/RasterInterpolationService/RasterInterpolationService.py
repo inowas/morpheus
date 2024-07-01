@@ -1,4 +1,3 @@
-import math
 from enum import StrEnum
 from typing import Any
 
