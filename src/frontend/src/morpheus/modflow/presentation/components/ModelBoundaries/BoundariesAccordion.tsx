@@ -23,7 +23,7 @@ interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
-  onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
+  onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | null) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -56,8 +56,12 @@ const BoundariesAccordion = ({
   const panelDetails = getPanelDetails(boundaries, selectedBoundaryAndObservation);
 
   const handlePanelChange = (panel: IPanelDetails) => {
+    if (panel.active) {
+      return onSelectBoundaryAndObservation(null);
+    }
+
     if (!panel.boundaries.length) {
-      return;
+      return onSelectBoundaryAndObservation(null);
     }
 
     const firstBoundary = panel.boundaries[0];
@@ -65,7 +69,7 @@ const BoundariesAccordion = ({
       return;
     }
 
-    onSelectBoundaryAndObservation({boundary: firstBoundary});
+    onSelectBoundaryAndObservation({boundary: firstBoundary, observationId: firstBoundary.observations[0].observation_id});
   };
 
   return (

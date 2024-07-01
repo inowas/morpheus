@@ -143,10 +143,10 @@ const BoundariesLayer = ({
                   <LeafletCircleMarker
                     key={key}
                     center={position}
-                    radius={isSelected ? 10 : 5}
+                    radius={7}
                     fill={true}
-                    fillOpacity={isSelected ? 1 : 0.5}
-                    color={isSelected ? 'red' : 'blue'}
+                    fillOpacity={1}
+                    color={isSelected ? 'blue' : 'grey'}
                     eventHandlers={isEditable ? editBoundaryEventHandlers : viewModeEventHandlers}
                     pmIgnore={!isEditable}
                   >
@@ -166,9 +166,9 @@ const BoundariesLayer = ({
                   <LeafletPolyline
                     key={key}
                     positions={linePositions}
-                    weight={isSelected ? 3 : 1.5}
+                    weight={3}
                     eventHandlers={isEditable ? editBoundaryEventHandlers : viewModeEventHandlers}
-                    color={isSelected ? 'red' : 'blue'}
+                    color={isSelected ? 'blue' : 'grey'}
                     pmIgnore={!isEditable}
                   >
                     <LeafletPopup>
@@ -181,17 +181,24 @@ const BoundariesLayer = ({
                     const keyObservation = `${observation.observation_id}-${isSelectedObservation ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : 'view'}`;
                     const geometry = observation.geometry as Point;
                     const position = [geometry.coordinates[1], geometry.coordinates[0]] as LatLngExpression;
-                    viewModeEventHandlers = {click: () => handleSelectBoundary(boundary, observation.observation_id)};
-                    const editBoundaryObservationEventHandlers: LeafletEventHandlers = {'pm:update': handleChangeBoundaryObservationPointGeometry(boundary.id, observation.observation_id)};
+                    const editBoundaryObservationEventHandlers: LeafletEventHandlers = {
+                      'pm:update': handleChangeBoundaryObservationPointGeometry(boundary.id, observation.observation_id),
+                      'click': () => handleSelectBoundary(boundary, observation.observation_id),
+                    };
+
+                    if (!isEditable) {
+                      return;
+                    }
+
                     return (
                       <LeafletCircleMarker
                         key={`${keyObservation}`}
                         center={position}
-                        radius={isSelectedObservation ? 10 : 5}
+                        radius={7}
                         fill={true}
-                        fillOpacity={isSelectedObservation ? 1 : 0.5}
+                        fillOpacity={1}
                         eventHandlers={isEditable ? editBoundaryObservationEventHandlers : viewModeEventHandlers}
-                        color={isSelectedObservation ? 'red' : 'blue'}
+                        color={isSelectedObservation ? 'blue' : 'grey'}
                         pmIgnore={!isSelectedObservation}
                       >
                         <LeafletPopup>
@@ -213,10 +220,10 @@ const BoundariesLayer = ({
                     key={key}
                     positions={positions}
                     fill={isSelected}
-                    weight={isSelected ? 3 : 1.5}
+                    weight={isSelected ? 3 : 1}
                     fillOpacity={1}
                     eventHandlers={isEditable ? editBoundaryEventHandlers : viewModeEventHandlers}
-                    color={isSelected ? 'red' : 'blue'}
+                    color={isSelected ? 'blue' : 'grey'}
                     pmIgnore={!isEditable}
                   >
                     <LeafletPopup>
@@ -286,8 +293,8 @@ const BoundariesLayer = ({
             preventMarkerRemoval: true,
             continueDrawing: false,
             editable: true,
-            maxRadiusCircleMarker: 50,
-            minRadiusCircleMarker: 50,
+            maxRadiusCircleMarker: 10,
+            minRadiusCircleMarker: 10,
             draggable: true,
           }}
         />
