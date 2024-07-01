@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {Form} from 'semantic-ui-react';
 import {ICalculationProfile} from '../../../types/CalculationProfile.type';
 import {DropdownInput, StringInput} from './FormFields';
-import {SectionTitle, Tab, TabPane} from 'common/components';
+import {Button, SectionTitle, Tab, TabPane} from 'common/components';
 import * as PackageSettings from './PackageSettings';
 import descriptions from './PackageSettings/PackagePropsDescriptions';
 
@@ -31,11 +31,17 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
     <>
       <SectionTitle
         title={'Calculation Profile'}
-        disabled={!profileHasChanged}
-        onClick={!isReadOnly ? () => onChange(profile) : undefined}
-        btnTitle={!isReadOnly ? 'Save' : undefined}
         style={{marginBottom: 20}}
-      />
+      >
+        {!isReadOnly && <Button
+          disabled={!profileHasChanged}
+          primary={true}
+          size={'small'}
+          onClick={() => onChange(profile)}
+        >
+          Save
+        </Button>}
+      </SectionTitle>
       <Form>
         <Form.Group widths='equal' style={{alignItems: 'center'}}>
           <DropdownInput

@@ -5,11 +5,9 @@ import {useParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {IGrid} from '../../types';
-import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
+import {DataGrid, LockButton, SectionTitle, Tab, TabPane} from 'common/components';
 import {Accordion, AccordionContent} from '../components/Content';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 import {MenuItem} from 'semantic-ui-react';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
@@ -112,10 +110,13 @@ const SpatialDiscretizationContainer = () => {
         <DataGrid>
           <SectionTitle
             title={'Model Geometry'}
-            faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-            faIconText={locked ? 'Locked' : 'Unlocked'}
-            faIconOnClick={() => !isReadOnly && setLocked(!locked)}
-          />
+          >
+            <LockButton
+              title={locked ? 'Locked' : 'Unlocked'}
+              onClick={() => !isReadOnly && setLocked(!locked)}
+              locked={locked}
+            />
+          </SectionTitle>
           <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
             <AccordionContent title={'Model domain'}>
               <Tab
