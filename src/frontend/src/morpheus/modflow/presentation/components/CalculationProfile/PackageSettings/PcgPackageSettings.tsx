@@ -2,9 +2,8 @@ import React from 'react';
 import {IPcgPackageSettings} from '../../../../types/CalculationProfile.type';
 import {SectionTitle} from '../../../../../../common/components';
 import {Divider, Form} from 'semantic-ui-react';
-import {DropdownInput, FloatInput, IntegerInput} from '../FormFields';
+import {DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
-import NumberInput from '../FormFields/NumberInput';
 
 interface IProps {
   settings: IPcgPackageSettings
@@ -28,19 +27,21 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <IntegerInput
+          <NumberInput
             label={'Maximum number of outer iterations (mxiter)'}
             value={settings.mxiter}
             onChange={(value: number) => onChange({...settings, mxiter: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.mxiter}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum number of inner equations (iter1)'}
             value={settings.iter1}
             onChange={(value: number) => onChange({...settings, iter1: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.iter1}
+            precision={0}
           />
           <DropdownInput
             label={'Matrix conditioning method (npcond)'}
@@ -79,25 +80,26 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
           <NumberInput
             label={'Head change criterion (hclose)'}
             value={settings.hclose}
-            onChange={(value: number | null) => null !== value && onChange({...settings, hclose: value})}
+            onChange={(value: number) => onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.hclose}
-            precision={6}
             isScientificNotation={true}
           />
-          <FloatInput
+          <NumberInput
             label={'Residual criterion (rclose)'}
             value={settings.rclose}
-            onChange={(value: number | null) => null !== value && onChange({...settings, rclose: value})}
+            onChange={(value: number) => onChange({...settings, rclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.rclose}
+            isScientificNotation={true}
           />
-          <FloatInput
+          <NumberInput
             label={'Relaxation parameter (relax)'}
             value={settings.relax}
-            onChange={(value: number | null) => null !== value && onChange({...settings, relax: value})}
+            onChange={(value: number) => onChange({...settings, relax: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.relax}
+            precision={2}
           />
           <NumberInput
             label={'Eigenvalue upper bound (nbpol)'}
@@ -107,12 +109,13 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             description={descriptions.pcg.nbpol}
             precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Solver printout interval (iprpcg)'}
             value={settings.iprpcg}
             onChange={(value: number) => onChange({...settings, iprpcg: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.iprpcg}
+            precision={0}
           />
           <DropdownInput
             label={'Print options (mutpcg)'}
@@ -127,19 +130,21 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               {key: '3', value: 3, text: '(3) Printing only if convergence fails'},
             ]}
           />
-          <FloatInput
+          <NumberInput
             label={'Steady-state damping factor (damp)'}
             value={settings.damp}
-            onChange={(value: number | null) => null !== value && onChange({...settings, damp: value})}
+            onChange={(value: number) => onChange({...settings, damp: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.damp}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Transient damping factor (dampt)'}
             value={settings.dampt}
-            onChange={(value: number | null) => null !== value && onChange({...settings, dampt: value})}
+            onChange={(value: number) => onChange({...settings, dampt: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.dampt}
+            precision={2}
           />
         </Form.Group>
       </Form>

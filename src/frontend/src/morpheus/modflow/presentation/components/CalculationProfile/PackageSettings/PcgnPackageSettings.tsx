@@ -2,7 +2,7 @@ import React from 'react';
 import {IPcgnPackageSettings} from '../../../../types/CalculationProfile.type';
 import {SectionTitle} from '../../../../../../common/components';
 import {Divider, Form, Header} from 'semantic-ui-react';
-import {DropdownInput, FloatInput, IntegerInput} from '../FormFields';
+import {DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
 interface IProps {
@@ -28,40 +28,45 @@ const PcgnPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <IntegerInput
+          <NumberInput
             label={'Max. no. of outer iterations (ITER_MO)'}
             value={settings.iter_mo}
             onChange={(value: number) => onChange({...settings, iter_mo: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.iter_mo}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Max. no. of inner iterations (ITER_MI)'}
             value={settings.iter_mi}
             onChange={(value: number) => onChange({...settings, iter_mi: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.iter_mi}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Residual-based stopping criterion (CLOSE_R)'}
             value={settings.close_r}
-            onChange={(value: number | null) => null !== value && onChange({...settings, close_r: value})}
+            onChange={(value: number) => onChange({...settings, close_r: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.close_r}
+            isScientificNotation={true}
           />
-          <FloatInput
+          <NumberInput
             label={'Head-based stopping criterion (CLOSE_H)'}
             value={settings.close_h}
-            onChange={(value: number | null) => null !== value && onChange({...settings, close_h: value})}
+            onChange={(value: number) => onChange({...settings, close_h: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.close_h}
+            isScientificNotation={true}
           />
-          <FloatInput
+          <NumberInput
             label={'Relaxation parameter (RELAX)'}
             value={settings.relax}
-            onChange={(value: number | null) => null !== value && onChange({...settings, relax: value})}
+            onChange={(value: number) => onChange({...settings, relax: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.relax}
+            precision={2}
           />
           <DropdownInput
             label={'Fill level of the MIC preconditioner (IFILL)'}
@@ -74,19 +79,21 @@ const PcgnPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               {key: '1', value: 1, text: '(1) More preconditioning'},
             ]}
           />
-          <IntegerInput
+          <NumberInput
             label={'Save progress for inner PCG iteration to file (UNIT_PC)'}
             value={settings.unit_pc}
             onChange={(value: number) => onChange({...settings, unit_pc: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.unit_pc}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Save time in PCG solver to file (UNIT_TS)'}
             value={settings.unit_ts}
             onChange={(value: number) => onChange({...settings, unit_ts: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.unit_ts}
+            precision={0}
           />
         </Form.Group>
       </Form>
@@ -125,54 +132,61 @@ const PcgnPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               {key: '2', value: 2, text: '(2) Enhanced'},
             ]}
           />
-          <FloatInput
+          <NumberInput
             label={'Damping restriction (DAMP)'}
             value={settings.damp}
-            onChange={(value: number | null) => null !== value && onChange({...settings, damp: value})}
+            onChange={(value: number) => onChange({...settings, damp: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.damp}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Minimum relative convergence (CNVG_LB)'}
             value={settings.cnvg_lb}
-            onChange={(value: number | null) => null !== value && onChange({...settings, cnvg_lb: value})}
+            onChange={(value: number) => onChange({...settings, cnvg_lb: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.cnvg_lb}
+            precision={4}
           />
-          <FloatInput
+          <NumberInput
             label={'Damping lower bound (DAMP_LB)'}
             value={settings.damp_lb}
-            onChange={(value: number | null) => null !== value && onChange({...settings, damp_lb: value})}
+            onChange={(value: number) => onChange({...settings, damp_lb: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.damp_lb}
+            precision={4}
           />
-          <IntegerInput
+          <NumberInput
             label={'Relative convergence increase (MCNVG)'}
             value={settings.mcnvg}
             onChange={(value: number) => onChange({...settings, mcnvg: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.mcnvg}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Rate parameter (RATE_D)'}
             value={settings.rate_d}
-            onChange={(value: number | null) => null !== value && onChange({...settings, rate_d: value})}
+            onChange={(value: number) => onChange({...settings, rate_d: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.rate_d}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Convergence enhancement control (RATE_C)'}
             value={settings.rate_c}
-            onChange={(value: number | null) => null !== value && onChange({...settings, rate_c: value})}
+            onChange={(value: number) => onChange({...settings, rate_c: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.rate_c}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Maximum head change (CHGLIMIT)'}
             value={settings.chglimit}
-            onChange={(value: number | null) => null !== value && onChange({...settings, chglimit: value})}
+            onChange={(value: number) => onChange({...settings, chglimit: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcgn.chglimit}
+            precision={2}
           />
           <DropdownInput
             label={'Progress reporting (IPUNIT)'}

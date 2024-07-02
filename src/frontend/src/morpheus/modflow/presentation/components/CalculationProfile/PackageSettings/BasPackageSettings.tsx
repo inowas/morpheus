@@ -2,7 +2,7 @@ import React from 'react';
 import {Form} from 'semantic-ui-react';
 import {IBasPackageSettings} from '../../../../types/CalculationProfile.type';
 import PackageWrapper from './PackageWrapper';
-import {CheckBox, FloatInput} from '../FormFields';
+import {CheckBox, NumberInput, NumberOrNullInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 import {SectionTitle} from '../../../../../../common/components';
 
@@ -33,14 +33,15 @@ const BasPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               rowGap: 20,
             }}
           >
-            <FloatInput
+            <NumberInput
               label={'Head assigned to all no flow cells (HNOFLO)'}
               value={settings.hnoflo}
-              onChange={(value: number | null) => null !== value && onChange({...settings, hnoflo: value})}
+              onChange={(value: number) => onChange({...settings, hnoflo: value})}
               isReadOnly={true}
               description={descriptions.bas.hnoflo}
+              precision={2}
             />
-            <FloatInput
+            <NumberOrNullInput
               label={'Budget percent discrepancy (STOPER)'}
               value={settings.stoper}
               onChange={(value: number | null) => onChange({...settings, stoper: value})}
