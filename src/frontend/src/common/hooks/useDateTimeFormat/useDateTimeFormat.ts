@@ -12,6 +12,8 @@ interface IUseDateTimeFormat {
   formatISODateTime: (dateString: string) => string;
   isValid: (dateString: string) => boolean;
   parseUserInput: (isoDateString: string, formatString: string) => string;
+  parseDate: (dateString: string) => string;
+  parseDateTime: (dateString: string) => string;
 }
 
 const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFormat => {
@@ -62,6 +64,14 @@ const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFo
     return DateTime.fromISO(dateString).setZone(timezone).isValid;
   };
 
+  const parseDate = (dateString: string): string => {
+    return DateTime.fromFormat(dateString, USER_DATE_FORMAT, {zone: timezone}).toISO() as string;
+  };
+
+  const parseDateTime = (dateString: string): string => {
+    return DateTime.fromFormat(dateString, USER_DATE_TIME_FORMAT, {zone: timezone}).toISO() as string;
+  };
+
   // parse the user input to an ISO string
   // the format string is used to parse the input
   const parseUserInput = (dateString: string, formatString: string): string => {
@@ -79,6 +89,8 @@ const useDateTimeFormat = (timezone: string | undefined = 'UTC'): IUseDateTimeFo
     formatISODateTime,
     formatISO,
     isValid,
+    parseDate,
+    parseDateTime,
     parseUserInput,
   };
 };
