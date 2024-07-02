@@ -196,9 +196,9 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation, i
                 </div>
                 <div>
                   <Checkbox
-                    disabled={isReadOnly}
+                    disabled={0 === rowId || isReadOnly}
                     toggle={true}
-                    checked={row.enabled}
+                    checked={0 === rowId || row.enabled}
                     style={{pointerEvents: 'all', marginLeft: 10}}
                     onChange={(e, {checked}) => {
                       const newData = [...data];

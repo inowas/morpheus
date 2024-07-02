@@ -6,6 +6,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
+from .BoundaryInterpolationType import InterpolationType
 from .Observation import ObservationId, RawDataItem, DataItem, Observation, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
@@ -96,8 +97,23 @@ class WellObservation(Observation):
             'data': [d.to_dict() for d in self.data]
         }
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> WellDataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> WellDataItem | None:
 
+        # No interpolation
+        # if this is set, we are expecting that the start_date_time is present in the time series
+        # no other values are used or being interpolated
+        if interpolation == InterpolationType.none:
+            for item in self.data:
+                if item.date_time == start_date_time:
+                    return WellDataItem(
+                        observation_id=self.observation_id,
+                        start_date_time=start_date_time,
+                        end_date_time=end_date_time,
+                        pumping_rate=item.pumping_rate
+                    )
+            return None
+
+        # if interpolation is set, we need to interpolate the values
         # In range check
         if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
             return None
@@ -114,12 +130,32 @@ class WellObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
+
+        # Forward fill or backward fill interpolation
+        # We need to fill the missing values with the last known value
+        if interpolation == InterpolationType.forward_fill:
+            df = pd.DataFrame({'time_series': time_series, 'pumping_rates': pumping_rates})
+            df.set_index('time_series', inplace=True)
+            df = df.reindex(date_range, method='ffill')
+
+            target_date_time = pd.to_datetime(start_date_time.to_value())
+            pumping_rate_at_start_date_time = df.loc[target_date_time, 'pumping_rates']
+
+            return WellDataItem(
+                observation_id=self.observation_id,
+                start_date_time=start_date_time,
+                end_date_time=end_date_time,
+                pumping_rate=PumpingRate.from_value(pumping_rate_at_start_date_time)
+            )
+
+        # Linear or nearest interpolation
         pumping_rates_interpolator = interp1d(
             time_series.values.astype(float),
             pumping_rates.values.astype(float),
-            kind='linear',
+            kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
             fill_value='extrapolate'  # type: ignore
         )
+
         pumping_rates = pumping_rates_interpolator(date_range.values.astype(float))
 
         return WellDataItem(
