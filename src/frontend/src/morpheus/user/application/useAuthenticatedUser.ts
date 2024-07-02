@@ -18,10 +18,10 @@ type IAuthenticatedUserGetResponse = {
   is_admin: boolean;
   email: string;
   username: string;
-  first_name: string;
-  last_name: string;
-  keycloak_user_id: string;
-  geo_node_user_id: string;
+  first_name: string | null;
+  last_name: string | null;
+  keycloak_user_id: string | null;
+  geo_node_user_id: string | null;
 };
 
 const useAuthenticatedUser = (): IUseAuthenticatedUser => {
@@ -66,4 +66,4 @@ const useAuthenticatedUser = (): IUseAuthenticatedUser => {
 
 export default useAuthenticatedUser;
 
-export type {IUseAuthenticatedUser};
+export type {IUseAuthenticatedUser, IAuthenticatedUser};

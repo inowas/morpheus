@@ -1,7 +1,7 @@
 import {IError, IProjectListItem, IUserPrivilege} from '../types';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
-import {useApi, useAuthentication} from '../incoming';
+import {useApi, useUsers} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface IUseProjectList {
@@ -143,21 +143,19 @@ type IProjectSummaryGetResponse = {
 const useProjectList = (): IUseProjectList => {
   const isMounted = useRef(true);
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
-  const [filter, setFilter] = useState<IFilterParams>({});
+  const [filter, setFilter] = useState<IFilterParams>({my_projects: true});
   const [orderOption, setOrderOption] = useState<IOrderOption>(orderOptions[0]);
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
+  const {authenticatedUser} = useUsers();
 
   const {sendCommand} = useProjectCommandBus();
 
-  const {userProfile} = useAuthentication();
-  const myUserId = userProfile?.sub || '';
-
   const filterOptions: IFilterOptions = useMemo(() => {
     return {
-      number_of_my_projects: projects.filter((project) => project.owner_id === myUserId).length,
-      number_of_my_group_projects: projects.filter((project) => project.owner_id !== myUserId).length,
+      number_of_my_projects: projects.filter((project) => project.owner_id === authenticatedUser?.user_id).length,
+      number_of_my_group_projects: projects.filter((project) => project.owner_id !== authenticatedUser?.user_id).length,
       users: [{
         user_id: 'Dmytro',
         unsername: 'Dmytro',
@@ -224,14 +222,14 @@ const useProjectList = (): IUseProjectList => {
         recharge: 12,
       },
     };
-  }, [myUserId, projects]);
+  }, [authenticatedUser?.user_id, projects]);
 
 
   const filteredProjects = useMemo(() => {
 
     let newListOfProjects: IProjectListItem[] = projects.filter((project) => {
 
-      if (filter.my_projects && project.owner_id !== myUserId) {
+      if (filter.my_projects && project.owner_id !== authenticatedUser?.user_id) {
         return false;
       }
 
@@ -298,7 +296,7 @@ const useProjectList = (): IUseProjectList => {
 
     return newListOfProjects;
 
-  }, [projects, filter, search, orderOption, myUserId]);
+  }, [projects, filter, search, orderOption, authenticatedUser?.user_id]);
 
   const onDeleteClick = async (projectId: string): Promise<void> => {
     if (!isMounted.current) {
@@ -377,7 +375,7 @@ const useProjectList = (): IUseProjectList => {
     order: orderOption,
     onOrderChange: setOrderOption,
     orderOptions,
-    search: '',
+    search,
     onSearchChange: setSearch,
     onDeleteClick,
     loading,

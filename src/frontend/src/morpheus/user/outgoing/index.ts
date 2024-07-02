@@ -1,4 +1,5 @@
-import useAuthenticatedUser, {IUseAuthenticatedUser} from '../application/useAuthenticatedUser';
+import useAuthenticatedUser, {IUseAuthenticatedUser, IAuthenticatedUser} from '../application/useAuthenticatedUser';
+import useUsers, {IUseUsers, IUser} from '../application/useUsers';
 
-export {useAuthenticatedUser};
-export type {IUseAuthenticatedUser};
+export {useAuthenticatedUser, useUsers};
+export type {IUseAuthenticatedUser, IUseUsers, IUser, IAuthenticatedUser};
