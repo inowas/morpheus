@@ -1,9 +1,10 @@
-import {IError, IUser} from '../types';
+import {IAuthenticatedUser, IError, IUser} from '../types';
 
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
 
 export interface UserState {
+  authenticatedUser: IAuthenticatedUser | null;
   users: IUser[];
   loading: boolean;
   error: IError | null;
@@ -11,6 +12,7 @@ export interface UserState {
 
 const initialState: UserState = {
   users: [],
+  authenticatedUser: null,
   loading: false,
   error: null,
 };
@@ -20,6 +22,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setAuthenticatedUser: (state, action: PayloadAction<IAuthenticatedUser | null>) => {
+      state.authenticatedUser = action.payload;
+    },
     setUsers: (state, action: PayloadAction<IUser[]>) => {
       state.users = action.payload;
     },
@@ -33,6 +38,6 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {setUsers, setLoading, setError} = userSlice.actions;
+export const {setAuthenticatedUser, setUsers, setLoading, setError} = userSlice.actions;
 
 export default userSlice.reducer;

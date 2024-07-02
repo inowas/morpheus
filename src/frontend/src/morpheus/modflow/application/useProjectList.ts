@@ -1,4 +1,4 @@
-import {IError, IProjectListItem} from '../types';
+import {IError, IProjectListItem, IUserPrivilege} from '../types';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {useApi, useAuthentication} from '../incoming';
@@ -128,6 +128,18 @@ interface IOrder {
   [key: string]: 'asc' | 'desc';
 }
 
+type IProjectSummaryGetResponse = {
+  project_id: string
+  created_at: string
+  description: string
+  is_public: boolean
+  name: string
+  owner_id: string
+  tags: string[]
+  updated_at: string
+  user_privileges: IUserPrivilege[]
+}[];
+
 const useProjectList = (): IUseProjectList => {
   const isMounted = useRef(true);
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
@@ -230,9 +242,9 @@ const useProjectList = (): IUseProjectList => {
       if (filter.is_public && !project.is_public) {
         return false;
       }
-      if (filter.status && !filter.status.includes(project.status)) {
-        return false;
-      }
+      // if (filter.status && !filter.status.includes(project.status)) {
+      //   return false;
+      // }
       if (filter.date_range) {
         const projectDate = new Date(project.created_at);
         const startDate = filter.date_range.start && new Date(filter.date_range.start);
@@ -328,7 +340,7 @@ const useProjectList = (): IUseProjectList => {
       }
       setLoading(true);
       setError(null);
-      const result = await httpGet<any>('/projects');
+      const result = await httpGet<IProjectSummaryGetResponse>('/projects');
 
       if (!isMounted.current) {
         return;
