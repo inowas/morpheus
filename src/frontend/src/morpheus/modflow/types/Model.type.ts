@@ -1,7 +1,8 @@
+import {IBoundary} from './Boundaries.type';
+import {ILayer} from './Layers.type';
 import {ISpatialDiscretization} from './SpatialDiscretization.type';
 import {ITimeDiscretization} from './TimeDiscretization.type';
-import {ILayer} from './Layers.type';
-import {IBoundary} from "./Boundaries.type";
+
 
 interface IModel {
   model_id: string;
