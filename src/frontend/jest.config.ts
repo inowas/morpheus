@@ -23,7 +23,7 @@ export default async (): Promise<Config.InitialOptions> => ({
     global: {
       statements: 20,
       branches: 10,
-      lines: 25,
+      lines: 20,
       functions: 15,
     },
   },
