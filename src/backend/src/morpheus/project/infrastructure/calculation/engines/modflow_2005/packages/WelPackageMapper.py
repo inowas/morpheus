@@ -24,7 +24,7 @@ def calculate_wel_boundary_stress_period_data(
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
-        mean_data = wel_boundary.get_mean_data(start_date_time, end_date_time)
+        mean_data = wel_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=wel_boundary.interpolation)
 
         if wel_boundary.number_of_observations() == 0 or None in mean_data:
             # if we have no observation points
@@ -38,8 +38,7 @@ def calculate_wel_boundary_stress_period_data(
         layer_indices = [layer_ids.index(layer_id) for layer_id in wel_boundary.affected_layers]
 
         # we need to filter the affected cells to only include cells that are part of the model
-        wel_boundary.affected_cells = wel_boundary.affected_cells.filter(
-            lambda cell: spatial_discretization.affected_cells.contains(cell))
+        wel_boundary.affected_cells = wel_boundary.affected_cells.filter(lambda cell: spatial_discretization.affected_cells.contains(cell))
 
         if wel_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]
@@ -57,8 +56,7 @@ def calculate_wel_boundary_stress_period_data(
                 # for pumping rates we distribute the pumping rate equally over all layers
                 # pumping rates will be summed up
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
-                                      values=[pumping_rate.to_float() / len(layer_indices)], sum_up_values=True)
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[pumping_rate.to_float() / len(layer_indices)], sum_up_values=True)
 
     return sp_data
 

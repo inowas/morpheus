@@ -27,7 +27,7 @@ def calculate_riv_boundary_stress_period_data(
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
-        mean_data = riv_boundary.get_mean_data(start_date_time, end_date_time)
+        mean_data = riv_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=riv_boundary.interpolation)
 
         if riv_boundary.number_of_observations() == 0 or None in mean_data:
             # if we have no observation points
@@ -83,7 +83,7 @@ def calculate_riv_boundary_stress_period_data(
                 shapely_point = ShapelyPoint(observation.geometry.coordinates)
                 xx.append(line_string.project(shapely_point, normalized=True))
 
-                mean_data = observation.get_data_item(start_date_time, end_date_time)
+                mean_data = observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=riv_boundary.interpolation)
                 if not isinstance(mean_data, RiverDataItem):
                     raise TypeError("Expected GeneralHeadDataItem but got {}".format(type(mean_data)))
 

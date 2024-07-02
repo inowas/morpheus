@@ -1,6 +1,6 @@
-import {LineString, Point, Polygon} from "geojson";
-import {IAffectedCells} from "./SpatialDiscretization.type";
-import {ILayerId} from "./Layers.type";
+import {LineString, Point, Polygon} from 'geojson';
+import {IAffectedCells} from './SpatialDiscretization.type';
+import {ILayerId} from './Layers.type';
 
 
 type IBoundaryId = string;
@@ -10,6 +10,7 @@ interface IGenericBoundary<T> {
   id: IBoundaryId;
   type: IBoundaryType;
   name: string;
+  interpolation: IInterpolationType;
   tags: string[];
   geometry: Point | LineString | Polygon;
   affected_cells: IAffectedCells;
@@ -19,6 +20,8 @@ interface IGenericBoundary<T> {
 }
 
 export type IBoundaryType = 'constant_head' | 'drain' | 'evapotranspiration' | 'flow_and_head' | 'general_head' | 'lake' | 'recharge' | 'river' | 'well';
+
+export type IInterpolationType = 'none' | 'nearest' | 'linear' | 'backward_fill' | 'forward_fill';
 
 export type IObservationId = string;
 
@@ -158,7 +161,7 @@ type IBoundaryObservationData = IConstantHeadObservationData
   | IWellObservationData;
 
 
-export type {IBoundary, IBoundaryId, IBoundaryObservationData, ISelectedBoundaryAndObservation}
+export type {IBoundary, IBoundaryId, IBoundaryObservationData, ISelectedBoundaryAndObservation};
 
 
 export const availableBoundaries: { title: string, type: IBoundaryType, keys: string[] }[] = [

@@ -6,7 +6,7 @@ import {useProjectList, useTranslate} from '../../application';
 import Error from 'common/components/Error';
 import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
-import {useAuthentication} from '../../incoming';
+import {useUsers} from '../../incoming';
 import {useDateTimeFormat} from 'common/hooks';
 
 interface IProps {
@@ -41,31 +41,30 @@ const ProjectListPage = ({basePath}: IProps) => {
   const {translate} = useTranslate();
   const {projects, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
+  const {users} = useUsers();
 
-  const {userProfile} = useAuthentication();
-  const {formatDate} = useDateTimeFormat();
-  const myUserId = userProfile?.sub || '';
+  const {formatISODate} = useDateTimeFormat();
 
-  const cards = useMemo(() => {
+
+  const cards: ICard[] = useMemo(() => {
     return projects.map((project) => {
-
-      const canBeCopied = true;
-      const canBeDeleted = myUserId === project.owner_id;
+      const canBeDeleted = project.user_privileges.includes('full_access');
 
       return {
         key: project.project_id,
         title: project.name,
         description: project.description,
+        author: users.find((user) => user.user_id === project.owner_id)?.full_name || '',
         image: project.image,
-        status: 'green',
-        date_time: formatDate(project.created_at, 'dd.MM.yyyy'),
+        date_time: formatISODate(project.created_at),
         onViewClick: () => navigateTo(`${basePath}/${project.project_id}`),
         onDeleteClick: canBeDeleted ? () => onDeleteClick(project.project_id) : undefined,
-        onCopyClick: canBeCopied ? () => console.log('Copy project') : undefined,
-      } as ICard;
+        // onCopyClick: canBeCopied ? () => console.log('Copy project') : undefined,
+        status: 'green',
+      };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projects]);
+  }, [projects, users]);
 
   if (error) {
     return <Error message={error.message}/>;

@@ -1,7 +1,4 @@
 import dataclasses
-import pandas as pd
-
-from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
 from .Observation import ObservationId, Observation, ObservationName
@@ -100,25 +97,17 @@ class FlowAndHeadObservation(Observation):
         if self.data[-1].date_time.to_datetime() < date_time.to_datetime():
             return None
 
-        time_series = pd.Series([d.date_time.to_datetime() for d in self.data if d.flow is not None])
-        flows = pd.Series([d.flow.to_value() for d in self.data if d.flow is not None])
-        if len(flows) == 0:
-            return None
+        for item in self.data:
+            if item.date_time == date_time:
+                if item.flow is None:
+                    return None
 
-        date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1h')
-        flow_interpolator = interp1d(
-            time_series.values.astype(float),
-            flows.values.astype(float),
-            kind='linear',
-            fill_value='extrapolate'  # type: ignore
-        )
-        interpolated_flows = flow_interpolator(date_range.values.astype(float))
-
-        return FlowDataItem(
-            observation_id=self.observation_id,
-            date_time=date_time,
-            flow=Flow.from_value(interpolated_flows.mean())
-        )
+                return FlowDataItem(
+                    observation_id=self.observation_id,
+                    date_time=date_time,
+                    flow=item.flow
+                )
+        return None
 
     def get_head_data_item(self, date_time: StartDateTime) -> HeadDataItem | None:
 
@@ -129,25 +118,16 @@ class FlowAndHeadObservation(Observation):
         if self.data[-1].date_time.to_datetime() < date_time.to_datetime():
             return None
 
-        time_series = pd.Series([d.date_time.to_datetime() for d in self.data if d.head is not None])
-        heads = pd.Series([d.head.to_value() for d in self.data if d.head is not None])
-        if len(heads) == 0:
-            return None
-
-        date_range = pd.date_range(date_time.to_datetime(), date_time.to_datetime(), freq='1h')
-        head_interpolator = interp1d(
-            time_series.values.astype(float),
-            heads.values.astype(float),
-            kind='linear',
-            fill_value='extrapolate'  # type: ignore
-        )
-        interpolated_heads = head_interpolator(date_range.values.astype(float))
-
-        return HeadDataItem(
-            observation_id=self.observation_id,
-            date_time=date_time,
-            head=Head.from_value(interpolated_heads.mean())
-        )
+        for item in self.data:
+            if item.date_time == date_time:
+                if item.head is None:
+                    return None
+                return HeadDataItem(
+                    observation_id=self.observation_id,
+                    date_time=date_time,
+                    head=item.head
+                )
+        return None
 
     def get_date_times(self) -> list[StartDateTime]:
         return [d.date_time for d in self.data]

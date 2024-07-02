@@ -26,7 +26,7 @@ def calculate_rch_boundary_stress_period_data(
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
-        mean_data = rch_boundary.get_mean_data(start_date_time, end_date_time)
+        mean_data = rch_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=rch_boundary.interpolation)
 
         if rch_boundary.number_of_observations() == 0 or None in mean_data:
             # if we have no observation points

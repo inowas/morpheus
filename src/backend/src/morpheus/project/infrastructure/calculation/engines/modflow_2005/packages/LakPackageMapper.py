@@ -76,7 +76,7 @@ def calculate_lak_boundary_stress_period_data(
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
 
         for lake_idx, lak_boundary in enumerate(lak_boundaries):
-            mean_data = lak_boundary.get_mean_data(start_date_time, end_date_time)
+            mean_data = lak_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=lak_boundary.interpolation)
 
             if lak_boundary.number_of_observations() == 0 or None in mean_data:
                 # if we have no observation points

@@ -1,7 +1,16 @@
 import React from 'react';
 import BoundariesAccordionPane from './BoundariesAccordionPane';
 import {Accordion} from 'common/components';
-import {availableBoundaries, IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
+import {
+  availableBoundaries,
+  IBoundary,
+  IBoundaryId,
+  IBoundaryType,
+  IInterpolationType,
+  IObservation,
+  IObservationId,
+  ISelectedBoundaryAndObservation,
+} from '../../../types/Boundaries.type';
 import {ILayer, ILayerId} from '../../../types/Layers.type';
 import {ITimeDiscretization} from '../../../types';
 
@@ -29,6 +38,7 @@ interface IProps {
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -45,6 +55,7 @@ const BoundariesAccordion = ({
   onDisableBoundary,
   onEnableBoundary,
   onUpdateBoundaryAffectedLayers,
+  onUpdateBoundaryInterpolation,
   onUpdateBoundaryMetadata,
   onUpdateBoundaryObservation,
   onRemoveBoundary,
@@ -97,6 +108,7 @@ const BoundariesAccordion = ({
               onRemoveBoundaryObservation={onRemoveBoundaryObservation}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+              onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
               onUpdateBoundaryObservation={onUpdateBoundaryObservation}
               selectedBoundaryAndObservation={selectedBoundaryAndObservation?.boundary?.type === panel.type ? selectedBoundaryAndObservation : undefined}
               onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}

@@ -1,15 +1,25 @@
 import useHttp, {IHttpError, IUseHttp} from 'common/hooks/useHttp';
 
 import config from 'config';
-import useAuth from './useAuth';
+import useAuthentication from './useAuthentication';
 
 export interface IUseApi extends IUseHttp {
 }
 
 export default (): IUseApi => {
-  const auth = useAuth();
   const apiBaseUrl = config.baseApiUrl;
-  return {...useHttp(apiBaseUrl)};
+  const {accessToken, onUnauthorized} = useAuthentication();
+
+  if (!accessToken) {
+    return {...useHttp(apiBaseUrl)};
+  }
+
+  return {
+    ...useHttp(apiBaseUrl, {
+      accessToken: accessToken,
+      onUnauthorized,
+    }),
+  };
 };
 
 export type {IHttpError};

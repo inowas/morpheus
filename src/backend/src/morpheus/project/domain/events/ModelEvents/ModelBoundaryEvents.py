@@ -6,7 +6,7 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryId, BoundaryName, BoundaryTags, BoundaryType
+from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryId, BoundaryName, BoundaryTags, BoundaryType, InterpolationType
 from morpheus.project.types.boundaries.Observation import Observation, ObservationId
 from morpheus.project.types.boundaries.ObservationFactory import ObservationFactory
 from morpheus.project.types.discretization.spatial import ActiveCells
@@ -242,6 +242,36 @@ class ModelBoundaryGeometryUpdatedEvent(EventBase):
     @staticmethod
     def get_event_name() -> EventName:
         return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARY_GEOMETRY_UPDATED.to_str())
+
+
+class ModelBoundaryInterpolationUpdatedEvent(EventBase):
+    @classmethod
+    def from_props(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, interpolation: InterpolationType, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'boundary_id': boundary_id.to_str(),
+                'interpolation': interpolation.value
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_boundary_id(self) -> BoundaryId:
+        return BoundaryId.from_str(self.payload['boundary_id'])
+
+    def get_interpolation(self) -> InterpolationType:
+        return InterpolationType(self.payload['interpolation'])
+
+    @staticmethod
+    def get_event_name() -> EventName:
+        return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARY_INTERPOLATION_UPDATED.to_str())
 
 
 class ModelBoundaryMetadataUpdatedEvent(EventBase):

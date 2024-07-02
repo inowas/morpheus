@@ -13,6 +13,7 @@ def register_routes(blueprint: Blueprint):
     CORS(blueprint, supports_credentials=True)
 
     @blueprint.route('', methods=['GET'])
+    @blueprint.route('/', methods=['GET'])
     @cross_origin()
     @authenticate()
     def read_user_list():

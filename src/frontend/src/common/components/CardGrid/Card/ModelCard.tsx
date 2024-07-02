@@ -1,4 +1,4 @@
-import {Button as SemanticButton, Icon, Image} from 'semantic-ui-react';
+import {Button as SemanticButton, Icon, Image, Popup} from 'semantic-ui-react';
 
 import Button from '../../Button/Button';
 import React from 'react';
@@ -15,6 +15,7 @@ export interface ICard {
   onViewClick?: () => void;
   onCopyClick?: () => void;
   onDeleteClick?: () => void;
+  userFullName?: string;
 
   [key: string]: any;
 }
@@ -67,18 +68,12 @@ const ModelCard: React.FC<ICard> = ({
 
         <div className={styles.modelBtnGroup}>
           <div className={styles.modelAuthor}>
-            <SemanticButton
-              className={styles.modelAvatarLink}
-              as="a"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onViewClick) onViewClick();
-              }}
-            >
-              <Icon name="user" style={{margin: '5'}}/>
-              {author}
+            <SemanticButton className={styles.modelAvatarLink} as="a">
+              <Popup trigger={<Icon name="user" style={{margin: '5'}}/>} content={author}/>
             </SemanticButton>
-            <span className={styles.modelMetaText}><Icon className={styles.metaIcon} name="calendar outline"/>{date_time}</span>
+            <span className={styles.modelMetaText}>
+              <Icon className={styles.metaIcon} name="calendar outline"/>{date_time}
+            </span>
           </div>
           <div className={styles.modelActions}>
             {onDeleteClick &&

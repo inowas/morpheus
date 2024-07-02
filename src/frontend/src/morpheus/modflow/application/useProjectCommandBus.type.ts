@@ -1,7 +1,7 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerPropertyName, IZone} from '../types/Layers.type';
-import {IBoundaryObservationData, IBoundaryType, IObservationId} from '../types/Boundaries.type';
+import {IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
 
 // Asset Commands
@@ -265,6 +265,16 @@ export interface IUpdateModelBoundaryGeometryCommand {
   }
 }
 
+export interface IUpdateModelBoundaryInterpolationCommand {
+  command_name: 'update_model_boundary_interpolation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_id: string;
+    interpolation: IInterpolationType;
+  }
+}
+
 export interface IUpdateModelBoundaryMetadataCommand {
   command_name: 'update_model_boundary_metadata_command';
   payload: {
@@ -419,6 +429,7 @@ export type IModelCommand = IAddModelBoundaryCommand |
   IUpdateModelBoundaryAffectedCellsCommand |
   IUpdateModelBoundaryAffectedLayersCommand |
   IUpdateModelBoundaryGeometryCommand |
+  IUpdateModelBoundaryInterpolationCommand |
   IUpdateModelBoundaryMetadataCommand |
   IUpdateModelBoundaryObservationCommand |
   IUpdateModelGeometryCommand |
