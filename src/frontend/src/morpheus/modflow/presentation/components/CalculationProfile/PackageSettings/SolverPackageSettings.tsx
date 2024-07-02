@@ -49,35 +49,35 @@ const SolverPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
         {'de4' === settings.selected_solver_package && (
           <De4PackageSettings
             settings={settings.de4}
-            onChange={(value) => onChange({...settings, de4: value})}
+            onChange={(value) => onChange({...settings, de4: {...value}})}
             isReadOnly={isReadOnly}
           />
         )}
         {'gmg' === settings.selected_solver_package && (
           <GmgPackageSettings
             settings={settings.gmg}
-            onChange={(value) => onChange({...settings, gmg: value})}
+            onChange={(value) => onChange({...settings, gmg: {...value}})}
             isReadOnly={isReadOnly}
           />
         )}
         {'pcg' === settings.selected_solver_package && (
           <PcgPackageSettings
             settings={settings.pcg}
-            onChange={(value) => onChange({...settings, pcg: value})}
+            onChange={(value) => onChange({...settings, pcg: {...value}})}
             isReadOnly={isReadOnly}
           />
         )}
         {'pcgn' === settings.selected_solver_package && (
           <PcgnPackageSettings
             settings={settings.pcgn}
-            onChange={(value) => onChange({...settings, pcgn: value})}
+            onChange={(value) => onChange({...settings, pcgn: {...value}})}
             isReadOnly={isReadOnly}
           />
         )}
         {'sip' === settings.selected_solver_package && (
           <SipPackageSettings
             settings={settings.sip}
-            onChange={(value) => onChange({...settings, sip: value})}
+            onChange={(value) => onChange({...settings, sip: {...value}})}
             isReadOnly={isReadOnly}
           />
         )}

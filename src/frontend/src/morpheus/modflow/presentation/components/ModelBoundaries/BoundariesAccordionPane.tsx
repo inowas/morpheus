@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
+import {IBoundary, IBoundaryId, IBoundaryType, IInterpolationType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import BoundaryList from './BoundaryList';
 import {Grid, InfoTitle, Tab} from 'common/components';
 
@@ -9,6 +9,7 @@ import {ObservationDataTable} from '../BoundariesLayers/BoundariesTable';
 import {ILayer, ILayerId} from '../../../types/Layers.type';
 import ObservationDataChart from '../BoundariesLayers/BoundariesTable/ObservationDataChart';
 import {ITimeDiscretization} from '../../../types';
+import ObservationDataTableWithDisabledInterpolation from '../BoundariesLayers/BoundariesTable/ObservationDataTableWithDisabledInterpolation';
 
 interface IProps {
   boundaries: IBoundary[];
@@ -23,6 +24,7 @@ interface IProps {
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   timeDiscretization: ITimeDiscretization;
@@ -42,6 +44,7 @@ const BoundariesAccordionPane = ({
   onRemoveBoundary,
   onRemoveBoundaryObservation,
   onUpdateBoundaryAffectedLayers,
+  onUpdateBoundaryInterpolation,
   onUpdateBoundaryMetadata,
   onUpdateBoundaryObservation,
   isReadOnly,
@@ -113,8 +116,9 @@ const BoundariesAccordionPane = ({
           />
           <BoundariesForm
             boundary={selectedBoundary}
-            onChangeBoundaryTags={handleChangeBoundaryTags}
             onChangeBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+            onChangeBoundaryInterpolation={onUpdateBoundaryInterpolation}
+            onChangeBoundaryTags={handleChangeBoundaryTags}
             isReadOnly={isReadOnly}
             layers={layers}
           />
@@ -133,10 +137,13 @@ const BoundariesAccordionPane = ({
                 </MenuItem>
               ),
               render: () => <TabPane attached={false}>
-                <ObservationDataTable
+                <ObservationDataTableWithDisabledInterpolation
                   boundaryType={boundaryType}
                   observation={selectedBoundaryObservation}
                   onChangeObservation={(observation: IObservation<any>) => onUpdateBoundaryObservation(selectedBoundary.id, boundaryType, observation)}
+                  interpolation={selectedBoundary.interpolation}
+                  timeDiscretization={timeDiscretization}
+                  isReadOnly={isReadOnly}
                 />
               </TabPane>,
             },

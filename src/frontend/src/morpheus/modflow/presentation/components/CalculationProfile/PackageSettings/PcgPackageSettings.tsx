@@ -4,6 +4,7 @@ import {SectionTitle} from '../../../../../../common/components';
 import {Divider, Form} from 'semantic-ui-react';
 import {DropdownInput, FloatInput, IntegerInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
+import NumberInput from '../FormFields/NumberInput';
 
 interface IProps {
   settings: IPcgPackageSettings
@@ -75,12 +76,14 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <FloatInput
+          <NumberInput
             label={'Head change criterion (hclose)'}
             value={settings.hclose}
             onChange={(value: number | null) => null !== value && onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.hclose}
+            precision={6}
+            isScientificNotation={true}
           />
           <FloatInput
             label={'Residual criterion (rclose)'}
@@ -96,12 +99,13 @@ const PcgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             isReadOnly={isReadOnly}
             description={descriptions.pcg.relax}
           />
-          <IntegerInput
+          <NumberInput
             label={'Eigenvalue upper bound (nbpol)'}
             value={settings.nbpol}
             onChange={(value: number) => onChange({...settings, nbpol: value})}
             isReadOnly={isReadOnly}
             description={descriptions.pcg.nbpol}
+            precision={0}
           />
           <IntegerInput
             label={'Solver printout interval (iprpcg)'}

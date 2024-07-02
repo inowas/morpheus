@@ -9,21 +9,31 @@ interface IProps {
   label: string;
   description?: string | JSX.Element;
   precision?: number;
+  isScientificNotation?: boolean;
 }
 
 
-const FloatInput = ({value, isReadOnly, onChange, label, description, precision = 3}: IProps) => {
+const NumberInput = ({value, isReadOnly, onChange, label, description, precision = 3, isScientificNotation = false}: IProps) => {
 
   const [valueLocal, setValueLocal] = useState<string>(value.toString());
 
   useEffect(() => {
-    setValueLocal(value.toString());
+    if (isScientificNotation) {
+      return setValueLocal(value.toExponential());
+    }
+
+    return setValueLocal(value.toString());
+    // eslint-disable-next-line
   }, [value]);
 
-  const isScientificNotation = (inputValue: string) => {
-    // Regular expression to match scientific notation format
-    return /^-?\d+(\.\d+)?([eE][-+]?\d+)?$/.test(inputValue);
+  const sanitizeValue = (v: string) => {
+    if (isScientificNotation) {
+      return v.replace(/[^0-9-+.,e]/g, '');
+    }
+
+    return v.replace(/[^0-9-.,]/g, '');
   };
+
   const round = (v: number, p: number) => {
     const d = Math.pow(10, p);
     return Math.round(v * d) / d;
@@ -35,9 +45,9 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
       onChange(value);
     }
 
-    if (isScientificNotation(valueLocal)) {
-      setValueLocal(parsed.toString());
-      onChange(parsed);
+    if (isScientificNotation) {
+      setValueLocal(parsed.toExponential());
+      return onChange(parsed);
     }
 
     setValueLocal(round(parsed, precision).toString());
@@ -64,7 +74,7 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
         disabled={isReadOnly}
         type="text"
         value={valueLocal}
-        onChange={(_, data) => setValueLocal(data.value)}
+        onChange={(_, data) => setValueLocal(sanitizeValue(data.value))}
         onBlur={handleBlur}
         readOnly={isReadOnly}
       />
@@ -72,4 +82,4 @@ const FloatInput = ({value, isReadOnly, onChange, label, description, precision 
   );
 };
 
-export default FloatInput;
+export default NumberInput;

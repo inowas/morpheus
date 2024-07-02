@@ -52,14 +52,14 @@ const FlowPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
         {'lpf' === settings.selected_flow_package && (
           <LpfPackageSettings
             settings={settings.lpf}
-            onChange={(value) => onChange({...settings, lpf: value})}
+            onChange={(value) => onChange({...settings, lpf: {...value}})}
             isReadOnly={isReadOnly}
           />
         )}
         {'bcf' === settings.selected_flow_package && (
           <BcfPackageSettings
             settings={settings.bcf}
-            onChange={(value) => onChange({...settings, bcf: value})}
+            onChange={(value) => onChange({...settings, bcf: {...value}})}
             isReadOnly={isReadOnly}
           />)}
       </PackageWrapper>

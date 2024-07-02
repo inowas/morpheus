@@ -1,25 +1,30 @@
 import React, {ReactNode, useEffect} from 'react';
 import {IAvailableResults} from '../../../types/Calculation.type';
 import {DataGrid, Form} from 'common/components';
-import SimpleSlider from 'common/components/Slider/SimpleSlider';
 import ToolTipSlider from '../../../../../common/components/Slider/ToolTipSlider';
 import {Button} from 'semantic-ui-react';
+import {ITimeDiscretization} from '../../../types';
+import useDateTimeFormat from 'common/hooks/useDateTimeFormat';
 
 interface IProps {
   layerNames: string[];
   results: IAvailableResults;
   onFetchFlowResult: (layerIdx: number, timeStepIdx: number) => void;
   isLoading: boolean;
+  timeDiscretization: ITimeDiscretization;
 }
 
-const CrossSectionParameterSelector = ({results, layerNames, onFetchFlowResult}: IProps) => {
+const CrossSectionParameterSelector = ({results, layerNames, onFetchFlowResult, timeDiscretization}: IProps) => {
 
   const [selectedLayerIdx, setSelectedLayerIdx] = React.useState<number>(results.number_of_layers - 1);
   const [selectedTimeStepIdx, setSelectedTimeStepIdx] = React.useState<number>(results.times.length - 1);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
 
+  const {formatISODate, addDays} = useDateTimeFormat();
+
   useEffect(() => {
     onFetchFlowResult(selectedLayerIdx, selectedTimeStepIdx);
+    // eslint-disable-next-line
   }, [selectedLayerIdx, selectedTimeStepIdx]);
 
   useEffect(() => {
@@ -33,6 +38,7 @@ const CrossSectionParameterSelector = ({results, layerNames, onFetchFlowResult}:
       }, 500);
       return () => clearInterval(interval);
     }
+    // eslint-disable-next-line
   }, [isPlaying, selectedTimeStepIdx]);
 
   const layerOptions = new Array(results.number_of_layers).fill(0).map((_, idx) => ({
@@ -64,7 +70,7 @@ const CrossSectionParameterSelector = ({results, layerNames, onFetchFlowResult}:
     const marks: { [key: number]: ReactNode } = {};
     results.times.forEach((time, idx) => {
       if (0 === idx || idx === results.times.length - 1) {
-        marks[time] = <span>{Math.round(time)}</span>;
+        marks[time] = <span style={{whiteSpace: 'nowrap'}}>{formatISODate(addDays(timeDiscretization.start_date_time, time))}</span>;
         return;
       }
 
@@ -83,10 +89,15 @@ const CrossSectionParameterSelector = ({results, layerNames, onFetchFlowResult}:
         />
         <Form.Group>
           <Button
-            icon={isPlaying ? 'pause' : 'play'} onClick={handleOnPlay}
-            style={{marginLeft: 10}} disabled={1 >= results.times.length}
+            icon={isPlaying ? 'pause' : 'play'}
+            onClick={handleOnPlay}
+            style={{width: 50, height: 50}}
+            disabled={1 >= results.times.length}
+            primary={isPlaying}
+            secondary={!isPlaying}
+            circular={true}
           />
-          <div style={{margin: 20, width: '100%'}}>
+          <div style={{margin: 15, width: 'calc(100% - 100px)'}}>
             <ToolTipSlider
               min={results.times[0]}
               max={results.times[results.times.length - 1]}
@@ -95,7 +106,7 @@ const CrossSectionParameterSelector = ({results, layerNames, onFetchFlowResult}:
               step={null}
               onChange={(value) => handleTimeStepChange(results.times.indexOf(value as number))}
               onChangeComplete={(value) => handleTimeStepChange(results.times.indexOf(value as number))}
-              tipFormatter={(value) => `${Math.round(value)} days`}
+              tipFormatter={(value) => `${formatISODate(addDays(timeDiscretization.start_date_time, value))}`}
             />
           </div>
         </Form.Group>

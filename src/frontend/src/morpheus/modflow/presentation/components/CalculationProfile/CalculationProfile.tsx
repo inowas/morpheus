@@ -80,7 +80,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
             <PackageSettings.MfPackageSettings
               settings={profile.engine_settings.mf}
               isReadOnly={isReadOnly}
-              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, mf: settings}})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, mf: {...settings}}})}
             />
           </TabPane>,
         },
@@ -90,7 +90,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
             <PackageSettings.BasPackageSettings
               settings={profile.engine_settings.bas}
               isReadOnly={isReadOnly}
-              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, bas: settings}})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, bas: {...settings}}})}
             />
           </TabPane>,
         },
@@ -100,7 +100,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
             <PackageSettings.DisPackageSettings
               settings={profile.engine_settings.dis}
               isReadOnly={isReadOnly}
-              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, dis: settings}})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, dis: {...settings}}})}
             />
           </TabPane>,
         },
@@ -110,7 +110,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
             <PackageSettings.BoundaryPackageSettings
               settings={profile.engine_settings}
               isReadOnly={isReadOnly}
-              onChange={(settings) => setProfile({...profile, engine_settings: settings})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...settings}})}
             />
           </TabPane>,
         },
@@ -119,7 +119,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
           render: () => <TabPane>
             <PackageSettings.HobPackageSettings
               settings={profile.engine_settings.hob}
-              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, hob: settings}})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, hob: {...settings}}})}
               isReadOnly={isReadOnly}
             />
           </TabPane>,
@@ -129,7 +129,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
           render: () => <TabPane>
             <PackageSettings.FlowPackageSettings
               settings={profile.engine_settings}
-              onChange={(settings) => setProfile({...profile, engine_settings: settings})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...settings}})}
               isReadOnly={isReadOnly}
             />
           </TabPane>,
@@ -139,7 +139,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
           render: () => <TabPane>
             <PackageSettings.SolverPackageSettings
               settings={profile.engine_settings}
-              onChange={(settings) => setProfile({...profile, engine_settings: settings})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...settings}})}
               isReadOnly={isReadOnly}
             />
           </TabPane>,
@@ -149,7 +149,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
           render: () => <TabPane>
             <PackageSettings.OcPackageSettings
               settings={profile.engine_settings.oc}
-              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, oc: settings}})}
+              onChange={(settings) => setProfile({...profile, engine_settings: {...profile.engine_settings, oc: {...settings}}})}
               isReadOnly={isReadOnly}
             />
           </TabPane>,

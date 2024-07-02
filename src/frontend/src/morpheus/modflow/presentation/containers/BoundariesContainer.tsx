@@ -38,6 +38,7 @@ const BoundariesContainer = () => {
     onUpdateBoundaryAffectedCells,
     onUpdateBoundaryAffectedLayers,
     onUpdateBoundaryGeometry,
+    onUpdateBoundaryInterpolation,
     onUpdateBoundaryMetadata,
     onUpdateBoundaryObservation,
     onDisableBoundary,
@@ -148,8 +149,9 @@ const BoundariesContainer = () => {
               onCloneBoundaryObservation={onCloneBoundaryObservation}
               onDisableBoundary={onDisableBoundary}
               onEnableBoundary={onEnableBoundary}
-              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+              onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
+              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onRemoveBoundary={onRemoveBoundary}
               onRemoveBoundaryObservation={onRemoveBoundaryObservation}
               onUpdateBoundaryObservation={onUpdateBoundaryObservation}
