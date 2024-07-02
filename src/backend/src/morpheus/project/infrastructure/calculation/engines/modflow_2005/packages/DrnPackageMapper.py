@@ -27,7 +27,7 @@ def calculate_drn_boundary_stress_period_data(
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
-        mean_data = drn_boundary.get_mean_data(start_date_time, end_date_time)
+        mean_data = drn_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=drn_boundary.interpolation)
 
         if drn_boundary.number_of_observations() == 0 or None in mean_data:
             # if we have no observation points
@@ -79,9 +79,9 @@ def calculate_drn_boundary_stress_period_data(
                 shapely_point = ShapelyPoint(observation.geometry.coordinates)
                 xx.append(line_string.project(shapely_point, normalized=True))
 
-                mean_data = observation.get_data_item(start_date_time, end_date_time)
+                mean_data = observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=drn_boundary.interpolation)
                 if not isinstance(mean_data, DrainDataItem):
-                    raise TypeError("Expected GeneralHeadDataItem but got {}".format(type(mean_data)))
+                    raise TypeError("Expected DrainDataItem but got {}".format(type(mean_data)))
 
                 yy_stages.append(mean_data.stage.to_float())
                 yy_conductances.append(mean_data.conductance.to_float())

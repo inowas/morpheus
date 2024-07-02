@@ -116,20 +116,22 @@ const BoundaryList = ({
                 )}
               </div>
 
-              <div
-                className={styles.buttonsWrapper}
-                style={{paddingRight: `${!boundary.observations[0].observation_name && '21px'}`}}
-              >
+              <div className={styles.buttonsWrapper} style={{paddingRight: `${!boundary.observations[0].observation_name && '21px'}`}}>
                 <Checkbox
                   disabled={isReadOnly}
                   toggle={true}
                   checked={boundary.enabled}
                   style={{position: 'relative', pointerEvents: 'all'}}
-                  onChange={() => {
-                    if (boundary.enabled) {
-                      onDisableBoundary(boundary.id);
-                    } else {
-                      onEnableBoundary(boundary.id);
+                  onChange={(_, {checked}) => {
+                    if (checked === undefined) {
+                      return;
+                    }
+                    if (boundary.enabled && !checked) {
+                      return onDisableBoundary(boundary.id);
+                    }
+
+                    if (!boundary.enabled && checked) {
+                      return onEnableBoundary(boundary.id);
                     }
                   }}
                 />

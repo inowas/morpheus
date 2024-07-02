@@ -549,6 +549,35 @@ class ModelProjector(EventListenerBase):
 
         self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
+    @listen_to(ModelBoundaryEvents.ModelBoundaryInterpolationUpdatedEvent)
+    def on_model_boundary_interpolation_updated(self, event: ModelBoundaryEvents.ModelBoundaryInterpolationUpdatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        boundary_id = event.get_boundary_id()
+        interpolation = event.get_interpolation()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        boundaries = latest_model.boundaries
+        if boundaries is None:
+            return
+
+        boundary = boundaries.get_boundary(boundary_id=boundary_id)
+        if boundary is None:
+            return
+
+        updated_boundary = boundary.with_updated_interpolation(interpolation=interpolation)
+        new_boundaries = boundaries.with_updated_boundary(update=updated_boundary)
+        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
     @listen_to(ModelBoundaryEvents.ModelBoundaryMetadataUpdatedEvent)
     def on_model_boundary_metadata_updated(self, event: ModelBoundaryEvents.ModelBoundaryMetadataUpdatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()

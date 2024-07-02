@@ -4,6 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
+from .BoundaryInterpolationType import InterpolationType
 from .Observation import ObservationId, RawDataItem, DataItem, Observation, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
@@ -116,8 +117,24 @@ class EvapotranspirationObservation(Observation):
             'data': [d.to_dict() for d in self.data]
         }
 
-    def get_data_item(self, start_date_time: StartDateTime,
-                      end_date_time: EndDateTime) -> EvapotranspirationDataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> EvapotranspirationDataItem | None:
+
+        # No interpolation
+        # if this is set, we are expecting that the start_date_time is present in the time series
+        # no other values are used or being interpolated
+        if interpolation == InterpolationType.none:
+            for item in self.data:
+                if item.date_time == start_date_time:
+                    return EvapotranspirationDataItem(
+                        observation_id=self.observation_id,
+                        start_date_time=start_date_time,
+                        end_date_time=end_date_time,
+                        surface_elevation=item.surface_elevation,
+                        evapotranspiration=item.evapotranspiration,
+                        extinction_depth=item.extinction_depth
+                    )
+
+            return None
 
         # In range check
         if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
@@ -137,10 +154,33 @@ class EvapotranspirationObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
+
+        # Forward fill or backward fill interpolation
+        # We need to fill the missing values with the last known value
+        if interpolation == InterpolationType.forward_fill:
+            df = pd.DataFrame({'time_series': time_series, 'surface_elevations': surface_elevations, 'evapotranspirations': evapotranspirations, 'extinction_depths': extinction_depths})
+            df = df.set_index('time_series')
+            df = df.reindex(date_range, method='ffill')
+
+            target_date_time = pd.to_datetime(start_date_time.to_value())
+            surface_elevation_at_start_date_time = df.loc[target_date_time, 'surface_elevations']
+            evapotranspiration_at_start_date_time = df.loc[target_date_time, 'evapotranspirations']
+            extinction_depth_at_start_date_time = df.loc[target_date_time, 'extinction_depths']
+
+            return EvapotranspirationDataItem(
+                observation_id=self.observation_id,
+                start_date_time=start_date_time,
+                end_date_time=end_date_time,
+                surface_elevation=SurfaceElevation.from_value(surface_elevation_at_start_date_time),
+                evapotranspiration=Evapotranspiration.from_value(evapotranspiration_at_start_date_time),
+                extinction_depth=ExtinctionDepth.from_value(extinction_depth_at_start_date_time)
+            )
+
+        # Linear or nearest interpolation
         surface_elevations_interpolator = interp1d(
             time_series.values.astype(float),
             surface_elevations.values.astype(float),
-            kind='linear',
+            kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
             fill_value='extrapolate'  # type: ignore
         )
         surface_elevations = surface_elevations_interpolator(date_range.values.astype(float))
@@ -148,7 +188,7 @@ class EvapotranspirationObservation(Observation):
         evapotranspiration_interpolator = interp1d(
             time_series.values.astype(float),
             evapotranspirations.values.astype(float),
-            kind='linear',
+            kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
             fill_value='extrapolate'  # type: ignore
         )
 
@@ -157,7 +197,7 @@ class EvapotranspirationObservation(Observation):
         extinction_depths_interpolator = interp1d(
             time_series.values.astype(float),
             extinction_depths.values.astype(float),
-            kind='linear',
+            kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
             fill_value='extrapolate'  # type: ignore
         )
         extinction_depths = extinction_depths_interpolator(date_range.values.astype(float))
