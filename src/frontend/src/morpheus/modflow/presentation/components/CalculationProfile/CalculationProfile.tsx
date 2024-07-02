@@ -64,7 +64,7 @@ const CalculationProfile = ({calculationProfile, onChange, isReadOnly, isMobile}
       <Tab
         variant='secondary'
         title={true}
-        defaultActiveIndex={7}
+        defaultActiveIndex={4}
         menu={{fluid: true, vertical: !isMobile, tabular: true}}
         renderActiveOnly={true}
         panes={[{

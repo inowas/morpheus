@@ -14,8 +14,7 @@ interface IProps {
 
 
 const BasPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
-  console.log(JSON.stringify(settings, null, 2));
-  console.log(Object.keys(settings).length);
+
   return (
     <>
       <SectionTitle
