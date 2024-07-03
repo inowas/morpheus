@@ -8,10 +8,10 @@ import {Map} from 'common/components/Map';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import {MenuItem, Tab, TabPane} from 'semantic-ui-react';
 import CrossSectionParameterSelector from '../components/Results/CrossSectionParameterSelector';
-import CanvasDataLayer from 'common/components/Map/CanvasDataLayer';
+import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
 import {IFlowData} from '../../application/useCalculationData';
 import {useColorMap} from 'common/hooks';
-import ContoursDataLayer from 'common/components/Map/ContoursDataLayer';
+import ContoursDataLayer from 'common/components/Map/DataLayers/ContoursDataLayer';
 
 import useLayers from '../../application/useLayers';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
@@ -138,10 +138,13 @@ const FlowResultsContainer = () => {
           <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
 
           {data && showContours && <ContoursDataLayer
+            title={'Head [m]'}
             data={data.data.values}
             rotation={data.data.rotation}
             outline={data.data.outline}
             getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
+            minVal={minVal}
+            maxVal={maxVal}
           />}
 
           {data && !showContours && <CanvasDataLayer
@@ -157,10 +160,8 @@ const FlowResultsContainer = () => {
         </Map>
       </BodyContent>
     </>
-  )
-  ;
-}
-;
+  );
+};
 
 
 export default FlowResultsContainer;

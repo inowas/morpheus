@@ -3,18 +3,28 @@ import {Feature, Polygon} from 'geojson';
 import {contours} from 'd3-contour';
 import {bbox, transformRotate, centerOfMass} from '@turf/turf';
 import {FeatureGroup, GeoJSON} from 'react-leaflet';
-import Legend from '../Legend';
+import {ContinuousLegend} from '../Legend';
+import HoverDataLayer from '../CanvasDataLayer/HoverDataLayer';
 
 interface IProps {
+  title: string;
   data: number[][];
   rotation: number;
   outline: Feature<Polygon>;
   getRgbColor: (value: number) => string;
   onHover?: (value: number | null) => void;
   numberOfGrades?: number;
+  minVal: number;
+  maxVal: number;
 }
 
-const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50}: IProps) => {
+interface ISelection {
+  col: number;
+  row: number;
+  value: number;
+}
+
+const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal}: IProps) => {
 
   const [value, setValue] = useState<number | null>(null);
 
@@ -72,11 +82,19 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
           />
         );
       })}
-      <Legend
+      <ContinuousLegend
+        title={title}
         direction={'horizontal'}
         value={value}
-        grades={contourMultiPolygons.map(mp => mp.value)}
-        getRgbColor={(v) => getRgbColor(v)}
+        minValue={minVal}
+        maxValue={maxVal}
+        getRgbColor={getRgbColor}
+      />
+      <HoverDataLayer
+        data={data}
+        rotation={rotation}
+        outline={outline}
+        onHover={(selection: ISelection | null) => setValue(selection ? selection.value : null)}
       />
     </FeatureGroup>
   );

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {ILayerPropertyData} from '../../../types/Layers.type';
 import {FeatureGroup} from 'react-leaflet';
 import {IColorMap, useColorMap} from 'common/hooks';
-import CanvasDataLayer from 'common/components/Map/CanvasDataLayer';
+import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
 
 interface IProps {
   data: ILayerPropertyData;
