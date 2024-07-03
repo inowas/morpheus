@@ -36,6 +36,7 @@ export default {
     filenames: <div>Filenames to use for the package. If filenames=None the package name will be created using the
       model name and package extension. If a single string is passed the package will be set to the string.
       Default is None.</div>,
+    laycbd: <div></div>,
   },
 
   // DIS

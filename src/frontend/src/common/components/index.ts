@@ -13,7 +13,7 @@ import Select, {DropdownProps} from './Select/Select';
 
 import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
-import {AccordionItem, Accordion} from './Accordion/Accordion';
+import {Accordion, AccordionItem} from './Accordion/Accordion';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
 import Breadcrumb from './Breadcrumb';
 import Button from './Button/Button';
@@ -33,6 +33,7 @@ import ImageRenderer, {IImageRenderer} from './ImageRenderer';
 import InfoTitle from './InfoTitle/InfoTitle';
 import Label from './Label/Label';
 import Loader from './Loader/Loader';
+import LockButton from './LockButton/LockButton';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
 import MapExample from './Map/MapExample';
 import Message from './Message/Message';
@@ -91,6 +92,7 @@ export {
   InfoTitle,
   Label,
   Loader,
+  LockButton,
   LoaderAnimation,
   MapExample,
   Message,

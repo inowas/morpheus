@@ -1,8 +1,8 @@
 import React from 'react';
 import {IGmgPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import {Divider, Form} from 'semantic-ui-react';
-import {DropdownInput, FloatInput, IntegerInput} from '../FormFields';
+import {DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
 interface IProps {
@@ -27,40 +27,45 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <FloatInput
+          <NumberInput
             label={'Inner convergence residual (RCLOSE)'}
             value={settings.rclose}
             onChange={(value: number) => onChange({...settings, rclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.rclose}
+            isScientificNotation={true}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum inner iterations (IITER)'}
             value={settings.iiter}
             onChange={(value: number) => onChange({...settings, iiter: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.iiter}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Outer convergence residual (HCLOSE)'}
             value={settings.hclose}
             onChange={(value: number) => onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.hclose}
+            isScientificNotation={true}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum outer iterations (MXITER)'}
             value={settings.mxiter}
             onChange={(value: number) => onChange({...settings, mxiter: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.mxiter}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Relocation parameter (RELAX)'}
             value={settings.relax}
             onChange={(value: number) => onChange({...settings, relax: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.relax}
+            precision={2}
           />
           <DropdownInput
             label={'Damping option (IADAMP)'}
@@ -86,19 +91,21 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <IntegerInput
+          <NumberInput
             label={'Output flag (IOUTGMG)'}
             value={settings.ioutgmg}
             onChange={(value: number) => onChange({...settings, ioutgmg: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.ioutgmg}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum head output (IUNITMHC)'}
             value={settings.iunitmhc}
             onChange={(value: number) => onChange({...settings, iunitmhc: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.iunitmhc}
+            precision={0}
           />
           <DropdownInput
             label={'Multi-grid preconditioner smoothing (ISM)'}
@@ -125,33 +132,37 @@ const GmgPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               {key: '4', value: 4, text: '(4) None'},
             ]}
           />
-          <FloatInput
+          <NumberInput
             label={'Maximum damping (DUP)'}
             value={settings.dup}
             onChange={(value: number) => onChange({...settings, dup: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.dup}
+            precision={3}
           />
-          <FloatInput
+          <NumberInput
             label={'Minimum damping (DLOW)'}
             value={settings.dlow}
             onChange={(value: number) => onChange({...settings, dlow: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.dlow}
+            precision={3}
           />
-          <FloatInput
+          <NumberInput
             label={'Damping parameter (DAMP)'}
             value={settings.damp}
             onChange={(value: number) => onChange({...settings, damp: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.damp}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Minimum damping (CHGLIMIT)'}
             value={settings.chglimit}
             onChange={(value: number) => onChange({...settings, chglimit: value})}
             isReadOnly={isReadOnly}
             description={descriptions.gmg.chglimit}
+            precision={2}
           />
         </Form.Group>
       </Form>

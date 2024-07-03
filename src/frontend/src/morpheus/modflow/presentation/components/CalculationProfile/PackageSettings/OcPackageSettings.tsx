@@ -1,6 +1,6 @@
 import React from 'react';
 import {IOcPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 
 interface IProps {
   settings: IOcPackageSettings

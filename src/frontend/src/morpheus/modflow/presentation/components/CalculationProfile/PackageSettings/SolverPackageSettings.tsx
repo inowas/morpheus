@@ -1,6 +1,6 @@
 import React from 'react';
 import {ICalculationProfile} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import PackageWrapper from './PackageWrapper';
 import {DropdownInput} from '../FormFields';
 import {Form} from 'semantic-ui-react';
@@ -15,7 +15,6 @@ interface IProps {
 
 
 const SolverPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
-
   const flopPackageOptions = settings.available_solver_packages.map((p) => {
     return {key: p, value: p, text: `${p.toUpperCase()} 'Package`};
   });

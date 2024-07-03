@@ -1,8 +1,8 @@
 import React from 'react';
 import {IDe4PackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import {Divider, Form} from 'semantic-ui-react';
-import {FloatInput, IntegerInput} from '../FormFields';
+import {NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
 interface IProps {
@@ -27,33 +27,37 @@ const De4PackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <IntegerInput
+          <NumberInput
             label={'Maximum number of iterations (ITMX)'}
             value={settings.itmx}
             onChange={(value: number) => onChange({...settings, itmx: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.itmx}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum number of upper equations (MXUP)'}
             value={settings.mxup}
             onChange={(value: number) => onChange({...settings, mxup: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.mxup}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum number of lower equations (MXLOW)'}
             value={settings.mxlow}
             onChange={(value: number) => onChange({...settings, mxlow: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.mxlow}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Maximum bandwidth (MXBW)'}
             value={settings.mxbw}
             onChange={(value: number) => onChange({...settings, mxbw: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.mxbw}
+            precision={0}
           />
         </Form.Group>
       </Form>
@@ -67,40 +71,45 @@ const De4PackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <IntegerInput
+          <NumberInput
             label={'Frequency of change (IFREQ)'}
             value={settings.ifreq}
             onChange={(value: number) => onChange({...settings, ifreq: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.ifreq}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Head change multiplier (ACCL)'}
             value={settings.accl}
             onChange={(value: number) => onChange({...settings, accl: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.accl}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Print convergence (MUTD4)'}
             value={settings.mutd4}
             onChange={(value: number) => onChange({...settings, mutd4: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.mutd4}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Head change closure criterion (HCLOSE)'}
             value={settings.hclose}
             onChange={(value: number) => onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.hclose}
+            isScientificNotation={true}
           />
-          <IntegerInput
+          <NumberInput
             label={'Time step interval for printing (IPRD4)'}
             value={settings.iprd4}
             onChange={(value: number) => onChange({...settings, iprd4: value})}
             isReadOnly={isReadOnly}
             description={descriptions.de4.iprd4}
+            precision={0}
           />
         </Form.Group>
       </Form>

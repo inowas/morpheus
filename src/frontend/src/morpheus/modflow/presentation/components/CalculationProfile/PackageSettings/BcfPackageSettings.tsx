@@ -1,7 +1,7 @@
 import React from 'react';
 import {IBcfPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
-import {CheckBox, DropdownInput, FloatInput, IntegerInput} from '../FormFields';
+import {SectionTitle} from 'common/components';
+import {CheckBox, DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 import {Form} from 'semantic-ui-react';
 
@@ -54,33 +54,37 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               {key: '1', value: 1, text: '(1) h = BOT + WETFCT(THRESH), (eq 33B)'},
             ]}
           />
-          <FloatInput
+          <NumberInput
             label={'Wetting factor (WETFCT)'}
             value={settings.wetfct}
             onChange={(value: number) => onChange({...settings, wetfct: value})}
             isReadOnly={isReadOnly}
             description={descriptions.bcf.wetfct}
+            precision={2}
           />
-          <IntegerInput
+          <NumberInput
             label={'Wetting interval (IWETIT)'}
             value={settings.iwetit}
             onChange={(value: number) => onChange({...settings, iwetit: value})}
             isReadOnly={isReadOnly}
             description={descriptions.bcf.iwetit}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Wetting threshold and flag (WETDRY)'}
             value={settings.wetdry}
             onChange={(value: number) => onChange({...settings, wetdry: value})}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             description={descriptions.bcf.wetdry}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             onChange={(value: number) => onChange({...settings, hdry: value})}
             description={descriptions.bcf.hdry}
+            isScientificNotation={true}
           />
         </Form.Group>
       </Form>

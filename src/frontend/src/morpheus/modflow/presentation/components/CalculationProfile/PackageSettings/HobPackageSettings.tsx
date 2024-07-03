@@ -2,9 +2,9 @@ import {Form} from 'semantic-ui-react';
 import React from 'react';
 import {IHobPackageSettings} from '../../../../types/CalculationProfile.type';
 import PackageWrapper from './PackageWrapper';
-import {FloatInput} from '../FormFields';
+import {NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 
 interface IProps {
   settings: IHobPackageSettings
@@ -22,19 +22,21 @@ const HobPackageSettings = ({settings, onChange, isReadOnly}: IProps) => (
     <PackageWrapper>
       <Form>
         <Form.Group widths={2}>
-          <FloatInput
+          <NumberInput
             value={settings.hobdry}
             onChange={(value: number) => onChange({...settings, hobdry: value})}
             isReadOnly={isReadOnly}
             label={'HOBDRY'}
             description={descriptions.hob.hobdry}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             value={settings.tomulth}
             onChange={(value: number) => onChange({...settings, hobdry: value})}
             isReadOnly={isReadOnly}
             label={'TOMULTH'}
             description={descriptions.hob.tomulth}
+            precision={2}
           />
         </Form.Group>
       </Form>
