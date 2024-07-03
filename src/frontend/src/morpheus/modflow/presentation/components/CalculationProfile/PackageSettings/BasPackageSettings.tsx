@@ -19,7 +19,7 @@ const BasPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
     <>
       <SectionTitle
         as={'h5'}
-        title={'Mf Package Settings'}
+        title={'Basic Package'}
         style={{marginBottom: 15}}
       />
       <PackageWrapper>
@@ -36,7 +36,7 @@ const BasPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               label={'Head assigned to all no flow cells (HNOFLO)'}
               value={settings.hnoflo}
               onChange={(value: number) => onChange({...settings, hnoflo: value})}
-              isReadOnly={true}
+              isReadOnly={isReadOnly}
               description={descriptions.bas.hnoflo}
               precision={2}
             />
@@ -44,7 +44,7 @@ const BasPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               label={'Budget percent discrepancy (STOPER)'}
               value={settings.stoper}
               onChange={(value: number | null) => onChange({...settings, stoper: value})}
-              isReadOnly={true}
+              isReadOnly={isReadOnly}
               description={descriptions.bas.stoper}
             />
             <CheckBox

@@ -6,20 +6,13 @@ import {Form, Header} from 'semantic-ui-react';
 import {CheckBox, DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
-
 interface IProps {
   settings: ICalculationProfile['engine_settings']
   onChange: (settings: ICalculationProfile['engine_settings']) => void
   isReadOnly: boolean
 }
 
-
 const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
-
-  // console.log(JSON.stringify(settings, null, 2));
-  // console.log(Object.keys(settings).length);
-  console.log(settings);
-
 
   return (
     <>

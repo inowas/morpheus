@@ -83,7 +83,7 @@ const SipPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             label={'(WSEED)'}
             value={settings.wseed}
             onChange={(value: number) => onChange({...settings, wseed: value})}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             description={descriptions.sip.wseed}
             precision={2}
           />

@@ -73,14 +73,14 @@ const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             label={'Wetting threshold and flag (WETDRY)'}
             value={settings.wetdry}
             onChange={(value: number) => onChange({...settings, wetdry: value})}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             description={descriptions.lpf.wetdry}
             precision={3}
           />
           <NumberInput
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             onChange={(value: number) => onChange({...settings, hdry: value})}
             description={descriptions.lpf.hdry}
             isScientificNotation={true}
