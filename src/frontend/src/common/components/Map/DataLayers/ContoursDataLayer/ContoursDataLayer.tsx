@@ -3,8 +3,7 @@ import {Feature, Polygon} from 'geojson';
 import {contours} from 'd3-contour';
 import {bbox, transformRotate, centerOfMass} from '@turf/turf';
 import {FeatureGroup, GeoJSON} from 'react-leaflet';
-import {ContinuousLegend} from '../Legend';
-import HoverDataLayer from '../CanvasDataLayer/HoverDataLayer';
+import {ContinuousLegend, HoverDataLayer, ISelection} from '../Legend';
 
 interface IProps {
   title: string;
@@ -16,12 +15,6 @@ interface IProps {
   numberOfGrades?: number;
   minVal: number;
   maxVal: number;
-}
-
-interface ISelection {
-  col: number;
-  row: number;
-  value: number;
 }
 
 const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal}: IProps) => {

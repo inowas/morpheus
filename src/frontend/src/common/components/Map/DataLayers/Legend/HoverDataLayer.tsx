@@ -88,3 +88,4 @@ const HoverDataLayer = ({data, rotation, outline, onHover, onClick}: IProps) => 
 };
 
 export default HoverDataLayer;
+export type {ISelection};
