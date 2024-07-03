@@ -27,7 +27,7 @@ def calculate_chd_boundary_stress_period_data(
     for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
-        mean_data = chd_boundary.get_mean_data(start_date_time, end_date_time)
+        mean_data = chd_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=chd_boundary.interpolation)
 
         if chd_boundary.number_of_observations() == 0 or None in mean_data:
             # if we have no observation points
@@ -59,17 +59,14 @@ def calculate_chd_boundary_stress_period_data(
                     continue
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
-                                      values=[start_head.to_float(), end_head.to_float()], sum_up_values=False)
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[start_head.to_float(), end_head.to_float()], sum_up_values=False)
 
         if chd_boundary.number_of_observations() > 1:
             # if we have multiple observation points
             # we need to interpolate the mean data for each affected cell ;(
             line_string = ShapelyLineString(chd_boundary.geometry.coordinates)
             observations = chd_boundary.get_observations()
-            observations.sort(
-                key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True)
-            )
+            observations.sort(key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True))
 
             xx: list[float] = []
             yy_start_heads: list[float] = []
@@ -77,7 +74,7 @@ def calculate_chd_boundary_stress_period_data(
             for observation in observations:
                 shapely_point = ShapelyPoint(observation.geometry.coordinates)
                 xx.append(line_string.project(shapely_point, normalized=True))
-                mean_data = observation.get_data_item(start_date_time, end_date_time)
+                mean_data = observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=chd_boundary.interpolation)
                 if not isinstance(mean_data, ConstantHeadDataItem):
                     raise TypeError("Expected ConstantHeadDataItem but got {}".format(type(mean_data)))
                 yy_start_heads.append(mean_data.start_head.to_float())
@@ -96,8 +93,7 @@ def calculate_chd_boundary_stress_period_data(
                 yy_new_end_head = float(np.interp(xx_new, xx, yy_end_heads)[0])
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
-                                      values=[yy_new_start_head, yy_new_end_head], sum_up_values=False)
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[yy_new_start_head, yy_new_end_head], sum_up_values=False)
 
     return sp_data
 

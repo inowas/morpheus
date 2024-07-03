@@ -19,7 +19,7 @@ class UpdateModelBoundaryInterpolationCommandPayload(TypedDict):
     project_id: str
     model_id: str
     boundary_id: str
-    interpolation: Literal['none', 'linear', 'nearest', 'forward_fill', 'backward_fill']
+    interpolation: Literal['none', 'linear', 'nearest', 'forward_fill']
 
 
 @dataclasses.dataclass(frozen=True)

@@ -3,6 +3,7 @@ from enum import StrEnum
 from typing import Literal, Sequence
 
 from morpheus.common.types import Uuid, String
+from .BoundaryInterpolationType import InterpolationType
 from .ConstantHeadObservation import ConstantHeadObservation, ConstantHeadRawDataItem
 from .DrainObservation import DrainObservation, DrainRawDataItem
 from .EvapotranspirationObservation import EvapotranspirationObservation, EvapotranspirationRawDataItem
@@ -246,8 +247,8 @@ class Boundary:
     def as_geojson(self):
         return self.geometry.as_geojson()
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem | None]:
-        return [observation.get_data_item(start_date_time, end_date_time) for observation in self.observations]
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> list[DataItem | None]:
+        return [observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=interpolation) for observation in self.observations]
 
 
 @dataclasses.dataclass
@@ -558,7 +559,7 @@ class FlowAndHeadBoundary(Boundary):
             enabled=obj['enabled']
         )
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> list[DataItem | None]:
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> list[DataItem | None]:
         raise NotImplementedError()
 
     def get_head_data(self, start_date_time: StartDateTime):

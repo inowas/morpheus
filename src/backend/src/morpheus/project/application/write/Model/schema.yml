@@ -695,7 +695,7 @@ definitions:
                 - linear
                 - nearest
                 - forward_fill
-                - backward_fill
+              example: none
           required:
             - project_id
             - model_id

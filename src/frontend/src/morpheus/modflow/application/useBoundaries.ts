@@ -36,6 +36,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
   const {model} = useSelector((state: IRootState) => state.project.model);
   const dispatch = useDispatch();
+  const boundaries = useSelector((state: IRootState) => state.project.model.model?.boundaries || []);
 
   const isMounted = useRef(true);
   const [loading, setLoading] = useState<boolean>(false);
@@ -294,6 +295,14 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     setLoading(true);
     setError(null);
 
+    // to have a better user experience, we enable the boundary in the frontend first
+    // this method is an optimistic update and will be reverted if the command fails
+    // because fetchSingleBoundary will be called in any case
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (boundary) {
+      dispatch(updateBoundary({...boundary, enabled: false}));
+    }
+
     const disableBoundaryResult = await sendCommand<Commands.IDisableModelBoundaryCommand>({
       command_name: 'disable_model_boundary_command',
       payload: {
@@ -330,6 +339,14 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
     setLoading(true);
     setError(null);
+
+    // to have a better user experience, we enable the boundary in the frontend first
+    // this method is an optimistic update and will be reverted if the command fails
+    // because fetchSingleBoundary will be called in any case
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (boundary) {
+      dispatch(updateBoundary({...boundary, enabled: true}));
+    }
 
     const enableBoundaryResult = await sendCommand<Commands.IEnableModelBoundaryCommand>({
       command_name: 'enable_model_boundary_command',
@@ -519,6 +536,15 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     setLoading(true);
     setError(null);
 
+    // to have a better user experience, we enable the boundary in the frontend first
+    // this method is an optimistic update and will be reverted if the command fails
+    // because fetchSingleBoundary will be called in any case
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (boundary) {
+      dispatch(updateBoundary({...boundary, geometry: geometry as any}));
+    }
+
+
     const updateBoundaryGeometryResult = await sendCommand<Commands.IUpdateModelBoundaryGeometryCommand>({
       command_name: 'update_model_boundary_geometry_command',
       payload: {
@@ -665,7 +691,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
   };
 
   return {
-    boundaries: model?.boundaries || [],
+    boundaries,
     fetchAffectedCellsGeometry,
     onAddBoundary,
     onAddBoundaryObservation,

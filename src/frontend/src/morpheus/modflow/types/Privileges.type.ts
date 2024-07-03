@@ -1,3 +1,5 @@
-type IProjectPrivilege = 'view_project' | 'edit_project' | 'manage_project' | 'full_access';
+type IUserPrivilege = 'view_project' | 'edit_project' | 'manage_project' | 'full_access';
 
-export type IProjectPrivileges = IProjectPrivilege[];
+type IProjectPrivileges = IUserPrivilege[];
+
+export type {IUserPrivilege, IProjectPrivileges};

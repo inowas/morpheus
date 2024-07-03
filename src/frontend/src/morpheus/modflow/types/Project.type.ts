@@ -1,3 +1,5 @@
+import {IUserPrivilege} from './Privileges.type';
+
 interface IProjectListItem {
   project_id: string;
   name: string;
@@ -7,7 +9,8 @@ interface IProjectListItem {
   owner_id: string;
   is_public: boolean;
   created_at: string;
-  status: 'green' | 'yellow' | 'red' | 'grey';
+  updated_at: string;
+  user_privileges: IUserPrivilege[];
 }
 
 export type {IProjectListItem};
