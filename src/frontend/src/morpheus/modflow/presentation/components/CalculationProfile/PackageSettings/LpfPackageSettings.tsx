@@ -1,8 +1,8 @@
 import React from 'react';
 import {ILpfPackageSettings} from '../../../../types/CalculationProfile.type';
 import {Form} from 'semantic-ui-react';
-import {SectionTitle} from '../../../../../../common/components';
-import {CheckBox, DropdownInput, FloatInput, IntegerInput} from '../FormFields';
+import {SectionTitle} from 'common/components';
+import {CheckBox, DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
 interface IProps {
@@ -53,33 +53,37 @@ const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               {key: '1', value: 1, text: '(1) h = BOT + WETFCT(THRESH), (eq 33B)'},
             ]}
           />
-          <FloatInput
+          <NumberInput
             label={'Wetting factor (WETFCT)'}
             value={settings.wetfct}
             onChange={(value: number) => onChange({...settings, wetfct: value})}
             isReadOnly={isReadOnly}
             description={descriptions.lpf.wetfct}
+            precision={2}
           />
-          <IntegerInput
+          <NumberInput
             label={'Wetting interval (IWETIT)'}
             value={settings.iwetit}
             onChange={(value: number) => onChange({...settings, iwetit: value})}
             isReadOnly={isReadOnly}
             description={descriptions.lpf.iwetit}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Wetting threshold and flag (WETDRY)'}
             value={settings.wetdry}
             onChange={(value: number) => onChange({...settings, wetdry: value})}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             description={descriptions.lpf.wetdry}
+            precision={3}
           />
-          <FloatInput
+          <NumberInput
             label={'Head assigned to dry cells (HDRY)'}
             value={settings.hdry}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             onChange={(value: number) => onChange({...settings, hdry: value})}
             description={descriptions.lpf.hdry}
+            isScientificNotation={true}
           />
           <CheckBox
             label={'Storage coefficient (STORAGECOEFFICIENT)'}

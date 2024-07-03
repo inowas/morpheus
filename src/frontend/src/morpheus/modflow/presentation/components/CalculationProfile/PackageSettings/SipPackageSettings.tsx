@@ -1,8 +1,8 @@
 import React from 'react';
 import {ISipPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import {Divider, Form} from 'semantic-ui-react';
-import {CheckBox, FloatInput, IntegerInput} from '../FormFields';
+import {CheckBox, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
 interface IProps {
@@ -28,33 +28,37 @@ const SipPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             rowGap: 20,
           }}
         >
-          <IntegerInput
+          <NumberInput
             label={'Maximum iterations per time step (MXITER)'}
             value={settings.mxiter}
             onChange={(value: number) => onChange({...settings, mxiter: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.mxiter}
+            precision={0}
           />
-          <IntegerInput
+          <NumberInput
             label={'Number of iteration parameters (NPARM)'}
             value={settings.nparm}
             onChange={(value: number) => onChange({...settings, nparm: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.nparm}
+            precision={0}
           />
-          <FloatInput
+          <NumberInput
             label={'Acceleration parameter (ACCL)'}
             value={settings.accl}
             onChange={(value: number) => onChange({...settings, accl: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.accl}
+            precision={2}
           />
-          <FloatInput
+          <NumberInput
             label={'Head change criterion for convergence (HCLOSE)'}
             value={settings.hclose}
             onChange={(value: number) => onChange({...settings, hclose: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.hclose}
+            isScientificNotation={true}
           />
         </Form.Group>
       </Form>
@@ -75,19 +79,21 @@ const SipPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             isReadOnly={isReadOnly}
             description={descriptions.sip.ipcalc}
           />
-          <FloatInput
+          <NumberInput
             label={'(WSEED)'}
             value={settings.wseed}
             onChange={(value: number) => onChange({...settings, wseed: value})}
-            isReadOnly={true}
+            isReadOnly={isReadOnly}
             description={descriptions.sip.wseed}
+            precision={2}
           />
-          <IntegerInput
+          <NumberInput
             label={'Printout Interval (IPRSIP))'}
             value={settings.iprsip}
             onChange={(value: number) => onChange({...settings, iprsip: value})}
             isReadOnly={isReadOnly}
             description={descriptions.sip.iprsip}
+            precision={0}
           />
         </Form.Group>
       </Form>
