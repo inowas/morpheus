@@ -15,7 +15,12 @@ interface IProps {
 
 
 const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
-  
+
+  // console.log(JSON.stringify(settings, null, 2));
+  // console.log(Object.keys(settings).length);
+  console.log(settings);
+
+
   return (
     <>
       <SectionTitle
