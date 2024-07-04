@@ -3,10 +3,10 @@ import * as turf from '@turf/turf';
 import type {Feature, FeatureCollection, MultiPolygon, Polygon} from 'geojson';
 
 import {FeatureGroup, GeoJSON, useMapEvents} from 'common/infrastructure/React-Leaflet';
-import {AffectedCells, IAffectedCells} from "../../../types";
-import objectHash from "object-hash";
-import AffectedCellsMapLayerControl from "./AffectedCellsMapLayerControl";
-import cloneDeep from "lodash.clonedeep";
+import {AffectedCells, IAffectedCells} from '../../../types';
+import objectHash from 'object-hash';
+import AffectedCellsMapLayerControl from './AffectedCellsMapLayerControl';
+import cloneDeep from 'lodash.clonedeep';
 
 
 interface IProps {
@@ -26,15 +26,15 @@ const emptyFeatureCollection: FeatureCollection = {
 };
 
 const AffectedCellsMapLayer = ({
-                                 affectedCells,
-                                 fetchAffectedCellsGeometry,
-                                 fetchGridGeometry,
-                                 onChangeAffectedCells,
-                                 isReadOnly,
-                                 inverted = false,
-                                 showAffectedCellsByDefault = false,
-                                 expectSingleCell = false
-                               }: IProps) => {
+  affectedCells,
+  fetchAffectedCellsGeometry,
+  fetchGridGeometry,
+  onChangeAffectedCells,
+  isReadOnly,
+  inverted = false,
+  showAffectedCellsByDefault = false,
+  expectSingleCell = false,
+}: IProps) => {
 
   const [newActiveCellGeometries, setNewActiveCellGeometries] = useState<FeatureCollection>(emptyFeatureCollection);
   const [newInactiveCellGeometries, setNewInactiveCellGeometries] = useState<FeatureCollection>(emptyFeatureCollection);
@@ -126,7 +126,7 @@ const AffectedCellsMapLayer = ({
       }));
 
       if (affectedCellsLayerGeometry) {
-        setNewInactiveCellGeometries({...emptyFeatureCollection, features: [affectedCellsLayerGeometry]})
+        setNewInactiveCellGeometries({...emptyFeatureCollection, features: [affectedCellsLayerGeometry]});
       }
 
       newAffectedCells.setActiveOnlyOneCell(row, col);
@@ -136,7 +136,7 @@ const AffectedCellsMapLayer = ({
 
     newAffectedCells.setActive(row, col, active);
     setAffectedCellsLocal(newAffectedCells.toObject() as IAffectedCells);
-  }
+  };
 
   const handleChangeEditAffectedCells = (edit: boolean) => {
     if (!edit) {
@@ -144,7 +144,7 @@ const AffectedCellsMapLayer = ({
     }
 
     setEditAffectedCells(edit);
-  }
+  };
 
   useMapEvents({
     click: function (e) {
@@ -268,7 +268,7 @@ const AffectedCellsMapLayer = ({
           style={{
             weight: 0,
             fillOpacity: 0.6,
-            fillColor: inverted ? 'grey' : 'white'
+            fillColor: inverted ? 'grey' : 'white',
           }}
           pmIgnore={true}
         />}
@@ -279,7 +279,7 @@ const AffectedCellsMapLayer = ({
           style={{
             weight: 0,
             fillOpacity: 0.4,
-            fillColor: inverted ? 'white' : 'grey'
+            fillColor: inverted ? 'white' : 'grey',
           }}
           pmIgnore={true}
         />}
