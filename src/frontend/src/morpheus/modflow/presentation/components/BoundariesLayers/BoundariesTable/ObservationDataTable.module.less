@@ -1,3 +1,52 @@
+@import "../../../../../../common/components/site.variables";
+
+table.table {
+
+  thead {
+    z-index: 2;
+  }
+
+  th, td {
+    box-sizing: border-box;
+    min-height: 34px;
+  }
+
+  thead th, tbody td {
+    padding: 5px !important;
+  }
+
+  input[type="number"] {
+    width: auto;
+  }
+
+  .editableCell {
+    width: inherit;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .actions {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    justify-content: flex-end;
+
+    button {
+      padding: 0 !important;
+      background: transparent;
+      color: @black;
+      transition: transform 300ms;
+
+      &:hover,
+      &:focus {
+        color: @black;
+        background-color: transparent !important;
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
 .buttonsGroup {
   margin-top: 15px;
   display: flex;

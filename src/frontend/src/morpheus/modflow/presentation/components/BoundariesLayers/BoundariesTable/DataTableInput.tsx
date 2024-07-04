@@ -1,5 +1,6 @@
-import {Input} from 'semantic-ui-react';
+import {Form, Input} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
+import styles from '../../Testing/TestingContent.module.less';
 
 
 interface IProps {
@@ -33,19 +34,22 @@ const DataTableInput = ({value, isReadOnly, onChange, isDisabled}: IProps) => {
   };
 
   return (
-    <Input
-      width={1}
-      size={'small'}
-      type="text"
-      value={valueLocal}
-      onChange={(_, {value}) => setValueLocal(value)}
-      onBlur={handleBlur}
-      readOnly={isReadOnly}
-      disabled={isDisabled}
-      style={{width: '100px'}}
-    >
-      <input style={{textAlign: 'right'}}/>
-    </Input>
+    <Form.Field className={styles.field}>
+      <Input
+        width={1}
+        size={'small'}
+        type="text"
+        value={valueLocal}
+        onChange={(_, {value}) => setValueLocal(value)}
+        onBlur={handleBlur}
+        readOnly={isReadOnly}
+        disabled={isDisabled}
+        style={{width: '100px'}}
+      >
+        <input style={{textAlign: 'right'}}/>
+      </Input>
+    </Form.Field>
+
   );
 };
 
