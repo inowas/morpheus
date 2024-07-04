@@ -1,9 +1,11 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Feature, Polygon} from 'geojson';
 import {contours} from 'd3-contour';
 import {bbox, transformRotate, centerOfMass} from '@turf/turf';
 import {FeatureGroup, GeoJSON} from 'react-leaflet';
-import {ContinuousLegend, HoverDataLayer, ISelection} from '../Legend';
+import {ContinuousLegend} from '../Legend';
+import {ISelection} from '../types';
+import HoverDataLayer from '../HoverDataLayer';
 
 interface IProps {
   title: string;
@@ -11,22 +13,29 @@ interface IProps {
   rotation: number;
   outline: Feature<Polygon>;
   getRgbColor: (value: number) => string;
-  onHover?: (value: number | null) => void;
   numberOfGrades?: number;
   minVal: number;
   maxVal: number;
+  onClick?: (selection: ISelection | null) => void;
+  onHover?: (selection: ISelection | null) => void;
 }
 
-const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal}: IProps) => {
+const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal, onClick}: IProps) => {
 
-  const [value, setValue] = useState<number | null>(null);
+  const [selection, setSelection] = useState<ISelection | null>(null);
 
-  useEffect(() => {
+  const handleHover = (selected: ISelection | null) => {
+    setSelection(selected);
     if (onHover) {
-      onHover(value);
+      onHover(selected);
     }
-    // eslint-disable-next-line
-  }, [value]);
+  };
+
+  const handleClick = (selected: ISelection | null) => {
+    if (onClick) {
+      onClick(selected);
+    }
+  };
 
   const contourMultiPolygons = useMemo(() => {
     const contoursFunction = contours().size([data[0].length, data.length]).thresholds(numberOfGrades);
@@ -60,10 +69,6 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
           <GeoJSON
             key={JSON.stringify(mp) + key}
             data={mp}
-            onEachFeature={(feature, layer) => {
-              layer.on('mouseover', () => setValue(mp.value));
-              layer.on('mouseout', () => setValue(null));
-            }}
             pmIgnore={true}
             pathOptions={{
               fillOpacity: .5,
@@ -78,7 +83,7 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
       <ContinuousLegend
         title={title}
         direction={'horizontal'}
-        value={value}
+        value={selection ? selection.value : null}
         minValue={minVal}
         maxValue={maxVal}
         getRgbColor={getRgbColor}
@@ -87,7 +92,8 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
         data={data}
         rotation={rotation}
         outline={outline}
-        onHover={(selection: ISelection | null) => setValue(selection ? selection.value : null)}
+        onHover={handleHover}
+        onClick={handleClick}
       />
     </FeatureGroup>
   );

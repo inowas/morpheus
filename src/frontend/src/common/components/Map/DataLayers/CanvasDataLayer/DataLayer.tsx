@@ -1,23 +1,15 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Feature, Polygon, FeatureCollection} from 'geojson';
 import {Polygon as LeafletPolygon, FeatureGroup, useMap, useMapEvents} from 'common/infrastructure/React-Leaflet';
 import * as turf from '@turf/turf';
 import {canvas, GridLayerOptions} from 'leaflet';
-import {L} from '../../../../infrastructure/Leaflet';
-
-interface ISelection {
-  col: number;
-  row: number;
-  value: number;
-}
+import { ISelection } from '../types';
 
 interface IProps {
   data: number[][];
   rotation: number;
   outline: Feature<Polygon>;
   getRgbColor: (value: number) => string;
-  onHover?: (selection: ISelection | null) => void;
-  onClick?: (selection: ISelection | null) => void;
   options?: GridLayerOptions;
 }
 
@@ -29,7 +21,7 @@ interface IFeatureProperties {
 }
 
 
-const DataLayer = ({data, rotation, outline, onHover, onClick, getRgbColor, options}: IProps) => {
+const DataLayer = ({data, rotation, outline, getRgbColor, options}: IProps) => {
 
   const map = useMap();
   const [factor, setFactor] = useState(1);
@@ -86,8 +78,8 @@ const DataLayer = ({data, rotation, outline, onHover, onClick, getRgbColor, opti
     // as we want to render maximum 1000 cells we need to calculate the factor
     // we need to determine the viewports width and height on the map
     // and divide it by the cell width and height
-    for (let row = 0; row < nRows - 1; row++) {
-      for (let col = 0; col < nCols - 1; col++) {
+    for (let row = 0; row < nRows; row++) {
+      for (let col = 0; col < nCols; col++) {
 
         const value = data[row][col];
         const color = getRgbColor(value);
@@ -118,21 +110,16 @@ const DataLayer = ({data, rotation, outline, onHover, onClick, getRgbColor, opti
   return (
     <FeatureGroup>
       {polygons.features.map((feature, index) => {
-        const {col, row, value, color} = feature.properties;
+        const {color} = feature.properties;
         return (
           <LeafletPolygon
             key={'factor-' + factor + '-cell-' + index}
             positions={feature.geometry.coordinates[0].map((coords) => [coords[1], coords[0]])}
-            color={onHover || onClick ? 'transparent' : 'black'}
+            color={'transparent'}
             fillOpacity={options?.opacity || 1}
             fillColor={color || 'transparent'}
             weight={0}
             renderer={renderer}
-            eventHandlers={{
-              click: () => onClick && onClick({col, row, value}),
-              mouseover: () => onHover && onHover({col, row, value}),
-              mouseout: () => onHover && onHover(null),
-            }}
           />
         );
       })}

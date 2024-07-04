@@ -3,12 +3,7 @@ import {Feature, Polygon} from 'geojson';
 import {Polygon as LeafletPolygon, FeatureGroup, useMapEvents} from 'common/infrastructure/React-Leaflet';
 import * as turf from '@turf/turf';
 import {LatLng} from 'leaflet';
-
-interface ISelection {
-  col: number;
-  row: number;
-  value: number;
-}
+import {ISelection} from '../types';
 
 interface IProps {
   data: number[][];

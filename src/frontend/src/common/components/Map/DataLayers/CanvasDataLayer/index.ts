@@ -1,3 +1,3 @@
-import CanvasDataLayer from './CanvasDataLayer';
+import DataLayerWrapper from './DataLayerWrapper';
 
-export default CanvasDataLayer;
+export default DataLayerWrapper;
