@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {FeatureGroup, Polygon as LeafletPolygon, useMap} from 'common/infrastructure/React-Leaflet';
-import {transformRotate, bbox, bboxPolygon} from '@turf/turf';
+import {transformRotate, bbox, bboxPolygon, centerOfMass} from '@turf/turf';
 
 import type {Polygon} from 'geojson';
 
@@ -11,7 +11,7 @@ interface IProps {
 }
 
 
-const RotatedBoundingBoxMapLayer = ({modelGeometry, rotation}: IProps) => {
+const GridRotationMapLayer = ({modelGeometry, rotation}: IProps) => {
 
   const map = useMap();
 
@@ -21,9 +21,10 @@ const RotatedBoundingBoxMapLayer = ({modelGeometry, rotation}: IProps) => {
   // 2. calculate the bounding box
   // 3. rotate the bounding box back
   const rotatedBoundingBox = useMemo(() => {
-    const rotatedGeometry = transformRotate(modelGeometry, rotation);
+    const center = centerOfMass(modelGeometry);
+    const rotatedGeometry = transformRotate(modelGeometry, rotation, {pivot: center});
     const boundingBox = bboxPolygon(bbox(rotatedGeometry));
-    return transformRotate(boundingBox, -rotation);
+    return transformRotate(boundingBox, -rotation, {pivot: center});
   }, [modelGeometry, rotation]);
 
   if (!map) {
@@ -44,4 +45,4 @@ const RotatedBoundingBoxMapLayer = ({modelGeometry, rotation}: IProps) => {
   );
 };
 
-export default RotatedBoundingBoxMapLayer;
+export default GridRotationMapLayer;
