@@ -2,6 +2,7 @@ import {useRef, useState} from 'react';
 import {IError} from '../../types';
 import {useApi} from '../incoming';
 import {Feature, Polygon} from 'geojson';
+import {useMap} from 'react-leaflet';
 
 interface IData {
   n_cols: number;

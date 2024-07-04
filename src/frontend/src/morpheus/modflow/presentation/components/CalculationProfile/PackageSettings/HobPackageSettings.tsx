@@ -4,7 +4,7 @@ import {IHobPackageSettings} from '../../../../types/CalculationProfile.type';
 import PackageWrapper from './PackageWrapper';
 import {NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 
 interface IProps {
   settings: IHobPackageSettings

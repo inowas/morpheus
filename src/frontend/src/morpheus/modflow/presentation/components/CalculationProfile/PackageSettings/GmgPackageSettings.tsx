@@ -1,6 +1,6 @@
 import React from 'react';
 import {IGmgPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import {Divider, Form} from 'semantic-ui-react';
 import {DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';

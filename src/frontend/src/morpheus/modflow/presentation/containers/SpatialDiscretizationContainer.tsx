@@ -15,6 +15,7 @@ import {Map} from 'common/components/Map';
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
+import GridRotationMapLayer from '../components/ModelSpatialDiscretization/GridRotationMapLayer';
 
 
 const SpatialDiscretizationContainer = () => {
@@ -106,7 +107,7 @@ const SpatialDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={500}>
         <DataGrid>
           <SectionTitle
             title={'Model Geometry'}
@@ -196,6 +197,10 @@ const SpatialDiscretizationContainer = () => {
             inverted={true}
             showAffectedCellsByDefault={true}
           />
+
+          {spatialDiscretization.grid.rotation !== grid.rotation && (
+            <GridRotationMapLayer modelGeometry={modelGeometry} rotation={grid.rotation}/>
+          )}
         </Map>
       </BodyContent>
     </>

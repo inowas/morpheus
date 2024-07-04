@@ -1,10 +1,11 @@
 import React from 'react';
 import {Form} from 'semantic-ui-react';
+import {SectionTitle} from 'common/components';
+
 import {IBasPackageSettings} from '../../../../types/CalculationProfile.type';
 import PackageWrapper from './PackageWrapper';
 import {CheckBox, NumberInput, NumberOrNullInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
-import {SectionTitle} from '../../../../../../common/components';
 
 interface IProps {
   settings: IBasPackageSettings

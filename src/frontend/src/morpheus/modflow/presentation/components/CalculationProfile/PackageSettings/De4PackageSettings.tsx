@@ -1,6 +1,6 @@
 import React from 'react';
 import {IDe4PackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import {Divider, Form} from 'semantic-ui-react';
 import {NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';

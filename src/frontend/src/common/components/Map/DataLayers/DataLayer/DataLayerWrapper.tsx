@@ -1,9 +1,9 @@
 import React, {useMemo, useState} from 'react';
 import {Feature, Polygon} from 'geojson';
-import ReactLeafletCanvasDataLayer from './ReactLeafletCanvasDataLayer';
-import {GridLayerOptions, LatLngExpression} from 'leaflet';
+import {GridLayerOptions, LatLngBoundsExpression} from 'leaflet';
 import {bbox} from '@turf/turf';
-import {ContinuousLegend} from '../Legend';
+import {ContinuousLegend, ISelection} from '../Legend';
+import DataLayer from './DataLayer';
 
 interface IProps {
   title?: string;
@@ -17,12 +17,11 @@ interface IProps {
   options?: GridLayerOptions;
 }
 
-
-const CanvasDataLayer = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
+const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
 
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
-  const bounds: LatLngExpression[] | null = useMemo(() => {
+  const bounds: LatLngBoundsExpression | null = useMemo(() => {
     if (!outline) {
       return null;
     }
@@ -31,19 +30,18 @@ const CanvasDataLayer = ({title, data, rotation, outline, getRgbColor, minVal, m
     return [[boundingBox[1], boundingBox[0]], [boundingBox[3], boundingBox[2]]];
   }, [outline]);
 
-
   if (!bounds) {
     return null;
   }
 
   return (
     <>
-      <ReactLeafletCanvasDataLayer
+      <DataLayer
         data={data}
         rotation={rotation}
-        bounds={bounds}
+        outline={outline}
         getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
-        onHover={setHoveredValue}
+        onHover={(value: ISelection | null) => setHoveredValue(value ? value.value : null)}
         options={options}
       />
       <ContinuousLegend
@@ -58,4 +56,4 @@ const CanvasDataLayer = ({title, data, rotation, outline, getRgbColor, minVal, m
   );
 };
 
-export default CanvasDataLayer;
+export default DataLayerWrapper;

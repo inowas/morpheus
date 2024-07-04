@@ -1,6 +1,6 @@
 import React from 'react';
 import {ISipPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {SectionTitle} from 'common/components';
 import {Divider, Form} from 'semantic-ui-react';
 import {CheckBox, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
