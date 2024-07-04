@@ -8,14 +8,21 @@ import {Map} from 'common/components/Map';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import {MenuItem, Tab, TabPane} from 'semantic-ui-react';
 import CrossSectionParameterSelector from '../components/Results/CrossSectionParameterSelector';
-import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
 import {IFlowData} from '../../application/useCalculationData';
 import {useColorMap} from 'common/hooks';
 import ContoursDataLayer from 'common/components/Map/DataLayers/ContoursDataLayer';
 
 import useLayers from '../../application/useLayers';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
-import DataLayer from '../../../../common/components/Map/DataLayers/DataLayer';
+import CanvasDataLayer from '../../../../common/components/Map/DataLayers/CanvasDataLayer';
+import SelectedRowAndColLayer from '../../../../common/components/Map/DataLayers/SelectedRowAndColLayer';
+import {ISelection} from '../../../../common/components/Map/DataLayers/types';
+import HoverDataLayer from '../../../../common/components/Map/DataLayers/HoverDataLayer';
+
+interface ISelectedRowAndColumn {
+  col: number;
+  row: number;
+}
 
 const FlowResultsContainer = () => {
   const {projectId} = useParams();
@@ -31,6 +38,8 @@ const FlowResultsContainer = () => {
   const [showContours, setShowContours] = useState<boolean>(false);
   const [opacity, setOpacity] = useState<number>(0.8);
   const [useGlobalMinMax, setUseGlobalMinMax] = useState<boolean>(true);
+
+  const [selectedRowAndColumn, setSelectedRowAndColumn] = useState<ISelectedRowAndColumn | null>(null);
 
   const {getRgbColor} = useColorMap('jet_r');
 
@@ -146,20 +155,10 @@ const FlowResultsContainer = () => {
             getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
             minVal={minVal}
             maxVal={maxVal}
+            onClick={(selection: ISelection | null) => setSelectedRowAndColumn(selection ? {col: selection.col, row: selection.row} : null)}
           />}
 
-          {/*{data && !showContours && <CanvasDataLayer*/}
-          {/*  title={'Head [m]'}*/}
-          {/*  data={data.data.values}*/}
-          {/*  minVal={minVal}*/}
-          {/*  maxVal={maxVal}*/}
-          {/*  outline={data.data.outline}*/}
-          {/*  getRgbColor={getRgbColor}*/}
-          {/*  rotation={data.data.rotation}*/}
-          {/*  options={{opacity: opacity}}*/}
-          {/*/>}*/}
-
-          {data && !showContours && <DataLayer
+          {data && !showContours && <CanvasDataLayer
             title={'Head [m]'}
             data={data.data.values}
             minVal={minVal}
@@ -168,6 +167,7 @@ const FlowResultsContainer = () => {
             getRgbColor={getRgbColor}
             rotation={data.data.rotation}
             options={{opacity: opacity}}
+            onClick={(selection: ISelection | null) => setSelectedRowAndColumn(selection ? {col: selection.col, row: selection.row} : null)}
           />}
         </Map>
       </BodyContent>

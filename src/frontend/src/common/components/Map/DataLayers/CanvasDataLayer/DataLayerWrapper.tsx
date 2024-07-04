@@ -2,8 +2,11 @@ import React, {useMemo, useState} from 'react';
 import {Feature, Polygon} from 'geojson';
 import {GridLayerOptions, LatLngBoundsExpression} from 'leaflet';
 import {bbox} from '@turf/turf';
-import {ContinuousLegend, ISelection} from '../Legend';
+import {ContinuousLegend} from '../Legend';
 import DataLayer from './DataLayer';
+import {ISelection} from '../types';
+import SelectedRowAndColLayer from '../SelectedRowAndColLayer';
+import HoverDataLayer from '../HoverDataLayer';
 
 interface IProps {
   title?: string;
@@ -13,13 +16,29 @@ interface IProps {
   rotation: number;
   outline: Feature<Polygon>
   getRgbColor: (value: number, minVal: number, maxVal: number) => string;
-  onHover?: (value: number | null) => void;
+  onHover?: (selection: ISelection | null) => void;
+  onClick?: (selection: ISelection | null) => void;
   options?: GridLayerOptions;
 }
 
-const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
+const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options, onHover, onClick}: IProps) => {
 
+  const [selection, setSelection] = useState<ISelection | null>(null);
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
+
+  const handleHover = (selected: ISelection | null) => {
+    setHoveredValue(selected?.value || null);
+    if (onHover) {
+      onHover(selected);
+    }
+  };
+
+  const handleClick = (selected: ISelection | null) => {
+    setSelection(selected);
+    if (onClick) {
+      onClick(selected);
+    }
+  };
 
   const bounds: LatLngBoundsExpression | null = useMemo(() => {
     if (!outline) {
@@ -41,8 +60,22 @@ const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, 
         rotation={rotation}
         outline={outline}
         getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
-        onHover={(value: ISelection | null) => setHoveredValue(value ? value.value : null)}
         options={options}
+      />
+      {selection && <SelectedRowAndColLayer
+        nRows={data.length}
+        nCols={data[0].length}
+        selectedRow={selection.row}
+        selectedCol={selection.col}
+        outline={outline}
+        rotation={rotation}
+      />}
+      <HoverDataLayer
+        data={data}
+        rotation={rotation}
+        outline={outline}
+        onHover={handleHover}
+        onClick={handleClick}
       />
       <ContinuousLegend
         title={title}
