@@ -237,13 +237,6 @@
     }
   }
 
-  [class*="disabled"],
-  .disabled {
-    cursor: default;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
   button.dotsMenu {
     margin-left: 0 !important;
     color: @black !important;
@@ -254,5 +247,12 @@
       background-color: transparent !important;
       transform: scale(1.2);
     }
+  }
+
+  [class*="disabled"],
+  .disabled {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
   }
 }

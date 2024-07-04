@@ -20,7 +20,7 @@ interface IProps {
 
 type IBoundaryObservationDataEnabled = IBoundaryObservationData & { enabled: boolean, [key: string]: any };
 
-const ObservationDataTable = ({boundaryType, observation, onChangeObservation, timeDiscretization, isReadOnly}: IProps) => {
+const ObservationDataTableWithDisabledInterpolation = ({boundaryType, observation, onChangeObservation, timeDiscretization, isReadOnly}: IProps) => {
 
   const {formatISODate, parseDate} = useDateTimeFormat('UTC');
   const [data, setData] = useState<IBoundaryObservationDataEnabled[]>(observation.data || []);
@@ -60,7 +60,10 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation, t
         onSubmit={() => console.log('Submit from ObservationDataTable')}
         columns={columns}
       />
-      <Table celled={true} striped={true}>
+      <Table
+        celled={true}
+        striped={true}
+      >
         <TableHeader>
           <TableRow textAlign={'center'}>
             <TableHeaderCell textAlign={'left'}>No</TableHeaderCell>
@@ -132,4 +135,4 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation, t
   );
 };
 
-export default ObservationDataTable;
+export default ObservationDataTableWithDisabledInterpolation;

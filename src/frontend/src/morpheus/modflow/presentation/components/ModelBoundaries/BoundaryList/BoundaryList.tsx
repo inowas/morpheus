@@ -77,15 +77,15 @@ const BoundaryList = ({
       <List className={styles.list}>
         {filteredBoundaries.map((boundary) => (
           <ListItem
-            key={boundary.id} className={styles.item}
-            disabled={!boundary.enabled}
+            key={boundary.id}
+            className={styles.item}
           >
             <div
               // Title styles when item is selected
               className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}
             >
               {/*// Title open and close observations list*/}
-              <div className={`${styles.titleInner}`} onClick={() => onSelectBoundaryAndObservation({boundary})}>
+              <div className={`${styles.titleInner} ${!boundary.enabled ? styles.disabled : ''}`} onClick={() => onSelectBoundaryAndObservation({boundary})}>
                 {editBoundaryName !== boundary.id &&
                   <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
                     {boundary.name}
@@ -137,7 +137,7 @@ const BoundaryList = ({
                 />
                 <DotsMenu
                   disabled={isReadOnly}
-                  className={`${styles.dotsMenu}`}
+                  className={`${styles.dotsMenu} ${!boundary.enabled ? styles.disabled : ''}`}
                   actions={[
                     {
                       text: 'Rename Item', icon: 'edit', onClick: () => {
@@ -160,7 +160,7 @@ const BoundaryList = ({
             </div>
             {canHaveMultipleObservations(boundary) && (
               <Accordion.Content
-                className={styles.accordionContent}
+                className={`${styles.accordionContent} ${!boundary.enabled ? styles.disabled : ''}`}
                 active={isSelected(boundary)}
                 style={{display: isSelected(boundary) ? 'block' : 'none'}}
               >

@@ -5,7 +5,6 @@ import {Grid, InfoTitle, Tab} from 'common/components';
 
 import {BoundariesForm} from '../BoundariesLayers/BoundariesForm';
 import {MenuItem, TabPane} from 'semantic-ui-react';
-import {ObservationDataTable} from '../BoundariesLayers/BoundariesTable';
 import {ILayer, ILayerId} from '../../../types/Layers.type';
 import ObservationDataChart from '../BoundariesLayers/BoundariesTable/ObservationDataChart';
 import {ITimeDiscretization} from '../../../types';
