@@ -38,6 +38,9 @@ include:
   # Backend
   - local: src/backend/.gitlab-ci.publish.yml
 
+  # Keycloak
+  - local: src/keycloak/.gitlab-ci.publish.yml
+
 # Infrastructure
 deploy-morpheus:dev:
   image: ubuntu:22.04
