@@ -3,11 +3,11 @@ import {Icon} from 'semantic-ui-react';
 import React from 'react';
 
 interface IProps {
-  maxWidth: number;
+  maxWidth?: number | string;
   children: React.ReactNode;
 }
 
-const SidebarContent = ({maxWidth, children}: IProps) => {
+const SidebarContent = ({maxWidth = 'auto', children}: IProps) => {
 
   const [isOpen, setIsOpen] = React.useState<boolean>(true);
 

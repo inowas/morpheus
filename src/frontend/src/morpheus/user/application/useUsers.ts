@@ -7,7 +7,6 @@ import {useApi} from '../incoming';
 import {useEffect} from 'react';
 
 interface IUseUsers {
-  fetchUsers: () => Promise<void>;
   users: IUser[];
   loading: boolean;
   error: IError | null;
@@ -16,10 +15,8 @@ interface IUseUsers {
 type IUsersGetResponse = {
   user_id: string;
   username: string;
-  email: string;
-  full_name: string;
-  is_superuser: boolean;
-  status: 'active' | 'inactive'
+  first_name: string | null;
+  last_name: string | null;
 }[];
 
 const useUsers = (): IUseUsers => {
@@ -56,7 +53,6 @@ const useUsers = (): IUseUsers => {
   }, []);
 
   return {
-    fetchUsers,
     users,
     loading,
     error,

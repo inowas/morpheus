@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Any
 
 import numpy as np
-from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator, RegularGridInterpolator
 from scipy.ndimage import generic_filter
 
 from morpheus.project.types.discretization.spatial import Grid
@@ -61,7 +61,8 @@ class RasterInterpolationService:
         raster_data: RasterData,
         grid: Grid,
         method: InterpolationMethod = InterpolationMethod.linear,
-        no_data_value: float = -9999
+        no_data_value: float = -9999,
+        precision: int = 6
     ) -> tuple[list[list[float]], float]:
 
         src_xx = np.array(raster_data.get_xx_centers())
@@ -82,6 +83,8 @@ class RasterInterpolationService:
         grid_xx = np.array(grid_xx)
         grid_yy = np.array(grid_yy)
         grid_data = interp((grid_xx, grid_yy))
+        grid_data.astype(np.float32)
+        grid_data = np.around(grid_data, precision)
 
         grid_data = RasterInterpolationService.expand_island(grid_data, 1)
         grid_data[np.isnan(grid_data)] = no_data_value
@@ -89,8 +92,7 @@ class RasterInterpolationService:
         return grid_data.tolist(), no_data_value
 
     @staticmethod
-    def grid_to_raster_data(grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256,
-                            method: InterpolationMethod = InterpolationMethod.linear) -> RasterData:
+    def grid_to_raster_data(grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256, method: InterpolationMethod = InterpolationMethod.linear, precision=6) -> RasterData:
         # get grid coordinates
         xx_coords, yy_coords = grid.get_wgs_cell_center_coordinates()
         xx_coords = np.array(xx_coords)
@@ -120,6 +122,8 @@ class RasterInterpolationService:
 
         no_data_value = -9999
         target_data[np.isnan(target_data)] = no_data_value
+        target_data.astype(np.float32)
+        target_data = np.around(target_data, precision)
 
         return RasterData(
             xx_centers=target_xx.tolist(),
@@ -130,41 +134,36 @@ class RasterInterpolationService:
         )
 
     @staticmethod
-    def grid_data_to_grid_data_with_equal_cells(grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256,
-                                                method: InterpolationMethod = InterpolationMethod.linear) -> list[list[float]]:
-        # get grid coordinates
-        xx_coords, yy_coords = grid.get_wgs_cell_center_coordinates()
-        xx_coords = np.array(xx_coords)
-        yy_coords = np.array(yy_coords)
-        grid_data = np.array(data)
-        grid_data = np.where(grid_data == no_data_value, np.nan, grid_data)
+    def grid_data_to_grid_data_with_equal_cells(grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256, expand: int = 0, precision: int = 6) -> list[list[float]]:
+
+        src_col_coordinates = np.array(grid.col_coordinates_relative())
+        src_row_coordinates = np.array(grid.row_coordinates_relative())
+
+        src_col_centers = [0.5 * (src_col_coordinates[i] + src_col_coordinates[i + 1]) for i in range(len(src_col_coordinates) - 1)]
+        src_row_centers = [0.5 * (src_row_coordinates[i] + src_row_coordinates[i + 1]) for i in range(len(src_row_coordinates) - 1)]
 
         # get grid bounds
         # keep aspect ratio
         aspect_ratio = grid.total_width / grid.total_height
         target_resolution_y = int(target_resolution_x / aspect_ratio)
 
-        # create target grid
-        target_xx = [np.linspace(xx_row[0], xx_row[-1], target_resolution_x) for xx_row in xx_coords]
-        target_xx = np.array(target_xx)
-
-        max_yys = yy_coords[0]
-        min_yys = yy_coords[-1]
-        target_yy = [np.linspace(min_yys[col], max_yys[col], target_resolution_y) for col in range(len(max_yys))]
-        target_yy = np.array(target_yy)
-
+        grid_data = np.array(data)
         if isinstance(data, (int, float)):
-            grid_data = np.ones_like(xx_coords) * data
+            grid_data = np.ones((len(src_row_centers), len(src_col_centers))) * data
 
-        if method == InterpolationMethod.nearest:
-            interp = NearestNDInterpolator(list(zip(xx_coords.ravel(), yy_coords.ravel())), grid_data.ravel())
-        else:
-            interp = LinearNDInterpolator(list(zip(xx_coords.ravel(), yy_coords.ravel())), grid_data.ravel(), fill_value=np.nan, rescale=True)
+        grid_data = np.where(grid_data == no_data_value, np.nan, grid_data)
+        interp = RegularGridInterpolator((src_row_centers, src_col_centers), grid_data, bounds_error=False, fill_value=np.nan)
 
-        target_data = interp((target_xx, target_yy))
-        target_data = RasterInterpolationService.expand_island(target_data, 1)
-        target_data[np.isnan(target_data)] = no_data_value
+        target_xx, target_yy = np.meshgrid(np.linspace(0, 1, target_resolution_x), np.linspace(0, 1, target_resolution_y))
 
+        target_data = interp((target_yy, target_xx))
+        target_data.astype(np.float32)
+        target_data = np.around(target_data, precision)
+
+        if expand > 0:
+            target_data = RasterInterpolationService.expand_island(target_data, expand)
+
+        target_data = np.where(np.isnan(target_data), no_data_value, target_data)
         return target_data.tolist()
 
     @staticmethod
@@ -173,7 +172,8 @@ class RasterInterpolationService:
         source_data: IData,
         target_grid: Grid,
         no_data_value: Any = None,
-        method: InterpolationMethod = InterpolationMethod.linear
+        method: InterpolationMethod = InterpolationMethod.linear,
+        precision: int = 6
     ) -> list[list[float]]:
 
         # get source grid coordinates
@@ -200,5 +200,7 @@ class RasterInterpolationService:
         target_data = interp((target_xx_coords, target_yy_coords))
         target_data = RasterInterpolationService.expand_island(target_data, 1)
         target_data = np.where(np.isnan(target_data), no_data_value, target_data)
+        target_data = target_data.astype(np.float32)
+        target_data = np.around(target_data, precision)
 
         return target_data.tolist()

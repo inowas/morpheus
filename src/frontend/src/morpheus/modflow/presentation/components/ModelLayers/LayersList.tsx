@@ -8,7 +8,7 @@ import {IChangeLayerPropertyValues, ILayer, ILayerPropertyData, ILayerPropertyNa
 import {ISpatialDiscretization} from '../../../types';
 
 interface IProps {
-  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName) => Promise<ILayerPropertyData | null>;
+  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName, format?: 'raster' | 'grid') => Promise<ILayerPropertyData | null>;
   fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   layers: ILayer[];
   spatialDiscretization: ISpatialDiscretization;

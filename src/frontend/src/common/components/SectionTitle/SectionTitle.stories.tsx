@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
 
 import React from 'react';
 import SectionTitle from 'common/components/SectionTitle';
+import LockButton from 'common/components/LockButton/LockButton';
+import {Button} from '../index';
 
 export default {
   /* 👇 The title prop is optional.
@@ -26,64 +26,94 @@ export const SectionTitleExample: StoryFn<typeof SectionTitle> = () => {
       />
       <SectionTitle
         title={'Model Geometry'}
-      />
-      <SectionTitle
-        subTitle={'Model Geometry'}
-      />
-      <SectionTitle
-        title={'Model Geometry'}
-        faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-        faIconText={locked ? 'Locked' : 'Unlocked'}
-        faIconOnClick={() => {
-          setLocked(!locked);
-        }}
-      />
-      <SectionTitle
-        subTitle={'Model Geometry'}
-        faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-        faIconText={locked ? 'Locked' : 'Unlocked'}
-        faIconOnClick={() => {
-          setLocked(!locked);
-        }}
+        as={'h1'}
       />
       <SectionTitle
         title={'Model Geometry'}
-        btnTitle={'Edit'}
-        onClick={() => {
-          console.log('some action');
-        }}
+        as={'h2'}
       />
       <SectionTitle
-        subTitle={'Model Geometry'}
-        btnTitle={'Edit'}
-        onClick={() => {
-          console.log('some action');
-        }}
-      />
+        as={'h1'}
+        title={'Model Geometry'}
+      >
+        <LockButton
+          title={locked ? 'Locked' : 'Unlocked'}
+          locked={locked}
+          disabled={false}
+          onClick={() => setLocked(!locked)}
+        />
+      </SectionTitle>
       <SectionTitle
         title={'Model Geometry'}
-        btnTitle={'Edit'}
-        onClick={() => {
-          console.log('some action');
-        }}
-        faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-        faIconText={locked ? 'Locked' : 'Unlocked'}
-        faIconOnClick={() => {
-          setLocked(!locked);
-        }}
-      />
+        as={'h2'}
+      >
+        <LockButton
+          title={locked ? 'Locked' : 'Unlocked'}
+          locked={locked}
+          disabled={false}
+          onClick={() => setLocked(!locked)}
+        />
+      </SectionTitle>
       <SectionTitle
-        subTitle={'Model Geometry'}
-        btnTitle={'Edit'}
-        onClick={() => {
-          console.log('some action');
-        }}
-        faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-        faIconText={locked ? 'Locked' : 'Unlocked'}
-        faIconOnClick={() => {
-          setLocked(!locked);
-        }}
-      />
+        title={'Model Geometry'}
+        as={'h3'}
+      >
+        <Button
+          disabled={false}
+          primary={true}
+          size={'small'}
+          onClick={() => console.log('some action')}
+        >
+          Edit
+        </Button>
+      </SectionTitle>
+      <SectionTitle
+        title={'Model Geometry'}
+        as={'h2'}
+      >
+        <Button
+          disabled={true}
+          primary={true}
+          size={'small'}
+          onClick={() => console.log('some action')}
+        >
+          Edit
+        </Button>
+      </SectionTitle>
+      <SectionTitle
+        title={'Model Geometry'}
+        as={'h1'}
+      >
+        <LockButton
+          title={locked ? 'Locked' : 'Unlocked'}
+          locked={locked}
+          onClick={() => setLocked(!locked)}
+        />
+        <Button
+          primary={true}
+          size={'small'}
+          onClick={() => console.log('some action')}
+        >
+          Save
+        </Button>
+      </SectionTitle>
+      <SectionTitle
+        title={'Model Geometry'}
+        as={'h2'}
+      >
+        <LockButton
+          title={locked ? 'Locked' : 'Unlocked'}
+          locked={locked}
+          onClick={() => setLocked(!locked)}
+        />
+        <Button
+          primary={true}
+          size={'small'}
+          onClick={() => console.log('some action')}
+        >
+          Save
+        </Button>
+      </SectionTitle>
     </div>
   );
 };

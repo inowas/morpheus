@@ -22,12 +22,17 @@ class ReadPreviewImageRequestHandler:
         if not project_reader.project_exists(project_id):
             return '', 404
 
-        asset_reader = get_asset_reader()
-        preview_image_asset = asset_reader.get_preview_image(project_id)
-        if preview_image_asset is None:
-            return default_preview_image_response()
+        try:
+            # for now without authentication (see https://redmine.junghanns.it/issues/2388)
+            # permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)
+            asset_reader = get_asset_reader()
+            preview_image_asset = asset_reader.get_preview_image(project_id)
+            if preview_image_asset is None:
+                return default_preview_image_response()
 
-        return asset_file_response(preview_image_asset)
+            return asset_file_response(preview_image_asset)
+        except InsufficientPermissionsException as e:
+            return str(e), 403
 
 
 class ReadAssetListRequestHandler:

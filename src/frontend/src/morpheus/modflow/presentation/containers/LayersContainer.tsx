@@ -5,14 +5,13 @@ import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 
 import useLayers from '../../application/useLayers';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {BodyContent, SidebarContent} from '../components';
 import LayersList from '../components/ModelLayers/LayersList';
-import ModelGeometryMapLayer from "../components/ModelSpatialDiscretization/ModelGeometryMapLayer";
-import {MapRef} from "../../../../common/components/Map/Map";
-
+import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+import {MapRef} from 'common/components/Map/Map';
 
 const LayersContainer = () => {
 
@@ -29,7 +28,7 @@ const LayersContainer = () => {
     onDeleteLayer,
   } = useLayers(projectId as string);
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const mapRef: IMapRef = useRef(null);
 
   if (!layers || !spatialDiscretization) {

@@ -2,7 +2,7 @@ import {Button, DataRow, DropdownComponent} from 'common/components';
 
 import React, {useEffect, useState} from 'react';
 import {Form, Icon, Label, Popup} from 'semantic-ui-react';
-import {IBoundary, IBoundaryId} from '../../../../types/Boundaries.type';
+import {IBoundary, IBoundaryId, IInterpolationType} from '../../../../types/Boundaries.type';
 import {ILayerId} from '../../../../types/Layers.type';
 import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 import isEqual from 'lodash.isequal';
@@ -11,8 +11,9 @@ import {canHaveMultipleAffectedLayers} from '../../ModelBoundaries/helpers';
 
 interface IProps {
   boundary: IBoundary;
-  onChangeBoundaryTags: (boundaryId: IBoundaryId, boundaryTags: string[]) => Promise<void>;
   onChangeBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
+  onChangeBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
+  onChangeBoundaryTags: (boundaryId: IBoundaryId, boundaryTags: string[]) => Promise<void>;
   layers: ILayerMetadata[];
   isReadOnly: boolean;
 }
@@ -22,7 +23,7 @@ interface ILayerMetadata {
   name: string;
 }
 
-const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, isReadOnly, layers}: IProps) => {
+const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, onChangeBoundaryInterpolation, isReadOnly, layers}: IProps) => {
 
   const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
   const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
@@ -30,6 +31,10 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
 
   const isDirty = () => {
     if (!isEqual(boundaryLocal.tags, boundary.tags)) {
+      return true;
+    }
+
+    if (!isEqual(boundaryLocal.interpolation, boundary.interpolation)) {
       return true;
     }
 
@@ -44,6 +49,10 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
 
     if (boundary.affected_layers !== boundaryLocal.affected_layers) {
       await onChangeBoundaryAffectedLayers(boundaryLocal.id, boundaryLocal.affected_layers);
+    }
+
+    if (boundary.interpolation !== boundaryLocal.interpolation) {
+      await onChangeBoundaryInterpolation(boundaryLocal.id, boundaryLocal.interpolation);
     }
     setSubmitting(false);
   };
@@ -104,7 +113,6 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             />
             Tags
           </Label>
-
           <DropdownComponent.Dropdown
             disabled={isReadOnly}
             allowAdditions={true}
@@ -119,6 +127,32 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             search={true}
             selection={true}
             value={boundaryLocal.tags}
+          />
+        </Form.Field>
+
+        <Form.Field>
+          <Label htmlFor="tags" className="labelSmall">
+            <Popup
+              trigger={<Icon name="info circle"/>}
+              content={'Interpolation Type, default is none. Meaning no interpolation is applied and values for each stress period have to be provided.'}
+              hideOnScroll={true}
+              size="tiny"
+            />
+            Interpolation Type
+          </Label>
+          <DropdownComponent.Dropdown
+            disabled={true}
+            fluid={true}
+            options={[
+              {key: 'none', text: 'None', value: 'none'},
+              {key: 'nearest', text: 'Nearest', value: 'nearest'},
+              {key: 'linear', text: 'Linear', value: 'linear'},
+              {key: 'backward_fill', text: 'Backward Fill', value: 'backward_fill'},
+              {key: 'forward_fill', text: 'Forward Fill', value: 'forward_fill'},
+            ]}
+            selection={true}
+            value={boundaryLocal.interpolation}
+            onChange={(event, {value}) => setBoundaryLocal({...boundaryLocal, interpolation: value as IInterpolationType})}
           />
         </Form.Field>
         {!isReadOnly && (

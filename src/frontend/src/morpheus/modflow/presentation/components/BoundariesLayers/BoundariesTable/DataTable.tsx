@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
-import {Icon, Popup, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow} from 'semantic-ui-react';
+import {Icon, Popup, SemanticWIDTHS, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow} from 'semantic-ui-react';
+import cloneDeep from 'lodash.clonedeep';
 import styles from './DataTable.module.less';
-import cloneDeep from "lodash.clonedeep";
-import {Button} from "../../../../../../common/components";
+import {Button} from '../../../../../../common/components';
 
 interface IProps {
   columns: IColumn[];
@@ -50,14 +50,19 @@ const DataTable = ({columns, data, isReadOnly, onChangeData}: IProps) => {
     );
   };
 
+  const columnWidth = Math.floor(14 / columns.length);
   return (
     <div className='scrollableTable'>
-      <Table celled={true} striped={true}>
+      <Table
+        className={styles.table} celled={true}
+        striped={true}
+      >
         <TableHeader>
           <TableRow>
             {columns.map((column, idx) => (
               <TableHeaderCell
-                className={`${styles.headerCell} field`}
+                className='field'
+                width={columnWidth as SemanticWIDTHS}
                 key={idx}
               >
                 <Popup
@@ -71,7 +76,9 @@ const DataTable = ({columns, data, isReadOnly, onChangeData}: IProps) => {
                 {column.title}
               </TableHeaderCell>
             ))}
-            <TableHeaderCell/>
+            <TableHeaderCell
+              width={2}
+            />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -80,15 +87,16 @@ const DataTable = ({columns, data, isReadOnly, onChangeData}: IProps) => {
               {columns.map((column, cellId) => (
                 <TableCell
                   key={cellId}
+                  width={columnWidth as SemanticWIDTHS}
                 >
                   {renderCell(column, row[column.key], rowId)}
                 </TableCell>
               ))}
-              <TableCell>
-                {!isReadOnly && <>
+              <TableCell width={2}>
+                {!isReadOnly && <div className={styles.actions}>
                   {selectedRow === rowId && <Button icon="save" onClick={() => setSelectedRow(null)}/>}
                   {selectedRow !== rowId && <Button icon="edit" onClick={() => setSelectedRow(rowId)}/>}
-                  {dataLocal.length > 1 && <Button
+                  {1 < dataLocal.length && <Button
                     icon="trash"
                     onClick={() => {
                       const newData = cloneDeep(dataLocal);
@@ -97,7 +105,7 @@ const DataTable = ({columns, data, isReadOnly, onChangeData}: IProps) => {
                       onChangeData(newData);
                     }}
                   />}
-                </>}
+                </div>}
               </TableCell>
             </TableRow>
           ))}

@@ -1,4 +1,5 @@
+import useAuthenticatedUser from './useAuthenticatedUser';
 import useUsers, {IUseUsers, IUser} from './useUsers';
 
 export type {IUser, IUseUsers};
-export {useUsers};
+export {useAuthenticatedUser, useUsers};

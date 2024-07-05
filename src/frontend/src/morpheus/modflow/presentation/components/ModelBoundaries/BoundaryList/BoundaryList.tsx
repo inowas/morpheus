@@ -13,6 +13,8 @@ interface ISelectedListProps {
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => Promise<void>;
+  onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onUpdateObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -29,6 +31,8 @@ const BoundaryList = ({
   onSelectBoundaryAndObservation,
   onCloneBoundary,
   onCloneObservation,
+  onDisableBoundary,
+  onEnableBoundary,
   onUpdateObservation,
   onRemoveBoundary,
   onRemoveObservation,
@@ -45,12 +49,15 @@ const BoundaryList = ({
   const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
   const [inputObservationValue, setInputObservationValue] = useState('');
 
+  const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
   const filteredBoundaries = useMemo(() => {
     return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
   }, [boundaries, search, type]);
-
-  const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
-
 
   return (
     <>
@@ -62,14 +69,17 @@ const BoundaryList = ({
         allSelected={undefined}
         onChangeAllSelected={undefined}
         searchInput={search}
-        onChangeSearchInput={setSearch}
+        onChangeSearchInput={handleSearchChange}
       />
       {/**/}
       {/*Body with list items*/}
       {/**/}
       <List className={styles.list}>
         {filteredBoundaries.map((boundary) => (
-          <ListItem key={boundary.id} className={styles.item}>
+          <ListItem
+            key={boundary.id} className={styles.item}
+            disabled={!boundary.enabled}
+          >
             <div
               // Title styles when item is selected
               className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}
@@ -80,7 +90,6 @@ const BoundaryList = ({
                   <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
                     {boundary.name}
                   </div>}
-
                 {editBoundaryName === boundary.id && (
                   <div className={styles.renameField}>
                     <input
@@ -107,10 +116,25 @@ const BoundaryList = ({
                 )}
               </div>
 
-              <div
-                className={styles.buttonsWrapper}
-                style={{paddingRight: `${!boundary.observations[0].observation_name && '21px'}`}}
-              >
+              <div className={styles.buttonsWrapper} style={{paddingRight: `${!boundary.observations[0].observation_name && '21px'}`}}>
+                <Checkbox
+                  disabled={isReadOnly}
+                  toggle={true}
+                  checked={boundary.enabled}
+                  style={{position: 'relative', pointerEvents: 'all'}}
+                  onChange={(_, {checked}) => {
+                    if (checked === undefined) {
+                      return;
+                    }
+                    if (boundary.enabled && !checked) {
+                      return onDisableBoundary(boundary.id);
+                    }
+
+                    if (!boundary.enabled && checked) {
+                      return onEnableBoundary(boundary.id);
+                    }
+                  }}
+                />
                 <DotsMenu
                   disabled={isReadOnly}
                   className={`${styles.dotsMenu}`}
@@ -134,7 +158,6 @@ const BoundaryList = ({
                 )}
               </div>
             </div>
-
             {canHaveMultipleObservations(boundary) && (
               <Accordion.Content
                 className={styles.accordionContent}
@@ -211,20 +234,6 @@ const BoundaryList = ({
           </ListItem>
         ))}
       </List>
-      {/*<div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>*/}
-      {/*  <Button*/}
-      {/*    className='buttonLink'*/}
-      {/*    disabled={0 === checkedBoundaries.length}*/}
-      {/*    onClick={handleDeleteSelected}*/}
-      {/*  >*/}
-      {/*    Delete selected <FontAwesomeIcon icon={faTrashCan}/>*/}
-      {/*  </Button>*/}
-      {/*  <Button*/}
-      {/*    className='buttonLink'*/}
-      {/*    disabled={0 === checkedBoundaries.length}*/}
-      {/*  >*/}
-      {/*    Download selected <FontAwesomeIcon icon={faDownload}/></Button>*/}
-      {/*</div>*/}
     </>
   );
 };

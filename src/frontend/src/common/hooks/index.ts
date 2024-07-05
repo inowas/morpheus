@@ -3,6 +3,7 @@ import useTranslation, {IUseTranslation} from './useTranslation';
 import useColorMap, {IColorMap, IUseColorMap} from './useColorMap';
 
 import useDateTimeFormat from './useDateTimeFormat';
+import useIsMobile from './useIsMobile';
 import useLocation from './useLocation';
 import useNavigate from './useNavigate';
 import usePlotly from './usePlotly';
@@ -13,6 +14,7 @@ export {
   useColorMap,
   useDateTimeFormat,
   useHttp,
+  useIsMobile,
   useLocation,
   useNavigate,
   usePlotly,

@@ -17,6 +17,7 @@ model_boundary_event_list = [
     ModelBoundaryEvents.ModelBoundaryDisabledEvent,
     ModelBoundaryEvents.ModelBoundaryEnabledEvent,
     ModelBoundaryEvents.ModelBoundaryGeometryUpdatedEvent,
+    ModelBoundaryEvents.ModelBoundaryInterpolationUpdatedEvent,
     ModelBoundaryEvents.ModelBoundaryMetadataUpdatedEvent,
     ModelBoundaryEvents.ModelBoundaryRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationAddedEvent,

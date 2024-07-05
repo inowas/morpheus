@@ -4,6 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
+from .BoundaryInterpolationType import InterpolationType
 from .Observation import ObservationId, Observation, DataItem, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
@@ -86,7 +87,22 @@ class GeneralHeadObservation(Observation):
             'data': [d.to_dict() for d in self.data]
         }
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> GeneralHeadDataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> GeneralHeadDataItem | None:
+
+        # No interpolation
+        # if this is set, we are expecting that the start_date_time is present in the time series
+        # no other values are used or being interpolated
+        if interpolation == InterpolationType.none:
+            for item in self.data:
+                if item.date_time == start_date_time:
+                    return GeneralHeadDataItem(
+                        observation_id=self.observation_id,
+                        start_date_time=start_date_time,
+                        end_date_time=end_date_time,
+                        stage=item.stage,
+                        conductance=item.conductance
+                    )
+            return None
 
         # In range check
         if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
@@ -105,17 +121,38 @@ class GeneralHeadObservation(Observation):
             freq = '1h'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
+
+        # Forward fill or backward fill interpolation
+        # We need to fill the missing values with the last known value
+        if interpolation == InterpolationType.forward_fill:
+            df = pd.DataFrame({'time_series': time_series, 'stages': stages, 'conductances': conductances})
+            df = df.set_index('time_series')
+            df = df.reindex(date_range, method='ffill')
+
+            target_date_time = pd.to_datetime(start_date_time.to_value())
+            stage_at_start_date_time = df.loc[target_date_time, 'stages']
+            conductance_at_start_date_time = df.loc[target_date_time, 'conductances']
+
+            return GeneralHeadDataItem(
+                observation_id=self.observation_id,
+                start_date_time=start_date_time,
+                end_date_time=end_date_time,
+                stage=Stage.from_value(stage_at_start_date_time),
+                conductance=Conductance.from_value(conductance_at_start_date_time)
+            )
+
+        # Linear or nearest interpolation
         stages_interpolator = interp1d(
             time_series.values.astype(float),
             stages.values.astype(float),
-            kind='linear',
+            kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
             fill_value='extrapolate'  # type: ignore
         )
         stages = stages_interpolator(date_range.values.astype(float))
         conductances_interpolator = interp1d(
             time_series.values.astype(float),
             conductances.values.astype(float),
-            kind='linear',
+            kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
             fill_value='extrapolate'  # type: ignore
         )
         conductances = conductances_interpolator(date_range.values.astype(float))

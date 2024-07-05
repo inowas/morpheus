@@ -11,12 +11,10 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class HobPackageSettings:
-    iuhobsv: int
     hobdry: float
     tomulth: float
 
-    def __init__(self, iuhobsv: int = 1, hobdry: float = 0.0, tomulth: float = 1.0):
-        self.iuhobsv = iuhobsv
+    def __init__(self, hobdry: float = 0.0, tomulth: float = 1.0, **_):
         self.hobdry = hobdry
         self.tomulth = tomulth
 
@@ -83,7 +81,7 @@ def calculate_hob_package_data(model: Model, settings: HobPackageSettings) -> Ho
     if head_observation_data.is_empty():
         return None
 
-    return HobPackageData(head_observation_data=head_observation_data, iuhobsv=settings.iuhobsv, hobdry=settings.hobdry, tomulth=settings.tomulth)
+    return HobPackageData(head_observation_data=head_observation_data, hobdry=settings.hobdry, tomulth=settings.tomulth)
 
 
 def create_hob_package(flopy_modflow: FlopyModflow, model: Model, settings: HobPackageSettings) -> FlopyModflowHob | None:

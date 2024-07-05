@@ -21,13 +21,13 @@ const ModelGeometryMapLayer = ({modelGeometry, onChangeModelGeometry, editModelG
 
 
   useEffect(() => {
-    if (!modelGeometry) {
+    if (!modelGeometry || !map) {
       return;
     }
 
     const layer = L.geoJSON(modelGeometry);
     map.fitBounds(layer.getBounds());
-  }, [modelGeometry]);
+  }, [map, modelGeometry]);
 
 
   const handleChange = () => {

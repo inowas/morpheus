@@ -73,7 +73,7 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
         <div className="field">
           <Label className="labelSmall">
             <Icon className={'dateIcon'} name="info circle"/>
-            Rotation angle (°)
+            Rotation (°)
           </Label>
           <Input
             disabled={isLocked || readOnly}
@@ -87,8 +87,8 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
         <Slider
           disabled={isLocked || readOnly}
           className="fieldSlider"
-          min={-90}
-          max={90}
+          min={-45}
+          max={45}
           step={1}
           value={grid.rotation}
           onChange={(value) => onChange({...grid, rotation: value as number})}

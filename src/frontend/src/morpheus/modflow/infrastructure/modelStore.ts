@@ -2,10 +2,9 @@ import {IError, ISpatialDiscretization, ITimeDiscretization} from '../types';
 
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
-import {IModel} from '../types/Model.type';
+import {IBoundary} from '../types/Boundaries.type';
 import {ILayer} from '../types/Layers.type';
-import {IBoundary} from "../types/Boundaries.type";
-
+import {IModel} from '../types/Model.type';
 
 type IModelState = 'initializing' | 'error' | 'loading' | 'loaded' | 'setup';
 

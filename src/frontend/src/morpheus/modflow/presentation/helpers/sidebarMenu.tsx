@@ -2,15 +2,14 @@ import React from 'react';
 import {
   faBarsStaggered,
   faBorderAll,
+  faCalculator,
   faChartLine,
   faChartSimple,
   faCircle,
   faClock,
   faCompress,
-  faDatabase,
   faFlag,
-  faFolder,
-  faInfo,
+  faGear,
   faLayerGroup,
   faLocationCrosshairs,
   faMap,
@@ -19,12 +18,15 @@ import {
   faSquareCheck,
 } from '@fortawesome/free-solid-svg-icons';
 
+import BoundariesContainer from '../containers/BoundariesContainer';
+import CalculationProfileContainer from '../containers/CalculationProfileContainer';
 import LayersContainer from '../containers/LayersContainer';
+import ModelSetupContainer from '../containers/ModelSetupContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
-import ModelSetupContainer from '../containers/ModelSetupContainer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import BoundariesContainer from '../containers/BoundariesContainer';
+import CalculationContainer from '../containers/CalculationContainer';
+import FlowResultsContainer from '../containers/FlowResultsContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -34,7 +36,7 @@ export interface IMenuItem {
   component?: React.ReactNode;
 }
 
-const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
+const getSidebarItems = (): IMenuItem[] => {
   return [
     {
       name: 'Model',
@@ -90,22 +92,24 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
       slug: 'variable-density-flow',
     },
     {
-      icon: <FontAwesomeIcon icon={faSliders}/>,
+      icon: <FontAwesomeIcon icon={faGear}/>,
       name: 'Calculation',
       isTitle: true,
-      slug: 'calculation',
+      slug: 'calculation-header',
     },
     {
-      icon: <FontAwesomeIcon icon={faFolder}/>,
-      name: 'Calculation Profile',
+      icon: <FontAwesomeIcon icon={faSliders}/>,
+      name: 'Settings',
       isTitle: false,
-      slug: 'calculation-profiles',
+      slug: 'calculation-profile',
+      component: <CalculationProfileContainer/>,
     },
     {
-      icon: <FontAwesomeIcon icon={faFolder}/>,
+      icon: <FontAwesomeIcon icon={faCalculator}/>,
       name: 'Calculation',
       isTitle: false,
       slug: 'calculation',
+      component: <CalculationContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faSquareCheck}/>,
@@ -115,9 +119,10 @@ const getSidebarItems = (basePath: string, section: string): IMenuItem[] => {
     },
     {
       icon: <FontAwesomeIcon icon={faMap}/>,
-      name: 'Groundwater heads',
+      name: 'Flow Results',
       isTitle: false,
-      slug: 'groundwater-heads',
+      slug: 'flow-results',
+      component: <FlowResultsContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faChartSimple}/>,

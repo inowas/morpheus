@@ -10,7 +10,7 @@ import {TabPane} from 'semantic-ui-react';
 import ShapeFileInput from '../../../../common/components/ShapeFileInput';
 import SetupGridProperties from '../components/ModelSetup/SetupGridProperties';
 import ModelSetupMap from '../components/ModelSetup/Map';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 
 interface ICreateGrid {
   n_cols: number;
@@ -33,7 +33,7 @@ const ModelSetupContainer = () => {
   const [geometry, setGeometry] = useState<Polygon | undefined>();
   const {loading, error: serverError, createModel} = useModelSetup(projectId as string);
   const [shapeFileError, setShapeFileError] = useState<IError | null>(null);
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const {processShapefile} = useAssets(projectId as string);
   const handleCreateModel = async () => {

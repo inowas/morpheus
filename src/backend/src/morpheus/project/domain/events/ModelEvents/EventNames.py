@@ -46,6 +46,7 @@ class ModelBoundaryEventName(StrEnum):
     MODEL_BOUNDARY_DISABLED = 'Model Boundary Disabled'
     MODEL_BOUNDARY_ENABLED = 'Model Boundary Enabled'
     MODEL_BOUNDARY_GEOMETRY_UPDATED = 'Model Boundary Geometry Updated'
+    MODEL_BOUNDARY_INTERPOLATION_UPDATED = 'Model Boundary Interpolation Updated'
     MODEL_BOUNDARY_METADATA_UPDATED = 'Model Boundary Metadata Updated'
     MODEL_BOUNDARY_REMOVED = 'Model Boundary Removed'
     MODEL_BOUNDARY_OBSERVATION_ADDED = 'Model Boundary Observation Added'

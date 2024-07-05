@@ -5,18 +5,17 @@ import {useParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {IGrid} from '../../types';
-import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
+import {DataGrid, LockButton, SectionTitle, Tab, TabPane} from 'common/components';
 import {Accordion, AccordionContent} from '../components/Content';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faLock, faUnlock} from '@fortawesome/free-solid-svg-icons';
-import {Header, MenuItem} from 'semantic-ui-react';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import {MenuItem} from 'semantic-ui-react';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
 
 import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
+import GridRotationMapLayer from '../components/ModelSpatialDiscretization/GridRotationMapLayer';
 
 
 const SpatialDiscretizationContainer = () => {
@@ -26,7 +25,7 @@ const SpatialDiscretizationContainer = () => {
   const [locked, setLocked] = useState<boolean>(false);
 
   const {projectId} = useParams();
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const getInitialEditMode = () => {
     if (locked) {
@@ -108,14 +107,17 @@ const SpatialDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={500}>
         <DataGrid>
           <SectionTitle
             title={'Model Geometry'}
-            faIcon={<FontAwesomeIcon icon={locked ? faLock : faUnlock}/>}
-            faIconText={locked ? 'Locked' : 'Unlocked'}
-            faIconOnClick={() => !isReadOnly && setLocked(!locked)}
-          />
+          >
+            <LockButton
+              title={locked ? 'Locked' : 'Unlocked'}
+              onClick={() => !isReadOnly && setLocked(!locked)}
+              locked={locked}
+            />
+          </SectionTitle>
           <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
             <AccordionContent title={'Model domain'}>
               <Tab
@@ -123,7 +125,14 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem key='model_domain' onClick={() => setEditMode('geometry')}><Header as='h4'>Model Domain</Header></MenuItem>,
+                    menuItem: <MenuItem
+                      role='tabitem'
+                      as='span'
+                      key='model_domain'
+                      onClick={() => setEditMode('geometry')}
+                    >
+                      Model Domain
+                    </MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelDomain
                         isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
@@ -146,7 +155,13 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: 'Grid Properties',
+                    menuItem: <MenuItem
+                      role='tabitem'
+                      as='span'
+                      key='grid_properties'
+                    >
+                      Grid Properties
+                    </MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelGrid
                         grid={grid}
@@ -182,6 +197,10 @@ const SpatialDiscretizationContainer = () => {
             inverted={true}
             showAffectedCellsByDefault={true}
           />
+
+          {spatialDiscretization.grid.rotation !== grid.rotation && (
+            <GridRotationMapLayer modelGeometry={modelGeometry} rotation={grid.rotation}/>
+          )}
         </Map>
       </BodyContent>
     </>

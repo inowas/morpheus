@@ -7,7 +7,7 @@ import {ModflowContainer} from '../components';
 import {Navbar} from 'common/components';
 import {useNavbarItems} from '../../../application/application';
 import {useModel} from '../../application';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 
 interface IProps {
   basePath: string;
@@ -24,12 +24,12 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     propertyId?: string;
   }>();
 
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
 
   const {error, state} = useModel(projectId);
 
-  const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => getSidebarItems(basePath, section).map((item) => ({
+  const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => getSidebarItems().map((item) => ({
     ...item,
     isActive: item.slug == property,
     onClick: () => navigate(`${basePath}/${projectId}/${section}/${item.slug}`),

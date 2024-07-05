@@ -1,6 +1,7 @@
 import dataclasses
 
 from morpheus.common.types import Uuid, String
+from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
 from morpheus.project.types.discretization.time.Stressperiods import StartDateTime, EndDateTime
 from morpheus.project.types.geometry import Point
 
@@ -55,7 +56,7 @@ class Observation:
     def to_dict(self):
         raise NotImplementedError()
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime) -> DataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> DataItem | None:
         raise NotImplementedError()
 
     def as_geojson(self):

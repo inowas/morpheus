@@ -1,9 +1,11 @@
 import useAssets, {IAssetId} from './useAssets';
+import useCalculation from './useCalculation';
+import useCalculationData from './useCalculationData';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useProject from './useProject';
 import useProjectList from './useProjectList';
-import useProjectPermissions from './useProjectPermissions';
+import useProjectPrivileges from './useProjectPrivileges';
 import useProjectCommandBus from './useProjectCommandBus';
 import useProjectEventLog from './useProjectEventLog';
 import useProjectMetadata from './useProjectMetadata';
@@ -13,13 +15,15 @@ import useTranslate from './useTranslate';
 
 export {
   useAssets,
+  useCalculation,
+  useCalculationData,
   useModel,
   useModelSetup,
   useProject,
   useProjectCommandBus,
   useProjectEventLog,
   useProjectList,
-  useProjectPermissions,
+  useProjectPrivileges,
   useProjectMetadata,
   useSpatialDiscretization,
   useTimeDiscretization,

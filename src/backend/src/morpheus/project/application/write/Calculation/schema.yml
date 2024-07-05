@@ -133,11 +133,14 @@ definitions:
           project_id:
             type: string
             example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          calculation_profile_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
           calculation_profile:
-            oneOf:
-              - "$ref": "#/components/Mf2005CalculationProfile"
+            "$ref": "#/components/Mf2005CalculationProfile"
         required:
           - project_id
+          - calculation_profile_id
           - calculation_profile
 components:
   Mf2005CalculationProfile:
@@ -176,8 +179,8 @@ components:
                 example: -999.99
               stoper:
                 oneOf:
-                  - type: null
-                  - type: float
+                  - type: 'null'
+                  - type: number
           chd:
             type: object
           drn:
@@ -220,7 +223,7 @@ components:
                 type: integer
                 example: 0
               theta:
-                type: float
+                type: number
                 example: 1.0
           rch:
             type: object
@@ -247,7 +250,7 @@ components:
                 type: integer
                 example: 0
               hobdry:
-                type: float
+                type: number
                 example: 0.0
           selected_flow_package:
             type: string
@@ -268,16 +271,16 @@ components:
                 type: integer
                 example: 0
               wetfct:
-                type: float
+                type: number
                 example: 0.1
               iwetit:
                 type: integer
                 example: 1
               wetdry:
-                type: float
+                type: number
                 example: -0.01
               hdry:
-                type: float
+                type: number
                 example: -1e+30
           lpf:
             type: object
@@ -296,16 +299,16 @@ components:
                 type: integer
                 example: 0
               wetfct:
-                type: float
+                type: number
                 example: 0.1
               iwetit:
                 type: integer
                 example: 1
               wetdry:
-                type: float
+                type: number
                 example: -0.01
               hdry:
-                type: float
+                type: number
                 example: -1e+30
               storagecoefficient:
                 type: boolean
@@ -356,7 +359,7 @@ components:
                 type: integer
                 example: 1
               hclose:
-                type: float
+                type: number
                 example: 1e-05
               iprd4:
                 type: integer
@@ -374,13 +377,13 @@ components:
                 type: integer
                 example: 0
               hclose:
-                type: float
+                type: number
                 example: 1e-05
               rclose:
-                type: float
+                type: number
                 example: 1e-05
               relax:
-                type: float
+                type: number
                 example: 1.0
               ioutgmg:
                 type: integer
@@ -395,16 +398,16 @@ components:
                 type: integer
                 example: 0
               damp:
-                type: float
+                type: number
                 example: 1.0
               dup:
-                type: float
+                type: number
                 example: 0.75
               dlow:
-                type: float
+                type: number
                 example: 0.01
               chglimit:
-                type: float
+                type: number
                 example: 1.0
           pcg:
             type: object
@@ -419,13 +422,13 @@ components:
                 type: integer
                 example: 1
               hclose:
-                type: float
+                type: number
                 example: 1e-05
               rclose:
-                type: float
+                type: number
                 example: 1e-05
               relax:
-                type: float
+                type: number
                 example: 1.0
               nbpol:
                 type: integer
@@ -437,10 +440,10 @@ components:
                 type: integer
                 example: 3
               damp:
-                type: float
+                type: number
                 example: 1.0
               dampt:
-                type: float
+                type: number
                 example: 1.0
               ihcofadd:
                 type: integer
@@ -455,13 +458,13 @@ components:
                 type: integer
                 example: 30
               close_r:
-                type: float
+                type: number
                 example: 1e-05
               close_h:
-                type: float
+                type: number
                 example: 1e-05
               relax:
-                type: float
+                type: number
                 example: 1.0
               ifill:
                 type: integer
@@ -476,28 +479,28 @@ components:
                 type: integer
                 example: 0
               damp:
-                type: float
+                type: number
                 example: 1.0
               damp_lb:
-                type: float
+                type: number
                 example: 0.001
               rate_d:
-                type: float
+                type: number
                 example: 0.1
               chglimit:
-                type: float
+                type: number
                 example: 0.0
               acnvg:
                 type: integer
                 example: 0
               cnvg_lb:
-                type: float
+                type: number
                 example: 0.001
               mcnvg:
                 type: integer
                 example: 2
               rate_c:
-                type: float
+                type: number
                 example: -1.0
               ipunit:
                 type: integer
@@ -512,16 +515,16 @@ components:
                 type: integer
                 example: 5
               accl:
-                type: float
+                type: number
                 example: 1.0
               hclose:
-                type: float
+                type: number
                 example: 1e-05
               ipcalc:
                 type: integer
                 example: 1
               wseed:
-                type: float
+                type: number
                 example: 0.0
               iprsip:
                 type: integer
@@ -537,17 +540,17 @@ components:
                 example: 0
               chedfm:
                 oneOf:
-                  - type: null
+                  - type: 'null'
                   - type: string
                 example: null
               cddnfm:
                 oneOf:
-                  - type: null
+                  - type: 'null'
                   - type: string
                 example: null
               cboufm:
                 oneOf:
-                  - type: null
+                  - type: 'null'
                   - type: string
                 example: null
               compact:

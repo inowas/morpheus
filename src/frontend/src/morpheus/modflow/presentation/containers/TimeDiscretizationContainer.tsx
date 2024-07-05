@@ -12,7 +12,7 @@ import cloneDeep from 'lodash.clonedeep';
 import {useDateTimeFormat} from 'common/hooks';
 import {StressperiodsUpload} from '../components/ModelTimeDiscretization/StressperiodsUpload';
 import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
-import useProjectPermissions from '../../application/useProjectPermissions';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 
@@ -22,7 +22,7 @@ const TimeDiscretizationContainer = () => {
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
   const [timeDiscretizationLocal, setTimeDiscretizationLocal] = useState<ITimeDiscretization | null>(null);
   const {addDays, isValid, formatISO} = useDateTimeFormat('UTC');
-  const {isReadOnly} = useProjectPermissions(projectId as string);
+  const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   useEffect(() => {
     if (timeDiscretization) {

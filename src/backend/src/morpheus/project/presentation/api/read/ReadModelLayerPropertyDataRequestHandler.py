@@ -1,13 +1,17 @@
-import json
+import simplejson as json
 from enum import StrEnum
 
 import numpy as np
 
+from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from ....application.read.ModelReader import ModelReader
+from ....application.read.PermissionsReader import permissions_reader
+from ....incoming import get_identity
 from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
 from ....types.Project import ProjectId
 from ....types.layers.Layer import LayerPropertyName, LayerId, Layer
+from ....types.permissions.Privilege import Privilege
 
 
 class DataOutputFormat(StrEnum):
@@ -39,13 +43,19 @@ class ReadModelLayerPropertyDataRequestHandler:
         return min_value, max_value
 
     def handle(self, project_id: ProjectId, layer_id: LayerId, property_name: LayerPropertyName, output_format: DataOutputFormat):
-
-        model_reader = ModelReader()
+        identity = get_identity()
+        if identity is None:
+            return '', 401
 
         try:
-            model = model_reader.get_latest_model(project_id)
+            permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)
+            model = ModelReader().get_latest_model(project_id)
+        except InsufficientPermissionsException as e:
+            return str(e), 403
         except ModelNotFoundException:
             return {'message': 'Model not found'}, 404
+
+        grid = model.spatial_discretization.grid
 
         layer = model.layers.get_layer(layer_id)
         if not isinstance(layer, Layer):
@@ -65,35 +75,37 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'min_value': min([min(row) for row in data]) if isinstance(data, list) else data,
                 'max_value': max([max(row) for row in data]) if isinstance(data, list) else data,
                 'data': data,
+                'grid_outline': grid.get_wgs_outline_geometry().to_dict(),
                 'nodata_value': None,
             }), 200
 
         if output_format == DataOutputFormat.grid:
             no_data_value = None
-            raster_interpolator = RasterInterpolationService()
-            grid = model.spatial_discretization.grid
-            target_resolution_x = grid.n_cols() if grid.n_cols() < 200 else int(grid.n_cols() / 2)
-            result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x,
-                                                                                      method=InterpolationMethod.linear,
-                                                                                      no_data_value=no_data_value)
 
+            raster_interpolator = RasterInterpolationService()
+            target_resolution_x = grid.n_cols() if grid.n_cols() < 200 else int(grid.n_cols() / 2)
+            result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, no_data_value=no_data_value, expand=1)
+
+            grid_width, grid_height = grid.get_wgs_width_height()
             min_value, max_value = self.get_min_max(result_data, no_data_value)
 
             return json.dumps({
                 'n_cols': len(result_data[0]),
                 'n_rows': len(result_data),
+                'width': grid_width,
+                'height': grid_height,
+                'outline': grid.get_wgs_outline_geometry().to_dict(),
                 'bounds': grid.get_wgs_bbox(),
                 'rotation': grid.rotation.to_float(),
                 'min_value': min_value,
                 'max_value': max_value,
                 'data': result_data,
                 'nodata_value': no_data_value,
-            }), 200
+            }, ignore_nan=True), 200
 
         if output_format == DataOutputFormat.raster:
             no_data_value = None
             raster_interpolator = RasterInterpolationService()
-            grid = model.spatial_discretization.grid
             target_resolution_x = grid.n_cols() if grid.n_cols() < 200 else int(grid.n_cols() / 2)
             cartesian_grid = grid.to_cartesian_grid(n_cols=target_resolution_x)
 
@@ -107,8 +119,9 @@ class ReadModelLayerPropertyDataRequestHandler:
             return json.dumps({
                 'n_cols': cartesian_grid.n_cols(),
                 'n_rows': cartesian_grid.n_rows(),
-                "grid_width": grid_width,
-                "grid_height": grid_height,
+                'width': grid_width,
+                'height': grid_height,
+                'outline': cartesian_grid.get_wgs_outline_geometry().to_dict(),
                 'bounds': {
                     'x_min': x_min,
                     'y_min': y_min,

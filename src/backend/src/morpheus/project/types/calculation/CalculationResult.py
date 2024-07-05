@@ -15,6 +15,8 @@ class AvailableResults:
     kstpkper: list[(tuple[int, int])]
     number_of_layers: int
     number_of_observations: int
+    min_value: float | None = None
+    max_value: float | None = None
 
     @classmethod
     def from_dict(cls, obj):
@@ -23,6 +25,8 @@ class AvailableResults:
             kstpkper=obj['kstpkper'],
             number_of_layers=obj['number_of_layers'],
             number_of_observations=obj['number_of_observations'],
+            min_value=obj['min_value'] if 'min_value' in obj and obj['min_value'] is not None else None,
+            max_value=obj['max_value'] if 'max_value' in obj and obj['max_value'] is not None else None,
         )
 
     def to_dict(self) -> dict:
@@ -31,6 +35,8 @@ class AvailableResults:
             'kstpkper': self.kstpkper,
             'number_of_layers': self.number_of_layers,
             'number_of_observations': self.number_of_observations,
+            'min_value': self.min_value,
+            'max_value': self.max_value,
         }
 
 
@@ -49,10 +55,10 @@ class CalculationResult:
     flow_budget_results: AvailableResults | None
     transport_concentration_results: AvailableResults | None
     transport_budget_results: AvailableResults | None
-    package_list: list[str]
+    packages: list[str]
 
     @classmethod
-    def failure(cls, message: str, files: list[str], package_list: list[str] | None = None):
+    def failure(cls, message: str, files: list[str], packages: list[str] | None = None):
         return cls(
             type=CalculationResultType.FAILURE,
             message=message,
@@ -62,7 +68,7 @@ class CalculationResult:
             flow_budget_results=None,
             transport_concentration_results=None,
             transport_budget_results=None,
-            package_list=package_list or [],
+            packages=packages or [],
         )
 
     @classmethod
@@ -75,7 +81,7 @@ class CalculationResult:
         flow_budget_results: AvailableResults | None = None,
         transport_concentration_results: AvailableResults | None = None,
         transport_budget_results: AvailableResults | None = None,
-        package_list: list[str] | None = None,
+        packages: list[str] | None = None,
     ):
         return cls(
             type=CalculationResultType.SUCCESS,
@@ -86,7 +92,7 @@ class CalculationResult:
             flow_budget_results=flow_budget_results,
             transport_concentration_results=transport_concentration_results,
             transport_budget_results=transport_budget_results,
-            package_list=package_list or [],
+            packages=packages or [],
         )
 
     @classmethod
@@ -101,7 +107,7 @@ class CalculationResult:
             transport_concentration_results=AvailableResults.from_dict(obj['transport_concentration_results']) if 'transport_concentration_results' in obj and obj[
                 'transport_concentration_results'] is not None else None,
             transport_budget_results=AvailableResults.from_dict(obj['transport_budget_results']) if 'transport_budget_results' in obj and obj['transport_budget_results'] is not None else None,
-            package_list=obj['package_list'] if 'package_list' in obj and obj['package_list'] is not None and obj['package_list'] != '' else [],
+            packages=obj['packages'] if 'packages' in obj and obj['packages'] is not None and obj['packages'] != '' else [],
         )
 
     @classmethod
@@ -121,5 +127,5 @@ class CalculationResult:
             'flow_budget_results': self.flow_budget_results.to_dict() if self.flow_budget_results is not None else None,
             'transport_concentration_results': self.transport_concentration_results.to_dict() if self.transport_concentration_results is not None else None,
             'transport_budget_results': self.transport_budget_results.to_dict() if self.transport_budget_results is not None else None,
-            'package_list': self.package_list,
+            'packages': self.packages,
         }

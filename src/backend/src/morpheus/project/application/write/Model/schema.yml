@@ -22,6 +22,7 @@ definitions:
       - "$ref": "#/definitions/commands/UpdateModelBoundaryAffectedCellsCommand"
       - "$ref": "#/definitions/commands/UpdateModelBoundaryAffectedLayersCommand"
       - "$ref": "#/definitions/commands/UpdateModelBoundaryGeometryCommand"
+      - "$ref": "#/definitions/commands/UpdateModelBoundaryInterpolationCommand"
       - "$ref": "#/definitions/commands/UpdateModelBoundaryMetadataCommand"
       - "$ref": "#/definitions/commands/UpdateModelBoundaryObservationCommand"
       - "$ref": "#/definitions/commands/UpdateModelGeometryCommand"
@@ -668,6 +669,41 @@ definitions:
             - model_id
             - boundary_id
             - affected_layers
+    UpdateModelBoundaryInterpolationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_interpolation_command
+          example: update_model_boundary_interpolation_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            interpolation:
+              type: string
+              enum:
+                - none
+                - linear
+                - nearest
+                - forward_fill
+              example: none
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - interpolation
+      required:
+        - command_name
+        - payload
     UpdateModelBoundaryGeometryCommand:
       type: object
       properties:

@@ -2,17 +2,17 @@ import {IAffectedCells, IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IObservation, IObservationId} from "../types/Boundaries.type";
-import {useApi} from "../incoming";
-import useProjectCommandBus, {Commands} from "./useProjectCommandBus";
-import {setBoundaries, updateBoundary} from "../infrastructure/modelStore";
-import {Feature, LineString, MultiPolygon, Point, Polygon} from "geojson";
-import {ILayerId} from "../types/Layers.type";
+import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservation, IObservationId} from '../types/Boundaries.type';
+import {useApi} from '../incoming';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
+import {setBoundaries, updateBoundary} from '../infrastructure/modelStore';
+import {Feature, LineString, MultiPolygon, Point, Polygon} from 'geojson';
+import {ILayerId} from '../types/Layers.type';
 
 interface IUseBoundaries {
   boundaries: IBoundary[];
   fetchAffectedCellsGeometry: (boundaryId: IBoundaryId) => Promise<Feature<Polygon | MultiPolygon> | null>;
-  onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<void>;
+  onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<IBoundaryId | undefined>;
   onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
@@ -23,6 +23,7 @@ interface IUseBoundaries {
   onUpdateBoundaryAffectedCells: (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryGeometry: (boundaryId: IBoundaryId, geometry: Point | Polygon | LineString) => Promise<void>;
+  onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundaryName?: string, boundaryTags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
   loading: boolean;
@@ -35,6 +36,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
   const {model} = useSelector((state: IRootState) => state.project.model);
   const dispatch = useDispatch();
+  const boundaries = useSelector((state: IRootState) => state.project.model.model?.boundaries || []);
 
   const isMounted = useRef(true);
   const [loading, setLoading] = useState<boolean>(false);
@@ -109,7 +111,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         code: result.val.code,
       });
     }
-  }
+  };
 
   const fetchAffectedCellsGeometry = async (boundaryId: IBoundaryId): Promise<Feature<Polygon | MultiPolygon> | null> => {
     const result = await httpGet<Feature<Polygon | MultiPolygon>>(`/projects/${projectId}/model/boundaries/${boundaryId}/affected_cells?format=geojson_outline`);
@@ -141,7 +143,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_type: boundary_type,
         boundary_geometry: geometry,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -150,15 +152,21 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
 
     setLoading(false);
 
+    if (addBoundaryResult.ok) {
+      await fetchAllBoundaries();
+      const location = addBoundaryResult.val;
+      if (location) {
+        return location.split('/').pop() || undefined;
+      }
+    }
+
     if (addBoundaryResult.err) {
       setError({
         message: addBoundaryResult.val.message,
         code: addBoundaryResult.val.code,
       });
     }
-
-    await fetchAllBoundaries();
-  }
+  };
 
   const onAddBoundaryObservation = async (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
     if (!model || !projectId) {
@@ -181,7 +189,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         observation_name: observationName,
         observation_geometry: observationGeometry,
         observation_data: observationData,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -198,7 +206,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onCloneBoundary = async (boundaryId: IBoundaryId) => {
     if (!model || !projectId) {
@@ -218,7 +226,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         project_id: projectId,
         model_id: model.model_id,
         boundary_id: boundaryId,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -235,7 +243,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchAllBoundaries();
-  }
+  };
 
   const onCloneBoundaryObservation = async (boundaryId: IBoundaryId, observationId: IObservationId) => {
     if (!model || !projectId) {
@@ -256,7 +264,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_id: boundaryId,
         observation_id: observationId,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -273,7 +281,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onDisableBoundary = async (boundaryId: IBoundaryId) => {
     if (!model || !projectId) {
@@ -287,13 +295,21 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     setLoading(true);
     setError(null);
 
+    // to have a better user experience, we enable the boundary in the frontend first
+    // this method is an optimistic update and will be reverted if the command fails
+    // because fetchSingleBoundary will be called in any case
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (boundary) {
+      dispatch(updateBoundary({...boundary, enabled: false}));
+    }
+
     const disableBoundaryResult = await sendCommand<Commands.IDisableModelBoundaryCommand>({
       command_name: 'disable_model_boundary_command',
       payload: {
         project_id: projectId,
         model_id: model.model_id,
         boundary_id: boundaryId,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -310,7 +326,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onEnableBoundary = async (boundaryId: IBoundaryId) => {
     if (!model || !projectId) {
@@ -324,13 +340,21 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     setLoading(true);
     setError(null);
 
+    // to have a better user experience, we enable the boundary in the frontend first
+    // this method is an optimistic update and will be reverted if the command fails
+    // because fetchSingleBoundary will be called in any case
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (boundary) {
+      dispatch(updateBoundary({...boundary, enabled: true}));
+    }
+
     const enableBoundaryResult = await sendCommand<Commands.IEnableModelBoundaryCommand>({
       command_name: 'enable_model_boundary_command',
       payload: {
         project_id: projectId,
         model_id: model.model_id,
         boundary_id: boundaryId,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -347,7 +371,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onRemoveBoundary = async (boundaryId: IBoundaryId) => {
     if (!model || !projectId) {
@@ -367,7 +391,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         project_id: projectId,
         model_id: model.model_id,
         boundary_id: boundaryId,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -384,7 +408,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchAllBoundaries();
-  }
+  };
 
   const onRemoveBoundaryObservation = async (boundaryId: IBoundaryId, observationId: string) => {
     if (!model || !projectId) {
@@ -405,7 +429,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_id: boundaryId,
         observation_id: observationId,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -422,7 +446,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onUpdateBoundaryAffectedCells = async (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => {
     if (!model || !projectId) {
@@ -443,7 +467,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_id: boundaryId,
         affected_cells: affectedCells,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -460,7 +484,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onUpdateBoundaryAffectedLayers = async (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => {
     if (!model || !projectId) {
@@ -481,7 +505,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_id: boundaryId,
         affected_layers: affectedLayers,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -498,7 +522,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onUpdateBoundaryGeometry = async (boundaryId: IBoundaryId, geometry: Point | Polygon | LineString) => {
     if (!model || !projectId) {
@@ -512,6 +536,15 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     setLoading(true);
     setError(null);
 
+    // to have a better user experience, we enable the boundary in the frontend first
+    // this method is an optimistic update and will be reverted if the command fails
+    // because fetchSingleBoundary will be called in any case
+    const boundary = boundaries.find((b) => b.id === boundaryId);
+    if (boundary) {
+      dispatch(updateBoundary({...boundary, geometry: geometry as any}));
+    }
+
+
     const updateBoundaryGeometryResult = await sendCommand<Commands.IUpdateModelBoundaryGeometryCommand>({
       command_name: 'update_model_boundary_geometry_command',
       payload: {
@@ -519,7 +552,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         model_id: model.model_id,
         boundary_id: boundaryId,
         geometry: geometry,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -536,7 +569,45 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
+
+  const onUpdateBoundaryInterpolation = async (boundaryId: IBoundaryId, interpolation: IInterpolationType) => {
+    if (!model || !projectId) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const updateBoundaryInterpolationResult = await sendCommand<Commands.IUpdateModelBoundaryInterpolationCommand>({
+      command_name: 'update_model_boundary_interpolation_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundary_id: boundaryId,
+        interpolation: interpolation,
+      },
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (updateBoundaryInterpolationResult.err) {
+      setError({
+        message: updateBoundaryInterpolationResult.val.message,
+        code: updateBoundaryInterpolationResult.val.code,
+      });
+    }
+
+    await fetchSingleBoundary(boundaryId);
+  };
 
   const onUpdateBoundaryMetadata = async (boundaryId: IBoundaryId, boundaryName?: string, boundaryTags?: string[]) => {
     if (!model || !projectId) {
@@ -558,7 +629,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         boundary_id: boundaryId,
         boundary_name: boundaryName,
         boundary_tags: boundaryTags,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -575,7 +646,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   const onUpdateBoundaryObservation = async (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => {
     if (!model || !projectId) {
@@ -600,7 +671,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         observation_name: observation.observation_name,
         observation_geometry: observation.geometry,
         observation_data: observation.data,
-      }
+      },
     });
 
     if (!isMounted.current) {
@@ -617,10 +688,10 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
 
     await fetchSingleBoundary(boundaryId);
-  }
+  };
 
   return {
-    boundaries: model?.boundaries || [],
+    boundaries,
     fetchAffectedCellsGeometry,
     onAddBoundary,
     onAddBoundaryObservation,
@@ -633,6 +704,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     onUpdateBoundaryAffectedCells,
     onUpdateBoundaryAffectedLayers,
     onUpdateBoundaryGeometry,
+    onUpdateBoundaryInterpolation,
     onUpdateBoundaryMetadata,
     onUpdateBoundaryObservation,
     loading,

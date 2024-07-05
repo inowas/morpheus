@@ -37,9 +37,11 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.P
 
 class Mf2005CalculationEngine(CalculationEngineBase):
     workspace_path: str
+    no_data_value: float
 
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
+        self.no_data_value = -9999.0
 
     def preprocess(self, model: Model, calculation_profile: CalculationProfile) -> Log:
         if calculation_profile.engine_type != CalculationEngineType.MF2005:
@@ -82,10 +84,11 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         # general packages
         # mf
-        flopy_model = create_mf_package(model=model, model_ws=self.workspace_path, settings=calculation_engine_settings.mf)
+        flopy_model = create_mf_package(model=model, model_name='mf2005', model_ws=self.workspace_path, settings=calculation_engine_settings.mf)
         # dis
         create_dis_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.dis)
         # bas
+        calculation_engine_settings.bas.hnoflo = self.no_data_value
         bas = create_bas_package(flopy_modflow=flopy_model, model=model, settings=calculation_engine_settings.bas)
 
         # boundary condition packages
@@ -219,7 +222,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return CalculationResult.failure(
                 message="Calculation failed",
                 files=os.listdir(self.workspace_path),
-                package_list=self.get_package_list()
+                packages=self.get_packages()
             )
 
         return CalculationResult.success(
@@ -230,7 +233,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             flow_budget_results=self.__read_flow_budget_results(),
             transport_concentration_results=self.__read_transport_concentration_results(),
             transport_budget_results=self.__read_transport_concentration_budget_results(),
-            package_list=self.get_package_list()
+            packages=self.get_packages()
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -239,17 +242,36 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 return os.path.join(self.workspace_path, file)
         return None
 
+    def __read_min_max_values_from_binary_file(self, head_file: bf.HeadFile) -> Tuple[float | None, float | None]:
+        try:
+            all_data = head_file.get_alldata(nodata=self.no_data_value)  # type: ignore # noqa # nodata is expected to be float, intrisic type is int
+            if not isinstance(all_data, np.ndarray):
+                all_data = np.array(all_data)
+            min_value = float(np.nanmin(all_data))
+            min_value = min_value if not np.isnan(min_value) else None
+            max_value = float(np.nanmax(all_data))
+            max_value = max_value if not np.isnan(max_value) else None
+        except ValueError:
+            min_value = None
+            max_value = None
+
+        return min_value, max_value
+
     def __read_flow_head_results(self) -> AvailableResults | None:
         file = self.__get_file_with_extension_from_workspace(".hds")
         if file is None:
             return None
 
         bf_head_file = bf.HeadFile(file)
+        min_value, max_value = self.__read_min_max_values_from_binary_file(bf_head_file)
+
         return AvailableResults(
             times=[float(time) for time in bf_head_file.get_times()],
             kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in bf_head_file.get_kstpkper()],
             number_of_layers=int(bf_head_file.get_data().shape[0]),
             number_of_observations=len(self.read_head_observations()),
+            min_value=min_value,
+            max_value=max_value
         )
 
     def __read_flow_drawdown_results(self) -> AvailableResults | None:
@@ -258,11 +280,15 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return None
 
         bf_head_file = bf.HeadFile(file)
+        min_value, max_value = self.__read_min_max_values_from_binary_file(bf_head_file)
+
         return AvailableResults(
             times=[float(time) for time in bf_head_file.get_times()],
             kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in bf_head_file.get_kstpkper()],
             number_of_layers=int(bf_head_file.get_data().shape[0]),
             number_of_observations=0,
+            min_value=min_value,
+            max_value=max_value
         )
 
     def __read_flow_budget_results(self) -> AvailableResults | None:
@@ -280,6 +306,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             else [],
             number_of_layers=0,
             number_of_observations=0,
+            min_value=None,
+            max_value=None,
         )
 
     def __read_transport_concentration_results(self) -> AvailableResults | None:
@@ -324,7 +352,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         return []
 
@@ -332,7 +361,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         self, totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
@@ -344,8 +374,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
         if data is None:
             return []
-        data = np.round(data, 3)
-        data[data < -999] = None
+        data = np.round(data, precision)
         return data.tolist()
 
     def read_flow_head(
@@ -353,7 +382,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
-        layer=0
+        layer=0,
+        precision=4
     ):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
@@ -365,8 +395,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
         if data is None:
             return []
-        data = np.round(data, 3)
-        data[data <= -999] = None
+        data = np.round(data, precision)
         return data.tolist()
 
     def read_head_observations(self) -> list[Observation]:
@@ -399,10 +428,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         if not os.path.exists(file):
             return None
 
-        with open(file, 'r') as f:
-            return f.read()
+        try:
+            with open(file, 'r') as f:
+                return f.read()
+        except UnicodeError:
+            return "Binary file"
 
-    def get_package_list(self) -> list[str]:
+    def get_packages(self) -> list[str]:
         flopy_model = self.__load_flopy_model()
         if flopy_model is None:
             return []

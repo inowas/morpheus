@@ -1,6 +1,6 @@
 import {float} from '@kitware/vtk.js/types';
 import {IAffectedCells} from './SpatialDiscretization.type';
-import {MultiPolygon, Polygon} from 'geojson';
+import {Feature, MultiPolygon, Polygon} from 'geojson';
 
 export type ILayerId = string;
 
@@ -93,8 +93,9 @@ export interface IZone {
 export interface ILayerPropertyData {
   n_cols: number;
   n_rows: number;
-  grid_height: number;
-  grid_width: number;
+  height: number;
+  width: number;
+  outline: Feature<Polygon>;
   bounds: {
     x_min: number;
     y_min: number;
@@ -104,6 +105,6 @@ export interface ILayerPropertyData {
   rotation: number;
   min_value: number;
   max_value: number;
-  no_data_value: number;
   data: number[][];
+  no_data_value: number;
 }
