@@ -7,7 +7,6 @@ interface ICalculation {
   check_model_log: string[] | null;
   calculation_log: string[] | null;
   result: ICalculationResult | null;
-
 }
 
 type ICalculationId = string;
@@ -21,10 +20,10 @@ interface ICalculationResult {
   message: string;
   files: string[];
   flow_head_results: IAvailableResults;
-  flow_drawdown_results: IAvailableResults;
-  flow_budget_results: IAvailableResults;
-  transport_concentration_results: IAvailableResults;
-  transport_budget_results: IAvailableResults;
+  flow_drawdown_results: IAvailableResults | null;
+  flow_budget_results: IAvailableResults | null;
+  transport_concentration_results: IAvailableResults | null;
+  transport_budget_results: IAvailableResults | null;
   packages: string[];
 }
 

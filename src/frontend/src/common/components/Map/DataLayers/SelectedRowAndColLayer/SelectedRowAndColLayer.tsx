@@ -1,6 +1,7 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {Feature, FeatureCollection, Polygon} from 'geojson';
-import {Polygon as LeafletPolygon, FeatureGroup} from 'common/infrastructure/React-Leaflet';
+import {Polygon as LeafletPolygon, FeatureGroup, Pane, useMap} from 'common/infrastructure/React-Leaflet';
+import {L} from 'common/infrastructure/Leaflet';
 import * as turf from '@turf/turf';
 import {ISelection} from '../types';
 import PolygonWithText from './PolygonWithText';
@@ -20,6 +21,20 @@ interface PolygonProperties {
 }
 
 const SelectedRowAndColLayer = ({nRows, nCols, selectedRow, selectedCol, outline, rotation}: IProps) => {
+
+  const map = useMap();
+  const [renderer, setRenderer] = React.useState<L.Renderer | null>(null);
+
+  useEffect(() => {
+    setRenderer(map.options.renderer || null);
+    map.options.renderer = L.canvas({padding: 1, tolerance: 1});
+    return () => {
+      if (renderer) {
+        map.options.renderer = renderer;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map]);
 
   const rowAndColPolygons = useMemo(() => {
     const polygon = turf.polygon(outline.geometry.coordinates);
@@ -95,9 +110,9 @@ const SelectedRowAndColLayer = ({nRows, nCols, selectedRow, selectedCol, outline
   };
 
   return (
-    <FeatureGroup>
-      {rowAndColPolygons.features.map((feature) => {
-        return (
+    <Pane name={'selected-row-and-col-layer'} style={{zIndex: 1000}}>
+      <FeatureGroup>
+        {rowAndColPolygons.features.map((feature) => (
           <LeafletPolygon
             key={`row-${feature.properties.row || ''}-col-${feature.properties.col || ''}`}
             positions={feature.geometry.coordinates[0].map((c) => [c[1], c[0]])}
@@ -106,13 +121,13 @@ const SelectedRowAndColLayer = ({nRows, nCols, selectedRow, selectedCol, outline
             fillOpacity={.2}
             bubblingMouseEvents={true}
           />
-        );
-      })}
-      <PolygonWithText coords={getCellPolygon(-2, selectedCol).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'A'}/>
-      <PolygonWithText coords={getCellPolygon(nRows + 1, selectedCol).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'A'}/>
-      <PolygonWithText coords={getCellPolygon(selectedRow, -2).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'B'}/>
-      <PolygonWithText coords={getCellPolygon(selectedRow, nCols + 1).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'B'}/>
-    </FeatureGroup>
+        ))}
+        <PolygonWithText coords={getCellPolygon(-2, selectedCol).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'B'}/>
+        <PolygonWithText coords={getCellPolygon(nRows + 1, selectedCol).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'B\''}/>
+        <PolygonWithText coords={getCellPolygon(selectedRow, -2).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'A'}/>
+        <PolygonWithText coords={getCellPolygon(selectedRow, nCols + 1).geometry.coordinates[0].map((c) => [c[1], c[0]])} text={'A\''}/>
+      </FeatureGroup>
+    </Pane>
   );
 };
 

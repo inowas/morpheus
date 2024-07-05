@@ -53,9 +53,11 @@ interface IBudgetResponse {
   incremental: boolean;
 }
 
+type IFlowResultType = 'head' | 'drawdown';
+
 
 interface IUseCalculationData {
-  fetchFlowResult: (calculationId: string, type: 'head' | 'drawdown', layerIdx: number, timeStepIdx: number) => Promise<IFlowData | undefined>;
+  fetchFlowResult: (calculationId: string, type: IFlowResultType, layerIdx: number, timeStepIdx: number) => Promise<IFlowData | undefined>;
   fetchConcentrationResult: (calculationId: string, layerIdx: number, timeStepIdx: number) => Promise<IConcentrationData | undefined>;
   fetchBudgetResult: (calculationId: string, type: 'flow' | 'transport', timeIdx: number, incremental: boolean) => Promise<IBudgetData | undefined>;
   loading: boolean;
@@ -159,4 +161,4 @@ const useCalculationData = (projectId: string): IUseCalculationData => {
 };
 
 export default useCalculationData;
-export type {IFlowData, IConcentrationData, IBudgetData};
+export type {IFlowData, IConcentrationData, IBudgetData, IFlowResultType};

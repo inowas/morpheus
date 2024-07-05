@@ -3,7 +3,7 @@ import type {SliderProps} from 'rc-slider';
 import Slider from 'rc-slider';
 import Tooltip, {TooltipRef} from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
-import raf from 'rc-util/lib/raf';
+import raf from 'raf';
 
 interface HandleTooltipProps {
   value: number;

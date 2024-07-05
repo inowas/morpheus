@@ -1,5 +1,5 @@
 import {L, LatLngTuple} from 'common/infrastructure/Leaflet';
-import {MapContainer, TileLayer, useMap} from 'react-leaflet';
+import {LayersControl, MapContainer, TileLayer, useMap} from 'react-leaflet';
 
 import React, {useEffect, useRef} from 'react';
 import {createLeafletContext, LeafletContext} from '@react-leaflet/core';
@@ -82,6 +82,7 @@ const Map = ({center, zoom, children}: IProps) => {
   return (
     <div ref={containerRef} style={{height: '100%', width: '100%'}}>
       <MapContainer
+        preferCanvas={true}
         center={center || defaultCenter}
         zoom={zoom || defaultZoom}
         style={{height: '100%', width: '100%'}}
@@ -89,7 +90,19 @@ const Map = ({center, zoom, children}: IProps) => {
         wheelDebounceTime={100}
       >
         <MapRef mapRef={mapRef}/>;
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>
+
+        {/*More providers here: https://leaflet-extras.github.io/leaflet-providers/preview/*/}
+        {/*<TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>*/}
+
+        <LayersControl position="topright">
+          <LayersControl.BaseLayer name="Topo" checked={true}>
+            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Street">
+            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"/>
+          </LayersControl.BaseLayer>
+
+        </LayersControl>
         {children}
       </MapContainer>
     </div>
