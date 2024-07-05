@@ -28,6 +28,3 @@ FROM keycloak/keycloak:25.0.1 as production
 
 COPY --from=builder_production /opt/keycloak/ /opt/keycloak/
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-
-
-
