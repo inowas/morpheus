@@ -15,9 +15,8 @@ import ContoursDataLayer from 'common/components/Map/DataLayers/ContoursDataLaye
 import useLayers from '../../application/useLayers';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import CanvasDataLayer from '../../../../common/components/Map/DataLayers/CanvasDataLayer';
-import SelectedRowAndColLayer from '../../../../common/components/Map/DataLayers/SelectedRowAndColLayer';
 import {ISelection} from '../../../../common/components/Map/DataLayers/types';
-import HoverDataLayer from '../../../../common/components/Map/DataLayers/HoverDataLayer';
+import CrossSectionChart from '../components/Results/CrossSectionChart';
 
 interface ISelectedRowAndColumn {
   col: number;
@@ -59,7 +58,7 @@ const FlowResultsContainer = () => {
   useEffect(() => {
     handleFetchLatestCalculation();
     // eslint-disable-next-line
-  }, []);
+    }, []);
 
   if (loadingCalculation) {
     return (
@@ -85,12 +84,12 @@ const FlowResultsContainer = () => {
     );
   }
 
-  const handleFetchParameters = async (layerIdx: number, timeStepIdx: number) => {
+  const handleChangeParameters = async (layerIdx: number, timeStepIdx: number, type: 'head' | 'drawdown') => {
     if (!calculation?.result) {
       return;
     }
 
-    const result = await fetchFlowResult(calculation.calculation_id, 'head', layerIdx, timeStepIdx);
+    const result = await fetchFlowResult(calculation.calculation_id, type, layerIdx, timeStepIdx);
     if (!result) {
       return;
     }
@@ -100,9 +99,13 @@ const FlowResultsContainer = () => {
   const minVal = useGlobalMinMax ? calculation.result.flow_head_results.min_value || 0 : data?.data.min_value || 0;
   const maxVal = useGlobalMinMax ? calculation.result.flow_head_results.max_value || 1 : data?.data.max_value || 1;
 
+  const hasHeadResults = () => {
+    return calculation?.result?.flow_head_results && 0 < calculation.result.flow_head_results.number_of_layers;
+  };
+
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={'33%'}>
         <DataGrid>
           <SectionTitle title={'Flow results'}/>
           <Tab
@@ -110,18 +113,19 @@ const FlowResultsContainer = () => {
             menu={{secondary: true, pointing: true}}
             panes={[
               {
-                menuItem: <MenuItem key={'head'}>Head</MenuItem>,
+                menuItem: <MenuItem key={'head'}>Cross sections</MenuItem>,
                 render: () =>
                   <TabPane attached={false}>
                     <>
-                      {calculation?.result?.flow_head_results &&
-                        <CrossSectionParameterSelector
-                          layerNames={layers?.map(l => l.name) || []}
-                          results={calculation.result.flow_head_results}
-                          onFetchFlowResult={handleFetchParameters}
-                          isLoading={false}
-                          timeDiscretization={timeDiscretization}
-                        />}
+                      {calculation?.result && hasHeadResults() &&
+                          <CrossSectionParameterSelector
+                            layerNames={layers?.map(l => l.name) || []}
+                            calculationResult={calculation.result}
+                            onChangeParameters={handleChangeParameters}
+                            isLoading={false}
+                            timeDiscretization={timeDiscretization}
+                          />}
+                      {selectedRowAndColumn && data?.data.values && <CrossSectionChart data={data.data.values} selectedRowAndColumn={selectedRowAndColumn}/>}
                     </>
                   </TabPane>,
               },
@@ -173,7 +177,8 @@ const FlowResultsContainer = () => {
       </BodyContent>
     </>
   );
-};
+}
+;
 
 
 export default FlowResultsContainer;

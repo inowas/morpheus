@@ -1,9 +1,9 @@
 import React, {useMemo, useState} from 'react';
 import {Feature, Polygon, FeatureCollection} from 'geojson';
-import {Polygon as LeafletPolygon, FeatureGroup, useMap, useMapEvents} from 'common/infrastructure/React-Leaflet';
+import {Polygon as LeafletPolygon, FeatureGroup, useMap, useMapEvents, Pane} from 'common/infrastructure/React-Leaflet';
 import * as turf from '@turf/turf';
-import {canvas, GridLayerOptions} from 'leaflet';
-import { ISelection } from '../types';
+import {GridLayerOptions} from 'leaflet';
+import {ISelection} from '../types';
 
 interface IProps {
   data: number[][];
@@ -51,8 +51,6 @@ const DataLayer = ({data, rotation, outline, getRgbColor, options}: IProps) => {
       // the viewport in pixels and the width and height of the model
     },
   });
-
-  const renderer = canvas({padding: 1, tolerance: 1});
 
   const polygons = useMemo(() => {
     const nCols = data[0].length;
@@ -108,22 +106,23 @@ const DataLayer = ({data, rotation, outline, getRgbColor, options}: IProps) => {
   }, [data, rotation, outline, getRgbColor]);
 
   return (
-    <FeatureGroup>
-      {polygons.features.map((feature, index) => {
-        const {color} = feature.properties;
-        return (
-          <LeafletPolygon
-            key={'factor-' + factor + '-cell-' + index}
-            positions={feature.geometry.coordinates[0].map((coords) => [coords[1], coords[0]])}
-            color={'transparent'}
-            fillOpacity={options?.opacity || 1}
-            fillColor={color || 'transparent'}
-            weight={0}
-            renderer={renderer}
-          />
-        );
-      })}
-    </FeatureGroup>
+    <Pane name={'data-layer'} style={{zIndex: 400}}>
+      <FeatureGroup>
+        {polygons.features.map((feature) => {
+          const {color, row, col} = feature.properties;
+          return (
+            <LeafletPolygon
+              key={`factor-${factor}-row-${row}-col-${col}-color-${color}`}
+              positions={feature.geometry.coordinates[0].map((coords) => [coords[1], coords[0]])}
+              color={'transparent'}
+              fillOpacity={options?.opacity || 1}
+              fillColor={color || 'transparent'}
+              weight={0}
+            />
+          );
+        })}
+      </FeatureGroup>
+    </Pane>
   );
 };
 
