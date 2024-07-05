@@ -11,11 +11,9 @@ ENV KC_METRICS_ENABLED=true
 RUN /opt/keycloak/bin/kc.sh build
 
 
-
 FROM builder_base as builder_production
 
 RUN /opt/keycloak/bin/kc.sh build
-
 
 
 FROM keycloak/keycloak:25.0.1 as development

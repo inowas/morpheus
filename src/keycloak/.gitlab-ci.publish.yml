@@ -12,8 +12,8 @@ publish-keycloak:prod:
     - docker push $MORPHEUS_BACKEND_API_IMAGE:$KEYCLOAK_VERSION
   only:
     changes:
-      - src/infrastructure/production/keycloak/**/*.*
-      - src/keycloak/**/*.*
+      - src/infrastructure/production/keycloak/**/*
+      - src/keycloak/**/*
     refs:
       - main
       - tags
