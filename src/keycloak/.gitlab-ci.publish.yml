@@ -1,0 +1,19 @@
+variables:
+  KEYCLOAK_IMAGE: inowas/keycloak
+  KEYCLOAK_VERSION: 25.0.1
+
+publish-keycloak:prod:
+  stage: publish
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - DOCKER_BUILDKIT=1 docker build --target production --tag $KEYCLOAK_IMAGE:$KEYCLOAK_VERSION --file src/keycloak/Dockerfile .
+    - docker push $MORPHEUS_BACKEND_API_IMAGE:$KEYCLOAK_VERSION
+  only:
+    changes:
+      - src/infrastructure/production/keycloak/**/*.*
+      - src/keycloak/**/*.*
+    refs:
+      - main
+      - tags

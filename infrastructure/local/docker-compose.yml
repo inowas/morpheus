@@ -166,13 +166,13 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${KEYCLOAK_POSTGRES_DB}
       KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
-      KC_HOSTNAME_URL: http://${IDENTITY_HOST}
+      KC_HOSTNAME: ${IDENTITY_HOST}
       KC_PROXY: edge
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
     command:
-      start --optimized --import-realm
+      start --optimized --import-realm --proxy-headers=xforwarded --hostname-strict=false
     networks:
       - auth
       - mail
