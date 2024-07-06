@@ -1,6 +1,6 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
-import {ILayerId, ILayerPropertyName, IZone} from '../types/Layers.type';
+import {ILayerId, ILayerProperty, IZone} from '../types/Layers.type';
 import {IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
 
@@ -360,7 +360,7 @@ export interface IUpdateModelLayerPropertyDefaultValueCommand {
     project_id: string;
     model_id: string;
     layer_id: string;
-    property_name: ILayerPropertyName;
+    property_name: ILayerProperty;
     property_default_value: number;
   }
 }
@@ -371,7 +371,7 @@ export interface IUpdateModelLayerPropertyRasterReferenceCommand {
     project_id: string;
     model_id: string;
     layer_id: string;
-    property_name: ILayerPropertyName;
+    property_name: ILayerProperty;
     property_raster_reference: {
       asset_id: string;
       band: number;
@@ -385,7 +385,7 @@ export interface IUpdateModelLayerPropertyZonesCommand {
     project_id: string;
     model_id: string;
     layer_id: string;
-    property_name: ILayerPropertyName;
+    property_name: ILayerProperty;
     property_zones: IZone[] | null;
   }
 }

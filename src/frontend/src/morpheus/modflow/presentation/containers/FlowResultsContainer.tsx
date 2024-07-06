@@ -165,8 +165,8 @@ const FlowResultsContainer = () => {
           {data && !showContours && <CanvasDataLayer
             title={'Head [m]'}
             data={data.data.values}
-            minVal={minVal}
-            maxVal={maxVal}
+            minValue={minVal}
+            maxValue={maxVal}
             outline={data.data.outline}
             getRgbColor={getRgbColor}
             rotation={data.data.rotation}

@@ -39,8 +39,8 @@ const HoverDataLayer = ({data, rotation, outline, onHover, onClick}: IProps) => 
 
     const col = Math.floor(x * nCols);
     const row = Math.floor(y * nRows);
-    const value = data[row][col];
 
+    const value = data[row][col];
     return {col, row, value};
   };
 
