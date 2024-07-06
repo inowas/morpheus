@@ -2,7 +2,7 @@ import {IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
-import {IChangeLayerPropertyValues, ILayer, ILayerConfinement, ILayerPropertyData, ILayerPropertyName} from '../types/Layers.type';
+import {IChangeLayerPropertyValues, ILayer, ILayerConfinement, ILayerPropertyData, ILayerProperty} from '../types/Layers.type';
 import {setLayers} from '../infrastructure/modelStore';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
@@ -10,14 +10,14 @@ import {IRootState} from '../../store';
 
 interface IUseLayers {
   layers: ILayer[] | null;
-  fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
-  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName, format?: 'raster' | 'grid') => Promise<ILayerPropertyData | null>;
-  onCloneLayer: (layerId: string) => void;
-  onDeleteLayer: (layerId: string) => void;
-  onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => void;
-  onChangeLayerOrder: (newOrderIds: string[]) => void;
-  onChangeLayerConfinement: (layerId: string, confinement: ILayerConfinement) => void;
-  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => void;
+  fetchLayerPropertyImage: (layerId: string, propertyName: ILayerProperty) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
+  fetchLayerPropertyData: (layerId: string, propertyName: ILayerProperty, format?: 'raster' | 'grid') => Promise<ILayerPropertyData | null>;
+  onCloneLayer: (layerId: string) => Promise<void>;
+  onDeleteLayer: (layerId: string) => Promise<void>;
+  onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => Promise<void>;
+  onChangeLayerOrder: (newOrderIds: string[]) => Promise<void>;
+  onChangeLayerConfinement: (layerId: string, confinement: ILayerConfinement) => Promise<void>;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerProperty, values: IChangeLayerPropertyValues) => Promise<void>;
   loading: boolean;
   error: IError | null;
 }
@@ -79,7 +79,7 @@ const useLayers = (projectId: string): IUseLayers => {
     // eslint-disable-next-line
   }, [projectId]);
 
-  const fetchLayerPropertyImage = async (layerId: string, propertyName: ILayerPropertyName): Promise<{ imageUrl: string, colorbarUrl: string } | null> => {
+  const fetchLayerPropertyImage = async (layerId: string, propertyName: ILayerProperty): Promise<{ imageUrl: string, colorbarUrl: string } | null> => {
 
     const imageResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}/image?format=raster`, true);
     const colorbarResult = await httpGet<Blob>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}/image?format=raster_colorbar`, true);
@@ -94,7 +94,7 @@ const useLayers = (projectId: string): IUseLayers => {
     return null;
   };
 
-  const fetchLayerPropertyData = async (layerId: string, propertyName: ILayerPropertyName, format: 'raster' | 'grid' = 'raster'): Promise<ILayerPropertyData | null> => {
+  const fetchLayerPropertyData = async (layerId: string, propertyName: ILayerProperty, format: 'raster' | 'grid' = 'raster'): Promise<ILayerPropertyData | null> => {
 
     const result = await httpGet<IGetLayerPropertyDataResponse>(`/projects/${projectId}/model/layers/${layerId}/properties/${propertyName}?format=${format}`);
 
@@ -237,7 +237,7 @@ const useLayers = (projectId: string): IUseLayers => {
     await fetchLayers();
   };
 
-  const onChangeLayerProperty = async (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => {
+  const onChangeLayerProperty = async (layerId: string, propertyName: ILayerProperty, values: IChangeLayerPropertyValues) => {
     if (!model) {
       return;
     }

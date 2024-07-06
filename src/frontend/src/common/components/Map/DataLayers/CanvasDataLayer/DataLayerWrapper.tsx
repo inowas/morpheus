@@ -11,23 +11,24 @@ import HoverDataLayer from '../HoverDataLayer';
 interface IProps {
   title?: string;
   data: number[][];
-  minVal: number;
-  maxVal: number;
+  minValue: number;
+  maxValue: number;
   rotation: number;
   outline: Feature<Polygon>
   getRgbColor: (value: number, minVal: number, maxVal: number) => string;
   onHover?: (selection: ISelection | null) => void;
   onClick?: (selection: ISelection | null) => void;
   options?: GridLayerOptions;
+  selectRowsAndCols?: boolean;
 }
 
-const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options, onHover, onClick}: IProps) => {
+const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minValue, maxValue, options, onHover, onClick, selectRowsAndCols = true}: IProps) => {
 
   const [selection, setSelection] = useState<ISelection | null>(null);
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
   const handleHover = (selected: ISelection | null) => {
-    setHoveredValue(selected?.value || null);
+    setHoveredValue(selected?.value === undefined ? null : selected.value);
     if (onHover) {
       onHover(selected);
     }
@@ -49,6 +50,26 @@ const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, 
     return [[boundingBox[1], boundingBox[0]], [boundingBox[3], boundingBox[2]]];
   }, [outline]);
 
+  const minMaxValue = useMemo(() => {
+    let min = minValue;
+    let max = maxValue;
+
+    if (min == max) {
+      min = 0;
+      max = max * 2;
+    }
+
+    if (min === max && 0 === max) {
+      min = -1;
+      max = 1;
+    }
+
+    min = min - (max - min) * 0.1;
+    max = max + (max - min) * 0.1;
+
+    return {min, max};
+  }, [minValue, maxValue]);
+
   if (!bounds) {
     return null;
   }
@@ -59,10 +80,10 @@ const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, 
         data={data}
         rotation={rotation}
         outline={outline}
-        getRgbColor={(value: number) => getRgbColor(value, minVal, maxVal)}
+        getRgbColor={(value: number) => getRgbColor(value, minMaxValue.min, minMaxValue.max)}
         options={options}
       />
-      {selection && <SelectedRowAndColLayer
+      {selection && selectRowsAndCols && <SelectedRowAndColLayer
         nRows={data.length}
         nCols={data[0].length}
         selectedRow={selection.row}
@@ -81,8 +102,8 @@ const DataLayerWrapper = ({title, data, rotation, outline, getRgbColor, minVal, 
         title={title}
         direction={'horizontal'}
         value={hoveredValue}
-        minValue={minVal}
-        maxValue={maxVal}
+        minValue={minMaxValue.min}
+        maxValue={minMaxValue.max}
         getRgbColor={getRgbColor}
       />
     </>

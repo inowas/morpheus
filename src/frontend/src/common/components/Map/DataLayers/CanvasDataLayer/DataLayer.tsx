@@ -20,7 +20,6 @@ interface IFeatureProperties {
   color: string;
 }
 
-
 const DataLayer = ({data, rotation, outline, getRgbColor, options}: IProps) => {
 
   const map = useMap();
