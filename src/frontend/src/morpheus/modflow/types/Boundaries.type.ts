@@ -164,16 +164,16 @@ type IBoundaryObservationData = IConstantHeadObservationData
 export type {IBoundary, IBoundaryId, IBoundaryObservationData, ISelectedBoundaryAndObservation};
 
 
-export const availableBoundaries: { title: string, type: IBoundaryType, keys: string[] }[] = [
-  {title: 'Constant Head Boundaries', type: 'constant_head', keys: ['date_time', 'head']},
-  {title: 'Drain Boundaries', type: 'drain', keys: ['date_time', 'stage', 'conductance']},
-  {title: 'Evapotranspiration Boundaries', type: 'evapotranspiration', keys: ['date_time', 'surface_elevation', 'evapotranspiration']},
-  {title: 'Flow and Head Boundaries', type: 'flow_and_head', keys: ['date_time', 'flow', 'head']},
-  {title: 'General Head Boundaries', type: 'general_head', keys: ['date_time', 'stage', 'conductance']},
-  {title: 'Lake Boundaries', type: 'lake', keys: ['date_time', 'precipitation', 'evaporation', 'runoff', 'withdrawal']},
-  {title: 'Recharge', type: 'recharge', keys: ['date_time', 'recharge_rate']},
-  {title: 'River', type: 'river', keys: ['date_time', 'river_stage', 'riverbed_bottom', 'conductance']},
-  {title: 'Well Boundaries', type: 'well', keys: ['date_time', 'pumping_rate']},
+export const availableBoundaries: { title: string, type: IBoundaryType, keys: string[], isTimeSeriesDependent: boolean }[] = [
+  {title: 'Constant Head Boundaries', type: 'constant_head', keys: ['date_time', 'head'], isTimeSeriesDependent: true},
+  {title: 'Drain Boundaries', type: 'drain', keys: ['date_time', 'stage', 'conductance'], isTimeSeriesDependent: true},
+  {title: 'Evapotranspiration Boundaries', type: 'evapotranspiration', keys: ['date_time', 'surface_elevation', 'evapotranspiration'], isTimeSeriesDependent: true},
+  {title: 'Flow and Head Boundaries', type: 'flow_and_head', keys: ['date_time', 'flow', 'head'], isTimeSeriesDependent: false},
+  {title: 'General Head Boundaries', type: 'general_head', keys: ['date_time', 'stage', 'conductance'], isTimeSeriesDependent: true},
+  {title: 'Lake Boundaries', type: 'lake', keys: ['date_time', 'precipitation', 'evaporation', 'runoff', 'withdrawal'], isTimeSeriesDependent: true},
+  {title: 'Recharge', type: 'recharge', keys: ['date_time', 'recharge_rate'], isTimeSeriesDependent: true},
+  {title: 'River', type: 'river', keys: ['date_time', 'river_stage', 'riverbed_bottom', 'conductance'], isTimeSeriesDependent: true},
+  {title: 'Well Boundaries', type: 'well', keys: ['date_time', 'pumping_rate'], isTimeSeriesDependent: true},
 ];
 
 
