@@ -10,7 +10,7 @@ publish-keycloak:prod:
     - KEYCLOAK_VERSION=$(cat src/keycloak/.version | tr -d "[:space:]")
     - echo "Using Keycloak version $KEYCLOAK_VERSION"
     - DOCKER_BUILDKIT=1 docker build --build-arg="KEYCLOAK_VERSION=$KEYCLOAK_VERSION" --target production --tag $KEYCLOAK_IMAGE:$KEYCLOAK_VERSION --file src/keycloak/Dockerfile .
-    - docker push $MORPHEUS_BACKEND_API_IMAGE:$KEYCLOAK_VERSION
+    - docker push $KEYCLOAK_IMAGE:$KEYCLOAK_VERSION
   only:
     changes:
       - src/infrastructure/production/keycloak/**/*
