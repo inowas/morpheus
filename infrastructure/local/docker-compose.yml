@@ -161,6 +161,8 @@ services:
       context: ${MORPHEUS_PROJECT_ROOT}
       dockerfile: src/keycloak/Dockerfile
       target: development
+      args:
+        - KEYCLOAK_VERSION=${KEYCLOAK_VERSION}
     environment:
       KC_DB: postgres
       KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
