@@ -3,14 +3,17 @@ import DataTable, {IColumn} from './DataTable';
 import {IBoundaryObservationData, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
 import {useDateTimeFormat} from 'common/hooks';
 import {Button} from 'common/components';
-import styles from './ObservationDataTable.module.less';
+import styles from './BoundaryDataTable.module.less';
 import {Icon} from 'semantic-ui-react';
-import BoundariesUpload from '../BoundariesUpload/BoundariesUpload';
+import BoundariesUpload from '../BoundaryUpload/BoundariesUpload';
+import {ITimeDiscretization} from '../../../../types';
 
 interface IProps {
   boundaryType: IBoundaryType;
   observation: IObservation<any>;
   onChangeObservation: (observation: IObservation<any>) => void;
+  timeDiscretization: ITimeDiscretization;
+  isReadOnly: boolean;
 }
 
 type IFormatDate = (dateString: string, formatString: string) => string;
@@ -110,7 +113,7 @@ const newRow = (boundaryType: IBoundaryType, dateString: string): IBoundaryObser
   }
 };
 
-const ObservationDataTable = ({boundaryType, observation, onChangeObservation}: IProps) => {
+const BoundaryDataTableFreeDates = ({boundaryType, observation, onChangeObservation}: IProps) => {
 
   const {formatDate, parseUserInput, addDays, addWeeks, addMonths, addYears} = useDateTimeFormat('UTC');
   const [data, setData] = useState<IBoundaryObservationData[]>(observation.data || []);
@@ -125,19 +128,19 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation}: 
       return;
     }
 
-    const new_data = [...data, dataPoint];
-    new_data.sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime());
-    setData(new_data);
+    const newData = [...data, dataPoint];
+    newData.sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime());
+    setData(newData);
   };
 
   const updateDataPoint = (dataPoint: IBoundaryObservationData) => {
-    const new_data = data.map((d) => d.date_time === dataPoint.date_time ? dataPoint : d);
-    setData(new_data);
+    const newData = data.map((d) => d.date_time === dataPoint.date_time ? dataPoint : d);
+    setData(newData);
   };
 
   const removeDataPoint = (dataPoint: IBoundaryObservationData) => {
-    const new_data = data.filter((d) => d.date_time !== dataPoint.date_time);
-    setData(new_data);
+    const newData = data.filter((d) => d.date_time !== dataPoint.date_time);
+    setData(newData);
   };
 
   const handleChangedData = (newData: { [key: string]: any; }[]) => {
@@ -176,4 +179,4 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation}: 
   );
 };
 
-export default ObservationDataTable;
+export default BoundaryDataTableFreeDates;

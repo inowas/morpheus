@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styles from './BoundariesUpload.module.less';
 import {ECsvColumnType} from './types/BoundariesUpload.type';
-import {IColumn} from '../BoundariesTable/DataTable';
+import {IColumn} from '../BoundaryDataTable/DataTable';
 import {Button, Modal, Notification} from 'common/components';
 import {Form, Icon, Table} from 'semantic-ui-react';
 import {DataGrid, DataRow} from 'common/components/DataGrid';

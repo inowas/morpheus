@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservation} from '../../../../types/Boundaries.type';
+import {IBoundaryObservationData, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
 import {useDateTimeFormat} from 'common/hooks';
 import {Checkbox, Icon, Popup, Table, TableBody, TableHeader, TableHeaderCell, TableRow} from 'semantic-ui-react';
-import BoundariesUpload from '../BoundariesUpload/BoundariesUpload';
+import BoundariesUpload from '../BoundaryUpload/BoundariesUpload';
 import {ITimeDiscretization} from '../../../../types';
 import {Button} from 'common/components';
 import DataTableInput from './DataTableInput';
@@ -13,14 +13,13 @@ interface IProps {
   boundaryType: IBoundaryType;
   observation: IObservation<any>;
   onChangeObservation: (observation: IObservation<any>) => void;
-  interpolation: IInterpolationType;
   timeDiscretization: ITimeDiscretization;
   isReadOnly: boolean;
 }
 
 type IBoundaryObservationDataEnabled = IBoundaryObservationData & { enabled: boolean, [key: string]: any };
 
-const ObservationDataTable = ({boundaryType, observation, onChangeObservation, timeDiscretization, isReadOnly}: IProps) => {
+const BoundaryDataTableStressPeriods = ({boundaryType, observation, onChangeObservation, timeDiscretization, isReadOnly}: IProps) => {
 
   const {formatISODate, parseDate} = useDateTimeFormat('UTC');
   const [data, setData] = useState<IBoundaryObservationDataEnabled[]>(observation.data || []);
@@ -132,4 +131,4 @@ const ObservationDataTable = ({boundaryType, observation, onChangeObservation, t
   );
 };
 
-export default ObservationDataTable;
+export default BoundaryDataTableStressPeriods;

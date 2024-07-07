@@ -1,12 +1,13 @@
+import React, {useEffect, useState} from 'react';
+
+import {Form, Icon, Label, Popup, DropdownItemProps} from 'semantic-ui-react';
 import {Button, DataRow, DropdownComponent} from 'common/components';
 
-import React, {useEffect, useState} from 'react';
-import {Form, Icon, Label, Popup} from 'semantic-ui-react';
-import {availableBoundaries, IBoundary, IBoundaryId, IInterpolationType} from '../../../../types/Boundaries.type';
-import {ILayerId} from '../../../../types/Layers.type';
-import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 import isEqual from 'lodash.isequal';
-import {canHaveMultipleAffectedLayers} from '../../ModelBoundaries/helpers';
+import {boundarySettings, hasMultipleAffectedLayers} from '../helpers';
+
+import {IBoundary, IBoundaryId, IInterpolationType} from '../../../../types/Boundaries.type';
+import {ILayerId} from '../../../../types/Layers.type';
 
 
 interface IProps {
@@ -62,7 +63,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
     setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
   }, [boundary]);
 
-  const isTimeSeriesDependent = availableBoundaries.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
+  const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
 
   return (
     <Form>
@@ -83,16 +84,16 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
 
           <DropdownComponent.Dropdown
             disabled={isReadOnly}
-            name="selectedLayer"
-            multiple={canHaveMultipleAffectedLayers(boundaryLocal)}
+            name={'selectedLayer'}
+            multiple={hasMultipleAffectedLayers(boundaryLocal.type)}
             selection={true}
-            value={canHaveMultipleAffectedLayers(boundaryLocal) ? boundaryLocal.affected_layers : boundaryLocal.affected_layers[0]}
+            value={hasMultipleAffectedLayers(boundaryLocal.type) ? boundaryLocal.affected_layers : boundaryLocal.affected_layers[0]}
             options={layers.map((layer) => ({
               key: layer.layer_id,
               text: layer.name,
               value: layer.layer_id,
             }))}
-            onChange={(event, {value}) => {
+            onChange={(_, {value}) => {
               if (!value) {
                 return;
               }
@@ -150,7 +151,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
               ]}
               selection={true}
               value={boundaryLocal.interpolation}
-              onChange={(event, {value}) => setBoundaryLocal({...boundaryLocal, interpolation: value as IInterpolationType})}
+              onChange={(_, {value}) => setBoundaryLocal({...boundaryLocal, interpolation: value as IInterpolationType})}
             />)}
         </Form.Field>
         {!isReadOnly && (

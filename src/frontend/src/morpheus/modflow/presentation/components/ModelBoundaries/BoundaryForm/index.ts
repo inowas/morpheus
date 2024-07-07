@@ -1,5 +1,3 @@
 import BoundariesForm from './BoundariesForm';
 
-export {
-  BoundariesForm,
-};
+export default BoundariesForm;
