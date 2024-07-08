@@ -2,7 +2,6 @@ import React from 'react';
 import BoundariesAccordionPane from './BoundariesAccordionPane';
 import {Accordion} from 'common/components';
 import {
-  availableBoundaries,
   IBoundary,
   IBoundaryId,
   IBoundaryType,
@@ -13,6 +12,7 @@ import {
 } from '../../../types/Boundaries.type';
 import {ILayer, ILayerId} from '../../../types/Layers.type';
 import {ITimeDiscretization} from '../../../types';
+import {boundarySettings} from './helpers';
 
 interface IPanelDetails {
   title: string;
@@ -21,7 +21,7 @@ interface IPanelDetails {
   active: boolean;
 }
 
-const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation): IPanelDetails[] => availableBoundaries.map((b) => ({
+const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation): IPanelDetails[] => boundarySettings.map((b) => ({
   title: b.title,
   type: b.type,
   boundaries: boundaries.filter((boundary) => boundary.type === b.type),

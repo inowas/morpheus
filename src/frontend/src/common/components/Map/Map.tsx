@@ -94,15 +94,17 @@ const Map = ({center, zoom, children}: IProps) => {
         {/*More providers here: https://leaflet-extras.github.io/leaflet-providers/preview/*/}
         {/*<TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>*/}
 
-        <LayersControl position="topright">
-          <LayersControl.BaseLayer name="Topo" checked={true}>
-            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Street">
-            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"/>
-          </LayersControl.BaseLayer>
+        <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>
 
-        </LayersControl>
+        {/*<LayersControl position="topright">*/}
+        {/*  <LayersControl.BaseLayer name="Topo" checked={true}>*/}
+        {/*    <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>*/}
+        {/*  </LayersControl.BaseLayer>*/}
+        {/*  <LayersControl.BaseLayer name="Street">*/}
+        {/*    <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"/>*/}
+        {/*  </LayersControl.BaseLayer>*/}
+        {/*</LayersControl>*/}
+
         {children}
       </MapContainer>
     </div>

@@ -1,3 +1,3 @@
-import DataLayerWrapper from './DataLayerWrapper';
+import DataLayer from './DataLayer';
 
-export default DataLayerWrapper;
+export default DataLayer;

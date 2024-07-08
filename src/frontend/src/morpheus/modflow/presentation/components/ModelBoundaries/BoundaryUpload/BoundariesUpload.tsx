@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
 import Papa from 'papaparse';
 import {IStressPeriod} from '../../../../types';
-import {IColumn} from '../BoundariesTable/DataTable';
+import {IColumn} from '../BoundaryDataTable/DataTable';
 
 interface IProps {
   columns: IColumn[];

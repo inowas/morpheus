@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
+
 import {IBoundary, IBoundaryId, IBoundaryType, IInterpolationType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import BoundaryList from './BoundaryList';
 import {Grid, InfoTitle, Tab} from 'common/components';
-
-import {BoundariesForm} from '../BoundariesLayers/BoundariesForm';
 import {MenuItem, TabPane} from 'semantic-ui-react';
-import {ObservationDataTable} from '../BoundariesLayers/BoundariesTable';
+
+import BoundariesForm from './BoundaryForm';
+import BoundaryDataChart from './BoundaryDataChart';
+import BoundaryDataTable from './BoundaryDataTable';
+
 import {ILayer, ILayerId} from '../../../types/Layers.type';
-import ObservationDataChart from '../BoundariesLayers/BoundariesTable/ObservationDataChart';
 import {ITimeDiscretization} from '../../../types';
-import ObservationDataTableWithDisabledInterpolation from '../BoundariesLayers/BoundariesTable/ObservationDataTableWithDisabledInterpolation';
 
 interface IProps {
   boundaries: IBoundary[];
@@ -136,21 +137,22 @@ const BoundariesAccordionPane = ({
                   Table
                 </MenuItem>
               ),
-              render: () => <TabPane attached={false}>
-                <ObservationDataTableWithDisabledInterpolation
-                  boundaryType={boundaryType}
-                  observation={selectedBoundaryObservation}
-                  onChangeObservation={(observation: IObservation<any>) => onUpdateBoundaryObservation(selectedBoundary.id, boundaryType, observation)}
-                  interpolation={selectedBoundary.interpolation}
-                  timeDiscretization={timeDiscretization}
-                  isReadOnly={isReadOnly}
-                />
-              </TabPane>,
+              render: () => (
+                <TabPane attached={false}>
+                  <BoundaryDataTable
+                    boundary={selectedBoundary}
+                    observation={selectedBoundaryObservation}
+                    onChangeObservation={(observation: IObservation<any>) => onUpdateBoundaryObservation(selectedBoundary.id, boundaryType, observation)}
+                    timeDiscretization={timeDiscretization}
+                    isReadOnly={isReadOnly}
+                  />
+                </TabPane>
+              ),
             },
             {
               menuItem: <MenuItem key='Chart'>Chart</MenuItem>,
               render: () => <TabPane attached={false}>
-                <ObservationDataChart observation={selectedBoundaryObservation} timeDiscretization={timeDiscretization}/>
+                <BoundaryDataChart observation={selectedBoundaryObservation} timeDiscretization={timeDiscretization}/>
               </TabPane>,
             },
           ]}

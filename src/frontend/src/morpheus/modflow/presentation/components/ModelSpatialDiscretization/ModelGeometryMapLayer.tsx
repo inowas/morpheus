@@ -4,6 +4,7 @@ import {FeatureGroup, Polygon as LeafletPolygon, useMap} from 'common/infrastruc
 
 import type {Polygon} from 'geojson';
 import {GeomanControls} from 'common/components/Map';
+import {useMapEvents} from 'react-leaflet';
 
 
 interface IProps {
@@ -18,7 +19,6 @@ const ModelGeometryMapLayer = ({modelGeometry, onChangeModelGeometry, editModelG
 
   const editModelGeometryRef = useRef<L.FeatureGroup>(L.featureGroup());
   const map = useMap();
-
 
   useEffect(() => {
     if (!modelGeometry || !map) {
