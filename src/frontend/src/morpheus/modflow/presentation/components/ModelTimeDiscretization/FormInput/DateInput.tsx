@@ -1,4 +1,4 @@
-import {Input} from 'semantic-ui-react';
+import {Form} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
 
 
@@ -7,9 +7,11 @@ interface IProps {
   isReadOnly: boolean;
   onChange: (value: string) => void;
   isDisabled?: boolean;
+  isValid?: (value: string) => boolean;
+  textAlign?: 'left' | 'right' | 'center';
 }
 
-const DataTableInput = ({value, isReadOnly, onChange, isDisabled}: IProps) => {
+const DateInput = ({value, isReadOnly, onChange, isDisabled, isValid = () => true, textAlign = 'left'}: IProps) => {
 
   const [valueLocal, setValueLocal] = useState<string>(value);
 
@@ -17,19 +19,17 @@ const DataTableInput = ({value, isReadOnly, onChange, isDisabled}: IProps) => {
     setValueLocal(value);
   }, [value]);
 
-  const sanitizeValue = (value: string) => {
-    return value.replace(/[^0-9-.]/g, '');
-  };
-
   const handleBlur = () => {
-    const sanitized = sanitizeValue(valueLocal);
-    setValueLocal(sanitized);
-    onChange(sanitized);
+    if (!isValid(valueLocal)) {
+      setValueLocal(value);
+      return;
+    }
+
+    onChange(valueLocal);
   };
 
   return (
-    <Input
-      width={1}
+    <Form.Input
       size={'small'}
       type="text"
       value={valueLocal}
@@ -39,9 +39,9 @@ const DataTableInput = ({value, isReadOnly, onChange, isDisabled}: IProps) => {
       disabled={isDisabled}
       style={{width: '100px'}}
     >
-      <input style={{textAlign: 'right'}}/>
-    </Input>
+      <input style={{textAlign}}/>
+    </Form.Input>
   );
 };
 
-export default DataTableInput;
+export default DateInput;

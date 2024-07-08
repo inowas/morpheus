@@ -1,41 +1,42 @@
-import {Checkbox, CheckboxProps, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
-import React, {ChangeEvent, useRef, useState} from 'react';
+import {Checkbox, CheckboxProps, Dropdown, Form, Icon, InputOnChangeData, Popup, Table} from 'semantic-ui-react';
+import React, {useRef, useState} from 'react';
 import {faDownload, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 
 import {Button, Notification} from 'common/components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './TimeDiscretizationStressPeriods.module.less';
-import {IStressPeriod, ITimeDiscretization} from '../../../../types';
+import {IStressPeriod} from '../../../../types';
 import {useDateTimeFormat} from 'common/hooks';
 import Papa from 'papaparse';
+import {DateInput, NumberInput} from '../FormInput';
 
 interface IProps {
-  timeDiscretization: ITimeDiscretization;
-  onChange: (value: ITimeDiscretization) => void;
-  readOnly: boolean;
+  stressPeriods: IStressPeriod[];
+  onChange: (value: IStressPeriod[]) => void;
+  isReadOnly: boolean;
   timeZone?: string;
 }
 
-const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, onChange, readOnly, timeZone}) => {
+const TimeDiscretizationStressPeriods: React.FC<IProps> = ({stressPeriods, onChange, isReadOnly, timeZone}) => {
 
-  const {addDays, formatISO, formatISODate, isValid} = useDateTimeFormat(timeZone);
+  const {addDays, addWeeks, addMonths, addYears, formatISODate, isValid, parseDate} = useDateTimeFormat(timeZone);
 
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const [showNotification, setShowNotification] = useState(false);
 
-  const handleDeleteAllStressPeriods = () => onChange({
-    ...timeDiscretization,
-    stress_periods: timeDiscretization.stress_periods.filter((_: IStressPeriod, idx: number) => 0 === idx),
-  });
+  const handleDeleteAllStressPeriods = () => {
+    const newStressPeriods = stressPeriods.filter((_: IStressPeriod, idx: number) => 0 === idx);
+    onChange(newStressPeriods);
+  };
 
-  const handleDeleteStressPeriod = (key: number) => onChange({
-    ...timeDiscretization,
-    stress_periods: timeDiscretization.stress_periods.filter((_: IStressPeriod, idx: number) => key !== idx),
-  });
+  const handleDeleteStressPeriod = (idx: number) => {
+    const newStressPeriods = stressPeriods.filter((_: IStressPeriod, index: number) => idx !== index);
+    onChange(newStressPeriods);
+  };
 
-  const handleAddNewStressPeriod = () => {
-    const lastStressPeriod = timeDiscretization.stress_periods[timeDiscretization.stress_periods.length - 1];
+  const handleAddNewStressPeriod = (timeToAdd: '1d' | '1w' | '1m' | '1y' = '1d') => {
+    const lastStressPeriod = stressPeriods[stressPeriods.length - 1];
 
     if (tableRef.current) {
       const scrollHeight = tableRef.current.scrollHeight;
@@ -51,28 +52,41 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
       setShowNotification(true);
       return;
     }
+
+    let newStartDate = addDays(lastStressPeriod.start_date_time, 1);
+    if ('1w' === timeToAdd) {
+      newStartDate = addWeeks(lastStressPeriod.start_date_time, 1);
+    }
+
+    if ('1m' === timeToAdd) {
+      newStartDate = addMonths(lastStressPeriod.start_date_time, 1);
+    }
+
+    if ('1y' === timeToAdd) {
+      newStartDate = addYears(lastStressPeriod.start_date_time, 1);
+    }
+
     setShowNotification(false);
     const newStressPeriod: IStressPeriod = {
       ...lastStressPeriod,
-      start_date_time: formatISO(addDays(formatISO(lastStressPeriod.start_date_time), 1)),
+      start_date_time: newStartDate,
       steady_state: false,
       time_step_multiplier: 1,
       number_of_time_steps: 1,
     };
-    onChange({...timeDiscretization, stress_periods: [...timeDiscretization.stress_periods, newStressPeriod]});
+    const newStressPeriods = [...stressPeriods, newStressPeriod];
+    onChange(newStressPeriods);
   };
 
   const handleChangeStressPeriod = (key: number, sp: IStressPeriod) => {
-    console.log(sp);
-    const newStressPeriods = timeDiscretization.stress_periods.map((s: IStressPeriod, idx: number) => (idx === key ? sp : s));
-
-    onChange({...timeDiscretization, stress_periods: newStressPeriods});
+    const newStressPeriods = stressPeriods.map((s: IStressPeriod, idx: number) => (idx === key ? sp : s));
+    onChange(newStressPeriods);
   };
 
   const handleDownload = () => {
     const csv = Papa.unparse({
       fields: ['start_date_time', 'number_of_time_steps', 'time_step_multiplier', 'steady_state'],
-      data: timeDiscretization.stress_periods.map((sp) => (
+      data: stressPeriods.map((sp) => (
         [sp.start_date_time, sp.number_of_time_steps, sp.time_step_multiplier, sp.steady_state]
       )),
     });
@@ -130,117 +144,98 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({timeDiscretization, 
     </Table.Header>
   );
 
-  const renderBody = () => {
-    return (
-      <tbody
-        className={styles.tableBody}
-        ref={tableRef}
-      >
-        {timeDiscretization.stress_periods.map((sp: IStressPeriod, idx: number) => {
-          return (
-            <Table.Row className={styles.tableRow} key={idx}>
-              <Table.Cell><span>{idx + 1}</span></Table.Cell>
-              <Table.Cell>
-                <Form.Input
-                  disabled={readOnly}
-                  type="date"
-                  name={'start_date_time'}
-                  idx={idx}
-                  style={{width: '100%'}}
-                  value={formatISODate(sp.start_date_time)}
-                  onChange={(e: ChangeEvent<HTMLInputElement>, {value}: InputOnChangeData) => {
-                    const dateValue = formatISO(`${value}`);
-                    if (!isValid(dateValue)) {
-                      return;
-                    }
-                    handleChangeStressPeriod(idx, {...sp, start_date_time: dateValue});
-                  }}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <Form.Input
-                  disabled={readOnly}
-                  type="number"
-                  error={50 < Number(sp.time_step_multiplier)}
-                  max={50}
-                  name="nstp"
-                  idx={idx}
-                  value={sp.number_of_time_steps}
-                  onChange={(_, {value}: InputOnChangeData) => {
-                    handleChangeStressPeriod(idx, {...sp, number_of_time_steps: parseInt(value, 10)});
-                  }}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <Form.Input
-                  disabled={readOnly}
-                  type="number"
-                  name="tsmult"
-                  idx={idx}
-                  value={('-' === sp.time_step_multiplier ? 0 : Number(sp.time_step_multiplier)).toFixed(3)}
-                  onChange={(_, {value}: InputOnChangeData) => {
-                    handleChangeStressPeriod(idx, {...sp, time_step_multiplier: parseFloat(value)});
-                  }}
-                />
-              </Table.Cell>
-              <Table.Cell style={{textAlign: 'right', width: '70px'}}>
-                <Checkbox
-                  name={'steady'}
-                  checked={sp.steady_state}
-                  disabled={readOnly}
-                  idx={idx}
-                  onChange={(_, {checked}: CheckboxProps) => {
-                    handleChangeStressPeriod(idx, {...sp, steady_state: !!checked});
-                  }}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                {!readOnly && 0 < idx && (
-                  <Button onClick={() => handleDeleteStressPeriod(idx)}>
-                    <FontAwesomeIcon icon={faTrashCan}/>
-                  </Button>
-                )}
-              </Table.Cell>
-            </Table.Row>
-          );
-        })}
-      </tbody>
-    );
-  };
+  const renderBody = () => (
+    <tbody className={styles.tableBody} ref={tableRef}>
+
+      {stressPeriods.map((sp: IStressPeriod, idx: number) => {
+        return (
+          <Table.Row className={styles.tableRow} key={idx}>
+            <Table.Cell><span>{idx + 1}</span></Table.Cell>
+            <Table.Cell>
+              <DateInput
+                value={formatISODate(sp.start_date_time)}
+                isReadOnly={isReadOnly}
+                onChange={(value) => handleChangeStressPeriod(idx, {...sp, start_date_time: parseDate(value)})}
+                isValid={(value) => isValid(parseDate(value))}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              <NumberInput
+                value={sp.number_of_time_steps}
+                isReadOnly={isReadOnly}
+                precision={0}
+                onChange={(value) => handleChangeStressPeriod(idx, {...sp, number_of_time_steps: value})}
+                textAlign={'right'}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              <NumberInput
+                value={sp.time_step_multiplier}
+                isReadOnly={isReadOnly}
+                onChange={(value) => handleChangeStressPeriod(idx, {...sp, time_step_multiplier: value})}
+                precision={2}
+                textAlign={'right'}
+              />
+            </Table.Cell>
+            <Table.Cell style={{textAlign: 'right', width: '70px'}}>
+              <Checkbox
+                name={'steady'}
+                checked={sp.steady_state}
+                disabled={isReadOnly}
+                idx={idx}
+                onChange={(_, {checked}: CheckboxProps) => handleChangeStressPeriod(idx, {...sp, steady_state: !!checked})}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              {!isReadOnly && 0 < idx && (
+                <Button onClick={() => handleDeleteStressPeriod(idx)}>
+                  <FontAwesomeIcon icon={faTrashCan}/>
+                </Button>
+              )}
+            </Table.Cell>
+          </Table.Row>
+        );
+      })}
+    </tbody>
+  );
 
   return (
     <div className={styles.stressPeriod}>
       <div
         className={styles.tableWrapper}
       >
-        <Table
-          className={styles.table}
-          unstackable={true}
-        >
+        <Table className={styles.table} unstackable={true}>
           {renderHeader()}
           {renderBody()}
         </Table>
       </div>
       <div className={styles.buttonsGroup}>
+        <Dropdown
+          icon={null}
+          trigger={<Button className='buttonLink'>Add new <Icon name="add"/></Button>}
+          options={
+            [
+              {key: '1', text: '+ 1 day', onClick: () => handleAddNewStressPeriod('1d')},
+              {key: '2', text: '+ 1 week', onClick: () => handleAddNewStressPeriod('1w')},
+              {key: '3', text: '+ 1 month', onClick: () => handleAddNewStressPeriod('1m')},
+              {key: '4', text: '+ 1 year', onClick: () => handleAddNewStressPeriod('1y')},
+            ]
+          }
+        />
         <Button
           className='buttonLink'
-          onClick={handleAddNewStressPeriod}
-        >
-          Add new <Icon name="add"/>
-        </Button>
-        <Button
-          className='buttonLink'
-          disabled={1 === timeDiscretization.stress_periods.length}
+          disabled={1 === stressPeriods.length}
           onClick={handleDeleteAllStressPeriods}
         >
           Delete all <FontAwesomeIcon icon={faTrashCan}/>
         </Button>
         <Button
           className='buttonLink'
-          disabled={0 === timeDiscretization.stress_periods.length}
+          disabled={0 === stressPeriods.length}
           onClick={handleDownload}
         >
-          Download all <FontAwesomeIcon icon={faDownload}/></Button>
+          Download all <FontAwesomeIcon icon={faDownload}/>
+        </Button>
       </div>
       {showNotification && (
         <Notification warning={true}>
