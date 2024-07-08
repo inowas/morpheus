@@ -64,8 +64,6 @@ const BoundariesAccordionPane = ({
         return setSelectedBoundaryObservation(observation);
       }
 
-      console.debug({selectedBoundaryAndObservation, boundary, observation});
-
       return setSelectedBoundaryObservation(boundary.observations[0]);
     }
 

@@ -13,7 +13,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry import Point
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationName, ObservationTags, HeadObservation, ObservationDataItem, Head
+from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationName, ObservationTags, HeadObservation, HeadObservationDataItem, Head
 
 
 class AddModelObservationCommandPayload(TypedDict):
@@ -25,7 +25,7 @@ class AddModelObservationCommandPayload(TypedDict):
 @dataclasses.dataclass(frozen=True)
 class AddModelObservationCommand(ProjectCommandBase):
     model_id: ModelId
-    head_observation_id: ObservationId
+    observation_id: ObservationId
     name: ObservationName
     tags: ObservationTags
     geometry: Point
@@ -36,8 +36,8 @@ class AddModelObservationCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
-            head_observation_id=ObservationId.new(),
-            name=ObservationName.from_value(''),
+            observation_id=ObservationId.new(),
+            name=ObservationName.from_value('New Head Observation'),
             tags=ObservationTags.empty(),
             geometry=Point.from_dict(payload['geometry']),
         )
@@ -60,13 +60,13 @@ class AddModelObservationCommandHandler(CommandHandlerBase):
         start_date_time = latest_model.time_discretization.start_date_time
 
         head_observation = HeadObservation.from_geometry(
-            id=command.head_observation_id,
+            id=command.observation_id,
             name=command.name,
             tags=command.tags,
             geometry=command.geometry,
             grid=current_grid,
             affected_layers=[top_layer_id],
-            data=[ObservationDataItem(date_time=start_date_time, head=Head.from_value(0.0))]
+            data=[HeadObservationDataItem(date_time=start_date_time, head=Head.from_value(0.0))]
         )
 
         event = ModelObservationAddedEvent.from_observation(

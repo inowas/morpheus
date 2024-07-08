@@ -27,6 +27,7 @@ import TimeDiscretizationContainer from '../containers/TimeDiscretizationContain
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import CalculationContainer from '../containers/CalculationContainer';
 import FlowResultsContainer from '../containers/FlowResultsContainer';
+import HeadObservationsContainer from '../containers/HeadObservationsContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -78,6 +79,7 @@ const getSidebarItems = (): IMenuItem[] => {
       name: 'Head observations',
       isTitle: false,
       slug: 'head-observations',
+      component: <HeadObservationsContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faCompress}/>,

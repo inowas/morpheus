@@ -868,7 +868,6 @@ class ModelProjector(EventListenerBase):
     def on_model_observation_updated(self, event: ModelObservationEvents.ModelObservationUpdatedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
         model_id = event.get_model_id()
-        observation = event.get_observation()
 
         updated_by = UserId.from_str(metadata.get_created_by().to_str())
         updated_at = event.get_occurred_at()
@@ -881,7 +880,20 @@ class ModelProjector(EventListenerBase):
         if observations is None:
             return
 
-        updated_observations = observations.with_updated_observation(observation=observation)
+        observation_to_update = observations.get_observation(id=event.get_observation_id())
+        if observation_to_update is None:
+            return
+
+        observation_to_update = observation_to_update.with_updated_type(type=event.get_type())
+        observation_to_update = observation_to_update.with_updated_name(name=event.get_name())
+        observation_to_update = observation_to_update.with_updated_tags(tags=event.get_tags())
+        observation_to_update = observation_to_update.with_updated_data(data=event.get_data())
+        observation_to_update = observation_to_update.with_updated_geometry(geometry=event.get_geometry())
+        observation_to_update = observation_to_update.with_updated_affected_cells(affected_cells=event.get_affected_cells())
+        observation_to_update = observation_to_update.with_updated_affected_layers(affected_layers=event.get_affected_layers())
+        observation_to_update = observation_to_update.with_updated_enabled(enabled=event.get_enabled())
+
+        updated_observations = observations.with_updated_observation(observation=observation_to_update)
         updated_model = latest_model.with_updated_observations(observations=updated_observations)
 
         self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)

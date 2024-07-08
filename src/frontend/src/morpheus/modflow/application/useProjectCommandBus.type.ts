@@ -3,6 +3,7 @@ import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerProperty, IZone} from '../types/Layers.type';
 import {IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
+import {IHeadObservationData} from '../types/HeadObservations.type';
 
 // Asset Commands
 export interface IDeleteAssetCommand {
@@ -106,6 +107,16 @@ export interface IAddModelBoundaryObservationCommand {
   }
 }
 
+export interface IAddModelObservationCommand {
+  command_name: 'add_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    type: 'head';
+    geometry: Point;
+  }
+}
+
 export interface ICloneModelBoundaryCommand {
   command_name: 'clone_model_boundary_command';
   payload: {
@@ -131,6 +142,15 @@ export interface ICloneModelLayerCommand {
     project_id: string;
     model_id: string;
     layer_id: string;
+  }
+}
+
+export interface ICloneModelObservationCommand {
+  command_name: 'clone_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
   }
 }
 
@@ -199,12 +219,30 @@ export interface IDisableModelBoundaryCommand {
   }
 }
 
+export interface IDisableModelObservationCommand {
+  command_name: 'disable_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+  }
+}
+
 export interface IEnableModelBoundaryCommand {
   command_name: 'enable_model_boundary_command';
   payload: {
     project_id: string;
     model_id: string;
     boundary_id: string;
+  }
+}
+
+export interface IEnableModelObservationCommand {
+  command_name: 'enable_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
   }
 }
 
@@ -223,6 +261,15 @@ export interface IRemoveModelBoundaryObservationCommand {
     project_id: string;
     model_id: string;
     boundary_id: string;
+    observation_id: string;
+  }
+}
+
+export interface IRemoveModelObservationCommand {
+  command_name: 'remove_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
     observation_id: string;
   }
 }
@@ -390,6 +437,23 @@ export interface IUpdateModelLayerPropertyZonesCommand {
   }
 }
 
+export interface IUpdateModelObservationCommand {
+  command_name: 'update_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+    type: 'head';
+    name: string;
+    tags: string[];
+    geometry: Point;
+    affected_cells: IAffectedCells;
+    affected_layers: ILayerId[];
+    data: IHeadObservationData[];
+    enabled: boolean;
+  }
+}
+
 export interface IUpdateModelTimeDiscretizationCommand {
   command_name: 'update_model_time_discretization_command';
   payload: {
@@ -413,18 +477,23 @@ export interface IUpdateModelVersionDescriptionCommand {
 
 export type IModelCommand = IAddModelBoundaryCommand |
   IAddModelBoundaryObservationCommand |
+  IAddModelObservationCommand |
   ICloneModelBoundaryCommand |
   ICloneModelBoundaryObservationCommand |
   ICloneModelLayerCommand |
+  ICloneModelObservationCommand |
   ICreateModelCommand |
   ICreateModelLayerCommand |
   ICreateModelVersionCommand |
   IDeleteModelLayerCommand |
   IDeleteModelVersionCommand |
   IDisableModelBoundaryCommand |
+  IDisableModelObservationCommand |
   IEnableModelBoundaryCommand |
+  IEnableModelObservationCommand |
   IRemoveModelBoundaryCommand |
   IRemoveModelBoundaryObservationCommand |
+  IRemoveModelObservationCommand |
   IUpdateModelAffectedCellsCommand |
   IUpdateModelBoundaryAffectedCellsCommand |
   IUpdateModelBoundaryAffectedLayersCommand |
@@ -434,6 +503,7 @@ export type IModelCommand = IAddModelBoundaryCommand |
   IUpdateModelBoundaryObservationCommand |
   IUpdateModelGeometryCommand |
   IUpdateModelGridCommand |
+  IUpdateModelObservationCommand |
   IUpdateModelLayerConfinementCommand |
   IUpdateModelLayerMetadataCommand |
   IUpdateModelLayerOrderCommand |

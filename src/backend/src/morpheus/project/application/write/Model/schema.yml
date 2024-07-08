@@ -577,53 +577,44 @@ definitions:
             observation_id:
               type: string
               example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            observation:
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-                name:
-                  type: string
-                  example: Observation 1
-                tags:
-                  type: array
-                  items:
+            name:
+              type: string
+              example: Observation 1
+            tags:
+              type: array
+              items:
+                type: string
+              example: [ tag1, tag2 ]
+            affected_cells:
+              "$ref": "#/definitions/components/AffectedCells"
+            affected_layers:
+              "$ref": "#/definitions/components/AffectedLayers"
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  date_time:
                     type: string
-                  example: [ tag1, tag2 ]
-                affected_cells:
-                  "$ref": "#/definitions/components/AffectedCells"
-                affected_layers:
-                  "$ref": "#/definitions/components/AffectedLayers"
-                data:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      date_time:
-                        type: string
-                        format: date-time
-                        example: 2020-01-01T00:00:00Z
-                      head:
-                        type: number
-                        minimum: -1000
-                        maximum: 10000
-                enabled:
-                  type: boolean
-                  example: true
-              required:
-                - id
-                - name
-                - tags
-                - affected_cells
-                - affected_layers
-                - data
-                - enabled
+                    format: date-time
+                    example: 2020-01-01T00:00:00Z
+                  head:
+                    type: number
+                    minimum: -1000
+                    maximum: 10000
+            enabled:
+              type: boolean
+              example: true
           required:
             - project_id
             - model_id
             - observation_id
-            - observation
+            - name
+            - tags
+            - affected_cells
+            - affected_layers
+            - data
+            - enabled
     UpdateModelLayerConfinementCommand:
       type: object
       properties:

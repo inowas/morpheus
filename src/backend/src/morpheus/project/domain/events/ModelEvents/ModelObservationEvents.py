@@ -4,7 +4,10 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.observations.HeadObservation import HeadObservation, ObservationId
+from morpheus.project.types.discretization.spatial import ActiveCells
+from morpheus.project.types.geometry import Point
+from morpheus.project.types.layers import LayerId
+from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationDataItem, HeadObservation
 
 from .EventNames import ModelObservationEventName
 
@@ -145,14 +148,22 @@ class ModelObservationRemovedEvent(EventBase):
 
 class ModelObservationUpdatedEvent(EventBase):
     @classmethod
-    def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, observation: HeadObservation, occurred_at: DateTime):
+    def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, type: ObservationType, tags: ObservationTags, name: ObservationName,
+                         geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[HeadObservationDataItem], enabled: bool, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
                 'model_id': model_id.to_str(),
                 'observation_id': observation_id.to_str(),
-                'observation': observation.to_dict()
+                'type': type.to_str(),
+                'tags': tags.to_value(),
+                'name': name.to_value(),
+                'geometry': geometry.to_dict(),
+                'affected_cells': affected_cells.to_dict(),
+                'affected_layers': [layer_id.to_str() for layer_id in affected_layers],
+                'data': [value.to_dict() for value in data],
+                'enabled': enabled
             }
         )
 
@@ -165,8 +176,29 @@ class ModelObservationUpdatedEvent(EventBase):
     def get_observation_id(self) -> ObservationId:
         return ObservationId.from_str(self.payload['observation_id'])
 
-    def get_observation(self) -> HeadObservation:
-        return HeadObservation.from_dict(self.payload['observation'])
+    def get_type(self) -> ObservationType:
+        return ObservationType.from_str(self.payload['type'])
+
+    def get_tags(self) -> ObservationTags:
+        return ObservationTags.from_value(self.payload['tags'])
+
+    def get_name(self) -> ObservationName:
+        return ObservationName.from_value(self.payload['name'])
+
+    def get_geometry(self) -> Point:
+        return Point.from_dict(self.payload['geometry'])
+
+    def get_affected_cells(self) -> ActiveCells:
+        return ActiveCells.from_dict(self.payload['affected_cells'])
+
+    def get_affected_layers(self) -> list[LayerId]:
+        return [LayerId.from_str(layer_id) for layer_id in self.payload['affected_layers']]
+
+    def get_data(self) -> list[HeadObservationDataItem]:
+        return [HeadObservationDataItem.from_dict(value) for value in self.payload['data']]
+
+    def get_enabled(self) -> bool:
+        return self.payload['enabled']
 
     @staticmethod
     def get_event_name() -> EventName:

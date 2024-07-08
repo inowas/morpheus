@@ -73,7 +73,7 @@ class Head(Float):
 
 
 @dataclasses.dataclass
-class ObservationDataItem:
+class HeadObservationDataItem:
     date_time: StartDateTime
     head: Head
 
@@ -100,14 +100,14 @@ class HeadObservation:
     geometry: Point
     affected_cells: ActiveCells
     affected_layers: list[LayerId]
-    data: list[ObservationDataItem]
+    data: list[HeadObservationDataItem]
     enabled: bool = True
 
     def __eq__(self, other):
         return self.to_dict() == other.to_dict()
 
     @classmethod
-    def from_geometry(cls, name: ObservationName, tags: ObservationTags, geometry: Point, grid: Grid, affected_layers: list[LayerId], data: list[ObservationDataItem] | None = None,
+    def from_geometry(cls, name: ObservationName, tags: ObservationTags, geometry: Point, grid: Grid, affected_layers: list[LayerId], data: list[HeadObservationDataItem] | None = None,
                       id: ObservationId | None = None, enabled: bool = True):
         return cls(
             id=id or ObservationId.new(),
@@ -131,7 +131,7 @@ class HeadObservation:
             geometry=Point.from_dict(obj['geometry']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
-            data=[ObservationDataItem.from_dict(value) for value in obj['data']],
+            data=[HeadObservationDataItem.from_dict(value) for value in obj['data']],
             enabled=obj['enabled'] if 'enabled' in obj else True
         )
 
@@ -148,20 +148,35 @@ class HeadObservation:
             'enabled': self.enabled
         }
 
-    def get_data_items(self, start: StartDateTime, end: EndDateTime) -> List[ObservationDataItem]:
+    def get_data_items(self, start: StartDateTime, end: EndDateTime) -> List[HeadObservationDataItem]:
         return [value for value in self.data if start.to_datetime() <= value.date_time.to_datetime() <= end.to_datetime()]
 
     def as_geojson(self):
         return self.geometry.as_geojson()
 
+    def with_updated_id(self, id: ObservationId):
+        return dataclasses.replace(self, id=id)
+
+    def with_updated_type(self, type: ObservationType):
+        return dataclasses.replace(self, type=type)
+
     def with_updated_name(self, name: ObservationName):
         return dataclasses.replace(self, name=name)
+
+    def with_updated_tags(self, tags: ObservationTags):
+        return dataclasses.replace(self, tags=tags)
+
+    def with_updated_data(self, data: list[HeadObservationDataItem]):
+        return dataclasses.replace(self, data=data)
 
     def with_updated_geometry(self, geometry: Point):
         return dataclasses.replace(self, geometry=geometry)
 
-    def with_updated_id(self, id: ObservationId):
-        return dataclasses.replace(self, id=id)
+    def with_updated_affected_cells(self, affected_cells: ActiveCells):
+        return dataclasses.replace(self, affected_cells=affected_cells)
+
+    def with_updated_affected_layers(self, affected_layers: list[LayerId]):
+        return dataclasses.replace(self, affected_layers=affected_layers)
 
     def with_updated_enabled(self, enabled: bool):
         return dataclasses.replace(self, enabled=enabled)
