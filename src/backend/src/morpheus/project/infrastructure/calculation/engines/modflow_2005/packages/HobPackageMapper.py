@@ -2,7 +2,7 @@ import dataclasses
 
 from morpheus.common.types import Float
 from morpheus.project.types.Model import Model
-from morpheus.project.types.observations.Observation import HeadValue
+from morpheus.project.types.observations.HeadObservation import Head
 
 
 class TotalTime(Float):
@@ -12,7 +12,7 @@ class TotalTime(Float):
 @dataclasses.dataclass
 class HeadObservationTimeSeriesItem:
     total_time: TotalTime
-    head_value: HeadValue
+    head_value: Head
 
     def to_list(self) -> list[float]:
         return [self.total_time.to_value(), self.head_value.to_value()]
@@ -76,7 +76,7 @@ def calculate_observation_items(model: Model) -> HeadObservationData:
                         total_time=TotalTime.from_float(
                             time_discretization.get_total_time_from_date_time(data_item.date_time)
                         ),
-                        head_value=data_item.head_value
+                        head_value=data_item.head
                     ))
 
                     if len(time_series_data) == 0:

@@ -14,7 +14,7 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.H
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
 from morpheus.project.types.calculation.Calculation import Log, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
-from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
+from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, CalculationHeadObservation
 from morpheus.project.types.Model import Model
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
@@ -398,7 +398,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = np.round(data, precision)
         return data.tolist()
 
-    def read_head_observations(self) -> list[Observation]:
+    def read_head_observations(self) -> list[CalculationHeadObservation]:
         hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
         if hob_out_file is None:
             return []
@@ -415,11 +415,13 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 continue
 
             values = line.split()
-            observations.append(Observation(
-                simulated=float(values[0]),
-                observed=float(values[1]),
-                name=values[2],
-            ))
+            observations.append(
+                CalculationHeadObservation(
+                    simulated=float(values[0]),
+                    observed=float(values[1]),
+                    name=values[2],
+                )
+            )
 
         return observations
 

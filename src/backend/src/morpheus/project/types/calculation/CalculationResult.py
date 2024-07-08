@@ -3,10 +3,25 @@ from enum import StrEnum
 
 
 @dataclasses.dataclass(frozen=True)
-class Observation:
+class CalculationHeadObservation:
     name: str
     simulated: float
     observed: float
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(
+            name=obj['name'],
+            simulated=obj['simulated'],
+            observed=obj['observed'],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'name': self.name,
+            'simulated': self.simulated,
+            'observed': self.observed,
+        }
 
 
 @dataclasses.dataclass(frozen=True)

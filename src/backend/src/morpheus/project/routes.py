@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 from .incoming import authenticate
 from .presentation.api.read.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
 from .presentation.api.read.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
+from .presentation.api.read.ReadCalculationHeadObservationsRequestHandler import ReadCalculationHeadObservationsRequestHandler
 from .presentation.api.read.ReadCalculationResultsRequestHandler import ReadCalculationResultsRequestHandler
 from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
 from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
@@ -14,6 +15,7 @@ from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBo
 from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelCalculationDetailsRequestHandler import ReadModelCalculationDetailsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
+from .presentation.api.read.ReadModelObservationsRequestHandler import ReadModelHeadObservationsRequestHandler
 from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ReadModelLayerPropertyImageRequestHandler, ImageOutputFormat
 from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler, DataOutputFormat
 from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
@@ -33,6 +35,7 @@ from .types.boundaries.Boundary import BoundaryId
 from .types.calculation.Calculation import CalculationId
 from .types.calculation.CalculationProfile import CalculationProfileId
 from .types.layers.Layer import LayerPropertyName, LayerId
+from .types.observations.HeadObservation import ObservationId
 from ..common.presentation.api.middleware.schema_validation import validate_request
 
 
@@ -94,6 +97,12 @@ def register_routes(blueprint: Blueprint):
             layer_idx=layer_idx,
             incremental=incremental
         )
+
+    @blueprint.route('/<project_id>/calculations/<calculation_id>/head-observations', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_calculation_head_observations(project_id: str, calculation_id: str):
+        return ReadCalculationHeadObservationsRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id))
 
     @blueprint.route('/<project_id>/model/calculation-profile', methods=['GET'])
     @blueprint.route('/<project_id>/calculation-profiles/selected', methods=['GET'])
@@ -210,6 +219,13 @@ def register_routes(blueprint: Blueprint):
             boundary_id=BoundaryId.from_str(boundary_id),
             format=output_format
         )
+
+    @blueprint.route('/<project_id>/model/head-observations', methods=['GET'])
+    @blueprint.route('/<project_id>/model/head-observations/<head_observation_id>', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_model_head_observations(project_id: str, head_observation_id: str | None = None):
+        return ReadModelHeadObservationsRequestHandler().handle(project_id=ProjectId.from_str(project_id), head_observation_id=ObservationId.try_from_str(head_observation_id))
 
     @blueprint.route('/<project_id>/privileges', methods=['GET'])
     @cross_origin()

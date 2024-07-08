@@ -1,4 +1,4 @@
-from . import GeneralModelEvents, ModelBoundaryEvents, ModelDiscretizationEvents, ModelLayerEvents
+from . import GeneralModelEvents, ModelBoundaryEvents, ModelObservationEvents, ModelDiscretizationEvents, ModelLayerEvents
 
 general_model_event_list = [
     GeneralModelEvents.ModelCreatedEvent,
@@ -45,6 +45,15 @@ model_layer_event_list = [
     ModelLayerEvents.ModelLayerPropertyUpdatedEvent,
 ]
 
+model_observation_event_list = [
+    ModelObservationEvents.ModelObservationAddedEvent,
+    ModelObservationEvents.ModelObservationClonedEvent,
+    ModelObservationEvents.ModelObservationDisabledEvent,
+    ModelObservationEvents.ModelObservationEnabledEvent,
+    ModelObservationEvents.ModelObservationRemovedEvent,
+    ModelObservationEvents.ModelObservationUpdatedEvent,
+]
+
 
 def get_model_event_list():
-    return general_model_event_list + model_boundary_event_list + model_discretization_event_list + model_layer_event_list
+    return general_model_event_list + model_boundary_event_list + model_discretization_event_list + model_layer_event_list + model_observation_event_list

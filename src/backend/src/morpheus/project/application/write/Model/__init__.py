@@ -1,17 +1,22 @@
 from .AddModelBoundary import AddModelBoundaryCommand, AddModelBoundaryCommandHandler
 from .AddModelBoundaryObservation import AddModelBoundaryObservationCommand, AddModelBoundaryObservationCommandHandler
+from .AddModelObservation import AddModelObservationCommand, AddModelObservationCommandHandler
 from .CloneModelBoundary import CloneModelBoundaryCommand, CloneModelBoundaryCommandHandler
 from .CloneModelBoundaryObservation import CloneModelBoundaryObservationCommand, CloneModelBoundaryObservationCommandHandler
 from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
+from .CloneModelObservation import CloneModelObservationCommand, CloneModelObservationCommandHandler
 from .CreateModel import CreateModelCommand, CreateModelCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
 from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
 from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
 from .DisableModelBoundary import DisableModelBoundaryCommandHandler, DisableModelBoundaryCommand
+from .DisableModelObservation import DisableModelObservationCommand, DisableModelObservationCommandHandler
 from .EnableModelBoundary import EnableModelBoundaryCommand, EnableModelBoundaryCommandHandler
+from .EnableModelObservation import EnableModelObservationCommand, EnableModelObservationCommandHandler
 from .RemoveModelBoundary import RemoveModelBoundaryCommand, RemoveModelBoundaryCommandHandler
 from .RemoveModelBoundaryObservation import RemoveModelBoundaryObservationCommandHandler, RemoveModelBoundaryObservationCommand
+from .RemoveModelObservation import RemoveModelObservationCommand, RemoveModelObservationCommandHandler
 from .UpdateModelBoundaryAffectedCells import UpdateModelBoundaryAffectedCellsCommand, UpdateModelBoundaryAffectedCellsCommandHandler
 from .UpdateModelBoundaryAffectedLayers import UpdateModelBoundaryAffectedLayersCommandHandler, UpdateModelBoundaryAffectedLayersCommand
 from .UpdateModelBoundaryGeometry import UpdateModelBoundaryGeometryCommandHandler, UpdateModelBoundaryGeometryCommand
@@ -33,8 +38,10 @@ from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand,
 model_command_handler_map = {
     AddModelBoundaryCommand: AddModelBoundaryCommandHandler,
     AddModelBoundaryObservationCommand: AddModelBoundaryObservationCommandHandler,
+    AddModelObservationCommand: AddModelObservationCommandHandler,
     CloneModelBoundaryCommand: CloneModelBoundaryCommandHandler,
     CloneModelBoundaryObservationCommand: CloneModelBoundaryObservationCommandHandler,
+    CloneModelObservationCommand: CloneModelObservationCommandHandler,
     CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelCommand: CreateModelCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,
@@ -42,9 +49,12 @@ model_command_handler_map = {
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,
     DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
     DisableModelBoundaryCommand: DisableModelBoundaryCommandHandler,
+    DisableModelObservationCommand: DisableModelObservationCommandHandler,
     EnableModelBoundaryCommand: EnableModelBoundaryCommandHandler,
+    EnableModelObservationCommand: EnableModelObservationCommandHandler,
     RemoveModelBoundaryCommand: RemoveModelBoundaryCommandHandler,
     RemoveModelBoundaryObservationCommand: RemoveModelBoundaryObservationCommandHandler,
+    RemoveModelObservationCommand: RemoveModelObservationCommandHandler,
     UpdateModelAffectedCellsCommand: UpdateModelAffectedCellsCommandHandler,
     UpdateModelBoundaryAffectedCellsCommand: UpdateModelBoundaryAffectedCellsCommandHandler,
     UpdateModelBoundaryAffectedLayersCommand: UpdateModelBoundaryAffectedLayersCommandHandler,

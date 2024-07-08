@@ -5,9 +5,8 @@ from scipy.interpolate import interp1d
 from morpheus.common.types import Float
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
 
-from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, StartDateTime, EndDateTime, RawDataItem, Observation
+from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, ObservationName, StartDateTime, EndDateTime, RawDataItem, Observation
 from morpheus.project.types.geometry import Point
-from morpheus.project.types.observations.Observation import ObservationName
 
 
 class HeadValue(Float):
