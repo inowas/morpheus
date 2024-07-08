@@ -1,12 +1,13 @@
+import React, {useEffect, useState} from 'react';
+
+import {Form, Icon, Label, Popup, DropdownItemProps} from 'semantic-ui-react';
 import {Button, DataRow, DropdownComponent} from 'common/components';
 
-import React, {useEffect, useState} from 'react';
-import {Form, Icon, Label, Popup} from 'semantic-ui-react';
+import isEqual from 'lodash.isequal';
+import {boundarySettings, hasMultipleAffectedLayers} from '../helpers';
+
 import {IBoundary, IBoundaryId, IInterpolationType} from '../../../../types/Boundaries.type';
 import {ILayerId} from '../../../../types/Layers.type';
-import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
-import isEqual from 'lodash.isequal';
-import {canHaveMultipleAffectedLayers} from '../../ModelBoundaries/helpers';
 
 
 interface IProps {
@@ -62,6 +63,8 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
     setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
   }, [boundary]);
 
+  const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
+
   return (
     <Form>
       <DataRow>
@@ -81,16 +84,16 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
 
           <DropdownComponent.Dropdown
             disabled={isReadOnly}
-            name="selectedLayer"
-            multiple={canHaveMultipleAffectedLayers(boundaryLocal)}
+            name={'selectedLayer'}
+            multiple={hasMultipleAffectedLayers(boundaryLocal.type)}
             selection={true}
-            value={canHaveMultipleAffectedLayers(boundaryLocal) ? boundaryLocal.affected_layers : boundaryLocal.affected_layers[0]}
+            value={hasMultipleAffectedLayers(boundaryLocal.type) ? boundaryLocal.affected_layers : boundaryLocal.affected_layers[0]}
             options={layers.map((layer) => ({
               key: layer.layer_id,
               text: layer.name,
               value: layer.layer_id,
             }))}
-            onChange={(event, {value}) => {
+            onChange={(_, {value}) => {
               if (!value) {
                 return;
               }
@@ -118,11 +121,8 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             allowAdditions={true}
             fluid={true}
             multiple={true}
-            onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
-            onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
-              console.log(data.value);
-              setBoundaryLocal({...boundaryLocal, tags: data.value as string[]});
-            }}
+            onAddItem={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
+            onChange={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})}
             options={tagOptions}
             search={true}
             selection={true}
@@ -140,20 +140,19 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             />
             Interpolation Type
           </Label>
-          <DropdownComponent.Dropdown
-            disabled={true}
-            fluid={true}
-            options={[
-              {key: 'none', text: 'None', value: 'none'},
-              {key: 'nearest', text: 'Nearest', value: 'nearest'},
-              {key: 'linear', text: 'Linear', value: 'linear'},
-              {key: 'backward_fill', text: 'Backward Fill', value: 'backward_fill'},
-              {key: 'forward_fill', text: 'Forward Fill', value: 'forward_fill'},
-            ]}
-            selection={true}
-            value={boundaryLocal.interpolation}
-            onChange={(event, {value}) => setBoundaryLocal({...boundaryLocal, interpolation: value as IInterpolationType})}
-          />
+
+          {isTimeSeriesDependent && (
+            <DropdownComponent.Dropdown
+              fluid={true}
+              options={[
+                {key: 'forward_fill', text: 'Forward Fill', value: 'forward_fill'},
+                {key: 'nearest', text: 'Nearest', value: 'nearest'},
+                {key: 'linear', text: 'Linear', value: 'linear'},
+              ]}
+              selection={true}
+              value={boundaryLocal.interpolation}
+              onChange={(_, {value}) => setBoundaryLocal({...boundaryLocal, interpolation: value as IInterpolationType})}
+            />)}
         </Form.Field>
         {!isReadOnly && (
           <Form.Field>

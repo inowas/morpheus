@@ -1,129 +1,113 @@
 import React, {useMemo, useState} from 'react';
-import {Feature, Polygon, FeatureCollection} from 'geojson';
-import {Polygon as LeafletPolygon, FeatureGroup, useMap, useMapEvents, Pane} from 'common/infrastructure/React-Leaflet';
-import * as turf from '@turf/turf';
-import {GridLayerOptions} from 'leaflet';
+import {Feature, Polygon} from 'geojson';
+import {GridLayerOptions, LatLngBoundsExpression} from 'leaflet';
+import {bbox} from '@turf/turf';
+import {ContinuousLegend} from '../Legend';
+import CanvasDataLayer from './CanvasDataLayer';
 import {ISelection} from '../types';
+import SelectedRowAndColLayer from '../SelectedRowAndColLayer';
+import HoverDataLayer from '../HoverDataLayer';
 
 interface IProps {
+  title?: string;
   data: number[][];
+  minValue: number;
+  maxValue: number;
   rotation: number;
-  outline: Feature<Polygon>;
-  getRgbColor: (value: number) => string;
+  outline: Feature<Polygon>
+  getRgbColor: (value: number, minVal: number, maxVal: number) => string;
+  onHover?: (selection: ISelection | null) => void;
+  onClick?: (selection: ISelection | null) => void;
   options?: GridLayerOptions;
+  selectRowsAndCols?: boolean;
 }
 
-interface IFeatureProperties {
-  value: number;
-  col: number;
-  row: number;
-  color: string;
-}
+const DataLayer = ({title, data, rotation, outline, getRgbColor, minValue, maxValue, options, onHover, onClick, selectRowsAndCols = true}: IProps) => {
 
-const DataLayer = ({data, rotation, outline, getRgbColor, options}: IProps) => {
+  const [selection, setSelection] = useState<ISelection | null>(null);
+  const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
-  const map = useMap();
-  const [factor, setFactor] = useState(1);
+  const handleHover = (selected: ISelection | null) => {
+    setHoveredValue(selected?.value === undefined ? null : selected.value);
+    if (onHover) {
+      onHover(selected);
+    }
+  };
 
-  useMapEvents({
-    zoomend: () => {
+  const handleClick = (selected: ISelection | null) => {
+    setSelection(selected);
+    if (onClick) {
+      onClick(selected);
+    }
+  };
 
-      const bounds = map.getBounds();
-      const southWest = bounds.getSouthWest();
-      const northEast = bounds.getNorthEast();
-
-      const xMin = southWest.lng;
-      const yMin = southWest.lat;
-      const xMax = northEast.lng;
-      const yMax = northEast.lat;
-      const mapWidth = xMax - xMin;
-      const mapHeight = yMax - yMin;
-
-      const modelBbox = turf.bbox(outline);
-      const modelWidth = modelBbox[2] - modelBbox[0];
-      const modelHeight = modelBbox[3] - modelBbox[1];
-
-      const widthFactor = mapWidth / modelWidth;
-      const heightFactor = mapHeight / modelHeight;
-
-      // here we should calculate the factor based on the width and height of the map
-      // the viewport in pixels and the width and height of the model
-    },
-  });
-
-  const polygons = useMemo(() => {
-    const nCols = data[0].length;
-    const nRows = data.length;
-
-    const polygon = turf.polygon(outline.geometry.coordinates);
-    const centerOfPolygon = turf.centerOfMass(polygon);
-    const rotatedPolygonBbox = turf.bbox(turf.transformRotate(polygon, rotation, {pivot: centerOfPolygon.geometry.coordinates}));
-    const [xMin, , , yMax] = rotatedPolygonBbox;
-
-    const width = rotatedPolygonBbox[2] - rotatedPolygonBbox[0];
-    const height = rotatedPolygonBbox[3] - rotatedPolygonBbox[1];
-    const cellWidth = width / nCols;
-    const cellHeight = height / nRows;
-
-    const featureCollection: FeatureCollection<Polygon, IFeatureProperties> = {
-      type: 'FeatureCollection',
-      features: [],
-    };
-
-    // render less cells for performance reasons
-    // depending on the scaling factor
-    // as we want to render maximum 1000 cells we need to calculate the factor
-    // we need to determine the viewports width and height on the map
-    // and divide it by the cell width and height
-    for (let row = 0; row < nRows; row++) {
-      for (let col = 0; col < nCols; col++) {
-
-        const value = data[row][col];
-        const color = getRgbColor(value);
-        if (null === value) {
-          continue;
-        }
-        const x1 = col * cellWidth;
-        const y1 = row * cellHeight;
-        const x2 = (col + 1) * cellWidth;
-        const y2 = (row + 1) * cellHeight;
-
-        const cellPolygon = turf.polygon([[
-          [xMin + x1, yMax - y1],
-          [xMin + x2, yMax - y1],
-          [xMin + x2, yMax - y2],
-          [xMin + x1, yMax - y2],
-          [xMin + x1, yMax - y1],
-        ]]);
-
-        cellPolygon.properties = {value, col, row, color};
-        featureCollection.features.push(cellPolygon as Feature<Polygon, IFeatureProperties>);
-      }
+  const bounds: LatLngBoundsExpression | null = useMemo(() => {
+    if (!outline) {
+      return null;
     }
 
-    return turf.transformRotate(featureCollection, -rotation, {mutate: true, pivot: centerOfPolygon.geometry.coordinates});
-  }, [data, rotation, outline, getRgbColor]);
+    const boundingBox = bbox(outline);
+    return [[boundingBox[1], boundingBox[0]], [boundingBox[3], boundingBox[2]]];
+  }, [outline]);
+
+  const minMaxValue = useMemo(() => {
+    let min = minValue;
+    let max = maxValue;
+
+    if (min == max) {
+      min = 0;
+      max = max * 2;
+    }
+
+    if (min === max && 0 === max) {
+      min = -1;
+      max = 1;
+    }
+
+    min = min - (max - min) * 0.1;
+    max = max + (max - min) * 0.1;
+
+    return {min, max};
+  }, [minValue, maxValue]);
+
+  if (!bounds) {
+    return null;
+  }
 
   return (
-    <Pane name={'data-layer'} style={{zIndex: 400}}>
-      <FeatureGroup>
-        {polygons.features.map((feature) => {
-          const {color, row, col} = feature.properties;
-          return (
-            <LeafletPolygon
-              key={`factor-${factor}-row-${row}-col-${col}-color-${color}`}
-              positions={feature.geometry.coordinates[0].map((coords) => [coords[1], coords[0]])}
-              color={'transparent'}
-              fillOpacity={options?.opacity || 1}
-              fillColor={color || 'transparent'}
-              weight={0}
-            />
-          );
-        })}
-      </FeatureGroup>
-    </Pane>
+    <>
+      <CanvasDataLayer
+        data={data}
+        rotation={rotation}
+        outline={outline}
+        getRgbColor={(value: number) => getRgbColor(value, minMaxValue.min, minMaxValue.max)}
+        options={options}
+      />
+      {selection && selectRowsAndCols && <SelectedRowAndColLayer
+        nRows={data.length}
+        nCols={data[0].length}
+        selectedRow={selection.row}
+        selectedCol={selection.col}
+        outline={outline}
+        rotation={rotation}
+      />}
+      <HoverDataLayer
+        data={data}
+        rotation={rotation}
+        outline={outline}
+        onHover={handleHover}
+        onClick={handleClick}
+      />
+      <ContinuousLegend
+        title={title}
+        direction={'horizontal'}
+        value={hoveredValue}
+        minValue={minMaxValue.min}
+        maxValue={minMaxValue.max}
+        getRgbColor={getRgbColor}
+      />
+    </>
   );
 };
 
 export default DataLayer;
-export type {ISelection};

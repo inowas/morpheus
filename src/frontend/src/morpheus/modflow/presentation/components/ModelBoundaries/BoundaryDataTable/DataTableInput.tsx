@@ -21,11 +21,6 @@ const DataTableInput = ({value, isReadOnly, onChange, isDisabled}: IProps) => {
     return value.replace(/[^0-9-.]/g, '');
   };
 
-  const isScientificNotation = (inputValue: string) => {
-    // Regular expression to match scientific notation format
-    return /^-?\d+(\.\d+)?([eE][-+]?\d+)?$/.test(inputValue);
-  };
-
   const handleBlur = () => {
     const sanitized = sanitizeValue(valueLocal);
     setValueLocal(sanitized);
@@ -38,7 +33,7 @@ const DataTableInput = ({value, isReadOnly, onChange, isDisabled}: IProps) => {
       size={'small'}
       type="text"
       value={valueLocal}
-      onChange={(_, {value}) => setValueLocal(value)}
+      onChange={(_, {value: v}) => setValueLocal(v)}
       onBlur={handleBlur}
       readOnly={isReadOnly}
       disabled={isDisabled}

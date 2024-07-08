@@ -5,32 +5,31 @@ import {DataGrid} from 'common/components/DataGrid';
 import styles from './TimeDiscretizationGeneralParameters.module.less';
 import {ITimeDiscretization, ITimeUnit} from '../../../../types';
 import {useDateTimeFormat} from 'common/hooks';
+import DateInput from '../FormInput/DateInput';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
   onChange: (data: ITimeDiscretization) => void;
   timeZone?: string;
-  readOnly: boolean;
+  isReadOnly: boolean;
 }
 
-const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange, timeZone, readOnly}) => {
+const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretization, onChange, timeZone, isReadOnly}) => {
 
-  const {isValid, formatISO, getUnixTimestamp, formatISODate} = useDateTimeFormat(timeZone);
+  const {isValid, getUnixTimestamp, formatISODate, parseDate} = useDateTimeFormat(timeZone);
 
   const handleChangeStartDateTime = (value: string) => {
-    const dateValue = formatISO(value);
-    if (!isValid(dateValue)) {
+    if (!isValid(value)) {
       return;
     }
-    onChange({...timeDiscretization, start_date_time: dateValue});
+    onChange({...timeDiscretization, start_date_time: value});
   };
 
   const handleChangeEndDateTime = (value: string) => {
-    const dateValue = formatISO(value);
-    if (!isValid(dateValue)) {
+    if (!isValid(value)) {
       return;
     }
-    onChange({...timeDiscretization, end_date_time: dateValue});
+    onChange({...timeDiscretization, end_date_time: value});
   };
 
   const handleChangeTimeUnit = (value: ITimeUnit) => {
@@ -74,15 +73,13 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
             Start Date
           </label>
           <div className={'divider'}>
-            <Form.Input
-              disabled={true}
-              className={styles.inputField}
-              type="date"
-              name={'startDate'}
+            <DateInput
               value={formatISODate(timeDiscretization.start_date_time)}
-              onChange={(_, {value}) => handleChangeStartDateTime(value)}
+              onChange={(value) => handleChangeStartDateTime(parseDate(value))}
+              isReadOnly={isReadOnly}
+              isValid={(value) => isValid(parseDate(value))}
+              isDisabled={true}
             />
-            <Icon className={'dateIcon'} name="calendar outline"/>
           </div>
         </Form.Field>
         <Form.Field className={'dateInputWrapper'}>
@@ -91,15 +88,12 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
             End Date
           </label>
           <div className={'divider'}>
-            <Form.Input
-              className={styles.inputField}
-              type="date"
-              name={'endDate'}
+            <DateInput
               value={formatISODate(timeDiscretization.end_date_time)}
-              onChange={(_, {value}) => handleChangeEndDateTime(value)}
-              disabled={readOnly}
+              onChange={(value) => handleChangeEndDateTime(parseDate(value))}
+              isReadOnly={isReadOnly}
+              isValid={(value) => isValid(parseDate(value))}
             />
-            <Icon className={'dateIcon'} name="calendar outline"/>
           </div>
         </Form.Field>
         <Form.Field>

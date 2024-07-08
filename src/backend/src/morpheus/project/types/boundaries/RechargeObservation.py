@@ -111,6 +111,39 @@ class RechargeObservation(Observation):
                     )
             return None
 
+        # Forward fill interpolation
+        # if this is set, we are expecting that the start_date_time is present in the time series
+        # if the start_date_time is not present, we are using the last known value
+        if interpolation == InterpolationType.forward_fill:
+            sorted_data = sorted(self.data, key=lambda x: x.date_time)
+            if len(sorted_data) == 0:
+                return None
+
+            last_known_value = sorted_data[0]
+            for i, item in enumerate(self.data):
+                if item.date_time < start_date_time:
+                    last_known_value = item
+
+                if item.date_time == start_date_time:
+                    return RechargeDataItem(
+                        observation_id=self.observation_id,
+                        start_date_time=start_date_time,
+                        end_date_time=end_date_time,
+                        recharge_rate=item.recharge_rate
+                    )
+
+                # do not process any further if the item is after the start_date_time
+                if item.date_time > start_date_time:
+                    break
+
+            # return the last known value if the start_date_time is not present in the time series
+            return RechargeDataItem(
+                observation_id=self.observation_id,
+                start_date_time=start_date_time,
+                end_date_time=end_date_time,
+                recharge_rate=last_known_value.recharge_rate
+            )
+
         # In range check
         if end_date_time.to_datetime() < self.data[0].date_time.to_datetime():
             return None
@@ -127,23 +160,6 @@ class RechargeObservation(Observation):
             freq = '1H'
 
         date_range = pd.date_range(start_date_time.to_datetime(), end_date_time.to_datetime(), freq=freq)
-
-        # Forward fill or backward fill interpolation
-        # We need to fill the missing values with the last known value
-        if interpolation == InterpolationType.forward_fill:
-            df = pd.DataFrame({'time_series': time_series, 'recharge_rates': recharge_rates})
-            df = df.set_index('time_series')
-            df = df.reindex(date_range, method='ffill')
-
-            target_date_time = pd.to_datetime(start_date_time.to_value())
-            recharge_at_start_date_time = df.loc[target_date_time, 'recharge_rates']
-
-            return RechargeDataItem(
-                observation_id=self.observation_id,
-                start_date_time=start_date_time,
-                end_date_time=end_date_time,
-                recharge_rate=RechargeRate.from_value(recharge_at_start_date_time)
-            )
 
         # Linear or nearest interpolation
         pumping_rates_interpolator = interp1d(

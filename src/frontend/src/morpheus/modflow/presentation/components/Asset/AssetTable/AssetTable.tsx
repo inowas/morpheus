@@ -144,7 +144,6 @@ const AssetTable = ({
               onClick={(e) => {
                 e.stopPropagation();
                 deleteAsset(asset.asset_id);
-                console.log(asset.asset_id, ' from delete');
               }}
             >
               Delete
@@ -154,7 +153,6 @@ const AssetTable = ({
               className='buttonLink'
               onClick={(e) => {
                 e.stopPropagation();
-                console.log(asset.asset_id, ' from download');
               }}
             >
               Download
