@@ -13,35 +13,35 @@ interface IProps {
   isReadOnly: boolean;
   onStartCalculation: () => void;
   onNavigateToResults: () => void;
-  onFetchFile: (file: string) => Promise<string | undefined>;
+  onFetchFileContent: (file: string) => Promise<string | undefined>;
   isLoading: boolean;
 }
 
-const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onNavigateToResults, onFetchFile, isLoading}: IProps) => {
+const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onNavigateToResults, onFetchFileContent, isLoading}: IProps) => {
 
 
   const getPanes = () => {
-    const defaultPanes = [
-      {
-        menuItem: {
-          key: 'calculation',
-          content: <span>Modflow Calculation</span>,
-        },
+    const defaultPanes = [{
+      menuItem: {
+        key: 'calculation',
+        content: <span>Modflow Calculation</span>,
       },
-      {
-        menuItem: 'Calculation Status',
-        render: () => <TabPane>
-          <CalculationState
-            isReadOnly={isReadOnly}
-            calculation={calculation}
-            onStartCalculation={onStartCalculation}
-            onNavigateToResults={onNavigateToResults}
-          />
-        </TabPane>,
-      }];
+    }, {
+      menuItem: 'Calculation Status',
+      render: () => <TabPane>
+        <CalculationState
+          isReadOnly={isReadOnly}
+          calculation={calculation}
+          onStartCalculation={onStartCalculation}
+          onNavigateToResults={onNavigateToResults}
+        />
+      </TabPane>,
+    }];
+
     if (!calculation) {
       return defaultPanes;
     }
+
 
     return [...defaultPanes, ...[
       {
@@ -66,7 +66,7 @@ const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onN
       {
         menuItem: 'Calculation Files',
         render: () => <TabPane>
-          {calculation?.result && <CalculationFiles files={calculation?.result?.files} fetchFile={onFetchFile}/>}
+          {calculation?.result && <CalculationFiles files={calculation?.result?.files} fetchFile={onFetchFileContent}/>}
         </TabPane>,
       },
     ]];

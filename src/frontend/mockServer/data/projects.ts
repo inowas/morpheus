@@ -97,9 +97,7 @@ const generateRandomProject = (counter: number, user: IUser): IProject => {
           n_cols: 10,
           n_rows: 10,
           col_widths: new Array(10).fill(10),
-          total_width: 1000,
           row_heights: new Array(10).fill(10),
-          total_height: 1000,
           origin: {
             type: 'Point',
             coordinates: [13.737521, 51.05702],

@@ -192,8 +192,8 @@ definitions:
         command_name:
           type: string
           enum:
-            - clone_observation_command
-          example: clone_observation_command
+            - clone_model_observation_command
+          example: clone_model_observation_command
         payload:
           type: object
           properties:

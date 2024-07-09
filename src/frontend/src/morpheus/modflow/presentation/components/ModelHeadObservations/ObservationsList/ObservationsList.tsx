@@ -59,7 +59,16 @@ const ObservationsList = ({
               {/*// Title open and close observations list*/}
               <div className={`${styles.titleInner}`} onClick={() => onSelect(observation.id)}>
                 {editObservationName !== observation.id &&
-                  <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
+                  <div
+                    style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}
+                    onDoubleClick={() => {
+                      if (isReadOnly) {
+                        return;
+                      }
+                      setEditObservationName(observation.id);
+                      setInputValue(observation.name);
+                    }}
+                  >
                     {observation.name}
                   </div>}
                 {editObservationName === observation.id && (
@@ -69,8 +78,27 @@ const ObservationsList = ({
                       value={inputValue}
                       placeholder={observation.name}
                       onChange={(e) => {
-                        const newTitle = e.target.value;
+                        const newTitle = e.target.value.trim();
+                        if (8 < newTitle.length) {
+                          return;
+                        }
                         setInputValue(newTitle);
+                      }}
+                      onBlur={async () => {
+                        if (isReadOnly) {
+                          return;
+                        }
+                        const sanitizedValue = inputValue
+                          .trim()
+                          .replace(/\s+/g, '_')
+                          .replace(/[^a-zA-Z0-9._-]/g, '');
+
+                        if (!sanitizedValue) {
+                          return setEditObservationName(null);
+                        }
+                        await onChange({...observation, name: sanitizedValue});
+                        setInputValue('');
+                        setEditObservationName(null);
                       }}
                     />
                     <button onClick={async () => {

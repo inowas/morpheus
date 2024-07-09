@@ -57,7 +57,6 @@ class HeadObservationData:
 def calculate_observation_items(model: Model) -> HeadObservationData:
     layers = model.layers
     time_discretization = model.time_discretization
-
     layer_ids = [layer.layer_id for layer in layers]
 
     head_observation_data = HeadObservationData.new()
@@ -73,9 +72,7 @@ def calculate_observation_items(model: Model) -> HeadObservationData:
                 time_series_data = []
                 for data_item in data_items:
                     time_series_data.append(HeadObservationTimeSeriesItem(
-                        total_time=TotalTime.from_float(
-                            time_discretization.get_total_time_from_date_time(data_item.date_time)
-                        ),
+                        total_time=TotalTime.from_float(time_discretization.get_total_time_from_date_time(data_item.date_time)),
                         head_value=data_item.head
                     ))
 

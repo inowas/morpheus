@@ -1,26 +1,40 @@
 import React from 'react';
-import {Feature, Polygon} from 'geojson';
+import {Point, Polygon} from 'geojson';
 import {Polygon as LeafletPolygon, FeatureGroup, useMapEvents} from 'common/infrastructure/React-Leaflet';
 import * as turf from '@turf/turf';
 import {LatLng} from 'leaflet';
-import {ISelection} from '../types';
 
-interface IProps {
-  data: number[][];
-  rotation: number;
-  outline: Feature<Polygon>;
-  onHover?: (selection: ISelection | null) => void;
-  onClick?: (selection: ISelection | null) => void;
+interface IDataPoint {
+  col: number;
+  row: number;
+  point: Point;
 }
 
-const HoverDataLayer = ({data, rotation, outline, onHover, onClick}: IProps) => {
+interface IProps {
+  nCols: number;
+  nRows: number;
+  colWidths?: number[];
+  rowHeights?: number[];
+  rotation: number;
+  outline: Polygon;
+  onHover?: (dataPoint: IDataPoint | null) => void;
+  onClick?: (dataPoint: IDataPoint | null) => void;
+}
 
-  const getSelection = (latlng: LatLng): ISelection | null => {
-    const nCols = data[0].length;
-    const nRows = data.length;
+const HoverDataLayer = ({nCols, nRows, colWidths, rowHeights, rotation, outline, onHover, onClick}: IProps) => {
+
+  const getSelection = (latlng: LatLng): IDataPoint | null => {
+
+    colWidths = colWidths || new Array(nCols).fill(1);
+    const totalWidth = colWidths.reduce((acc, w) => acc + w, 0);
+    colWidths = colWidths.map((w) => w / totalWidth);
+
+    rowHeights = rowHeights || new Array(nRows).fill(1);
+    const totalHeight = rowHeights.reduce((acc, h) => acc + h, 0);
+    rowHeights = rowHeights.map((h) => h / totalHeight);
 
     const point = turf.point([latlng.lng, latlng.lat]);
-    const polygon = turf.polygon(outline.geometry.coordinates);
+    const polygon = turf.polygon(outline.coordinates);
     const centerOfPolygon = turf.centerOfMass(polygon);
 
     if (!turf.inside(point, polygon)) {
@@ -30,18 +44,34 @@ const HoverDataLayer = ({data, rotation, outline, onHover, onClick}: IProps) => 
     const rotatedPolygonBbox = turf.bbox(turf.transformRotate(polygon, rotation, {pivot: centerOfPolygon.geometry.coordinates}));
     const rotatedPoint = turf.transformRotate(point, rotation, {pivot: centerOfPolygon.geometry.coordinates});
 
-    const x = (rotatedPoint.geometry.coordinates[0] - rotatedPolygonBbox[0]) / (rotatedPolygonBbox[2] - rotatedPolygonBbox[0]);
-    const y = (rotatedPolygonBbox[3] - rotatedPoint.geometry.coordinates[1]) / (rotatedPolygonBbox[3] - rotatedPolygonBbox[1]);
+    const relativeDistanceX = (rotatedPoint.geometry.coordinates[0] - rotatedPolygonBbox[0]) / (rotatedPolygonBbox[2] - rotatedPolygonBbox[0]);
+    const relativeDistanceY = (rotatedPolygonBbox[3] - rotatedPoint.geometry.coordinates[1]) / (rotatedPolygonBbox[3] - rotatedPolygonBbox[1]);
 
-    if (0 > x || 1 < x || 0 > y || 1 < y) {
+    if (0 > relativeDistanceX || 1 < relativeDistanceX || 0 > relativeDistanceY || 1 < relativeDistanceY) {
       return null;
     }
 
-    const col = Math.floor(x * nCols);
-    const row = Math.floor(y * nRows);
+    let col = 0;
+    let colSum = 0;
+    for (let i = 0; i < nCols; i++) {
+      colSum += colWidths[i];
+      if (relativeDistanceX <= colSum) {
+        col = i;
+        break;
+      }
+    }
 
-    const value = data[row][col];
-    return {col, row, value};
+    let row = 0;
+    let rowSum = 0;
+    for (let i = 0; i < nRows; i++) {
+      rowSum += rowHeights[i];
+      if (relativeDistanceY <= rowSum) {
+        row = i;
+        break;
+      }
+    }
+
+    return {col, row, point: point.geometry};
   };
 
   useMapEvents({
@@ -72,7 +102,7 @@ const HoverDataLayer = ({data, rotation, outline, onHover, onClick}: IProps) => 
     <FeatureGroup>
       <LeafletPolygon
         key={JSON.stringify(outline)}
-        positions={outline.geometry.coordinates[0].map((c) => [c[1], c[0]])}
+        positions={outline.coordinates[0].map((c) => [c[1], c[0]])}
         fill={false}
         weight={0}
         opacity={0}
@@ -83,4 +113,4 @@ const HoverDataLayer = ({data, rotation, outline, onHover, onClick}: IProps) => 
 };
 
 export default HoverDataLayer;
-export type {ISelection};
+export type {IDataPoint};

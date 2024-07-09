@@ -2,11 +2,10 @@ import React, {useEffect, useState} from 'react';
 
 import {IBoundary, IBoundaryId, IBoundaryType, IInterpolationType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import BoundaryList from './BoundaryList';
-import {Grid, InfoTitle, Tab} from 'common/components';
+import {Grid, InfoTitle, Tab, TimeSeriesDataChart} from 'common/components';
 import {MenuItem, TabPane} from 'semantic-ui-react';
 
 import BoundariesForm from './BoundaryForm';
-import BoundaryDataChart from './BoundaryDataChart';
 import BoundaryDataTable from './BoundaryDataTable';
 
 import {ILayer, ILayerId} from '../../../types/Layers.type';
@@ -15,6 +14,7 @@ import {ITimeDiscretization} from '../../../types';
 interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
+  formatDateTime: (value: string) => string;
   boundaryType: IBoundaryType;
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
@@ -35,6 +35,7 @@ interface IProps {
 const BoundariesAccordionPane = ({
   boundaryType,
   boundaries,
+  formatDateTime,
   layers,
   selectedBoundaryAndObservation,
   onSelectBoundaryAndObservation,
@@ -150,7 +151,12 @@ const BoundariesAccordionPane = ({
             {
               menuItem: <MenuItem key='Chart'>Chart</MenuItem>,
               render: () => <TabPane attached={false}>
-                <BoundaryDataChart observation={selectedBoundaryObservation} timeDiscretization={timeDiscretization}/>
+                <TimeSeriesDataChart
+                  data={selectedBoundaryObservation.data}
+                  dateTimes={[...timeDiscretization.stress_periods.map((sp) => sp.start_date_time), timeDiscretization.end_date_time]}
+                  formatDateTime={formatDateTime}
+                  type={'forward_fill'}
+                />
               </TabPane>,
             },
           ]}

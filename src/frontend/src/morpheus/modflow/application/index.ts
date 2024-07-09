@@ -1,7 +1,6 @@
 import useAssets, {IAssetId} from './useAssets';
-import useCalculation from './useCalculation';
-import useCalculationData from './useCalculationData';
-import useHeadObservations from './useHeadObservations';
+import useCalculationResults from './useCalculationResults';
+import useObservations from './useObservations';
 import useModel from './useModel';
 import useModelSetup from './useModelSetup';
 import useProject from './useProject';
@@ -16,9 +15,8 @@ import useTranslate from './useTranslate';
 
 export {
   useAssets,
-  useCalculation,
-  useCalculationData,
-  useHeadObservations,
+  useCalculationResults,
+  useObservations,
   useModel,
   useModelSetup,
   useProject,

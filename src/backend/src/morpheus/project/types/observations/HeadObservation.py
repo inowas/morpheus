@@ -107,7 +107,9 @@ class HeadObservation:
         return self.to_dict() == other.to_dict()
 
     @classmethod
-    def from_geometry(cls, name: ObservationName, tags: ObservationTags, geometry: Point, grid: Grid, affected_layers: list[LayerId], data: list[HeadObservationDataItem] | None = None,
+    def from_geometry(cls, name: ObservationName, geometry: Point, grid: Grid, affected_layers: list[LayerId],
+                      tags: ObservationTags = ObservationTags.empty(),
+                      data: list[HeadObservationDataItem] | None = None,
                       id: ObservationId | None = None, enabled: bool = True):
         return cls(
             id=id or ObservationId.new(),

@@ -48,7 +48,9 @@ const useModel = (projectId: string | undefined): IUseModel => {
       }
     };
 
-    fetch();
+    if (!model) {
+      fetch();
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);

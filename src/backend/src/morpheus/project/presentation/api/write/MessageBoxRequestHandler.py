@@ -25,10 +25,6 @@ class MessageBoxRequestHandler:
 
         try:
             command = command_factory.create_from_request_body(user_id=user_id, body=body)  # type: ignore
-        except ValueError as e:
-            abort(400, str(e))
-
-        try:
             assert_identity_can_execute_command(identity, command)
             project_command_bus.dispatch(command)
             return generate_response_for(command)
@@ -36,5 +32,7 @@ class MessageBoxRequestHandler:
             abort(404, str(e))
         except InsufficientPermissionsException as e:
             abort(403, str(e))
+        except ValueError as e:
+            abort(400, str(e))
         except Exception as e:
             abort(500, str(e))

@@ -355,10 +355,29 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         layer=0,
         precision=4
     ):
-        return []
+        raise NotImplementedError('Transport is not available in Mf2005')
+
+    def read_transport_concentration_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        raise NotImplementedError('Transport is not available in Mf2005')
+
+    def read_transport_budget(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        incremental=False
+    ):
+        raise NotImplementedError('Transport is not available in Mf2005')
 
     def read_flow_drawdown(
-        self, totim: float | None = None,
+        self,
+        totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
         layer=0,
@@ -372,6 +391,23 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return []
 
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+        if data is None:
+            return []
+        data = np.round(data, precision)
+        return data.tolist()
+
+    def read_flow_drawdown_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        file = self.__get_file_with_extension_from_workspace(".ddn")
+        if file is None:
+            return []
+
+        data = bf.HeadFile(file).get_ts((layer, row, col))
         if data is None:
             return []
         data = np.round(data, precision)
@@ -393,6 +429,23 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return []
 
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+        if data is None:
+            return []
+        data = np.round(data, precision)
+        return data.tolist()
+
+    def read_flow_head_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        file = self.__get_file_with_extension_from_workspace(".hds")
+        if file is None:
+            return []
+
+        data = bf.HeadFile(file).get_ts((layer, row, col))
         if data is None:
             return []
         data = np.round(data, precision)

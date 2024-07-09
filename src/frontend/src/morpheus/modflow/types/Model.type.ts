@@ -2,7 +2,7 @@ import {IBoundary} from './Boundaries.type';
 import {ILayer} from './Layers.type';
 import {ISpatialDiscretization} from './SpatialDiscretization.type';
 import {ITimeDiscretization} from './TimeDiscretization.type';
-import {IHeadObservation} from './Observations.type';
+import {IHeadObservation} from './HeadObservations.type';
 
 
 interface IModel {

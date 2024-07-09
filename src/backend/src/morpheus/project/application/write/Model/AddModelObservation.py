@@ -26,8 +26,6 @@ class AddModelObservationCommandPayload(TypedDict):
 class AddModelObservationCommand(ProjectCommandBase):
     model_id: ModelId
     observation_id: ObservationId
-    name: ObservationName
-    tags: ObservationTags
     geometry: Point
 
     @classmethod
@@ -37,8 +35,6 @@ class AddModelObservationCommand(ProjectCommandBase):
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             observation_id=ObservationId.new(),
-            name=ObservationName.from_value('New Head Observation'),
-            tags=ObservationTags.empty(),
             geometry=Point.from_dict(payload['geometry']),
         )
 
@@ -55,14 +51,21 @@ class AddModelObservationCommandHandler(CommandHandlerBase):
         if latest_model.model_id != command.model_id:
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
+        observations = latest_model.observations
+        observation_names = [observation.name for observation in observations if observation.name.to_str().startswith('hob-')]
+        observation_names.sort(key=lambda name: int(name.to_str().split('-')[1]))
+        last_observation_name = observation_names[-1] if observation_names else ObservationName.from_str('hob-1')
+        last_observation_number = int(last_observation_name.to_str().split('-')[1])
+        name = ObservationName.from_str(f'hob-{last_observation_number + 1}')
+
         current_grid = latest_model.spatial_discretization.grid
         top_layer_id = latest_model.layers[0].layer_id
         start_date_time = latest_model.time_discretization.start_date_time
 
         head_observation = HeadObservation.from_geometry(
             id=command.observation_id,
-            name=command.name,
-            tags=command.tags,
+            name=name,
+            tags=ObservationTags.empty(),
             geometry=command.geometry,
             grid=current_grid,
             affected_layers=[top_layer_id],

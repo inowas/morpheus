@@ -41,7 +41,7 @@ const ObservationsForm = ({observation, onChange, isReadOnly, layers}: IProps) =
           <DropdownComponent.Dropdown
             disabled={isReadOnly}
             name={'selectedLayer'}
-            multiple={false}
+            multiple={true}
             selection={true}
             value={observation.affected_layers}
             options={layers.map((layer) => ({
@@ -82,17 +82,6 @@ const ObservationsForm = ({observation, onChange, isReadOnly, layers}: IProps) =
             selection={true}
             value={observation.tags}
           />
-        </Form.Field>
-        <Form.Field>
-          <Label htmlFor="tags" className="labelSmall">
-            <Popup
-              trigger={<Icon name="info circle"/>}
-              content={'Interpolation Type, default is none. Meaning no interpolation is applied and values for each stress period have to be provided.'}
-              hideOnScroll={true}
-              size="tiny"
-            />
-            Interpolation Type
-          </Label>
         </Form.Field>
       </DataRow>
     </Form>

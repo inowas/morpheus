@@ -50,6 +50,15 @@ class CalculationEngineBase:
     ):
         raise NotImplementedError
 
+    def read_transport_concentration_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        raise NotImplementedError
+
     def read_transport_budget(
         self,
         totim: float | None = None,
@@ -69,12 +78,30 @@ class CalculationEngineBase:
     ):
         raise NotImplementedError
 
+    def read_flow_drawdown_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        raise NotImplementedError
+
     def read_flow_head(
         self,
         totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
         layer=0,
+        precision=4
+    ):
+        raise NotImplementedError
+
+    def read_flow_head_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
         precision=4
     ):
         raise NotImplementedError

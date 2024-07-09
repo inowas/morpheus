@@ -1,22 +1,23 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 import {MapRef} from 'common/components/Map/Map';
 import {DataGrid, SearchInput, SectionTitle} from 'common/components';
 
-import useHeadObservations from '../../application/useHeadObservations';
+import useObservations from '../../application/useObservations';
 import useLayers from '../../application/useLayers';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {useTimeDiscretization} from '../../application';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
-import {useNavigate} from 'common/hooks';
+import {useDateTimeFormat, useNavigate} from 'common/hooks';
 import {IHeadObservation, IObservationType} from '../../types/HeadObservations.type';
 import HeadObservationListDetails from '../components/ModelHeadObservations/HeadObservationListDetails';
 import DrawObservationLayer from '../components/ModelHeadObservations/DrawObservationLayer';
 import {Point} from 'geojson';
+import ObservationsLayer from '../components/ModelHeadObservations/ObservationsLayer';
 
 
 const HeadObservationsContainer = () => {
@@ -24,9 +25,10 @@ const HeadObservationsContainer = () => {
 
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
   const {timeDiscretization} = useTimeDiscretization(projectId as string);
-  const {headObservations, onAdd, onClone, onDisable, onRemove, onEnable, onUpdate} = useHeadObservations(projectId as string);
+  const {observations, onAdd, onClone, onDisable, onRemove, onEnable, onUpdate} = useObservations(projectId as string);
   const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPrivileges(projectId as string);
+  const {formatISODate} = useDateTimeFormat('UTC');
 
   const navigate = useNavigate();
   const mapRef: IMapRef = useRef(null);
@@ -35,15 +37,15 @@ const HeadObservationsContainer = () => {
   const [selectedHeadObservation, setSelectedHeadObservation] = useState<IHeadObservation | null>(null);
 
   useEffect(() => {
-    if (!headObservations) {
+    if (!observations) {
       return;
     }
 
-    if (0 === headObservations.length) {
+    if (0 === observations.length) {
       return;
     }
-    setSelectedHeadObservation(headObservations.find((o) => o.id === observationId) || null);
-  }, [headObservations, observationId]);
+    setSelectedHeadObservation(observations.find((o) => o.id === observationId) || null);
+  }, [observations, observationId]);
 
   const handleSelectObservation = async (id: IHeadObservation['id']) => {
     navigate(`/projects/${projectId}/model/head-observations/${id}`);
@@ -73,34 +75,18 @@ const HeadObservationsContainer = () => {
     onUpdate(observation);
   };
 
-  const handleChangeObservationGeometry = (geometry: Point) => {
-    if (!selectedHeadObservation) {
-      return;
-    }
-
-    onUpdate({...selectedHeadObservation, geometry});
-  };
-
-  const isDirty = useMemo(() => {
-    if (!selectedHeadObservation) {
-      return false;
-    }
-    const original = headObservations.find((o) => o.id === selectedHeadObservation.id);
-    return JSON.stringify(original) !== JSON.stringify(selectedHeadObservation);
-  }, [headObservations, selectedHeadObservation]);
-
-  if (!spatialDiscretization || !headObservations || !layers || !timeDiscretization) {
+  if (!spatialDiscretization || !observations || !layers || !timeDiscretization) {
     return null;
   }
 
   return (
     <>
-      <SidebarContent maxWidth={700}>
+      <SidebarContent maxWidth={500}>
         <LeafletMapProvider mapRef={mapRef}>
           <DataGrid>
-            <SectionTitle title={'Boundary conditions'}/>
+            <SectionTitle title={'Observations'}/>
             <SearchInput
-              dropDownText={'Add new head observation'}
+              dropDownText={'Add new'}
               dropdownItems={[
                 {text: 'Head Observation', action: () => setAddObservationOnMap('head')},
               ]}
@@ -109,8 +95,8 @@ const HeadObservationsContainer = () => {
               isReadOnly={isReadOnly}
             />
             <HeadObservationListDetails
-              observations={headObservations}
-              selected={observationId || null}
+              observations={observations}
+              selected={selectedHeadObservation || null}
               layers={layers}
               onClone={handleCloneObservation}
               onDisable={onDisable}
@@ -119,6 +105,8 @@ const HeadObservationsContainer = () => {
               onChange={handleChangeObservation}
               onRemove={handleRemoveObservation}
               isReadOnly={isReadOnly}
+              timeDiscretization={timeDiscretization}
+              formatDateTime={formatISODate}
             />
           </DataGrid>
         </LeafletMapProvider>
@@ -130,6 +118,13 @@ const HeadObservationsContainer = () => {
           <DrawObservationLayer
             observationType={addObservationOnMap}
             onAdd={(type, geometry) => handleAddObservation(type, geometry)}
+          />
+          <ObservationsLayer
+            observations={observations}
+            selected={selectedHeadObservation || undefined}
+            onSelect={(observation) => handleSelectObservation(observation.id)}
+            onChange={handleChangeObservation}
+            isReadOnly={isReadOnly}
           />
         </Map>
       </BodyContent>
