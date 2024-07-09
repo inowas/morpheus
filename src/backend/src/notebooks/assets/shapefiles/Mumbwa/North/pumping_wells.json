@@ -1,0 +1,5084 @@
+[
+  {
+    "type": "wel",
+    "name": "12839",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0492994,
+        -15.0002756
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -22.464
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12840",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2670853,
+        -14.9980559
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -20.304
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12842",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.1890331,
+        -15.1652622
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -13.392
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12843",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.999858,
+        -15.0013855
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "907",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.25913,
+        -15.12017
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1291",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.01823,
+        -15.0859
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1231",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03712,
+        -14.95058
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1296",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2563,
+        -15.00052
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1292",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00838,
+        -15.08472
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "939",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.3018,
+        -15.05158
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "910",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.28782,
+        -15.02322
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1087",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.01948,
+        -15.03453
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1280",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.01882,
+        -15.08465
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1159",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03572,
+        -14.94223
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1202",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.20777,
+        -14.9851
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "905",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2165,
+        -15.12018
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1073",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0053,
+        -15.00293
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1229",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03922,
+        -14.95837
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1246",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.17622,
+        -14.92352
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "937",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.30382,
+        -15.05448
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "911",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2745,
+        -14.99217
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1254",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87342,
+        -15.00457
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1284",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03845,
+        -15.05513
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "928",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.35593,
+        -15.12067
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1238",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02053,
+        -14.94152
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1288",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.04108,
+        -15.05215
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1205",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.01692,
+        -14.90062
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "908",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2594,
+        -15.11852
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1245",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02622,
+        -14.93575
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1283",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03978,
+        -15.0566
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1285",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03937,
+        -15.03977
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1157",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07062,
+        -14.96698
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "938",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2929,
+        -15.04292
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1143",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86882,
+        -15.00013
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "913",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.33822,
+        -14.96933
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1133",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8671,
+        -15.0366
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1266",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83513,
+        -15.00763
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1282",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03965,
+        -15.05282
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1002",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.11805,
+        -15.19107
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1112",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9087,
+        -15.03807
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1113",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95368,
+        -15.17495
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "811",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.40548,
+        -15.12587
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1253",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83858,
+        -14.98362
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1101",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00725,
+        -15.03485
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1153",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.13507,
+        -14.93527
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "898",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.33692,
+        -15.20895
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "953",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07627,
+        -15.10172
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "957",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.01768,
+        -15.10212
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1132",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8728,
+        -15.07337
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1298",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.25325,
+        -14.97102
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1194",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.78542,
+        -15.07092
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1286",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03498,
+        -15.06842
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1118",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86792,
+        -15.0531
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1213",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.21722,
+        -15.00328
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1321",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10167,
+        -15.05252
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "931",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.40233,
+        -15.07255
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "959",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00385,
+        -15.10898
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1142",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87065,
+        -15.00518
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "949",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.04175,
+        -15.10638
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1119",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.85728,
+        -15.03782
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1209",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.27508,
+        -14.9262
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "956",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03432,
+        -15.05713
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1226",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07392,
+        -15.00882
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1203",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.23465,
+        -15.00042
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1307",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.06837,
+        -15.052
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1314",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07605,
+        -15.03852
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "924",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.1023,
+        -15.00722
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1206",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9849,
+        -14.97142
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1235",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0687,
+        -14.95615
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1250",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.04165,
+        -14.9931
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "958",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00905,
+        -15.10403
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1012",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.32043,
+        -15.24153
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1227",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07348,
+        -14.98697
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "961",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.002,
+        -15.12097
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1218",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10265,
+        -15.00505
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1139",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87408,
+        -15.00797
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1204",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03595,
+        -14.99017
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1215",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10845,
+        -15.00303
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "894",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03682,
+        -15.15172
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "932",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.42655,
+        -15.07037
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1255",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.77642,
+        -14.9914
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1257",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.78932,
+        -15.00392
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1268",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.23612,
+        -15.16757
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1272",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.06732,
+        -15.00192
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "927",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.3353,
+        -15.0846
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1214",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.08418,
+        -15.00587
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1242",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0214,
+        -14.9416
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "809",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.40497,
+        -15.12657
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1037",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95627,
+        -15.20602
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "906",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.25032,
+        -15.1219
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "929",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.35998,
+        -15.12377
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "941",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.37528,
+        -15.13373
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1144",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8743,
+        -15.00768
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1145",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87342,
+        -15.0045
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1239",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00305,
+        -14.8728
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "930",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.40847,
+        -15.09308
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1211",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.19232,
+        -15.00707
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "945",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02015,
+        -15.09255
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "946",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02088,
+        -15.08953
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "947",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02233,
+        -15.0904
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1005",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.12532,
+        -15.1567
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1289",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00863,
+        -15.07485
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "967",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98495,
+        -15.1359
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "897",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.31757,
+        -15.16997
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "963",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.001,
+        -15.12212
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1241",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.00313,
+        -14.86983
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1252",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.85878,
+        -15.02488
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1236",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07453,
+        -14.95678
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1271",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.25492,
+        -15.0693
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1154",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10263,
+        -14.93997
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1217",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10265,
+        -15.00453
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1319",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.06773,
+        -14.95377
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1208",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0082,
+        -14.99035
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1134",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86968,
+        -15.03357
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1141",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86805,
+        -15.0295
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1189",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83838,
+        -15.00452
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1219",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09222,
+        -15.00823
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "895",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03693,
+        -15.15375
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1150",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09215,
+        -14.86972
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1249",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98405,
+        -14.96995
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -79.445
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "904",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.35102,
+        -15.20887
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -81.259
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "951",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02462,
+        -15.12023
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -212.587
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1110",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8696,
+        -15.03897
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -35.942
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "900",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.34315,
+        -15.22185
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -84.456
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1094",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87427,
+        -15.13503
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -85.018
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "812",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.3727,
+        -15.13702
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -18.274
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1262",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07228,
+        -15.07412
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -103.594
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "912",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.31828,
+        -14.9705
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -27.734
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1158",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07442,
+        -14.95538
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -45.49
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "986",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.34072,
+        -15.21987
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -81.518
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1083",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95135,
+        -15.08587
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -96.898
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1099",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87187,
+        -15.13705
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -86.314
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1152",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.13935,
+        -14.92563
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -109.858
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1201",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.20822,
+        -14.95807
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -146.275
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1247",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03588,
+        -15.00183
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -23.587
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1258",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.78522,
+        -14.99037
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -50.846
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "903",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.33872,
+        -15.21777
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -78.624
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1067",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.34293,
+        -15.22307
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -85.925
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1183",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.80637,
+        -14.99058
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -63.202
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "902",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.33875,
+        -15.2174
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -78.624
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1224",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.15712,
+        -15.01737
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -56.635
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "950",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03867,
+        -15.10867
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -204.466
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1151",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10387,
+        -14.85322
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -89.51
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1221",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.15907,
+        -15.00558
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -67.306
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1251",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.92525,
+        -15.01908
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -94.651
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1237",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03358,
+        -14.98372
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -26.611
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1114",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95557,
+        -15.18648
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -99.619
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1210",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.22248,
+        -15.0351
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -38.059
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "933",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.3691,
+        -15.09168
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -13.954
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "997",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.1256,
+        -15.14005
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -54.95
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1100",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87627,
+        -15.12558
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -70.762
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1098",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.85977,
+        -15.17132
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -86.962
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1137",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87635,
+        -15.01717
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -55.598
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1269",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.22013,
+        -15.13828
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -58.795
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1079",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.88427,
+        -15.12415
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -61.344
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1148",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83482,
+        -15.00792
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -65.146
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1104",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.90393,
+        -15.03955
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -52.618
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "887",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0599,
+        -15.17645
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -170.554
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1225",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.16797,
+        -15.00922
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -50.069
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1259",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.81943,
+        -15.00963
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -68.904
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1082",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9512,
+        -15.08582
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -96.898
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "955",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.02407,
+        -15.05903
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -129.427
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1232",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.05397,
+        -14.9396
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -49.594
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1223",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.15963,
+        -15.01077
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -60.437
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1267",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2343,
+        -15.00088
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -36.763
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "968",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.97627,
+        -15.14008
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -129.557
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1003",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.12002,
+        -15.1874
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -87.739
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "893",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.04098,
+        -15.15297
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -211.982
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "899",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.33517,
+        -15.20915
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -69.768
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1220",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.13742,
+        -15.01737
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -66.701
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1302",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.39275,
+        -15.07303
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -30.629
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1306",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10132,
+        -15.1704
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -103.334
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1004",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.12463,
+        -15.16937
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -72.749
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1105",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.89258,
+        -15.04055
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -40.478
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "964",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9573,
+        -15.17228
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -98.064
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1281",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.01767,
+        -15.08757
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -158.069
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "962",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.99163,
+        -15.12575
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -170.338
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "943",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.39178,
+        -15.13628
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -29.851
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "896",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03795,
+        -15.15477
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -211.291
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1084",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.97342,
+        -15.08723
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -134.957
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "891",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03865,
+        -15.1521
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -212.328
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1108",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87332,
+        -15.05302
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -21.686
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1121",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87188,
+        -15.11843
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -54.778
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1136",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87265,
+        -15.02657
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -47.65
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "810",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.40743,
+        -15.12485
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -37.8
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "954",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.05732,
+        -15.08753
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -148.694
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1109",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.88697,
+        -15.05112
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -26.006
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1243",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03542,
+        -14.90387
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -70.718
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1103",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9087,
+        -15.03807
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -61.301
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1265",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.08457,
+        -15.07075
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -86.184
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1263",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10025,
+        -15.0761
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -71.712
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1311",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10018,
+        -15.07653
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -72.014
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1038",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.94167,
+        -15.2552
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -103.118
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1131",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8714,
+        -15.05987
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -17.41
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1233",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.15047,
+        -14.92372
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -117.288
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "948",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.05067,
+        -15.1202
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -207.965
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "952",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0755,
+        -15.10875
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -148.608
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "999",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10172,
+        -15.17013
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -103.334
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "888",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0567,
+        -15.14025
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -207.533
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1077",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98622,
+        -15.04187
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -154.872
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1111",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95048,
+        -15.18657
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -94.608
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1138",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87298,
+        -15.0213
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -52.229
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "998",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09317,
+        -15.18348
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -115.517
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1130",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86925,
+        -15.07615
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -9.418
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "892",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.04007,
+        -15.15082
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -212.89
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1075",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98645,
+        -15.05113
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -155.52
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "886",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.06698,
+        -15.18342
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -151.978
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1000",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10315,
+        -15.20108
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -104.89
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "965",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9672,
+        -15.1695
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -111.197
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1074",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.99088,
+        -15.03927
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -154.051
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "944",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.42232,
+        -15.10642
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -49.075
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "966",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98417,
+        -15.15167
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -153.922
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1081",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87193,
+        -15.15612
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -88.387
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1126",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86795,
+        -15.09327
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -10.066
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1036",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95895,
+        -15.20438
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -105.322
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1091",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8421,
+        -15.17108
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -89.338
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1155",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09008,
+        -14.95068
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -60.048
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1035",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95907,
+        -15.18437
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -103.075
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1140",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.88773,
+        -15.01885
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -57.802
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1290",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0077,
+        -15.08422
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -150.379
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1128",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8734,
+        -15.08603
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.862
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "884",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0399,
+        -15.15475
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -210.902
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1090",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83955,
+        -15.16867
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -90.893
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "889",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03987,
+        -15.14188
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -215.395
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1125",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86923,
+        -15.1094
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -30.715
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1096",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.91742,
+        -15.10788
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -45.317
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1129",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87405,
+        -15.08365
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -7.862
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1095",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.88343,
+        -15.13785
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -84.802
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1107",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.88442,
+        -15.05322
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -22.81
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1080",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.88843,
+        -15.12037
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -51.97
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1127",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.86808,
+        -15.1042
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -20.39
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1092",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.90695,
+        -15.11687
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -44.971
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1123",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87163,
+        -15.11907
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -54.778
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "885",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.05387,
+        -15.17647
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -176.818
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "883",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.05322,
+        -15.1668
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -190.944
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1089",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.91743,
+        -15.1093
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -45.23
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1093",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.92028,
+        -15.10715
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -45.49
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "1309",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.22373,
+        -15.07167
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -48.643
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12711",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98334,
+        -15.05128
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -155.52
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12695",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.18751,
+        -14.96795
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -164.16
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12701",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.78333,
+        -15.11794
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -172.8
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "wel",
+    "name": "12666",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.03334,
+        -15.1346
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "well_type": "puw",
+    "sp_values": [
+      [
+        -216.0
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  }
+]
