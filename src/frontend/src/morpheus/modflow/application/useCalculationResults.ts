@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
 import {setCalculation, setError, setLoading} from '../infrastructure/calculationsStore';
 import {ICalculation, ICalculationId} from '../types/Calculation.type';
+import {IObservationResult} from '../types/HeadObservations.type';
 
 interface IBudgetData {
   result_type: 'flow' | 'transport';
@@ -42,13 +43,7 @@ interface ITimeSeriesData {
 
 type ITimeSeriesDataResponse = ITimeSeriesData;
 
-type IObservationData = {
-  name: string;
-  simulated: number;
-  observed: number;
-}[];
-
-type IObservationDataResponse = IObservationData;
+type IObservationDataResponse = IObservationResult[];
 
 type ICalculationResponse = ICalculation;
 
@@ -59,7 +54,7 @@ interface IUseCalculationResults {
   fetchBudgetResult: (type: 'flow' | 'transport', timeIdx: number, incremental: boolean) => Promise<IBudgetData | undefined>;
   fetchLayerResult: (type: 'head' | 'drawdown' | 'concentration', layer: number, timeIdx: number) => Promise<ILayerData | undefined>;
   fetchTimeSeriesResult: (type: 'head' | 'drawdown' | 'concentration', layer: number, row: number, col: number) => Promise<ITimeSeriesData | undefined>;
-  fetchObservationResults: (type: 'head') => Promise<IObservationData | undefined>;
+  fetchObservationResults: (type: 'head') => Promise<IObservationResult[] | undefined>;
   loading: boolean;
   error: string | null;
 }
@@ -105,7 +100,7 @@ const useCalculationResults = (projectId: string, calculationIdProps?: ICalculat
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calculationId, calculations]);
+  }, [calculationId]);
 
   const fetchBudgetResult = async (type: 'flow' | 'transport', timeIdx: number, incremental: boolean): Promise<IBudgetData | undefined> => {
 
@@ -176,7 +171,7 @@ const useCalculationResults = (projectId: string, calculationIdProps?: ICalculat
     }
   };
 
-  const fetchObservationResult = async (type: 'head'): Promise<IObservationData | undefined> => {
+  const fetchObservationResult = async (type: 'head'): Promise<IObservationResult[] | undefined> => {
 
     if (!calculationId) {
       dispatch(setError('calculationId is missing'));
@@ -212,4 +207,4 @@ const useCalculationResults = (projectId: string, calculationIdProps?: ICalculat
 };
 
 export default useCalculationResults;
-export type {IBudgetData, ILayerData, IObservationData, ITimeSeriesData};
+export type {IBudgetData, ILayerData, ITimeSeriesData};

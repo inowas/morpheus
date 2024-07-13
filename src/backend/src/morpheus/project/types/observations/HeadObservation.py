@@ -1,7 +1,7 @@
 import dataclasses
 from typing import List, Sequence, Literal
 
-from morpheus.common.types import Uuid, Float, String
+from morpheus.common.types import Uuid, Float, String, DateTime
 from ..discretization.spatial import ActiveCells, Grid
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point, GeometryCollection
@@ -74,13 +74,13 @@ class Head(Float):
 
 @dataclasses.dataclass
 class HeadObservationDataItem:
-    date_time: StartDateTime
+    date_time: DateTime
     head: Head
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
-            date_time=StartDateTime.from_value(obj['date_time']),
+            date_time=DateTime.from_value(obj['date_time']),
             head=Head.from_value(obj['head'])
         )
 

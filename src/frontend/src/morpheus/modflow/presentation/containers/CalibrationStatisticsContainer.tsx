@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {ContentWrapper, SectionTitle, Tab, TabPane} from 'common/components';
 import {useParams} from 'react-router-dom';
-import {useColorMap, useIsMobile} from 'common/hooks';
+import {useColorMap, useDateTimeFormat, useIsMobile} from 'common/hooks';
 import CalibrationStatistics from '../components/CalibrationStatistics/CalibrationStatistics';
 import useCalculateStatistics from '../../application/useCalculateStatistics';
 import useObservations from '../../application/useObservations';
@@ -9,14 +9,26 @@ import {Form, Header} from 'semantic-ui-react';
 import {ObservedVsCalculatedHeads, RankedResidualsAgainstNormalProbability, WeightedResidualsVsSimulatedHeads} from '../components/CalibrationStatistics/Charts';
 import useCalculationResults from '../../application/useCalculationResults';
 import {IObservationResult} from '../../types/HeadObservations.type';
+import TimeSeriesChart from '../components/Results/TimeSeriesChart';
+import {useTimeDiscretization} from '../../application';
+
+interface ITimeSeriesItem {
+  key: number;
+  name: string;
+  layer: number;
+  row: number;
+  col: number;
+  color: string;
+  data: { date_time: string, value: number }[];
+}
 
 const CalibrationStatisticsContainer = () => {
   const {projectId, propertyId: calculationId} = useParams();
+  const {timeDiscretization} = useTimeDiscretization(projectId!);
+
   const {colors} = useColorMap('jet_r');
-
   const {observations, loading} = useObservations(projectId as string);
-
-  const {fetchObservationResults, calculation} = useCalculationResults(projectId as string, calculationId);
+  const {fetchObservationResults, calculation, fetchTimeSeriesResult} = useCalculationResults(projectId as string, calculationId);
   const {calculateStatistics} = useCalculateStatistics();
 
   const {isMobile} = useIsMobile();
@@ -24,6 +36,8 @@ const CalibrationStatisticsContainer = () => {
   const [exclude, setExclude] = useState<string[]>([]);
   const [observationResults, setObservationResults] = useState<IObservationResult[]>([]);
 
+  const [timeSeries, setTimeSeries] = useState<ITimeSeriesItem[]>([]);
+  const {formatISODate, addDays} = useDateTimeFormat();
 
   useEffect(() => {
     if (!calculation) {
@@ -32,14 +46,99 @@ const CalibrationStatisticsContainer = () => {
 
     const fetch = async () => {
       const data = await fetchObservationResults('head');
-      if (data) {
-        setObservationResults(data);
+      if (!data) {
+        return;
       }
+
+      setObservationResults(data);
     };
 
     fetch();
     // eslint-disable-next-line
   }, [calculation]);
+
+  useEffect(() => {
+
+    if (0 === observations.length || 0 === observationResults.length || !timeDiscretization) {
+      return;
+    }
+
+    const fetch = async () => {
+
+      const newTimeSeries: ITimeSeriesItem[] = [];
+
+      // load full time series data for each observation
+      for (const [idx, observationResult] of observationResults.entries()) {
+        const existingTimeSeries = newTimeSeries.find((ts) =>
+          ts.name === `${observationResult.observation_name} (simulated)`
+          && ts.layer === observationResult.layer
+          && ts.row === observationResult.row
+          && ts.col === observationResult.col,
+        );
+
+        if (existingTimeSeries) {
+          newTimeSeries.push(existingTimeSeries);
+          continue;
+        }
+
+        const name = `${observationResult.observation_name} (simulated)`;
+        const layer = observationResult.layer;
+        const row = observationResult.row;
+        const col = observationResult.col;
+        const data = await fetchTimeSeriesResult('head', layer, row, col);
+
+        if (!data) {
+          continue;
+        }
+
+        const newTimeSeriesItem: ITimeSeriesItem = {
+          key: idx,
+          name,
+          layer, row, col,
+          color: colors.normal[idx],
+          data: data.data.map(([totim, value]) => ({date_time: addDays(timeDiscretization.start_date_time, totim), value})),
+        };
+
+        newTimeSeries.push(newTimeSeriesItem);
+      }
+
+      // add time series data for observed values
+      for (const [idx, observation] of observations.entries()) {
+        const results = observationResults.filter((r) => r.observation_id === observation.id);
+        if (results.length) {
+          continue;
+        }
+
+        const name = `${results[0].observation_name} (observed)`;
+        const layer = results[0].layer;
+        const row = results[0].row;
+        const col = results[0].col;
+        const data = results.map((r) => ({
+          date_time: r.date_time,
+          value: r.observed,
+        }));
+
+        if (!data) {
+          continue;
+        }
+
+        const newTimeSeriesItem: ITimeSeriesItem = {
+          key: newTimeSeries.length + idx,
+          name,
+          layer, row, col,
+          color: colors.normal[newTimeSeries.length + idx],
+          data,
+        };
+
+        newTimeSeries.push(newTimeSeriesItem);
+      }
+
+      setTimeSeries(newTimeSeries);
+    };
+
+    fetch();
+    // eslint-disable-next-line
+  }, [observationResults, timeDiscretization, observations]);
 
   const statistics = useMemo(() => {
     if (observationResults.length) {
@@ -120,7 +219,12 @@ const CalibrationStatisticsContainer = () => {
       menuItem: 'Time series',
       render: () => (
         <TabPane>
-          <p>Time series</p>
+          {renderExcluded()}
+          <Header>Time series</Header>
+          <TimeSeriesChart
+            timeSeries={timeSeries.filter((ts) => !exclude.includes(ts.name))}
+            formatDateTime={formatISODate}
+          />
         </TabPane>
       ),
     },

@@ -1,5 +1,4 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Point} from 'geojson';
 import {CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 
 interface ITimeSeriesChartDataItem {
@@ -8,21 +7,17 @@ interface ITimeSeriesChartDataItem {
   [key: string]: any;
 }
 
-interface ITimeSeriesItem {
-  id: number;
+interface IChartItem {
+  key: number;
   name: string;
-  layer: number;
-  row: number;
-  col: number;
-  point: Point;
   color: string;
   data: { date_time: string, value: number }[];
 }
 
 interface IProps {
-  timeSeries: ITimeSeriesItem[];
+  timeSeries: IChartItem[];
   formatDateTime: (value: string) => string;
-  selectedTimeStepIdx: number;
+  selectedTimeStepIdx?: number;
 }
 
 interface IColorMap {
@@ -30,7 +25,6 @@ interface IColorMap {
 }
 
 const TimeSeriesChart = ({timeSeries, formatDateTime, selectedTimeStepIdx}: IProps) => {
-
 
   const [dateTimes, setDateTimes] = useState<string[]>([]);
 
@@ -61,12 +55,14 @@ const TimeSeriesChart = ({timeSeries, formatDateTime, selectedTimeStepIdx}: IPro
       date_time,
       unix_timestamp: isoDateToEpoch(date_time),
     };
+
     timeSeries.forEach((ts) => {
       const value = ts.data.find((d) => d.date_time === date_time);
       if (value) {
         item[ts.name] = value.value;
       }
     });
+
     return item;
   }), [timeSeries, dateTimes]);
 
@@ -95,22 +91,22 @@ const TimeSeriesChart = ({timeSeries, formatDateTime, selectedTimeStepIdx}: IPro
         />
         <YAxis type={'number'} domain={['auto', 'auto']}/>
         <Tooltip labelFormatter={formatTick}/>
-        <ReferenceLine
+        {selectedTimeStepIdx && <ReferenceLine
           x={isoDateToEpoch(dateTimes[selectedTimeStepIdx])}
           stroke='#000'
           strokeOpacity={0.5}
           strokeWidth={5}
           label={{value: formatDateTime(dateTimes[selectedTimeStepIdx]), position: 'top', fill: '#000'}}
-        />
+        />}
 
         {timeSeries.map(item => <Line
-          key={item.id}
+          key={item.key}
           type="monotone"
           dataKey={item.name}
           color={item.color}
           stroke={item.color}
           strokeWidth={2}
-          activeDot={{r: 2}}
+          activeDot={{r: 4}}
         />)}
       </LineChart>
     </ResponsiveContainer>
@@ -118,4 +114,4 @@ const TimeSeriesChart = ({timeSeries, formatDateTime, selectedTimeStepIdx}: IPro
 };
 
 export default TimeSeriesChart;
-export type {ITimeSeriesItem};
+export type {IChartItem};

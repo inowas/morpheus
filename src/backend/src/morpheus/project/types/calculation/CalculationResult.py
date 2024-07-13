@@ -1,24 +1,28 @@
 import dataclasses
 from enum import StrEnum
 
+from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationName
+
 
 @dataclasses.dataclass(frozen=True)
-class CalculationHeadObservation:
-    name: str
+class CalculationObservationResultItem:
+    observation_id: ObservationId
+    observation_name: ObservationName
+    layer: int
+    row: int
+    col: int
+    date_time: str
     simulated: float
     observed: float
 
-    @classmethod
-    def from_dict(cls, obj):
-        return cls(
-            name=obj['name'],
-            simulated=obj['simulated'],
-            observed=obj['observed'],
-        )
-
     def to_dict(self) -> dict:
         return {
-            'name': self.name,
+            'observation_id': self.observation_id.to_str(),
+            'observation_name': self.observation_name.to_str(),
+            'layer': self.layer,
+            'row': self.row,
+            'col': self.col,
+            'date_time': self.date_time,
             'simulated': self.simulated,
             'observed': self.observed,
         }

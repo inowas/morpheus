@@ -17,7 +17,7 @@ interface IProps {
   isLoading: boolean;
 }
 
-const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onNavigateToResults, onFetchFileContent, isLoading}: IProps) => {
+const Calculation = ({calculation, isMobile, isReadOnly, onStartCalculation, onNavigateToResults, onFetchFileContent}: IProps) => {
 
 
   const getPanes = () => {

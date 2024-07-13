@@ -59,6 +59,7 @@ const useCalculate = (projectId: string): IUseCalculate => {
 
     if (response.ok) {
       const fetchedCalculation = response.val;
+      setCalculationId(fetchedCalculation.calculation_id);
       setCalculationState(response.val);
       if (['created', 'queued', 'preprocessing', 'preprocessed', 'calculating'].includes(fetchedCalculation.state)) {
         setTimeout(() => fetchCalculation(id), 1000);

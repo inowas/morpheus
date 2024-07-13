@@ -19,12 +19,24 @@ import {IAvailableResults} from '../../types/Calculation.type';
 import BudgetChart from '../components/Results/BudgetSectionChart';
 import HoverGridLayer, {IDataPoint} from 'common/components/Map/DataLayers/HoverDataLayer';
 import {ISelection} from 'common/components/Map/DataLayers/types';
-import TimeSeriesChart, {ITimeSeriesItem} from '../components/Results/TimeSeriesChart';
+import TimeSeriesChart from '../components/Results/TimeSeriesChart';
 import LabelledPointsLayer from 'common/components/Map/DataLayers/LabelledPointsLayer';
+import {Point} from 'geojson';
 
 interface ISelectedRowAndColumn {
   col: number;
   row: number;
+}
+
+interface ITimeSeriesItem {
+  id: number;
+  name: string;
+  layer: number;
+  row: number;
+  col: number;
+  point: Point;
+  color: string;
+  data: { date_time: string, value: number }[];
 }
 
 type IResultType = 'head' | 'drawdown' | 'concentration';
@@ -305,7 +317,12 @@ const FlowResultsContainer = () => {
                         </Label>
                       ))}
                       <TimeSeriesChart
-                        timeSeries={timeSeries}
+                        timeSeries={timeSeries.map((ts) => ({
+                          key: ts.id,
+                          name: ts.name,
+                          color: ts.color,
+                          data: ts.data,
+                        }))}
                         formatDateTime={formatISODate}
                         selectedTimeStepIdx={selectedTimeStepIdx}
                       />

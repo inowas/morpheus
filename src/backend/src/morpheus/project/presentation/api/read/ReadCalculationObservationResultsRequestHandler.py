@@ -34,7 +34,7 @@ class ReadCalculationObservationResultsRequestHandler:
             engine = CalculationEngineFactory.create_engine(calculation_id=calculation_id, engine_type=calculation.get_engine_type())
 
             if result_type == 'head':
-                head_observations = engine.read_head_observations()
+                head_observations = engine.read_head_observations(model=model)
                 return [head_observation.to_dict() for head_observation in head_observations]
 
             raise ValueError(f'Result type not found, available types are: {", ".join(available_result_types)}')

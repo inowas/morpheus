@@ -296,7 +296,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
   };
 
   return {
-    observations: model ? model.observations : [],
+    observations: model && model.observations ? model.observations : [],
     onAdd,
     onClone,
     onDisable,

@@ -4,7 +4,7 @@ from typing import Tuple
 from morpheus.project.types.Model import Model
 from morpheus.project.types.calculation.Calculation import Log, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
-from morpheus.project.types.calculation.CalculationResult import CalculationResult, CalculationHeadObservation
+from morpheus.project.types.calculation.CalculationResult import CalculationResult, CalculationObservationResultItem
 
 
 class CalculationEngineType(StrEnum):
@@ -106,7 +106,10 @@ class CalculationEngineBase:
     ):
         raise NotImplementedError
 
-    def read_head_observations(self) -> list[CalculationHeadObservation]:
+    def read_number_of_head_observations(self) -> int:
+        raise NotImplementedError
+
+    def read_head_observations(self, model: Model) -> list[CalculationObservationResultItem]:
         raise NotImplementedError
 
     def read_file(self, file_name: str) -> str | None:

@@ -22,7 +22,12 @@ interface IHeadObservationData {
 }
 
 type IObservationResult = {
-  name: string;
+  observation_id: string;
+  observation_name: string;
+  layer: number;
+  row: number;
+  col: number;
+  date_time: string;
   simulated: number;
   observed: number;
 };

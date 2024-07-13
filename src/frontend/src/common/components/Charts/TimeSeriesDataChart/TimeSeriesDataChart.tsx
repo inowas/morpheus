@@ -12,13 +12,11 @@ type IIsoDateTimes = string[];
 interface IProps {
   dateTimes: IIsoDateTimes;
   data: ITimeSeriesChartDataItem[];
-  colors?: { [key: string]: string }
   formatDateTime?: (value: string) => string;
   type?: 'linear' | 'forward_fill';
-  margin?: { top: number, right: number, bottom: number, left: number };
 }
 
-const TimeSeriesDataChart = ({data, dateTimes, formatDateTime, colors, type = 'linear', margin}: IProps) => {
+const TimeSeriesDataChart = ({data, dateTimes, formatDateTime, type = 'linear'}: IProps) => {
   const dataKeys = Object.keys(data[0]).filter((key) => 'date_time' !== key);
 
   const isoDateToEpoch = (isoDate: string) => Date.parse(isoDate);
@@ -68,7 +66,11 @@ const TimeSeriesDataChart = ({data, dateTimes, formatDateTime, colors, type = 'l
     >
       <LineChart
         data={chartData}
-        margin={margin ? margin : {top: 10, right: 10, left: 10, bottom: 10}}
+        margin={{
+          top: 20,
+          right: 20,
+          bottom: 20,
+        }}
       >
         <CartesianGrid strokeDasharray="3 3"/>
         <XAxis
@@ -85,9 +87,7 @@ const TimeSeriesDataChart = ({data, dateTimes, formatDateTime, colors, type = 'l
 
         {dataKeys.map((key: string) => <Line
           key={key} type="monotone"
-          dataKey={key}
-          stroke={colors ? colors[key] : '#8884d8'}
-          color={colors ? colors[key] : undefined}
+          dataKey={key} stroke="#8884d8"
           activeDot={{r: 8}}
         />)}
       </LineChart>
