@@ -5,21 +5,22 @@ import {useCalculationResults, useTimeDiscretization} from '../../application';
 import {BodyContent, SidebarContent} from '../components';
 import {Map} from 'common/components/Map';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
-import {Icon, Label, SemanticCOLORS, Tab, TabPane} from 'semantic-ui-react';
+import {Icon, Label, Tab, TabPane} from 'semantic-ui-react';
 import {IBudgetData, ILayerData} from '../../application/useCalculationResults';
 import {useColorMap, useDateTimeFormat} from 'common/hooks';
 import ContoursDataLayer from 'common/components/Map/DataLayers/ContoursDataLayer';
 
 import useLayers from '../../application/useLayers';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
-import CanvasDataLayer from '../../../../common/components/Map/DataLayers/CanvasDataLayer';
+import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
 import ResultsSelector from '../components/Results/CrossSectionParameterSelector';
 import CrossSectionChart from '../components/Results/CrossSectionChart';
 import {IAvailableResults} from '../../types/Calculation.type';
 import BudgetChart from '../components/Results/BudgetSectionChart';
-import HoverGridLayer, {IDataPoint} from '../../../../common/components/Map/DataLayers/HoverDataLayer';
-import {ISelection} from '../../../../common/components/Map/DataLayers/types';
+import HoverGridLayer, {IDataPoint} from 'common/components/Map/DataLayers/HoverDataLayer';
+import {ISelection} from 'common/components/Map/DataLayers/types';
 import TimeSeriesChart, {ITimeSeriesItem} from '../components/Results/TimeSeriesChart';
+import LabelledPointsLayer from 'common/components/Map/DataLayers/LabelledPointsLayer';
 
 interface ISelectedRowAndColumn {
   col: number;
@@ -222,15 +223,27 @@ const FlowResultsContainer = () => {
     }
 
     return (
-      <HoverGridLayer
-        nCols={spatialDiscretization.grid.n_cols}
-        nRows={spatialDiscretization.grid.n_rows}
-        colWidths={spatialDiscretization.grid.col_widths}
-        rowHeights={spatialDiscretization.grid.row_heights}
-        rotation={spatialDiscretization.grid.rotation}
-        outline={spatialDiscretization.grid.outline}
-        onClick={handleAddTimeSeriesItem}
-      />
+      <>
+        <HoverGridLayer
+          nCols={spatialDiscretization.grid.n_cols}
+          nRows={spatialDiscretization.grid.n_rows}
+          colWidths={spatialDiscretization.grid.col_widths}
+          rowHeights={spatialDiscretization.grid.row_heights}
+          rotation={spatialDiscretization.grid.rotation}
+          outline={spatialDiscretization.grid.outline}
+          onClick={handleAddTimeSeriesItem}
+        />
+
+        <LabelledPointsLayer
+          points={timeSeries.map((ts) => ({
+            key: ts.id,
+            point: ts.point,
+            label: ts.name,
+            color: ts.color,
+          }))}
+          onClick={(point) => setTimeSeries(timeSeries.filter((ts) => ts.id !== point.key))}
+        />
+      </>
     );
   };
 
@@ -292,9 +305,9 @@ const FlowResultsContainer = () => {
                         </Label>
                       ))}
                       <TimeSeriesChart
-                        dateTimes={[...timeDiscretization.stress_periods.map((sp) => sp.start_date_time), timeDiscretization.end_date_time]}
                         timeSeries={timeSeries}
                         formatDateTime={formatISODate}
+                        selectedTimeStepIdx={selectedTimeStepIdx}
                       />
                     </>
                   </TabPane>,
