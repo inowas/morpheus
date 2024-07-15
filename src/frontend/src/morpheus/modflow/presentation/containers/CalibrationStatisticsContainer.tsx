@@ -9,8 +9,8 @@ import {Form, Header} from 'semantic-ui-react';
 import {ObservedVsCalculatedHeads, RankedResidualsAgainstNormalProbability, WeightedResidualsVsSimulatedHeads} from '../components/CalibrationStatistics/Charts';
 import useCalculationResults from '../../application/useCalculationResults';
 import {IObservationResult} from '../../types/HeadObservations.type';
-import TimeSeriesChart from '../components/Results/TimeSeriesChart';
 import {useTimeDiscretization} from '../../application';
+import CombinedTimeSeriesChart, {ISimulatedObservedItem} from '../components/CalibrationStatistics/Charts/CombinedTimeSeriesChart';
 
 interface ITimeSeriesItem {
   key: number;
@@ -37,6 +37,8 @@ const CalibrationStatisticsContainer = () => {
   const [observationResults, setObservationResults] = useState<IObservationResult[]>([]);
 
   const [timeSeries, setTimeSeries] = useState<ITimeSeriesItem[]>([]);
+  const [simulatedObserved, setSimulatedObserved] = useState<ISimulatedObservedItem[]>([]);
+
   const {formatISODate, addDays} = useDateTimeFormat();
 
   useEffect(() => {
@@ -65,12 +67,23 @@ const CalibrationStatisticsContainer = () => {
 
     const fetch = async () => {
 
+      const newSimulatedObserved: ISimulatedObservedItem[] = [];
       const newTimeSeries: ITimeSeriesItem[] = [];
 
       // load full time series data for each observation
       for (const [idx, observationResult] of observationResults.entries()) {
+
+        newSimulatedObserved.push({
+          key: idx,
+          name: `${observationResult.observation_name}`,
+          color: colors.normal[idx],
+          date_time: observationResult.date_time,
+          simulated: observationResult.simulated,
+          observed: observationResult.observed,
+        });
+
         const existingTimeSeries = newTimeSeries.find((ts) =>
-          ts.name === `${observationResult.observation_name} (simulated)`
+          ts.name === `${observationResult.observation_name}`
           && ts.layer === observationResult.layer
           && ts.row === observationResult.row
           && ts.col === observationResult.col,
@@ -81,7 +94,7 @@ const CalibrationStatisticsContainer = () => {
           continue;
         }
 
-        const name = `${observationResult.observation_name} (simulated)`;
+        const name = `${observationResult.observation_name}`;
         const layer = observationResult.layer;
         const row = observationResult.row;
         const col = observationResult.col;
@@ -102,37 +115,7 @@ const CalibrationStatisticsContainer = () => {
         newTimeSeries.push(newTimeSeriesItem);
       }
 
-      // add time series data for observed values
-      for (const [idx, observation] of observations.entries()) {
-        const results = observationResults.filter((r) => r.observation_id === observation.id);
-        if (results.length) {
-          continue;
-        }
-
-        const name = `${results[0].observation_name} (observed)`;
-        const layer = results[0].layer;
-        const row = results[0].row;
-        const col = results[0].col;
-        const data = results.map((r) => ({
-          date_time: r.date_time,
-          value: r.observed,
-        }));
-
-        if (!data) {
-          continue;
-        }
-
-        const newTimeSeriesItem: ITimeSeriesItem = {
-          key: newTimeSeries.length + idx,
-          name,
-          layer, row, col,
-          color: colors.normal[newTimeSeries.length + idx],
-          data,
-        };
-
-        newTimeSeries.push(newTimeSeriesItem);
-      }
-
+      setSimulatedObserved(newSimulatedObserved);
       setTimeSeries(newTimeSeries);
     };
 
@@ -221,7 +204,8 @@ const CalibrationStatisticsContainer = () => {
         <TabPane>
           {renderExcluded()}
           <Header>Time series</Header>
-          <TimeSeriesChart
+          <CombinedTimeSeriesChart
+            simulatedObserved={simulatedObserved.filter((ts) => !exclude.includes(ts.name))}
             timeSeries={timeSeries.filter((ts) => !exclude.includes(ts.name))}
             formatDateTime={formatISODate}
           />
