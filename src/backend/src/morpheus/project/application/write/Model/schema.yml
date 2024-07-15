@@ -6,18 +6,23 @@ definitions:
     oneOf:
       - "$ref": "#/definitions/commands/AddModelBoundaryCommand"
       - "$ref": "#/definitions/commands/AddModelBoundaryObservationCommand"
+      - "$ref": "#/definitions/commands/AddModelObservationCommand"
       - "$ref": "#/definitions/commands/CloneModelBoundaryCommand"
       - "$ref": "#/definitions/commands/CloneModelBoundaryObservationCommand"
       - "$ref": "#/definitions/commands/CloneModelLayerCommand"
+      - "$ref": "#/definitions/commands/CloneModelObservationCommand"
       - "$ref": "#/definitions/commands/CreateModelCommand"
       - "$ref": "#/definitions/commands/CreateModelVersionCommand"
       - "$ref": "#/definitions/commands/CreateModelLayerCommand"
       - "$ref": "#/definitions/commands/DeleteModelLayerCommand"
       - "$ref": "#/definitions/commands/DeleteModelVersionCommand"
       - "$ref": "#/definitions/commands/DisableModelBoundaryCommand"
+      - "$ref": "#/definitions/commands/DisableModelObservationCommand"
       - "$ref": "#/definitions/commands/EnableModelBoundaryCommand"
+      - "$ref": "#/definitions/commands/EnableModelObservationCommand"
       - "$ref": "#/definitions/commands/RemoveModelBoundaryCommand"
       - "$ref": "#/definitions/commands/RemoveModelBoundaryObservationCommand"
+      - "$ref": "#/definitions/commands/RemoveModelObservationCommand"
       - "$ref": "#/definitions/commands/UpdateModelAffectedCellsCommand"
       - "$ref": "#/definitions/commands/UpdateModelBoundaryAffectedCellsCommand"
       - "$ref": "#/definitions/commands/UpdateModelBoundaryAffectedLayersCommand"
@@ -27,6 +32,7 @@ definitions:
       - "$ref": "#/definitions/commands/UpdateModelBoundaryObservationCommand"
       - "$ref": "#/definitions/commands/UpdateModelGeometryCommand"
       - "$ref": "#/definitions/commands/UpdateModelGridCommand"
+      - "$ref": "#/definitions/commands/UpdateModelObservationCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerConfinementCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerMetadataCommand"
       - "$ref": "#/definitions/commands/UpdateModelLayerOrderCommand"
@@ -99,6 +105,35 @@ definitions:
             - observation_name
             - observation_geometry
             - observation_data
+    AddModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_model_observation_command
+          example: add_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            type:
+              type: string
+              enum:
+                - head
+              example: head
+            geometry:
+              $ref: "#/definitions/components/Point"
+          required:
+            - project_id
+            - model_id
+            - type
+            - geometry
     CloneModelBoundaryCommand:
       type: object
       properties:
@@ -151,6 +186,30 @@ definitions:
             - model_id
             - boundary_id
             - observation_id
+    CloneModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_observation_command
+          example: clone_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
     CloneModelLayerCommand:
       type: object
       properties:
@@ -199,6 +258,30 @@ definitions:
             - project_id
             - model_id
             - boundary_id
+    DisableModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - disable_model_observation_command
+          example: disable_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
     EnableModelBoundaryCommand:
       type: object
       properties:
@@ -223,6 +306,30 @@ definitions:
             - project_id
             - model_id
             - boundary_id
+    EnableModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - enable_model_observation_command
+          example: enable_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
     RemoveModelBoundaryCommand:
       type: object
       properties:
@@ -274,6 +381,30 @@ definitions:
             - project_id
             - model_id
             - boundary_id
+            - observation_id
+    RemoveModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - remove_model_observation_command
+          example: remove_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
             - observation_id
     CreateModelLayerCommand:
       type: object
@@ -423,6 +554,67 @@ definitions:
             version_id:
               type: string
               example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - version_id
+    UpdateModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_observation_command
+          example: update_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            name:
+              type: string
+              example: Observation 1
+            tags:
+              type: array
+              items:
+                type: string
+              example: [ tag1, tag2 ]
+            affected_cells:
+              "$ref": "#/definitions/components/AffectedCells"
+            affected_layers:
+              "$ref": "#/definitions/components/AffectedLayers"
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  date_time:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00Z
+                  head:
+                    type: number
+                    minimum: -1000
+                    maximum: 10000
+            enabled:
+              type: boolean
+              example: true
+          required:
+            - project_id
+            - model_id
+            - observation_id
+            - name
+            - tags
+            - affected_cells
+            - affected_layers
+            - data
+            - enabled
     UpdateModelLayerConfinementCommand:
       type: object
       properties:

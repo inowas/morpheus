@@ -1,100 +1,86 @@
 import React, {ReactNode, useEffect} from 'react';
-import useDateTimeFormat from 'common/hooks/useDateTimeFormat';
 import {Button, DataGrid, Form} from 'common/components';
 import ToolTipSlider from 'common/components/Slider/ToolTipSlider';
 
-import {IAvailableResults, ICalculationResult} from '../../../types/Calculation.type';
-import {ITimeDiscretization} from '../../../types';
 import {Label} from 'semantic-ui-react';
 
 
-type IFlowResultType = 'head' | 'drawdown';
+type IResultType = 'head' | 'drawdown' | 'concentration';
 
 interface IProps {
-  layerNames: string[];
-  calculationResult: ICalculationResult;
-  onChangeParameters: (layerIdx: number, timeStepIdx: number, type: IFlowResultType) => void;
   isLoading: boolean;
-  timeDiscretization: ITimeDiscretization;
+  availableLayers: string[];
+  selectedLayer: number;
+  onChangeSelectedLayer: (layer: number) => void;
+  availableResultTypes: IResultType[];
+  selectedResultType: IResultType;
+  onChangeResultType: (type: IResultType) => void;
+  availableTotalTimes: number[];
+  selectedTimeIdx: number;
+  onChangeTimeIdx: (timeStepIdx: number) => void;
+  formatTotalTime: (time: number) => string;
 }
 
-const CrossSectionParameterSelector = ({calculationResult, layerNames, onChangeParameters, timeDiscretization}: IProps) => {
+const CrossSectionParameterSelector = ({
+  availableLayers,
+  selectedLayer,
+  onChangeSelectedLayer,
+  availableResultTypes,
+  selectedResultType,
+  onChangeResultType,
+  availableTotalTimes,
+  selectedTimeIdx,
+  onChangeTimeIdx,
+  formatTotalTime,
+}: IProps) => {
 
-  const [selectedLayerIdx, setSelectedLayerIdx] = React.useState<number>(calculationResult.flow_head_results.number_of_layers - 1);
-  const [selectedTimeStepIdx, setSelectedTimeStepIdx] = React.useState<number>(calculationResult.flow_head_results.times.length - 1);
-  const [selectedResults, setSelectedResults] = React.useState<IAvailableResults>(calculationResult.flow_head_results);
-  const [selectedResultType, setSelectedResultType] = React.useState<'head' | 'drawdown'>('head');
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
-  const {formatISODate, addDays} = useDateTimeFormat();
 
   useEffect(() => {
-    if ('head' === selectedResultType) {
-      setSelectedResults(calculationResult.flow_head_results);
-    }
+    setIsPlaying(false);
+  }, [availableTotalTimes]);
 
-    if ('drawdown' === selectedResultType && calculationResult.flow_drawdown_results) {
-      setSelectedResults(calculationResult.flow_drawdown_results);
-    }
-
-    onChangeParameters(selectedLayerIdx, selectedTimeStepIdx, selectedResultType);
-    // eslint-disable-next-line
-  }, [selectedLayerIdx, selectedTimeStepIdx, selectedResultType]);
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && availableTotalTimes) {
       const interval = setInterval(() => {
-        if (selectedTimeStepIdx < selectedResults.times.length - 1) {
-          setSelectedTimeStepIdx(selectedTimeStepIdx + 1);
-        } else {
-          setIsPlaying(false);
+        if (selectedTimeIdx < availableTotalTimes.length - 1) {
+          onChangeTimeIdx(selectedTimeIdx + 1);
+          return;
         }
+        setIsPlaying(false);
       }, 500);
       return () => clearInterval(interval);
     }
     // eslint-disable-next-line
-  }, [isPlaying, selectedTimeStepIdx]);
+    }, [isPlaying, selectedTimeIdx]);
 
-  const layerOptions = new Array(selectedResults.number_of_layers).fill(0).map((_, idx) => ({
+  const getLayerOptions = () => availableLayers.map((name, idx) => ({
     key: idx,
     value: idx,
-    text: `Layer ${idx + 1} (${layerNames[idx]})`,
+    text: `Layer ${idx + 1} (${name})`,
   }));
 
-  const getTypeOptions = () => {
-    const options = [
-      {key: 'head', value: 'head', text: 'Head'},
-    ];
+  const getResultTypeOptions = () => availableResultTypes.map((type) => ({
+    key: type,
+    value: type,
+    text: type.charAt(0).toUpperCase() + type.slice(1),
+  }));
 
-    if (calculationResult.flow_drawdown_results) {
-      options.push({key: 'drawdown', value: 'drawdown', text: 'Drawdown'});
-    }
-
-    return options;
-  };
-
-  const handleLayerChange = (value: number) => {
-    if (selectedResults.number_of_layers - 1 >= value) {
-      setSelectedLayerIdx(value);
-    }
-  };
-
-  const handleTimeStepChange = (value: number) => {
-    if (selectedResults.times.length - 1 >= value) {
-      setSelectedTimeStepIdx(value);
-    }
-  };
 
   const handleOnPlay = () => {
-    if (!isPlaying && selectedTimeStepIdx === selectedResults.times.length - 1) {
-      setSelectedTimeStepIdx(0);
+    if (!isPlaying && selectedTimeIdx === availableTotalTimes.length - 1) {
+      onChangeTimeIdx(0);
     }
     setIsPlaying(!isPlaying);
   };
 
   const getMarks = () => {
     const marks: { [key: number]: ReactNode } = {};
-    selectedResults.times.forEach((time, idx) => {
-      if (0 === idx % 3 || idx === selectedResults.times.length - 1) {
+    const numberOfResults = availableTotalTimes.length;
+    const modulo = Math.ceil(numberOfResults / 16);
+    availableTotalTimes.forEach((time, idx) => {
+      if (0 === idx % modulo || idx === availableTotalTimes.length - 1) {
         marks[time] = <span>{Math.round(time)}</span>;
         return;
       }
@@ -109,21 +95,21 @@ const CrossSectionParameterSelector = ({calculationResult, layerNames, onChangeP
         <Form.Group>
           {/* Todo @dmytro - add styles to dropdown */}
           <Form.Dropdown
-            options={layerOptions}
-            value={selectedLayerIdx}
-            onChange={(e, {value}) => handleLayerChange(value as number)}
+            options={getLayerOptions()}
+            value={selectedLayer}
+            onChange={(e, {value}) => onChangeSelectedLayer(value as number)}
           />
           <Form.Dropdown
-            options={getTypeOptions()}
+            options={getResultTypeOptions()}
             value={selectedResultType}
-            onChange={(e, {value}) => setSelectedResultType(value as 'head' | 'drawdown')}
+            onChange={(e, {value}) => onChangeResultType(value as IResultType)}
           />
         </Form.Group>
         <Form.Group>
           <Button
             icon={isPlaying ? 'pause' : 'play'}
             onClick={handleOnPlay}
-            disabled={1 >= selectedResults.times.length}
+            disabled={1 >= availableTotalTimes.length}
             primary={isPlaying}
             secondary={!isPlaying}
             circular={true}
@@ -131,17 +117,17 @@ const CrossSectionParameterSelector = ({calculationResult, layerNames, onChangeP
           <div style={{margin: 'auto', width: 'calc(100% - 80px)'}}>
             {/* Todo @dmytro - add styles and info button */}
             <Label>
-              Select time step (days)
+                Select time step (days)
             </Label>
             <ToolTipSlider
-              min={selectedResults.times[0]}
-              max={selectedResults.times[selectedResults.times.length - 1]}
-              value={selectedResults.times[selectedTimeStepIdx]}
+              min={availableTotalTimes[0]}
+              max={availableTotalTimes[availableTotalTimes.length - 1]}
+              value={availableTotalTimes[selectedTimeIdx]}
               marks={getMarks()}
               step={null}
-              onChange={(value) => handleTimeStepChange(selectedResults.times.indexOf(value as number))}
-              onChangeComplete={(value) => handleTimeStepChange(selectedResults.times.indexOf(value as number))}
-              tipFormatter={(value) => `${formatISODate(addDays(timeDiscretization.start_date_time, value))}`}
+              onChange={(value) => onChangeTimeIdx(availableTotalTimes.indexOf(value as number))}
+              onChangeComplete={(value) => onChangeTimeIdx(availableTotalTimes.indexOf(value as number))}
+              tipFormatter={(value) => formatTotalTime(value as number)}
             />
           </div>
         </Form.Group>

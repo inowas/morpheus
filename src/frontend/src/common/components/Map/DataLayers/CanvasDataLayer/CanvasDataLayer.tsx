@@ -3,7 +3,6 @@ import {Feature, Polygon, FeatureCollection} from 'geojson';
 import {Polygon as LeafletPolygon, FeatureGroup, useMap, useMapEvents, Pane} from 'common/infrastructure/React-Leaflet';
 import * as turf from '@turf/turf';
 import {GridLayerOptions} from 'leaflet';
-import {ISelection} from '../types';
 
 interface IProps {
   data: number[][];
@@ -126,4 +125,3 @@ const CanvasDataLayer = ({data, rotation, outline, getRgbColor, options}: IProps
 };
 
 export default CanvasDataLayer;
-export type {ISelection};

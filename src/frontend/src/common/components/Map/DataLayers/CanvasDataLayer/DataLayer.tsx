@@ -6,7 +6,7 @@ import {ContinuousLegend} from '../Legend';
 import CanvasDataLayer from './CanvasDataLayer';
 import {ISelection} from '../types';
 import SelectedRowAndColLayer from '../SelectedRowAndColLayer';
-import HoverDataLayer from '../HoverDataLayer';
+import HoverGridLayer from '../HoverDataLayer';
 
 interface IProps {
   title?: string;
@@ -28,7 +28,15 @@ const DataLayer = ({title, data, rotation, outline, getRgbColor, minValue, maxVa
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
   const handleHover = (selected: ISelection | null) => {
-    setHoveredValue(selected?.value === undefined ? null : selected.value);
+
+    if (null === selected || selected === undefined) {
+      setHoveredValue(null);
+    }
+
+    if (selected && selected.row < data.length && selected.col < data[0].length) {
+      setHoveredValue(data[selected.row][selected.col]);
+    }
+
     if (onHover) {
       onHover(selected);
     }
@@ -84,17 +92,18 @@ const DataLayer = ({title, data, rotation, outline, getRgbColor, minValue, maxVa
         options={options}
       />
       {selection && selectRowsAndCols && <SelectedRowAndColLayer
-        nRows={data.length}
         nCols={data[0].length}
+        nRows={data.length}
         selectedRow={selection.row}
         selectedCol={selection.col}
         outline={outline}
         rotation={rotation}
       />}
-      <HoverDataLayer
-        data={data}
+      <HoverGridLayer
+        nCols={data[0].length}
+        nRows={data.length}
         rotation={rotation}
-        outline={outline}
+        outline={outline.geometry}
         onHover={handleHover}
         onClick={handleClick}
       />

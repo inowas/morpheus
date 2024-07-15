@@ -1,0 +1,922 @@
+[
+  {
+    "type": "hob",
+    "name": "910.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.28782,
+        -15.02322
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1152.968
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "911.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2745,
+        -14.99217
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1181.693
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "929.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.35998,
+        -15.12377
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1073.35
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "933.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.3691,
+        -15.09168
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1087.885
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "952.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0755,
+        -15.10875
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1157.401
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "966.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98417,
+        -15.15167
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1067.152
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "997.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.1256,
+        -15.14005
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1149.609
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "998.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09317,
+        -15.18348
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1146.421
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1002.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.11805,
+        -15.19107
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1120.637
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1005.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.12532,
+        -15.1567
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1147.746
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1012.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.32043,
+        -15.24153
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1030.603
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1037.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95627,
+        -15.20602
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1037.062
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1038.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.94167,
+        -15.2552
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1026.597
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1073.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.0053,
+        -15.00293
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1188.587
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1082.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.9512,
+        -15.08582
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1098.033
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1083.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95135,
+        -15.08587
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1099.531
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1084.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.97342,
+        -15.08723
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1108.714
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1099.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87187,
+        -15.13705
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1058.581
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1108.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.87332,
+        -15.05302
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1081.197
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1111.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.95048,
+        -15.18657
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1040.103
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1119.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.85728,
+        -15.03782
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1101.559
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1132.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.8728,
+        -15.07337
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1070.808
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1148.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83482,
+        -15.00792
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1138.5
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1150.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09215,
+        -14.86972
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1248.522
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1151.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10387,
+        -14.85322
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1248.134
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1154.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.10263,
+        -14.93997
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1195.121
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1155.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.09008,
+        -14.95068
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1201.453
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1183.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.80637,
+        -14.99058
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1179.68
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1210.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.22248,
+        -15.0351
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1214.191
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1213.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.21722,
+        -15.00328
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1211.74
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1221.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.15907,
+        -15.00558
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1237.023
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1232.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.05397,
+        -14.9396
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1228.887
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1236.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.07453,
+        -14.95678
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1202.202
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1249.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98405,
+        -14.96995
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1200.469
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1250.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.04165,
+        -14.9931
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1176.625
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1252.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.85878,
+        -15.02488
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1102.351
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1266.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.83513,
+        -15.00763
+      ]
+    },
+    "layers": [
+      0
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1138.087
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1267.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.2343,
+        -15.00088
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1179.114
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "1269.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.22013,
+        -15.13828
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1128.036
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  },
+  {
+    "type": "hob",
+    "name": "12711.0",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.98334,
+        -15.05128
+      ]
+    },
+    "layers": [
+      1
+    ],
+    "date_times": [
+      "2000-01-01"
+    ],
+    "sp_values": [
+      [
+        1116.553
+      ]
+    ],
+    "is_excluded_from_calculation": false
+  }
+]

@@ -31,6 +31,7 @@ const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation
 interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
+  formatDateTime: (value: string) => string;
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | null) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -49,6 +50,7 @@ interface IProps {
 const BoundariesAccordion = ({
   boundaries,
   layers,
+  formatDateTime,
   selectedBoundaryAndObservation,
   onCloneBoundary,
   onCloneBoundaryObservation,
@@ -115,6 +117,7 @@ const BoundariesAccordion = ({
               isReadOnly={false}
               layers={layers}
               timeDiscretization={timeDiscretization}
+              formatDateTime={formatDateTime}
             />
           ),
         },

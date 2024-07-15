@@ -94,13 +94,16 @@ def create_hob_package(flopy_modflow: FlopyModflow, model: Model, settings: HobP
         if not isinstance(item, HeadObservationItem):
             continue
 
-        obs_data.append(FlopyModflowHeadObservation(
-            model=flopy_modflow,
-            obsname=item.name,
-            layer=item.layer,
-            row=item.row,
-            column=item.column,
-            time_series_data=[item.to_list() for item in item.time_series_data]
-        ))
+        obs_data.append(
+            FlopyModflowHeadObservation(
+                model=flopy_modflow,
+                layer=item.layer,
+                obsname=item.obs_name,
+                row=item.row,
+                column=item.column,
+                time_series_data=[item.to_list() for item in item.time_series_data],
+                names=item.names
+            )
+        )
 
     return FlopyModflowHob(model=flopy_modflow, obs_data=obs_data, **package_data.to_dict())

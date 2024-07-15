@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="de"><Esri><CreaDate>20240712</CreaDate><CreaTime>10512700</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\3D Analyst Tools.tbx\AddSurfaceInformation" Date="20240712" Time="105127">AddSurfaceInformation SADC_south_for_calibration "DEM_South_SRTM_filled_lower resolution.tif" Z Bilinear # 1 0 #</Process></lineage></DataProperties></Esri></metadata>

@@ -1,8 +1,8 @@
 import dataclasses
 
-from morpheus.common.types import Float
+from morpheus.common.types import Float, DateTime
 from morpheus.project.types.Model import Model
-from morpheus.project.types.observations.Observation import HeadValue
+from morpheus.project.types.observations.HeadObservation import Head, ObservationId, ObservationName
 
 
 class TotalTime(Float):
@@ -11,8 +11,9 @@ class TotalTime(Float):
 
 @dataclasses.dataclass
 class HeadObservationTimeSeriesItem:
+    date_time: DateTime
     total_time: TotalTime
-    head_value: HeadValue
+    head_value: Head
 
     def to_list(self) -> list[float]:
         return [self.total_time.to_value(), self.head_value.to_value()]
@@ -20,20 +21,14 @@ class HeadObservationTimeSeriesItem:
 
 @dataclasses.dataclass
 class HeadObservationItem:
-    name: str
+    observation_id: ObservationId
+    observation_name: ObservationName
+    obs_name: str
+    names: list[str]
     layer: int
     row: int
     column: int
     time_series_data: list[HeadObservationTimeSeriesItem]
-
-    def to_dict(self) -> dict:
-        return {
-            'name': self.name,
-            'layer': self.layer,
-            'row': self.row,
-            'column': self.column,
-            'time_series_data': [item.to_list() for item in self.time_series_data]
-        }
 
 
 @dataclasses.dataclass
@@ -57,7 +52,6 @@ class HeadObservationData:
 def calculate_observation_items(model: Model) -> HeadObservationData:
     layers = model.layers
     time_discretization = model.time_discretization
-
     layer_ids = [layer.layer_id for layer in layers]
 
     head_observation_data = HeadObservationData.new()
@@ -73,17 +67,19 @@ def calculate_observation_items(model: Model) -> HeadObservationData:
                 time_series_data = []
                 for data_item in data_items:
                     time_series_data.append(HeadObservationTimeSeriesItem(
-                        total_time=TotalTime.from_float(
-                            time_discretization.get_total_time_from_date_time(data_item.date_time)
-                        ),
-                        head_value=data_item.head_value
+                        date_time=data_item.date_time,
+                        total_time=TotalTime.from_float(time_discretization.get_total_time_from_date_time(data_item.date_time)),
+                        head_value=data_item.head
                     ))
 
                     if len(time_series_data) == 0:
                         continue
 
                 head_observation_data.add_item(item=HeadObservationItem(
-                    name=observation.name.to_value(),
+                    observation_id=observation.id,
+                    observation_name=observation.name,
+                    obs_name=observation.id.to_str()[:6],
+                    names=[f'{observation.id.to_str()[:6]}.{idx}' for idx in range(len(time_series_data))],
                     layer=layer_idx,
                     row=cell.row,
                     column=cell.col,
