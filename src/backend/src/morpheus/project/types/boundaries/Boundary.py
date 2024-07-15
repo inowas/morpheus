@@ -24,23 +24,22 @@ class BoundaryId(Uuid):
     pass
 
 
-IBoundaryTypeLiteral = Literal[
-    'constant_head', 'drain', 'evapotranspiration', 'flow_and_head', 'general_head', 'lake', 'recharge', 'river', 'well']
+BoundaryTypeLiteral = Literal['constant_head', 'drain', 'evapotranspiration', 'flow_and_head', 'general_head', 'lake', 'recharge', 'river', 'well']
 
 
 @dataclasses.dataclass(frozen=True)
 class BoundaryType:
-    type: IBoundaryTypeLiteral
+    type: BoundaryTypeLiteral
 
     def __eq__(self, other):
         return self.type == other.type
 
     @classmethod
-    def from_str(cls, value: IBoundaryTypeLiteral):
+    def from_str(cls, value: BoundaryTypeLiteral):
         return cls(type=value)
 
     @classmethod
-    def from_value(cls, value: IBoundaryTypeLiteral):
+    def from_value(cls, value: BoundaryTypeLiteral):
         return cls.from_str(value=value)
 
     @classmethod

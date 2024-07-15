@@ -1,3 +1,4 @@
+import dataclasses
 import tempfile
 from typing import Tuple
 
@@ -10,11 +11,12 @@ from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineB
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import create_drn_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import create_evt_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import create_fhb_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageMapper import calculate_observation_items, HeadObservationItem
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
 from morpheus.project.types.calculation.Calculation import Log, CalculationState
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
-from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, Observation
+from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, CalculationObservationResultItem
 from morpheus.project.types.Model import Model
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
@@ -33,6 +35,13 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.L
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import create_bcf_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import create_de4_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import create_pcg_package
+
+
+@dataclasses.dataclass
+class HobOutItem:
+    name: str
+    simulated: float
+    observed: float
 
 
 class Mf2005CalculationEngine(CalculationEngineBase):
@@ -269,7 +278,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             times=[float(time) for time in bf_head_file.get_times()],
             kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in bf_head_file.get_kstpkper()],
             number_of_layers=int(bf_head_file.get_data().shape[0]),
-            number_of_observations=len(self.read_head_observations()),
+            number_of_observations=self.read_number_of_head_observations(),
             min_value=min_value,
             max_value=max_value
         )
@@ -355,10 +364,29 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         layer=0,
         precision=4
     ):
-        return []
+        raise NotImplementedError('Transport is not available in Mf2005')
+
+    def read_transport_concentration_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        raise NotImplementedError('Transport is not available in Mf2005')
+
+    def read_transport_budget(
+        self,
+        totim: float | None = None,
+        idx: int | None = None,
+        kstpkper: Tuple[int, int] | None = None,
+        incremental=False
+    ):
+        raise NotImplementedError('Transport is not available in Mf2005')
 
     def read_flow_drawdown(
-        self, totim: float | None = None,
+        self,
+        totim: float | None = None,
         idx: int | None = None,
         kstpkper: Tuple[int, int] | None = None,
         layer=0,
@@ -372,6 +400,23 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return []
 
         data = bf.HeadFile(file).get_data(totim=totim, idx=idx, kstpkper=kstpkper, mflay=layer)
+        if data is None:
+            return []
+        data = np.round(data, precision)
+        return data.tolist()
+
+    def read_flow_drawdown_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        file = self.__get_file_with_extension_from_workspace(".ddn")
+        if file is None:
+            return []
+
+        data = bf.HeadFile(file).get_ts((layer, row, col))
         if data is None:
             return []
         data = np.round(data, precision)
@@ -398,30 +443,100 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = np.round(data, precision)
         return data.tolist()
 
-    def read_head_observations(self) -> list[Observation]:
+    def read_flow_head_time_series(
+        self,
+        layer: int,
+        row: int,
+        col: int,
+        precision=4
+    ):
+        file = self.__get_file_with_extension_from_workspace(".hds")
+        if file is None:
+            return []
+
+        data = bf.HeadFile(file).get_ts((layer, row, col))
+        if data is None:
+            return []
+        data = np.round(data, precision)
+        return data.tolist()
+
+    def read_number_of_head_observations(self) -> int:
+        hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
+        if hob_out_file is None:
+            return 0
+
+        with open(hob_out_file) as f:
+            header = False
+            count = 0
+            for line in f:
+                if line.startswith('#'):
+                    continue
+
+                if not header:
+                    header = line.split('"')[1::2]
+                    continue
+
+                count += 1
+
+        return count
+
+    def read_head_observations(self, model: Model) -> list[CalculationObservationResultItem]:
         hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
         if hob_out_file is None:
             return []
 
-        observations = []
-        f = open(hob_out_file)
-        header = False
-        for line in f:
-            if line.startswith('#'):
+        hob_out_items = {}
+        with open(hob_out_file) as f:
+            header = False
+            for line in f:
+                if line.startswith('#'):
+                    continue
+
+                if not header:
+                    header = line.split('"')[1::2]
+                    continue
+
+                values = line.split()
+                name = values[2]
+                simulated = float(values[0])
+                observed = float(values[1])
+                hob_out_items[name] = HobOutItem(name=name, simulated=simulated, observed=observed)
+
+        observation_items = calculate_observation_items(model)
+
+        calculation_observation_results = []
+        for item in observation_items:
+            if not isinstance(item, HeadObservationItem):
                 continue
 
-            if not header:
-                header = line.split('"')[1::2]
-                continue
+            observation_id = item.observation_id
+            observation_name = item.observation_name
+            layer = item.layer
+            row = item.row
+            col = item.column
+            for idx, time_series_item in enumerate(item.time_series_data):
+                date_time = time_series_item.date_time
+                observed = time_series_item.head_value
+                simulated = 0.0
+                if item.names[idx] in hob_out_items:
+                    simulated = hob_out_items[item.names[idx]].simulated
+                if idx == 0 and item.obs_name in hob_out_items:
+                    simulated = hob_out_items[item.obs_name].simulated
 
-            values = line.split()
-            observations.append(Observation(
-                simulated=float(values[0]),
-                observed=float(values[1]),
-                name=values[2],
-            ))
+                calculation_observation_results.append(
+                    CalculationObservationResultItem(
+                        observation_id=observation_id,
+                        observation_name=observation_name,
+                        layer=layer,
+                        row=row,
+                        col=col,
+                        date_time=date_time.to_str(),
+                        simulated=simulated,
+                        observed=observed.to_value()
+                    )
+                )
 
-        return observations
+        return calculation_observation_results
 
     def read_file(self, file_name: str) -> str | None:
         file = os.path.join(self.workspace_path, file_name)

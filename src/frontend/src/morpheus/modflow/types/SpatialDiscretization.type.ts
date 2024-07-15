@@ -26,18 +26,13 @@ export interface IGrid {
   n_rows: number;
 
   col_widths: number[]; // length of each column (sums up to del_col_total)
-  total_width: number; // total length of all columns
-
   row_heights: number[]; // length of each row (sums up to del_row_total)
-  total_height: number; // total length of all rows
 
   origin: Point // top left corner of the grid
-  rotation: number;
-  length_unit: ILengthUnit;
-
-  bounding_box: [[number, number], [number, number]]; // [[minX, minY], [maxX, maxY]]
+  outline: Polygon; // the outline of the grid
+  rotation: number; // rotation angle in degrees
+  length_unit: ILengthUnit; // unit of the lengths
 }
-
 
 export enum ILengthUnit {
   UNDEFINED = 'unknown',

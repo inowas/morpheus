@@ -6,6 +6,7 @@ import {FeatureGroup, GeoJSON} from 'react-leaflet';
 import {ContinuousLegend} from '../Legend';
 import {ISelection} from '../types';
 import HoverDataLayer from '../HoverDataLayer';
+import SelectedRowAndColLayer from '../SelectedRowAndColLayer';
 
 interface IProps {
   title: string;
@@ -18,20 +19,31 @@ interface IProps {
   maxVal: number;
   onClick?: (selection: ISelection | null) => void;
   onHover?: (selection: ISelection | null) => void;
+  selectRowsAndCols?: boolean;
 }
 
-const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal, onClick}: IProps) => {
+const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal, onClick, selectRowsAndCols}: IProps) => {
 
   const [selection, setSelection] = useState<ISelection | null>(null);
+  const [selectedValue, setSelectedValue] = useState<number | null>(null);
 
   const handleHover = (selected: ISelection | null) => {
     setSelection(selected);
+    if (selected && selected.row < data.length && selected.col < data[0].length) {
+      setSelectedValue(data[selected.row][selected.col]);
+    }
+
     if (onHover) {
       onHover(selected);
     }
   };
 
   const handleClick = (selected: ISelection | null) => {
+    setSelection(selected);
+    if (selected && selected.row < data.length && selected.col < data[0].length) {
+      setSelectedValue(data[selected.row][selected.col]);
+    }
+
     if (onClick) {
       onClick(selected);
     }
@@ -60,7 +72,7 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
       return transformRotate(mp, -rotation, {mutate: true, pivot: centerOfMassOutline});
     });
 
-  }, [data, rotation, outline]);
+  }, [data, numberOfGrades, outline, rotation]);
 
   return (
     <FeatureGroup key={'contourLayer'}>
@@ -83,15 +95,24 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
       <ContinuousLegend
         title={title}
         direction={'horizontal'}
-        value={selection ? selection.value : null}
+        value={selectedValue}
         minValue={minVal}
         maxValue={maxVal}
         getRgbColor={getRgbColor}
       />
-      <HoverDataLayer
-        data={data}
-        rotation={rotation}
+      {selection && selectRowsAndCols && <SelectedRowAndColLayer
+        nRows={data.length}
+        nCols={data[0].length}
+        selectedRow={selection.row}
+        selectedCol={selection.col}
         outline={outline}
+        rotation={rotation}
+      />}
+      <HoverDataLayer
+        nCols={data[0].length}
+        nRows={data.length}
+        rotation={rotation}
+        outline={outline.geometry}
         onHover={handleHover}
         onClick={handleClick}
       />

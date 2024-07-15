@@ -5,6 +5,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {IBoundary} from '../types/Boundaries.type';
 import {ILayer} from '../types/Layers.type';
 import {IModel} from '../types/Model.type';
+import {IHeadObservation} from '../types/HeadObservations.type';
 
 type IModelState = 'initializing' | 'error' | 'loading' | 'loaded' | 'setup';
 
@@ -60,6 +61,25 @@ export const modelSlice = createSlice({
         });
       }
     },
+    setHeadObservations: (state, action: PayloadAction<IHeadObservation[]>) => {
+      if (state.model) {
+        state.model.observations = action.payload;
+      }
+    },
+    addOrUpdateHeadObservation: (state, action: PayloadAction<IHeadObservation>) => {
+      if (state.model) {
+        if (state.model.observations.find((o) => o.id === action.payload.id)) {
+          state.model.observations = state.model.observations.map((o) => {
+            if (o.id === action.payload.id) {
+              return action.payload;
+            }
+            return o;
+          });
+          return;
+        }
+        state.model.observations.push(action.payload);
+      }
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
       if (action.payload) {
@@ -88,8 +108,10 @@ export const {
   setLayers,
   setBoundaries,
   setLoading,
+  setHeadObservations,
   setError,
   updateBoundary,
+  addOrUpdateHeadObservation,
 } = modelSlice.actions;
 
 export default modelSlice.reducer;

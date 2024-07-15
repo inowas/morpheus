@@ -4,6 +4,7 @@ from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import VersionDeletedEvent, VersionAssignedToModelEvent, VersionDescriptionUpdatedEvent, VersionCreatedEvent, \
     ModelCreatedEvent
 import morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents as ModelBoundaryEvents
+import morpheus.project.domain.events.ModelEvents.ModelObservationEvents as ModelObservationEvents
 from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelAffectedCellsRecalculatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelGridUpdatedEvent, \
     ModelGridRecalculatedEvent, ModelGeometryUpdatedEvent, ModelAffectedCellsUpdatedEvent
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent, ModelLayerMetadataUpdatedEvent, ModelLayerOrderUpdatedEvent, \
@@ -754,6 +755,168 @@ class ModelProjector(EventListenerBase):
         updated_boundary = boundary.with_updated_observation(observation_id=observation_id, update=observation)
         new_boundaries = boundaries.with_updated_boundary(update=updated_boundary)
         updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelObservationEvents.ModelObservationAddedEvent)
+    def on_model_observation_added(self, event: ModelObservationEvents.ModelObservationAddedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        observation = event.get_observation()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        observations = latest_model.observations
+        if observations is None:
+            return
+
+        new_observations = observations.with_added_observation(observation=observation)
+        updated_model = latest_model.with_updated_observations(observations=new_observations)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelObservationEvents.ModelObservationClonedEvent)
+    def on_model_observation_cloned(self, event: ModelObservationEvents.ModelObservationClonedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        observation_id = event.get_observation_id()
+        new_observation_id = event.get_new_observation_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        observations = latest_model.observations
+        if observations is None:
+            return
+
+        observation = observations.get_observation(id=observation_id)
+        if observation is None:
+            return
+
+        new_observation = observation.with_updated_id(id=new_observation_id)
+        new_observations = observations.with_added_observation(observation=new_observation)
+        updated_model = latest_model.with_updated_observations(observations=new_observations)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelObservationEvents.ModelObservationEnabledEvent)
+    def on_model_observation_enabled(self, event: ModelObservationEvents.ModelObservationEnabledEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        observation_id = event.get_observation_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+        if latest_model.model_id != model_id:
+            return
+
+        observations = latest_model.observations
+        if observations is None:
+            return
+
+        observation = observations.get_observation(id=observation_id)
+        if observation is None:
+            return
+
+        updated_observation = observation.with_updated_enabled(enabled=True)
+        new_observations = observations.with_updated_observation(observation=updated_observation)
+        updated_model = latest_model.with_updated_observations(observations=new_observations)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelObservationEvents.ModelObservationDisabledEvent)
+    def on_model_observation_disabled(self, event: ModelObservationEvents.ModelObservationDisabledEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        observation_id = event.get_observation_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+        if latest_model.model_id != model_id:
+            return
+
+        observations = latest_model.observations
+        if observations is None:
+            return
+
+        observation = observations.get_observation(id=observation_id)
+        if observation is None:
+            return
+
+        updated_observation = observation.with_updated_enabled(enabled=False)
+        new_observations = observations.with_updated_observation(observation=updated_observation)
+        updated_model = latest_model.with_updated_observations(observations=new_observations)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelObservationEvents.ModelObservationUpdatedEvent)
+    def on_model_observation_updated(self, event: ModelObservationEvents.ModelObservationUpdatedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+        if latest_model.model_id != model_id:
+            return
+
+        observations = latest_model.observations
+        if observations is None:
+            return
+
+        observation_to_update = observations.get_observation(id=event.get_observation_id())
+        if observation_to_update is None:
+            return
+
+        observation_to_update = observation_to_update.with_updated_type(type=event.get_type())
+        observation_to_update = observation_to_update.with_updated_name(name=event.get_name())
+        observation_to_update = observation_to_update.with_updated_tags(tags=event.get_tags())
+        observation_to_update = observation_to_update.with_updated_data(data=event.get_data())
+        observation_to_update = observation_to_update.with_updated_geometry(geometry=event.get_geometry())
+        observation_to_update = observation_to_update.with_updated_affected_cells(affected_cells=event.get_affected_cells())
+        observation_to_update = observation_to_update.with_updated_affected_layers(affected_layers=event.get_affected_layers())
+        observation_to_update = observation_to_update.with_updated_enabled(enabled=event.get_enabled())
+
+        updated_observations = observations.with_updated_observation(observation=observation_to_update)
+        updated_model = latest_model.with_updated_observations(observations=updated_observations)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelObservationEvents.ModelObservationRemovedEvent)
+    def on_model_observation_removed(self, event: ModelObservationEvents.ModelObservationRemovedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        observation_id = event.get_observation_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+        if latest_model.model_id != model_id:
+            return
+
+        observations = latest_model.observations
+        if observations is None:
+            return
+
+        new_observations = observations.with_removed_observation(id=observation_id)
+        updated_model = latest_model.with_updated_observations(observations=new_observations)
 
         self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
