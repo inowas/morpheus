@@ -12,8 +12,9 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, BoundaryTypeLiteral, BoundaryId
+from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, BoundaryId
 from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
+from morpheus.project.types.boundaries.BoundaryType import BoundaryTypeLiteral
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import GeometryFactory, Point, Polygon, LineString
 
@@ -64,7 +65,7 @@ class AddModelBoundaryCommandHandler(CommandHandlerBase):
         top_layer_id = latest_model.layers[0].layer_id
         start_date_time = latest_model.time_discretization.start_date_time
 
-        boundary = BoundaryFactory().create_with_default_data(
+        boundary = BoundaryFactory().create_with_default_observation_values(
             boundary_id=command.boundary_id,
             boundary_type=command.type,
             geometry=command.geometry,

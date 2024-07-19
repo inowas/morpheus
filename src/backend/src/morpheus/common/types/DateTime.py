@@ -9,6 +9,9 @@ class DateTime:
     def __eq__(self, other):
         return self.value == other.value
 
+    def __hash__(self):
+        return hash(self.value)
+
     def __lt__(self, other):
         return self.value < other.value
 
@@ -31,6 +34,10 @@ class DateTime:
 
     @classmethod
     def from_str(cls, value: str):
+        return cls.from_iso(value)
+
+    @classmethod
+    def from_iso(cls, value: str):
         return cls(value=datetime.fromisoformat(value))
 
     @classmethod

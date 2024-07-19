@@ -113,7 +113,7 @@ def calculate_stress_period_data(model: Model) -> LakStressPeriodData | None:
     sp_data = calculate_lak_boundary_stress_period_data(
         spatial_discretization=model.spatial_discretization,
         time_discretization=model.time_discretization,
-        lak_boundaries=model.boundaries.get_boundaries_of_type(BoundaryType.lake())  # Sequence[Boundary]
+        lak_boundaries=model.boundaries.get_boundaries_of_type(BoundaryType.lake)  # Sequence[Boundary]
     )
 
     if sp_data.is_empty():

@@ -7,7 +7,7 @@ from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
 from .BoundaryInterpolationType import InterpolationType
-from .Observation import ObservationId, RawDataItem, DataItem, Observation, ObservationName
+from .Observation import ObservationId, ObservationValue, DataItem, Observation, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -17,7 +17,7 @@ class PumpingRate(Float):
 
 
 @dataclasses.dataclass
-class WellRawDataItem(RawDataItem):
+class WellObservationValue(ObservationValue):
     date_time: StartDateTime
     pumping_rate: PumpingRate
 
@@ -69,10 +69,12 @@ class WellDataItem(DataItem):
 
 @dataclasses.dataclass
 class WellObservation(Observation):
-    data: Sequence[WellRawDataItem]
+    data: Sequence[WellObservationValue]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: Sequence[WellRawDataItem], observation_id: ObservationId | None = None):
+    def new(cls, name: ObservationName, geometry: Point, data: Sequence[WellObservationValue], observation_id: ObservationId | None = None):
+        data = list({d.date_time: d for d in data}.values())
+        data = sorted(data, key=lambda x: x.date_time)
         return cls(
             observation_id=observation_id or ObservationId.new(),
             observation_name=name,
@@ -86,7 +88,7 @@ class WellObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[WellRawDataItem.from_dict(d) for d in obj['data']]
+            data=[WellObservationValue.from_dict(d) for d in obj['data']]
         )
 
     def to_dict(self):

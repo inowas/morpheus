@@ -7,7 +7,7 @@ from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Point
 from morpheus.project.types.layers import LayerId
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationDataItem, HeadObservation
+from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationValue, HeadObservation
 
 from .EventNames import ModelObservationEventName
 
@@ -149,7 +149,7 @@ class ModelObservationRemovedEvent(EventBase):
 class ModelObservationUpdatedEvent(EventBase):
     @classmethod
     def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, type: ObservationType, tags: ObservationTags, name: ObservationName,
-                         geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[HeadObservationDataItem], enabled: bool, occurred_at: DateTime):
+                         geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[HeadObservationValue], enabled: bool, occurred_at: DateTime):
         return cls(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -194,8 +194,8 @@ class ModelObservationUpdatedEvent(EventBase):
     def get_affected_layers(self) -> list[LayerId]:
         return [LayerId.from_str(layer_id) for layer_id in self.payload['affected_layers']]
 
-    def get_data(self) -> list[HeadObservationDataItem]:
-        return [HeadObservationDataItem.from_dict(value) for value in self.payload['data']]
+    def get_data(self) -> list[HeadObservationValue]:
+        return [HeadObservationValue.from_dict(value) for value in self.payload['data']]
 
     def get_enabled(self) -> bool:
         return self.payload['enabled']

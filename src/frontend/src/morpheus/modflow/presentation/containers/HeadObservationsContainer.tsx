@@ -3,7 +3,7 @@ import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 import {MapRef} from 'common/components/Map/Map';
-import {DataGrid, SearchInput, SectionTitle} from 'common/components';
+import {DataGrid, DropdownComponent, SearchInput, SectionTitle} from 'common/components';
 
 import useObservations from '../../application/useObservations';
 import useLayers from '../../application/useLayers';
@@ -79,6 +79,10 @@ const HeadObservationsContainer = () => {
     return null;
   }
 
+  const dropdownItems = [
+    {text: 'Head Observation', action: () => setAddObservationOnMap('head')},
+  ];
+
   return (
     <>
       <SidebarContent maxWidth={500}>
@@ -86,14 +90,27 @@ const HeadObservationsContainer = () => {
           <DataGrid>
             <SectionTitle title={'Observations'}/>
             <SearchInput
-              dropDownText={'Add new'}
-              dropdownItems={[
-                {text: 'Head Observation', action: () => setAddObservationOnMap('head')},
-              ]}
-              onChangeSearch={(search) => console.log(search)}
-              searchPlaceholder={'Search head observations'}
-              isReadOnly={isReadOnly}
-            />
+              search={''}
+              onChange={(search) => console.log(search)}
+              placeholder={'Search boundaries'}
+            >
+              <DropdownComponent.Dropdown
+                data-testid='test-search-component'
+                text={'Draw on map'}
+                icon='pencil'
+                floating={true}
+                labeled={true}
+                button={true}
+                className='icon'
+                disabled={isReadOnly}
+              >
+                <DropdownComponent.Menu>
+                  {dropdownItems.map((item, key) => (
+                    <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
+                  ))}
+                </DropdownComponent.Menu>
+              </DropdownComponent.Dropdown>
+            </SearchInput>
             <HeadObservationListDetails
               observations={observations}
               selected={selectedHeadObservation || null}

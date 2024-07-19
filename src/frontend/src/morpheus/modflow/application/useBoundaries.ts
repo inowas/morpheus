@@ -2,7 +2,7 @@ import {IAffectedCells, IError} from '../types';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {IBoundary, IBoundaryId, IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservation, IObservationId} from '../types/Boundaries.type';
+import {IBoundary, IBoundaryId, IBoundaryObservationValue, IBoundaryType, IInterpolationType, IObservation, IObservationId} from '../types/Boundaries.type';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 import {setBoundaries, updateBoundary} from '../infrastructure/modelStore';
@@ -13,7 +13,7 @@ interface IUseBoundaries {
   boundaries: IBoundary[];
   fetchAffectedCellsGeometry: (boundaryId: IBoundaryId) => Promise<Feature<Polygon | MultiPolygon> | null>;
   onAddBoundary: (boundary_type: IBoundaryType, geometry: Point | Polygon | LineString) => Promise<IBoundaryId | undefined>;
-  onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => Promise<void>;
+  onAddBoundaryObservation: (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationValue[]) => Promise<void>;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -35,8 +35,9 @@ type IGetBoundariesResponse = IBoundary[];
 const useBoundaries = (projectId: string): IUseBoundaries => {
 
   const {model} = useSelector((state: IRootState) => state.project.model);
+  const boundaries = model?.boundaries || [];
+
   const dispatch = useDispatch();
-  const boundaries = useSelector((state: IRootState) => state.project.model.model?.boundaries || []);
 
   const isMounted = useRef(true);
   const [loading, setLoading] = useState<boolean>(false);
@@ -168,7 +169,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
   };
 
-  const onAddBoundaryObservation = async (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationData[]) => {
+  const onAddBoundaryObservation = async (boundaryId: IBoundaryId, observationName: string, observationGeometry: Point, observationData: IBoundaryObservationValue[]) => {
     if (!model || !projectId) {
       return;
     }

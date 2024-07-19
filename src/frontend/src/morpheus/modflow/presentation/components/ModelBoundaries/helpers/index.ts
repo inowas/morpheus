@@ -8,6 +8,7 @@ interface IAvailableBoundary {
   isTimeSeriesDependent: boolean;
   hasMultipleObservations: boolean;
   hasMultipleAffectedLayers: boolean;
+  geometryType: 'Point' | 'LineString' | 'Polygon';
 }
 
 export const boundarySettings: IAvailableBoundary[] = [
@@ -18,6 +19,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: true,
     hasMultipleAffectedLayers: true,
     hasMultipleObservations: true,
+    geometryType: 'LineString',
   },
   {
     title: 'Drain Boundaries',
@@ -26,6 +28,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: true,
     hasMultipleAffectedLayers: false,
     hasMultipleObservations: true,
+    geometryType: 'LineString',
   },
   {
     title: 'Evapotranspiration Boundaries',
@@ -34,6 +37,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: false,
     hasMultipleAffectedLayers: true,
     hasMultipleObservations: false,
+    geometryType: 'Polygon',
   },
   {
     title: 'Flow and Head Boundaries',
@@ -42,6 +46,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: false,
     hasMultipleAffectedLayers: true,
     hasMultipleObservations: true,
+    geometryType: 'LineString',
   },
   {
     title: 'General Head Boundaries',
@@ -50,6 +55,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: true,
     hasMultipleAffectedLayers: true,
     hasMultipleObservations: true,
+    geometryType: 'LineString',
   },
   {
     title: 'Lake Boundaries',
@@ -58,6 +64,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: true,
     hasMultipleAffectedLayers: false,
     hasMultipleObservations: false,
+    geometryType: 'Polygon',
   },
   {
     title: 'Recharge',
@@ -66,6 +73,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: true,
     hasMultipleAffectedLayers: false,
     hasMultipleObservations: false,
+    geometryType: 'Polygon',
   },
   {
     title: 'River',
@@ -74,6 +82,7 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: false,
     hasMultipleAffectedLayers: true,
     hasMultipleObservations: true,
+    geometryType: 'LineString',
   },
   {
     title: 'Well Boundaries',
@@ -82,14 +91,13 @@ export const boundarySettings: IAvailableBoundary[] = [
     isTimeSeriesDependent: true,
     hasMultipleAffectedLayers: false,
     hasMultipleObservations: false,
+    geometryType: 'Point',
   },
 ];
 
 
-export const getAvailableBoundary = (type: IBoundaryType): IAvailableBoundary | null => {
-  return boundarySettings.find(b => b.type === type) || null;
-};
-
+export const getAvailableBoundary = (type: IBoundaryType): IAvailableBoundary | null => boundarySettings.find(b => b.type === type) || null;
+export const getBoundarySettings = (): IAvailableBoundary[] => boundarySettings;
 export const isTimeSeriesDependent = (type: IBoundaryType): boolean => getAvailableBoundary(type)?.isTimeSeriesDependent || false;
 export const hasMultipleAffectedLayers = (type: IBoundaryType): boolean => getAvailableBoundary(type)?.hasMultipleAffectedLayers || false;
 export const hasMultipleObservations = (type: IBoundaryType): boolean => getAvailableBoundary(type)?.hasMultipleObservations || false;

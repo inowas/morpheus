@@ -1,12 +1,15 @@
 import {useAuth} from 'react-oidc-context';
 import {IUserProfile} from '../types';
+import {useEffect} from 'react';
 
 interface IUseAuthentication {
   isAuthenticated: boolean;
   isLoading: boolean;
   accessToken: IOAuthToken | null;
+  revokeTokens: () => Promise<void>;
   signOutLocally: () => Promise<void>;
   signOutSilent: () => Promise<void>;
+  signOutRedirect: () => Promise<void>;
   signIn: () => Promise<void>;
   userProfile?: IUserProfile;
   error?: Error;
@@ -25,12 +28,22 @@ const useAuthentication = (): IUseAuthentication => {
 
   const auth = useAuth();
 
+  useEffect(() => {
+    return auth.events.addAccessTokenExpiring(() => {
+      auth.revokeTokens();
+    });
+  }, [auth.events]);
+
   const signIn = async () => {
     await auth.signinRedirect();
   };
 
   const signOutLocally = async () => {
     await auth.removeUser();
+  };
+
+  const revokeTokens = async () => {
+    await auth.revokeTokens();
   };
 
   const getAccessToken = (): IOAuthToken | null => {
@@ -54,10 +67,12 @@ const useAuthentication = (): IUseAuthentication => {
     accessToken: getAccessToken(),
     error: auth.error,
     isAuthenticated: auth.isAuthenticated,
-    isLoading: auth.isLoading || auth.activeNavigator !== undefined,
+    isLoading: auth.isLoading,
+    revokeTokens,
     signIn,
     signOutLocally,
     signOutSilent: auth.signoutSilent,
+    signOutRedirect: auth.signoutRedirect,
     userProfile: auth.user?.profile as IUserProfile | undefined,
   };
 };

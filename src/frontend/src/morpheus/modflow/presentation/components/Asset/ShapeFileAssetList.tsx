@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {IAsset, IAssetData, IAssetShapefileData} from '../../../types';
-import {Header, List, Search, SearchProps, Segment} from 'semantic-ui-react';
-import ShapefileAssetData from './ShapefileAssetData';
+import {List, Search, SearchProps, Segment} from 'semantic-ui-react';
 import {Form, Grid, ShapeFileInput} from 'common/components';
 import styles from './Asset.module.less';
+import {Polygon} from 'geojson';
+import {Map} from 'common/components/Map';
+import ShapeFileAssetDataLayer from './ShapeFileAssetDataLayer';
 
 interface IProps {
   assets: IAsset[];
@@ -13,10 +15,11 @@ interface IProps {
   onFileUpload: (file: File) => void;
   loading: boolean;
   isReadOnly: boolean;
+  modelDomain?: Polygon;
 }
 
 
-const ShapeFileAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsset, onFileUpload, loading, isReadOnly}: IProps) => {
+const ShapeFileAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsset, onFileUpload, loading, isReadOnly, modelDomain}: IProps) => {
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -29,17 +32,6 @@ const ShapeFileAssetList = ({assets, assetData, selectedAsset, onChangeSelectedA
     asset.file.file_name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const isAssetShapefileData = (data: IAssetData): data is IAssetShapefileData => (data && 'shapefile' === data.type);
-
-  useEffect(() => {
-    if ('shapefile' === selectedAsset?.type) {
-      return;
-    }
-
-    if (0 < assets.length) {
-      onChangeSelectedAsset(assets[0]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Grid.Grid>
@@ -75,9 +67,11 @@ const ShapeFileAssetList = ({assets, assetData, selectedAsset, onChangeSelectedA
       </Grid.Column>
       <Grid.Column width={10}>
         <Segment loading={loading} style={{height: '100%', border: 'none', boxShadow: 'none', padding: 0}}>
-          <Header as={'h4'}>Asset Details</Header>
-          <p>Asset ID: {selectedAsset?.asset_id}</p>
-          {assetData && isAssetShapefileData(assetData) && <ShapefileAssetData data={assetData}/>}
+          {assetData && isAssetShapefileData(assetData) &&
+            <Map>
+              <ShapeFileAssetDataLayer data={assetData} modelDomain={modelDomain}/>
+            </Map>
+          }
         </Segment>
       </Grid.Column>
     </Grid.Grid>

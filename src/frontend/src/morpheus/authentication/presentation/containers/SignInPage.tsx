@@ -4,7 +4,11 @@ import useAuthentication from '../../application/useAuthentication';
 
 const SignInPage = () => {
 
-  const {isAuthenticated, isLoading, signIn, signOutSilent, error} = useAuthentication();
+  const {isAuthenticated, isLoading, signIn, signOutLocally, error} = useAuthentication();
+
+  const handleSignOut = async () => {
+    await signOutLocally();
+  };
 
   const renderSignInButton = () => {
     return (
@@ -21,8 +25,9 @@ const SignInPage = () => {
   const renderSignOutButton = () => {
     return (
       <Button
-        color="red" fluid={true}
-        size="large" onClick={signOutSilent}
+        color="red"
+        fluid={true}
+        size="large" onClick={signOutLocally}
         loading={isLoading}
       >
         Sign Out

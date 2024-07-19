@@ -1,8 +1,8 @@
 from typing import Type
 
-from morpheus.project.application.write.CommandBase import CommandBase
-from morpheus.project.application.write.Calculation import calculation_command_handler_map
 from morpheus.project.application.write.Asset import asset_command_handler_map
+from morpheus.project.application.write.Calculation import calculation_command_handler_map
+from morpheus.project.application.write.CommandBase import CommandBase
 from morpheus.project.application.write.Model import model_command_handler_map
 from morpheus.project.application.write.Project import project_command_handler_map
 

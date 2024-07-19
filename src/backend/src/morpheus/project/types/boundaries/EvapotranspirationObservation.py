@@ -5,7 +5,7 @@ from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
 from .BoundaryInterpolationType import InterpolationType
-from .Observation import ObservationId, RawDataItem, DataItem, Observation, ObservationName
+from .Observation import ObservationId, ObservationValue, DataItem, Observation, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -23,7 +23,7 @@ class ExtinctionDepth(Float):
 
 
 @dataclasses.dataclass
-class EvapotranspirationRawDataItem(RawDataItem):
+class EvapotranspirationObservationValue(ObservationValue):
     date_time: StartDateTime
     surface_elevation: SurfaceElevation
     evapotranspiration: Evapotranspiration
@@ -89,10 +89,12 @@ class EvapotranspirationDataItem(DataItem):
 
 @dataclasses.dataclass
 class EvapotranspirationObservation(Observation):
-    data: list[EvapotranspirationRawDataItem]
+    data: list[EvapotranspirationObservationValue]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[EvapotranspirationRawDataItem], observation_id: ObservationId | None = None):
+    def new(cls, name: ObservationName, geometry: Point, data: list[EvapotranspirationObservationValue], observation_id: ObservationId | None = None):
+        data = list({d.date_time: d for d in data}.values())
+        data = sorted(data, key=lambda x: x.date_time)
         return cls(
             observation_id=observation_id or ObservationId.new(),
             observation_name=name,
@@ -106,7 +108,7 @@ class EvapotranspirationObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[EvapotranspirationRawDataItem.from_dict(d) for d in obj['data']]
+            data=[EvapotranspirationObservationValue.from_dict(d) for d in obj['data']]
         )
 
     def to_dict(self):

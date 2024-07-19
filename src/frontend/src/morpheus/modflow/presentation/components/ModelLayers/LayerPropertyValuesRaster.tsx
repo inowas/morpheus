@@ -42,8 +42,7 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly}: IProps) => {
     return (
       <Button
         size={'tiny'}
-        icon={'upload'}
-        content={'Choose file'}
+        content={'Load raster file'}
         onClick={() => setShowFileUploadModal(true)}
         disabled={readOnly}
       />

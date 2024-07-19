@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import DataTable, {IColumn} from './DataTable';
-import {IBoundaryObservationData, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
+import {IBoundaryObservationValue, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
 import {useDateTimeFormat} from 'common/hooks';
 import {Button} from 'common/components';
 import styles from './BoundaryDataTable.module.less';
@@ -90,7 +90,7 @@ const getColumns = (boundaryType: IBoundaryType, formatDate: IFormatDate, parseD
   }
 };
 
-const newRow = (boundaryType: IBoundaryType, dateString: string): IBoundaryObservationData => {
+const newRow = (boundaryType: IBoundaryType, dateString: string): IBoundaryObservationValue => {
   switch (boundaryType) {
   case 'constant_head':
     return {date_time: dateString, head: 0};
@@ -116,13 +116,13 @@ const newRow = (boundaryType: IBoundaryType, dateString: string): IBoundaryObser
 const BoundaryDataTableFreeDates = ({boundaryType, observation, onChangeObservation}: IProps) => {
 
   const {formatDate, parseUserInput, addDays, addWeeks, addMonths, addYears} = useDateTimeFormat('UTC');
-  const [data, setData] = useState<IBoundaryObservationData[]>(observation.data || []);
+  const [data, setData] = useState<IBoundaryObservationValue[]>(observation.data || []);
 
   useEffect(() => {
     setData(observation.data || []);
   }, [observation.data]);
 
-  const addUniqueDataPoint = (dataPoint: IBoundaryObservationData) => {
+  const addUniqueDataPoint = (dataPoint: IBoundaryObservationValue) => {
     // add new data to the existing data but only if the date_time is unique
     if (data.find((d) => d.date_time === dataPoint.date_time)) {
       return;
@@ -133,18 +133,18 @@ const BoundaryDataTableFreeDates = ({boundaryType, observation, onChangeObservat
     setData(newData);
   };
 
-  const updateDataPoint = (dataPoint: IBoundaryObservationData) => {
+  const updateDataPoint = (dataPoint: IBoundaryObservationValue) => {
     const newData = data.map((d) => d.date_time === dataPoint.date_time ? dataPoint : d);
     setData(newData);
   };
 
-  const removeDataPoint = (dataPoint: IBoundaryObservationData) => {
+  const removeDataPoint = (dataPoint: IBoundaryObservationValue) => {
     const newData = data.filter((d) => d.date_time !== dataPoint.date_time);
     setData(newData);
   };
 
   const handleChangedData = (newData: { [key: string]: any; }[]) => {
-    setData(newData as IBoundaryObservationData[]);
+    setData(newData as IBoundaryObservationValue[]);
   };
 
   const latestDate = data[data.length - 1].date_time;

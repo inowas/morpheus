@@ -15,7 +15,7 @@ from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Point
 from morpheus.project.types.layers import LayerId
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationDataItem
+from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationValue
 
 
 class HeadObservationDict(TypedDict):
@@ -54,7 +54,7 @@ class UpdateModelObservationCommand(ProjectCommandBase):
     geometry: Point
     affected_cells: ActiveCells
     affected_layers: list[LayerId]
-    data: list[HeadObservationDataItem]
+    data: list[HeadObservationValue]
     enabled: bool
 
     @classmethod
@@ -70,7 +70,7 @@ class UpdateModelObservationCommand(ProjectCommandBase):
             geometry=Point.from_dict(payload['geometry']),
             affected_cells=ActiveCells.from_dict(payload['affected_cells']),
             affected_layers=[LayerId.from_str(layer_id) for layer_id in payload['affected_layers']],
-            data=[HeadObservationDataItem.from_dict(value) for value in payload['data']],
+            data=[HeadObservationValue.from_dict(value) for value in payload['data']],
             enabled=payload['enabled']
         )
 

@@ -4,6 +4,7 @@ import {Button, SortButtons} from 'common/components';
 import styles from './AssetTable.module.less';
 
 import {IAsset, IAssetId} from '../../../../types';
+import FileNameInput from './FileNameInput';
 
 interface IProps {
   style?: React.CSSProperties;
@@ -12,6 +13,7 @@ interface IProps {
   assets: IAsset[];
   loading: boolean;
   deleteAsset: (id: string) => void;
+  updateAssetFileName: (id: string, fileName: string) => void;
   isReadOnly: boolean;
   selectedAsset: IAsset | null;
   onSelectAsset: (asset: IAsset) => void;
@@ -40,6 +42,7 @@ const AssetTable = ({
   assets,
   loading,
   deleteAsset,
+  updateAssetFileName,
   isReadOnly,
   selectedAsset,
   onSelectAsset,
@@ -134,7 +137,13 @@ const AssetTable = ({
           />
         </Table.Cell>}
 
-        <Table.Cell>{asset.file.file_name}</Table.Cell>
+        <Table.Cell>
+          <FileNameInput
+            value={asset.file.file_name}
+            onChange={(fileName) => updateAssetFileName(asset.asset_id, fileName)}
+            isReadOnly={isReadOnly}
+          />
+        </Table.Cell>
         <Table.Cell>{calculateFileSize(asset.file.size_in_bytes)}</Table.Cell>
         {!isReadOnly && (
           <Table.Cell style={{textAlign: 'right'}}>

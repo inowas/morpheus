@@ -4,7 +4,7 @@ import {ILayerId} from './Layers.type';
 
 type IObservationId = string;
 
-interface IHeadObservation {
+interface IObservation {
   id: IObservationId;
   type: IObservationType;
   name: string;
@@ -12,11 +12,11 @@ interface IHeadObservation {
   geometry: Point
   affected_cells: IAffectedCells;
   affected_layers: ILayerId[]
-  data: IHeadObservationData[];
+  data: IObservationValue[];
   enabled: boolean;
 }
 
-interface IHeadObservationData {
+interface IHeadObservationValue {
   date_time: string;
   head: number;
 }
@@ -86,8 +86,8 @@ interface ILinearRegression {
 }
 
 
-type IObservationData = IHeadObservationData;
+type IObservationValue = IHeadObservationValue;
 
 type IObservationType = 'head';
 
-export type {IHeadObservation, IHeadObservationData, IObservationType, IObservationId, IObservationData, IObservationResult, IStatistics, ILinearRegression};
+export type {IObservation, IHeadObservationValue, IObservationType, IObservationId, IObservationValue, IObservationResult, IStatistics, ILinearRegression};

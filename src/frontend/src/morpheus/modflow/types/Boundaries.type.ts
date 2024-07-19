@@ -32,63 +32,63 @@ export interface IObservation<T> {
   data: T[];
 }
 
-export interface IConstantHeadObservationData {
+export interface IConstantHeadObservationValue {
   date_time: string;
   head: number;
 }
 
-export interface IConstantHeadBoundary extends IGenericBoundary<IConstantHeadObservationData> {
+export interface IConstantHeadBoundary extends IGenericBoundary<IConstantHeadObservationValue> {
   type: 'constant_head';
   geometry: LineString;
 }
 
-export interface IDrainObservationData {
+export interface IDrainObservationValue {
   date_time: string;
   stage: number;
   conductance: number;
 }
 
-export interface IDrainBoundary extends IGenericBoundary<IDrainObservationData> {
+export interface IDrainBoundary extends IGenericBoundary<IDrainObservationValue> {
   type: 'drain';
   geometry: LineString;
 }
 
-export interface IEvapotranspirationObservationData {
+export interface IEvapotranspirationObservationValue {
   date_time: string;
   surface_elevation: number;
   evapotranspiration: number;
   extinction_depth: number;
 }
 
-export interface IEvapotranspirationBoundary extends IGenericBoundary<IEvapotranspirationObservationData> {
+export interface IEvapotranspirationBoundary extends IGenericBoundary<IEvapotranspirationObservationValue> {
   type: 'evapotranspiration';
   geometry: Polygon;
 }
 
 
-export interface IFlowAndHeadObservationData {
+export interface IFlowAndHeadObservationValue {
   date_time: string;
   flow?: number;
   head?: number;
 }
 
-export interface IFlowAndHeadBoundary extends IGenericBoundary<IFlowAndHeadObservationData> {
+export interface IFlowAndHeadBoundary extends IGenericBoundary<IFlowAndHeadObservationValue> {
   type: 'flow_and_head';
   geometry: LineString;
 }
 
-export interface IGeneralHeadObservationData {
+export interface IGeneralHeadObservationValue {
   date_time: string;
   stage: number;
   conductance: number;
 }
 
-export interface IGeneralHeadBoundary extends IGenericBoundary<IGeneralHeadObservationData> {
+export interface IGeneralHeadBoundary extends IGenericBoundary<IGeneralHeadObservationValue> {
   type: 'general_head';
   geometry: LineString;
 }
 
-export interface ILakeObservationData {
+export interface ILakeObservationValue {
   date_time: string;
   precipitation: number;
   evaporation: number;
@@ -96,40 +96,40 @@ export interface ILakeObservationData {
   withdrawal: number;
 }
 
-export interface ILakeBoundary extends IGenericBoundary<ILakeObservationData> {
+export interface ILakeBoundary extends IGenericBoundary<ILakeObservationValue> {
   type: 'lake';
   geometry: Polygon;
 }
 
-export interface IRechargeObservationData {
+export interface IRechargeObservationValue {
   date_time: string;
   recharge_rate: number;
 }
 
-export interface IRechargeBoundary extends IGenericBoundary<IRechargeObservationData> {
+export interface IRechargeBoundary extends IGenericBoundary<IRechargeObservationValue> {
   type: 'recharge';
   geometry: Polygon;
 }
 
-export interface IRiverObservationData {
+export interface IRiverObservationValue {
   date_time: string;
   river_stage: number;
   riverbed_bottom: number;
   conductance: number;
 }
 
-export interface IRiverBoundary extends IGenericBoundary<IRiverObservationData> {
+export interface IRiverBoundary extends IGenericBoundary<IRiverObservationValue> {
   type: 'river';
   geometry: LineString;
 }
 
 
-export interface IWellObservationData {
+export interface IWellObservationValue {
   date_time: string;
   pumping_rate: number;
 }
 
-export interface IWellBoundary extends IGenericBoundary<IWellObservationData> {
+export interface IWellBoundary extends IGenericBoundary<IWellObservationValue> {
   type: 'well';
   geometry: Point;
 }
@@ -150,17 +150,17 @@ type IBoundary =
   | IRiverBoundary
   | IWellBoundary;
 
-type IBoundaryObservationData = IConstantHeadObservationData
-  | IDrainObservationData
-  | IEvapotranspirationObservationData
-  | IFlowAndHeadObservationData
-  | IGeneralHeadObservationData
-  | ILakeObservationData
-  | IRechargeObservationData
-  | IRiverObservationData
-  | IWellObservationData;
+type IBoundaryObservationValue = IConstantHeadObservationValue
+  | IDrainObservationValue
+  | IEvapotranspirationObservationValue
+  | IFlowAndHeadObservationValue
+  | IGeneralHeadObservationValue
+  | ILakeObservationValue
+  | IRechargeObservationValue
+  | IRiverObservationValue
+  | IWellObservationValue;
 
 
-export type {IBoundary, IBoundaryId, IBoundaryObservationData, ISelectedBoundaryAndObservation};
+export type {IBoundary, IBoundaryId, IBoundaryObservationValue, ISelectedBoundaryAndObservation};
 
 

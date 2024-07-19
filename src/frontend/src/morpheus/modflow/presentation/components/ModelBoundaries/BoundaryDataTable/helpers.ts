@@ -1,4 +1,4 @@
-import {IBoundaryObservationData, IBoundaryType} from '../../../../types/Boundaries.type';
+import {IBoundaryObservationValue, IBoundaryType} from '../../../../types/Boundaries.type';
 import {IColumn} from './DataTable';
 
 const isNotNullish = (value: any): value is number => null !== value && value !== undefined;
@@ -77,7 +77,7 @@ export const getBoundaryColumnsByType = (boundaryType: IBoundaryType, formatDate
   }
 };
 
-export const getNewBoundaryDataItemByType = (boundaryType: IBoundaryType, dateString: string): IBoundaryObservationData => {
+export const getNewBoundaryDataItemByType = (boundaryType: IBoundaryType, dateString: string): IBoundaryObservationValue => {
   switch (boundaryType) {
   case 'constant_head':
     return {date_time: dateString, head: 0};

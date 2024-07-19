@@ -13,7 +13,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry import Point
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationName, ObservationTags, HeadObservation, HeadObservationDataItem, Head
+from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationName, ObservationTags, HeadObservation, HeadObservationValue, Head
 
 
 class AddModelObservationCommandPayload(TypedDict):
@@ -69,7 +69,7 @@ class AddModelObservationCommandHandler(CommandHandlerBase):
             geometry=command.geometry,
             grid=current_grid,
             affected_layers=[top_layer_id],
-            data=[HeadObservationDataItem(date_time=start_date_time, head=Head.from_value(0.0))]
+            data=[HeadObservationValue(date_time=start_date_time, head=Head.from_value(0.0))]
         )
 
         event = ModelObservationAddedEvent.from_observation(

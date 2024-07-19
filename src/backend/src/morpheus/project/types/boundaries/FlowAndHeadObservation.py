@@ -64,6 +64,8 @@ class FlowAndHeadObservation(Observation):
 
     @classmethod
     def new(cls, name: ObservationName, geometry: Point, data: list[FlowAndHeadRawDataItem], observation_id: ObservationId | None = None):
+        data = list({d.date_time: d for d in data}.values())
+        data = sorted(data, key=lambda x: x.date_time)
         return cls(
             observation_id=observation_id or ObservationId.new(),
             observation_name=name,

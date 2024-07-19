@@ -1,7 +1,7 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerProperty, IZone} from '../types/Layers.type';
-import {IBoundaryObservationData, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
+import {IBoundaryId, IBoundaryObservationValue, IBoundaryType, IImportItem, IInterpolationType, IObservationId} from '../types/Boundaries.type';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
 import {IHeadObservationData} from '../types/HeadObservations.type';
 
@@ -84,7 +84,7 @@ export interface IUpdateCalculationProfileCommand {
 type ICalculationCommand = IStartCalculationCommand | IStopCalculationCommand | IDeleteCalculationCommand | IUpdateCalculationProfileCommand;
 
 
-// Model Commands
+// Model Boundary Commands
 export interface IAddModelBoundaryCommand {
   command_name: 'add_model_boundary_command';
   payload: {
@@ -103,17 +103,7 @@ export interface IAddModelBoundaryObservationCommand {
     boundary_id: string;
     observation_name: string;
     observation_geometry: Point;
-    observation_data: IBoundaryObservationData[]
-  }
-}
-
-export interface IAddModelObservationCommand {
-  command_name: 'add_model_observation_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    type: 'head';
-    geometry: Point;
+    observation_data: IBoundaryObservationValue[]
   }
 }
 
@@ -136,95 +126,12 @@ export interface ICloneModelBoundaryObservationCommand {
   }
 }
 
-export interface ICloneModelLayerCommand {
-  command_name: 'clone_model_layer_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    layer_id: string;
-  }
-}
-
-export interface ICloneModelObservationCommand {
-  command_name: 'clone_model_observation_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    observation_id: string;
-  }
-}
-
-export interface ICreateModelCommand {
-  command_name: 'create_model_command';
-  payload: {
-    project_id: string;
-    geometry: Polygon;
-    n_cols: number;
-    n_rows: number;
-    rotation: number;
-  }
-}
-
-export interface ICreateModelLayerCommand {
-  command_name: 'create_model_layer_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    name: string;
-    description: string;
-    confinement: 'confined' | 'convertible' | 'unconfined';
-    hk: number;
-    hani: number;
-    vka: number;
-    specific_storage: number;
-    specific_yield: number;
-    initial_head: number;
-    top?: number;
-    bottom: number;
-  }
-}
-
-export interface ICreateModelVersionCommand {
-  command_name: 'create_model_version_command';
-  payload: {
-    project_id: string;
-    version_tag: string;
-    version_description: string;
-  }
-}
-
-export interface IDeleteModelLayerCommand {
-  command_name: 'delete_model_layer_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    layer_id: string;
-  }
-}
-
-export interface IDeleteModelVersionCommand {
-  command_name: 'delete_model_version_command';
-  payload: {
-    project_id: string;
-    version_id: string;
-  }
-}
-
 export interface IDisableModelBoundaryCommand {
   command_name: 'disable_model_boundary_command';
   payload: {
     project_id: string;
     model_id: string;
     boundary_id: string;
-  }
-}
-
-export interface IDisableModelObservationCommand {
-  command_name: 'disable_model_observation_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    observation_id: string;
   }
 }
 
@@ -237,12 +144,12 @@ export interface IEnableModelBoundaryCommand {
   }
 }
 
-export interface IEnableModelObservationCommand {
-  command_name: 'enable_model_observation_command';
+export interface IImportModelBoundariesCommand {
+  command_name: 'import_model_boundaries_command';
   payload: {
     project_id: string;
     model_id: string;
-    observation_id: string;
+    boundaries: IImportItem[]
   }
 }
 
@@ -262,23 +169,6 @@ export interface IRemoveModelBoundaryObservationCommand {
     model_id: string;
     boundary_id: string;
     observation_id: string;
-  }
-}
-
-export interface IRemoveModelObservationCommand {
-  command_name: 'remove_model_observation_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    observation_id: string;
-  }
-}
-
-export interface IUpdateModelAffectedCellsCommand {
-  command_name: 'update_model_affected_cells_command';
-  payload: {
-    project_id: string;
-    affected_cells: IAffectedCells;
   }
 }
 
@@ -343,7 +233,33 @@ export interface IUpdateModelBoundaryObservationCommand {
     observation_id: IObservationId;
     observation_name: string;
     observation_geometry: Point;
-    observation_data: IBoundaryObservationData[];
+    observation_data: IBoundaryObservationValue[];
+  }
+}
+
+export type IModelBoundaryCommand = IAddModelBoundaryCommand |
+  IAddModelBoundaryObservationCommand |
+  ICloneModelBoundaryCommand |
+  ICloneModelBoundaryObservationCommand |
+  IDisableModelBoundaryCommand |
+  IEnableModelBoundaryCommand |
+  IImportModelBoundariesCommand |
+  IRemoveModelBoundaryCommand |
+  IRemoveModelBoundaryObservationCommand |
+  IUpdateModelBoundaryAffectedCellsCommand |
+  IUpdateModelBoundaryAffectedLayersCommand |
+  IUpdateModelBoundaryGeometryCommand |
+  IUpdateModelBoundaryInterpolationCommand |
+  IUpdateModelBoundaryMetadataCommand |
+  IUpdateModelBoundaryObservationCommand;
+
+
+// Model Discretization Commands
+export interface IUpdateModelAffectedCellsCommand {
+  command_name: 'update_model_affected_cells_command';
+  payload: {
+    project_id: string;
+    affected_cells: IAffectedCells;
   }
 }
 
@@ -368,6 +284,172 @@ export interface IUpdateModelGridCommand {
     total_height?: number;
     rotation?: number;
     length_unit?: ILengthUnit;
+  }
+}
+
+export interface IUpdateModelTimeDiscretizationCommand {
+  command_name: 'update_model_time_discretization_command';
+  payload: {
+    project_id: string;
+    start_date_time: ITimeDiscretization['start_date_time'];
+    end_date_time: ITimeDiscretization['end_date_time'];
+    stress_periods: ITimeDiscretization['stress_periods'];
+    time_unit: ITimeDiscretization['time_unit'];
+  }
+}
+
+export type IModelDiscretizationCommand = IUpdateModelAffectedCellsCommand |
+  IUpdateModelGeometryCommand |
+  IUpdateModelGridCommand |
+  IUpdateModelTimeDiscretizationCommand;
+
+
+// General Model Commands
+export interface ICreateModelCommand {
+  command_name: 'create_model_command';
+  payload: {
+    project_id: string;
+    geometry: Polygon;
+    n_cols: number;
+    n_rows: number;
+    rotation: number;
+  }
+}
+
+export interface ICreateModelVersionCommand {
+  command_name: 'create_model_version_command';
+  payload: {
+    project_id: string;
+    version_tag: string;
+    version_description: string;
+  }
+}
+
+export interface IDeleteModelVersionCommand {
+  command_name: 'delete_model_version_command';
+  payload: {
+    project_id: string;
+    version_id: string;
+  }
+}
+
+export interface IUpdateModelVersionDescriptionCommand {
+  command_name: 'update_model_version_description_command';
+  payload: {
+    project_id: string;
+    version_id: string;
+    version_description: string;
+  }
+}
+
+export type IGeneralModelCommand = ICreateModelCommand | ICreateModelVersionCommand | IDeleteModelVersionCommand | IUpdateModelVersionDescriptionCommand;
+
+// Model Observation Commands
+export interface IAddModelObservationCommand {
+  command_name: 'add_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    type: 'head';
+    geometry: Point;
+  }
+}
+
+export interface ICloneModelObservationCommand {
+  command_name: 'clone_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+  }
+}
+
+export interface IDisableModelObservationCommand {
+  command_name: 'disable_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+  }
+}
+
+export interface IEnableModelObservationCommand {
+  command_name: 'enable_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+  }
+}
+
+export interface IRemoveModelObservationCommand {
+  command_name: 'remove_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+  }
+}
+
+export interface IUpdateModelObservationCommand {
+  command_name: 'update_model_observation_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    observation_id: string;
+    type: 'head';
+    name: string;
+    tags: string[];
+    geometry: Point;
+    affected_cells: IAffectedCells;
+    affected_layers: ILayerId[];
+    data: IHeadObservationData[];
+    enabled: boolean;
+  }
+}
+
+export type IModelObservationCommand = IAddModelObservationCommand |
+  ICloneModelObservationCommand |
+  IDisableModelObservationCommand |
+  IEnableModelObservationCommand |
+  IRemoveModelObservationCommand |
+  IUpdateModelObservationCommand;
+
+// Model Layer Commands
+export interface ICloneModelLayerCommand {
+  command_name: 'clone_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
+  }
+}
+
+export interface ICreateModelLayerCommand {
+  command_name: 'create_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    name: string;
+    description: string;
+    confinement: 'confined' | 'convertible' | 'unconfined';
+    hk: number;
+    hani: number;
+    vka: number;
+    specific_storage: number;
+    specific_yield: number;
+    initial_head: number;
+    top?: number;
+    bottom: number;
+  }
+}
+
+export interface IDeleteModelLayerCommand {
+  command_name: 'delete_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    layer_id: string;
   }
 }
 
@@ -437,82 +519,18 @@ export interface IUpdateModelLayerPropertyZonesCommand {
   }
 }
 
-export interface IUpdateModelObservationCommand {
-  command_name: 'update_model_observation_command';
-  payload: {
-    project_id: string;
-    model_id: string;
-    observation_id: string;
-    type: 'head';
-    name: string;
-    tags: string[];
-    geometry: Point;
-    affected_cells: IAffectedCells;
-    affected_layers: ILayerId[];
-    data: IHeadObservationData[];
-    enabled: boolean;
-  }
-}
-
-export interface IUpdateModelTimeDiscretizationCommand {
-  command_name: 'update_model_time_discretization_command';
-  payload: {
-    project_id: string;
-    start_date_time: ITimeDiscretization['start_date_time'];
-    end_date_time: ITimeDiscretization['end_date_time'];
-    stress_periods: ITimeDiscretization['stress_periods'];
-    time_unit: ITimeDiscretization['time_unit'];
-  }
-}
-
-export interface IUpdateModelVersionDescriptionCommand {
-  command_name: 'update_model_version_description_command';
-  payload: {
-    project_id: string;
-    version_id: string;
-    version_description: string;
-  }
-}
-
-
-export type IModelCommand = IAddModelBoundaryCommand |
-  IAddModelBoundaryObservationCommand |
-  IAddModelObservationCommand |
-  ICloneModelBoundaryCommand |
-  ICloneModelBoundaryObservationCommand |
-  ICloneModelLayerCommand |
-  ICloneModelObservationCommand |
-  ICreateModelCommand |
+export type IModelLayerCommand = ICloneModelLayerCommand |
   ICreateModelLayerCommand |
-  ICreateModelVersionCommand |
   IDeleteModelLayerCommand |
-  IDeleteModelVersionCommand |
-  IDisableModelBoundaryCommand |
-  IDisableModelObservationCommand |
-  IEnableModelBoundaryCommand |
-  IEnableModelObservationCommand |
-  IRemoveModelBoundaryCommand |
-  IRemoveModelBoundaryObservationCommand |
-  IRemoveModelObservationCommand |
-  IUpdateModelAffectedCellsCommand |
-  IUpdateModelBoundaryAffectedCellsCommand |
-  IUpdateModelBoundaryAffectedLayersCommand |
-  IUpdateModelBoundaryGeometryCommand |
-  IUpdateModelBoundaryInterpolationCommand |
-  IUpdateModelBoundaryMetadataCommand |
-  IUpdateModelBoundaryObservationCommand |
-  IUpdateModelGeometryCommand |
-  IUpdateModelGridCommand |
-  IUpdateModelObservationCommand |
   IUpdateModelLayerConfinementCommand |
   IUpdateModelLayerMetadataCommand |
   IUpdateModelLayerOrderCommand |
   IUpdateModelLayerPropertyDefaultValueCommand |
   IUpdateModelLayerPropertyRasterReferenceCommand |
-  IUpdateModelLayerPropertyZonesCommand |
-  IUpdateModelTimeDiscretizationCommand |
-  IUpdateModelVersionDescriptionCommand;
+  IUpdateModelLayerPropertyZonesCommand;
 
+// All Model Commands
+export type IModelCommand = IModelBoundaryCommand | IModelDiscretizationCommand | IGeneralModelCommand | IModelObservationCommand | IModelLayerCommand;
 
 // Project Commands
 export interface IAddProjectMemberCommand {

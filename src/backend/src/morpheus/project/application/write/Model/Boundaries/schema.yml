@@ -1,0 +1,594 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for ModelBoundaryCommands
+definitions:
+  commands:
+    AddModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_model_boundary_command
+          example: add_model_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_type:
+              $ref: "#/definitions/components/BoundaryType"
+            boundary_geometry:
+              oneOf:
+                - $ref: "#/definitions/components/Point"
+                - $ref: "#/definitions/components/Linestring"
+                - $ref: "#/definitions/components/Polygon"
+          required:
+            - project_id
+            - model_id
+            - boundary_type
+            - boundary_geometry
+    AddModelBoundaryObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_model_boundary_observation_command
+          example: add_model_boundary_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_name:
+              type: string
+              example: Observation 1
+            observation_geometry:
+              $ref: "#/definitions/components/Point"
+            observation_data:
+              type: object
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - observation_name
+            - observation_geometry
+            - observation_data
+    CloneModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_boundary_command
+          example: clone_model_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+    CloneModelBoundaryObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_boundary_observation_command
+          example: clone_model_boundary_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - observation_id
+    DisableModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - disable_model_boundary_command
+          example: disable_model_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+    EnableModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - enable_model_boundary_command
+          example: enable_model_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+    ImportModelBoundariesCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - import_boundaries_command
+          example: import_boundaries_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundaries:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: string  # optional
+                  type:
+                    $ref: "#/definitions/components/BoundaryType"
+                  name: string
+                  interpolation: # optional
+                    $ref: "#/definitions/components/InterpolationType"
+                  tags: # optional
+                    $ref: "#/definitions/components/Tags"
+                  geometry:
+                    $ref: "#/definitions/components/Geometry"
+                  affected_cells: # optional
+                    $ref: "#/definitions/components/AffectedCells"
+                  affected_layers:
+                    $ref: "#/definitions/components/AffectedLayers"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date_time: string
+                      required:
+                        - date_time
+                required:
+                  - type
+                  - name
+                  - geometry
+                  - affected_layers
+                  - data
+    RemoveModelBoundaryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - remove_model_boundary_command
+          example: remove_model_boundary_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+    RemoveModelBoundaryObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - remove_model_boundary_observation_command
+          example: remove_model_boundary_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - observation_id
+    UpdateModelBoundaryAffectedCellsCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_affected_cells_command
+          example: update_model_boundary_affected_cells_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            affected_cells:
+              "$ref": "#/definitions/components/AffectedCells"
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - affected_cells
+    UpdateModelBoundaryAffectedLayersCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_affected_layers_command
+          example: update_model_boundary_affected_layers_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            affected_layers:
+              "$ref": "#/definitions/components/AffectedLayers"
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - affected_layers
+    UpdateModelBoundaryInterpolationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_interpolation_command
+          example: update_model_boundary_interpolation_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            interpolation:
+              type: string
+              enum:
+                - none
+                - linear
+                - nearest
+                - forward_fill
+              example: none
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - interpolation
+      required:
+        - command_name
+        - payload
+    UpdateModelBoundaryGeometryCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_geometry_command
+          example: update_model_boundary_geometry_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            geometry:
+              oneOf:
+                - "$ref": "#/definitions/components/Linestring"
+                - "$ref": "#/definitions/components/Point"
+                - "$ref": "#/definitions/components/Polygon"
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - geometry
+      required:
+        - command_name
+        - payload
+    UpdateModelBoundaryMetadataCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_metadata_command
+          example: update_model_boundary_metadata_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_name:
+              type: string
+              example: Boundary 1
+            boundary_tags:
+              type: array
+              items:
+                type: string
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+      required:
+        - command_name
+        - payload
+    UpdateModelBoundaryObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_observation_command
+          example: update_model_boundary_observation_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_type:
+              $ref: "#/definitions/components/BoundaryType"
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_name:
+              type: string
+              example: Observation 1
+            observation_geometry:
+              "$ref": "#/definitions/components/Point"
+            observation_data:
+              type: array
+          required:
+            - project_id
+            - model_id
+            - boundary_id
+            - observation_id
+            - observation_name
+            - observation_geometry
+            - observation_data
+      required:
+        - command_name
+        - payload
+  components:
+    AffectedCells:
+      type: object
+    AffectedLayers:
+      type: array
+      items:
+        $ref: "#/definitions/components/LayerId"
+    Geometry:
+      oneOf:
+        - "$ref": "#/definitions/components/Point"
+        - "$ref": "#/definitions/components/Linestring"
+        - "$ref": "#/definitions/components/Polygon"
+    LayerId:
+      type: string
+      example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+    Nullable:
+      type: 'null'
+    Linestring:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - LineString
+          example: LineString
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: number
+            minItems: 2
+            maxItems: 2
+          example:
+            - - 13.922514437551428
+              - 50.964720483303836
+            - - 13.925250781947113
+              - 50.965228748412386
+            - - 13.925036413951403
+              - 50.96623732041704
+            - - 13.92222441026388
+              - 50.96609040370362
+            - - 13.922514437551428
+              - 50.964720483303836
+      required:
+        - type
+        - coordinates
+    Point:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+          example: Point
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - 13.922514437551428
+            - 50.964720483303836
+          items:
+            type: number
+            minItems: 2
+            maxItems: 2
+      required:
+        - type
+        - coordinates
+    Polygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Polygon
+          example: Polygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                minItems: 2
+                maxItems: 2
+          example:
+            - - - 13.922514437551428
+                - 50.964720483303836
+              - - 13.925250781947113
+                - 50.965228748412386
+              - - 13.925036413951403
+                - 50.96623732041704
+              - - 13.92222441026388
+                - 50.96609040370362
+              - - 13.922514437551428
+                - 50.964720483303836
+      required:
+        - type
+        - coordinates
+    BoundaryType:
+      type: string
+      enum:
+        - constant_head
+        - drain
+        - evapotranspiration
+        - flow_and_head
+        - general_head
+        - lake
+        - recharge
+        - river
+        - well
+      example: constant_head
+    InterpolationType:
+      type: string
+      enum:
+        - none
+        - linear
+        - nearest
+        - forward_fill
+      example: none
+    Tags:
+      type: array
+      items:
+          type: string

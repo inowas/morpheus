@@ -1,5 +1,5 @@
 import {L, LatLngTuple} from 'common/infrastructure/Leaflet';
-import {LayersControl, MapContainer, TileLayer, useMap} from 'react-leaflet';
+import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 
 import React, {useEffect, useRef} from 'react';
 import {createLeafletContext, LeafletContext} from '@react-leaflet/core';
