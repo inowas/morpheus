@@ -2,13 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {IBoundaryObservationData, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
 import {useDateTimeFormat} from 'common/hooks';
 import {Checkbox, Icon, Popup, SemanticWIDTHS, Table, TableBody, TableHeader, TableHeaderCell, TableRow} from 'semantic-ui-react';
-import BoundariesUpload from '../BoundariesUpload/BoundariesUpload';
+
 import {ITimeDiscretization} from '../../../../types';
 import {Button} from 'common/components';
 import DataTableInput from './DataTableInput';
 import cloneDeep from 'lodash.clonedeep';
 import {getBoundaryColumnsByType, getNewBoundaryDataItemByType} from './helpers';
-import styles from './ObservationDataTable.module.less';
+import styles from './BoundaryDataTable.module.less';
+import {BoundariesUpload} from '../BoundaryUpload';
 
 interface IProps {
   boundaryType: IBoundaryType;
