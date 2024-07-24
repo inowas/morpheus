@@ -9,7 +9,7 @@ const oidcConfig: AuthProviderProps = {
   client_id: config.keycloak.clientId,
   post_logout_redirect_uri: `${window.location.origin}/auth`,
   redirect_uri: `${window.location.origin}/auth/callback`,
-  userStore: new WebStorageStateStore({store: window.sessionStorage}),
+  userStore: new WebStorageStateStore({store: window.localStorage}),
 };
 
 interface IProps {

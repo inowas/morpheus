@@ -12,7 +12,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, IBoundaryTypeLiteral, BoundaryId
+from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryName, BoundaryTags, BoundaryTypeLiteral, BoundaryId
 from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import GeometryFactory, Point, Polygon, LineString
@@ -21,7 +21,7 @@ from morpheus.project.types.geometry import GeometryFactory, Point, Polygon, Lin
 class AddModelBoundaryCommandPayload(TypedDict):
     project_id: str
     model_id: str
-    boundary_type: IBoundaryTypeLiteral
+    boundary_type: BoundaryTypeLiteral
     boundary_geometry: dict
 
 

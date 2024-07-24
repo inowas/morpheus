@@ -105,7 +105,7 @@ class AsyncCalculationService:
             raise ValueError('Engine not loaded')
         return self.engine.read_transport_budget(idx=idx, incremental=incremental)
 
-    def read_head_observations(self):
+    def read_head_observations(self, model: Model):
         if self.engine is None:
             raise ValueError('Engine not loaded')
-        return self.engine.read_head_observations()
+        return self.engine.read_head_observations(model=model)

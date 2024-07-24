@@ -1,9 +1,12 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Feature, Polygon} from 'geojson';
 import {contours} from 'd3-contour';
 import {bbox, transformRotate, centerOfMass} from '@turf/turf';
 import {FeatureGroup, GeoJSON} from 'react-leaflet';
-import {ContinuousLegend, HoverDataLayer, ISelection} from '../Legend';
+import {ContinuousLegend} from '../Legend';
+import {ISelection} from '../types';
+import HoverDataLayer from '../HoverDataLayer';
+import SelectedRowAndColLayer from '../SelectedRowAndColLayer';
 
 interface IProps {
   title: string;
@@ -11,22 +14,40 @@ interface IProps {
   rotation: number;
   outline: Feature<Polygon>;
   getRgbColor: (value: number) => string;
-  onHover?: (value: number | null) => void;
   numberOfGrades?: number;
   minVal: number;
   maxVal: number;
+  onClick?: (selection: ISelection | null) => void;
+  onHover?: (selection: ISelection | null) => void;
+  selectRowsAndCols?: boolean;
 }
 
-const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal}: IProps) => {
+const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numberOfGrades = 50, title, maxVal, minVal, onClick, selectRowsAndCols}: IProps) => {
 
-  const [value, setValue] = useState<number | null>(null);
+  const [selection, setSelection] = useState<ISelection | null>(null);
+  const [selectedValue, setSelectedValue] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (onHover) {
-      onHover(value);
+  const handleHover = (selected: ISelection | null) => {
+    setSelection(selected);
+    if (selected && selected.row < data.length && selected.col < data[0].length) {
+      setSelectedValue(data[selected.row][selected.col]);
     }
-    // eslint-disable-next-line
-  }, [value]);
+
+    if (onHover) {
+      onHover(selected);
+    }
+  };
+
+  const handleClick = (selected: ISelection | null) => {
+    setSelection(selected);
+    if (selected && selected.row < data.length && selected.col < data[0].length) {
+      setSelectedValue(data[selected.row][selected.col]);
+    }
+
+    if (onClick) {
+      onClick(selected);
+    }
+  };
 
   const contourMultiPolygons = useMemo(() => {
     const contoursFunction = contours().size([data[0].length, data.length]).thresholds(numberOfGrades);
@@ -51,7 +72,7 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
       return transformRotate(mp, -rotation, {mutate: true, pivot: centerOfMassOutline});
     });
 
-  }, [data, rotation, outline]);
+  }, [data, numberOfGrades, outline, rotation]);
 
   return (
     <FeatureGroup key={'contourLayer'}>
@@ -60,10 +81,6 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
           <GeoJSON
             key={JSON.stringify(mp) + key}
             data={mp}
-            onEachFeature={(feature, layer) => {
-              layer.on('mouseover', () => setValue(mp.value));
-              layer.on('mouseout', () => setValue(null));
-            }}
             pmIgnore={true}
             pathOptions={{
               fillOpacity: .5,
@@ -78,16 +95,26 @@ const ContoursDataLayer = ({data, rotation, outline, getRgbColor, onHover, numbe
       <ContinuousLegend
         title={title}
         direction={'horizontal'}
-        value={value}
+        value={selectedValue}
         minValue={minVal}
         maxValue={maxVal}
         getRgbColor={getRgbColor}
       />
-      <HoverDataLayer
-        data={data}
-        rotation={rotation}
+      {selection && selectRowsAndCols && <SelectedRowAndColLayer
+        nRows={data.length}
+        nCols={data[0].length}
+        selectedRow={selection.row}
+        selectedCol={selection.col}
         outline={outline}
-        onHover={(selection: ISelection | null) => setValue(selection ? selection.value : null)}
+        rotation={rotation}
+      />}
+      <HoverDataLayer
+        nCols={data[0].length}
+        nRows={data.length}
+        rotation={rotation}
+        outline={outline.geometry}
+        onHover={handleHover}
+        onClick={handleClick}
       />
     </FeatureGroup>
   );

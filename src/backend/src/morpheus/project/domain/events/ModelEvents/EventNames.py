@@ -56,3 +56,15 @@ class ModelBoundaryEventName(StrEnum):
 
     def to_str(self):
         return self.value
+
+
+class ModelObservationEventName(StrEnum):
+    MODEL_HEAD_OBSERVATION_ADDED = 'Model Head Observation Added'
+    MODEL_HEAD_OBSERVATION_CLONED = 'Model Head Observation Cloned'
+    MODEL_HEAD_OBSERVATION_ENABLED = 'Model Head Observation Enabled'
+    MODEL_HEAD_OBSERVATION_DISABLED = 'Model Head Observation Disabled'
+    MODEL_HEAD_OBSERVATION_UPDATED = 'Model Head Observation Updated'
+    MODEL_HEAD_OBSERVATION_REMOVED = 'Model Head Observation Removed'
+
+    def to_str(self):
+        return self.value

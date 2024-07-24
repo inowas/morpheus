@@ -9,10 +9,10 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/${KEYCLOAK_POSTGRES_DB}
       KC_PROXY: edge
-      KC_HOSTNAME_URL: ${KEYCLOAK_HOSTNAME}
+      KC_HOSTNAME: ${DOMAIN}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true # https://github.com/keycloak/keycloak/issues/15255
     command:
-      start --optimized
+      start --optimized --proxy-headers=xforwarded
     networks:
       - auth
       - traefik

@@ -14,7 +14,7 @@ export interface ILayer {
 
 export type ILayerConfinement = 'confined' | 'convertible' | 'unconfined';
 
-export type ILayerPropertyName = 'hk' | 'hani' | 'vka' | 'specific_storage' | 'specific_yield' | 'initial_head' | 'top' | 'bottom';
+export type ILayerProperty = 'hk' | 'hani' | 'vka' | 'specific_storage' | 'specific_yield' | 'initial_head' | 'top' | 'bottom';
 
 interface ILayerProperties {
   hk: ILayerPropertyValues;

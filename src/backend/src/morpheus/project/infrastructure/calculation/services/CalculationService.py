@@ -8,6 +8,7 @@ from morpheus.project.types.calculation.CalculationResult import CalculationResu
 
 class CalculationService:
     engine: CalculationEngineBase
+    model: Model
     check_model_log: Log | None
     calculation_log: Log | None
     calculation_result: CalculationResult | None
@@ -15,6 +16,7 @@ class CalculationService:
     @classmethod
     def calculate(cls, model: Model, profile: CalculationProfile):
         instance = cls()
+        instance.model = model
         instance.engine = CalculationEngineFactory().create_engine(engine_type=profile.engine_type)
         try:
             instance.check_model_log = instance.engine.preprocess(model=model, calculation_profile=profile)
@@ -51,4 +53,4 @@ class CalculationService:
         return self.engine.read_transport_budget(idx=idx, incremental=incremental)
 
     def read_head_observations(self):
-        return self.engine.read_head_observations()
+        return self.engine.read_head_observations(self.model)

@@ -33,6 +33,8 @@ const TimeDiscretizationContainer = () => {
   const handleTimeDiscretizationChange = (td: ITimeDiscretization) => {
     const updatedTimeDiscretization = cloneDeep(td);
 
+    updatedTimeDiscretization.stress_periods.sort((a, b) => a.start_date_time < b.start_date_time ? -1 : 1);
+
     const newStartDateTime = updatedTimeDiscretization.stress_periods[0].start_date_time;
     if (!isValid(newStartDateTime)) {
       return;
@@ -44,7 +46,10 @@ const TimeDiscretizationContainer = () => {
       return;
     }
 
-    updatedTimeDiscretization.end_date_time = addDays(lastStartDateTime, 1);
+    if (addDays(lastStartDateTime, 1) > updatedTimeDiscretization.end_date_time) {
+      updatedTimeDiscretization.end_date_time = addDays(lastStartDateTime, 1);
+    }
+
     setTimeDiscretizationLocal(updatedTimeDiscretization);
   };
 
@@ -53,10 +58,7 @@ const TimeDiscretizationContainer = () => {
       return;
     }
 
-    handleTimeDiscretizationChange({
-      ...timeDiscretizationLocal,
-      stress_periods: stressPeriods,
-    });
+    handleTimeDiscretizationChange({...timeDiscretizationLocal, stress_periods: stressPeriods});
   };
 
   const handleSubmit = () => {
@@ -86,15 +88,15 @@ const TimeDiscretizationContainer = () => {
               <TimeDiscretizationGeneralParameters
                 timeDiscretization={timeDiscretizationLocal}
                 onChange={handleTimeDiscretizationChange}
-                readOnly={isReadOnly}
+                isReadOnly={isReadOnly}
               />
             </AccordionContent>
             <AccordionContent title={'Stress periods'}>
               <StressperiodsUpload onSubmit={handleStressPeriodsUpload} stressPeriods={timeDiscretizationLocal.stress_periods}/>
               <TimeDiscretizationStressPeriods
-                timeDiscretization={timeDiscretizationLocal}
-                onChange={handleTimeDiscretizationChange}
-                readOnly={isReadOnly}
+                stressPeriods={timeDiscretizationLocal.stress_periods}
+                onChange={(value) => handleTimeDiscretizationChange({...timeDiscretizationLocal, stress_periods: [...value]})}
+                isReadOnly={isReadOnly}
               />
             </AccordionContent>
           </Accordion>

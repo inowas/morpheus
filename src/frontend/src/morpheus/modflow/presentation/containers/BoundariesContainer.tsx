@@ -18,7 +18,7 @@ import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/Mode
 import BoundariesLayer from '../components/ModelBoundaries/BoundariesLayer';
 import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
 import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
-import {useNavigate} from 'common/hooks';
+import {useDateTimeFormat, useNavigate} from 'common/hooks';
 
 
 const BoundariesContainer = () => {
@@ -46,6 +46,7 @@ const BoundariesContainer = () => {
   } = useBoundaries(projectId as string);
   const {layers} = useLayers(projectId as string);
   const {isReadOnly} = useProjectPrivileges(projectId as string);
+  const {formatISODate} = useDateTimeFormat('UTC');
 
   const mapRef: IMapRef = useRef(null);
 
@@ -143,6 +144,7 @@ const BoundariesContainer = () => {
             <BoundariesAccordion
               boundaries={boundaries}
               layers={layers}
+              formatDateTime={formatISODate}
               selectedBoundaryAndObservation={selectedBoundaryAndObservation}
               onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
               onCloneBoundary={onCloneBoundary}

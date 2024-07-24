@@ -13,11 +13,11 @@ import Select, {DropdownProps} from './Select/Select';
 
 import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
-import {Accordion, AccordionItem} from './Accordion/Accordion';
+import {Accordion, AccordionItem} from './Accordion';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
 import Breadcrumb from './Breadcrumb';
 import Button from './Button/Button';
-import ChartModal from './ChartModal';
+import ChartModal from './Charts/ChartModal';
 import Container from './Container/Container';
 import Divider from './Divider/Divider';
 import DropdownComponent from './Dropdown';
@@ -50,16 +50,17 @@ import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
 import RasterFileInput from './RasterFileInput';
+import SearchInput from './SearchComponent/DropdownWithSearchInput';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
 import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
+import TimeSeriesDataChart from './Charts/TimeSeriesDataChart';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
-import SearchInput from './SearchComponent/DropdownWithSearchInput';
 
 export {
   ApplicationContentWrapper,
@@ -122,6 +123,7 @@ export {
   Tab,
   TabPane,
   Toggle,
+  TimeSeriesDataChart,
   CsvFileInput,
   UploadCSVFile,
   UploadFile,

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {ILayerPropertyData} from '../../../types/Layers.type';
-import {FeatureGroup} from 'react-leaflet';
 import {IColorMap, useColorMap} from 'common/hooks';
 import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
 
@@ -38,16 +37,14 @@ const LayerPropertyValuesMap = ({data, colorMap = 'gist_earth', minValue: minVal
 
 
   return (
-    <FeatureGroup key={'canvas_data_layer'}>
-      <CanvasDataLayer
-        data={data.data}
-        rotation={data.rotation}
-        outline={data.outline}
-        minVal={minValue}
-        maxVal={maxValue}
-        getRgbColor={(value: number) => getRgbColor(value, minValue, maxValue)}
-      />
-    </FeatureGroup>
+    <CanvasDataLayer
+      data={data.data}
+      rotation={data.rotation}
+      outline={data.outline}
+      minValue={minValue}
+      maxValue={maxValue}
+      getRgbColor={(value: number) => getRgbColor(value, minValue, maxValue)}
+    />
   );
 };
 

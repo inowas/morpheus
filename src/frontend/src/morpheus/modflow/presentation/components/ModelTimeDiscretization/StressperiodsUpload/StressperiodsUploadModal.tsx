@@ -71,9 +71,9 @@ const StressperiodsUploadModal = ({columns, rawData, onSubmit, onCancel, timeZon
 
       parsedData.push({
         start_date_time: parsedDataRow.start_date_time || 'Invalid Date',
-        number_of_time_steps: parsedDataRow.number_of_time_steps || '-',
-        time_step_multiplier: parsedDataRow.time_step_multiplier || '-',
-        steady_state: parsedDataRow.steady_state || '-',
+        number_of_time_steps: parsedDataRow.number_of_time_steps || 1,
+        time_step_multiplier: parsedDataRow.time_step_multiplier || 1,
+        steady_state: parsedDataRow.steady_state || false,
       });
     });
 

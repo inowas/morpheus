@@ -21,7 +21,7 @@ class Polygon:
     def __geo_interface__(self):
         return {
             'type': self.type,
-            'coordinates': self.coordinates
+            'coordinates': self.coordinates,
         }
 
     def centroid(self) -> Point:

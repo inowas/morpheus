@@ -3,20 +3,20 @@ import {createSlice} from '@reduxjs/toolkit';
 import {IAsset, IError} from '../types';
 
 
-export interface IPermissionsStoreState {
+export interface IAssetsStoreState {
   assets: IAsset[];
   error: IError | null;
   loading: boolean;
 }
 
-const initialState: IPermissionsStoreState = {
+const initialState: IAssetsStoreState = {
   assets: [],
   loading: false,
   error: null,
 };
 
 export const assetsSlice = createSlice({
-  name: 'permissions',
+  name: 'assets',
   initialState,
   reducers: {
     setAssets: (state, action: PayloadAction<IAsset[]>) => {

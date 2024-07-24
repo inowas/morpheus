@@ -59,7 +59,6 @@ const ModelSetupMap = ({polygon, onChange, editable}: IProps) => {
         }}
         onMount={() => L.PM.setOptIn(false)}
         onUnmount={() => L.PM.setOptIn(false)}
-        eventDebugFn={console.log}
         onCreate={handleChange}
         onChange={handleChange}
         onUpdate={handleChange}

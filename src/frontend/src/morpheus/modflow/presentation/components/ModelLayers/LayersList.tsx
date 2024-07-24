@@ -4,34 +4,29 @@ import isEqual from 'lodash.isequal';
 import {IMovableAccordionItem, IMovableAccordionListAction, MovableAccordionList} from 'common/components';
 
 import LayerDetails from './LayerDetails';
-import {IChangeLayerPropertyValues, ILayer, ILayerPropertyData, ILayerPropertyName} from '../../../types/Layers.type';
-import {ISpatialDiscretization} from '../../../types';
+import {IChangeLayerPropertyValues, ILayer, ILayerProperty} from '../../../types/Layers.type';
 
 interface IProps {
-  fetchLayerPropertyData: (layerId: string, propertyName: ILayerPropertyName, format?: 'raster' | 'grid') => Promise<ILayerPropertyData | null>;
-  fetchLayerPropertyImage: (layerId: string, propertyName: ILayerPropertyName) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   layers: ILayer[];
-  spatialDiscretization: ISpatialDiscretization;
   onCloneLayer: (layerId: ILayer['layer_id']) => void;
   onDeleteLayer: (layerId: ILayer['layer_id']) => void;
   onChangeLayerMetadata: (layerId: ILayer['layer_id'], name?: ILayer['name'], description?: ILayer['description']) => void;
   onChangeLayerConfinement: (layerId: ILayer['layer_id'], confinement: ILayer['confinement']) => void;
   onChangeLayerOrder: (newOrderIds: string[]) => void;
-  onChangeLayerProperty: (layerId: string, propertyName: ILayerPropertyName, values: IChangeLayerPropertyValues) => void;
+  onChangeLayerProperty: (layerId: string, propertyName: ILayerProperty, values: IChangeLayerPropertyValues) => void;
+  onSelectLayer: (layerId: string, propertyName?: ILayerProperty) => void;
   readOnly: boolean;
 }
 
 const LayersList = ({
-  fetchLayerPropertyData,
-  fetchLayerPropertyImage,
   layers,
-  spatialDiscretization,
   onCloneLayer,
   onDeleteLayer,
   onChangeLayerConfinement,
   onChangeLayerMetadata,
   onChangeLayerOrder,
   onChangeLayerProperty,
+  onSelectLayer,
   readOnly,
 }: IProps) => {
 
@@ -78,11 +73,9 @@ const LayersList = ({
       title: layerLocal.name,
       content: <LayerDetails
         layer={layerLocal}
-        spatialDiscretization={spatialDiscretization}
         onChangeLayerConfinement={handleChangeLayerConfinement}
         onChangeLayerProperty={onChangeLayerProperty}
-        fetchLayerPropertyData={fetchLayerPropertyData}
-        fetchLayerPropertyImage={fetchLayerPropertyImage}
+        onSelectLayer={onSelectLayer}
         isTopLayer={0 === idx}
       />,
       editTitle: editTitle === layerLocal.layer_id,

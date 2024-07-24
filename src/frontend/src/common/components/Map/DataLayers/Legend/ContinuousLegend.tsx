@@ -29,9 +29,9 @@ const ContinuousLegend = ({title, value, getRgbColor, minValue, maxValue, number
   const [previousValue, setPreviousValue] = React.useState<number | null>(null);
   const isFloat = (n: number) => 0 !== n % 1;
 
-  const getLegendIndicatorPosition = (value: number | null) => {
-    if (value) {
-      return `calc(${(value - minValue) / (maxValue - minValue) * 100}% - 18px)`;
+  const getLegendIndicatorPosition = (v: number | null) => {
+    if (null !== v) {
+      return `calc(${(v - minValue) / (maxValue - minValue) * 100}% - 18px)`;
     }
 
     return `calc(${previousValue && (previousValue - minValue) / (maxValue - minValue) * 100}% - 18px)`;
@@ -41,7 +41,6 @@ const ContinuousLegend = ({title, value, getRgbColor, minValue, maxValue, number
     if (map) {
       map.removeControl(legend);
       legend.onAdd = () => {
-
         const grades = calculateGrades(numberOfGrades, minValue, maxValue);
         const colors = grades.map((grade) => getRgbColor(grade, minValue, maxValue));
 
@@ -67,7 +66,7 @@ const ContinuousLegend = ({title, value, getRgbColor, minValue, maxValue, number
       legend.addTo(map);
       setLegend(legend);
     }
-  }, [numberOfGrades, direction, minValue, maxValue]);
+  }, [numberOfGrades, direction, minValue, maxValue, title, getRgbColor, map, legend]);
 
   useEffect(() => {
     const indicatorElement = document.getElementById('legend_indicator');
@@ -82,7 +81,8 @@ const ContinuousLegend = ({title, value, getRgbColor, minValue, maxValue, number
       indicatorElement.style.opacity = `${null !== value ? '1' : '0'}`;
       indicatorElement.innerHTML = `${null !== value ? (isFloat(value) ? value.toFixed(2) : value) : ''}`;
     }
-  }, [value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [direction, value]);
 
   useEffect(() => {
     return () => {

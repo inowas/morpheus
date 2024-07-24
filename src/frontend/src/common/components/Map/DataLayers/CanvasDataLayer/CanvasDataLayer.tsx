@@ -1,106 +1,126 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {Feature, Polygon} from 'geojson';
-import {GridLayerOptions, LatLngBoundsExpression} from 'leaflet';
-import {bbox} from '@turf/turf';
-import {ContinuousLegend, HoverDataLayer, ISelection} from '../Legend';
-import {ImageOverlay, useMap} from 'react-leaflet';
+import React, {useMemo, useState} from 'react';
+import {Feature, Polygon, FeatureCollection} from 'geojson';
+import {Polygon as LeafletPolygon, FeatureGroup, useMap, useMapEvents, Pane} from 'common/infrastructure/React-Leaflet';
+import * as turf from '@turf/turf';
+import {GridLayerOptions} from 'leaflet';
 
 interface IProps {
-  title?: string;
   data: number[][];
-  minVal: number;
-  maxVal: number;
   rotation: number;
-  outline: Feature<Polygon>
-  getRgbColor: (value: number, minVal: number, maxVal: number) => string;
-  onHover?: (value: number | null) => void;
+  outline: Feature<Polygon>;
+  getRgbColor: (value: number) => string;
   options?: GridLayerOptions;
 }
 
-const CanvasDataLayer = ({title, data, rotation, outline, getRgbColor, minVal, maxVal, options}: IProps) => {
+interface IFeatureProperties {
+  value: number;
+  col: number;
+  row: number;
+  color: string;
+}
 
-  const [hoveredValue, setHoveredValue] = useState<number | null>(null);
+const CanvasDataLayer = ({data, rotation, outline, getRgbColor, options}: IProps) => {
+
   const map = useMap();
+  const [factor, setFactor] = useState(1);
 
-  const bounds: LatLngBoundsExpression | null = useMemo(() => {
-    if (!outline) {
-      return null;
-    }
+  useMapEvents({
+    zoomend: () => {
 
-    const boundingBox = bbox(outline);
-    return [[boundingBox[1], boundingBox[0]], [boundingBox[3], boundingBox[2]]];
-  }, [outline]);
+      const bounds = map.getBounds();
+      const southWest = bounds.getSouthWest();
+      const northEast = bounds.getNorthEast();
 
-  const dataCanvas = useMemo(() => {
-    const precision = 10;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return canvas;
-    }
+      const xMin = southWest.lng;
+      const yMin = southWest.lat;
+      const xMax = northEast.lng;
+      const yMax = northEast.lat;
+      const mapWidth = xMax - xMin;
+      const mapHeight = yMax - yMin;
 
+      const modelBbox = turf.bbox(outline);
+      const modelWidth = modelBbox[2] - modelBbox[0];
+      const modelHeight = modelBbox[3] - modelBbox[1];
+
+      const widthFactor = mapWidth / modelWidth;
+      const heightFactor = mapHeight / modelHeight;
+
+      // here we should calculate the factor based on the width and height of the map
+      // the viewport in pixels and the width and height of the model
+    },
+  });
+
+  const polygons = useMemo(() => {
     const nCols = data[0].length;
     const nRows = data.length;
 
-    // Calculate the bounding box of the rotated rectangle
-    const angle = rotation * Math.PI / 180;
-    const cos = Math.abs(Math.cos(angle));
-    const sin = Math.abs(Math.sin(angle));
+    const polygon = turf.polygon(outline.geometry.coordinates);
+    const centerOfPolygon = turf.centerOfMass(polygon);
+    const rotatedPolygonBbox = turf.bbox(turf.transformRotate(polygon, rotation, {pivot: centerOfPolygon.geometry.coordinates}));
+    const [xMin, , , yMax] = rotatedPolygonBbox;
 
-    const canvasWidth = (nCols * cos + nRows * sin) * precision;
-    const canvasHeight = (nCols * sin + nRows * cos) * precision;
+    const width = rotatedPolygonBbox[2] - rotatedPolygonBbox[0];
+    const height = rotatedPolygonBbox[3] - rotatedPolygonBbox[1];
+    const cellWidth = width / nCols;
+    const cellHeight = height / nRows;
 
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+    const featureCollection: FeatureCollection<Polygon, IFeatureProperties> = {
+      type: 'FeatureCollection',
+      features: [],
+    };
 
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    // render less cells for performance reasons
+    // depending on the scaling factor
+    // as we want to render maximum 1000 cells we need to calculate the factor
+    // we need to determine the viewports width and height on the map
+    // and divide it by the cell width and height
+    for (let row = 0; row < nRows; row++) {
+      for (let col = 0; col < nCols; col++) {
 
-    if (rotation) {
-      ctx.translate(canvasWidth / 2, canvasHeight / 2);
-      ctx.rotate(-rotation * Math.PI / 180);
-      ctx.translate(-nCols * precision / 2, -nRows * precision / 2);
-      ctx.save();
+        const value = data[row][col];
+        const color = getRgbColor(value);
+        if (null === value) {
+          continue;
+        }
+        const x1 = col * cellWidth;
+        const y1 = row * cellHeight;
+        const x2 = (col + 1) * cellWidth;
+        const y2 = (row + 1) * cellHeight;
+
+        const cellPolygon = turf.polygon([[
+          [xMin + x1, yMax - y1],
+          [xMin + x2, yMax - y1],
+          [xMin + x2, yMax - y2],
+          [xMin + x1, yMax - y2],
+          [xMin + x1, yMax - y1],
+        ]]);
+
+        cellPolygon.properties = {value, col, row, color};
+        featureCollection.features.push(cellPolygon as Feature<Polygon, IFeatureProperties>);
+      }
     }
 
-    data.forEach((row: number[], nRow: number) => {
-      row.forEach((value, nCol) => {
-        const x = nCol * precision;
-        const y = nRow * precision;
-        ctx.fillStyle = null === value ? 'transparent' : getRgbColor(value, minVal, maxVal);
-        ctx.fillRect(x, y, precision, precision);
-      });
-    });
-
-    return canvas;
-  }, [data, rotation]);
-
-
-  if (!bounds) {
-    return null;
-  }
+    return turf.transformRotate(featureCollection, -rotation, {mutate: true, pivot: centerOfPolygon.geometry.coordinates});
+  }, [data, rotation, outline, getRgbColor]);
 
   return (
-    <>
-      <ImageOverlay
-        url={dataCanvas.toDataURL()}
-        bounds={bounds}
-        {...options}
-      />
-      <ContinuousLegend
-        title={title}
-        direction={'horizontal'}
-        value={hoveredValue}
-        minValue={minVal}
-        maxValue={maxVal}
-        getRgbColor={getRgbColor}
-      />
-      <HoverDataLayer
-        data={data}
-        rotation={rotation}
-        outline={outline}
-        onHover={(value: ISelection | null) => setHoveredValue(value ? value.value : null)}
-      />
-    </>
+    <Pane name={'data-layer'} style={{zIndex: 400}}>
+      <FeatureGroup>
+        {polygons.features.map((feature) => {
+          const {color, row, col} = feature.properties;
+          return (
+            <LeafletPolygon
+              key={`factor-${factor}-row-${row}-col-${col}-color-${color}`}
+              positions={feature.geometry.coordinates[0].map((coords) => [coords[1], coords[0]])}
+              color={'transparent'}
+              fillOpacity={options?.opacity || 1}
+              fillColor={color || 'transparent'}
+              weight={0}
+            />
+          );
+        })}
+      </FeatureGroup>
+    </Pane>
   );
 };
 

@@ -4,7 +4,7 @@ import React, {useMemo, useState} from 'react';
 import styles from './BoundaryList.module.less';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../../types/Boundaries.type';
 import BoundaryListHeader from './BoundaryListHeader';
-import {canHaveMultipleObservations} from '../helpers';
+import {hasMultipleObservations} from '../helpers';
 
 interface ISelectedListProps {
   type: IBoundaryType;
@@ -149,8 +149,7 @@ const BoundaryList = ({
                     {text: 'Delete', icon: 'remove', onClick: () => onRemoveBoundary(boundary.id)},
                   ]}
                 />
-
-                {canHaveMultipleObservations(boundary) && (
+                {hasMultipleObservations(boundary.type) && (
                   <Icon
                     name={`${isSelected(boundary) ? 'angle down' : 'angle right'}`}
                     onClick={() => onSelectBoundaryAndObservation({boundary})}
@@ -158,7 +157,7 @@ const BoundaryList = ({
                 )}
               </div>
             </div>
-            {canHaveMultipleObservations(boundary) && (
+            {hasMultipleObservations(boundary.type) && (
               <Accordion.Content
                 className={`${styles.accordionContent} ${!boundary.enabled ? styles.disabled : ''}`}
                 active={isSelected(boundary)}

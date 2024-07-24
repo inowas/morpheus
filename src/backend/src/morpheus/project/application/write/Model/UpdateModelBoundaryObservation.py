@@ -12,7 +12,7 @@ from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import proje
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryType, IBoundaryTypeLiteral
+from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryType, BoundaryTypeLiteral
 from morpheus.project.types.boundaries.Observation import ObservationId, ObservationName
 from morpheus.project.types.boundaries.ObservationFactory import ObservationFactory
 from morpheus.project.types.geometry import Point, LineString, Polygon
@@ -22,7 +22,7 @@ class UpdateModelBoundaryObservationCommandPayload(TypedDict):
     project_id: str
     model_id: str
     boundary_id: str
-    boundary_type: IBoundaryTypeLiteral
+    boundary_type: BoundaryTypeLiteral
     observation_id: str
     observation_name: str
     observation_geometry: dict

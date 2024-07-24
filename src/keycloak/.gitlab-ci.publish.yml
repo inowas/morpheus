@@ -1,0 +1,20 @@
+variables:
+  KEYCLOAK_IMAGE: inowas/keycloak
+
+publish-keycloak:prod:
+  stage: publish
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+  script:
+    - KEYCLOAK_VERSION=$(cat src/keycloak/.version | tr -d "[:space:]")
+    - echo "Using Keycloak version $KEYCLOAK_VERSION"
+    - DOCKER_BUILDKIT=1 docker build --build-arg="KEYCLOAK_VERSION=$KEYCLOAK_VERSION" --target production --tag $KEYCLOAK_IMAGE:$KEYCLOAK_VERSION --file src/keycloak/Dockerfile .
+    - docker push $KEYCLOAK_IMAGE:$KEYCLOAK_VERSION
+  only:
+    changes:
+      - src/infrastructure/production/keycloak/**/*
+      - src/keycloak/**/*
+    refs:
+      - main
+      - tags

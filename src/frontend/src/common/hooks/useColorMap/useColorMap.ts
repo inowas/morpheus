@@ -1,4 +1,5 @@
-import getColorScale, {IColorMap} from './colormap';
+import getColorScale, {IColorMap} from './colorMaps';
+import {normal, distinct} from './colorLists';
 import {useEffect, useState} from 'react';
 
 
@@ -6,6 +7,10 @@ interface IUseColorMap {
   getColorArray: (value: number, minValue: number, maxValue: number) => [number, number, number];
   getRgbColor: (value: number, minValue: number, maxValue: number) => string;
   getHexColor: (value: number, minValue: number, maxValue: number) => string;
+  colors: {
+    normal: string[];
+    distinct: string[];
+  }
 }
 
 const useColorMap = (name: IColorMap): IUseColorMap => {
@@ -44,6 +49,10 @@ const useColorMap = (name: IColorMap): IUseColorMap => {
     getColorArray,
     getRgbColor,
     getHexColor,
+    colors: {
+      normal,
+      distinct,
+    },
   };
 };
 

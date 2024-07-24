@@ -28,6 +28,7 @@ else
     && sed -i.bak -e "s!__replace_with__local_project_calculation_data_mountpoint!$localProjectCalculationDataMountpoint!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__celery_user_id!$userId!g" -- "$envFile.tmp" \
     && sed -i.bak -e "s!__replace_with__celery_group_id!$groupId!g" -- "$envFile.tmp" \
+    && sed -i.bak -e "s!__replace_with__keycloak_version!$(cat $projectRoot/src/keycloak/.version  | tr -d '[:space:]')!g" -- "$envFile.tmp" \
     && mv "$envFile.tmp" "$envFile" \
     && rm "$envFile.tmp.bak"
     exitWithErrorIfLastCommandFailed "Error preparing .env file $envFile"

@@ -27,6 +27,8 @@ import TimeDiscretizationContainer from '../containers/TimeDiscretizationContain
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import CalculationContainer from '../containers/CalculationContainer';
 import FlowResultsContainer from '../containers/FlowResultsContainer';
+import HeadObservationsContainer from '../containers/HeadObservationsContainer';
+import CalibrationStatisticsContainer from '../containers/CalibrationStatisticsContainer';
 
 export interface IMenuItem {
   icon: React.ReactNode;
@@ -78,6 +80,7 @@ const getSidebarItems = (): IMenuItem[] => {
       name: 'Head observations',
       isTitle: false,
       slug: 'head-observations',
+      component: <HeadObservationsContainer/>,
     },
     {
       icon: <FontAwesomeIcon icon={faCompress}/>,
@@ -141,54 +144,8 @@ const getSidebarItems = (): IMenuItem[] => {
       name: 'Calibration statistics',
       isTitle: false,
       slug: 'calibration-statistics',
+      component: <CalibrationStatisticsContainer/>,
     },
-    // {
-    //   icon: <FontAwesomeIcon icon={faFolderOpen}/>,
-    //   name: 'SCENARIOS',
-    //   isTitle: true,
-    //   slug: 'scenarios',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faCodeCompare}/>,
-    //   name: 'Scenarios comparison',
-    //   isTitle: false,
-    //   slug: 'scenarios-comparison',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter}/>,
-    //   name: 'Scenarios difference',
-    //   isTitle: false,
-    //   slug: 'scenarios-difference',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faTimeline}/>,
-    //   name: 'Scenarios time series',
-    //   isTitle: false,
-    //   slug: 'scenarios-time-series',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faArrowUpRightFromSquare}/>,
-    //   name: 'EXPORT',
-    //   isTitle: true, slug: 'export',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faNoteSticky}/>,
-    //   name: 'Export model (JSON)',
-    //   isTitle: false,
-    //   slug: 'export-model-json',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faImage}/>,
-    //   name: 'Export model results',
-    //   isTitle: false,
-    //   slug: 'export-model-results',
-    // },
-    // {
-    //   icon: <FontAwesomeIcon icon={faDownload}/>,
-    //   name: 'Download MODFLOW files',
-    //   isTitle: false,
-    //   slug: 'download-modflow-files',
-    // },
   ];
 };
 

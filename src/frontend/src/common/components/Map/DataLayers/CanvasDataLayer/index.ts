@@ -1,3 +1,3 @@
-import CanvasDataLayer from './CanvasDataLayer';
+import DataLayer from './DataLayer';
 
-export default CanvasDataLayer;
+export default DataLayer;

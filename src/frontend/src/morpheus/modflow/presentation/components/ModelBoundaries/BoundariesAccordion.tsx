@@ -2,7 +2,6 @@ import React from 'react';
 import BoundariesAccordionPane from './BoundariesAccordionPane';
 import {Accordion} from 'common/components';
 import {
-  availableBoundaries,
   IBoundary,
   IBoundaryId,
   IBoundaryType,
@@ -13,6 +12,7 @@ import {
 } from '../../../types/Boundaries.type';
 import {ILayer, ILayerId} from '../../../types/Layers.type';
 import {ITimeDiscretization} from '../../../types';
+import {boundarySettings} from './helpers';
 
 interface IPanelDetails {
   title: string;
@@ -21,7 +21,7 @@ interface IPanelDetails {
   active: boolean;
 }
 
-const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation): IPanelDetails[] => availableBoundaries.map((b) => ({
+const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation): IPanelDetails[] => boundarySettings.map((b) => ({
   title: b.title,
   type: b.type,
   boundaries: boundaries.filter((boundary) => boundary.type === b.type),
@@ -31,6 +31,7 @@ const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation
 interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
+  formatDateTime: (value: string) => string;
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | null) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
@@ -49,6 +50,7 @@ interface IProps {
 const BoundariesAccordion = ({
   boundaries,
   layers,
+  formatDateTime,
   selectedBoundaryAndObservation,
   onCloneBoundary,
   onCloneBoundaryObservation,
@@ -115,6 +117,7 @@ const BoundariesAccordion = ({
               isReadOnly={false}
               layers={layers}
               timeDiscretization={timeDiscretization}
+              formatDateTime={formatDateTime}
             />
           ),
         },

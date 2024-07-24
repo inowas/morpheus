@@ -1,18 +1,20 @@
 import React, {useEffect, useState} from 'react';
+
 import {IBoundary, IBoundaryId, IBoundaryType, IInterpolationType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import BoundaryList from './BoundaryList';
-import {Grid, InfoTitle, Tab} from 'common/components';
-
-import {BoundariesForm} from '../BoundariesLayers/BoundariesForm';
+import {Grid, InfoTitle, Tab, TimeSeriesDataChart} from 'common/components';
 import {MenuItem, TabPane} from 'semantic-ui-react';
+
+import BoundariesForm from './BoundaryForm';
+import BoundaryDataTable from './BoundaryDataTable';
+
 import {ILayer, ILayerId} from '../../../types/Layers.type';
-import ObservationDataChart from '../BoundariesLayers/BoundariesTable/ObservationDataChart';
 import {ITimeDiscretization} from '../../../types';
-import ObservationDataTableWithDisabledInterpolation from '../BoundariesLayers/BoundariesTable/ObservationDataTableWithDisabledInterpolation';
 
 interface IProps {
   boundaries: IBoundary[];
   layers: ILayer[];
+  formatDateTime: (value: string) => string;
   boundaryType: IBoundaryType;
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
@@ -33,6 +35,7 @@ interface IProps {
 const BoundariesAccordionPane = ({
   boundaryType,
   boundaries,
+  formatDateTime,
   layers,
   selectedBoundaryAndObservation,
   onSelectBoundaryAndObservation,
@@ -61,8 +64,6 @@ const BoundariesAccordionPane = ({
       if (observation) {
         return setSelectedBoundaryObservation(observation);
       }
-
-      console.debug({selectedBoundaryAndObservation, boundary, observation});
 
       return setSelectedBoundaryObservation(boundary.observations[0]);
     }
@@ -135,21 +136,27 @@ const BoundariesAccordionPane = ({
                   Table
                 </MenuItem>
               ),
-              render: () => <TabPane attached={false}>
-                <ObservationDataTableWithDisabledInterpolation
-                  boundaryType={boundaryType}
-                  observation={selectedBoundaryObservation}
-                  onChangeObservation={(observation: IObservation<any>) => onUpdateBoundaryObservation(selectedBoundary.id, boundaryType, observation)}
-                  interpolation={selectedBoundary.interpolation}
-                  timeDiscretization={timeDiscretization}
-                  isReadOnly={isReadOnly}
-                />
-              </TabPane>,
+              render: () => (
+                <TabPane attached={false}>
+                  <BoundaryDataTable
+                    boundary={selectedBoundary}
+                    observation={selectedBoundaryObservation}
+                    onChangeObservation={(observation: IObservation<any>) => onUpdateBoundaryObservation(selectedBoundary.id, boundaryType, observation)}
+                    timeDiscretization={timeDiscretization}
+                    isReadOnly={isReadOnly}
+                  />
+                </TabPane>
+              ),
             },
             {
               menuItem: <MenuItem key='Chart'>Chart</MenuItem>,
               render: () => <TabPane attached={false}>
-                <ObservationDataChart observation={selectedBoundaryObservation} timeDiscretization={timeDiscretization}/>
+                <TimeSeriesDataChart
+                  data={selectedBoundaryObservation.data}
+                  dateTimes={[...timeDiscretization.stress_periods.map((sp) => sp.start_date_time), timeDiscretization.end_date_time]}
+                  formatDateTime={formatDateTime}
+                  type={'forward_fill'}
+                />
               </TabPane>,
             },
           ]}

@@ -67,6 +67,7 @@ const AffectedCellsMapLayer = ({
       fetchGridGeometry().then(setGridGeometry);
       fetchAffectedCellsGeometry().then(setAffectedCellsGeometry);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [affectedCells]);
 
   useEffect(() => {
