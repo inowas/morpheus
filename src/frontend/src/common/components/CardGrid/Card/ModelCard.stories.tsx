@@ -29,7 +29,6 @@ export const ModelItemExample: StoryFn<typeof ModelCard> = () => {
   return (
     <div style={{width: '380px'}}>
       <ModelCard
-        key={item.id}
         title={item.title}
         description={item.description}
         date_time={item.date_time}

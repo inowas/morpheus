@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 
-import {Form, Icon, Label, Popup, DropdownItemProps} from 'semantic-ui-react';
+import {DropdownItemProps, Form, Icon, Label, Popup} from 'semantic-ui-react';
 import {DataRow, DropdownComponent} from 'common/components';
 
 import {ILayerId} from '../../../../types/Layers.type';
-import {IHeadObservation} from '../../../../types/HeadObservations.type';
+import {IObservation} from '../../../../types/Observations.type';
 
 interface IProps {
-  observation: IHeadObservation | null;
-  onChange: (observation: IHeadObservation) => void;
-  layers: {layer_id: string, name: string}[];
+  observation: IObservation | null;
+  onChange: (observation: IObservation) => void;
+  layers: { layer_id: string, name: string }[];
   isReadOnly: boolean;
 }
 

@@ -17,7 +17,6 @@ describe('ModelCard Component', () => {
   test('renders ModelCard component with provided data', () => {
     render(
       <ModelCard
-        key={model.key}
         title={model.title}
         description={model.description}
         image={model.image}
@@ -45,7 +44,6 @@ describe('ModelCard Component', () => {
 
     render(
       <ModelCard
-        key={model.key}
         title={model.title}
         description={model.description}
         image={model.image}

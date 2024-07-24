@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
-import {Form, Icon, Label, Popup, DropdownItemProps} from 'semantic-ui-react';
-import {Button, DataRow, DropdownComponent} from 'common/components';
+import {Form, Icon, Label, Popup} from 'semantic-ui-react';
+import {Button, DataRow, DropdownComponent, TechInput} from 'common/components';
 
 import isEqual from 'lodash.isequal';
 import {boundarySettings, hasMultipleAffectedLayers} from '../helpers';
@@ -27,7 +27,6 @@ interface ILayerMetadata {
 const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, onChangeBoundaryInterpolation, isReadOnly, layers}: IProps) => {
 
   const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
-  const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const isDirty = () => {
@@ -58,9 +57,12 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
     setSubmitting(false);
   };
 
+  const handleTagsChange = (newTags: string[]) => {
+    setBoundaryLocal({...boundaryLocal, tags: newTags});
+  };
+
   useEffect(() => {
     setBoundaryLocal(boundary);
-    setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
   }, [boundary]);
 
   const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
@@ -116,20 +118,14 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             />
             Tags
           </Label>
-          <DropdownComponent.Dropdown
+          <TechInput.Dropdown
             disabled={isReadOnly}
-            allowAdditions={true}
-            fluid={true}
-            multiple={true}
-            onAddItem={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
-            onChange={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})}
-            options={tagOptions}
-            search={true}
-            selection={true}
-            value={boundaryLocal.tags}
+            name="selectedKeywords"
+            initialTags={boundaryLocal.tags}
+            options={boundary.tags.map((tag) => ({key: tag, text: tag, value: tag}))}
+            onChange={(_: React.SyntheticEvent<HTMLElement, Event>, newTags: any) => handleTagsChange(newTags as string[])}
           />
         </Form.Field>
-
         <Form.Field>
           <Label htmlFor="tags" className="labelSmall">
             <Popup
@@ -140,7 +136,6 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             />
             Interpolation Type
           </Label>
-
           {isTimeSeriesDependent && (
             <DropdownComponent.Dropdown
               fluid={true}

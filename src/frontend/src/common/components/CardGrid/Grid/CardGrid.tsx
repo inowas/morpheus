@@ -31,21 +31,19 @@ const CardGrid: React.FC<ICardGrid> = ({
       }}
     >
       <div className={styles.modelGrid}>
-        {cards.map((item) => (
-          <div key={item.key}>
-            <ModelCard
-              key={item.id}
-              title={item.title}
-              description={item.description}
-              image={item.image}
-              author={item.author}
-              date_time={item.date_time}
-              status={item.status}
-              onViewClick={item.onViewClick}
-              onCopyClick={item.onCopyClick}
-              onDeleteClick={item.onDeleteClick}
-            />
-          </div>
+        {cards.map((item, index) => (
+          <ModelCard
+            key={item.key || index}
+            title={item.title}
+            description={item.description}
+            image={item.image}
+            author={item.author}
+            date_time={item.date_time}
+            status={item.status}
+            onViewClick={item.onViewClick}
+            onCopyClick={item.onCopyClick}
+            onDeleteClick={item.onDeleteClick}
+          />
         ))}
       </div>
     </div>

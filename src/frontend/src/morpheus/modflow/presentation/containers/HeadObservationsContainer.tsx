@@ -13,7 +13,7 @@ import useSpatialDiscretization from '../../application/useSpatialDiscretization
 import {useTimeDiscretization} from '../../application';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
-import {IHeadObservation, IObservationType} from '../../types/HeadObservations.type';
+import {IObservation, IObservationType} from '../../types/Observations.type';
 import HeadObservationListDetails from '../components/ModelHeadObservations/HeadObservationListDetails';
 import DrawObservationLayer from '../components/ModelHeadObservations/DrawObservationLayer';
 import {Point} from 'geojson';
@@ -34,7 +34,7 @@ const HeadObservationsContainer = () => {
   const mapRef: IMapRef = useRef(null);
 
   const [addObservationOnMap, setAddObservationOnMap] = useState<IObservationType | null>(null);
-  const [selectedHeadObservation, setSelectedHeadObservation] = useState<IHeadObservation | null>(null);
+  const [selectedHeadObservation, setSelectedHeadObservation] = useState<IObservation | null>(null);
 
   useEffect(() => {
     if (!observations) {
@@ -47,7 +47,7 @@ const HeadObservationsContainer = () => {
     setSelectedHeadObservation(observations.find((o) => o.id === observationId) || null);
   }, [observations, observationId]);
 
-  const handleSelectObservation = async (id: IHeadObservation['id']) => {
+  const handleSelectObservation = async (id: IObservation['id']) => {
     navigate(`/projects/${projectId}/model/head-observations/${id}`);
   };
 
@@ -59,19 +59,19 @@ const HeadObservationsContainer = () => {
     }
   };
 
-  const handleCloneObservation = async (id: IHeadObservation['id']) => {
+  const handleCloneObservation = async (id: IObservation['id']) => {
     const location = await onClone(id);
     if (location) {
       navigate(`/projects/${projectId}/model/head-observations/${location}`);
     }
   };
 
-  const handleRemoveObservation = async (id: IHeadObservation['id']) => {
+  const handleRemoveObservation = async (id: IObservation['id']) => {
     await onRemove(id);
     navigate(`/projects/${projectId}/model/head-observations`);
   };
 
-  const handleChangeObservation = (observation: IHeadObservation) => {
+  const handleChangeObservation = (observation: IObservation) => {
     onUpdate(observation);
   };
 

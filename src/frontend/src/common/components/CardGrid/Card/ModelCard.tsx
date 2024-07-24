@@ -5,7 +5,7 @@ import React from 'react';
 import styles from './ModelCard.module.less';
 
 export interface ICard {
-  key: string | number;
+  key?: string | number;
   title: string;
   description: string;
   image?: string;
@@ -16,8 +16,7 @@ export interface ICard {
   onCopyClick?: () => void;
   onDeleteClick?: () => void;
   userFullName?: string;
-
-  [key: string]: any;
+  className?: string
 }
 
 type ICardStatus = 'green' | 'yellow' | 'red' | 'grey';
@@ -31,6 +30,7 @@ const ModelCard: React.FC<ICard> = ({
   onViewClick,
   onCopyClick,
   onDeleteClick,
+  className,
   ...props
 }) => {
 
@@ -45,7 +45,7 @@ const ModelCard: React.FC<ICard> = ({
   return (
     <div
       data-testid="model-card"
-      className={props.className ? `${styles.modelCard} ${props.className}` : styles.modelCard}
+      className={className ? `${styles.modelCard} ${className}` : styles.modelCard}
       onClick={(e) => {
         e.stopPropagation();
         if (onViewClick) onViewClick();

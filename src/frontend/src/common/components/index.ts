@@ -57,11 +57,12 @@ import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
 import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
+import TechInput from './TechInput';
 import TimeSeriesDataChart from './Charts/TimeSeriesDataChart';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
-import {Step, StepDescription, StepGroup, StepTitle, StepContent} from 'semantic-ui-react';
+import {Step, StepContent, StepDescription, StepGroup, StepTitle} from 'semantic-ui-react';
 
 export {
   Step,
@@ -128,6 +129,7 @@ export {
   SortButtons,
   Tab,
   TabPane,
+  TechInput,
   Toggle,
   TimeSeriesDataChart,
   CsvFileInput,

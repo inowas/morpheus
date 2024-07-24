@@ -1,14 +1,17 @@
 import {Dropdown as SemanticDropdown, DropdownProps} from 'semantic-ui-react';
-import {HtmlSpanProps, SemanticShorthandContent, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
 
 import {DropdownItemProps} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 import {DropdownOnSearchChangeData} from 'semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown';
-import {FlagProps} from 'semantic-ui-react/dist/commonjs/elements/Flag';
-import {IconProps} from 'semantic-ui-react/dist/commonjs/elements/Icon';
-import {ImageProps} from 'semantic-ui-react/dist/commonjs/elements/Image';
 import {LabelProps} from 'semantic-ui-react/dist/commonjs/elements/Label';
-import React from 'react';
-import styles from './Dropdown.module.less';
+import React, {useState} from 'react';
+import styles from './TechInput.module.less';
+
+
+interface IOption {
+  key: string;
+  text: string;
+  value: string;
+}
 
 export interface IDropdownProps {
   name?: string
@@ -90,54 +93,47 @@ export interface IDropdownProps {
   upward?: boolean
   wrapSelection?: boolean
   style?: React.CSSProperties;
+  initialOptions?: IOption[];
+  initialTags?: string[];
 }
 
-const Dropdown: React.FC<IDropdownProps> = ({className, ...props}) => {
+
+const TechInput: React.FC<IDropdownProps> = ({
+  options = [],
+  initialTags = [],
+  onChange,
+  ...props
+}) => {
+
+  const [tags, setTags] = useState<string[]>(initialTags);
+  const [optionsData, setOptionsData] = useState(options);
+
+  const handleAddItem = (event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
+    setOptionsData([...optionsData, {key: data.value, text: data.value, value: data.value}]);
+  };
+
+  const handleChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: any) => {
+    const newTags = data.value as string[];
+    setTags(newTags);
+    if (onChange) {
+      onChange(event, newTags);
+    }
+  };
+
   return (
-    <SemanticDropdown  {...props} className={[styles.resetSemantic, className].join(' ')}/>
+    <SemanticDropdown
+      {...props}
+      allowAdditions={true}
+      fluid={true}
+      multiple={true}
+      onAddItem={handleAddItem}
+      onChange={handleChange}
+      options={optionsData}
+      search={true}
+      selection={true}
+      value={tags}
+      className={styles.resetSemantic}
+    />
   );
 };
-
-export interface IDropdownMenuProps {
-  as?: any
-  children?: React.ReactNode
-  className?: string
-  content?: SemanticShorthandContent
-  onClick?: (event: React.MouseEvent<HTMLDivElement>, data: DropdownItemProps) => void
-  direction?: 'left' | 'right'
-  open?: boolean
-  scrolling?: boolean
-  style?: React.CSSProperties;
-}
-
-
-const Menu: React.FC<IDropdownMenuProps> = (props) => (
-  <SemanticDropdown.Menu {...props} />
-);
-
-export interface IDropdownItemProps {
-  as?: any
-  active?: boolean
-  children?: React.ReactNode
-  className?: string
-  content?: SemanticShorthandContent
-  description?: SemanticShorthandItem<HtmlSpanProps>
-  disabled?: boolean
-  flag?: SemanticShorthandItem<FlagProps>
-  icon?: SemanticShorthandItem<IconProps>
-  image?: SemanticShorthandItem<ImageProps>
-  label?: SemanticShorthandItem<LabelProps>
-  onClick?: (event: React.MouseEvent<HTMLDivElement>, data: DropdownItemProps) => void
-  selected?: boolean
-  text?: SemanticShorthandContent
-  value?: boolean | number | string
-  data?: any
-  style?: React.CSSProperties;
-}
-
-const Item: React.FC<IDropdownItemProps> = (props) => (
-  <SemanticDropdown.Item {...props} />
-);
-
-export {Menu, Item};
-export default Dropdown;
+export default TechInput;

@@ -4,7 +4,7 @@ import React, {useState} from 'react';
 import RandomImage from 'common/components/RandomImage';
 import styles from './CreateProjectModal.module.less';
 import Images from './images';
-import {DropdownComponent, Modal} from 'common/components';
+import {Modal, TechInput} from 'common/components';
 import {IError} from '../../../../types';
 
 interface IProps {
@@ -19,7 +19,6 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [options, setOptions] = useState([{key: '0', text: 'Modflow', value: 'modflow'}]);
 
   const formIsValid = () => {
     return 0 < projectName.trim().length;
@@ -29,6 +28,10 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
     setProjectName('');
     setProjectDescription('');
     setTags([]);
+  };
+
+  const handleTagsChange = (newTags: string[]) => {
+    setTags(newTags);
   };
 
   const handleCancel = (event: React.FormEvent) => {
@@ -72,17 +75,11 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
             </Form.Field>
             <Form.Field className={styles.field}>
               <label className={`${styles.label} h4`}>Project keywords</label>
-              <DropdownComponent.Dropdown
-                allowAdditions={true}
+              <TechInput.Dropdown
                 name="selectedKeywords"
-                fluid={true}
-                multiple={true}
-                onAddItem={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setOptions([...options, {key: data.value, text: data.value, value: data.value}])}
-                onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTags(data.value as string[])}
-                options={options}
-                search={true}
-                selection={true}
-                value={tags}
+                initialTags={tags}
+                options={[{key: '0', text: 'Modflow', value: 'modflow'}]}
+                onChange={(event: React.SyntheticEvent<HTMLElement, Event>, data: any) => handleTagsChange(data)}
               />
             </Form.Field>
             {error && <div className={styles.error}>{error.message}</div>}
