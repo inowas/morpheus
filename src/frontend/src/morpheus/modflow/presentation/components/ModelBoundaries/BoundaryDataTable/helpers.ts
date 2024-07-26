@@ -1,5 +1,5 @@
 import {IBoundaryObservationValue, IBoundaryType} from '../../../../types/Boundaries.type';
-import {IColumn} from './DataTable';
+import {IColumn} from '../../../../types/DataTable.type';
 
 const isNotNullish = (value: any): value is number => null !== value && value !== undefined;
 const formatNumberOrNull = (fractionDigits: number) => (value: number | null) => isNotNullish(value) ? value.toFixed(fractionDigits) : '-';
@@ -9,26 +9,13 @@ type IFormatDate = (dateString: string) => string;
 
 export const getBoundaryColumnsByType = (boundaryType: IBoundaryType, formatDate: IFormatDate, parseDate: IFormatDate): IColumn[] => {
   const defaultColumns: IColumn[] = [
-    {
-      title: 'Start date',
-      key: 'date_time',
-      format: (value: string) => formatDate(value),
-      parse: (value: string) => parseDate(value),
-      defaultValue: 0,
-      inputType: 'date',
-    }];
+    {title: 'Start date', key: 'date_time', format: (value: string) => formatDate(value), parse: (value: string) => parseDate(value), defaultValue: 0, inputType: 'date'},
+  ];
 
   switch (boundaryType) {
   case 'constant_head':
     return [...defaultColumns,
-      {
-        title: 'Head',
-        key: 'head',
-        format: formatNumberOrNull(2), parse: parseNumber,
-        defaultValue: 0,
-        inputType: 'number',
-        precision: 2,
-      },
+      {title: 'Head', key: 'head', format: formatNumberOrNull(2), parse: parseNumber, defaultValue: 0, inputType: 'number', precision: 2},
     ];
   case 'drain':
     return [...defaultColumns,
@@ -70,7 +57,7 @@ export const getBoundaryColumnsByType = (boundaryType: IBoundaryType, formatDate
     ];
   case 'well':
     return [...defaultColumns,
-      {title: 'Pumping Rate', key: 'pumping_rate', format: formatNumberOrNull(2), parse: parseNumber, defaultValue: 0, inputType: 'text'},
+      {title: 'Pumping Rate', key: 'pumping_rate', format: formatNumberOrNull(2), parse: parseNumber, defaultValue: 0, inputType: 'number', precision: 2},
     ];
   default:
     return defaultColumns;
@@ -99,4 +86,3 @@ export const getNewBoundaryDataItemByType = (boundaryType: IBoundaryType, dateSt
     return {date_time: dateString, pumping_rate: 0};
   }
 };
-

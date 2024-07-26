@@ -139,8 +139,7 @@ interface ISelectedBoundaryAndObservation {
   observationId?: IObservationId;
 }
 
-type IBoundary =
-  IConstantHeadBoundary
+type IBoundary = IConstantHeadBoundary
   | IDrainBoundary
   | IEvapotranspirationBoundary
   | IFlowAndHeadBoundary

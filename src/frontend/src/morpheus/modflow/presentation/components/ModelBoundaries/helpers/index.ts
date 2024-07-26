@@ -101,3 +101,17 @@ export const getBoundarySettings = (): IAvailableBoundary[] => boundarySettings;
 export const isTimeSeriesDependent = (type: IBoundaryType): boolean => getAvailableBoundary(type)?.isTimeSeriesDependent || false;
 export const hasMultipleAffectedLayers = (type: IBoundaryType): boolean => getAvailableBoundary(type)?.hasMultipleAffectedLayers || false;
 export const hasMultipleObservations = (type: IBoundaryType): boolean => getAvailableBoundary(type)?.hasMultipleObservations || false;
+
+export const isBoundaryType = (type: string): type is IBoundaryType => {
+  return [
+    'constant_head',
+    'drain',
+    'evapotranspiration',
+    'flow_and_head',
+    'general_head',
+    'lake',
+    'recharge',
+    'river',
+    'well',
+  ].includes(type);
+};

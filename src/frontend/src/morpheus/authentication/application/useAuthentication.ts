@@ -29,7 +29,7 @@ const useAuthentication = (): IUseAuthentication => {
   const auth = useAuth();
 
   useEffect(() => {
-    return auth.events.addAccessTokenExpiring(() => {
+    return auth?.events?.addAccessTokenExpiring(() => {
       auth.revokeTokens();
     });
   }, [auth.events]);

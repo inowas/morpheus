@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Button, Grid, List, ListContent, ListIcon, ListItem, Segment} from 'semantic-ui-react';
-import {IImportItem} from '../../../types/Import.type';
+import {IImportItem} from './Import.type';
 
 interface IProps {
   items: IImportItem[];

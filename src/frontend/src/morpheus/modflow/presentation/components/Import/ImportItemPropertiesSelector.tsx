@@ -1,144 +1,371 @@
-import React, {useMemo, useState} from 'react';
-import {ITimeDiscretization} from '../../../types';
-import {Form, Grid, Segment} from 'semantic-ui-react';
-import {FeatureCollection, LineString, Point, Polygon} from 'geojson';
-import {IImportItem, IImportItemType} from '../../../types/Import.type';
+import React, {useEffect, useState} from 'react';
+import uniq from 'lodash.uniq';
+
+import {ISpatialDiscretization, ITimeDiscretization} from '../../../types';
+import {Button, Form, Grid, Icon, Label, Pagination, Popup, PopupContent, PopupHeader, Segment, Table} from 'semantic-ui-react';
+import {Feature, LineString, Point, Polygon} from 'geojson';
+import {IImportItem, IImportItemType, IImportItemValue} from './Import.type';
+import {Map} from 'common/components/Map';
+import {createDefaultImportItemValueByType, hasMultipleAffectedLayers} from './helpers';
+import PreviewMapLayer from './PreviewMapLayer';
+import ImportDataTable, {IExtendedImportItemValue} from './ImportDataTable';
+import {TimeSeriesDataChart} from '../../../../../common/components';
+
 
 interface IProps {
   type: IImportItemType;
-  onAssignProperties: (importItem: IImportItem[]) => void;
-  timeDiscretization: ITimeDiscretization;
+  features: Feature[];
   layerNames: string[];
-  data: FeatureCollection;
+  spatialDiscretization: ISpatialDiscretization;
+  timeDiscretization: ITimeDiscretization;
+  onChangeImportItems: (importItem: IImportItem[]) => void;
+  formatISODate: (date: string) => string;
+  parseDate: (date: string) => string;
 }
 
+const createDefaultImportItems = (type: IImportItemType, features: Feature[], timeDiscretization: ITimeDiscretization) => {
+  const items: IImportItem[] = [];
+  features.forEach((feature, idx) => {
+    const item: IImportItem = {
+      name: `Item ${idx + 1}`,
+      type: type,
+      geometry: feature.geometry as Point | LineString | Polygon,
+      affected_layers: [0],
+      tags: [],
+      interpolation: 'forward_fill',
+      data: timeDiscretization.stress_periods.map((sp) => createDefaultImportItemValueByType(type, sp.start_date_time)),
+    };
 
-const ImportItemPropertiesSelector = ({data, layerNames, onAssignProperties, type, timeDiscretization}: IProps) => {
+    items.push(item);
+  });
 
-  const [selectedPropertyForName, setSelectedPropertyForName] = useState<string | null>(null);
-  const [defaultValueForName, setDefaultValueForName] = useState<string>('No name');
+  return items;
+};
 
-  const [selectedPropertyForValue, setSelectedPropertyForValue] = useState<string | null>(null);
-  const [defaultValueForValue, setDefaultValueForValue] = useState<number>(0);
+const ImportItemPropertiesSelector = ({features, layerNames, onChangeImportItems, type, spatialDiscretization, timeDiscretization, formatISODate, parseDate}: IProps) => {
 
-  const [selectedPropertyForLayer, setSelectedPropertyForLayer] = useState<string | null>(null);
-  const [selectedLayerOption, setSelectedLayerOption] = useState<'zero_based' | 'one_based' | 'selected_layer'>('one_based');
-  const [selectedLayerName, setSelectedLayerName] = useState<string>(layerNames[0]);
+  const [availableAttributes, setAvailableAttributes] = useState<string[]>([]);
 
-  const availableProperties = useMemo(() => {
-    if (!data || 0 === data.features.length) {
-      return [];
+  const [selectedAttributeForName, setSelectedAttributeForName] = useState<string | null>(null);
+  const [selectedAttributesForLayer, setSelectedAttributesForLayer] = useState<string[] | null>(null);
+  const [selectedDefaultLayers, setSelectedDefaultLayers] = useState<number[]>([0]);
+
+  const [stressPeriodValues, setStressPeriodValues] = useState<IExtendedImportItemValue[]>(
+    timeDiscretization.stress_periods.map((sp, idx) => {
+      if (0 === idx) {
+        return {...createDefaultImportItemValueByType(type, sp.start_date_time), enabled: true};
+      }
+      return {...createDefaultImportItemValueByType(type, sp.start_date_time), enabled: false};
+    }),
+  );
+
+  const [importItems, setImportItems] = useState<IImportItem[]>([]);
+  const [selectedImportItemInPreview, setSelectedImportItemInPreview] = useState<number>(0);
+
+  useEffect(() => {
+    if (0 === features.length) {
+      setAvailableAttributes([]);
+      return;
     }
 
-    const feature = data.features[0];
-    return Object.keys(feature.properties || {});
-  }, [data]);
+    const keys = Object.keys(features[0].properties || {});
 
+    if (0 === keys.length) {
+      setAvailableAttributes([]);
+    }
 
-  const handleClickAssignProperties = () => {
-    const boundaries: IImportItem[] = [];
+    setAvailableAttributes(keys);
+    setImportItems(createDefaultImportItems(type, features, timeDiscretization));
+  }, [features, timeDiscretization, type]);
 
-    data.features.forEach((f) => {
-      const properties = f.properties || {};
-      const name = properties[selectedPropertyForName || ''] || defaultValueForName;
-      console.log('name', name, properties, selectedPropertyForName);
-      const value = parseFloat(properties[selectedPropertyForValue || '']) || defaultValueForValue;
-      boundaries.push({
-        type: type,
-        name: name,
-        geometry: f.geometry as Point | LineString | Polygon,
-        affected_layers: [0],
-        data: [{
-          date_time: timeDiscretization.start_date_time,
-          pumping_rate: value,
-        }],
+  useEffect(() => {
+    if (0 === importItems.length) {
+      return;
+    }
+
+    setImportItems((prev) => prev.map((item, idx) => {
+      const properties = features[idx].properties || {};
+      const newName = String(properties[selectedAttributeForName || ''] || `Item ${idx + 1}`);
+      return {
+        ...item,
+        name: newName,
+      };
+    }));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAttributeForName, features]);
+
+  useEffect(() => {
+    setImportItems((prev) => prev.map((item, idx) => {
+      const properties = features[idx].properties || {};
+      let affectedLayers = [...selectedDefaultLayers];
+      if (selectedAttributesForLayer) {
+        affectedLayers = selectedAttributesForLayer.map((p) => {
+          const layerIdx = parseInt(properties[p], 10) - 1;
+          if (0 > layerIdx) {
+            return 0;
+          }
+          if (layerIdx >= layerNames.length) {
+            return layerNames.length - 1;
+          }
+          return layerIdx;
+        });
+      }
+
+      affectedLayers = uniq(affectedLayers).toSorted();
+
+      return {
+        ...item,
+        affected_layers: affectedLayers,
+      };
+    }));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAttributesForLayer, selectedDefaultLayers, features]);
+
+  useEffect(() => {
+    if (selectedAttributeForName) {
+      return;
+    }
+
+    setSelectedAttributeForName(availableAttributes[0]);
+
+  }, [availableAttributes]);
+
+  useEffect(() => {
+    onChangeImportItems(importItems);
+  }, [importItems]);
+
+  const handleChangedStressPeriodValues = (extendedImportItemValues: IExtendedImportItemValue[]) => {
+    setStressPeriodValues(extendedImportItemValues);
+    console.log('handleChangedStressPeriodValues', extendedImportItemValues);
+    setImportItems((prev) => prev.map((item, idx) => {
+      const properties = features[idx].properties || {};
+
+      const newData: IImportItemValue[] = [];
+
+      extendedImportItemValues.forEach((extendedImportItemValue) => {
+        const {enabled, ...rest} = extendedImportItemValue;
+        if (!enabled) {
+          return;
+        }
+
+        const keys = Object.keys(rest);
+        if (0 === keys.length) {
+          return;
+        }
+
+        if (0 === idx) {
+          console.log('keys', keys);
+        }
+
+        keys.forEach((key) => {
+          if (availableAttributes.includes(rest[key])) {
+            rest[key] = Number(properties[rest[key]]);
+          }
+        });
+
+        newData.push(rest);
       });
-    });
 
-    onAssignProperties(boundaries);
+
+      return {
+        ...item,
+        data: newData,
+      };
+    }));
   };
+
+  const selectedImportItem = importItems[selectedImportItemInPreview] || null;
 
   return (
     <Grid>
       <Grid.Row>
-        <Grid.Column width={4}>
-          <Segment>
-            <h3>Data Info</h3>
-            <p>Boundary Type: {type}</p>
-            <p>Number of features: {data.features.length}</p>
+        <Grid.Column width={8}>
+          <Table>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Property</Table.HeaderCell>
+                <Table.HeaderCell>Attribute</Table.HeaderCell>
+                <Table.HeaderCell>Default value</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>
+                  <span style={{fontWeight: 'bold'}}>Name</span>
+                </Table.Cell>
+                <Table.Cell>
+                  <Form.Select
+                    floating={true}
+                    options={availableAttributes.map((p) => ({key: p, text: p, value: p}))}
+                    onChange={(e, {value}) => setSelectedAttributeForName(value as string)}
+                    clearable={true}
+                    value={selectedAttributeForName || ''}
+                  />
+                </Table.Cell>
+                <Table.Cell>{'Item {idx}'}</Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <span style={{fontWeight: 'bold'}}>Layers</span>
+                </Table.Cell>
+                <Table.Cell>
+                  <Form.Select
+                    floating={true}
+                    options={availableAttributes.map((p) => ({key: p, text: p, value: p}))}
+                    onChange={(e, data) => {
+                      const value = data.value as string | string[];
+                      if (!value) {
+                        setSelectedAttributesForLayer(null);
+                        return;
+                      }
+                      if (Array.isArray(value)) {
+                        setSelectedAttributesForLayer(value);
+                        return;
+                      }
+
+                      setSelectedAttributesForLayer([value]);
+                    }}
+                    clearable={true}
+                    multiple={hasMultipleAffectedLayers(type)}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <Form.Select
+                    floating={true}
+                    value={hasMultipleAffectedLayers(type) ? selectedDefaultLayers : selectedDefaultLayers[0]}
+                    options={layerNames.map((l, idx) => ({key: idx, text: l, value: idx}))}
+                    onChange={(e, data) => {
+                      const value = data.value as null | number | number[];
+                      if (!value) {
+                        setSelectedDefaultLayers([0]);
+                        return;
+                      }
+                      if (Array.isArray(value)) {
+                        setSelectedDefaultLayers(value);
+                        return;
+                      }
+                      setSelectedDefaultLayers([value]);
+                    }}
+                    multiple={hasMultipleAffectedLayers(type)}
+                  />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+        </Grid.Column>
+        <Grid.Column width={8}>
+
+          <Segment tertiary={true}>
+            <Label
+              as={'h3'}
+              color={'blue'}
+              attached={'top right'}
+            >
+              Preview
+            </Label>
+            {selectedImportItem && (
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column width={8}>
+                    <Table style={{backgroundColor: 'transparent'}}>
+                      <Table.Body>
+                        <Table.Row>
+                          <Table.Cell>
+                            <span style={{fontWeight: 'bold'}}>Name</span>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {selectedImportItem.name}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            <span style={{fontWeight: 'bold'}}>Type</span>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {selectedImportItem.type}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            <span style={{fontWeight: 'bold'}}>Tags</span>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {selectedImportItem.tags.join(', ')}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            <span style={{fontWeight: 'bold'}}>Layers</span>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {selectedImportItem.affected_layers.map((l) => layerNames[l]).join(', ')}
+                          </Table.Cell>
+                        </Table.Row>
+                      </Table.Body>
+                    </Table>
+                    <Popup
+                      trigger={<Button icon={'chart line'} size={'mini'}/>} pinned={true}
+                      on={'click'}
+                      popper={<div style={{ filter: 'none' }}></div>}
+                    >
+                      <PopupContent style={{width: 400, filter: 'none'}}>
+                        <TimeSeriesDataChart
+                          data={selectedImportItem.data}
+                          dateTimes={[...timeDiscretization.stress_periods.map((sp) => sp.start_date_time), timeDiscretization.end_date_time]}
+                          formatDateTime={formatISODate}
+                          type={selectedImportItem.interpolation as 'linear' | 'forward_fill'}
+                        />
+                      </PopupContent>
+                    </Popup>
+
+                  </Grid.Column>
+                  <Grid.Column width={8}>
+                    <Map
+                      zoomControl={false} dragging={false}
+                      boxZoom={false} doubleClickZoom={false}
+                      scrollWheelZoom={false} touchZoom={false}
+                      style={{border: '1px solid black'}}
+                    >
+                      <PreviewMapLayer item={selectedImportItem.geometry} modelDomain={spatialDiscretization.geometry}/>
+                    </Map>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            )}
+            <div style={{display: 'flex', justifyContent: 'center', margin: 10}}>
+              <Pagination
+                size={'mini'}
+                secondary={true}
+                boundaryRange={1}
+                siblingRange={1}
+                firstItem={null}
+                lastItem={null}
+                defaultActivePage={1}
+                ellipsisItem={{content: <Icon name='ellipsis horizontal'/>, icon: true}}
+                prevItem={{content: <Icon name='angle left'/>, icon: true}}
+                nextItem={{content: <Icon name='angle right'/>, icon: true}}
+                totalPages={importItems.length}
+                onPageChange={(e, {activePage}) => setSelectedImportItemInPreview(activePage as number - 1)}
+                style={{margin: 'auto', textAlign: 'center', alignItems: 'center'}}
+              />
+            </div>
           </Segment>
         </Grid.Column>
-        <Grid.Column width={12}>
-          <Segment>
-            <Form>
-              <Form.Group>
-                <Form.Select
-                  label={'Select property for name'}
-                  options={availableProperties.map((p) => ({key: p, text: p, value: p}))}
-                  value={selectedPropertyForName || ''}
-                  onChange={(e, {value}) => setSelectedPropertyForName(value as string)}
-                />
-                <Form.Input
-                  label={'Default name'}
-                  value={defaultValueForName}
-                  onChange={(e, {value}) => setDefaultValueForName(value as string)}
-                ></Form.Input>
-              </Form.Group>
-              <Form.Group>
-                <Form.Select
-                  label={'Select property for layer'}
-                  options={availableProperties.map((p) => ({key: p, text: p, value: p}))}
-                  value={selectedPropertyForLayer || ''}
-                  onChange={(e, {value}) => setSelectedPropertyForLayer(value as string)}
-                />
-                <Form.Select
-                  label={'Layer option'}
-                  options={[
-                    {key: 'zero_based', text: 'Zero based', value: 'zero_based'},
-                    {key: 'one_based', text: 'One based', value: 'one_based'},
-                    {key: 'selected_layer', text: 'Selected Layer', value: 'selected_layer'},
-                  ]}
-                  value={selectedLayerOption}
-                  onChange={(e, {value}) => setSelectedLayerOption(value as 'zero_based' | 'one_based')}
-                />
-                {'selected_layer' === selectedLayerOption && (
-                  <Form.Select
-                    label={'Select layer name'}
-                    options={layerNames.map((ln) => ({key: ln, text: ln, value: ln}))}
-                    value={selectedLayerName}
-                    onChange={(e, {value}) => setSelectedLayerName(value as string)}
-                  />
-                )}
-              </Form.Group>
-              <Form.Group>
-                <Form.Input
-                  disabled={true}
-                  label={'Date time'}
-                  value={timeDiscretization.start_date_time}
-                />
-                <Form.Select
-                  label={'Select property for value'}
-                  options={availableProperties.map((p) => ({key: p, text: p, value: p}))}
-                  value={selectedPropertyForValue || ''}
-                  onChange={(e, {value}) => setSelectedPropertyForValue(value as string)}
-                />
-                <Form.Input
-                  label={'Default value'}
-                  type={'number'}
-                  value={defaultValueForValue}
-                  onChange={(e, {value}) => setDefaultValueForValue(parseFloat(value))}
-                ></Form.Input>
-              </Form.Group>
-              <Form.Button
-                onClick={handleClickAssignProperties}
-                content={'Assign properties'}
-              />
-            </Form>
-          </Segment>
+        <Grid.Column width={16}>
+          <p>Stress period values</p>
+          <ImportDataTable
+            type={type}
+            values={stressPeriodValues}
+            onChangeValues={handleChangedStressPeriodValues}
+            formatISODate={formatISODate}
+            parseDate={parseDate}
+            attributes={availableAttributes}
+          />
         </Grid.Column>
       </Grid.Row>
     </Grid>
-
   );
 };
 

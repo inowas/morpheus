@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import DataTable, {IColumn} from './DataTable';
+import DataTable from './DataTable';
 import {IBoundaryObservationValue, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
 import {useDateTimeFormat} from 'common/hooks';
 import {Button} from 'common/components';
@@ -7,6 +7,8 @@ import styles from './BoundaryDataTable.module.less';
 import {Icon} from 'semantic-ui-react';
 import BoundariesUpload from '../BoundaryUpload/BoundariesUpload';
 import {ITimeDiscretization} from '../../../../types';
+import {getNewBoundaryDataItemByType} from './helpers';
+import {IColumn} from '../../../../types/DataTable.type';
 
 interface IProps {
   boundaryType: IBoundaryType;
@@ -90,29 +92,6 @@ const getColumns = (boundaryType: IBoundaryType, formatDate: IFormatDate, parseD
   }
 };
 
-const newRow = (boundaryType: IBoundaryType, dateString: string): IBoundaryObservationValue => {
-  switch (boundaryType) {
-  case 'constant_head':
-    return {date_time: dateString, head: 0};
-  case 'drain':
-    return {date_time: dateString, stage: 0, conductance: 0};
-  case 'evapotranspiration':
-    return {date_time: dateString, surface_elevation: 0, evapotranspiration: 0, extinction_depth: 0};
-  case 'flow_and_head':
-    return {date_time: dateString, flow: 0, head: 0};
-  case 'general_head':
-    return {date_time: dateString, stage: 0, conductance: 0};
-  case 'lake':
-    return {date_time: dateString, precipitation: 0, evaporation: 0, runoff: 0, withdrawal: 0};
-  case 'recharge':
-    return {date_time: dateString, recharge_rate: 0};
-  case 'river':
-    return {date_time: dateString, river_stage: 0, riverbed_bottom: 0, conductance: 0};
-  case 'well':
-    return {date_time: dateString, pumping_rate: 0};
-  }
-};
-
 const BoundaryDataTableFreeDates = ({boundaryType, observation, onChangeObservation}: IProps) => {
 
   const {formatDate, parseUserInput, addDays, addWeeks, addMonths, addYears} = useDateTimeFormat('UTC');
@@ -161,16 +140,16 @@ const BoundaryDataTableFreeDates = ({boundaryType, observation, onChangeObservat
         onChangeData={handleChangedData}
       />
       <div className={styles.buttonsGroup}>
-        <Button className='buttonLink' onClick={() => addUniqueDataPoint(newRow(boundaryType, addDays(latestDate, 1)))}>
+        <Button className='buttonLink' onClick={() => addUniqueDataPoint(getNewBoundaryDataItemByType(boundaryType, addDays(latestDate, 1)))}>
           <Icon name="add"/> 1 day
         </Button>
-        <Button className='buttonLink' onClick={() => addUniqueDataPoint(newRow(boundaryType, addWeeks(latestDate, 1)))}>
+        <Button className='buttonLink' onClick={() => addUniqueDataPoint(getNewBoundaryDataItemByType(boundaryType, addWeeks(latestDate, 1)))}>
           <Icon name="add"/> 1 week
         </Button>
-        <Button className='buttonLink' onClick={() => addUniqueDataPoint(newRow(boundaryType, addMonths(latestDate, 1)))}>
+        <Button className='buttonLink' onClick={() => addUniqueDataPoint(getNewBoundaryDataItemByType(boundaryType, addMonths(latestDate, 1)))}>
           <Icon name="add"/> 1 month
         </Button>
-        <Button className='buttonLink' onClick={() => addUniqueDataPoint(newRow(boundaryType, addYears(latestDate, 1)))}>
+        <Button className='buttonLink' onClick={() => addUniqueDataPoint(getNewBoundaryDataItemByType(boundaryType, addYears(latestDate, 1)))}>
           <Icon name="add"/> 1 year
         </Button>
         <Button disabled={data === observation.data} onClick={() => onChangeObservation({...observation, data})}>Save</Button>

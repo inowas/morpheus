@@ -3,22 +3,13 @@ import {Icon, Popup, SemanticWIDTHS, Table, TableBody, TableCell, TableHeader, T
 import cloneDeep from 'lodash.clonedeep';
 import styles from './DataTable.module.less';
 import {Button} from 'common/components';
+import {IColumn} from '../../../../types/DataTable.type';
 
 interface IProps {
   columns: IColumn[];
   data: Array<{ [key: string]: any }>;
   onChangeData: (data: Array<{ [key: string]: any }>) => void;
   isReadOnly?: boolean;
-}
-
-export interface IColumn {
-  title: string;
-  key: string;
-  format: (value: any) => string;
-  parse: (value: string) => any;
-  defaultValue: number;
-  inputType: 'text' | 'number' | 'date' | 'datetime-local';
-  precision?: number;
 }
 
 const DataTable = ({columns, data, isReadOnly, onChangeData}: IProps) => {

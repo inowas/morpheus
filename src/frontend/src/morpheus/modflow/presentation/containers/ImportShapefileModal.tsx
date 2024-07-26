@@ -11,10 +11,11 @@ import {FeatureCollection} from 'geojson';
 import ImportItemPropertiesSelector from '../components/Import/ImportItemPropertiesSelector';
 import {useSpatialDiscretization, useTimeDiscretization} from '../../application';
 import useLayers from '../../application/useLayers';
-import {IImportItem, IImportItemType} from '../../types/Import.type';
+import {IImportItem, IImportItemType} from '../components/Import/Import.type';
 
 import {booleanWithin, booleanCrosses} from '@turf/turf';
 import {getBoundarySettings} from '../components/ModelBoundaries/helpers';
+import {useDateTimeFormat} from '../../../../common/hooks';
 
 
 interface IProps {
@@ -51,6 +52,8 @@ const ImportShapefileModal = ({trigger}: IProps) => {
 
   const {projectId} = useParams();
   const {shapeFiles, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
+
+  const {formatISODate, parseDate} = useDateTimeFormat();
 
   // Step 1
   const [selectedShapefile, setSelectedShapefile] = useState<IAsset | null>(null);
@@ -109,8 +112,6 @@ const ImportShapefileModal = ({trigger}: IProps) => {
       if (!feature) {
         return;
       }
-
-      const geometryType = feature.geometry.type;
 
       setSelectedGeometryType(feature.geometry.type);
     }
@@ -226,8 +227,8 @@ const ImportShapefileModal = ({trigger}: IProps) => {
 
       <Step completed={!!importItems.length} active={2 == activeStep}>
         <StepContent>
-          <StepTitle>Assign properties</StepTitle>
-          <StepDescription>Assign properties</StepDescription>
+          <StepTitle>Assign attributes</StepTitle>
+          <StepDescription>Assign attributes to props</StepDescription>
         </StepContent>
       </Step>
 
@@ -288,11 +289,14 @@ const ImportShapefileModal = ({trigger}: IProps) => {
       return (
         <Segment.Segment raised={true}>
           {availableImportFeatures && <ImportItemPropertiesSelector
-            data={availableImportFeatures}
+            features={availableImportFeatures.features}
             type={importItemType}
             layerNames={layers.map((l) => l.name)}
+            spatialDiscretization={spatialDiscretization}
             timeDiscretization={timeDiscretization}
-            onAssignProperties={setImportItems}
+            onChangeImportItems={setImportItems}
+            formatISODate={formatISODate}
+            parseDate={parseDate}
           />}
         </Segment.Segment>
       );
@@ -328,7 +332,7 @@ const ImportShapefileModal = ({trigger}: IProps) => {
           centered={false}
           closeIcon={true}
         >
-          <Modal.Header>Upload Boundaries</Modal.Header>
+          <Modal.Header>Import Boundaries and Observations</Modal.Header>
           <Modal.Content>
             {renderSteps()}
             <Divider/>

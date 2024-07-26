@@ -60,13 +60,6 @@ const ModelSetupContainer = () => {
     try {
       const assetShapefileData = await processShapefile(zipFile);
       const geoJson = assetShapefileData.data;
-      if ('Polygon' === geoJson.type) {
-        setGeometry(geoJson);
-      }
-
-      if ('Feature' === geoJson.type && 'Polygon' === geoJson.geometry.type) {
-        return setGeometry(geoJson.geometry as Polygon);
-      }
 
       if ('FeatureCollection' === geoJson.type) {
         const polygon = geoJson.features.find((f) => 'Polygon' === f.geometry.type);
