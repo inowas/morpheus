@@ -3,7 +3,7 @@ import {Checkbox, Icon, Popup, Table, TableBody, TableHeader, TableHeaderCell, T
 import DataTableInput from './ImportDataTableInput';
 import cloneDeep from 'lodash.clonedeep';
 import {getImportColumnsByType} from './helpers';
-import {IImportItemType, IImportItemValue} from './Import.type';
+import {IImportItemType, IImportItemValue} from '../../../types/Import.type';
 
 interface IProps {
   type: IImportItemType;

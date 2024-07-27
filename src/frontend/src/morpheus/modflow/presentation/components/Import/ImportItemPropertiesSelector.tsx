@@ -2,14 +2,14 @@ import React, {useEffect, useState} from 'react';
 import uniq from 'lodash.uniq';
 
 import {ISpatialDiscretization, ITimeDiscretization} from '../../../types';
-import {Button, Form, Grid, Icon, Label, Pagination, Popup, PopupContent, PopupHeader, Segment, Table} from 'semantic-ui-react';
+import {Button, Form, Grid, Icon, Label, Pagination, Popup, PopupContent, Segment, Table} from 'semantic-ui-react';
 import {Feature, LineString, Point, Polygon} from 'geojson';
-import {IImportItem, IImportItemType, IImportItemValue} from './Import.type';
-import {Map} from 'common/components/Map';
+import {IImportItem, IImportItemType, IImportItemValue} from '../../../types/Import.type';
 import {createDefaultImportItemValueByType, hasMultipleAffectedLayers} from './helpers';
 import PreviewMapLayer from './PreviewMapLayer';
 import ImportDataTable, {IExtendedImportItemValue} from './ImportDataTable';
-import {TimeSeriesDataChart} from '../../../../../common/components';
+import {Map} from 'common/components/Map';
+import {TimeSeriesDataChart} from 'common/components';
 
 
 interface IProps {
@@ -138,7 +138,6 @@ const ImportItemPropertiesSelector = ({features, layerNames, onChangeImportItems
 
   const handleChangedStressPeriodValues = (extendedImportItemValues: IExtendedImportItemValue[]) => {
     setStressPeriodValues(extendedImportItemValues);
-    console.log('handleChangedStressPeriodValues', extendedImportItemValues);
     setImportItems((prev) => prev.map((item, idx) => {
       const properties = features[idx].properties || {};
 
@@ -153,10 +152,6 @@ const ImportItemPropertiesSelector = ({features, layerNames, onChangeImportItems
         const keys = Object.keys(rest);
         if (0 === keys.length) {
           return;
-        }
-
-        if (0 === idx) {
-          console.log('keys', keys);
         }
 
         keys.forEach((key) => {
@@ -303,23 +298,33 @@ const ImportItemPropertiesSelector = ({features, layerNames, onChangeImportItems
                             {selectedImportItem.affected_layers.map((l) => layerNames[l]).join(', ')}
                           </Table.Cell>
                         </Table.Row>
+                        {Object.keys(selectedImportItem.data[0]).filter((key) => 'date_time' !== key).map((key) => (
+                          <Table.Row key={key}>
+                            <Table.Cell>
+                              <span style={{fontWeight: 'bold'}}>{key}</span>
+                            </Table.Cell>
+                            <Table.Cell>
+                              <Popup
+                                trigger={<Button icon={'chart line'} size={'mini'}/>} pinned={true}
+                                on={'hover'}
+                                popper={<div style={{filter: 'none'}}></div>}
+                                content={
+                                  <PopupContent style={{width: 400, filter: 'none'}}>
+                                    <TimeSeriesDataChart
+                                      data={selectedImportItem.data.map((d) => ({date_time: d.date_time, [key]: d[key] as number}))}
+                                      dateTimes={[...timeDiscretization.stress_periods.map((sp) => sp.start_date_time), timeDiscretization.end_date_time]}
+                                      formatDateTime={formatISODate}
+                                      type={selectedImportItem.interpolation as 'linear' | 'forward_fill'}
+                                    />
+                                  </PopupContent>
+                                }
+                              />
+                            </Table.Cell>
+                          </Table.Row>
+                        ))
+                        }
                       </Table.Body>
                     </Table>
-                    <Popup
-                      trigger={<Button icon={'chart line'} size={'mini'}/>} pinned={true}
-                      on={'click'}
-                      popper={<div style={{ filter: 'none' }}></div>}
-                    >
-                      <PopupContent style={{width: 400, filter: 'none'}}>
-                        <TimeSeriesDataChart
-                          data={selectedImportItem.data}
-                          dateTimes={[...timeDiscretization.stress_periods.map((sp) => sp.start_date_time), timeDiscretization.end_date_time]}
-                          formatDateTime={formatISODate}
-                          type={selectedImportItem.interpolation as 'linear' | 'forward_fill'}
-                        />
-                      </PopupContent>
-                    </Popup>
-
                   </Grid.Column>
                   <Grid.Column width={8}>
                     <Map

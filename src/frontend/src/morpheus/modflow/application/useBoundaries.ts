@@ -8,6 +8,7 @@ import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 import {setBoundaries, updateBoundary} from '../infrastructure/modelStore';
 import {Feature, LineString, MultiPolygon, Point, Polygon} from 'geojson';
 import {ILayerId} from '../types/Layers.type';
+import {IImportItem} from '../types/Import.type';
 
 interface IUseBoundaries {
   boundaries: IBoundary[];
@@ -18,6 +19,7 @@ interface IUseBoundaries {
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>
+  onImportBoundaries: (items: IImportItem[]) => Promise<void>;
   onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
   onUpdateBoundaryAffectedCells: (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => Promise<void>;
@@ -374,6 +376,47 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     await fetchSingleBoundary(boundaryId);
   };
 
+  const onImportBoundaries = async (items: IImportItem[]) => {
+    if (!model) {
+      return;
+    }
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const command: Commands.IImportModelBoundariesCommand = {
+      command_name: 'import_model_boundaries_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+        boundaries: items,
+      },
+    };
+
+    const result = await sendCommand<Commands.IImportModelBoundariesCommand>(command);
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (result.err) {
+      setError({
+        message: result.val.message,
+        code: result.val.code,
+      });
+    }
+
+    if (result.ok) {
+      await fetchAllBoundaries();
+    }
+  };
+
   const onRemoveBoundary = async (boundaryId: IBoundaryId) => {
     if (!model || !projectId) {
       return;
@@ -700,6 +743,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     onCloneBoundaryObservation,
     onDisableBoundary,
     onEnableBoundary,
+    onImportBoundaries,
     onRemoveBoundary,
     onRemoveBoundaryObservation,
     onUpdateBoundaryAffectedCells,

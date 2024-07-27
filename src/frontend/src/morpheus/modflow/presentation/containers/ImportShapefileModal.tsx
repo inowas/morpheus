@@ -7,15 +7,17 @@ import {useParams} from 'react-router-dom';
 
 import ImportItemTypeSelector from '../components/Import/ImportItemTypeSelector';
 import ImportItemsUploadSelector from '../components/Import/ImportItemsUploadSelector';
-import {FeatureCollection} from 'geojson';
+import {Feature, FeatureCollection, LineString, Point, Polygon} from 'geojson';
 import ImportItemPropertiesSelector from '../components/Import/ImportItemPropertiesSelector';
 import {useSpatialDiscretization, useTimeDiscretization} from '../../application';
 import useLayers from '../../application/useLayers';
-import {IImportItem, IImportItemType} from '../components/Import/Import.type';
+import {IImportItem, IImportItemType} from '../../types/Import.type';
 
 import {booleanWithin, booleanCrosses} from '@turf/turf';
-import {getBoundarySettings} from '../components/ModelBoundaries/helpers';
+import {getBoundarySettings, isBoundaryType} from '../components/ModelBoundaries/helpers';
 import {useDateTimeFormat} from '../../../../common/hooks';
+import useBoundaries from '../../application/useBoundaries';
+import {isObservationType} from '../components/ModelHeadObservations/helpers';
 
 
 interface IProps {
@@ -52,6 +54,7 @@ const ImportShapefileModal = ({trigger}: IProps) => {
 
   const {projectId} = useParams();
   const {shapeFiles, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
+  const {onImportBoundaries, loading: uploadingBoundaries, error: uploadingBoundariesError} = useBoundaries(projectId as string);
 
   const {formatISODate, parseDate} = useDateTimeFormat();
 
@@ -66,7 +69,7 @@ const ImportShapefileModal = ({trigger}: IProps) => {
 
   // Step 3
   const [importItems, setImportItems] = useState<IImportItem[]>([]);
-  const [excludedItemIdx, setExcludedItemIdx] = useState<number[]>([]);
+  const [includedForUploadIdx, setIncludedForUploadIdx] = useState<number[]>([]);
 
   const [activeStep, setActiveStep] = useState<number>(0);
 
@@ -75,6 +78,12 @@ const ImportShapefileModal = ({trigger}: IProps) => {
   const {spatialDiscretization} = useSpatialDiscretization(projectId as string);
 
   const [open, setOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!open) {
+      setActiveStep(0);
+    }
+  }, [open]);
 
   const isAssetShapefileData = (data: IAssetData): data is IAssetShapefileData => (data && 'shapefile' === data.type);
   const isValidStep = (step: number): boolean => {
@@ -138,15 +147,16 @@ const ImportShapefileModal = ({trigger}: IProps) => {
       return;
     }
 
+    // filter data which is within the model domain
+    // convert multi geometries into single geometries, taking only the first one
     setAvailableImportFeatures({
       type: 'FeatureCollection',
-      features: selectedShapefileData.data.features.filter(
-        (f) => {
-          if (f.geometry.type !== selectedGeometryType) {
+      features: selectedShapefileData.data.features
+        .filter((feature) => {
+          if (feature.geometry.type !== selectedGeometryType) {
             return false;
           }
-
-          return booleanWithin(f, spatialDiscretization.geometry) || booleanCrosses(f, spatialDiscretization.geometry);
+          return booleanWithin(feature, spatialDiscretization.geometry) || booleanCrosses(feature, spatialDiscretization.geometry);
         }),
     });
   };
@@ -157,6 +167,28 @@ const ImportShapefileModal = ({trigger}: IProps) => {
     }
 
     setActiveStep(activeStep - 1);
+  };
+
+  const handleClickUpload = async () => {
+    if (!isValidStep(activeStep)) {
+      return;
+    }
+
+    const selectedItems = importItems.filter((_, idx) => includedForUploadIdx.includes(idx));
+    if (!importItemType)
+      return;
+
+    if (isBoundaryType(importItemType)) {
+      await onImportBoundaries(selectedItems);
+      if (!uploadingBoundariesError) {
+        setOpen(false);
+      }
+    }
+
+    if (isObservationType(importItemType)) {
+      // Todo: implement observation upload in backend
+      throw new Error('Observations not yet implemented');
+    }
   };
 
   const handleClickNext = () => {
@@ -175,28 +207,65 @@ const ImportShapefileModal = ({trigger}: IProps) => {
 
       setAvailableImportFeatures({
         type: 'FeatureCollection',
-        features: selectedShapefileData.data.features.filter(
-          (f) => {
-            if (f.geometry.type !== selectedGeometryType) {
-              return false;
+        features: selectedShapefileData.data.features
+          .filter(
+            (f) => {
+              if (f.geometry.type !== selectedGeometryType) {
+                return false;
+              }
+
+              if ('MultiPolygon' === f.geometry.type || 'Polygon' === f.geometry.type) {
+                return booleanWithin(f, spatialDiscretization.geometry) || booleanCrosses(f, spatialDiscretization.geometry);
+              }
+
+              if ('LineString' === f.geometry.type || 'MultiLineString' === f.geometry.type) {
+                return booleanWithin(f, spatialDiscretization.geometry) || booleanCrosses(f, spatialDiscretization.geometry);
+              }
+
+              if ('Point' === f.geometry.type) {
+                return booleanWithin(f, spatialDiscretization.geometry);
+              }
+
+              if ('MultiPoint' === f.geometry.type) {
+                return booleanWithin(f, spatialDiscretization.geometry);
+              }
+            })
+          .map((feature) => {
+            if (['LineString', 'Point', 'Polygon'].includes(feature.geometry.type)) {
+              return feature;
             }
 
-            if ('MultiPolygon' === f.geometry.type || 'Polygon' === f.geometry.type) {
-              return booleanWithin(f, spatialDiscretization.geometry) || booleanCrosses(f, spatialDiscretization.geometry);
+            if ('MultiPoint' === feature.geometry.type && 0 < feature.geometry.coordinates.length) {
+              return {
+                ...feature,
+                geometry: {
+                  type: 'Point',
+                  coordinates: feature.geometry.coordinates[0],
+                },
+              } as Feature<Point>;
             }
 
-            if ('LineString' === f.geometry.type || 'MultiLineString' === f.geometry.type) {
-              return booleanWithin(f, spatialDiscretization.geometry) || booleanCrosses(f, spatialDiscretization.geometry);
+            if ('MultiLineString' === feature.geometry.type && 0 < feature.geometry.coordinates.length) {
+              return {
+                ...feature,
+                geometry: {
+                  type: 'LineString',
+                  coordinates: feature.geometry.coordinates[0],
+                },
+              } as Feature<LineString>;
             }
 
-
-            if ('Point' === f.geometry.type) {
-              return booleanWithin(f, spatialDiscretization.geometry);
+            if ('MultiPolygon' === feature.geometry.type && 0 < feature.geometry.coordinates.length) {
+              return {
+                ...feature,
+                geometry: {
+                  type: 'Polygon',
+                  coordinates: feature.geometry.coordinates[0],
+                },
+              } as Feature<Polygon>;
             }
 
-            if ('MultiPoint' === f.geometry.type) {
-              return booleanWithin(f, spatialDiscretization.geometry);
-            }
+            return feature;
           }),
       });
     }
@@ -234,7 +303,7 @@ const ImportShapefileModal = ({trigger}: IProps) => {
 
       <Step completed={false} active={3 == activeStep}>
         <StepContent>
-          <StepTitle>Upload</StepTitle>
+          <StepTitle>Select and Upload</StepTitle>
           <StepDescription>Select and upload</StepDescription>
         </StepContent>
       </Step>
@@ -307,8 +376,9 @@ const ImportShapefileModal = ({trigger}: IProps) => {
         <Segment.Segment raised={true}>
           <ImportItemsUploadSelector
             items={importItems}
-            excludedIdx={excludedItemIdx}
-            onChangeExcludedIdx={setExcludedItemIdx}
+            includedForUploadIdx={includedForUploadIdx}
+            onChangeIncludedForUploadIdx={setIncludedForUploadIdx}
+            spatialDiscretization={spatialDiscretization}
           />
         </Segment.Segment>
       );
@@ -353,9 +423,10 @@ const ImportShapefileModal = ({trigger}: IProps) => {
                 fontSize: '17px',
                 textTransform: 'capitalize',
               }}
-              content={'Next'}
+              content={3 === activeStep ? 'Upload' : 'Next'}
               disabled={!isValidStep(activeStep)}
-              onClick={handleClickNext}
+              onClick={3 === activeStep ? handleClickUpload : handleClickNext}
+              loading={uploadingBoundaries}
             />
           </Modal.Actions>
         </Modal.Modal>

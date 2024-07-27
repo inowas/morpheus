@@ -194,7 +194,7 @@ const BoundariesContainer = () => {
       <BodyContent>
         <Map>
           <MapRef mapRef={mapRef}/>;
-          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry}/>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry} fill={true}/>
           <DrawBoundaryLayer boundaryType={addBoundaryOnMap} onAddBoundary={handleAddBoundary}/>
           <BoundariesLayer
             boundaries={boundaries}

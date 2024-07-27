@@ -71,13 +71,13 @@ class ImportModelBoundariesCommandHandler(CommandHandlerBase):
 
         boundaries = []
         for boundary_dict in command.boundaries:
-            boundary_id = BoundaryId.from_str(boundary_dict['id']) if boundary_dict['id'] else BoundaryId.new()
+            boundary_id = BoundaryId.from_str(boundary_dict['id']) if 'id' in boundary_dict else BoundaryId.new()
             boundary_type = BoundaryType.from_str(boundary_dict['type'])
             name = BoundaryName.from_str(boundary_dict['name'])
-            tags = BoundaryTags.from_list(boundary_dict['tags']) if boundary_dict['tags'] else BoundaryTags.empty()
-            interpolation = InterpolationType(boundary_dict['interpolation']) if boundary_dict['interpolation'] else InterpolationType.default
+            tags = BoundaryTags.from_list(boundary_dict['tags']) if 'tags' in boundary_dict else BoundaryTags.empty()
+            interpolation = InterpolationType(boundary_dict['interpolation']) if 'interpolation' in boundary_dict else InterpolationType.default
             geometry = GeometryFactory.from_dict(boundary_dict['geometry'])
-            affected_cells = ActiveCells.from_dict(boundary_dict['affected_cells']) if boundary_dict['affected_cells'] else ActiveCells.from_geometry(geometry=geometry, grid=grid)
+            affected_cells = ActiveCells.from_dict(boundary_dict['affected_cells']) if 'affected_cells' in boundary_dict else ActiveCells.from_geometry(geometry=geometry, grid=grid)
             affected_layers = [layer_ids[layer_id] for layer_id in boundary_dict['affected_layers']]
             data = boundary_dict['data']
 

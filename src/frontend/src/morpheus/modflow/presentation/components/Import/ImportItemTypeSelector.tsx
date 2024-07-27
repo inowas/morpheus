@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form, Grid, Segment} from 'semantic-ui-react';
 import {Map} from 'common/components/Map';
-import {IImportItemType} from './Import.type';
+import {IImportItemType} from '../../../types/Import.type';
 import {FeatureCollection, Polygon} from 'geojson';
 import ImportShapefileDataLayer from './ImportShapefileDataLayer';
 

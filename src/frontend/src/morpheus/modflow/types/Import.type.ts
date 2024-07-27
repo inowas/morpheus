@@ -1,7 +1,7 @@
 import {LineString, Point, Polygon} from 'geojson';
-import {IAffectedCells} from '../../../types';
-import {IBoundaryId, IBoundaryObservationValue, IBoundaryType, IInterpolationType} from '../../../types/Boundaries.type';
-import {IObservationValue, IObservationId, IObservationType} from '../../../types/Observations.type';
+import {IAffectedCells} from './index';
+import {IBoundaryId, IBoundaryObservationValue, IBoundaryType, IInterpolationType} from './Boundaries.type';
+import {IObservationValue, IObservationId, IObservationType} from './Observations.type';
 
 interface IImportItem {
   id?: IImportId;
@@ -17,6 +17,6 @@ interface IImportItem {
 
 type IImportId = IBoundaryId | IObservationId;
 type IImportItemType = IBoundaryType | IObservationType;
-type IImportItemValue = IBoundaryObservationValue | IObservationValue | {date_time: string, [key: string]: any};
+type IImportItemValue = (IBoundaryObservationValue | IObservationValue) & { [key: string]: any; };
 
 export type {IImportItem, IImportId, IImportItemType, IImportItemValue};

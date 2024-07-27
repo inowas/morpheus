@@ -172,8 +172,8 @@ definitions:
         command_name:
           type: string
           enum:
-            - import_boundaries_command
-          example: import_boundaries_command
+            - import_model_boundaries_command
+          example: import_model_boundaries_command
         payload:
           type: object
           properties:
@@ -188,10 +188,16 @@ definitions:
               items:
                 type: object
                 properties:
-                  id: string  # optional
+                  id:
+                    description: The unique identifier of the boundary (optional).
+                    type: string
+                    example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
                   type:
                     $ref: "#/definitions/components/BoundaryType"
-                  name: string
+                  name:
+                    description: The name of the boundary.
+                    type: string
+                    example: Boundary 1
                   interpolation: # optional
                     $ref: "#/definitions/components/InterpolationType"
                   tags: # optional
@@ -201,13 +207,22 @@ definitions:
                   affected_cells: # optional
                     $ref: "#/definitions/components/AffectedCells"
                   affected_layers:
-                    $ref: "#/definitions/components/AffectedLayers"
+                    description: The layer indexes (zero based) affected by the boundary.
+                    type: array
+                    items:
+                      type: number
+                      minimum: 0
+                      maximum: 100
+                    minItems: 1
                   data:
                     type: array
                     items:
                       type: object
                       properties:
-                        date_time: string
+                        date_time:
+                            type: string
+                            format: date-time
+                            example: 2021-01-01T00:00:00Z
                       required:
                         - date_time
                 required:

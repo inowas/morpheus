@@ -1,4 +1,4 @@
-import {IImportItemType, IImportItemValue} from './Import.type';
+import {IImportItemType, IImportItemValue} from '../../../types/Import.type';
 import {boundarySettings} from '../ModelBoundaries/helpers';
 import {getBoundaryColumnsByType, getNewBoundaryDataItemByType} from '../ModelBoundaries/BoundaryDataTable/helpers';
 import {IBoundaryType} from '../../../types/Boundaries.type';

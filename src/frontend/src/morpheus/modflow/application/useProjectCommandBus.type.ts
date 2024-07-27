@@ -1,9 +1,10 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerProperty, IZone} from '../types/Layers.type';
-import {IBoundaryId, IBoundaryObservationValue, IBoundaryType, IImportItem, IInterpolationType, IObservationId} from '../types/Boundaries.type';
+import {IBoundaryObservationValue, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
-import {IHeadObservationData} from '../types/HeadObservations.type';
+import {IObservationValue} from '../types/Observations.type';
+import {IImportItem} from '../types/Import.type';
 
 // Asset Commands
 export interface IDeleteAssetCommand {
@@ -403,7 +404,7 @@ export interface IUpdateModelObservationCommand {
     geometry: Point;
     affected_cells: IAffectedCells;
     affected_layers: ILayerId[];
-    data: IHeadObservationData[];
+    data: IObservationValue[];
     enabled: boolean;
   }
 }

@@ -82,7 +82,6 @@ paths:
                 - $ref: './application/write/Calculation/schema.yml#/definitions/commands/StopCalculationCommand'
                 - $ref: './application/write/Calculation/schema.yml#/definitions/commands/UpdateCalculationProfileCommand'
 
-
                 # Model Commands
                 # General Model Commands
                 - $ref: './application/write/Model/General/schema.yml#/definitions/commands/CreateModelCommand'

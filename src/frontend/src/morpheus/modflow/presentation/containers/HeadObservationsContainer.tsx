@@ -131,7 +131,7 @@ const HeadObservationsContainer = () => {
       <BodyContent>
         <Map>
           <MapRef mapRef={mapRef}/>;
-          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry}/>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry} fill={true}/>
           <DrawObservationLayer
             observationType={addObservationOnMap}
             onAdd={(type, geometry) => handleAddObservation(type, geometry)}
