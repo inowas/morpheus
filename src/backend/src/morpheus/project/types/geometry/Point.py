@@ -22,6 +22,10 @@ class Point:
             raise ValueError('Geometry Type must be a Point')
         return cls(coordinates=obj['coordinates'])
 
+    @classmethod
+    def from_wgs84(cls, x: float, y: float):
+        return cls(coordinates=(x, y))
+
     def to_dict(self):
         return {
             'type': self.type,
