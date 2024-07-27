@@ -1,0 +1,417 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for ModelLayerCommands
+definitions:
+  commands:
+    CloneModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_layer_command
+          example: clone_model_layer_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - layer_id
+    CreateModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - create_model_layer_command
+          example: create_model_layer_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            name:
+              type: string
+              example: Layer 1
+            description:
+              type: string
+              example: Layer 1 description
+            confinement:
+              "$ref": "#/definitions/components/LayerConfinement"
+            hk:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            hani:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            vka:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            specific_storage:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            specific_yield:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            initial_head:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            top:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+            bottom:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+          required:
+            - project_id
+            - model_id
+            - name
+            - type
+            - hk
+            - hani
+            - vka
+            - specific_storage
+            - specific_yield
+            - initial_head
+            - bottom
+    DeleteModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - delete_model_layer_command
+          example: delete_model_layer_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - layer_id
+    UpdateModelLayerConfinementCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_confinement_command
+          example: update_model_layer_confinement_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            confinement:
+              "$ref": "#/definitions/components/LayerConfinement"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - confinement
+    UpdateModelLayerMetadataCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_metadata_command
+          example: update_model_layer_metadata_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            name:
+              type: string
+              example: Layer 1
+            description:
+              type: string
+              example: Layer 1 description
+          required:
+            - project_id
+            - model_id
+            - layer_id
+    UpdateModelLayerOrderCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_order_command
+          example: update_model_layer_order_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            layer_ids:
+              type: array
+              items:
+                type: string
+          required:
+            - project_id
+            - model_id
+            - layer_ids
+    UpdateModelLayerPropertyRasterReferenceCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_property_raster_reference_command
+          example: update_model_layer_property_raster_reference_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            property_name:
+              "$ref": "#/definitions/components/LayerPropertyName"
+            property_raster_reference:
+              oneOf:
+                - "$ref": "#/definitions/components/LayerPropertyRasterReference"
+                - "$ref": "#/definitions/components/Nullable"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - property_name
+            - property_raster_reference
+    UpdateModelLayerPropertyDefaultValueCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_property_default_value_command
+          example: update_model_layer_property_default_value_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            property_name:
+              "$ref": "#/definitions/components/LayerPropertyName"
+            property_default_value:
+              "$ref": "#/definitions/components/LayerPropertyDefaultValue"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - property_name
+            - property_default_value
+    UpdateModelLayerPropertyZonesCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_layer_property_zones_command
+          example: update_model_layer_property_zones_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            layer_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            property_name:
+              "$ref": "#/definitions/components/LayerPropertyName"
+            property_zones:
+              oneOf:
+                - "$ref": "#/definitions/components/LayerPropertyZones"
+                - "$ref": "#/definitions/components/Nullable"
+          required:
+            - project_id
+            - model_id
+            - layer_id
+            - property_name
+            - property_zones
+  components:
+    LayerId:
+      type: string
+      example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+    LayerConfinement:
+      type: string
+      enum:
+        - confined
+        - unconfined
+        - convertible
+      example: confined
+    LayerPropertyName:
+      type: string
+      enum:
+        - hk
+        - hani
+        - vka
+        - specific_storage
+        - specific_yield
+        - initial_head
+        - top
+        - bottom
+      example: hk
+    LayerPropertyDefaultValue:
+      description: The default value of a layer property.
+      type: number
+      example: 1.0
+    LayerPropertyRasterReference:
+      description: The reference to a raster property.
+      type: object
+      properties:
+        asset_id:
+          type: string
+          example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+        band:
+          type: integer
+          minimum: 0
+          maximum: 1000
+      required:
+        - asset_id
+        - band
+    LayerPropertyZones:
+      description: The zones of a layer property.
+      type: array
+      items:
+        type: object
+        properties:
+          zone_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          name:
+            type: string
+            example: Zone 1
+          geometry:
+            oneOf:
+              - "$ref": "#/definitions/components/Polygon"
+              - "$ref": "#/definitions/components/MultiPolygon"
+          affected_cells:
+            type: object
+          value:
+            type: number
+        required:
+          - geometry
+          - value
+    MultiPolygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPolygon
+          example: MultiPolygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - - - - 13.922514437551428
+                  - 50.964720483303836
+                - - 13.925250781947113
+                  - 50.965228748412386
+                - - 13.925036413951403
+                  - 50.96623732041704
+                - - 13.92222441026388
+                  - 50.96609040370362
+                - - 13.922514437551428
+                  - 50.964720483303836
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                  minItems: 2
+                  maxItems: 2
+      required:
+        - type
+        - coordinates
+    Nullable:
+      type: 'null'
+    Polygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Polygon
+          example: Polygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                minItems: 2
+                maxItems: 2
+          example:
+            - - - 13.922514437551428
+                - 50.964720483303836
+              - - 13.925250781947113
+                - 50.965228748412386
+              - - 13.925036413951403
+                - 50.96623732041704
+              - - 13.92222441026388
+                - 50.96609040370362
+              - - 13.922514437551428
+                - 50.964720483303836
+      required:
+        - type
+        - coordinates

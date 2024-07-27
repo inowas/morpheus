@@ -76,7 +76,7 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly}: IP
       <Button
         size={'tiny'}
         onClick={() => setShowFileUploadModal(true)}
-        content={'Upload Shapefile'}
+        content={'Load shape file'}
       />
       <LayerPropertyValuesZonesList
         zones={zones}

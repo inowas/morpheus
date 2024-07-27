@@ -107,7 +107,7 @@ def calculate_drn_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: Model) -> DrnStressPeriodData | None:
     sp_data = DrnStressPeriodData()
-    drn_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.drain())
+    drn_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.drain)
     for drn_boundary in drn_boundaries:
         if not isinstance(drn_boundary, DrainBoundary):
             raise TypeError(

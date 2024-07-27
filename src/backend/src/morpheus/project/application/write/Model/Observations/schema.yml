@@ -1,0 +1,220 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for ModelObservationCommands
+definitions:
+  commands:
+    AddModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_model_observation_command
+          example: add_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            type:
+              type: string
+              enum:
+                - head
+              example: head
+            geometry:
+              $ref: "#/definitions/components/Point"
+          required:
+            - project_id
+            - model_id
+            - type
+            - geometry
+    CloneModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - clone_model_observation_command
+          example: clone_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
+    DisableModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - disable_model_observation_command
+          example: disable_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
+    EnableModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - enable_model_observation_command
+          example: enable_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
+    RemoveModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - remove_model_observation_command
+          example: remove_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+            - observation_id
+    UpdateModelObservationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_observation_command
+          example: update_model_observation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            observation_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            name:
+              type: string
+              example: Observation 1
+            tags:
+              type: array
+              items:
+                type: string
+              example: [ tag1, tag2 ]
+            affected_cells:
+              "$ref": "#/definitions/components/AffectedCells"
+            affected_layers:
+              "$ref": "#/definitions/components/AffectedLayers"
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  date_time:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00Z
+                  head:
+                    type: number
+                    minimum: -1000
+                    maximum: 10000
+            enabled:
+              type: boolean
+              example: true
+          required:
+            - project_id
+            - model_id
+            - observation_id
+            - name
+            - tags
+            - affected_cells
+            - affected_layers
+            - data
+            - enabled
+  components:
+    AffectedCells:
+      type: object
+    AffectedLayers:
+      type: array
+      items:
+        $ref: "#/definitions/components/LayerId"
+    LayerId:
+      type: string
+      example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+    Point:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+          example: Point
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - 13.922514437551428
+            - 50.964720483303836
+          items:
+            type: number
+            minItems: 2
+            maxItems: 2
+      required:
+        - type
+        - coordinates

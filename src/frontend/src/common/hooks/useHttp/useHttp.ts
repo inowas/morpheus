@@ -83,24 +83,24 @@ const useHttp = (apiBaseUrl: string, auth?: {
       return config;
     });
 
-    if (auth && auth.onRefreshToken) {
+    if (auth) {
       instance.interceptors.response.use(
         (response) => response,
         async (error) => {
+
           const originalRequest = error.config;
 
-          if (!auth.onRefreshToken) {
-            return Promise.reject(error);
+          if (auth.onRefreshToken) {
+            if (401 === error.response.status && !originalRequest._retry) {
+              const newToken = await auth?.onRefreshToken(auth?.accessToken);
+              originalRequest.headers.Authorization = 'Bearer ' + newToken.access_token;
+              originalRequest._retry = true;
+              return instance(originalRequest);
+            }
           }
 
-          if (401 === error.response.status && !originalRequest._retry) {
-            const newToken = await auth?.onRefreshToken(auth?.accessToken);
-            originalRequest.headers.Authorization = 'Bearer ' + newToken.access_token;
-            originalRequest._retry = true;
-            return instance(originalRequest);
-          }
-
-          if (401 === error.response.status && originalRequest._retry) {
+          if (!auth.onRefreshToken && 401 === error.response.status) {
+            console.log('test_123');
             return auth.onUnauthorized();
           }
 

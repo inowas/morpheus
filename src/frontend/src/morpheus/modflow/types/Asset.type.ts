@@ -1,4 +1,4 @@
-import {GeoJSON} from 'geojson';
+import {FeatureCollection, GeoJSON} from 'geojson';
 
 interface IRasterAsset {
   asset_id: IAssetId;
@@ -76,7 +76,7 @@ interface IAssetRasterData {
 
 interface IAssetShapefileData {
   type: IAssetType;
-  data: GeoJSON,
+  data: FeatureCollection;
   wgs_84_bounding_box: {
     min_x: number;
     min_y: number;

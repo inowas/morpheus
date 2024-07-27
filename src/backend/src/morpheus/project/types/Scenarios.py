@@ -34,7 +34,7 @@ class Scenario:
 
     def with_updated_boundary(self, boundary: Boundary):
         boundaries = self.boundaries
-        if boundaries.has_boundary(boundary.boundary_id):
+        if boundaries.has_boundary(boundary.id):
             boundaries = boundaries.with_updated_boundary(boundary)
         else:
             boundaries = boundaries.with_added_boundary(boundary)

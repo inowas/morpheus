@@ -64,7 +64,7 @@ def calculate_wel_boundary_stress_period_data(
 def calculate_stress_period_data(model: Model) -> WelStressPeriodData | None:
     sp_data = WelStressPeriodData()
 
-    wel_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.well())
+    wel_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.well)
     for wel_boundary in wel_boundaries:
         if not isinstance(wel_boundary, WellBoundary):
             raise TypeError(

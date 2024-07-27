@@ -1,0 +1,11 @@
+from .CreateModel import CreateModelCommand, CreateModelCommandHandler
+from .CreateModelVersion import CreateModelVersionCommand, CreateModelVersionCommandHandler
+from .DeleteModelVersion import DeleteModelVersionCommand, DeleteModelVersionCommandHandler
+from .UpdateModelVersionDescription import UpdateModelVersionDescriptionCommand, UpdateModelVersionDescriptionCommandHandler
+
+model_general_command_handler_map = {
+    CreateModelCommand: CreateModelCommandHandler,
+    CreateModelVersionCommand: CreateModelVersionCommandHandler,
+    DeleteModelVersionCommand: DeleteModelVersionCommandHandler,
+    UpdateModelVersionDescriptionCommand: UpdateModelVersionDescriptionCommandHandler,
+}

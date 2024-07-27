@@ -2,146 +2,139 @@
 "$schema": http://json-schema.org/draft-07/schema#
 title: Schema for Calculation Commands
 definitions:
-  CalculationCommands:
-    oneOf:
-      - "$ref": "#/definitions/AddCalculationProfileCommand"
-      - "$ref": "#/definitions/DeleteCalculationCommand"
-      - "$ref": "#/definitions/RemoveCalculationProfileCommand"
-      - "$ref": "#/definitions/StartCalculationCommand"
-      - "$ref": "#/definitions/StopCalculationCommand"
-      - "$ref": "#/definitions/UpdateCalculationProfileCommand"
-  AddCalculationProfileCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - add_calculation_profile_command
-        example: add_calculation_profile_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          calculation_profile_name:
-            type: string
-            example: calculation_profile_name
-          calculation_profile_engine:
-            type: string
-            enum:
-              - mf2005
-              - mf6
-              - seawat
-              - mt3dms
-            example: mf2005
-        required:
-          - project_id
-          - calculation_profile_name
-          - calculation_profile_engine
-  DeleteCalculationCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - delete_calculation_command
-        example: delete_calculation_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          calculation_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-        required:
-          - project_id
-          - calculation_id
-  RemoveCalculationProfileCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - remove_calculation_profile_command
-        example: remove_calculation_profile_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          calculation_profile_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-        required:
-          - project_id
-          - calculation_profile_id
-  StartCalculationCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - start_calculation_command
-        example: start_calculation_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          model_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-        required:
-          - project_id
-          - model_id
-  StopCalculationCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - stop_calculation_command
-        example: stop_calculation_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          calculation_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-        required:
-          - project_id
-          - calculation_id
-  UpdateCalculationProfileCommand:
-    type: object
-    properties:
-      command_name:
-        type: string
-        enum:
-          - update_calculation_profile_command
-        example: update_calculation_profile_command
-      payload:
-        type: object
-        properties:
-          project_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          calculation_profile_id:
-            type: string
-            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-          calculation_profile:
-            "$ref": "#/components/Mf2005CalculationProfile"
-        required:
-          - project_id
-          - calculation_profile_id
-          - calculation_profile
+  commands:
+    AddCalculationProfileCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_calculation_profile_command
+          example: add_calculation_profile_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            calculation_profile_name:
+              type: string
+              example: calculation_profile_name
+            calculation_profile_engine:
+              type: string
+              enum:
+                - mf2005
+                - mf6
+                - seawat
+                - mt3dms
+              example: mf2005
+          required:
+            - project_id
+            - calculation_profile_name
+            - calculation_profile_engine
+    DeleteCalculationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - delete_calculation_command
+          example: delete_calculation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            calculation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - calculation_id
+    RemoveCalculationProfileCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - remove_calculation_profile_command
+          example: remove_calculation_profile_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            calculation_profile_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - calculation_profile_id
+    StartCalculationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - start_calculation_command
+          example: start_calculation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
+    StopCalculationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - stop_calculation_command
+          example: stop_calculation_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            calculation_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - calculation_id
+    UpdateCalculationProfileCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_calculation_profile_command
+          example: update_calculation_profile_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            calculation_profile_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            calculation_profile:
+              "$ref": "#/components/Mf2005CalculationProfile"
+          required:
+            - project_id
+            - calculation_profile_id
+            - calculation_profile
 components:
   Mf2005CalculationProfile:
     type: object

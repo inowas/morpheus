@@ -29,7 +29,7 @@ const AssetsPage = ({}: IProps) => {
   const location = useLocation();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
-  const {assets, loading, deleteAsset, uploadAsset, fetchAssetData} = useAssets(projectId as string);
+  const {assets, loading, deleteAsset, uploadAsset, fetchAssetData, updateAssetFileName, error} = useAssets(projectId as string);
 
   const [selectedAssetType, setSelectedAssetType] = useState<'shape' | 'raster' | 'csv'>('raster');
   const [rasterAssets, setRasterAssets] = useState<IAsset[]>([]);
@@ -70,9 +70,10 @@ const AssetsPage = ({}: IProps) => {
     // if no zip file is found, compress the files and upload the zip file
     if (!zipFile) {
       const zip = new JSZip();
+      const fileName = files[0].name.split('.')[0];
       files.forEach((file) => zip.file(`${file.name}`, file));
       const zipContent = await zip.generateAsync({type: 'blob'});
-      const file = new File([zipContent], 'shapefile.zip', {type: 'application/zip'});
+      const file = new File([zipContent], `${fileName}.zip`, {type: 'application/zip'});
       await uploadAsset(file);
     }
   };
@@ -127,13 +128,14 @@ const AssetsPage = ({}: IProps) => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem key='model_domain' onClick={() => setSelectedAssetType('raster')}>Raster File</MenuItem>,
+                    menuItem: <MenuItem key='raster-assets' onClick={() => setSelectedAssetType('raster')}>Raster File</MenuItem>,
                     render: () => <TabPane attached={false}>
                       <AssetTable
                         fileType={selectedAssetType}
                         assets={rasterAssets}
                         loading={loading}
                         deleteAsset={deleteAsset}
+                        updateAssetFileName={updateAssetFileName}
                         isReadOnly={isReadOnly}
                         selectedAsset={isRasterAsset(selectedAsset) ? selectedAsset : null}
                         onSelectAsset={setSelectedAsset}
@@ -148,13 +150,14 @@ const AssetsPage = ({}: IProps) => {
                     </TabPane>,
                   },
                   {
-                    menuItem: <MenuItem key='affected_cells' onClick={() => setSelectedAssetType('shape')}>Shape File</MenuItem>,
+                    menuItem: <MenuItem key='shapefile-assets' onClick={() => setSelectedAssetType('shape')}>Shape File</MenuItem>,
                     render: () => <TabPane attached={false}>
                       <AssetTable
                         fileType={selectedAssetType}
                         assets={shapeAssets}
                         loading={loading}
                         deleteAsset={deleteAsset}
+                        updateAssetFileName={updateAssetFileName}
                         isReadOnly={isReadOnly}
                         selectedAsset={isShapeAsset(selectedAsset) ? selectedAsset : null}
                         onSelectAsset={setSelectedAsset}
