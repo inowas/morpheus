@@ -5,7 +5,7 @@ from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
 from .BoundaryInterpolationType import InterpolationType
-from .Observation import ObservationId, RawDataItem, DataItem, Observation, ObservationName
+from .Observation import ObservationId, ObservationValue, DataItem, Observation, ObservationName
 from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
 from ..geometry import Point
 
@@ -15,7 +15,7 @@ class RechargeRate(Float):
 
 
 @dataclasses.dataclass
-class RechargeRawDataItem(RawDataItem):
+class RechargeObservationValue(ObservationValue):
     date_time: StartDateTime
     recharge_rate: RechargeRate
 
@@ -67,10 +67,12 @@ class RechargeDataItem(DataItem):
 
 @dataclasses.dataclass
 class RechargeObservation(Observation):
-    data: list[RechargeRawDataItem]
+    data: list[RechargeObservationValue]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[RechargeRawDataItem], observation_id: ObservationId | None = None):
+    def new(cls, name: ObservationName, geometry: Point, data: list[RechargeObservationValue], observation_id: ObservationId | None = None):
+        data = list({d.date_time: d for d in data}.values())
+        data = sorted(data, key=lambda x: x.date_time)
         return cls(
             observation_id=observation_id or ObservationId.new(),
             observation_name=name,
@@ -84,7 +86,7 @@ class RechargeObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[RechargeRawDataItem.from_dict(d) for d in obj['data']]
+            data=[RechargeObservationValue.from_dict(d) for d in obj['data']]
         )
 
     def to_dict(self):

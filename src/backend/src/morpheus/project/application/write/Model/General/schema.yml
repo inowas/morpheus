@@ -1,0 +1,230 @@
+---
+"$schema": http://json-schema.org/draft-07/schema#
+title: Schema for GeneralModelCommands
+definitions:
+  commands:
+    CreateModelCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - create_model_command
+          example: create_model_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            geometry:
+              "$ref": "#/definitions/components/Polygon"
+            n_cols:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            n_rows:
+              type: integer
+              minimum: 1
+              maximum: 1000
+            rotation:
+              type: number
+              minimum: -90
+              maximum: 90
+          required:
+            - project_id
+            - geometry
+            - n_cols
+            - n_rows
+            - rotation
+    CreateModelVersionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - create_model_version_command
+          example: create_model_version_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_tag:
+              type: string
+              example: v1.0.0
+            version_description:
+              type: string
+              example: Initial version
+          required:
+            - project_id
+            - version_tag
+            - version_description
+    DeleteModelVersionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - delete_model_version_command
+          example: delete_model_version_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - version_id
+    UpdateModelVersionDescriptionCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_version_description_command
+          example: update_model_version_description_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            version_description:
+              type: string
+              example: Initial version
+          required:
+            - project_id
+            - version_id
+            - version_description
+  components:
+    MultiPolygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPolygon
+          example: MultiPolygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - - - - 13.922514437551428
+                  - 50.964720483303836
+                - - 13.925250781947113
+                  - 50.965228748412386
+                - - 13.925036413951403
+                  - 50.96623732041704
+                - - 13.92222441026388
+                  - 50.96609040370362
+                - - 13.922514437551428
+                  - 50.964720483303836
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                  minItems: 2
+                  maxItems: 2
+      required:
+        - type
+        - coordinates
+    Nullable:
+      type: 'null'
+    Linestring:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - LineString
+          example: LineString
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: number
+            minItems: 2
+            maxItems: 2
+          example:
+            - - 13.922514437551428
+              - 50.964720483303836
+            - - 13.925250781947113
+              - 50.965228748412386
+            - - 13.925036413951403
+              - 50.96623732041704
+            - - 13.92222441026388
+              - 50.96609040370362
+            - - 13.922514437551428
+              - 50.964720483303836
+      required:
+        - type
+        - coordinates
+    Point:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+          example: Point
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          example:
+            - 13.922514437551428
+            - 50.964720483303836
+          items:
+            type: number
+            minItems: 2
+            maxItems: 2
+      required:
+        - type
+        - coordinates
+    Polygon:
+      type: object
+      description: The geometry of the feature.
+      properties:
+        type:
+          type: string
+          enum:
+            - Polygon
+          example: Polygon
+        coordinates:
+          type: array
+          description: The coordinates of the geometry.
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                minItems: 2
+                maxItems: 2
+          example:
+            - - - 13.922514437551428
+                - 50.964720483303836
+              - - 13.925250781947113
+                - 50.965228748412386
+              - - 13.925036413951403
+                - 50.96623732041704
+              - - 13.92222441026388
+                - 50.96609040370362
+              - - 13.922514437551428
+                - 50.964720483303836
+      required:
+        - type
+        - coordinates

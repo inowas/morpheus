@@ -1,36 +1,36 @@
 import React, {useEffect, useState} from 'react';
-import {IHeadObservation} from '../../../types/HeadObservations.type';
 import {Grid, InfoTitle, Tab, TimeSeriesDataChart} from 'common/components';
 import ObservationsList from './ObservationsList';
 import ObservationsForm from './ObservationsForm';
 import {MenuItem, TabPane} from 'semantic-ui-react';
 import ObservationsDataTable from './ObservationsDataTable/ObservationsDataTable';
 import {ITimeDiscretization} from '../../../types';
+import {IObservation, IObservationId} from '../../../types/Observations.type';
 
 interface IProps {
-  observations: IHeadObservation[];
-  selected: IHeadObservation | null;
+  observations: IObservation[];
+  selected: IObservation | null;
   layers: { layer_id: string, name: string }[];
   timeDiscretization: ITimeDiscretization;
   formatDateTime: (value: string) => string;
-  onClone: (id: IHeadObservation['id']) => Promise<void>;
-  onDisable: (id: IHeadObservation['id']) => Promise<void>;
-  onEnable: (id: IHeadObservation['id']) => Promise<void>;
-  onSelect: (id: IHeadObservation['id']) => void;
-  onChange: (observation: IHeadObservation) => void;
-  onRemove: (id: IHeadObservation['id']) => Promise<void>;
+  onClone: (id: IObservationId) => Promise<void>;
+  onDisable: (id: IObservationId) => Promise<void>;
+  onEnable: (id: IObservationId) => Promise<void>;
+  onSelect: (id: IObservationId) => void;
+  onChange: (observation: IObservation) => void;
+  onRemove: (id: IObservationId) => Promise<void>;
   isReadOnly: boolean;
 }
 
 const HeadObservationListDetails = ({observations, selected, timeDiscretization, isReadOnly, layers, formatDateTime, ...commands}: IProps) => {
 
-  const [selectedObservation, setSelectedObservation] = useState<IHeadObservation | null>(selected);
+  const [selectedObservation, setSelectedObservation] = useState<IObservation | null>(selected);
 
   useEffect(() => {
     setSelectedObservation(selected);
   }, [selected, observations]);
 
-  const handleChange = (observation: IHeadObservation) => {
+  const handleChange = (observation: IObservation) => {
     setSelectedObservation(observation);
     commands.onChange(observation);
   };

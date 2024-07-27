@@ -100,7 +100,7 @@ def calculate_chd_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: Model) -> ChdStressPeriodData | None:
     sp_data = ChdStressPeriodData()
-    chd_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.constant_head())
+    chd_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.constant_head)
     for chd_boundary in chd_boundaries:
         if not isinstance(chd_boundary, ConstantHeadBoundary):
             raise TypeError(

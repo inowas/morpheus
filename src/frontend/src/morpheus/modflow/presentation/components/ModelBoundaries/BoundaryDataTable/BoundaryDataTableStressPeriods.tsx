@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {IBoundaryObservationData, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
+import {IBoundaryObservationValue, IBoundaryType, IObservation} from '../../../../types/Boundaries.type';
 import {useDateTimeFormat} from 'common/hooks';
 import {Checkbox, Icon, Popup, Table, TableBody, TableHeader, TableHeaderCell, TableRow} from 'semantic-ui-react';
 import BoundariesUpload from '../BoundaryUpload/BoundariesUpload';
@@ -17,7 +17,7 @@ interface IProps {
   isReadOnly: boolean;
 }
 
-type IBoundaryObservationDataEnabled = IBoundaryObservationData & { enabled: boolean, [key: string]: any };
+type IBoundaryObservationDataEnabled = IBoundaryObservationValue & { enabled: boolean, [key: string]: any };
 
 const BoundaryDataTableStressPeriods = ({boundaryType, observation, onChangeObservation, timeDiscretization, isReadOnly}: IProps) => {
 
@@ -41,7 +41,7 @@ const BoundaryDataTableStressPeriods = ({boundaryType, observation, onChangeObse
     setData(observationData);
   }, [boundaryType, observation.data, timeDiscretization]);
 
-  const mapData = (dataToMap: IBoundaryObservationDataEnabled[]): IBoundaryObservationData[] => {
+  const mapData = (dataToMap: IBoundaryObservationDataEnabled[]): IBoundaryObservationValue[] => {
     return dataToMap.filter((item) => item.enabled)
       .map((item) => {
         const {enabled, ...rest} = item;

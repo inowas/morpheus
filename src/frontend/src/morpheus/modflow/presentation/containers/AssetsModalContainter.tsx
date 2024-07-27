@@ -18,9 +18,9 @@ interface IProps {
 const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: IProps) => {
   const {projectId} = useParams();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
+
   const {assets, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
   const [selectedAsset, setSelectedAsset] = useState<IAsset | null>(null);
-
   const [rasterFiles, setRasterFiles] = useState<IAsset[]>([]);
   const [shapeFiles, setShapeFiles] = useState<IAsset[]>([]);
 

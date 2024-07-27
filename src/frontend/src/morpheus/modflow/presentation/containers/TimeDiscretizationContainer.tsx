@@ -110,7 +110,10 @@ const TimeDiscretizationContainer = () => {
       </SidebarContent>
       <BodyContent>
         <Map>
-          <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+          <ModelGeometryMapLayer
+            modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}
+            fill={true}
+          />
         </Map>
       </BodyContent>
     </>

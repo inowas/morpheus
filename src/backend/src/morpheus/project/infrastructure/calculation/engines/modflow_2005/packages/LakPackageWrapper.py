@@ -95,7 +95,7 @@ class LakPackageData:
 
 
 def calculate_lak_package_data(model: Model, settings: LakPackageSettings) -> LakPackageData | None:
-    lake_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.lake())
+    lake_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.lake)
 
     nx = model.spatial_discretization.grid.n_cols()
     ny = model.spatial_discretization.grid.n_rows()

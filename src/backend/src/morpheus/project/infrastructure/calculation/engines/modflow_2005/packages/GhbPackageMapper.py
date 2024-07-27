@@ -106,7 +106,7 @@ def calculate_ghb_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: Model) -> GhbStressPeriodData | None:
     sp_data = GhbStressPeriodData()
-    ghb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.general_head())
+    ghb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.general_head)
     for ghb_boundary in ghb_boundaries:
         if not isinstance(ghb_boundary, GeneralHeadBoundary):
             raise TypeError(

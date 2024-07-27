@@ -1,0 +1,15 @@
+from .AddModelObservation import AddModelObservationCommand, AddModelObservationCommandHandler
+from .CloneModelObservation import CloneModelObservationCommand, CloneModelObservationCommandHandler
+from .DisableModelObservation import DisableModelObservationCommand, DisableModelObservationCommandHandler
+from .EnableModelObservation import EnableModelObservationCommand, EnableModelObservationCommandHandler
+from .RemoveModelObservation import RemoveModelObservationCommand, RemoveModelObservationCommandHandler
+from .UpdateModelObservation import UpdateModelObservationCommand, UpdateModelObservationCommandHandler
+
+model_observations_command_handler_map = {
+    AddModelObservationCommand: AddModelObservationCommandHandler,
+    CloneModelObservationCommand: CloneModelObservationCommandHandler,
+    DisableModelObservationCommand: DisableModelObservationCommandHandler,
+    EnableModelObservationCommand: EnableModelObservationCommandHandler,
+    RemoveModelObservationCommand: RemoveModelObservationCommandHandler,
+    UpdateModelObservationCommand: UpdateModelObservationCommandHandler,
+}

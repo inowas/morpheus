@@ -4,7 +4,8 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
-    "@storybook/addon-webpack5-compiler-babel"
+    "@storybook/addon-webpack5-compiler-babel",
+    "@chromatic-com/storybook"
   ],
   framework: {
     name: "@storybook/react-webpack5",
@@ -13,8 +14,6 @@ module.exports = {
   staticDirs: [
     './public'
   ],
-  docs: {
-    autodocs: "tag",
-  },
+  docs: {},
 
 };

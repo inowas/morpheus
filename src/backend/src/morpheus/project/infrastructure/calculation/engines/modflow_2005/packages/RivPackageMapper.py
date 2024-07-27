@@ -114,7 +114,7 @@ def calculate_riv_boundary_stress_period_data(
 
 def calculate_stress_period_data(model: Model) -> RivStressPeriodData | None:
     sp_data = RivStressPeriodData()
-    riv_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.river())
+    riv_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.river)
     for riv_boundary in riv_boundaries:
         if not isinstance(riv_boundary, RiverBoundary):
             raise TypeError(
