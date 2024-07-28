@@ -20,6 +20,7 @@ services:
       postgres_keycloak:
         condition: service_healthy
     read_only: true
+    restart: always
     tmpfs:
       - /tmp
     volumes:
@@ -64,7 +65,7 @@ volumes:
     driver: local
 networks:
   auth:
-      name: ${COMPOSE_PROJECT_NAME}-auth
+    name: ${COMPOSE_PROJECT_NAME}-auth
   traefik:
     name: ${TRAEFIK_NETWORK}
     external: true
