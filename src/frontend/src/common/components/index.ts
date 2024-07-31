@@ -54,7 +54,7 @@ import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
 import RasterFileInput from './RasterFileInput';
 import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
-import SearchInput from './SearchComponent/DropdownWithSearchInput';
+import SearchInput from './SearchComponent/SearchInput';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import Slider from './Slider/SimpleSlider';
@@ -67,8 +67,14 @@ import TimeSeriesDataChart from './Charts/TimeSeriesDataChart';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
+import {Step, StepDescription, StepGroup, StepTitle, StepContent} from 'semantic-ui-react';
 
 export {
+  Step,
+  StepDescription,
+  StepGroup,
+  StepTitle,
+  StepContent,
   ApplicationContentWrapper,
   Accordion,
   AccordionItem,

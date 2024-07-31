@@ -5,7 +5,7 @@ from scipy.interpolate import interp1d
 from morpheus.common.types import Float
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
 
-from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, ObservationName, StartDateTime, EndDateTime, RawDataItem, Observation
+from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, ObservationName, StartDateTime, EndDateTime, ObservationValue, Observation
 from morpheus.project.types.geometry import Point
 
 
@@ -14,7 +14,7 @@ class HeadValue(Float):
 
 
 @dataclasses.dataclass
-class ConstantHeadRawDataItem(RawDataItem):
+class ConstantHeadObservationValue(ObservationValue):
     date_time: StartDateTime
     head: HeadValue
 
@@ -69,10 +69,12 @@ class ConstantHeadDataItem(DataItem):
 
 @dataclasses.dataclass
 class ConstantHeadObservation(Observation):
-    data: list[ConstantHeadRawDataItem]
+    data: list[ConstantHeadObservationValue]
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[ConstantHeadRawDataItem], observation_id: ObservationId | None = None):
+    def new(cls, name: ObservationName, geometry: Point, data: list[ConstantHeadObservationValue], observation_id: ObservationId | None = None):
+        data = list({d.date_time: d for d in data}.values())
+        data = sorted(data, key=lambda x: x.date_time)
         return cls(
             observation_id=observation_id or ObservationId.new(),
             observation_name=name,
@@ -170,7 +172,7 @@ class ConstantHeadObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[ConstantHeadRawDataItem.from_dict(d) for d in obj['data']]
+            data=[ConstantHeadObservationValue.from_dict(d) for d in obj['data']]
         )
 
     def to_dict(self):

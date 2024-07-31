@@ -101,7 +101,11 @@ const LayersContainer = () => {
       <BodyContent>
         <Map>
           <MapRef mapRef={mapRef}/>
-          <ModelGeometryMapLayer modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}/>
+          <ModelGeometryMapLayer
+            modelGeometry={spatialDiscretization?.geometry}
+            editModelGeometry={false}
+            fill={true}
+          />
           {layerPropertyData && <CanvasDataLayer
             title={selectedLayer?.property || ''}
             data={layerPropertyData.data}

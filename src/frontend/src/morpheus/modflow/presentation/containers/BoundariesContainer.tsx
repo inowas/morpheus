@@ -1,19 +1,20 @@
 import React, {useMemo, useRef, useState} from 'react';
+import {Button} from 'semantic-ui-react';
 import {useParams} from 'react-router-dom';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 import {MapRef} from 'common/components/Map/Map';
-import {DataGrid, SearchInput, SectionTitle} from 'common/components';
-import {AffectedCellsMapLayer, BodyContent, BoundariesAccordion, BoundariesLayer, DrawBoundaryLayer, ModelGeometryMapLayer, SidebarContent} from '../components';
 
+import {DataGrid, DropdownComponent, SearchInput, SectionTitle} from 'common/components';
 import useBoundaries from '../../application/useBoundaries';
 import useLayers from '../../application/useLayers';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
-
-import {useTimeDiscretization} from '../../application';
+import {AffectedCellsMapLayer, BodyContent, BoundariesAccordion, BoundariesLayer, DrawBoundaryLayer, ModelGeometryMapLayer, SidebarContent} from '../components';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
+import {useTimeDiscretization} from '../../application';
 import {LineString, Point, Polygon} from 'geojson';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
+import ImportShapefileModal from './ImportShapefileModal';
 
 
 const BoundariesContainer = () => {
@@ -113,28 +114,55 @@ const BoundariesContainer = () => {
     await onUpdateBoundaryObservation(bId, boundary.type, {...observation, geometry});
   };
 
+  const dropdownItems = [
+    {text: 'Constant head', action: () => setAddBoundaryOnMap('constant_head')},
+    {text: 'Drain', action: () => setAddBoundaryOnMap('drain')},
+    {text: 'Evapotranspiration', action: () => setAddBoundaryOnMap('evapotranspiration')},
+    {text: 'Flow and head', action: () => setAddBoundaryOnMap('flow_and_head')},
+    {text: 'General head', action: () => setAddBoundaryOnMap('general_head')},
+    {text: 'Lake', action: () => setAddBoundaryOnMap('lake')},
+    {text: 'Recharge', action: () => setAddBoundaryOnMap('recharge')},
+    {text: 'River', action: () => setAddBoundaryOnMap('river')},
+    {text: 'Well', action: () => setAddBoundaryOnMap('well')},
+  ];
+
   return (
     <>
       <SidebarContent maxWidth={700}>
         <DataGrid>
           <SectionTitle title={'Boundary conditions'}/>
           <SearchInput
-            dropDownText={'Add new boundary'}
-            dropdownItems={[
-              {text: 'Constant head', action: () => setAddBoundaryOnMap('constant_head')},
-              {text: 'Drain', action: () => setAddBoundaryOnMap('drain')},
-              {text: 'Evapotranspiration', action: () => setAddBoundaryOnMap('evapotranspiration')},
-              {text: 'Flow and head', action: () => setAddBoundaryOnMap('flow_and_head')},
-              {text: 'General head', action: () => setAddBoundaryOnMap('general_head')},
-              {text: 'Lake', action: () => setAddBoundaryOnMap('lake')},
-              {text: 'Recharge', action: () => setAddBoundaryOnMap('recharge')},
-              {text: 'River', action: () => setAddBoundaryOnMap('river')},
-              {text: 'Well', action: () => setAddBoundaryOnMap('well')},
-            ]}
-            onChangeSearch={(search) => console.log(search)}
-            searchPlaceholder={'Search boundaries'}
-            isReadOnly={isReadOnly}
-          />
+            search={''}
+            onChange={(search) => console.log(search)}
+            placeholder={'Search boundaries'}
+          >
+            <ImportShapefileModal
+              trigger={
+                <Button
+                  text={'Import'}
+                  icon='upload'
+                  content={'Import'}
+                  disabled={isReadOnly}
+                />
+              }
+            />
+            <DropdownComponent.Dropdown
+              data-testid='test-search-component'
+              text={'Draw on map'}
+              icon='pencil'
+              floating={true}
+              labeled={true}
+              button={true}
+              className='icon'
+              disabled={isReadOnly}
+            >
+              <DropdownComponent.Menu>
+                {dropdownItems.map((item, key) => (
+                  <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
+                ))}
+              </DropdownComponent.Menu>
+            </DropdownComponent.Dropdown>
+          </SearchInput>
           <LeafletMapProvider mapRef={mapRef}>
             <BoundariesAccordion
               boundaries={boundaries}
@@ -160,7 +188,7 @@ const BoundariesContainer = () => {
       <BodyContent>
         <Map>
           <MapRef mapRef={mapRef}/>;
-          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry}/>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry} fill={true}/>
           <DrawBoundaryLayer boundaryType={addBoundaryOnMap} onAddBoundary={handleAddBoundary}/>
           <BoundariesLayer
             boundaries={boundaries}

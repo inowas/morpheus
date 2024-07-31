@@ -1,9 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {BodyContent, SidebarContent} from '../components';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 import {MapRef} from 'common/components/Map/Map';
-import {DataGrid, SearchInput, SectionTitle} from 'common/components';
+import {DataGrid, DropdownComponent, SearchInput, SectionTitle} from 'common/components';
 
 import useObservations from '../../application/useObservations';
 import useLayers from '../../application/useLayers';
@@ -11,9 +10,9 @@ import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {useTimeDiscretization} from '../../application';
-import {DrawObservationLayer, HeadObservationListDetails, ModelGeometryMapLayer, ObservationsLayer} from '../components/';
+import {BodyContent, SidebarContent, DrawObservationLayer, HeadObservationListDetails, ModelGeometryMapLayer, ObservationsLayer} from '../components/';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
-import {IHeadObservation, IObservationType} from '../../types/HeadObservations.type';
+import {IObservation, IObservationType, IObservationId} from '../../types/Observations.type';
 import {Point} from 'geojson';
 
 
@@ -31,7 +30,7 @@ const HeadObservationsContainer = () => {
   const mapRef: IMapRef = useRef(null);
 
   const [addObservationOnMap, setAddObservationOnMap] = useState<IObservationType | null>(null);
-  const [selectedHeadObservation, setSelectedHeadObservation] = useState<IHeadObservation | null>(null);
+  const [selectedHeadObservation, setSelectedHeadObservation] = useState<IObservation | null>(null);
 
   useEffect(() => {
     if (!observations) {
@@ -44,7 +43,7 @@ const HeadObservationsContainer = () => {
     setSelectedHeadObservation(observations.find((o) => o.id === observationId) || null);
   }, [observations, observationId]);
 
-  const handleSelectObservation = async (id: IHeadObservation['id']) => {
+  const handleSelectObservation = async (id: IObservationId) => {
     navigate(`/projects/${projectId}/model/head-observations/${id}`);
   };
 
@@ -56,25 +55,29 @@ const HeadObservationsContainer = () => {
     }
   };
 
-  const handleCloneObservation = async (id: IHeadObservation['id']) => {
+  const handleCloneObservation = async (id: IObservationId) => {
     const location = await onClone(id);
     if (location) {
       navigate(`/projects/${projectId}/model/head-observations/${location}`);
     }
   };
 
-  const handleRemoveObservation = async (id: IHeadObservation['id']) => {
+  const handleRemoveObservation = async (id: IObservationId) => {
     await onRemove(id);
     navigate(`/projects/${projectId}/model/head-observations`);
   };
 
-  const handleChangeObservation = (observation: IHeadObservation) => {
+  const handleChangeObservation = (observation: IObservation) => {
     onUpdate(observation);
   };
 
   if (!spatialDiscretization || !observations || !layers || !timeDiscretization) {
     return null;
   }
+
+  const dropdownItems = [
+    {text: 'Head Observation', action: () => setAddObservationOnMap('head')},
+  ];
 
   return (
     <>
@@ -83,14 +86,27 @@ const HeadObservationsContainer = () => {
           <DataGrid>
             <SectionTitle title={'Observations'}/>
             <SearchInput
-              dropDownText={'Add new'}
-              dropdownItems={[
-                {text: 'Head Observation', action: () => setAddObservationOnMap('head')},
-              ]}
-              onChangeSearch={(search) => console.log(search)}
-              searchPlaceholder={'Search head observations'}
-              isReadOnly={isReadOnly}
-            />
+              search={''}
+              onChange={(search) => console.log(search)}
+              placeholder={'Search boundaries'}
+            >
+              <DropdownComponent.Dropdown
+                data-testid='test-search-component'
+                text={'Draw on map'}
+                icon='pencil'
+                floating={true}
+                labeled={true}
+                button={true}
+                className='icon'
+                disabled={isReadOnly}
+              >
+                <DropdownComponent.Menu>
+                  {dropdownItems.map((item, key) => (
+                    <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
+                  ))}
+                </DropdownComponent.Menu>
+              </DropdownComponent.Dropdown>
+            </SearchInput>
             <HeadObservationListDetails
               observations={observations}
               selected={selectedHeadObservation || null}
@@ -111,7 +127,7 @@ const HeadObservationsContainer = () => {
       <BodyContent>
         <Map>
           <MapRef mapRef={mapRef}/>;
-          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry}/>
+          <ModelGeometryMapLayer modelGeometry={spatialDiscretization.geometry} fill={true}/>
           <DrawObservationLayer
             observationType={addObservationOnMap}
             onAdd={(type, geometry) => handleAddObservation(type, geometry)}

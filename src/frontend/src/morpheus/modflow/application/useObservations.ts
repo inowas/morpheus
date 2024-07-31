@@ -5,24 +5,24 @@ import {IRootState} from '../../store';
 import {useApi} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 import {setHeadObservations, addOrUpdateHeadObservation} from '../infrastructure/modelStore';
-import {IHeadObservation, IObservationType} from '../types/HeadObservations.type';
+import {IObservation, IObservationId, IObservationType} from '../types/Observations.type';
 import {Point} from 'geojson';
 
-interface IUseHeadObservations {
-  observations: IHeadObservation[];
+interface IUseObservations {
+  observations: IObservation[];
   onAdd: (type: IObservationType, geometry: Point) => Promise<string | undefined>;
-  onClone: (id: IHeadObservation['id']) => Promise<string | undefined>;
-  onDisable: (id: IHeadObservation['id']) => Promise<void>;
-  onEnable: (id: IHeadObservation['id']) => Promise<void>;
-  onUpdate: (observation: IHeadObservation) => Promise<void>;
-  onRemove: (id: IHeadObservation['id']) => Promise<void>;
+  onClone: (id: IObservationId) => Promise<string | undefined>;
+  onDisable: (id: IObservationId) => Promise<void>;
+  onEnable: (id: IObservationId) => Promise<void>;
+  onUpdate: (observation: IObservation) => Promise<void>;
+  onRemove: (id: IObservationId) => Promise<void>;
   loading: boolean;
   error: IError | null;
 }
 
-type IGetHeadObservationsResponse = IHeadObservation[];
+type IGetHeadObservationsResponse = IObservation[];
 
-const useObservations = (projectId: string): IUseHeadObservations => {
+const useObservations = (projectId: string): IUseObservations => {
 
   const {model} = useSelector((state: IRootState) => state.project.model);
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     // eslint-disable-next-line
   }, [projectId]);
 
-  const fetchHeadObservation = async (headObservationId: IHeadObservation['id']) => {
+  const fetchHeadObservation = async (headObservationId: IObservationId) => {
     if (!isMounted.current) {
       return;
     }
@@ -82,7 +82,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     setLoading(true);
     setError(null);
 
-    const result = await httpGet<IHeadObservation>(`/projects/${projectId}/model/head-observations/${headObservationId}`);
+    const result = await httpGet<IObservation>(`/projects/${projectId}/model/head-observations/${headObservationId}`);
 
     if (!isMounted.current) {
       return;
@@ -138,7 +138,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     }
   };
 
-  const onClone = async (id: IHeadObservation['id']) => {
+  const onClone = async (id: IObservationId) => {
 
     if (!model) {
       return;
@@ -175,7 +175,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     }
   };
 
-  const onDisable = async (id: IHeadObservation['id']) => {
+  const onDisable = async (id: IObservationId) => {
     if (!model) {
       return;
     }
@@ -203,7 +203,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     }
   };
 
-  const onEnable = async (id: IHeadObservation['id']) => {
+  const onEnable = async (id: IObservationId) => {
     if (!model) {
       return;
     }
@@ -231,7 +231,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     }
   };
 
-  const onUpdate = async (observation: IHeadObservation) => {
+  const onUpdate = async (observation: IObservation) => {
     if (!model) {
       return;
     }
@@ -267,7 +267,7 @@ const useObservations = (projectId: string): IUseHeadObservations => {
     }
   };
 
-  const onRemove = async (id: IHeadObservation['id']) => {
+  const onRemove = async (id: IObservationId) => {
     if (!model) {
       return;
     }
@@ -309,4 +309,4 @@ const useObservations = (projectId: string): IUseHeadObservations => {
 };
 
 export default useObservations;
-export type {IUseHeadObservations};
+export type {IUseObservations};

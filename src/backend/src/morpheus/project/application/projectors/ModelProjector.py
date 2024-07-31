@@ -887,7 +887,7 @@ class ModelProjector(EventListenerBase):
         observation_to_update = observation_to_update.with_updated_type(type=event.get_type())
         observation_to_update = observation_to_update.with_updated_name(name=event.get_name())
         observation_to_update = observation_to_update.with_updated_tags(tags=event.get_tags())
-        observation_to_update = observation_to_update.with_updated_data(data=event.get_data())
+        observation_to_update = observation_to_update.with_updated_values(data=event.get_data())
         observation_to_update = observation_to_update.with_updated_geometry(geometry=event.get_geometry())
         observation_to_update = observation_to_update.with_updated_affected_cells(affected_cells=event.get_affected_cells())
         observation_to_update = observation_to_update.with_updated_affected_layers(affected_layers=event.get_affected_layers())

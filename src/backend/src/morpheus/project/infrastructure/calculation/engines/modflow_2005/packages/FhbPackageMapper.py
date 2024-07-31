@@ -101,7 +101,7 @@ class FhbStressPeriodData:
 
 
 def get_date_times(model: Model) -> list[StartDateTime]:
-    fhb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.flow_and_head())
+    fhb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.flow_and_head)
     if len(fhb_boundaries) == 0:
         return []
 
@@ -133,7 +133,7 @@ def get_total_times(date_times: list[StartDateTime], model: Model) -> list[float
 
 def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodData | None:
     spatial_discretization = model.spatial_discretization
-    fhb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.flow_and_head())
+    fhb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.flow_and_head)
 
     if len(fhb_boundaries) == 0:
         return None

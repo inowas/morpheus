@@ -5,11 +5,15 @@ import {IRootState} from '../../store';
 import {setAssets, updateAsset, setLoading, removeAsset, setError} from '../infrastructure/assetsStore';
 import {useEffect} from 'react';
 import useProjectCommandBus from './useProjectCommandBus';
-import {IDeleteAssetCommand} from './useProjectCommandBus.type';
+import {IDeleteAssetCommand, IUpdateAssetDescriptionCommand, IUpdateAssetFileNameCommand} from './useProjectCommandBus.type';
 
 interface IUseAssets {
   assets: IAsset[];
+  shapeFiles: IAsset[];
+  rasterFiles: IAsset[];
   uploadAsset: (file: File, description?: string) => Promise<IAssetId | undefined>;
+  updateAssetDescription: (assetId: IAssetId, description: string) => Promise<void>;
+  updateAssetFileName: (assetId: IAssetId, fileName: string) => Promise<void>;
   fetchAssets: () => Promise<IAsset[] | undefined>;
   fetchAssetData: (assetId: IAssetId) => Promise<IAssetData | undefined>;
   fetchAssetMetadata: (assetId: IAssetId) => Promise<IAsset | undefined>;
@@ -31,33 +35,6 @@ const useAssets = (projectId: string): IUseAssets => {
   const {httpGet, httpPost} = useApi();
   const {sendCommand} = useProjectCommandBus();
 
-  const deleteAsset = async (assetId: IAssetId): Promise<IAssetId | undefined> => {
-
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-
-    const deleteAssetCommand: IDeleteAssetCommand = {
-      command_name: 'delete_asset_command',
-      payload: {
-        project_id: projectId,
-        asset_id: assetId,
-      },
-    };
-
-    const deleteResponse = await sendCommand(deleteAssetCommand);
-
-    dispatch(setLoading(false));
-
-    if (deleteResponse.ok) {
-      dispatch(removeAsset(assetId));
-      return assetId;
-    }
-
-    if (deleteResponse.err) {
-      dispatch(setError(deleteResponse.val));
-    }
-  };
-
   const fetchAssets = async (): Promise<undefined> => {
 
     dispatch(setLoading(true));
@@ -77,11 +54,6 @@ const useAssets = (projectId: string): IUseAssets => {
   };
 
   const fetchAssetMetadata = async (assetId: IAssetId): Promise<IAsset | undefined> => {
-
-    const asset = assets.find(({asset_id}) => asset_id === assetId);
-    if (asset) {
-      return asset;
-    }
 
     dispatch(setLoading(true));
     dispatch(setError(null));
@@ -115,6 +87,90 @@ const useAssets = (projectId: string): IUseAssets => {
 
     if (getResponse.err) {
       dispatch(setError(getResponse.val));
+    }
+  };
+
+  const deleteAsset = async (assetId: IAssetId): Promise<IAssetId | undefined> => {
+
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const deleteAssetCommand: IDeleteAssetCommand = {
+      command_name: 'delete_asset_command',
+      payload: {
+        project_id: projectId,
+        asset_id: assetId,
+      },
+    };
+
+    const deleteResponse = await sendCommand(deleteAssetCommand);
+
+    dispatch(setLoading(false));
+
+    if (deleteResponse.ok) {
+      dispatch(removeAsset(assetId));
+      return assetId;
+    }
+
+    if (deleteResponse.err) {
+      dispatch(setError(deleteResponse.val));
+    }
+  };
+
+  const updateAssetDescription = async (assetId: IAssetId, description: string): Promise<void> => {
+
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const updateAssetFileNameCommand: IUpdateAssetDescriptionCommand = {
+      command_name: 'update_asset_description_command',
+      payload: {
+        project_id: projectId,
+        asset_id: assetId,
+        asset_description: description,
+      },
+    };
+
+
+    const updateResponse = await sendCommand(updateAssetFileNameCommand);
+
+    dispatch(setLoading(false));
+
+    if (updateResponse.ok) {
+      fetchAssetMetadata(assetId);
+    }
+
+    if (updateResponse.err) {
+      dispatch(setError(updateResponse.val));
+    }
+  };
+  const updateAssetFileName = async (assetId: IAssetId, fileName: string): Promise<void> => {
+
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const updateAssetFileNameCommand: IUpdateAssetFileNameCommand = {
+      command_name: 'update_asset_file_name_command',
+      payload: {
+        project_id: projectId,
+        asset_id: assetId,
+        asset_file_name: fileName,
+      },
+    };
+
+
+    const updateResponse = await sendCommand(updateAssetFileNameCommand);
+
+    dispatch(setLoading(false));
+
+    console.log(updateResponse, updateResponse.ok);
+
+    if (updateResponse.ok) {
+      await fetchAssetMetadata(assetId);
+    }
+
+    if (updateResponse.err) {
+      dispatch(setError(updateResponse.val));
     }
   };
 
@@ -180,21 +236,26 @@ const useAssets = (projectId: string): IUseAssets => {
   useEffect(() => {
     fetchAssets();
     // eslint-disable-next-line
-  }, []);
+    }, []);
 
   return {
     assets,
+    shapeFiles: assets.filter((asset) => 'shapefile' === asset.type),
+    rasterFiles: assets.filter((asset) => 'geo_tiff' === asset.type),
     deleteAsset,
     fetchAssets,
     fetchAssetData,
     fetchAssetMetadata,
     processRasterFile,
     processShapefile,
+    updateAssetDescription,
+    updateAssetFileName,
     uploadAsset,
     loading,
     error: error ? error : undefined,
   };
-};
+}
+;
 
 export default useAssets;
 export type {IUseAssets, IAssetId};

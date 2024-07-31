@@ -37,7 +37,7 @@ const HoverDataLayer = ({nCols, nRows, colWidths, rowHeights, rotation, outline,
     const polygon = turf.polygon(outline.coordinates);
     const centerOfPolygon = turf.centerOfMass(polygon);
 
-    if (!turf.inside(point, polygon)) {
+    if (!turf.booleanWithin(point, polygon)) {
       return null;
     }
 

@@ -17,7 +17,7 @@ class ObservationName(String):
 
 
 @dataclasses.dataclass
-class RawDataItem:
+class ObservationValue:
     date_time: StartDateTime
 
     @classmethod
@@ -47,7 +47,7 @@ class Observation:
     observation_id: ObservationId
     observation_name: ObservationName
     geometry: Point
-    data: list[RawDataItem]
+    data: list[ObservationValue]
 
     @classmethod
     def from_dict(cls, obj):
@@ -71,8 +71,14 @@ class Observation:
     def with_updated_geometry(self, geometry: Point):
         return dataclasses.replace(self, geometry=geometry)
 
-    def with_appended_data(self, data_item: RawDataItem):
-        return dataclasses.replace(self, data=[*self.data, data_item])
+    def with_added_value(self, data_item: ObservationValue):
+        # if there is an item with the same date_time, delete it before adding the new one
+        new_data = [item for item in self.data if item.date_time != data_item.date_time]
+        # add the new item
+        new_data.append(data_item)
+        # sort the data by date_time
+        new_data.sort(key=lambda x: x.date_time)
+        return dataclasses.replace(self, data=new_data)
 
-    def with_updated_data(self, data: list[RawDataItem]):
+    def with_updated_values(self, data: list[ObservationValue]):
         return dataclasses.replace(self, data=data)

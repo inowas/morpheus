@@ -83,8 +83,8 @@ const ModelGeometryMapLayer = ({modelGeometry, onChangeModelGeometry, editModelG
           key={editModelGeometry ? 'edit_geometry' : 'view_geometry'}
           positions={modelGeometry.coordinates[0].map((c) => [c[1], c[0]])}
           fill={fill}
-          weight={editModelGeometry ? 2 : 1}
-          opacity={editModelGeometry ? 1 : 0.5}
+          weight={2}
+          opacity={1}
           pmIgnore={!editModelGeometry}
         />}
       </FeatureGroup>
