@@ -1,7 +1,6 @@
 import React from 'react';
 import {ILpfPackageSettings} from '../../../../types/CalculationProfile.type';
-import {Form} from 'semantic-ui-react';
-import {SectionTitle} from '../../../../../../common/components';
+import {Form, SectionTitle} from 'common/components';
 import {CheckBox, DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
@@ -19,7 +18,7 @@ const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
         as={'h5'} title={'Lpf Package Settings'}
         style={{marginBottom: 15}}
       />
-      <Form>
+      <Form.Form>
         <Form.Group
           widths={2}
           style={{
@@ -121,7 +120,7 @@ const LpfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             description={descriptions.lpf.thickstrt}
           />
         </Form.Group>
-      </Form>
+      </Form.Form>
     </>
   );
 };

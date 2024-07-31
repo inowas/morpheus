@@ -52,6 +52,7 @@ const Radio: React.FC<IFormRadioProps> = (props) => (
 
 export interface IFormGroupProps extends StrictFormGroupProps {
   as?: any;
+  style?: React.CSSProperties;
   children?: React.ReactNode;
   className?: string;
   grouped?: boolean;

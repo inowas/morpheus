@@ -1,13 +1,10 @@
 import React, {useState} from 'react';
-import {BodyContent, SidebarContent} from '../components';
 import type {Polygon} from 'geojson';
 import {useParams} from 'react-router-dom';
 import {useAssets, useModelSetup} from '../../application';
 import {IError, ILengthUnit} from '../../types';
-import {Button, DataGrid, SectionTitle, Tab} from 'common/components';
-import {Accordion, AccordionContent} from '../components/Content';
-import {TabPane} from 'semantic-ui-react';
-import ShapeFileInput from '../../../../common/components/ShapeFileInput';
+import {Accordion, AccordionContent, BodyContent, SidebarContent} from '../components';
+import {Button, DataGrid, SectionTitle, ShapeFileInput, Tab, TabPane} from 'common/components';
 import SetupGridProperties from '../components/ModelSetup/SetupGridProperties';
 import ModelSetupMap from '../components/ModelSetup/Map';
 import useProjectPrivileges from '../../application/useProjectPrivileges';

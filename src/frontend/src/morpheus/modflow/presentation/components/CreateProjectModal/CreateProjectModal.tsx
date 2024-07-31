@@ -1,10 +1,9 @@
-import {Button, Form, TextArea} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
 import RandomImage from 'common/components/RandomImage';
 import styles from './CreateProjectModal.module.less';
 import Images from './images';
-import {DropdownComponent, Modal} from 'common/components';
+import {Button, DropdownComponent, Form, Modal, TextArea} from 'common/components';
 import {IError} from '../../../../types';
 
 interface IProps {
@@ -55,22 +54,22 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
           <h1 className={styles.title}>
             Create new project
           </h1>
-          <Form onSubmit={handleSubmit}>
-            <Form.Field className={styles.field}>
+          <Form.Form onSubmit={handleSubmit}>
+            <Form.FormField className={styles.field}>
               <label className={`${styles.label} h4`}>Project name<span className="required">*</span></label>
               <input
                 type="text" value={projectName}
                 onChange={(event) => setProjectName(event.target.value)}
               />
-            </Form.Field>
-            <Form.Field className={styles.field}>
+            </Form.FormField>
+            <Form.FormField className={styles.field}>
               <label className={`${styles.label} h4`}>Project description</label>
               <TextArea
                 value={projectDescription}
                 onChange={(event) => setProjectDescription(event.target.value)}
               />
-            </Form.Field>
-            <Form.Field className={styles.field}>
+            </Form.FormField>
+            <Form.FormField className={styles.field}>
               <label className={`${styles.label} h4`}>Project keywords</label>
               <DropdownComponent.Dropdown
                 allowAdditions={true}
@@ -84,7 +83,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
                 selection={true}
                 value={tags}
               />
-            </Form.Field>
+            </Form.FormField>
             {error && <div className={styles.error}>{error.message}</div>}
             <div className={styles.mandatory}>
               <span className="required">*</span>Mandatory field
@@ -102,7 +101,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
                 Create new project
               </Button>
             </div>
-          </Form>
+          </Form.Form>
         </div>
       </div>
     </Modal.Modal>

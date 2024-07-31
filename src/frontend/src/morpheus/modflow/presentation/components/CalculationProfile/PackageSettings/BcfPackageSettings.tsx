@@ -1,9 +1,8 @@
 import React from 'react';
 import {IBcfPackageSettings} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {Form, SectionTitle} from 'common/components';
 import {CheckBox, DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
-import {Form} from 'semantic-ui-react';
 
 interface IProps {
   settings: IBcfPackageSettings;
@@ -20,7 +19,7 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
         as={'h5'} title={'Bcf Package Settings'}
         style={{marginBottom: 15}}
       />
-      <Form>
+      <Form.Form>
         <Form.Group
           widths={2}
           style={{
@@ -87,7 +86,7 @@ const BcfPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
             isScientificNotation={true}
           />
         </Form.Group>
-      </Form>
+      </Form.Form>
     </>
   );
 };

@@ -26,6 +26,7 @@ import Form from './Form';
 import Grid from './Grid';
 import Header from './Header';
 import HeaderWrapper from './HeaderWrapper';
+import {Header as SemanticHeader} from 'semantic-ui-react';
 import {IDropdownItemProps} from './Dropdown/Dropdown';
 import IconButton from './IconButton/IconButton';
 import Image from './Image/Image';
@@ -61,6 +62,7 @@ import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
 import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
+import TextArea from 'common/components/TextArea/TextArea';
 import TimeSeriesDataChart from './Charts/TimeSeriesDataChart';
 import Toggle from './Toggle/Toggle';
 import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
@@ -87,6 +89,7 @@ export {
   DropdownComponent,
   Header,
   HeaderWrapper,
+  SemanticHeader,
   Error,
   Footer,
   Form,
@@ -130,6 +133,7 @@ export {
   SortButtons,
   Tab,
   TabPane,
+  TextArea,
   Toggle,
   TimeSeriesDataChart,
   CsvFileInput,

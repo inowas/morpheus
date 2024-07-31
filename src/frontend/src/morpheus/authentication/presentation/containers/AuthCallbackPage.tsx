@@ -2,7 +2,7 @@ import {Grid, Header} from 'semantic-ui-react';
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import useAuthentication from '../../application/useAuthentication';
-import {Button} from '../../../../common/components';
+import {Button} from 'common/components';
 
 interface IProps {
   redirectTo: string;

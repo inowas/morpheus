@@ -3,7 +3,7 @@ import {Meta, StoryFn} from '@storybook/react';
 
 import CreateProjectModal from './CreateProjectModal';
 import React from 'react';
-import {Button} from '../../../../../common/components';
+import {Button} from 'common/components';
 
 export default {
   /* 👇 The title prop is optional.

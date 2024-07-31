@@ -1,45 +1,46 @@
-import {Button as SemanticButton, SemanticCOLORS, SemanticSIZES, SemanticShorthandItem} from 'semantic-ui-react';
-
-import {ButtonProps} from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
-import {IconProps} from 'semantic-ui-react/dist/commonjs/elements/Icon';
 import React from 'react';
+import {TextArea as SemanticTextArea, TextAreaProps as SemanticTextAreaProps} from 'semantic-ui-react';
 
-export type IButtonProps = {
-  active?: boolean;
-  animated?: boolean;
-  as?: any;
-  attached?: boolean | 'left' | 'right' | 'top' | 'bottom';
-  basic?: boolean;
-  children?: React.ReactNode;
-  circular?: boolean;
-  className?: string;
-  color?: SemanticCOLORS;
-  compact?: boolean;
-  content?: React.ReactNode;
-  disabled?: boolean;
-  floated?: 'left' | 'right';
-  fluid?: boolean;
-  icon?: boolean | SemanticShorthandItem<IconProps>;
-  inverted?: boolean;
-  label?: boolean | string;
-  labelPosition?: 'left' | 'right';
-  loading?: boolean;
-  negative?: boolean;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps | IButtonProps) => void;
-  positive?: boolean;
-  primary?: boolean;
-  role?: string;
-  secondary?: boolean;
-  size?: SemanticSIZES;
-  tabIndex?: number;
-  toggle?: boolean;
-  type?: 'button' | 'reset' | 'submit';
-  style?: React.CSSProperties;
-  id?: string;
+interface ITextAreaProps extends Omit<SemanticTextAreaProps, 'onChange' | 'onInput' | 'rows' | 'value'> {
+  elementType?: React.ElementType;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>, data: { value: string }) => void;
+  onInput?: (event: React.FormEvent<HTMLTextAreaElement>, data: { value: string }) => void;
+  rows?: number | string;
+  value?: string | number;
+}
+
+const TextArea: React.FC<ITextAreaProps> = ({
+  elementType = 'textarea',
+  onChange,
+  onInput,
+  rows,
+  value,
+  ...props
+}) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const data = {value: event.target.value};
+    if (onChange) {
+      onChange(event, data);
+    }
+  };
+
+  const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    const data = {value: event.currentTarget.value};
+    if (onInput) {
+      onInput(event, data);
+    }
+  };
+
+  return (
+    <SemanticTextArea
+      as={elementType}
+      onChange={handleChange}
+      onInput={handleInput}
+      rows={rows}
+      value={value}
+      {...props}
+    />
+  );
 };
 
-const Button: React.FC<IButtonProps> = ({...props}) => (
-  <SemanticButton {...props}/>
-);
-
-export default Button;
+export default TextArea;

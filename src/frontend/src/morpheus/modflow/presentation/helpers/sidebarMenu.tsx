@@ -20,6 +20,7 @@ import {
 
 import BoundariesContainer from '../containers/BoundariesContainer';
 import CalculationProfileContainer from '../containers/CalculationProfileContainer';
+import ModelSetupContainer from '../containers/ModelSetupContainer';
 import LayersContainer from '../containers/LayersContainer';
 import SpatialDiscretizationContainer from '../containers/SpatialDiscretizationContainer';
 import TimeDiscretizationContainer from '../containers/TimeDiscretizationContainer';
@@ -44,6 +45,7 @@ const getSidebarItems = (): IMenuItem[] => {
       slug: 'setup',
       icon: <FontAwesomeIcon icon={faPenToSquare}/>,
       isTitle: true,
+      component: <ModelSetupContainer/>,
     },
     {
       name: 'Grid properties',

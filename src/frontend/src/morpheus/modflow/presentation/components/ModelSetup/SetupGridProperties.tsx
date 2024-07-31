@@ -1,5 +1,5 @@
-import {DataGrid, Slider} from '../../../../../common/components';
-import {Form, Icon, Input, Label} from 'semantic-ui-react';
+import {DataGrid, Form, Icon, Slider} from 'common/components';
+import {Input} from 'semantic-ui-react';
 import React from 'react';
 import {ILengthUnit} from '../../../types';
 
@@ -27,11 +27,11 @@ const SetupGridProperties = ({gridProperties, onChange, readOnly}: IProps) => {
   return (
     <>
       <DataGrid columns={2}>
-        <Form.Field>
-          <Label className="labelSmall">
+        <Form.FormField>
+          <Form.Label className="labelSmall">
             <Icon name="info circle"/>
             Rows
-          </Label>
+          </Form.Label>
           <Input
             type="number"
             defaultValue={gridProperties.n_rows}
@@ -39,12 +39,12 @@ const SetupGridProperties = ({gridProperties, onChange, readOnly}: IProps) => {
             step={0}
             disabled={readOnly}
           />
-        </Form.Field>
-        <Form.Field>
-          <Label className="labelSmall">
+        </Form.FormField>
+        <Form.FormField>
+          <Form.Label className="labelSmall">
             <Icon name="info circle"/>
             Columns
-          </Label>
+          </Form.Label>
           <Input
             type="number"
             defaultValue={gridProperties.n_cols}
@@ -52,15 +52,15 @@ const SetupGridProperties = ({gridProperties, onChange, readOnly}: IProps) => {
             step={0}
             disabled={readOnly}
           />
-        </Form.Field>
+        </Form.FormField>
       </DataGrid>
       <DataGrid style={{marginTop: 20}}>
         <div className="fieldGridSlider">
           <div className="field">
-            <Label className="labelSmall">
+            <Form.Label className="labelSmall">
               <Icon className={'dateIcon'} name="info circle"/>
               Rotation angle (°)
-            </Label>
+            </Form.Label>
             <Input
               name="rotationAngle"
               type="number"

@@ -1,8 +1,7 @@
 import React from 'react';
 import {ICalculationProfile} from '../../../../types/CalculationProfile.type';
-import {SectionTitle} from '../../../../../../common/components';
+import {Form, SectionTitle, SemanticHeader} from 'common/components';
 import PackageWrapper from './PackageWrapper';
-import {Form, Header} from 'semantic-ui-react';
 import {CheckBox, DropdownInput, NumberInput} from '../FormFields';
 import descriptions from './PackagePropsDescriptions';
 
@@ -23,8 +22,8 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
       />
       <PackageWrapper>
         {settings.chd.laycbd && <>
-          <Header as={'h3'} dividing={true}>CHD: Constant Head Package</Header>
-          <Form>
+          <SemanticHeader as={'h3'} dividing={true}>CHD: Constant Head Package</SemanticHeader>
+          <Form.Form>
             <Form.Group
               widths={2}
               style={{
@@ -42,11 +41,11 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
                 description={descriptions.chd.laycbd}
               />
             </Form.Group>
-          </Form>
+          </Form.Form>
         </>}
 
-        <Header as={'h3'} dividing={true}>DRN: Drain Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>DRN: Drain Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -63,10 +62,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.drn.ipakcb}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>EVT: Evapotranspiration Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>EVT: Evapotranspiration Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -95,10 +94,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.evt.ipakcb}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>FHB: Flow and Head Boundary Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>FHB: Flow and Head Boundary Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -129,10 +128,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.fhb.ifhbpt}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>GHB: General-Head Boundary Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>GHB: General-Head Boundary Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -149,10 +148,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.ghb.ipakcb}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>LAK: Lake Boundary Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>LAK: Lake Boundary Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -177,10 +176,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               precision={2}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>RCH: Recharge Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>RCH: Recharge Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -197,10 +196,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.rch.ipakcb}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>RIV: River Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>RIV: River Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -217,10 +216,10 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.riv.ipakcb}
             />
           </Form.Group>
-        </Form>
+        </Form.Form>
 
-        <Header as={'h3'} dividing={true}>WEL: Well Package</Header>
-        <Form>
+        <SemanticHeader as={'h3'} dividing={true}>WEL: Well Package</SemanticHeader>
+        <Form.Form>
           <Form.Group
             widths={2}
             style={{
@@ -237,8 +236,7 @@ const BoundaryPackageSettings = ({settings, onChange, isReadOnly}: IProps) => {
               description={descriptions.wel.ipakcb}
             />
           </Form.Group>
-        </Form>
-
+        </Form.Form>
       </PackageWrapper>
     </>
 
