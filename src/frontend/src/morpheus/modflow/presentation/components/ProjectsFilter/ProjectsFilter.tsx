@@ -1,11 +1,8 @@
-import {Button, DatePicker, DropdownComponent} from 'common/components';
-// import Dropdown from 'common/components/Dropdown/Dropdown';
-import Slider from 'common/components/Slider/SimpleSlider';
-import {MapContainer, TileLayer} from 'react-leaflet';
-import {Checkbox, Form, Icon, Radio} from 'semantic-ui-react';
 import React from 'react';
-import styles from './ProjectsFilter.module.less';
+import {MapContainer, TileLayer} from 'react-leaflet';
+import {Button, DatePicker, Form, Icon, Slider} from 'common/components';
 import {IFilterOptions, IFilterParams} from 'morpheus/modflow/application/useProjectList';
+import styles from './ProjectsFilter.module.less';
 
 interface IProps {
   filterParams: IFilterParams;
@@ -68,7 +65,7 @@ const ProjectsFilter = ({
 
 
   return (
-    <Form className={styles.projectsFilterForm} style={{...style}}>
+    <Form.Form className={styles.projectsFilterForm} style={{...style}}>
       <div className={styles.titleWrapper}>
         <h2 className={styles.title}>Filters</h2>
         <Button
@@ -80,10 +77,10 @@ const ProjectsFilter = ({
       </div>
 
       {/*// By ownership*/}
-      <Form.Field className={styles.field}>
+      <Form.FormField className={styles.field}>
         <label className={styles.label}>By ownership</label>
         <div className={styles.checkboxWrapper}>
-          <Checkbox
+          <Form.Checkbox
             className={styles.checkbox}
             label="My models"
             name="myModels"
@@ -93,7 +90,7 @@ const ProjectsFilter = ({
           <span className={styles.count}>(<span>{filterOptions.number_of_my_projects}</span>)</span>
         </div>
         <div className={styles.checkboxWrapper}>
-          <Checkbox
+          <Form.Checkbox
             className={styles.checkbox}
             label="Models from my groups"
             name="modelsFromGroups"
@@ -103,7 +100,7 @@ const ProjectsFilter = ({
           <span className={styles.count}>(<span>{filterOptions.number_of_my_group_projects}</span>)</span>
         </div>
         <label className={styles.labelSmall}>Owners</label>
-        <DropdownComponent.Dropdown
+        <Form.Dropdown
           className={styles.dropdown}
           name="selectedOwners"
           clearable={true}
@@ -123,13 +120,13 @@ const ProjectsFilter = ({
             }
           }}
         />
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By status*/}
-      <Form.Field className={styles.field}>
+      <Form.FormField className={styles.field}>
         <label className={styles.label}>By status</label>
         <div className={styles.checkboxWrapper}>
-          <Checkbox
+          <Form.Checkbox
             className={styles.checkbox}
             label="Calculations finalised"
             name="calculationsFinalized"
@@ -147,7 +144,7 @@ const ProjectsFilter = ({
           </span>
         </div>
         <div className={styles.checkboxWrapper}>
-          <Checkbox
+          <Form.Checkbox
             className={styles.checkbox}
             label="Calculations not finalised"
             name="calculationsNotFinalized"
@@ -163,12 +160,13 @@ const ProjectsFilter = ({
             (<span>{filterOptions.by_status.red}</span>)
             <i className={styles.metaStatus} style={{background: '#C8C8C8'}}></i></span>
         </div>
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Date*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
+      <Form.FormField className={styles.field}>
+        <Form.Checkbox
           className={styles.checkboxLabel}
+          style={{marginBottom: 10}}
           label="By Date"
           name="date_access"
           checked={!!filterParams.date_range?.timestamp}
@@ -189,7 +187,7 @@ const ProjectsFilter = ({
           }}
         />
         <div className={styles.radioWrapper}>
-          <Radio
+          <Form.Radio
             disabled={!filterParams.date_range?.timestamp}
             className={styles.radio}
             label="Created Date"
@@ -205,7 +203,7 @@ const ProjectsFilter = ({
               },
             })}
           />
-          <Radio
+          <Form.Radio
             disabled={!filterParams.date_range?.timestamp}
             className={styles.radio}
             label="Modified Date"
@@ -221,7 +219,7 @@ const ProjectsFilter = ({
               },
             })}
           />
-          <Radio
+          <Form.Radio
             disabled={!filterParams.date_range?.timestamp}
             className={styles.radio}
             label="Model Date"
@@ -299,14 +297,14 @@ const ProjectsFilter = ({
             </div>
           </div>
         </div>
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Boundary Conditions*/}
-      <Form.Field className={styles.field}>
+      <Form.FormField className={styles.field}>
         <label className={styles.label}>By boundary conditions</label>
         {Object.entries(filterOptions.boundary_conditions).map(([key, value]) => (
           <div className={styles.checkboxWrapper} key={key}>
-            <Checkbox
+            <Form.Checkbox
               className={`${styles.checkbox} ${styles.checkboxBoundary}`}
               label={key}
               name={key}
@@ -330,11 +328,11 @@ const ProjectsFilter = ({
             <span className={styles.count}>(<span>{value}</span>)</span>
           </div>
         ))}
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Number of Grid Cells*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
+      <Form.FormField className={styles.field}>
+        <Form.Checkbox
           className={styles.checkboxLabel}
           label="By number of grid cells"
           name="number_of_grid_cells_access"
@@ -371,11 +369,11 @@ const ProjectsFilter = ({
           <span className={styles.sliderLabel}>{formatNumber(filterOptions.number_of_grid_cells.min)}</span>
           <span className={styles.sliderLabel}>{formatNumber(filterOptions.number_of_grid_cells.max)}</span>
         </div>
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Number of Stress Periods*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
+      <Form.FormField className={styles.field}>
+        <Form.Checkbox
           className={styles.checkboxLabel}
           label="By number of stress periods"
           name="number_of_stress_periods_access"
@@ -412,11 +410,11 @@ const ProjectsFilter = ({
           <span className={styles.sliderLabel}>{formatNumber(filterOptions.number_of_stress_periods.min)}</span>
           <span className={styles.sliderLabel}>{formatNumber(filterOptions.number_of_stress_periods.max)}</span>
         </div>
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Number of Layers*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
+      <Form.FormField className={styles.field}>
+        <Form.Checkbox
           className={styles.checkboxLabel}
           label="By number of layers"
           name="number_of_layers_access"
@@ -453,14 +451,14 @@ const ProjectsFilter = ({
           <span className={styles.sliderLabel}>{formatNumber(filterOptions.number_of_layers.min)}</span>
           <span className={styles.sliderLabel}>{formatNumber(filterOptions.number_of_layers.max)}</span>
         </div>
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Additional Features*/}
-      <Form.Field className={styles.field}>
+      <Form.FormField className={styles.field}>
         <label className={styles.label}>By additional features</label>
         {Object.entries(filterOptions.additional_features).map(([key, value]) => (
           <div className={styles.checkboxWrapper} key={key}>
-            <Checkbox
+            <Form.Checkbox
               className={styles.checkbox}
               label={additionalDescription(key)}
               name={key}
@@ -483,12 +481,12 @@ const ProjectsFilter = ({
             <span className={styles.count}>(<span>{value}</span>)</span>
           </div>
         ))}
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Keywords*/}
-      <Form.Field className={styles.field}>
+      <Form.FormField className={styles.field}>
         <label className={styles.label}>By keywords</label>
-        <DropdownComponent.Dropdown
+        <Form.Dropdown
           className={styles.dropdown}
           name="selectedKeywords"
           placeholder="Select keywords"
@@ -514,12 +512,13 @@ const ProjectsFilter = ({
           }}
         />
 
-      </Form.Field>
+      </Form.FormField>
 
       {/*// By Map*/}
-      <Form.Field className={styles.field}>
-        <Checkbox
+      <Form.FormField className={styles.field}>
+        <Form.Checkbox
           className={styles.checkboxLabel}
+          style={{marginBottom: 10}}
           label="By location"
           name="map_access"
         />
@@ -535,9 +534,9 @@ const ProjectsFilter = ({
             />
           </MapContainer>
         </div>
-      </Form.Field>
+      </Form.FormField>
 
-    </Form>
+    </Form.Form>
 
   );
 };

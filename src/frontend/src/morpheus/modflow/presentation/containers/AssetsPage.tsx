@@ -1,17 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {ContentWrapper, Grid, ImageRenderer, Loader, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
+import {useParams} from 'react-router-dom';
+
+import {ContentWrapper, Form, Grid, ImageRenderer, Loader, Menu, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
 import {ModflowContainer} from '../components';
+
+import {AssetButtonsGroup, AssetTable} from '../components/Asset';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
-import {useParams} from 'react-router-dom';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useAssets from '../../application/useAssets';
-import {MenuItem, Radio} from 'semantic-ui-react';
-import {AssetButtonsGroup, AssetTable} from '../components/Asset';
 import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
 import JSZip from 'jszip';
-import {Map, GeoJsonLayer} from 'common/components/Map';
+import {GeoJsonLayer, Map} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
+
 
 interface IProps {
   basePath: string;
@@ -127,7 +129,7 @@ const AssetsPage = ({}: IProps) => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem key='model_domain' onClick={() => setSelectedAssetType('raster')}>Raster File</MenuItem>,
+                    menuItem: <Menu.MenuItem key='model_domain' onClick={() => setSelectedAssetType('raster')}>Raster File</Menu.MenuItem>,
                     render: () => <TabPane attached={false}>
                       <AssetTable
                         fileType={selectedAssetType}
@@ -148,7 +150,7 @@ const AssetsPage = ({}: IProps) => {
                     </TabPane>,
                   },
                   {
-                    menuItem: <MenuItem key='affected_cells' onClick={() => setSelectedAssetType('shape')}>Shape File</MenuItem>,
+                    menuItem: <Menu.MenuItem key='affected_cells' onClick={() => setSelectedAssetType('shape')}>Shape File</Menu.MenuItem>,
                     render: () => <TabPane attached={false}>
                       <AssetTable
                         fileType={selectedAssetType}
@@ -180,7 +182,7 @@ const AssetsPage = ({}: IProps) => {
                 {isRasterAsset(selectedAsset) &&
                   <div style={{display: 'flex', gap: 10, margin: 10}}>
                     {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
-                      <Radio
+                      <Form.Radio
                         key={index}
                         label={`Band ${index + 1}`}
                         value={`band_${index + 1}`}

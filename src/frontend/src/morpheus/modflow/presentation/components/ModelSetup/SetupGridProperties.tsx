@@ -1,6 +1,5 @@
-import {DataGrid} from '../../../../../common/components';
+import {DataGrid, Slider} from '../../../../../common/components';
 import {Form, Icon, Input, Label} from 'semantic-ui-react';
-import Slider from '../../../../../common/components/Slider/SimpleSlider';
 import React from 'react';
 import {ILengthUnit} from '../../../types';
 

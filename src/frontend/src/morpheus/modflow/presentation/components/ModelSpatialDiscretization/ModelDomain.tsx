@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {ShapeFileInput, DataGrid, Button} from 'common/components';
+import {Button, DataGrid, ShapeFileInput} from 'common/components';
 import {Polygon} from 'geojson';
-import {IAssetShapefileData} from "../../../types";
+import {IAssetShapefileData} from '../../../types';
 
 interface IProps {
   isDirty: boolean;
@@ -22,7 +22,7 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
     setShapeFileError(undefined);
     try {
       const data = await processShapefile(zipFile);
-      const geoJson = data.data
+      const geoJson = data.data;
       if ('Polygon' === geoJson.type) {
         return onChangeGeometry(geoJson as Polygon);
       }

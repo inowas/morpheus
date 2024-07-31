@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Icon, MenuItem} from 'semantic-ui-react';
-import {DataGrid, SectionTitle, Tab, TabPane} from 'common/components';
+import {DataGrid, Icon, Menu, SectionTitle, Tab, TabPane} from 'common/components';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 
 import useLayers from '../../application/useLayers';
@@ -12,9 +11,9 @@ import {BodyContent, SidebarContent} from '../components';
 import LayersList from '../components/ModelLayers/LayersList';
 import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
 import {MapRef} from 'common/components/Map/Map';
-import {IChangeLayerPropertyValues, ILayerId, ILayerProperty, ILayerPropertyData} from '../../types/Layers.type';
-import CanvasDataLayer from '../../../../common/components/Map/DataLayers/CanvasDataLayer';
+import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
 import {useColorMap} from 'common/hooks';
+import {IChangeLayerPropertyValues, ILayerId, ILayerProperty, ILayerPropertyData} from '../../types/Layers.type';
 
 interface ISelectedLayer {
   layerId: ILayerId;
@@ -75,7 +74,7 @@ const LayersContainer = () => {
             variant='primary'
             menu={{secondary: true, pointing: true}}
             panes={[{
-              menuItem: <MenuItem key='properties'>Properties</MenuItem>,
+              menuItem: <Menu.MenuItem key='properties'>Properties</Menu.MenuItem>,
               render: () =>
                 <TabPane attached={false}>
                   <LeafletMapProvider mapRef={mapRef}>
@@ -93,7 +92,7 @@ const LayersContainer = () => {
                   </LeafletMapProvider>
                 </TabPane>,
             }, {
-              menuItem: <MenuItem key='validation' className='tabItemWithIcon'>Validation<Icon name='check circle'/></MenuItem>,
+              menuItem: <Menu.MenuItem key='validation' className='tabItemWithIcon'>Validation<Icon name='check circle'/></Menu.MenuItem>,
               render: () => <TabPane attached={false}>Validation</TabPane>,
             }]}
           />

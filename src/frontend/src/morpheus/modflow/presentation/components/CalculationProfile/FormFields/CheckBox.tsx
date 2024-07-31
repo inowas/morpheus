@@ -1,6 +1,5 @@
 import React from 'react';
-import {Form, Icon, Label, Popup} from 'semantic-ui-react';
-import {Checkbox} from 'common/components';
+import {Form, Icon, Popup} from 'common/components';
 
 interface IProps {
   value: boolean
@@ -11,8 +10,8 @@ interface IProps {
 }
 
 const CheckBox = ({value, label, onChange, isReadOnly, description}: IProps) => (
-  <Form.Field>
-    <Label htmlFor={label} className="labelSmall">
+  <Form.FormField>
+    <Form.Label htmlFor={label} className="labelSmall">
       {description && (
         <Popup
           trigger={<Icon name="info circle"/>}
@@ -21,8 +20,8 @@ const CheckBox = ({value, label, onChange, isReadOnly, description}: IProps) => 
           size="tiny"
         />)}
       {label}
-    </Label>
-    <Checkbox
+    </Form.Label>
+    <Form.Checkbox
       id={label}
       style={{minHeight: 'unset', alignItems: 'center'}}
       disabled={isReadOnly}
@@ -32,7 +31,7 @@ const CheckBox = ({value, label, onChange, isReadOnly, description}: IProps) => 
       checked={value}
       onChange={(_, {checked}) => onChange(checked || false)}
     />
-  </Form.Field>
+  </Form.FormField>
 );
 
 export default CheckBox;

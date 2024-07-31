@@ -1,11 +1,9 @@
-import {Form, Icon} from 'semantic-ui-react';
 import React, {useMemo} from 'react';
-
-import {DataGrid} from 'common/components/DataGrid';
-import styles from './TimeDiscretizationGeneralParameters.module.less';
-import {ITimeDiscretization, ITimeUnit} from '../../../../types';
-import {useDateTimeFormat} from 'common/hooks';
+import {DataGrid, Form, Icon} from 'common/components';
 import DateInput from '../FormInput/DateInput';
+import styles from './TimeDiscretizationGeneralParameters.module.less';
+import {useDateTimeFormat} from 'common/hooks';
+import {ITimeDiscretization, ITimeUnit} from '../../../../types';
 
 interface IProps {
   timeDiscretization: ITimeDiscretization;
@@ -65,9 +63,9 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
   }, [timeDiscretization.start_date_time, timeDiscretization.end_date_time, timeDiscretization.time_unit]);
 
   return (
-    <Form className={styles.stressperiodParameters}>
+    <Form.Form className={styles.stressperiodParameters}>
       <DataGrid columns={4}>
-        <Form.Field className={'dateInputWrapper'}>
+        <Form.FormField className={'dateInputWrapper'}>
           <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
             <Icon className={'dateIcon'} name="info circle"/>
             Start Date
@@ -81,8 +79,8 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               isDisabled={true}
             />
           </div>
-        </Form.Field>
-        <Form.Field className={'dateInputWrapper'}>
+        </Form.FormField>
+        <Form.FormField className={'dateInputWrapper'}>
           <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
             <Icon className={'dateIcon'} name="info circle"/>
             End Date
@@ -95,22 +93,22 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
               isValid={(value) => isValid(parseDate(value))}
             />
           </div>
-        </Form.Field>
-        <Form.Field>
+        </Form.FormField>
+        <Form.FormField>
           <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
             <Icon className={'dateIcon'} name="info circle"/>
             Time unit
           </label>
           <Form.Dropdown
             className={styles.inputField}
-            name="Time unit"
+            name='Time unit'
             options={timeUnitOptions}
             value={timeDiscretization.time_unit}
             disabled={true}
             onChange={(e, {value}) => handleChangeTimeUnit(value as ITimeUnit)}
           />
-        </Form.Field>
-        <Form.Field>
+        </Form.FormField>
+        <Form.FormField>
           <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
             <Icon className={'dateIcon'} name="info circle"/>
             Total time
@@ -118,12 +116,12 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
           <Form.Input
             className={styles.inputField}
             name="Total time"
-            value={calculatedTotalTime}
+            value={String(calculatedTotalTime)}
             disabled={true}
           />
-        </Form.Field>
+        </Form.FormField>
       </DataGrid>
-    </Form>
+    </Form.Form>
   );
 };
 

@@ -7,6 +7,7 @@ import {Select as SemanticSelect} from 'semantic-ui-react';
 import styles from './Select.module.less';
 
 export type ISelectProps = {
+  width?: string | number
   options: DropdownItemProps[];
   style?: React.CSSProperties;
   name?: string

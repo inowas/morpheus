@@ -1,5 +1,5 @@
 import styles from './SidebarContent.module.less';
-import {Icon} from 'semantic-ui-react';
+import {Icon} from 'common/components';
 import React from 'react';
 
 interface IProps {

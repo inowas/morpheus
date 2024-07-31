@@ -1,26 +1,23 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {ContentWrapper, DataGrid, SectionTitle, Segment} from 'common/components';
+import {ContentWrapper, DataGrid, Form, Icon, SectionTitle, Segment, Tab, TabPane} from 'common/components';
 import {useParams} from 'react-router-dom';
-import {useCalculationResults, useTimeDiscretization} from '../../application';
-import {BodyContent, SidebarContent} from '../components';
-import {Map} from 'common/components/Map';
-import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
-import {Icon, Label, Tab, TabPane} from 'semantic-ui-react';
-import {IBudgetData, ILayerData} from '../../application/useCalculationResults';
+
+import {BodyContent, BudgetChart, CrossSectionChart, ModelGeometryMapLayer, ResultsSelector, SidebarContent, TimeSeriesChart} from '../components';
+
 import {useColorMap, useDateTimeFormat} from 'common/hooks';
+
+import {Map} from 'common/components/Map';
+import {ISelection} from 'common/components/Map/DataLayers/types';
+import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
+import LabelledPointsLayer from 'common/components/Map/DataLayers/LabelledPointsLayer';
+import HoverGridLayer, {IDataPoint} from 'common/components/Map/DataLayers/HoverDataLayer';
 import ContoursDataLayer from 'common/components/Map/DataLayers/ContoursDataLayer';
 
+import {useCalculationResults, useTimeDiscretization} from '../../application';
+import {IBudgetData, ILayerData} from '../../application/useCalculationResults';
 import useLayers from '../../application/useLayers';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
-import CanvasDataLayer from 'common/components/Map/DataLayers/CanvasDataLayer';
-import ResultsSelector from '../components/Results/CrossSectionParameterSelector';
-import CrossSectionChart from '../components/Results/CrossSectionChart';
 import {IAvailableResults} from '../../types/Calculation.type';
-import BudgetChart from '../components/Results/BudgetSectionChart';
-import HoverGridLayer, {IDataPoint} from 'common/components/Map/DataLayers/HoverDataLayer';
-import {ISelection} from 'common/components/Map/DataLayers/types';
-import TimeSeriesChart from '../components/Results/TimeSeriesChart';
-import LabelledPointsLayer from 'common/components/Map/DataLayers/LabelledPointsLayer';
 import {Point} from 'geojson';
 
 interface ISelectedRowAndColumn {
@@ -306,7 +303,7 @@ const FlowResultsContainer = () => {
                     <>
                       {0 === timeSeries.length && <p>Click on map to add time series</p>}
                       {timeSeries.map((ts) => (
-                        <Label
+                        <Form.Label
                           key={ts.id}
                           as='a'
                           style={{margin: '0 5px', backgroundColor: ts.color, color: 'white'}}
@@ -314,7 +311,7 @@ const FlowResultsContainer = () => {
                         >
                           {ts.name}
                           <Icon name='delete'/>
-                        </Label>
+                        </Form.Label>
                       ))}
                       <TimeSeriesChart
                         timeSeries={timeSeries.map((ts) => ({

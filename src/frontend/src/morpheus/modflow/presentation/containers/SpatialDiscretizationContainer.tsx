@@ -1,21 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {BodyContent, SidebarContent} from '../components';
-import type {Polygon} from 'geojson';
 import {useParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
-import Error from 'common/components/Error';
-import {IGrid} from '../../types';
-import {DataGrid, LockButton, SectionTitle, Tab, TabPane} from 'common/components';
-import {Accordion, AccordionContent} from '../components/Content';
-import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
-import {MenuItem} from 'semantic-ui-react';
-import useProjectPrivileges from '../../application/useProjectPrivileges';
-import {Map} from 'common/components/Map';
 
-import ModelGrid from '../components/ModelSpatialDiscretization/ModelGrid';
-import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
-import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
-import GridRotationMapLayer from '../components/ModelSpatialDiscretization/GridRotationMapLayer';
+import useProjectPrivileges from '../../application/useProjectPrivileges';
+import {IGrid} from '../../types';
+import type {Polygon} from 'geojson';
+import {Accordion, AccordionContent, AffectedCellsMapLayer, BodyContent, GridRotationMapLayer, ModelDomain, ModelGeometryMapLayer, ModelGrid, SidebarContent} from '../components';
+import {DataGrid, Error, LockButton, Map, Menu, SectionTitle, Tab, TabPane} from 'common/components';
 
 
 const SpatialDiscretizationContainer = () => {
@@ -125,14 +116,14 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem
+                    menuItem: <Menu.MenuItem
                       role='tabitem'
                       as='span'
                       key='model_domain'
                       onClick={() => setEditMode('geometry')}
                     >
                       Model Domain
-                    </MenuItem>,
+                    </Menu.MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelDomain
                         isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
@@ -155,13 +146,13 @@ const SpatialDiscretizationContainer = () => {
                 menu={{pointing: true}}
                 panes={[
                   {
-                    menuItem: <MenuItem
+                    menuItem: <Menu.MenuItem
                       role='tabitem'
                       as='span'
                       key='grid_properties'
                     >
                       Grid Properties
-                    </MenuItem>,
+                    </Menu.MenuItem>,
                     render: () => <TabPane attached={false}>
                       <ModelGrid
                         grid={grid}

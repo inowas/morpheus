@@ -1,5 +1,5 @@
-import {Form} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
+import {Form} from 'common/components';
 
 
 interface IProps {

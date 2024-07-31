@@ -1,7 +1,7 @@
 import {HtmlLabelProps, SemanticShorthandItem} from 'semantic-ui-react/dist/commonjs/generic';
 import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
-import React from 'react';
 import {Checkbox as SemanticCheckbox} from 'semantic-ui-react';
+import React from 'react';
 
 export type StrictCheckboxProps = {
   as?: any;

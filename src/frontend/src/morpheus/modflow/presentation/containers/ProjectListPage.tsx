@@ -1,13 +1,10 @@
-import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem} from 'common/components';
 import React, {useMemo, useState} from 'react';
-import {useLocation, useNavigate} from 'common/hooks';
+import {Button, CardGrid, ContentWrapper, Error, ICard, INavbarItem, Navbar, SortDropdown} from 'common/components';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
+import {useDateTimeFormat, useLocation, useNavigate} from 'common/hooks';
 import {useProjectList, useTranslate} from '../../application';
-import Error from 'common/components/Error';
 import CreateProjectContainer from './CreateProjectContainer';
-import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useUsers} from '../../incoming';
-import {useDateTimeFormat} from 'common/hooks';
 
 interface IProps {
   basePath: string;
@@ -115,7 +112,6 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </ContentWrapper>
       </ModflowContainer>
-
       <CreateProjectContainer open={showCreateProjectModel} onClose={() => setShowCreateProjectModel(false)}/>
     </>
   );

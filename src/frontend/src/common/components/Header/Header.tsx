@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 
-import {ContentWrapper} from 'common/components';
+import {ContentWrapper, Menu} from 'common/components';
 import AvatarButton from './AvatarButton/AvatarButton';
 import LanguageSelector from './LanguageSelector/LanguageSelector';
-import {Menu} from 'semantic-ui-react';
 import logoTUDresden from './images/logo-tud.svg';
 import styles from './Header.module.less';
 
@@ -40,7 +39,7 @@ const Header = ({
     >
       <ContentWrapper>
         <div className={styles.inner}>
-          <Menu.Item
+          <Menu.MenuItem
             data-testid={'test-logo'}
             as="a"
             className={styles.logo}
@@ -54,13 +53,13 @@ const Header = ({
               src={logoTUDresden}
               alt={'logo'}
             />
-          </Menu.Item>
-          <Menu
+          </Menu.MenuItem>
+          <Menu.Menu
             className={styles.menu}
             secondary={true}
             position="right"
           >
-            <Menu.Item
+            <Menu.MenuItem
               name="Contact"
               as="a"
               className={styles.item}
@@ -69,7 +68,7 @@ const Header = ({
                 navigateTo('/contact/');
               }}
             />
-            <Menu.Item
+            <Menu.MenuItem
               name="Legal Notice"
               as="a"
               className={styles.item}
@@ -78,7 +77,7 @@ const Header = ({
                 navigateTo('/imprint/');
               }}
             />
-            <Menu.Item
+            <Menu.MenuItem
               name="Accessibility"
               as="a"
               className={styles.item}
@@ -96,7 +95,7 @@ const Header = ({
               </div>
               :
               <div className={styles.itemLogin}>
-                <Menu.Item
+                <Menu.MenuItem
                   name="Sign in!"
                   as="a"
                   className={styles.item}
@@ -115,7 +114,7 @@ const Header = ({
                 onChangeLanguage={onChangeLanguage}
               />
             )}
-          </Menu>
+          </Menu.Menu>
         </div>
       </ContentWrapper>
     </div>

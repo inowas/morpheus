@@ -1,7 +1,5 @@
 import React, {useMemo} from 'react';
-import {Button, DataGrid} from 'common/components';
-import {Form, Icon, Input, Label} from 'semantic-ui-react';
-import Slider from 'common/components/Slider/SimpleSlider';
+import {Button, DataGrid, Form, Icon, Slider} from 'common/components';
 import {IGrid} from '../../../types';
 
 interface IProps {
@@ -24,67 +22,67 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
   return (
     <>
       <DataGrid columns={4}>
-        <Form.Field>
-          <Label className="labelSmall">
+        <Form.FormField>
+          <Form.Label className="labelSmall">
             <Icon name="info circle"/>
             Rows
-          </Label>
-          <Input
+          </Form.Label>
+          <Form.Input
             disabled={isLocked || readOnly}
             type="number"
-            value={grid.n_rows}
+            value={String(grid.n_rows)}
             onChange={(e) => onChange({...grid, n_rows: parseInt(e.target.value)})}
             step={0}
           />
-        </Form.Field>
-        <Form.Field>
-          <Label className="labelSmall">
+        </Form.FormField>
+        <Form.FormField>
+          <Form.Label className="labelSmall">
             <Icon name="info circle"/>
             Columns
-          </Label>
-          <Input
+          </Form.Label>
+          <Form.Input
             disabled={isLocked || readOnly}
             type="number"
-            value={grid.n_cols}
+            value={String(grid.n_cols)}
             onChange={(e) => onChange({...grid, n_cols: parseInt(e.target.value)})}
             step={0}
           />
-        </Form.Field>
-        <Form.Field>
-          <Label className="labelSmall">
+        </Form.FormField>
+        <Form.FormField>
+          <Form.Label className="labelSmall">
             <Icon name="info circle"/>
             Cell height (m)
-          </Label>
-          <Input
+          </Form.Label>
+          <Form.Input
             disabled={true}
             type="number"
             value={(totalHeight / grid.n_rows).toFixed(1)}
             step={0.1}
           />
-        </Form.Field>
-        <Form.Field>
-          <Label className="labelSmall">
+        </Form.FormField>
+        <Form.FormField>
+          <Form.Label className="labelSmall">
             <Icon name="info circle"/>
             Cell width (m)
-          </Label>
-          <Input
+          </Form.Label>
+          <Form.Input
             disabled={true}
             value={(totalWidth / grid.n_cols).toFixed(1)}
           />
-        </Form.Field>
+        </Form.FormField>
       </DataGrid>
       <DataGrid style={{marginTop: 20}}>
         <div className="fieldGridSlider">
           <div className="field">
-            <Label className="labelSmall">
+            <Form.Label className="labelSmall">
               <Icon className={'dateIcon'} name="info circle"/>
               Rotation (°)
-            </Label>
-            <Input
+            </Form.Label>
+            <Form.Input
               disabled={isLocked || readOnly}
               name="rotationAngle"
               type="number"
-              value={grid.rotation}
+              value={String(grid.rotation)}
               onChange={(e) => onChange({...grid, rotation: parseInt(e.target.value)})}
               step={1}
             />

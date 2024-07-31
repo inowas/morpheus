@@ -1,23 +1,18 @@
 import React, {useMemo, useRef, useState} from 'react';
-import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 import {MapRef} from 'common/components/Map/Map';
 import {DataGrid, SearchInput, SectionTitle} from 'common/components';
+import {AffectedCellsMapLayer, BodyContent, BoundariesAccordion, BoundariesLayer, DrawBoundaryLayer, ModelGeometryMapLayer, SidebarContent} from '../components';
 
 import useBoundaries from '../../application/useBoundaries';
 import useLayers from '../../application/useLayers';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
-import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
-import BoundariesAccordion from '../components/ModelBoundaries/BoundariesAccordion';
 import {useTimeDiscretization} from '../../application';
+import useSpatialDiscretization from '../../application/useSpatialDiscretization';
+import {IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../types/Boundaries.type';
 import {LineString, Point, Polygon} from 'geojson';
-import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
-import BoundariesLayer from '../components/ModelBoundaries/BoundariesLayer';
-import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
-import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
 
 

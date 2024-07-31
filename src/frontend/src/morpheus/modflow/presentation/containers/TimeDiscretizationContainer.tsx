@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {BodyContent, SidebarContent} from '../components';
-import useTimeDiscretization from '../../application/useTimeDiscretization';
-import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import {useParams} from 'react-router-dom';
-import Error from 'common/components/Error';
-import {Button, DataGrid, SectionTitle} from '../../../../common/components';
-import {Accordion, AccordionContent} from '../components/Content';
-import TimeDiscretizationGeneralParameters from '../components/ModelTimeDiscretization/GeneralParameters';
+import {useProjectPrivileges, useSpatialDiscretization, useTimeDiscretization} from '../../application';
+import {Button, DataGrid, Error, Map, SectionTitle} from 'common/components';
+import {
+  Accordion,
+  AccordionContent,
+  BodyContent,
+  ModelGeometryMapLayer,
+  SidebarContent,
+  StressperiodsUpload,
+  TimeDiscretizationGeneralParameters,
+  TimeDiscretizationStressPeriods,
+} from '../components';
+
+import {useDateTimeFormat} from 'common/hooks';
 import {IStressPeriod, ITimeDiscretization} from '../../types';
 import cloneDeep from 'lodash.clonedeep';
-import {useDateTimeFormat} from 'common/hooks';
-import {StressperiodsUpload} from '../components/ModelTimeDiscretization/StressperiodsUpload';
-import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
-import useProjectPrivileges from '../../application/useProjectPrivileges';
-import {Map} from 'common/components/Map';
-import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+
 
 const TimeDiscretizationContainer = () => {
   const {projectId} = useParams();

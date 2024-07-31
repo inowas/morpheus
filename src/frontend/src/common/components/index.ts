@@ -11,7 +11,6 @@ import ModelCard, {ICard} from './CardGrid/Card';
 import Pagination, {IPaginationProps} from './Pagination/Pagination';
 import Select, {DropdownProps} from './Select/Select';
 
-import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 import ApplicationContentWrapper from './ApplicationContentWrapper/ApplicationContentWrapper';
 import {Accordion, AccordionItem} from './Accordion';
 import BackToTopButton from './BackToTopButton/BackToTopButton';
@@ -21,6 +20,7 @@ import ChartModal from './Charts/ChartModal';
 import Container from './Container/Container';
 import Divider from './Divider/Divider';
 import DropdownComponent from './Dropdown';
+import Error from './Error';
 import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
@@ -35,6 +35,8 @@ import Label from './Label/Label';
 import Loader from './Loader/Loader';
 import LockButton from './LockButton/LockButton';
 import LoaderAnimation from './LoaderAnimation/LoaderAnimation';
+import Map from './Map/Map';
+import Menu from './Menu';
 import MapExample from './Map/MapExample';
 import Message from './Message/Message';
 import Modal from './Modal/Modal';
@@ -50,9 +52,11 @@ import Popup from './Popup/Popup';
 import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
 import RasterFileInput from './RasterFileInput';
+import SortDropdown, {ISortOption} from 'common/components/CardGrid/SortDropdown';
 import SearchInput from './SearchComponent/DropdownWithSearchInput';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
+import Slider from './Slider/SimpleSlider';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
 import ShapeFileInput from './ShapeFileInput/ShapeFileInput';
 import SortButtons from './SortButtons/SortButtons';
@@ -81,10 +85,11 @@ export {
   Divider,
   DotsMenu,
   DropdownComponent,
-  Form,
   Header,
   HeaderWrapper,
+  Error,
   Footer,
+  Form,
   Icon,
   IconButton,
   Input,
@@ -95,6 +100,8 @@ export {
   Loader,
   LockButton,
   LoaderAnimation,
+  Map,
+  Menu,
   MapExample,
   Message,
   Modal,
@@ -117,6 +124,7 @@ export {
   Segment,
   Select,
   ShapeFileInput,
+  Slider,
   SliderSwiper,
   SortDropdown,
   SortButtons,

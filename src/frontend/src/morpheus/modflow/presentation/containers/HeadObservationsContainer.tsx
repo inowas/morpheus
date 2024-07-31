@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
+import {BodyContent, SidebarContent} from '../components';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 import {MapRef} from 'common/components/Map/Map';
 import {DataGrid, SearchInput, SectionTitle} from 'common/components';
@@ -11,13 +11,10 @@ import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 
 import {useTimeDiscretization} from '../../application';
-import ModelGeometryMapLayer from '../components/ModelSpatialDiscretization/ModelGeometryMapLayer';
+import {DrawObservationLayer, HeadObservationListDetails, ModelGeometryMapLayer, ObservationsLayer} from '../components/';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
 import {IHeadObservation, IObservationType} from '../../types/HeadObservations.type';
-import HeadObservationListDetails from '../components/ModelHeadObservations/HeadObservationListDetails';
-import DrawObservationLayer from '../components/ModelHeadObservations/DrawObservationLayer';
 import {Point} from 'geojson';
-import ObservationsLayer from '../components/ModelHeadObservations/ObservationsLayer';
 
 
 const HeadObservationsContainer = () => {
