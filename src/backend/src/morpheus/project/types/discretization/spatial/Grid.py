@@ -4,13 +4,14 @@ from typing import Tuple
 import numpy as np
 import pyproj
 
-from shapely import Polygon as ShapelyPolygon, Point as ShapelyPoint
-from shapely.affinity import rotate as rotate
+from shapely import Polygon as ShapelyPolygon, Point as ShapelyPoint, LineString as ShapelyLineString
+from shapely.affinity import rotate
+from shapely.ops import transform
 
 from .LengthUnit import LengthUnit
 from .Rotation import Rotation
 from .Crs import Crs
-from ...geometry import Point, Polygon
+from ...geometry import Point, Polygon, LineString
 from ...geometry.Feature import Feature
 from ...geometry.FeatureCollection import FeatureCollection
 
@@ -86,6 +87,9 @@ class Grid:
 
     _from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
     _from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+
+    _wgs_column_polygons = None
+    _wgs_row_polygons = None
 
     @classmethod
     def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> "Grid":
@@ -185,8 +189,8 @@ class Grid:
 
     def to_geojson(self) -> FeatureCollection:
         features = [self.get_wgs_outline_geometry()]
-        features += self.get_wgs_column_geometries()
-        features += self.get_wgs_row_geometries()
+        features += self.get_wgs_column_polygons()
+        features += self.get_wgs_row_polygons()
         return FeatureCollection(features=features)
 
     def with_updated_geometry(self, polygon: Polygon, preserve_absolute_coordinates: bool = False):
@@ -226,28 +230,31 @@ class Grid:
         row_coordinates = self.row_coordinates()
         return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
-    def get_mercator_cell_center_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
-        cell_centers = self.get_mercator_cell_centers()
-        xx_coords = [[point.coordinates[0] for point in row] for row in cell_centers]
-        yy_coords = [[point.coordinates[1] for point in row] for row in cell_centers]
-        return xx_coords, yy_coords
-
-    def get_mercator_cell_centers(self) -> list[list[Point]]:
+    def get_cells_from_wgs_point(self, point: Point) -> list[Tuple[int, int]]:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols, n_rows = self.n_cols(), self.n_rows()
-        centers = np.empty((n_rows, n_cols), dtype=Point)
-        origin_3857 = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
-        for row in range(self.n_rows()):
-            for col in range(self.n_cols()):
-                point_3857 = ShapelyPoint((
-                    origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2,
-                    origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
-                )
 
-                rotated_point_3857: ShapelyPoint = rotate(geom=point_3857, angle=self.rotation.to_float(), origin=origin_3857)  # type: ignore
-                centers[row][col] = Point(coordinates=rotated_point_3857.__geo_interface__['coordinates'])
+        origin_3857 = ShapelyPoint(self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1]))
+        point_3857 = transform(self._from_4326_to_3857.transform, ShapelyPoint(point.coordinates))
+        rotated_point_3857 = rotate(geom=point_3857, angle=-self.rotation.to_float(), origin=origin_3857)  # type: ignore
 
-        return centers.tolist()
+        col = None
+        row = None
+
+        for row_idx in range(n_rows):
+            if origin_3857.y - row_coordinates[row_idx] >= rotated_point_3857.y > origin_3857.y - row_coordinates[row_idx + 1]:
+                row = row_idx
+                break
+
+        for col_idx in range(n_cols):
+            if origin_3857.x + col_coordinates[col_idx] <= rotated_point_3857.x < origin_3857.x + col_coordinates[col_idx + 1]:
+                col = col_idx
+                break
+
+        if col is None or row is None:
+            return []
+
+        return [(col, row)]
 
     def get_wgs_cell_center_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
         cell_centers = self.get_wgs_cell_centers()
@@ -297,7 +304,11 @@ class Grid:
                 geometries[row][col] = Polygon(coordinates=[geometry_4326])
         return geometries.tolist()
 
-    def get_wgs_row_geometries(self) -> list[Feature]:
+    def get_wgs_row_polygons(self) -> list[Feature]:
+
+        if self._wgs_row_polygons is not None:
+            return self._wgs_row_polygons
+
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_rows = self.n_rows()
         features = np.empty(n_rows, dtype=Polygon)
@@ -317,9 +328,14 @@ class Grid:
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
             features[row] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'row': row, 'type': 'row'})
 
+        self._wgs_row_polygons = features.tolist()
         return features.tolist()
 
-    def get_wgs_column_geometries(self) -> list[Feature]:
+    def get_wgs_column_polygons(self) -> list[Feature]:
+
+        if self._wgs_column_polygons is not None:
+            return self._wgs_column_polygons
+
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols = self.n_cols()
         features = np.empty(n_cols, dtype=Polygon)
@@ -337,6 +353,81 @@ class Grid:
             rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
             features[col] = Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'col': col, 'type': 'col'})
+
+        self._wgs_column_polygons = features.tolist()
+        return features.tolist()
+
+    def get_wgs_row_center_lines(self) -> list[LineString]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_rows = self.n_rows()
+        features = np.empty(n_rows, dtype=Polygon)
+
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+
+        for row in range(n_rows):
+            line_string_3857 = ShapelyLineString([
+                (origin_3857_x, origin_3857_y - (row_coordinates[row] + row_coordinates[row + 1]) / 2),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - (row_coordinates[row] + row_coordinates[row + 1]) / 2),
+            ])
+
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
+            features[row] = LineString(coordinates=geometry_4326)
+
+        return features.tolist()
+
+    def get_wgs_column_center_lines(self) -> list[LineString]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_cols = self.n_cols()
+        features = np.empty(n_cols, dtype=Polygon)
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+
+        for col in range(n_cols):
+            line_string_3857 = ShapelyLineString([
+                (origin_3857_x + (col_coordinates[col] + col_coordinates[col + 1]) / 2, origin_3857_y),
+                (origin_3857_x + (col_coordinates[col] + col_coordinates[col + 1]) / 2, origin_3857_y - row_coordinates[-1])
+            ])
+
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
+            features[col] = LineString(coordinates=geometry_4326)
+
+        return features.tolist()
+
+    def get_wgs_row_coordinate_lines(self) -> list[LineString]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_rows = self.n_rows()
+        features = np.empty(n_rows, dtype=Polygon)
+
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+
+        for row in range(n_rows):
+            line_string_3857 = ShapelyLineString([
+                (origin_3857_x, origin_3857_y - row_coordinates[row]),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row]),
+            ])
+
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
+            features[row] = LineString(coordinates=geometry_4326)
+
+        return features.tolist()
+
+    def get_wgs_column_coordinate_lines(self) -> list[LineString]:
+        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
+        n_cols = self.n_cols()
+        features = np.empty(n_cols, dtype=Polygon)
+        origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
+
+        for col in range(n_cols):
+            line_string_3857 = ShapelyLineString([
+                (origin_3857_x + col_coordinates[col], origin_3857_y),
+                (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[-1])
+            ])
+
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
+            features[col] = LineString(coordinates=geometry_4326)
 
         return features.tolist()
 
