@@ -38,8 +38,7 @@ def calculate_chd_boundary_stress_period_data(
         layer_indices = [layer_ids.index(layer_id) for layer_id in chd_boundary.affected_layers]
 
         # we need to filter the affected cells to only include cells that are part of the model
-        chd_boundary.affected_cells = chd_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        chd_boundary.affected_cells = chd_boundary.affected_cells.filter(lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if chd_boundary.number_of_observations() == 1:
             # if we only have one observation point
@@ -95,7 +94,8 @@ def calculate_chd_boundary_stress_period_data(
                 for layer_idx in layer_indices:
                     sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[yy_new_start_head, yy_new_end_head], sum_up_values=False)
 
-    return sp_data
+
+return sp_data
 
 
 def calculate_stress_period_data(model: Model) -> ChdStressPeriodData | None:

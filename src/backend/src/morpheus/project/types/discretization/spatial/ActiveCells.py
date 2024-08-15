@@ -44,6 +44,15 @@ class ActiveCells:
     shape: tuple[int, int]
     data: list[ActiveCell]
 
+    _data_arr: None | np.ndarray = None
+
+    def get_data_arr(self):
+        if self._data_arr is None:
+            self._data_arr = np.full(shape=self.shape, fill_value=False, dtype=bool)
+            for cell in self.data:
+                self._data_arr[cell.row, cell.col] = True
+        return self._data_arr
+
     def __len__(self):
         return len(self.data)
 
@@ -81,6 +90,14 @@ class ActiveCells:
             shape=(rows, cols),
             data=active_cells
         )
+
+    def mask(self, mask: np.ndarray):
+        if mask.shape != self.shape:
+            raise ValueError(f'Mask shape {mask.shape} does not match active cells shape {self.shape}')
+
+        data_arr = self.get_data_arr()
+        data = np.logical_and(data_arr, mask)
+        return ActiveCells.from_numpy(data)
 
     def filter(self, predicate):
         return ActiveCells(
@@ -354,13 +371,8 @@ class ActiveCells:
         return self.shape[0]
 
     def is_active(self, col: int, row: int) -> bool:
-        if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
-            return False
-
-        try:
-            return next(cell for cell in self.data if cell.col == col and cell.row == row) is not None
-        except StopIteration:
-            return False
+        data_arr = self.get_data_arr()
+        return data_arr[row, col] if 0 <= row < self.shape[0] and 0 <= col < self.shape[1] else False
 
     def set_inactive(self, col: int, row: int):
         self.data = [cell for cell in self.data if cell.col != col or cell.row != row]
@@ -373,6 +385,7 @@ class ActiveCells:
             return
 
         self.data.append(ActiveCell(col=col, row=row))
+        self._data_arr = None
 
     def to_geojson(self, grid: Grid) -> GeometryCollection:
         cells_geometries = grid.get_wgs_cell_geometries()
@@ -391,9 +404,27 @@ class ActiveCells:
         return raster_data
 
     def outline_to_geojson(self, grid: Grid) -> Feature:
-        geometries = self.to_geojson(grid).geometries
-        geometries = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]
-        geometry = unary_union(geometries)
+        geometries: list[Polygon] = []
+        for row in range(grid.n_rows()):
+            start_active_cell = None
+            end_active_cell = None
+            for col in range(grid.n_cols()):
+                if self.is_active(col=col, row=row):
+                    if start_active_cell is None:
+                        start_active_cell = col
+                    end_active_cell = col
+                if not self.is_active(col=col, row=row):
+                    if start_active_cell is not None:
+                        geometries.append(grid.get_wgs_row_polygon(row=row, start_col=start_active_cell, end_col=end_active_cell))
+                    start_active_cell = None
+                    end_active_cell = None
+                if col == grid.n_cols() - 1 and start_active_cell is not None:
+                    geometries.append(grid.get_wgs_row_polygon(row=row, start_col=start_active_cell, end_col=end_active_cell))
+
+        polygons: list[ShapelyPolygon] = [ShapelyPolygon(polygon.coordinates[0]) for polygon in geometries]
+        buffered_polygons = [polygon.buffer(0.000001) for polygon in polygons]
+        buffered_geometry = unary_union(buffered_polygons)
+        geometry = buffered_geometry.buffer(-0.000001)
         if isinstance(geometry, ShapelyPolygon):
             geometry_dict = geometry.__geo_interface__
             feature = Feature(geometry=Polygon(coordinates=geometry_dict['coordinates']))
