@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Tuple
 
+from bisect import bisect_left
 import numpy as np
 import pyproj
 
@@ -90,6 +91,12 @@ class Grid:
 
     _wgs_column_polygons = None
     _wgs_row_polygons = None
+
+    _absolute_col_coordinates_3857 = None
+    _absolute_row_coordinates_3857 = None
+    _absolute_row_coordinates_3857_reverse = None
+
+    _origin_3857 = None
 
     @classmethod
     def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> "Grid":
@@ -231,27 +238,30 @@ class Grid:
         return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
     def get_cells_from_wgs_point(self, point: Point) -> list[Tuple[int, int]]:
-        col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
         n_cols, n_rows = self.n_cols(), self.n_rows()
 
-        origin_3857 = ShapelyPoint(self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1]))
+        if self._origin_3857 is None:
+            self._origin_3857 = transform(self._from_4326_to_3857.transform, ShapelyPoint(self.origin.coordinates))
+
+        origin_3857 = self._origin_3857
+
+        if self._absolute_col_coordinates_3857 is None:
+            self._absolute_col_coordinates_3857 = [origin_3857.x + col for col in self.col_coordinates()]
+
+        if self._absolute_row_coordinates_3857 is None:
+            self._absolute_row_coordinates_3857 = [origin_3857.y - row for row in self.row_coordinates()]
+            self._absolute_row_coordinates_3857_reverse = [origin_3857.y - row for row in self.row_coordinates()[::-1]]
+
         point_3857 = transform(self._from_4326_to_3857.transform, ShapelyPoint(point.coordinates))
         rotated_point_3857 = rotate(geom=point_3857, angle=-self.rotation.to_float(), origin=origin_3857)  # type: ignore
 
-        col = None
-        row = None
+        if self._absolute_col_coordinates_3857 is None or self._absolute_row_coordinates_3857 is None:
+            raise ValueError('Grid is not initialized')
 
-        for row_idx in range(n_rows):
-            if origin_3857.y - row_coordinates[row_idx] >= rotated_point_3857.y > origin_3857.y - row_coordinates[row_idx + 1]:
-                row = row_idx
-                break
+        col = bisect_left(self._absolute_col_coordinates_3857, rotated_point_3857.x) - 1  # type: ignore
+        row = n_rows - bisect_left(self._absolute_row_coordinates_3857_reverse, rotated_point_3857.y)  # type: ignore
 
-        for col_idx in range(n_cols):
-            if origin_3857.x + col_coordinates[col_idx] <= rotated_point_3857.x < origin_3857.x + col_coordinates[col_idx + 1]:
-                col = col_idx
-                break
-
-        if col is None or row is None:
+        if col < 0 or col >= n_cols or row < 0 or row >= n_rows:
             return []
 
         return [(col, row)]
@@ -305,7 +315,6 @@ class Grid:
         return geometries.tolist()
 
     def get_wgs_row_polygons(self) -> list[Feature]:
-
         if self._wgs_row_polygons is not None:
             return self._wgs_row_polygons
 
@@ -332,7 +341,6 @@ class Grid:
         return features.tolist()
 
     def get_wgs_column_polygons(self) -> list[Feature]:
-
         if self._wgs_column_polygons is not None:
             return self._wgs_column_polygons
 
@@ -370,7 +378,7 @@ class Grid:
                 (origin_3857_x + col_coordinates[-1], origin_3857_y - (row_coordinates[row] + row_coordinates[row + 1]) / 2),
             ])
 
-            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
             features[row] = LineString(coordinates=geometry_4326)
 
@@ -388,7 +396,7 @@ class Grid:
                 (origin_3857_x + (col_coordinates[col] + col_coordinates[col + 1]) / 2, origin_3857_y - row_coordinates[-1])
             ])
 
-            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
             features[col] = LineString(coordinates=geometry_4326)
 
@@ -407,7 +415,7 @@ class Grid:
                 (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row]),
             ])
 
-            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
             features[row] = LineString(coordinates=geometry_4326)
 
@@ -425,7 +433,7 @@ class Grid:
                 (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[-1])
             ])
 
-            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))
+            rotated_line_string_3857 = rotate(geom=line_string_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_line_string_3857.coords)]
             features[col] = LineString(coordinates=geometry_4326)
 

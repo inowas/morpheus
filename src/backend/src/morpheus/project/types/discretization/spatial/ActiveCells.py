@@ -1,8 +1,9 @@
 import dataclasses
 
 import numpy as np
-from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
+from shapely import LineString as ShapelyLineString, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon, MultiLineString as ShapelyMultiLineString
 from shapely.ops import unary_union
+from shapely.lib import intersection as shapely_intersection
 from morpheus.project.types.discretization.spatial import Grid
 from morpheus.project.types.geometry import GeometryCollection, Polygon, Point, LineString
 from morpheus.project.types.geometry.Feature import Feature
@@ -68,6 +69,19 @@ class ActiveCells:
             data=[]
         )
 
+    @classmethod
+    def from_numpy(cls, data: np.ndarray):
+        rows, cols = data.shape
+        active_cells = []
+        for row in range(rows):
+            for col in range(cols):
+                if data[row, col]:
+                    active_cells.append(ActiveCell(col=col, row=row))
+        return cls(
+            shape=(rows, cols),
+            data=active_cells
+        )
+
     def filter(self, predicate):
         return ActiveCells(
             shape=self.shape,
@@ -78,8 +92,15 @@ class ActiveCells:
         if not isinstance(other, ActiveCells):
             raise ValueError(f'Cannot merge with object of type {type(other)}')
 
+        data = np.full(shape=self.shape, fill_value=False, dtype=bool)
+        data.fill(False)
+        for cell in self.data:
+            data[cell.row, cell.col] = True
+
         for cell in other:
-            self.set_active(col=cell.col, row=cell.row)
+            data[cell.row, cell.col] = True
+
+        return ActiveCells.from_numpy(data)
 
     def contains(self, cell: ActiveCell) -> bool:
         return self.is_active(col=cell.col, row=cell.row)
@@ -90,7 +111,7 @@ class ActiveCells:
             return cls.from_linestring(linestring=geometry, grid=grid)
 
         if isinstance(geometry, MultiPolygon):
-            return cls.from_multipolygon(polygon=geometry, grid=grid)
+            return cls.from_multipolygon(multipolygon=geometry, grid=grid)
 
         if isinstance(geometry, Point):
             return cls.from_point(point=geometry, grid=grid)
@@ -99,70 +120,6 @@ class ActiveCells:
             return cls.from_polygon(polygon=geometry, grid=grid)
 
         raise ValueError(f'Unknown geometry type: {geometry}')
-
-    @classmethod
-    def from_linestring(cls, linestring: LineString | ShapelyLineString, grid: Grid):
-        cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-
-        if not isinstance(linestring, ShapelyLineString):
-            linestring: ShapelyLineString = ShapelyLineString(linestring.coordinates)
-
-        # intersect with grid-outline
-        grid_outline = grid.get_wgs_outline_geometry()
-        grid_outline = ShapelyPolygon(grid_outline.geometry.coordinates[0])
-        if not grid_outline.intersects(linestring):
-            return cells
-
-        linestring: ShapelyLineString = grid_outline.intersection(linestring)
-        if linestring.is_empty:
-            return cells
-
-        row_center_lines = grid.get_wgs_row_center_lines()
-        column_center_lines = grid.get_wgs_column_center_lines()
-
-        intersections = [Point(coordinates=coord) for coord in linestring.coords]
-        for row_coordinate_idx in range(len(row_center_lines)):
-            row_coordinate_line = ShapelyLineString(row_center_lines[row_coordinate_idx].coordinates)
-            intersection = row_coordinate_line.intersection(linestring)
-            if not intersection.is_empty and intersection.geom_type == 'Point':
-                intersections.append(Point(coordinates=intersection.coords[0]))
-
-        for col_coordinate_idx in range(len(column_center_lines)):
-            col_coordinate_line = ShapelyLineString(column_center_lines[col_coordinate_idx].coordinates)
-            intersection = col_coordinate_line.intersection(linestring)
-            if not intersection.is_empty and intersection.geom_type == 'Point':
-                intersections.append(Point(coordinates=intersection.coords[0]))
-
-        for intersection in intersections:
-            cells.merge(ActiveCells.from_point(point=intersection, grid=grid))
-
-        return cells
-
-    @classmethod
-    def from_polygon(cls, polygon: Polygon, grid: Grid):
-        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        area = ShapelyPolygon(polygon.coordinates[0])
-        grid_cell_centers = grid.get_wgs_cell_centers()
-        for col in range(grid.n_cols()):
-            for row in range(grid.n_rows()):
-                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
-                if area.contains(center):
-                    cells.set_active(col=col, row=row)
-
-        return cells
-
-    @classmethod
-    def from_multipolygon(cls, polygon: MultiPolygon, grid: Grid):
-        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        areas = ShapelyMultiPolygon(polygon.coordinates)
-        grid_cell_centers = grid.get_wgs_cell_centers()
-        for col in range(grid.n_cols()):
-            for row in range(grid.n_rows()):
-                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
-                if areas.contains(center):
-                    cells.set_active(col=col, row=row)
-
-        return cells
 
     @classmethod
     def from_point(cls, point: Point, grid: Grid):
@@ -174,8 +131,118 @@ class ActiveCells:
         return affected_cells
 
     @classmethod
-    def from_dict(cls, obj: dict):
+    def from_linestring(cls, linestring: LineString | ShapelyLineString, grid: Grid):
+        # prepare input
+        shapely_linestring: ShapelyLineString = linestring
+        if not isinstance(linestring, ShapelyLineString):
+            shapely_linestring: ShapelyLineString = ShapelyLineString(linestring.coordinates)
 
+        # prepare output
+        cells = np.empty(shape=(grid.n_rows(), grid.n_cols()), dtype=bool)
+        cells.fill(False)
+
+        # intersect input with grid-outline
+        grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
+        shapely_linestring: ShapelyLineString = grid_outline.intersection(shapely_linestring)
+        if shapely_linestring.is_empty:
+            return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+
+        # get grid center lines
+        row_center_lines: list[ShapelyLineString] = [ShapelyLineString(row.coordinates) for row in grid.get_wgs_row_center_lines()]
+        column_center_lines: list[ShapelyLineString] = [ShapelyLineString(col.coordinates) for col in grid.get_wgs_column_center_lines()]
+
+        # calculate intersections with grid center lines and add them to the known points variable
+        # known points are also all the points of the linestring
+        known_points = [Point(coordinates=coord) for coord in shapely_linestring.coords]
+        for row_center_line in row_center_lines:
+            point = row_center_line.intersection(shapely_linestring)
+            if not point.is_empty and point.geom_type == 'Point':
+                known_points.append(Point(coordinates=point.coords[0]))
+
+        for col_center_line in column_center_lines:
+            point = col_center_line.intersection(shapely_linestring)
+            if not point.is_empty and point.geom_type == 'Point':
+                known_points.append(Point(coordinates=point.coords[0]))
+
+        for point in known_points:
+            active_cells = grid.get_cells_from_wgs_point(point=point)
+            for cell in active_cells:
+                col, row = cell
+                cells[row, col] = True
+
+        return cls.from_numpy(cells)
+
+    @classmethod
+    def from_polygon(cls, polygon: Polygon | ShapelyPolygon, grid: Grid):
+        # prepare input
+        shapely_polygon: ShapelyPolygon = polygon
+        if not isinstance(polygon, ShapelyPolygon):
+            shapely_polygon = ShapelyPolygon(polygon.coordinates[0])
+
+        # prepare output
+        cells = np.empty(shape=(grid.n_rows(), grid.n_cols()), dtype=bool)
+        cells.fill(False)
+
+        # intersect input with grid-outline
+        grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
+        shapely_polygon: ShapelyPolygon = grid_outline.intersection(shapely_polygon)
+        if shapely_polygon.is_empty:
+            return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+
+        # get row center lines
+        row_center_lines: ShapelyMultiLineString = ShapelyMultiLineString([ShapelyLineString(row.coordinates) for row in grid.get_wgs_row_center_lines()])
+
+        # calculate the intersections with the grid center lines
+        # intersections is a mult line string with the intersection lines
+        intersections = shapely_intersection(shapely_polygon, row_center_lines)
+        for idx, intersection in enumerate(intersections.geoms):
+            if intersection.is_empty:
+                continue
+            if intersection.geom_type == 'LineString':
+                active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[0]))
+                active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[-1]))
+
+                if len(active_cells_start) == 0 or len(active_cells_end) == 0:
+                    continue
+
+                col_start, row_start = active_cells_start[0]
+                col_end, row_end = active_cells_end[0]
+
+                if row_start != row_end:
+                    raise ValueError(f'Row start {row_start} and row end {row_end} do not match')
+
+                for col in range(col_start, col_end + 1):
+                    cells[row_start, col] = True
+
+            if intersection.geom_type == 'MultiLineString':
+                for line in intersection.geoms:
+                    active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[0]))
+                    active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[-1]))
+                    if len(active_cells_start) == 0 or len(active_cells_end) == 0:
+                        continue
+
+                    col_start, row_start = active_cells_start[0]
+                    col_end, row_end = active_cells_end[0]
+
+                    if row_start != row_end:
+                        raise ValueError(f'Row start {row_start} and row end {row_end} do not match')
+
+                    for col in range(col_start, col_end + 1):
+                        cells[row_start, col] = True
+
+        return cls.from_numpy(cells)
+
+    @classmethod
+    def from_multipolygon(cls, multipolygon: MultiPolygon, grid: Grid):
+        polygons = [Polygon(coordinates=coordinate) for coordinate in multipolygon.coordinates]
+        active_cells = cls.empty_from_grid(grid)
+        for polygon in polygons:
+            active_cells.merge(cls.from_polygon(polygon=polygon, grid=grid))
+
+        return active_cells
+
+    @classmethod
+    def from_dict(cls, obj: dict):
         available_dict_types = ['raster', 'sparse', 'sparse_inverse']
         if obj['type'] not in available_dict_types:
             raise ValueError(f'Unknown grid cells dict_type: {obj["type"]}')
