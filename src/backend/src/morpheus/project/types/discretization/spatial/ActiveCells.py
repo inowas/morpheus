@@ -42,22 +42,16 @@ class ActiveCell:
 @dataclasses.dataclass
 class ActiveCells:
     shape: tuple[int, int]
-    data: list[ActiveCell]
-
-    _data_arr: None | np.ndarray = None
-
-    def get_data_arr(self):
-        if self._data_arr is None:
-            self._data_arr = np.full(shape=self.shape, fill_value=False, dtype=bool)
-            for cell in self.data:
-                self._data_arr[cell.row, cell.col] = True
-        return self._data_arr
+    data: np.ndarray
 
     def __len__(self):
-        return len(self.data)
+        return self.data[self.data == True].size
 
     def __iter__(self):
-        return iter(self.data)
+        for row in range(self.shape[0]):
+            for col in range(self.shape[1]):
+                if self.data[row, col]:
+                    yield ActiveCell(col=col, row=row)
 
     def __eq__(self, other):
         if not isinstance(other, ActiveCells):
@@ -68,55 +62,40 @@ class ActiveCells:
     def empty_from_shape(cls, n_cols: int, n_rows: int):
         return cls(
             shape=(n_rows, n_cols),
-            data=[]
+            data=np.full(shape=(n_rows, n_cols), fill_value=False, dtype=bool)
         )
 
     @classmethod
     def empty_from_grid(cls, grid: Grid):
         return cls(
             shape=(grid.n_rows(), grid.n_cols()),
-            data=[]
+            data=np.full(shape=(grid.n_rows(), grid.n_cols()), fill_value=False, dtype=bool)
         )
 
     @classmethod
     def from_numpy(cls, data: np.ndarray):
         rows, cols = data.shape
-        active_cells = []
-        for row in range(rows):
-            for col in range(cols):
-                if data[row, col]:
-                    active_cells.append(ActiveCell(col=col, row=row))
         return cls(
             shape=(rows, cols),
-            data=active_cells
+            data=data
         )
 
-    def mask(self, mask: np.ndarray):
-        if mask.shape != self.shape:
-            raise ValueError(f'Mask shape {mask.shape} does not match active cells shape {self.shape}')
+    def mask(self, other):
+        if not isinstance(other, ActiveCells):
+            raise ValueError(f'Cannot mask with object of type {type(other)}')
+        if other.shape != self.shape:
+            raise ValueError(f'Mask shape {other.shape} does not match active cells shape {self.shape}')
 
-        data_arr = self.get_data_arr()
-        data = np.logical_and(data_arr, mask)
+        data = np.logical_and(self.data, other.data)
         return ActiveCells.from_numpy(data)
-
-    def filter(self, predicate):
-        return ActiveCells(
-            shape=self.shape,
-            data=[cell for cell in self.data if predicate(cell)]
-        )
 
     def merge(self, other):
         if not isinstance(other, ActiveCells):
             raise ValueError(f'Cannot merge with object of type {type(other)}')
+        if other.shape != self.shape:
+            raise ValueError(f'Merge shape {other.shape} does not match active cells shape {self.shape}')
 
-        data = np.full(shape=self.shape, fill_value=False, dtype=bool)
-        data.fill(False)
-        for cell in self.data:
-            data[cell.row, cell.col] = True
-
-        for cell in other:
-            data[cell.row, cell.col] = True
-
+        data = np.logical_or(self.data, other.data)
         return ActiveCells.from_numpy(data)
 
     def contains(self, cell: ActiveCell) -> bool:
@@ -254,7 +233,7 @@ class ActiveCells:
         polygons = [Polygon(coordinates=coordinate) for coordinate in multipolygon.coordinates]
         active_cells = cls.empty_from_grid(grid)
         for polygon in polygons:
-            active_cells.merge(cls.from_polygon(polygon=polygon, grid=grid))
+            active_cells = active_cells.merge(cls.from_polygon(polygon=polygon, grid=grid))
 
         return active_cells
 
@@ -270,39 +249,38 @@ class ActiveCells:
                 raise ValueError(f'Grid cells shape {obj["shape"]} does not match raster data shape {raster_data.shape}')
 
             empty_value = obj['empty_value'] if 'empty_value' in obj else False
-            grid_cells = []
+            data = np.full(shape=obj['shape'], fill_value=empty_value, dtype=bool)
             for row in range(obj['shape'][0]):
                 for col in range(obj['shape'][1]):
                     value = raster_data[row, col]
                     if value and value != empty_value:
-                        grid_cells.append(ActiveCell(col=col, row=row))
+                        data[row, col] = True
 
             return cls(
                 shape=obj['shape'],
-                data=grid_cells
+                data=data
             )
 
         if obj['type'] == 'sparse':
+            data = np.full(shape=obj['shape'], fill_value=False, dtype=bool)
+            for cell in obj['data']:
+                row, col = cell
+                data[row, col] = True
+
             return cls(
                 shape=obj['shape'],
-                data=[ActiveCell.from_tuple(cell) for cell in obj['data']]
+                data=data
             )
 
         if obj['type'] == 'sparse_inverse':
-            raster_data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
+            data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
             for cell in obj['data']:
                 row, col = cell
-                raster_data[row, col] = False
-
-            grid_cells = []
-            for row in range(obj['shape'][0]):
-                for col in range(obj['shape'][1]):
-                    if raster_data[row, col]:
-                        grid_cells.append(ActiveCell(col=col, row=row))
+                data[row, col] = False
 
             return cls(
                 shape=obj['shape'],
-                data=grid_cells
+                data=data
             )
 
         raise ValueError(f'Unknown grid cells type: {obj["type"]}')
@@ -312,9 +290,10 @@ class ActiveCells:
         available_dict_types = ['raster', 'sparse', 'sparse_inverse']
         dict_type: str = 'raster' if as_raster else 'sparse'
         if auto_detect:
-            if len(self.data) <= (self.shape[0] * self.shape[1] * 0.10):
+            number_of_trues = len(self.data[self.data == True])  # noqa
+            if number_of_trues <= (self.shape[0] * self.shape[1] * 0.10):
                 dict_type = 'sparse'
-            elif len(self.data) >= (self.shape[0] * self.shape[1] * 0.90):
+            elif number_of_trues >= (self.shape[0] * self.shape[1] * 0.90):
                 dict_type = 'sparse_inverse'
             else:
                 dict_type = 'raster'
@@ -326,42 +305,38 @@ class ActiveCells:
             raise ValueError(f'Unknown grid cells dict_type: {dict_type}')
 
         if dict_type == 'sparse':
+            cells = []
+            for row in range(self.shape[0]):
+                for col in range(self.shape[1]):
+                    if self.is_active(col=col, row=row):
+                        cells.append(ActiveCell(col=col, row=row))
             return {
                 'type': dict_type,
                 'shape': self.shape,
-                'data': [cell.to_tuple() for cell in self.data]
+                'data': [cell.to_tuple() for cell in cells]
             }
 
         if dict_type == 'sparse_inverse':
-            inverted_value = False
-            raster = np.full(shape=self.shape, fill_value=inverted_value, dtype=bool)
-            for cell in self.data:
-                raster[cell.row, cell.col] = True
-
-            inverted_raster = np.invert(raster)
-            data = []
+            inverted_raster = np.invert(self.data)
+            cells = []
             for row in range(self.shape[0]):
                 for col in range(self.shape[1]):
                     if inverted_raster[row, col]:
-                        data.append(ActiveCell(col=col, row=row))
+                        cells.append(ActiveCell(col=col, row=row))
 
             return {
                 'type': dict_type,
                 'shape': self.shape,
-                'data': [cell.to_tuple() for cell in data]
+                'data': [cell.to_tuple() for cell in cells]
             }
 
         # save as Raster data
         empty_value = False
-        data = np.full(shape=self.shape, fill_value=empty_value, dtype=bool)
-        for cell in self.data:
-            data[cell.row, cell.col] = True
-
         return {
             'type': dict_type,
             'empty_value': empty_value,
             'shape': self.shape,
-            'data': data.tolist()
+            'data': self.data.tolist()
         }
 
     def n_cols(self) -> int:
@@ -371,21 +346,18 @@ class ActiveCells:
         return self.shape[0]
 
     def is_active(self, col: int, row: int) -> bool:
-        data_arr = self.get_data_arr()
-        return data_arr[row, col] if 0 <= row < self.shape[0] and 0 <= col < self.shape[1] else False
+        return self.data[row, col] if 0 <= row < self.shape[0] and 0 <= col < self.shape[1] else False
 
     def set_inactive(self, col: int, row: int):
-        self.data = [cell for cell in self.data if cell.col != col or cell.row != row]
+        if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
+            return
+        self.data[row, col] = False
 
     def set_active(self, col: int, row: int):
         if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
             return
 
-        if self.is_active(col=col, row=row):
-            return
-
-        self.data.append(ActiveCell(col=col, row=row))
-        self._data_arr = None
+        self.data[row, col] = True
 
     def to_geojson(self, grid: Grid) -> GeometryCollection:
         cells_geometries = grid.get_wgs_cell_geometries()
@@ -396,12 +368,6 @@ class ActiveCells:
                     cell_geometries.append(cells_geometries[row][col])
 
         return GeometryCollection(geometries=cell_geometries)
-
-    def to_mask(self) -> np.ndarray:
-        raster_data = np.full(shape=self.shape, fill_value=False, dtype=bool)
-        for cell in self.data:
-            raster_data[cell.row, cell.col] = True
-        return raster_data
 
     def outline_to_geojson(self, grid: Grid) -> Feature:
         geometries: list[Polygon] = []

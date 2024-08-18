@@ -1,3 +1,5 @@
+import numpy as np
+
 from .ActiveCells import ActiveCells
 
 
@@ -7,7 +9,7 @@ def test_empty_grid_cells() -> None:
     shape = (ny, nx)
     grid_cells = ActiveCells.empty_from_shape(n_cols=nx, n_rows=ny)
     assert shape == grid_cells.shape
-    assert len(grid_cells.data) == 0
+    assert grid_cells.data.tolist() == np.full(shape, False).tolist()
 
 
 def test_grid_cells_to_sparse_dict() -> None:
@@ -131,7 +133,7 @@ def test_grid_cells_autodetect() -> None:
     assert grid_cells.to_dict(auto_detect=True)['type'] == 'sparse_inverse'
 
 
-def test_grid_cells_filter() -> None:
+def test_grid_cells_mask() -> None:
     boundary_cells = ActiveCells.empty_from_shape(n_cols=15, n_rows=5)
     boundary_cells.set_active(col=0, row=0)
     boundary_cells.set_active(col=0, row=1)
@@ -145,7 +147,7 @@ def test_grid_cells_filter() -> None:
     model_cells.set_active(col=0, row=3)
     model_cells.set_active(col=0, row=4)
 
-    boundary_cells_filtered = boundary_cells.filter(lambda cell: model_cells.contains(cell))
+    boundary_cells_filtered = boundary_cells.mask(other=model_cells)
     assert boundary_cells_filtered.to_dict(auto_detect=True) == {
         'type': 'sparse',
         'shape': (5, 15),

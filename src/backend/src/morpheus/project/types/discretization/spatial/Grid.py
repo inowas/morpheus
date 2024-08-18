@@ -336,7 +336,7 @@ class Grid:
             (origin_3857.x + col_coordinates[start_col], origin_3857.y - row_coordinates[row]),
         ))
 
-        rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857.x, origin_3857.y))
+        rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857.x, origin_3857.y))  # type: ignore
         polygon_4326 = transform(self._from_3857_to_4326.transform, rotated_polygon_3857)
 
         return Polygon(coordinates=[polygon_4326.exterior.coords])

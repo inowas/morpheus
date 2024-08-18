@@ -38,7 +38,7 @@ def calculate_wel_boundary_stress_period_data(
         layer_indices = [layer_ids.index(layer_id) for layer_id in wel_boundary.affected_layers]
 
         # we need to filter the affected cells to only include cells that are part of the model
-        wel_boundary.affected_cells = wel_boundary.affected_cells.filter(lambda cell: spatial_discretization.affected_cells.contains(cell))
+        wel_boundary.affected_cells = wel_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
 
         if wel_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]
