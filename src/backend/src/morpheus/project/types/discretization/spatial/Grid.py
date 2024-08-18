@@ -266,8 +266,14 @@ class Grid:
         col = bisect_left(self._absolute_col_coordinates_3857, rotated_point_3857.x) - 1  # type: ignore
         row = n_rows - bisect_left(self._absolute_row_coordinates_3857_reverse, rotated_point_3857.y)  # type: ignore
 
-        if col < 0 or col >= n_cols or row < 0 or row >= n_rows:
-            return []
+        if col < 0:
+            col = 0
+        if row < 0:
+            row = 0
+        if col >= n_cols:
+            col = n_cols - 1
+        if row >= n_rows:
+            row = n_rows - 1
 
         return [(col, row)]
 

@@ -182,6 +182,7 @@ class ActiveCells:
         # intersect input with grid-outline
         grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
         shapely_polygon: ShapelyPolygon = grid_outline.intersection(shapely_polygon)
+
         if shapely_polygon.is_empty:
             return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
 
@@ -198,6 +199,8 @@ class ActiveCells:
                 active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[0]))
                 active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[-1]))
 
+                print(active_cells_start, active_cells_end)
+
                 if len(active_cells_start) == 0 or len(active_cells_end) == 0:
                     continue
 
@@ -211,6 +214,7 @@ class ActiveCells:
                     cells[row_start, col] = True
 
             if intersection.geom_type == 'MultiLineString':
+                print(intersection)
                 for line in intersection.geoms:
                     active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[0]))
                     active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[-1]))
