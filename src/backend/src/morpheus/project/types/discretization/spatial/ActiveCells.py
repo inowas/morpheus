@@ -45,7 +45,7 @@ class ActiveCells:
     data: np.ndarray
 
     def __len__(self):
-        return self.data[self.data == True].size
+        return self.data[self.data == True].size  # noqa
 
     def __iter__(self):
         for row in range(self.shape[0]):
@@ -83,7 +83,7 @@ class ActiveCells:
     def mask(self, other):
         if not isinstance(other, ActiveCells):
             raise ValueError(f'Cannot mask with object of type {type(other)}')
-        if other.shape != self.shape:
+        if self.shape != other.shape:
             raise ValueError(f'Mask shape {other.shape} does not match active cells shape {self.shape}')
 
         data = np.logical_and(self.data, other.data)
@@ -176,8 +176,7 @@ class ActiveCells:
             shapely_polygon = ShapelyPolygon(polygon.coordinates[0])
 
         # prepare output
-        cells = np.empty(shape=(grid.n_rows(), grid.n_cols()), dtype=bool)
-        cells.fill(False)
+        cells = np.full(shape=(grid.n_rows(), grid.n_cols()), fill_value=False, dtype=bool)
 
         # intersect input with grid-outline
         grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
@@ -261,7 +260,7 @@ class ActiveCells:
                         data[row, col] = True
 
             return cls(
-                shape=obj['shape'],
+                shape=(obj['shape'][0], obj['shape'][1]),
                 data=data
             )
 
@@ -272,7 +271,7 @@ class ActiveCells:
                 data[row, col] = True
 
             return cls(
-                shape=obj['shape'],
+                shape=(obj['shape'][0], obj['shape'][1]),
                 data=data
             )
 
@@ -283,7 +282,7 @@ class ActiveCells:
                 data[row, col] = False
 
             return cls(
-                shape=obj['shape'],
+                shape=(obj['shape'][0], obj['shape'][1]),
                 data=data
             )
 
