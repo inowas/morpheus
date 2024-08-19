@@ -164,8 +164,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
             layer_indices = [layer_ids.index(layer_id) for layer_id in fhb_boundary.affected_layers]
 
             # we need to filter the affected cells to only include cells that are part of the model
-            fhb_boundary.affected_cells = fhb_boundary.affected_cells.filter(
-                lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+            fhb_boundary.affected_cells = fhb_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
 
             if fhb_boundary.number_of_observations() == 1:
                 # if we only have one observation point
@@ -245,8 +244,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
             layer_indices = [layer_ids.index(layer_id) for layer_id in fhb_boundary.affected_layers]
 
             # we need to filter the affected cells to only include cells that are part of the model
-            fhb_boundary.affected_cells = fhb_boundary.affected_cells.filter(
-                lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+            fhb_boundary.affected_cells = fhb_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
 
             if fhb_boundary.number_of_observations() == 1:
                 # if we only have one observation point

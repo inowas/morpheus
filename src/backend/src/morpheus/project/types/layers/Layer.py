@@ -366,8 +366,8 @@ class LayerPropertyValues:
 
         if self.zones is not None and len(self.zones) > 0:
             for zone in self.zones:
-                zone_data = np.ones(shape) * zone.value * zone.affected_cells.to_mask()
-                np_raster_data = np.where(zone.affected_cells.to_mask(), zone_data, np_raster_data)
+                zone_data = np.ones(shape) * zone.value * zone.affected_cells.data
+                np_raster_data = np.where(zone.affected_cells.data, zone_data, np_raster_data)
 
         return np_raster_data.tolist()
 
