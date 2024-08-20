@@ -93,7 +93,6 @@ const useAuthentication = (): IUseAuthentication => {
     };
   };
 
-
   return {
     accessTokenObj: getAccessToken(),
     accessToken: typedAccessToken,
