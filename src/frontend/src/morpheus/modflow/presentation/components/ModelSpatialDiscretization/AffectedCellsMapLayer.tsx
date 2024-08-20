@@ -171,10 +171,11 @@ const AffectedCellsMapLayer = ({
       });
 
       if (colGeometry && 'Polygon' === colGeometry.geometry.type && rowGeometry && 'Polygon' === rowGeometry.geometry.type) {
-        const intersection = turf.intersect(
+
+        const intersection = turf.intersect(turf.featureCollection([
           turf.polygon(colGeometry.geometry.coordinates),
           turf.polygon(rowGeometry.geometry.coordinates),
-        );
+        ]));
 
         if (!intersection) {
           return;

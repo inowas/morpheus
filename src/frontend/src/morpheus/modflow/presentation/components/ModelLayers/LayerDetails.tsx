@@ -82,6 +82,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'top')}
                   readOnly={false}
                   unit={'m asl'}
+                  precision={3}
                 />
               </TabPane>,
               isDisabled: !isTopLayer,
@@ -100,6 +101,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'bottom')}
                   readOnly={false}
                   unit={'m asl'}
+                  precision={3}
                 />
               </TabPane>,
             },
@@ -117,6 +119,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'hk')}
                   readOnly={false}
                   unit={'m/d'}
+                  precision={3}
                 />
               </TabPane>,
             }, {
@@ -133,6 +136,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'hani')}
                   readOnly={false}
                   unit={'m/d'}
+                  precision={3}
                 />
               </TabPane>,
             },
@@ -150,6 +154,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'vka')}
                   readOnly={false}
                   unit={'m/d'}
+                  precision={3}
                 />
               </TabPane>,
             },
@@ -167,6 +172,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'specific_storage')}
                   readOnly={false}
                   unit={'1/m'}
+                  precision={8}
                 />
               </TabPane>,
             },
@@ -184,6 +190,7 @@ const LayerDetails = ({layer, onChangeLayerConfinement, onChangeLayerProperty, i
                   onSubmitZoneChange={handleSubmitZoneChange(layer.layer_id, 'specific_yield')}
                   readOnly={false}
                   unit={'-'}
+                  precision={4}
                 />
               </TabPane>,
             },
