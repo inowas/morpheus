@@ -2,7 +2,7 @@ import {useAuthentication as useAuthenticationHook, IUseAuthentication as IUseAu
 
 
 interface IUseAuthentication {
-  accessToken: IUseAuthenticationHook['accessToken'] | null;
+  accessToken: IUseAuthenticationHook['accessTokenObj'] | null;
   onUnauthorized: () => void;
   userProfile: {
     email: string;
@@ -11,11 +11,11 @@ interface IUseAuthentication {
 }
 
 const useAuthentication = () => {
-  const {accessToken, signOutLocally, userProfile} = useAuthenticationHook();
+  const {accessToken, logout, userProfile} = useAuthenticationHook();
 
   return {
-    accessToken,
-    onUnauthorized: signOutLocally,
+    accessToken: accessToken,
+    onUnauthorized: logout,
     userProfile,
   };
 };
