@@ -2,12 +2,12 @@ import {INavbarItem} from 'common/components/Navbar/types/navbar.type';
 import useTranslate from './useTranslate';
 
 const getProjectNavbarItems = (translate: (key: string) => string, projectId: string, isReadOnly: boolean): INavbarItem[] => ([
-  {
-    name: 'project',
-    label: translate('Overview'),
-    admin: false,
-    to: '/projects/' + projectId,
-  },
+  // {
+  //   name: 'project',
+  //   label: translate('Overview'),
+  //   admin: false,
+  //   to: '/projects/' + projectId,
+  // },
   {
     name: 'model',
     label: translate('Model'),
@@ -20,12 +20,12 @@ const getProjectNavbarItems = (translate: (key: string) => string, projectId: st
     admin: false,
     to: '/projects/' + projectId + '/scenarios',
   },
-  {
-    name: 'calculations',
-    label: translate('Calculations'),
-    admin: false,
-    to: '/projects/' + projectId + '/calculations',
-  },
+  // {
+  //   name: 'calculations',
+  //   label: translate('Calculations'),
+  //   admin: false,
+  //   to: '/projects/' + projectId + '/calculations',
+  // },
   {
     name: 'assets',
     label: translate('Assets'),

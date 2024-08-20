@@ -11,7 +11,7 @@ interface ListItemProps {
   items: IMenuItem | IDropdownItem;
   depthLevel?: number;
   onCloseMobileMenu: () => void;
-  location: any;
+  location: Location;
   navigateTo: (path: string) => void;
 }
 
@@ -44,9 +44,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
   }, [setDropdown]);
 
 
-  const isActive = (path: string): boolean => {
-    return path === location.pathname || location.hash === path;
-  };
+  const isActive = (path: string): boolean => location.pathname.includes(path);
 
   const onMouseEnter = () => {
     if (!isMobile) {
