@@ -11,6 +11,7 @@ const config = {
     realm: process.env.KEYCLOAK_REALM || 'inowas-dev',
     clientId: process.env.KEYCLOAK_CLIENT_ID || 'morpheus-frontend',
   },
+  debug: window.location.search.includes('debug=true'),
 };
 
 export default config;

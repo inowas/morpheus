@@ -9,6 +9,7 @@ import SignInPage from './authentication/presentation/containers/SignInPage';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 import ProjectsPage from './modflow/presentation/containers/ProjectListPage';
 import AuthCallback from './authentication/presentation/containers/AuthCallbackPage';
+import HomePage from './application/presentation/containers/Home';
 
 const Router = () => {
   const wrapPublicComponent = (component: React.ReactElement, disableFooter: boolean = false) => {
@@ -31,7 +32,7 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate replace={true} to="/projects"/>}/>
+      <Route path="/" element={wrapPublicComponent(<HomePage/>)}/>
       <Route path="/auth" element={wrapPublicComponent(<SignInPage/>)}/>
       <Route path="/auth/callback" element={wrapPublicComponent(<AuthCallback redirectTo="/projects"/>)}/>
       <Route path="/projects" element={wrapPrivateComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>

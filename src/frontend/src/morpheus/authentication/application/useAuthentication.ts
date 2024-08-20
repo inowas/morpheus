@@ -1,17 +1,57 @@
-import {useAuth} from 'react-oidc-context';
-import {IUserProfile} from '../types';
-import {useEffect} from 'react';
+import {useOidc, useOidcAccessToken, useOidcIdToken, useOidcUser} from '@axa-fr/react-oidc';
+
+type IAccessToken = string;
+
+interface IAccessTokenPayload {
+  exp: number;
+  iat: number;
+  auth_time: number;
+  jti: string;
+  iss: string;
+  aud: string;
+  sub: string;
+  typ: 'Bearer';
+  azp: string;
+  sid: string;
+}
+
+type IIdToken = string;
+
+interface IIdTokenPayload {
+  exp: number;
+  iat: number;
+  auth_time: number;
+  jti: string;
+  iss: string;
+  aud: string;
+  sub: string;
+  typ: 'ID';
+  azp: string;
+  nonce: string;
+  sid: string;
+}
+
+interface IOdcUserOInfo {
+  sub: string;
+  email_verified?: boolean;
+  name?: string;
+  preferred_username?: string;
+  given_name?: string;
+  family_name?: string;
+  email?: string;
+}
+
+type IOidcUserState = 'Unauthenticated' | 'Loading' | 'Loaded' | 'LoadingError';
 
 interface IUseAuthentication {
   isAuthenticated: boolean;
   isLoading: boolean;
-  accessToken: IOAuthToken | null;
-  revokeTokens: () => Promise<void>;
-  signOutLocally: () => Promise<void>;
-  signOutSilent: () => Promise<void>;
-  signOutRedirect: () => Promise<void>;
-  signIn: () => Promise<void>;
-  userProfile?: IUserProfile;
+  accessTokenObj: IOAuthToken | null;
+  accessToken: string;
+  renewTokens: () => void;
+  login: () => void;
+  logout: () => void;
+  userProfile?: IOdcUserOInfo;
   error?: Error;
 }
 
@@ -20,60 +60,50 @@ interface IOAuthToken {
   expires_in: number;
   token_type: string;
   scope: string;
-  refresh_token: string;
   user_id: string;
 }
 
 const useAuthentication = (): IUseAuthentication => {
 
-  const auth = useAuth();
+  const {logout, isAuthenticated, login, renewTokens} = useOidc();
+  const {accessToken, accessTokenPayload} = useOidcAccessToken();
+  const typedAccessToken: IAccessToken = accessToken;
+  const typedAccessTokenPayload: IAccessTokenPayload = accessTokenPayload;
 
-  useEffect(() => {
-    return auth?.events?.addAccessTokenExpiring(() => {
-      auth.revokeTokens();
-    });
-  }, [auth.events]);
+  const {idToken, idTokenPayload} = useOidcIdToken();
+  const typedIdToken: IIdToken = idToken;
+  const typedIdTokenPayload: IIdTokenPayload = idTokenPayload;
 
-  const signIn = async () => {
-    await auth.signinRedirect();
-  };
-
-  const signOutLocally = async () => {
-    await auth.removeUser();
-  };
-
-  const revokeTokens = async () => {
-    await auth.revokeTokens();
-  };
+  const {oidcUser, oidcUserLoadingState, reloadOidcUser} = useOidcUser();
+  const typedOidcUser: IOdcUserOInfo = oidcUser;
+  const typedOidcUserLoadingState: IOidcUserState = oidcUserLoadingState as unknown as IOidcUserState;
 
   const getAccessToken = (): IOAuthToken | null => {
 
-    if (!auth.user) {
+    if (!oidcUser || !accessToken) {
       return null;
     }
 
     return {
-      access_token: auth.user.access_token,
-      expires_in: auth.user.expires_in || 0,
-      token_type: auth.user.token_type,
-      scope: auth.user.scope || '',
-      refresh_token: auth.user.refresh_token || '',
-      user_id: auth.user.profile.sub,
+      access_token: typedAccessToken,
+      expires_in: typedAccessTokenPayload.exp,
+      token_type: typedAccessTokenPayload.typ,
+      scope: typedAccessTokenPayload.aud,
+      user_id: typedOidcUser.sub,
     };
   };
 
 
   return {
-    accessToken: getAccessToken(),
-    error: auth.error,
-    isAuthenticated: auth.isAuthenticated,
-    isLoading: auth.isLoading,
-    revokeTokens,
-    signIn,
-    signOutLocally,
-    signOutSilent: auth.signoutSilent,
-    signOutRedirect: auth.signoutRedirect,
-    userProfile: auth.user?.profile as IUserProfile | undefined,
+    accessTokenObj: getAccessToken(),
+    accessToken: typedAccessToken,
+    isAuthenticated: isAuthenticated,
+    isLoading: 'Loading' === typedOidcUserLoadingState,
+    login: login,
+    logout: logout,
+    renewTokens: renewTokens,
+    userProfile: oidcUser,
+    error: undefined,
   };
 };
 
