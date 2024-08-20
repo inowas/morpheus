@@ -3,6 +3,7 @@ import React, {ReactNode, useEffect, useState} from 'react';
 import {useTranslate} from '../../application';
 import {useNavigate, useReleaseVersion} from 'common/hooks';
 import {ContentContainer} from '../components';
+import {useAuthentication} from '../../incoming';
 
 interface IProps {
   children: ReactNode;
@@ -14,6 +15,7 @@ type ILanguageCode = 'de-DE' | 'en-GB';
 const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
 
   const {i18n} = useTranslate();
+  const {isAuthenticated, login, logout} = useAuthentication();
 
   const [language, setLanguage] = useState<ILanguageCode>(i18n.language as ILanguageCode);
   const navigateTo = useNavigate();
@@ -35,6 +37,9 @@ const ApplicationContainer = ({children, disableFooter = false}: IProps) => {
         language={language}
         languageList={languageList}
         onChangeLanguage={setLanguage}
+        isAuthenticated={isAuthenticated}
+        onLogout={() => logout()}
+        onLogin={() => login()}
       />
       <ContentContainer>
         {children}

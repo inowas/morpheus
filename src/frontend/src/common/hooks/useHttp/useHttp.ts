@@ -3,15 +3,6 @@ import axios, {AxiosError, AxiosHeaders, InternalAxiosRequestConfig} from 'axios
 
 import {useMemo} from 'react';
 
-export interface IOAuthToken {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string | null;
-  refresh_token: string;
-  user_id: string;
-}
-
 export interface IHttpError {
   code: number;
   message: string;
@@ -21,6 +12,8 @@ export interface IHttpError {
 export interface IHttpPostResponse {
   location: string | undefined;
 }
+
+type IAccessToken = string;
 
 export interface IUseHttp {
   httpGet: <T>(url: string, asBlob?: boolean) => Promise<Result<T, IHttpError>>;
@@ -35,8 +28,7 @@ interface IAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const useHttp = (apiBaseUrl: string, auth?: {
-  accessToken: IOAuthToken,
-  onRefreshToken?: (token: IOAuthToken) => Promise<IOAuthToken>,
+  accessToken: IAccessToken,
   onUnauthorized: () => void,
 }): IUseHttp => {
 
@@ -73,7 +65,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
       }
 
       if (auth) {
-        config.headers.Authorization = `Bearer ${auth.accessToken.access_token}`;
+        config.headers.Authorization = `Bearer ${auth.accessToken}`;
       }
 
       if (config.url && config.url.startsWith(config.baseURL)) {
@@ -88,19 +80,7 @@ const useHttp = (apiBaseUrl: string, auth?: {
         (response) => response,
         async (error) => {
 
-          const originalRequest = error.config;
-
-          if (auth.onRefreshToken) {
-            if (401 === error.response.status && !originalRequest._retry) {
-              const newToken = await auth?.onRefreshToken(auth?.accessToken);
-              originalRequest.headers.Authorization = 'Bearer ' + newToken.access_token;
-              originalRequest._retry = true;
-              return instance(originalRequest);
-            }
-          }
-
-          if (!auth.onRefreshToken && 401 === error.response.status) {
-            console.log('test_123');
+          if (401 === error.response.status) {
             return auth.onUnauthorized();
           }
 

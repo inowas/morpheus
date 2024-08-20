@@ -1,12 +1,13 @@
 import React from 'react';
-import {useAuthentication} from '../../outgoing';
 import {Navigate} from 'react-router-dom';
+import useAuthentication from '../../application/useAuthentication';
 
 interface IProps {
   children: React.ReactNode;
 }
 
 const PrivateRoute = ({children}: IProps) => {
+
   const {isAuthenticated, isLoading} = useAuthentication();
 
   if (isLoading) {
@@ -18,7 +19,7 @@ const PrivateRoute = ({children}: IProps) => {
   }
 
   return (
-    <Navigate replace={true} to="/auth"/>
+    <Navigate replace={true} to="/"/>
   );
 
 };
