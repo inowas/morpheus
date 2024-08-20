@@ -1,8 +1,9 @@
 import dataclasses
 
 import numpy as np
-from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
+from shapely import LineString as ShapelyLineString, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon, MultiLineString as ShapelyMultiLineString
 from shapely.ops import unary_union
+from shapely.lib import intersection as shapely_intersection
 from morpheus.project.types.discretization.spatial import Grid
 from morpheus.project.types.geometry import GeometryCollection, Polygon, Point, LineString
 from morpheus.project.types.geometry.Feature import Feature
@@ -41,13 +42,16 @@ class ActiveCell:
 @dataclasses.dataclass
 class ActiveCells:
     shape: tuple[int, int]
-    data: list[ActiveCell]
+    data: np.ndarray
 
     def __len__(self):
-        return len(self.data)
+        return self.data[self.data == True].size  # noqa
 
     def __iter__(self):
-        return iter(self.data)
+        for row in range(self.shape[0]):
+            for col in range(self.shape[1]):
+                if self.data[row, col]:
+                    yield ActiveCell(col=col, row=row)
 
     def __eq__(self, other):
         if not isinstance(other, ActiveCells):
@@ -58,21 +62,41 @@ class ActiveCells:
     def empty_from_shape(cls, n_cols: int, n_rows: int):
         return cls(
             shape=(n_rows, n_cols),
-            data=[]
+            data=np.full(shape=(n_rows, n_cols), fill_value=False, dtype=bool)
         )
 
     @classmethod
     def empty_from_grid(cls, grid: Grid):
         return cls(
             shape=(grid.n_rows(), grid.n_cols()),
-            data=[]
+            data=np.full(shape=(grid.n_rows(), grid.n_cols()), fill_value=False, dtype=bool)
         )
 
-    def filter(self, predicate):
-        return ActiveCells(
-            shape=self.shape,
-            data=[cell for cell in self.data if predicate(cell)]
+    @classmethod
+    def from_numpy(cls, data: np.ndarray):
+        rows, cols = data.shape
+        return cls(
+            shape=(rows, cols),
+            data=data
         )
+
+    def mask(self, other):
+        if not isinstance(other, ActiveCells):
+            raise ValueError(f'Cannot mask with object of type {type(other)}')
+        if self.shape != other.shape:
+            raise ValueError(f'Mask shape {other.shape} does not match active cells shape {self.shape}')
+
+        data = np.logical_and(self.data, other.data)
+        return ActiveCells.from_numpy(data)
+
+    def merge(self, other):
+        if not isinstance(other, ActiveCells):
+            raise ValueError(f'Cannot merge with object of type {type(other)}')
+        if other.shape != self.shape:
+            raise ValueError(f'Merge shape {other.shape} does not match active cells shape {self.shape}')
+
+        data = np.logical_or(self.data, other.data)
+        return ActiveCells.from_numpy(data)
 
     def contains(self, cell: ActiveCell) -> bool:
         return self.is_active(col=cell.col, row=cell.row)
@@ -83,7 +107,7 @@ class ActiveCells:
             return cls.from_linestring(linestring=geometry, grid=grid)
 
         if isinstance(geometry, MultiPolygon):
-            return cls.from_multipolygon(polygon=geometry, grid=grid)
+            return cls.from_multipolygon(multipolygon=geometry, grid=grid)
 
         if isinstance(geometry, Point):
             return cls.from_point(point=geometry, grid=grid)
@@ -94,91 +118,130 @@ class ActiveCells:
         raise ValueError(f'Unknown geometry type: {geometry}')
 
     @classmethod
-    def from_linestring(cls, linestring: LineString, grid: Grid):
-        cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        linestring = ShapelyLineString(linestring.coordinates)
-
-        # algorithm to find the cells that intersect the linestring
-        # 1. check all row and column geometries if they intersect the linestring
-        # 2. if they intersect, check the matrix of row and column geometries if the cell intersects the linestring
-        row_geometries = grid.get_wgs_row_geometries()
-        col_geometries = grid.get_wgs_column_geometries()
-        cell_geometries = grid.get_wgs_cell_geometries()
-
-        intersected_rows = []
-        for row_idx in range(len(row_geometries)):
-            row_geometry = ShapelyPolygon(row_geometries[row_idx].geometry.coordinates[0])
-            if row_geometry.intersects(linestring):
-                intersected_rows.append(row_idx)
-
-        intersected_cols = []
-        for col_idx in range(len(col_geometries)):
-            col_geometry = ShapelyPolygon(col_geometries[col_idx].geometry.coordinates[0])
-            if col_geometry.intersects(linestring):
-                intersected_cols.append(col_idx)
-
-        for col_idx in intersected_cols:
-            for row_idx in intersected_rows:
-                cell_geometry = ShapelyPolygon(cell_geometries[row_idx][col_idx].coordinates[0])
-                if cell_geometry.intersects(linestring):
-                    cells.set_active(col=col_idx, row=row_idx)
-
-        return cells
-
-    @classmethod
-    def from_polygon(cls, polygon: Polygon, grid: Grid):
-        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        area = ShapelyPolygon(polygon.coordinates[0])
-        grid_cell_centers = grid.get_wgs_cell_centers()
-        for col in range(grid.n_cols()):
-            for row in range(grid.n_rows()):
-                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
-                if area.contains(center):
-                    cells.set_active(col=col, row=row)
-
-        return cells
-
-    @classmethod
-    def from_multipolygon(cls, polygon: MultiPolygon, grid: Grid):
-        cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        areas = ShapelyMultiPolygon(polygon.coordinates)
-        grid_cell_centers = grid.get_wgs_cell_centers()
-        for col in range(grid.n_cols()):
-            for row in range(grid.n_rows()):
-                center = ShapelyPoint(grid_cell_centers[row][col].coordinates)
-                if areas.contains(center):
-                    cells.set_active(col=col, row=row)
-
-        return cells
-
-    @classmethod
     def from_point(cls, point: Point, grid: Grid):
-        cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        point = ShapelyPoint(point.coordinates)
-        grid_row_geometries = grid.get_wgs_row_geometries()
-        grid_col_geometries = grid.get_wgs_column_geometries()
+        affected_cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+        for cell in grid.get_cells_from_wgs_point(point=point):
+            col, row = cell
+            affected_cells.set_active(col=col, row=row)
 
-        row = None
-        for row_idx in range(len(grid_row_geometries)):
-            if ShapelyPolygon(grid_row_geometries[row_idx].geometry.coordinates[0]).contains(point):
-                row = row_idx
-                break
+        return affected_cells
 
-        col = None
-        for col_idx in range(len(grid_col_geometries)):
-            if ShapelyPolygon(grid_col_geometries[col_idx].geometry.coordinates[0]).contains(point):
-                col = col_idx
-                break
+    @classmethod
+    def from_linestring(cls, linestring: LineString | ShapelyLineString, grid: Grid):
+        # prepare input
+        shapely_linestring: ShapelyLineString = linestring
+        if not isinstance(linestring, ShapelyLineString):
+            shapely_linestring: ShapelyLineString = ShapelyLineString(linestring.coordinates)
 
-        if row is None or col is None:
-            raise ValueError(f'Point {point} is not contained in any grid cell')
+        # prepare output
+        cells = np.empty(shape=(grid.n_rows(), grid.n_cols()), dtype=bool)
+        cells.fill(False)
 
-        cells.set_active(col=col, row=row)
-        return cells
+        # intersect input with grid-outline
+        grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
+        shapely_linestring: ShapelyLineString = grid_outline.intersection(shapely_linestring)
+        if shapely_linestring.is_empty:
+            return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+
+        # get grid center lines
+        row_center_lines: list[ShapelyLineString] = [ShapelyLineString(row.coordinates) for row in grid.get_wgs_row_center_lines()]
+        column_center_lines: list[ShapelyLineString] = [ShapelyLineString(col.coordinates) for col in grid.get_wgs_column_center_lines()]
+
+        # calculate intersections with grid center lines and add them to the known points variable
+        # known points are also all the points of the linestring
+        known_points = [Point(coordinates=coord) for coord in shapely_linestring.coords]
+        for row_center_line in row_center_lines:
+            point = row_center_line.intersection(shapely_linestring)
+            if not point.is_empty and point.geom_type == 'Point':
+                known_points.append(Point(coordinates=point.coords[0]))
+
+        for col_center_line in column_center_lines:
+            point = col_center_line.intersection(shapely_linestring)
+            if not point.is_empty and point.geom_type == 'Point':
+                known_points.append(Point(coordinates=point.coords[0]))
+
+        for point in known_points:
+            active_cells = grid.get_cells_from_wgs_point(point=point)
+            for cell in active_cells:
+                col, row = cell
+                cells[row, col] = True
+
+        return cls.from_numpy(cells)
+
+    @classmethod
+    def from_polygon(cls, polygon: Polygon | ShapelyPolygon, grid: Grid):
+        # prepare input
+        shapely_polygon: ShapelyPolygon = polygon
+        if not isinstance(polygon, ShapelyPolygon):
+            shapely_polygon = ShapelyPolygon(polygon.coordinates[0])
+
+        # prepare output
+        cells = np.full(shape=(grid.n_rows(), grid.n_cols()), fill_value=False, dtype=bool)
+
+        # intersect input with grid-outline
+        grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
+        shapely_polygon: ShapelyPolygon = grid_outline.intersection(shapely_polygon)
+
+        if shapely_polygon.is_empty:
+            return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+
+        # get row center lines
+        row_center_lines: ShapelyMultiLineString = ShapelyMultiLineString([ShapelyLineString(row.coordinates) for row in grid.get_wgs_row_center_lines()])
+
+        # calculate the intersections with the grid center lines
+        # intersections is a mult line string with the intersection lines
+        intersections = shapely_intersection(shapely_polygon, row_center_lines)
+        for idx, intersection in enumerate(intersections.geoms):
+            if intersection.is_empty:
+                continue
+            if intersection.geom_type == 'LineString':
+                active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[0]))
+                active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[-1]))
+
+                print(active_cells_start, active_cells_end)
+
+                if len(active_cells_start) == 0 or len(active_cells_end) == 0:
+                    continue
+
+                col_start, row_start = active_cells_start[0]
+                col_end, row_end = active_cells_end[0]
+
+                if row_start != row_end:
+                    raise ValueError(f'Row start {row_start} and row end {row_end} do not match')
+
+                for col in range(col_start, col_end + 1):
+                    cells[row_start, col] = True
+
+            if intersection.geom_type == 'MultiLineString':
+                print(intersection)
+                for line in intersection.geoms:
+                    active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[0]))
+                    active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[-1]))
+                    if len(active_cells_start) == 0 or len(active_cells_end) == 0:
+                        continue
+
+                    col_start, row_start = active_cells_start[0]
+                    col_end, row_end = active_cells_end[0]
+
+                    if row_start != row_end:
+                        raise ValueError(f'Row start {row_start} and row end {row_end} do not match')
+
+                    for col in range(col_start, col_end + 1):
+                        cells[row_start, col] = True
+
+        return cls.from_numpy(cells)
+
+    @classmethod
+    def from_multipolygon(cls, multipolygon: MultiPolygon, grid: Grid):
+        polygons = [Polygon(coordinates=coordinate) for coordinate in multipolygon.coordinates]
+        active_cells = cls.empty_from_grid(grid)
+        for polygon in polygons:
+            active_cells = active_cells.merge(cls.from_polygon(polygon=polygon, grid=grid))
+
+        return active_cells
 
     @classmethod
     def from_dict(cls, obj: dict):
-
         available_dict_types = ['raster', 'sparse', 'sparse_inverse']
         if obj['type'] not in available_dict_types:
             raise ValueError(f'Unknown grid cells dict_type: {obj["type"]}')
@@ -189,39 +252,38 @@ class ActiveCells:
                 raise ValueError(f'Grid cells shape {obj["shape"]} does not match raster data shape {raster_data.shape}')
 
             empty_value = obj['empty_value'] if 'empty_value' in obj else False
-            grid_cells = []
+            data = np.full(shape=obj['shape'], fill_value=empty_value, dtype=bool)
             for row in range(obj['shape'][0]):
                 for col in range(obj['shape'][1]):
                     value = raster_data[row, col]
                     if value and value != empty_value:
-                        grid_cells.append(ActiveCell(col=col, row=row))
+                        data[row, col] = True
 
             return cls(
-                shape=obj['shape'],
-                data=grid_cells
+                shape=(obj['shape'][0], obj['shape'][1]),
+                data=data
             )
 
         if obj['type'] == 'sparse':
+            data = np.full(shape=obj['shape'], fill_value=False, dtype=bool)
+            for cell in obj['data']:
+                row, col = cell
+                data[row, col] = True
+
             return cls(
-                shape=obj['shape'],
-                data=[ActiveCell.from_tuple(cell) for cell in obj['data']]
+                shape=(obj['shape'][0], obj['shape'][1]),
+                data=data
             )
 
         if obj['type'] == 'sparse_inverse':
-            raster_data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
+            data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
             for cell in obj['data']:
                 row, col = cell
-                raster_data[row, col] = False
-
-            grid_cells = []
-            for row in range(obj['shape'][0]):
-                for col in range(obj['shape'][1]):
-                    if raster_data[row, col]:
-                        grid_cells.append(ActiveCell(col=col, row=row))
+                data[row, col] = False
 
             return cls(
-                shape=obj['shape'],
-                data=grid_cells
+                shape=(obj['shape'][0], obj['shape'][1]),
+                data=data
             )
 
         raise ValueError(f'Unknown grid cells type: {obj["type"]}')
@@ -231,9 +293,10 @@ class ActiveCells:
         available_dict_types = ['raster', 'sparse', 'sparse_inverse']
         dict_type: str = 'raster' if as_raster else 'sparse'
         if auto_detect:
-            if len(self.data) <= (self.shape[0] * self.shape[1] * 0.10):
+            number_of_trues = len(self.data[self.data == True])  # noqa
+            if number_of_trues <= (self.shape[0] * self.shape[1] * 0.10):
                 dict_type = 'sparse'
-            elif len(self.data) >= (self.shape[0] * self.shape[1] * 0.90):
+            elif number_of_trues >= (self.shape[0] * self.shape[1] * 0.90):
                 dict_type = 'sparse_inverse'
             else:
                 dict_type = 'raster'
@@ -245,42 +308,38 @@ class ActiveCells:
             raise ValueError(f'Unknown grid cells dict_type: {dict_type}')
 
         if dict_type == 'sparse':
+            cells = []
+            for row in range(self.shape[0]):
+                for col in range(self.shape[1]):
+                    if self.is_active(col=col, row=row):
+                        cells.append(ActiveCell(col=col, row=row))
             return {
                 'type': dict_type,
                 'shape': self.shape,
-                'data': [cell.to_tuple() for cell in self.data]
+                'data': [cell.to_tuple() for cell in cells]
             }
 
         if dict_type == 'sparse_inverse':
-            inverted_value = False
-            raster = np.full(shape=self.shape, fill_value=inverted_value, dtype=bool)
-            for cell in self.data:
-                raster[cell.row, cell.col] = True
-
-            inverted_raster = np.invert(raster)
-            data = []
+            inverted_raster = np.invert(self.data)
+            cells = []
             for row in range(self.shape[0]):
                 for col in range(self.shape[1]):
                     if inverted_raster[row, col]:
-                        data.append(ActiveCell(col=col, row=row))
+                        cells.append(ActiveCell(col=col, row=row))
 
             return {
                 'type': dict_type,
                 'shape': self.shape,
-                'data': [cell.to_tuple() for cell in data]
+                'data': [cell.to_tuple() for cell in cells]
             }
 
         # save as Raster data
         empty_value = False
-        data = np.full(shape=self.shape, fill_value=empty_value, dtype=bool)
-        for cell in self.data:
-            data[cell.row, cell.col] = True
-
         return {
             'type': dict_type,
             'empty_value': empty_value,
             'shape': self.shape,
-            'data': data.tolist()
+            'data': self.data.tolist()
         }
 
     def n_cols(self) -> int:
@@ -290,25 +349,18 @@ class ActiveCells:
         return self.shape[0]
 
     def is_active(self, col: int, row: int) -> bool:
-        if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
-            return False
-
-        try:
-            return next(cell for cell in self.data if cell.col == col and cell.row == row) is not None
-        except StopIteration:
-            return False
+        return self.data[row, col] if 0 <= row < self.shape[0] and 0 <= col < self.shape[1] else False
 
     def set_inactive(self, col: int, row: int):
-        self.data = [cell for cell in self.data if cell.col != col or cell.row != row]
+        if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
+            return
+        self.data[row, col] = False
 
     def set_active(self, col: int, row: int):
         if row < 0 or row >= self.shape[0] or col < 0 or col >= self.shape[1]:
             return
 
-        if self.is_active(col=col, row=row):
-            return
-
-        self.data.append(ActiveCell(col=col, row=row))
+        self.data[row, col] = True
 
     def to_geojson(self, grid: Grid) -> GeometryCollection:
         cells_geometries = grid.get_wgs_cell_geometries()
@@ -320,16 +372,28 @@ class ActiveCells:
 
         return GeometryCollection(geometries=cell_geometries)
 
-    def to_mask(self) -> np.ndarray:
-        raster_data = np.full(shape=self.shape, fill_value=False, dtype=bool)
-        for cell in self.data:
-            raster_data[cell.row, cell.col] = True
-        return raster_data
-
     def outline_to_geojson(self, grid: Grid) -> Feature:
-        geometries = self.to_geojson(grid).geometries
-        geometries = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]
-        geometry = unary_union(geometries)
+        geometries: list[Polygon] = []
+        for row in range(grid.n_rows()):
+            start_active_cell = None
+            end_active_cell = None
+            for col in range(grid.n_cols()):
+                if self.is_active(col=col, row=row):
+                    if start_active_cell is None:
+                        start_active_cell = col
+                    end_active_cell = col
+                if not self.is_active(col=col, row=row):
+                    if start_active_cell is not None:
+                        geometries.append(grid.get_wgs_row_polygon(row=row, start_col=start_active_cell, end_col=end_active_cell))
+                    start_active_cell = None
+                    end_active_cell = None
+                if col == grid.n_cols() - 1 and start_active_cell is not None:
+                    geometries.append(grid.get_wgs_row_polygon(row=row, start_col=start_active_cell, end_col=end_active_cell))
+
+        polygons: list[ShapelyPolygon] = [ShapelyPolygon(polygon.coordinates[0]) for polygon in geometries]
+        buffered_polygons = [polygon.buffer(0.000001) for polygon in polygons]
+        buffered_geometry = unary_union(buffered_polygons)
+        geometry = buffered_geometry.buffer(-0.000001)
         if isinstance(geometry, ShapelyPolygon):
             geometry_dict = geometry.__geo_interface__
             feature = Feature(geometry=Polygon(coordinates=geometry_dict['coordinates']))

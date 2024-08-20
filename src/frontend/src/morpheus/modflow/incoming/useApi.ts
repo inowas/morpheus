@@ -17,7 +17,7 @@ export default (): IUseApi => {
   return {
     ...useHttp(apiBaseUrl, {
       accessToken: accessToken,
-      onUnauthorized,
+      onUnauthorized: onUnauthorized,
     }),
   };
 };

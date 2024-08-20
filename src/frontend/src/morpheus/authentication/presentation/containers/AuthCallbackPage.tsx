@@ -2,14 +2,15 @@ import {Grid, Header} from 'semantic-ui-react';
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import useAuthentication from '../../application/useAuthentication';
-import {Button} from '../../../../common/components';
+import {Button} from 'common/components';
 
 interface IProps {
   redirectTo: string;
 }
 
 const AuthCallback = ({redirectTo}: IProps) => {
-  const {isAuthenticated, isLoading, signOutLocally, error} = useAuthentication();
+  const {isAuthenticated, isLoading, logout, error} = useAuthentication();
+
   return (
     <Grid
       centered={true} verticalAlign="middle"
@@ -26,7 +27,7 @@ const AuthCallback = ({redirectTo}: IProps) => {
         {error &&
           <Header as="h2" textAlign="center">
             Error: {error.message}
-            <Button onClick={signOutLocally}>Try again</Button>
+            <Button onClick={logout}>Try again</Button>
           </Header>
         }
 

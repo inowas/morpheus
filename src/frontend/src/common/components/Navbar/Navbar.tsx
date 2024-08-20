@@ -44,7 +44,7 @@ const Navbar: React.FC<IProps> = ({
           <div className={styles.inner}>
             <div className={styles.mainMenuLogo}>
               <Image
-                alt="An example alt"
+                alt="inowas logo"
                 as="a"
                 href="/"
                 size="tiny"
@@ -84,15 +84,15 @@ const Navbar: React.FC<IProps> = ({
             >
               <div className={styles.navWrapper}>
                 <ul className={styles.menu}>
-                  {navbarItems.map((item: INavbarItem, idx: number) => {
-                    return <MenuItem
+                  {navbarItems.map((item: INavbarItem, idx: number) => (
+                    <MenuItem
                       key={idx}
                       items={item}
                       onCloseMobileMenu={handleCloseMobileMenu}
                       location={location}
                       navigateTo={navigateTo}
-                    />;
-                  })}
+                    />
+                  ))}
                 </ul>
                 {button}
               </div>

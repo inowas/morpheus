@@ -127,6 +127,9 @@ const ImportShapefileModal = ({trigger}: IProps) => {
   };
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
     if (shapeFiles.length && !selectedShapefile) {
       handleSelectShapefile(shapeFiles[0]);
     }

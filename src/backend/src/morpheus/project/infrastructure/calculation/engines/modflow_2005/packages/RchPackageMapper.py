@@ -38,8 +38,7 @@ def calculate_rch_boundary_stress_period_data(
             raise NotImplementedError("Multiple observations for well boundaries are not supported")
 
         # we need to filter the affected cells to only include cells that are part of the model
-        rch_boundary.affected_cells = rch_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        rch_boundary.affected_cells = rch_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
 
         if rch_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]

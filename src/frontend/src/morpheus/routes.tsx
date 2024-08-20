@@ -4,11 +4,12 @@ import {NotFound} from 'common/components';
 
 import AboutUsPage from './application/presentation/containers/AboutUsContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
-import {ProjectAssetsPage, ProjectBaseModelPage, ProjectPage, ProjectScenariosPage, ProjectsSettingsPage, ProjectEventLogPage} from './modflow/presentation/containers';
+import {ProjectAssetsPage, ProjectBaseModelPage, ProjectScenariosPage, ProjectsSettingsPage, ProjectEventLogPage} from './modflow/presentation/containers';
 import SignInPage from './authentication/presentation/containers/SignInPage';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 import ProjectsPage from './modflow/presentation/containers/ProjectListPage';
 import AuthCallback from './authentication/presentation/containers/AuthCallbackPage';
+import HomePage from './application/presentation/containers/Home';
 
 const Router = () => {
   const wrapPublicComponent = (component: React.ReactElement, disableFooter: boolean = false) => {
@@ -31,11 +32,11 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate replace={true} to="/projects"/>}/>
+      <Route path="/" element={wrapPublicComponent(<HomePage/>)}/>
       <Route path="/auth" element={wrapPublicComponent(<SignInPage/>)}/>
       <Route path="/auth/callback" element={wrapPublicComponent(<AuthCallback redirectTo="/projects"/>)}/>
       <Route path="/projects" element={wrapPrivateComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>
-      <Route path="/projects/:projectId" element={wrapPrivateComponent(<ProjectPage basePath={'/projects'}/>, true)}/>
+      <Route path="/projects/:projectId" element={wrapPrivateComponent(<Navigate replace={true} to="model"/>)}/>
       <Route
         path="/projects/:projectId/model/:property?/:propertyId?/:subProperty?/:subPropertyId?"
         element={wrapPrivateComponent(<ProjectBaseModelPage basePath={'/projects'} section={'model'}/>, true)}

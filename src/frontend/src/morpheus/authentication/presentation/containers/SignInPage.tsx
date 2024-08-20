@@ -4,17 +4,15 @@ import useAuthentication from '../../application/useAuthentication';
 
 const SignInPage = () => {
 
-  const {isAuthenticated, isLoading, signIn, signOutLocally, error} = useAuthentication();
-
-  const handleSignOut = async () => {
-    await signOutLocally();
-  };
+  const {isAuthenticated, isLoading, login, logout, error} = useAuthentication();
 
   const renderSignInButton = () => {
     return (
       <Button
-        color="blue" fluid={true}
-        size="large" onClick={signIn}
+        color="blue"
+        fluid={true}
+        size="large"
+        onClick={() => login()}
         loading={isLoading}
       >
         Sign In with Keycloak
@@ -27,7 +25,8 @@ const SignInPage = () => {
       <Button
         color="red"
         fluid={true}
-        size="large" onClick={signOutLocally}
+        size="large"
+        onClick={logout}
         loading={isLoading}
       >
         Sign Out
