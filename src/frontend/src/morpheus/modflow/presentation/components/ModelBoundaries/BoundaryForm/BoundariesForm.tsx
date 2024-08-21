@@ -29,7 +29,6 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
   const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
   const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
-
   const isDirty = () => {
     if (!isEqual(boundaryLocal.tags, boundary.tags)) {
       return true;
@@ -59,11 +58,20 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
   };
 
   useEffect(() => {
-    setBoundaryLocal(boundary);
+    const layerIds = layers.map(layer => layer.layer_id);
+    setBoundaryLocal({...boundary, affected_layers: boundary.affected_layers.filter(affectedLayer => layerIds.includes(affectedLayer))});
     setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
   }, [boundary]);
 
   const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
+
+  const getDropdownValue = () => {
+    if (hasMultipleAffectedLayers(boundaryLocal.type)) {
+      return boundaryLocal.affected_layers;
+    }
+
+    return boundaryLocal.affected_layers[0];
+  };
 
   return (
     <Form>
