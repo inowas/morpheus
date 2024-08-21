@@ -125,8 +125,12 @@ const FlowResultsContainer = () => {
   };
 
   useEffect(() => {
+    if (!calculation?.result) {
+      return;
+    }
+
     fetchData();
-  }, [selectedResultType, selectedLayer, selectedTimeStepIdx, activeTab, showIncrementalBudget]);
+  }, [calculation, selectedResultType, selectedLayer, selectedTimeStepIdx, activeTab, showIncrementalBudget]);
 
   const availableResultTypes = useMemo(() => {
     const types = [];
