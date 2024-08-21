@@ -53,11 +53,17 @@ class UpdateModelBoundaryAffectedLayersCommandHandler(CommandHandlerBase):
         if not model.boundaries.has_boundary(boundary_id=command.boundary_id):
             raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
+        # check if affected layer ids are present and filter if needed
+        # throw exception if no valid affected layer is uploaded!
+        affected_layers = [layer_id for layer_id in command.affected_layers if model.layers.has_layer(layer_id=layer_id)]
+        if len(affected_layers) == 0:
+            raise ValueError('Affected layers property is empty or contains invalid layer ids')
+
         event = ModelBoundaryAffectedLayersUpdatedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
             boundary_id=command.boundary_id,
-            affected_layers=command.affected_layers,
+            affected_layers=affected_layers,
             occurred_at=DateTime.now()
         )
 

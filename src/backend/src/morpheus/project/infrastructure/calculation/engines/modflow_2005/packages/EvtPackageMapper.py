@@ -32,8 +32,17 @@ def calculate_evt_boundary_stress_period_data(
     grid = spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
 
+    # filter affected layers to only include layers that are part of the model
     layer_ids = [layer.layer_id for layer in layers]
-    layer_indices = [layer_ids.index(layer_id) for layer_id in evt_boundary.affected_layers]
+    affected_layers = [layer_id for layer_id in evt_boundary.affected_layers if layers.has_layer(layer_id)]
+    layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
+
+    if len(layer_indices) == 0:
+        # if we have no affected layers
+        # we do not apply any data for this stress period
+        # We should log a warning here
+        return sp_data
+
     layer_index = layer_indices[0] if len(layer_indices) > 0 else 0
 
     # first we need to calculate the mean values for each observation point and each stress period
