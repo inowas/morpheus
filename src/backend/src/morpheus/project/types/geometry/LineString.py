@@ -25,6 +25,11 @@ class LineString:
             raise ValueError('Geometry Type must be a LineString')
         return cls(coordinates=obj['coordinates'])
 
+    @classmethod
+    def from_shapely_linestring(cls, shapely_linestring: ShapelyLineString):
+        coordinates = shapely_linestring.__geo_interface__['coordinates']
+        return cls(coordinates=list(coordinates))
+
     def to_dict(self):
         return {
             'type': self.type,
@@ -40,3 +45,6 @@ class LineString:
         nearest_shapely_point_on_linestring = shapely_line.interpolate(shapely_line.project(shapely_point))
         nearest_point = Point(coordinates=nearest_shapely_point_on_linestring.coords[0])
         return nearest_point
+
+    def to_shapely_linestring(self):
+        return ShapelyLineString(self.coordinates)

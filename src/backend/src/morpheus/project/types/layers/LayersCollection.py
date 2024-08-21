@@ -31,6 +31,9 @@ class LayersCollection:
     def get_layer(self, layer_id: LayerId):
         return next((layer for layer in self.layers if layer.layer_id == layer_id), None)
 
+    def has_layer(self, layer_id: LayerId) -> bool:
+        return any(layer.layer_id == layer_id for layer in self.layers)
+
     def with_added_layer(self, layer: Layer):
         return dataclasses.replace(self, layers=self.layers + [layer])
 

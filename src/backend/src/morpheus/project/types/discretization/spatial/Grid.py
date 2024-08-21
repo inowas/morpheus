@@ -129,12 +129,11 @@ class Grid:
         if any([percentage < 0 or percentage > 1 for percentage in relative_col_coordinates + relative_row_coordinates]):
             raise ValueError('percentages must be between 0 and 1')
 
-        polygon = ShapelyPolygon(polygon.coordinates[0])
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         from_3867_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
         # transform polygon to 3857
-        polygon_3857 = ShapelyPolygon([from_4326_to_3857.transform(x, y) for x, y in polygon.exterior.coords])
+        polygon_3857 = transform(from_4326_to_3857.transform, polygon.to_shapely_polygon())
 
         # rotate polygon to 0 degrees
         polygon_3857_0_degrees = rotate(polygon_3857, -rotation.to_float(), origin=polygon_3857.centroid)
@@ -200,7 +199,7 @@ class Grid:
         }
 
     def to_geojson(self) -> FeatureCollection:
-        features = [self.get_wgs_outline_geometry()]
+        features = [self.get_wgs_outline_feature()]
         features += self.get_wgs_column_polygons()
         features += self.get_wgs_row_polygons()
         return FeatureCollection(features=features)
@@ -343,9 +342,9 @@ class Grid:
         ))
 
         rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857.x, origin_3857.y))  # type: ignore
-        polygon_4326 = transform(self._from_3857_to_4326.transform, rotated_polygon_3857)
+        polygon_4326: ShapelyPolygon = transform(self._from_3857_to_4326.transform, rotated_polygon_3857)
 
-        return Polygon(coordinates=[polygon_4326.exterior.coords])
+        return Polygon.from_shapely_polygon(polygon_4326)
 
     def get_wgs_row_polygons(self) -> list[Feature]:
         if self._wgs_row_polygons is not None:
@@ -473,7 +472,11 @@ class Grid:
 
         return features.tolist()
 
-    def get_wgs_outline_geometry(self) -> Feature:
+    def get_wgs_outline_feature(self) -> Feature:
+        polygon = self.get_wgs_outline_polygon()
+        return Feature(geometry=polygon, properties={'type': 'bounding_box'})
+
+    def get_wgs_outline_polygon(self) -> Polygon:
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
 
         origin_3857 = self.get_origin_3857()
@@ -488,7 +491,7 @@ class Grid:
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857.x, origin_3857.y))  # type: ignore
         geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
-        return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box'})
+        return Polygon(coordinates=[geometry_4326])
 
     def get_wgs_width_height(self) -> Tuple[float, float]:
         origin_3857 = self.get_origin_3857()
@@ -587,7 +590,7 @@ class Grid:
             row_coordinates_relative.append(round(1 / n_rows + row_coordinates_relative[-1] if row > 0 else 0, 5))
         row_coordinates_relative.append(1)
 
-        polygon = self.get_wgs_outline_geometry().geometry
+        polygon = self.get_wgs_outline_feature().geometry
         if not isinstance(polygon, Polygon):
             raise ValueError('Grid bounding box is not a polygon')
 

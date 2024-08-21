@@ -140,8 +140,6 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
 
     date_times = get_date_times(model)
     total_times = get_total_times(date_times, model)
-    layer_ids = [layer.layer_id for layer in model.layers.layers]
-
     fhb_stress_period_data = FhbStressPeriodData(date_times, total_times)
 
     # first we need to calculate the mean values for each observation point and date_time
@@ -151,6 +149,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
 
         # calculate the mean head data for each boundary
         for fhb_boundary in fhb_boundaries:
+
             if not isinstance(fhb_boundary, FlowAndHeadBoundary):
                 raise TypeError("Expected FlowAndHeadBoundary but got {}".format(type(fhb_boundary)))
 
@@ -161,7 +160,17 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                 # we do not apply any data for this stress period
                 continue
 
-            layer_indices = [layer_ids.index(layer_id) for layer_id in fhb_boundary.affected_layers]
+            # filter affected layers to only include layers that are part of the model
+            layers = model.layers
+            layer_ids = [layer.layer_id for layer in layers]
+            affected_layers = [layer_id for layer_id in fhb_boundary.affected_layers if layers.has_layer(layer_id)]
+            layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
+
+            if len(layer_indices) == 0:
+                # if we have no affected layers
+                # we do not apply any data for this stress period
+                # We should log a warning here
+                continue
 
             # we need to filter the affected cells to only include cells that are part of the model
             fhb_boundary.affected_cells = fhb_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
@@ -241,7 +250,17 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                 # we do not apply any data for this stress period
                 continue
 
-            layer_indices = [layer_ids.index(layer_id) for layer_id in fhb_boundary.affected_layers]
+            # filter affected layers to only include layers that are part of the model
+            layers = model.layers
+            layer_ids = [layer.layer_id for layer in layers]
+            affected_layers = [layer_id for layer_id in fhb_boundary.affected_layers if layers.has_layer(layer_id)]
+            layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
+
+            if len(layer_indices) == 0:
+                # if we have no affected layers
+                # we do not apply any data for this stress period
+                # We should log a warning here
+                continue
 
             # we need to filter the affected cells to only include cells that are part of the model
             fhb_boundary.affected_cells = fhb_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
