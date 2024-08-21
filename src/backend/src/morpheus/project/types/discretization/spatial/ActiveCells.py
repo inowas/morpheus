@@ -127,21 +127,22 @@ class ActiveCells:
         return affected_cells
 
     @classmethod
-    def from_linestring(cls, linestring: LineString | ShapelyLineString, grid: Grid):
+    def from_linestring(cls, linestring: LineString, grid: Grid):
         # prepare input
-        shapely_linestring: ShapelyLineString = linestring
-        if not isinstance(linestring, ShapelyLineString):
-            shapely_linestring: ShapelyLineString = ShapelyLineString(linestring.coordinates)
+        shapely_linestring: ShapelyLineString = linestring.to_shapely_linestring()
 
         # prepare output
         cells = np.empty(shape=(grid.n_rows(), grid.n_cols()), dtype=bool)
         cells.fill(False)
 
         # intersect input with grid-outline
-        grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
-        shapely_linestring: ShapelyLineString = grid_outline.intersection(shapely_linestring)
-        if shapely_linestring.is_empty:
+        grid_outline: ShapelyPolygon = grid.get_wgs_outline_polygon().to_shapely_polygon()
+        intersection = grid_outline.intersection(shapely_linestring)
+
+        if not isinstance(intersection, ShapelyLineString) or shapely_linestring.is_empty:
             return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+
+        shapely_linestring = intersection
 
         # get grid center lines
         row_center_lines: list[ShapelyLineString] = [ShapelyLineString(row.coordinates) for row in grid.get_wgs_row_center_lines()]
@@ -169,21 +170,21 @@ class ActiveCells:
         return cls.from_numpy(cells)
 
     @classmethod
-    def from_polygon(cls, polygon: Polygon | ShapelyPolygon, grid: Grid):
+    def from_polygon(cls, polygon: Polygon, grid: Grid):
         # prepare input
-        shapely_polygon: ShapelyPolygon = polygon
-        if not isinstance(polygon, ShapelyPolygon):
-            shapely_polygon = ShapelyPolygon(polygon.coordinates[0])
+        shapely_polygon: ShapelyPolygon = polygon.to_shapely_polygon()
 
         # prepare output
         cells = np.full(shape=(grid.n_rows(), grid.n_cols()), fill_value=False, dtype=bool)
 
         # intersect input with grid-outline
-        grid_outline = ShapelyPolygon(grid.get_wgs_outline_geometry().geometry.coordinates[0])
-        shapely_polygon: ShapelyPolygon = grid_outline.intersection(shapely_polygon)
+        grid_outline: ShapelyPolygon = grid.get_wgs_outline_polygon().to_shapely_polygon()
+        intersection = grid_outline.intersection(shapely_polygon)
 
-        if shapely_polygon.is_empty:
+        if not isinstance(intersection, ShapelyPolygon) or shapely_polygon.is_empty:
             return cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
+
+        shapely_polygon = intersection
 
         # get row center lines
         row_center_lines: ShapelyMultiLineString = ShapelyMultiLineString([ShapelyLineString(row.coordinates) for row in grid.get_wgs_row_center_lines()])
@@ -198,8 +199,6 @@ class ActiveCells:
                 active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[0]))
                 active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=intersection.coords[-1]))
 
-                print(active_cells_start, active_cells_end)
-
                 if len(active_cells_start) == 0 or len(active_cells_end) == 0:
                     continue
 
@@ -213,7 +212,6 @@ class ActiveCells:
                     cells[row_start, col] = True
 
             if intersection.geom_type == 'MultiLineString':
-                print(intersection)
                 for line in intersection.geoms:
                     active_cells_start = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[0]))
                     active_cells_end = grid.get_cells_from_wgs_point(Point(coordinates=line.coords[-1]))

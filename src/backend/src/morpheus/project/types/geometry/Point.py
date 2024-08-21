@@ -23,6 +23,10 @@ class Point:
         return cls(coordinates=obj['coordinates'])
 
     @classmethod
+    def from_shapely_point(cls, shapely_point):
+        return cls(coordinates=shapely_point.coords[0])
+
+    @classmethod
     def from_wgs84(cls, x: float, y: float):
         return cls(coordinates=(x, y))
 
@@ -34,3 +38,6 @@ class Point:
 
     def as_geojson(self):
         return self.__geo_interface__()
+
+    def to_shapely_point(self):
+        return self.coordinates
