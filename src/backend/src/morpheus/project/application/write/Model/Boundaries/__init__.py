@@ -5,7 +5,7 @@ from .CloneModelBoundaryObservation import CloneModelBoundaryObservationCommand,
 from .DisableModelBoundary import DisableModelBoundaryCommand, DisableModelBoundaryCommandHandler
 from .EnableModelBoundary import EnableModelBoundaryCommand, EnableModelBoundaryCommandHandler
 from .ImportModelBoundaries import ImportModelBoundariesCommand, ImportModelBoundariesCommandHandler
-from .RemoveModelBoundary import RemoveModelBoundaryCommand, RemoveModelBoundaryCommandHandler
+from .RemoveModelBoundaries import RemoveModelBoundariesCommand, RemoveModelBoundariesCommandHandler
 from .RemoveModelBoundaryObservation import RemoveModelBoundaryObservationCommand, RemoveModelBoundaryObservationCommandHandler
 from .UpdateModelBoundaryAffectedCells import UpdateModelBoundaryAffectedCellsCommand, UpdateModelBoundaryAffectedCellsCommandHandler
 from .UpdateModelBoundaryAffectedLayers import UpdateModelBoundaryAffectedLayersCommand, UpdateModelBoundaryAffectedLayersCommandHandler
@@ -22,7 +22,7 @@ model_boundaries_command_handler_map = {
     DisableModelBoundaryCommand: DisableModelBoundaryCommandHandler,
     EnableModelBoundaryCommand: EnableModelBoundaryCommandHandler,
     ImportModelBoundariesCommand: ImportModelBoundariesCommandHandler,
-    RemoveModelBoundaryCommand: RemoveModelBoundaryCommandHandler,
+    RemoveModelBoundariesCommand: RemoveModelBoundariesCommandHandler,
     RemoveModelBoundaryObservationCommand: RemoveModelBoundaryObservationCommandHandler,
     UpdateModelBoundaryAffectedCellsCommand: UpdateModelBoundaryAffectedCellsCommandHandler,
     UpdateModelBoundaryAffectedLayersCommand: UpdateModelBoundaryAffectedLayersCommandHandler,

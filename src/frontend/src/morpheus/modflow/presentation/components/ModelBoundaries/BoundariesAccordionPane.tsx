@@ -22,7 +22,7 @@ interface IProps {
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
@@ -43,7 +43,7 @@ const BoundariesAccordionPane = ({
   onCloneBoundaryObservation,
   onDisableBoundary,
   onEnableBoundary,
-  onRemoveBoundary,
+  onRemoveBoundaries,
   onRemoveBoundaryObservation,
   onUpdateBoundaryAffectedLayers,
   onUpdateBoundaryInterpolation,
@@ -101,7 +101,7 @@ const BoundariesAccordionPane = ({
             onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
             onCloneBoundary={onCloneBoundary}
             onCloneObservation={onCloneBoundaryObservation}
-            onRemoveBoundary={onRemoveBoundary}
+            onRemoveBoundaries={onRemoveBoundaries}
             onRemoveObservation={onRemoveBoundaryObservation}
             onUpdateObservation={onUpdateBoundaryObservation}
           />

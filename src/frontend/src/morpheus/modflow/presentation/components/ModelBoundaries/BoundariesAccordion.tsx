@@ -42,7 +42,7 @@ interface IProps {
   onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   timeDiscretization: ITimeDiscretization;
 }
@@ -60,7 +60,7 @@ const BoundariesAccordion = ({
   onUpdateBoundaryInterpolation,
   onUpdateBoundaryMetadata,
   onUpdateBoundaryObservation,
-  onRemoveBoundary,
+  onRemoveBoundaries,
   onRemoveBoundaryObservation,
   onSelectBoundaryAndObservation,
   timeDiscretization,
@@ -106,7 +106,7 @@ const BoundariesAccordion = ({
               onCloneBoundaryObservation={onCloneBoundaryObservation}
               onDisableBoundary={onDisableBoundary}
               onEnableBoundary={onEnableBoundary}
-              onRemoveBoundary={onRemoveBoundary}
+              onRemoveBoundaries={onRemoveBoundaries}
               onRemoveBoundaryObservation={onRemoveBoundaryObservation}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}

@@ -20,7 +20,7 @@ interface IUseBoundaries {
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>
   onImportBoundaries: (items: IImportItem[]) => Promise<void>;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: string) => Promise<void>;
   onUpdateBoundaryAffectedCells: (boundaryId: IBoundaryId, affectedCells: IAffectedCells) => Promise<void>;
   onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
@@ -417,7 +417,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     }
   };
 
-  const onRemoveBoundary = async (boundaryId: IBoundaryId) => {
+  const onRemoveBoundaries = async (boundaryIds: IBoundaryId[]) => {
     if (!model || !projectId) {
       return;
     }
@@ -429,12 +429,14 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     setLoading(true);
     setError(null);
 
-    const removeBoundaryResult = await sendCommand<Commands.IRemoveModelBoundaryCommand>({
-      command_name: 'remove_model_boundary_command',
+    dispatch(setBoundaries(boundaries.filter((b) => !boundaryIds.includes(b.id))));
+
+    const removeBoundaryResult = await sendCommand<Commands.IRemoveModelBoundariesCommand>({
+      command_name: 'remove_model_boundaries_command',
       payload: {
         project_id: projectId,
         model_id: model.model_id,
-        boundary_id: boundaryId,
+        boundary_ids: boundaryIds,
       },
     });
 
@@ -449,9 +451,11 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
         message: removeBoundaryResult.val.message,
         code: removeBoundaryResult.val.code,
       });
+
+      await fetchAllBoundaries();
     }
 
-    await fetchAllBoundaries();
+
   };
 
   const onRemoveBoundaryObservation = async (boundaryId: IBoundaryId, observationId: string) => {
@@ -744,7 +748,7 @@ const useBoundaries = (projectId: string): IUseBoundaries => {
     onDisableBoundary,
     onEnableBoundary,
     onImportBoundaries,
-    onRemoveBoundary,
+    onRemoveBoundaries,
     onRemoveBoundaryObservation,
     onUpdateBoundaryAffectedCells,
     onUpdateBoundaryAffectedLayers,

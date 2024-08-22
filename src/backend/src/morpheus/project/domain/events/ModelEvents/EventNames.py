@@ -38,6 +38,8 @@ class ModelLayerEventName(StrEnum):
 
 
 class ModelBoundaryEventName(StrEnum):
+    MODEL_BOUNDARIES_REMOVED = 'Model Boundaries Removed'
+    MODEL_BOUNDARIES_IMPORTED = 'Model Boundaries Imported'
     MODEL_BOUNDARY_ADDED = 'Model Boundary Added'
     MODEL_BOUNDARY_CLONED = 'Model Boundary Cloned'
     MODEL_BOUNDARY_AFFECTED_CELLS_RECALCULATED = 'Model Boundary Affected Cells Recalculated'
@@ -48,7 +50,6 @@ class ModelBoundaryEventName(StrEnum):
     MODEL_BOUNDARY_GEOMETRY_UPDATED = 'Model Boundary Geometry Updated'
     MODEL_BOUNDARY_INTERPOLATION_UPDATED = 'Model Boundary Interpolation Updated'
     MODEL_BOUNDARY_METADATA_UPDATED = 'Model Boundary Metadata Updated'
-    MODEL_BOUNDARY_REMOVED = 'Model Boundary Removed'
     MODEL_BOUNDARY_OBSERVATION_ADDED = 'Model Boundary Observation Added'
     MODEL_BOUNDARY_OBSERVATION_GEOMETRY_RECALCULATED = 'Model Boundary Observation Geometry Recalculated'
     MODEL_BOUNDARY_OBSERVATION_REMOVED = 'Model Boundary Observation Removed'
