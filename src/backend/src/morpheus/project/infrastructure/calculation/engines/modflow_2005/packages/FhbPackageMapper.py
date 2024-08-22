@@ -207,19 +207,19 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                     key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True)
                 )
 
-                xx: list[float] = []
-                yy_values: list[float] = []
+                xx_head: list[float] = []
+                yy_head_values: list[float] = []
                 for observation in observations:
 
                     if not isinstance(observation, FlowAndHeadObservation):
                         raise TypeError("Expected FlowAndHeadObservation but got {}".format(type(observation)))
 
                     shapely_point = ShapelyPoint(observation.geometry.coordinates)
-                    xx.append(line_string.project(shapely_point, normalized=True))
+                    xx_head.append(line_string.project(shapely_point, normalized=True))
 
                     mean_head_data = observation.get_head_data_item(date_time)
                     if isinstance(mean_head_data, HeadDataItem):
-                        yy_values.append(mean_head_data.head.to_float())
+                        yy_head_values.append(mean_head_data.head.to_float())
 
                 grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
                 for cell in fhb_boundary.affected_cells:
@@ -230,7 +230,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
 
                     center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                     xx_new = [line_string.project(center, normalized=True)]
-                    yy_new_value = float(np.interp(xx_new, xx, yy_values)[0])
+                    yy_new_value = float(np.interp(xx_new, xx_head, yy_head_values)[0])
 
                     for layer_idx in layer_indices:
                         fhb_stress_period_data.set_head_value(
@@ -297,20 +297,20 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
                     key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True)
                 )
 
-                xx: list[float] = []
-                yy_values: list[float] = []
+                xx_flow: list[float] = []
+                yy_flow_values: list[float] = []
                 for observation in observations:
 
                     if not isinstance(observation, FlowAndHeadObservation):
                         raise TypeError("Expected FlowAndHeadObservation but got {}".format(type(observation)))
 
                     shapely_point = ShapelyPoint(observation.geometry.coordinates)
-                    xx.append(line_string.project(shapely_point, normalized=True))
+                    xx_flow.append(line_string.project(shapely_point, normalized=True))
 
                     mean_flow_data = observation.get_flow_data_item(date_time)
 
                     if isinstance(mean_flow_data, FlowDataItem):
-                        yy_values.append(mean_flow_data.flow.to_float())
+                        yy_flow_values.append(mean_flow_data.flow.to_float())
 
                 grid_cell_centers = spatial_discretization.grid.get_wgs_cell_centers()
                 for cell in fhb_boundary.affected_cells:
@@ -321,7 +321,7 @@ def calculate_fhb_boundary_stress_period_data(model: Model) -> FhbStressPeriodDa
 
                     center = ShapelyPoint(grid_cell_centers[cell.row][cell.col].coordinates)
                     xx_new = [line_string.project(center, normalized=True)]
-                    yy_new_value = float(np.interp(xx_new, xx, yy_values)[0])
+                    yy_new_value = float(np.interp(xx_new, xx_flow, yy_flow_values)[0])
 
                     for layer_idx in layer_indices:
                         fhb_stress_period_data.set_flow_value(

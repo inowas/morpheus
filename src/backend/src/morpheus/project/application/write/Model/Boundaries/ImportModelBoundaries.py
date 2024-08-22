@@ -4,18 +4,18 @@ from typing import TypedDict, Optional
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryAddedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundariesImportedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryName, BoundaryTags
+from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
 from morpheus.project.types.boundaries.BoundaryType import BoundaryTypeLiteral, BoundaryType
-from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import GeometryFactory
 
@@ -97,14 +97,13 @@ class ImportModelBoundariesCommandHandler(CommandHandlerBase):
             if boundary is not None:
                 boundaries.append(boundary)
 
-        for boundary in boundaries:
-            event = ModelBoundaryAddedEvent.from_boundary(
-                project_id=project_id,
-                model_id=command.model_id,
-                boundary=boundary,
-                occurred_at=DateTime.now()
-            )
+        event = ModelBoundariesImportedEvent.from_boundaries(
+            project_id=project_id,
+            model_id=command.model_id,
+            boundaries=boundaries,
+            occurred_at=DateTime.now()
+        )
 
-            event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
-            event_envelope = EventEnvelope(event=event, metadata=event_metadata)
-            project_event_bus.record(event_envelope=event_envelope)
+        event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
+        event_envelope = EventEnvelope(event=event, metadata=event_metadata)
+        project_event_bus.record(event_envelope=event_envelope)

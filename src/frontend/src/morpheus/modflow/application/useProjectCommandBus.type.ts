@@ -154,12 +154,12 @@ export interface IImportModelBoundariesCommand {
   }
 }
 
-export interface IRemoveModelBoundaryCommand {
-  command_name: 'remove_model_boundary_command';
+export interface IRemoveModelBoundariesCommand {
+  command_name: 'remove_model_boundaries_command';
   payload: {
     project_id: string;
     model_id: string;
-    boundary_id: string;
+    boundary_ids: string[];
   }
 }
 
@@ -245,7 +245,7 @@ export type IModelBoundaryCommand = IAddModelBoundaryCommand |
   IDisableModelBoundaryCommand |
   IEnableModelBoundaryCommand |
   IImportModelBoundariesCommand |
-  IRemoveModelBoundaryCommand |
+  IRemoveModelBoundariesCommand |
   IRemoveModelBoundaryObservationCommand |
   IUpdateModelBoundaryAffectedCellsCommand |
   IUpdateModelBoundaryAffectedLayersCommand |

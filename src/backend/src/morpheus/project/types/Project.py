@@ -25,6 +25,10 @@ class Tags:
     value: list[str]
 
     @classmethod
+    def empty(cls):
+        return cls(value=[])
+
+    @classmethod
     def from_list(cls, value: list[str]):
         return cls(value=value)
 

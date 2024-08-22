@@ -97,7 +97,7 @@ paths:
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/DisableModelBoundaryCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/EnableModelBoundaryCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/ImportModelBoundariesCommand'
-                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/RemoveModelBoundaryCommand'
+                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/RemoveModelBoundariesCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/RemoveModelBoundaryObservationCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryAffectedCellsCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryAffectedLayersCommand'
