@@ -9,6 +9,8 @@ general_model_event_list = [
 ]
 
 model_boundary_event_list = [
+    ModelBoundaryEvents.ModelBoundariesImportedEvent,
+    ModelBoundaryEvents.ModelBoundariesRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryAddedEvent,
     ModelBoundaryEvents.ModelBoundaryClonedEvent,
     ModelBoundaryEvents.ModelBoundaryAffectedCellsRecalculatedEvent,
@@ -19,7 +21,6 @@ model_boundary_event_list = [
     ModelBoundaryEvents.ModelBoundaryGeometryUpdatedEvent,
     ModelBoundaryEvents.ModelBoundaryInterpolationUpdatedEvent,
     ModelBoundaryEvents.ModelBoundaryMetadataUpdatedEvent,
-    ModelBoundaryEvents.ModelBoundaryRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationAddedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationGeometryRecalculatedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationRemovedEvent,

@@ -17,7 +17,7 @@ interface ISelectedListProps {
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onUpdateObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   isReadOnly: boolean;
 }
@@ -34,7 +34,7 @@ const BoundaryList = ({
   onDisableBoundary,
   onEnableBoundary,
   onUpdateObservation,
-  onRemoveBoundary,
+  onRemoveBoundaries,
   onRemoveObservation,
   isReadOnly,
 }: ISelectedListProps) => {
@@ -146,7 +146,7 @@ const BoundaryList = ({
                       },
                     },
                     {text: 'Copy', icon: 'copy', onClick: () => onCloneBoundary(boundary.id)},
-                    {text: 'Delete', icon: 'remove', onClick: () => onRemoveBoundary(boundary.id)},
+                    {text: 'Delete', icon: 'remove', onClick: () => onRemoveBoundaries([boundary.id])},
                   ]}
                 />
                 {hasMultipleObservations(boundary.type) && (
