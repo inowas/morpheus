@@ -103,11 +103,11 @@ class Grid:
         relative_col_coordinates = []
         relative_row_coordinates = []
         for col in range(n_cols):
-            relative_col_coordinates.append(round(1 / n_cols + relative_col_coordinates[-1] if col > 0 else 0, 5))
+            relative_col_coordinates.append(1 / n_cols + relative_col_coordinates[-1] if col > 0 else 0)
         relative_col_coordinates.append(1)
 
         for row in range(n_rows):
-            relative_row_coordinates.append(round(1 / n_rows + relative_row_coordinates[-1] if row > 0 else 0, 5))
+            relative_row_coordinates.append(1 / n_rows + relative_row_coordinates[-1] if row > 0 else 0)
         relative_row_coordinates.append(1)
 
         return cls.from_polygon_with_relative_coordinates(
