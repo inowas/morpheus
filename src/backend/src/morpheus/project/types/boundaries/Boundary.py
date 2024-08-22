@@ -226,6 +226,12 @@ class BoundaryCollection:
         sorted_boundaries = sorted(boundaries, key=lambda b: b.name.to_lower())
         return dataclasses.replace(self, boundaries=sorted_boundaries)
 
+    def with_added_boundaries(self, boundaries: Sequence[Boundary]):
+        current_boundaries = list(self.boundaries)
+        current_boundaries.extend(boundaries)
+        sorted_boundaries = sorted(current_boundaries, key=lambda b: b.name.to_lower())
+        return dataclasses.replace(self, boundaries=sorted_boundaries)
+
     def update_boundary(self, update: Boundary):
         updated_boundaries = [update if boundary.id == update.id else boundary for boundary in
                               self.boundaries]
@@ -246,8 +252,10 @@ class BoundaryCollection:
         self.boundaries = [boundary for boundary in self.boundaries if boundary.id != boundary_id]
 
     def with_removed_boundary(self, boundary_id: BoundaryId):
-        return dataclasses.replace(self, boundaries=[boundary for boundary in self.boundaries if
-                                                     boundary.id != boundary_id])
+        return dataclasses.replace(self, boundaries=[boundary for boundary in self.boundaries if boundary.id != boundary_id])
+
+    def with_removed_boundaries(self, boundary_ids: Sequence[BoundaryId]):
+        return dataclasses.replace(self, boundaries=[boundary for boundary in self.boundaries if boundary.id not in boundary_ids])
 
     @classmethod
     def from_dict(cls, collection: Sequence[dict]):

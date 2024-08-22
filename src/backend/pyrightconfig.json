@@ -3,8 +3,10 @@
     "**/__pycache__",
     "**/.pytest_cache"
   ],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
   "ignore": [],
+  "reportAny": false,
   "reportMissingImports": true,
-  "reportMissingTypeStubs": false,
-  "reportIncompatibleVariableOverride": false
+  "reportMissingTypeStubs": false
 }

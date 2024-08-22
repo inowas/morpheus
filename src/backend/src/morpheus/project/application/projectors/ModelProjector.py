@@ -326,6 +326,45 @@ class ModelProjector(EventListenerBase):
         latest = latest.with_updated_layers(layers=layers.with_updated_layer(updated_layer=layer))
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
 
+    @listen_to(ModelBoundaryEvents.ModelBoundariesImportedEvent)
+    def on_model_boundaries_imported(self, event: ModelBoundaryEvents.ModelBoundariesImportedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        new_boundaries = latest_model.boundaries.with_added_boundaries(boundaries=event.get_boundaries())
+        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelBoundaryEvents.ModelBoundariesRemovedEvent)
+    def on_model_boundaries_removed(self, event: ModelBoundaryEvents.ModelBoundariesRemovedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        boundary_ids = event.get_boundary_ids()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        boundaries = latest_model.boundaries
+        if boundaries is None:
+            return
+
+        new_boundaries = boundaries.with_removed_boundaries(boundary_ids=boundary_ids)
+        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
+
     @listen_to(ModelBoundaryEvents.ModelBoundaryAddedEvent)
     def on_model_boundary_added(self, event: ModelBoundaryEvents.ModelBoundaryAddedEvent, metadata: EventMetadata) -> None:
         project_id = event.get_project_id()
@@ -607,29 +646,6 @@ class ModelProjector(EventListenerBase):
         updated_boundary = updated_boundary.with_updated_tags(tags=tags) if tags is not None else updated_boundary
 
         new_boundaries = boundaries.with_updated_boundary(update=updated_boundary)
-        updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
-
-        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
-
-    @listen_to(ModelBoundaryEvents.ModelBoundaryRemovedEvent)
-    def on_model_boundary_removed(self, event: ModelBoundaryEvents.ModelBoundaryRemovedEvent, metadata: EventMetadata) -> None:
-        project_id = event.get_project_id()
-        model_id = event.get_model_id()
-        boundary_id = event.get_boundary_id()
-
-        updated_by = UserId.from_str(metadata.get_created_by().to_str())
-        updated_at = event.get_occurred_at()
-
-        latest_model = self.model_repo.get_latest_model(project_id=project_id)
-
-        if latest_model.model_id != model_id:
-            return
-
-        boundaries = latest_model.boundaries
-        if boundaries is None:
-            return
-
-        new_boundaries = boundaries.with_removed_boundary(boundary_id=boundary_id)
         updated_model = latest_model.with_updated_boundaries(boundaries=new_boundaries)
 
         self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)

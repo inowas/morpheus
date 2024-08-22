@@ -16,6 +16,58 @@ from morpheus.project.types.layers import LayerId
 from .EventNames import ModelBoundaryEventName
 
 
+class ModelBoundariesImportedEvent(EventBase):
+    @classmethod
+    def from_boundaries(cls, project_id: ProjectId, model_id: ModelId, boundaries: list[Boundary], occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'boundaries': [boundary.to_dict() for boundary in boundaries]
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_boundaries(self) -> list[Boundary]:
+        return [Boundary.from_dict(boundary) for boundary in self.payload['boundaries']]
+
+    @staticmethod
+    def get_event_name() -> EventName:
+        return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARIES_IMPORTED.to_str())
+
+
+class ModelBoundariesRemovedEvent(EventBase):
+    @classmethod
+    def from_boundary_ids(cls, project_id: ProjectId, model_id: ModelId, boundary_ids: list[BoundaryId], occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'boundary_ids': [boundary_id.to_str() for boundary_id in boundary_ids]
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_boundary_ids(self) -> list[BoundaryId]:
+        return [BoundaryId.from_str(boundary_id) for boundary_id in self.payload['boundary_ids']]
+
+    @staticmethod
+    def get_event_name() -> EventName:
+        return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARIES_REMOVED.to_str())
+
+
 class ModelBoundaryAddedEvent(EventBase):
     @classmethod
     def from_boundary(cls, project_id: ProjectId, model_id: ModelId, boundary: Boundary, occurred_at: DateTime):
@@ -307,32 +359,6 @@ class ModelBoundaryMetadataUpdatedEvent(EventBase):
     @staticmethod
     def get_event_name() -> EventName:
         return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARY_METADATA_UPDATED.to_str())
-
-
-class ModelBoundaryRemovedEvent(EventBase):
-    @classmethod
-    def from_boundary_id(cls, project_id: ProjectId, model_id: ModelId, boundary_id: BoundaryId, occurred_at: DateTime):
-        return cls(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'boundary_id': boundary_id.to_str()
-            }
-        )
-
-    def get_project_id(self) -> ProjectId:
-        return ProjectId.from_str(self.entity_uuid.to_str())
-
-    def get_model_id(self) -> ModelId:
-        return ModelId.from_str(self.payload['model_id'])
-
-    def get_boundary_id(self) -> BoundaryId:
-        return BoundaryId.from_str(self.payload['boundary_id'])
-
-    @staticmethod
-    def get_event_name() -> EventName:
-        return EventName.from_str(ModelBoundaryEventName.MODEL_BOUNDARY_REMOVED.to_str())
 
 
 class ModelBoundaryObservationAddedEvent(EventBase):

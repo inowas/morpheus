@@ -220,9 +220,9 @@ definitions:
                       type: object
                       properties:
                         date_time:
-                            type: string
-                            format: date-time
-                            example: 2021-01-01T00:00:00Z
+                          type: string
+                          format: date-time
+                          example: 2021-01-01T00:00:00Z
                       required:
                         - date_time
                 required:
@@ -231,14 +231,14 @@ definitions:
                   - geometry
                   - affected_layers
                   - data
-    RemoveModelBoundaryCommand:
+    RemoveModelBoundariesCommand:
       type: object
       properties:
         command_name:
           type: string
           enum:
-            - remove_model_boundary_command
-          example: remove_model_boundary_command
+            - remove_model_boundaries_command
+          example: remove_model_boundaries_command
         payload:
           type: object
           properties:
@@ -248,13 +248,16 @@ definitions:
             model_id:
               type: string
               example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            boundary_id:
-              type: string
-              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_ids:
+              type: array
+              items:
+                type: string
+                example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+              minItems: 1
           required:
             - project_id
             - model_id
-            - boundary_id
+            - boundary_ids
     RemoveModelBoundaryObservationCommand:
       type: object
       properties:
@@ -606,4 +609,4 @@ definitions:
     Tags:
       type: array
       items:
-          type: string
+        type: string
