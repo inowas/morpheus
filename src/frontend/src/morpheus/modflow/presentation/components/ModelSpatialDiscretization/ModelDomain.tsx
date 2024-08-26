@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ShapeFileInput, DataGrid, Button} from 'common/components';
 import {Polygon} from 'geojson';
-import {IAssetShapefileData} from "../../../types";
+import {IAssetShapefileData} from '../../../types';
 
 interface IProps {
   isDirty: boolean;
@@ -10,7 +10,7 @@ interface IProps {
   onChangeGeometry: (polygon: Polygon) => void;
   onReset: () => void;
   onSubmit: () => void;
-  processShapefile: (zipFile: File) => Promise<IAssetShapefileData>;
+  processShapefile: (files: File[]) => Promise<IAssetShapefileData>;
   readOnly: boolean;
 }
 
@@ -18,18 +18,11 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
 
   const [shapeFileError, setShapeFileError] = useState<string | undefined>(undefined);
 
-  const handleSubmitShapeFile = async (zipFile: File) => {
+  const handleSubmitShapeFiles = async (files: File[]) => {
     setShapeFileError(undefined);
     try {
-      const data = await processShapefile(zipFile);
-      const geoJson = data.data
-      if ('Polygon' === geoJson.type) {
-        return onChangeGeometry(geoJson as Polygon);
-      }
-
-      if ('Feature' === geoJson.type && 'Polygon' === geoJson.geometry.type) {
-        return onChangeGeometry(geoJson.geometry as Polygon);
-      }
+      const data = await processShapefile(files);
+      const geoJson = data.data;
 
       if ('FeatureCollection' === geoJson.type) {
         const feature = geoJson.features.find((f) => 'Polygon' === f.geometry.type);
@@ -74,7 +67,7 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
   return (
     <>
       <ShapeFileInput
-        onSubmit={handleSubmitShapeFile}
+        onSubmit={handleSubmitShapeFiles}
         error={shapeFileError}
         readOnly={readOnly}
       />

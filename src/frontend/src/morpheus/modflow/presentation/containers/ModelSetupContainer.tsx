@@ -55,10 +55,10 @@ const ModelSetupContainer = () => {
     return null;
   }
 
-  const handleSubmitShapeFile = async (zipFile: File) => {
+  const handleSubmitShapeFiles = async (files: File[]) => {
     setShapeFileError(null);
     try {
-      const assetShapefileData = await processShapefile(zipFile);
+      const assetShapefileData = await processShapefile(files);
       const geoJson = assetShapefileData.data;
 
       if ('FeatureCollection' === geoJson.type) {
@@ -94,7 +94,7 @@ const ModelSetupContainer = () => {
                 panes={[{
                   menuItem: 'Upload File',
                   render: () => <TabPane attached={false}>
-                    <ShapeFileInput onSubmit={handleSubmitShapeFile} readOnly={isReadOnly}/>
+                    <ShapeFileInput onSubmit={handleSubmitShapeFiles} readOnly={isReadOnly}/>
                     {shapeFileError && !isReadOnly && <div>{shapeFileError.message}</div>}
                   </TabPane>,
                 }]}

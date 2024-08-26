@@ -9,7 +9,6 @@ import useAssets from '../../application/useAssets';
 import {MenuItem, Radio} from 'semantic-ui-react';
 import {AssetButtonsGroup, AssetTable} from '../components/Asset';
 import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
-import JSZip from 'jszip';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
 
@@ -29,7 +28,19 @@ const AssetsPage = ({}: IProps) => {
   const location = useLocation();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
-  const {assets, loading, deleteAsset, uploadAsset, fetchAssetData, updateAssetFileName, error} = useAssets(projectId as string);
+  const {
+    assets,
+    loadingAsset,
+    loadingData,
+    loadingList,
+    uploadingAsset,
+    deleteAsset,
+    uploadShapefile,
+    uploadRasterFile,
+    fetchAssetData,
+    updateAssetFileName,
+    error,
+  } = useAssets(projectId as string);
 
   const [selectedAssetType, setSelectedAssetType] = useState<'shape' | 'raster' | 'csv'>('raster');
   const [rasterAssets, setRasterAssets] = useState<IAsset[]>([]);
@@ -54,33 +65,16 @@ const AssetsPage = ({}: IProps) => {
 
   const handleUploadSelectedRasterFiles = async (files: File[]) => {
     for (const file of files) {
-      if (file.name.endsWith('.tif') || file.name.endsWith('.tiff') || file.name.endsWith('.geotiff')) {
-        await uploadAsset(file);
-      }
+      await uploadRasterFile(file);
     }
   };
 
   const handleUploadSelectedShapeFiles = async (files: File[]) => {
-    // Check if the file is a zip file and return this file directly
-    const zipFile = files.find((file) => file.name.endsWith('.zip'));
-    if (zipFile) {
-      uploadAsset(zipFile);
-    }
-
-    // if no zip file is found, compress the files and upload the zip file
-    if (!zipFile) {
-      const zip = new JSZip();
-      const fileName = files[0].name.split('.')[0];
-      files.forEach((file) => zip.file(`${file.name}`, file));
-      const zipContent = await zip.generateAsync({type: 'blob'});
-      const file = new File([zipContent], `${fileName}.zip`, {type: 'application/zip'});
-      await uploadAsset(file);
-    }
+    await uploadShapefile(files);
   };
 
   const renderData = (asset: IAsset | null, data: IAssetData | null) => {
-
-    if (loading) {
+    if (loadingData) {
       return <Loader
         style={{marginTop: '50px'}}
         inline={'centered'}
@@ -133,7 +127,8 @@ const AssetsPage = ({}: IProps) => {
                       <AssetTable
                         fileType={selectedAssetType}
                         assets={rasterAssets}
-                        loading={loading}
+                        loadingAsset={loadingAsset}
+                        loadingList={loadingList}
                         deleteAsset={deleteAsset}
                         updateAssetFileName={updateAssetFileName}
                         isReadOnly={isReadOnly}
@@ -144,7 +139,7 @@ const AssetsPage = ({}: IProps) => {
                         acceptFiles={'.geotiff,.tif,.tiff'}
                         buttonContent={'Upload Raster Files'}
                         isReadOnly={isReadOnly}
-                        loading={loading}
+                        loading={uploadingAsset}
                         onSelectFiles={handleUploadSelectedRasterFiles}
                       />
                     </TabPane>,
@@ -155,7 +150,8 @@ const AssetsPage = ({}: IProps) => {
                       <AssetTable
                         fileType={selectedAssetType}
                         assets={shapeAssets}
-                        loading={loading}
+                        loadingAsset={loadingAsset}
+                        loadingList={loadingList}
                         deleteAsset={deleteAsset}
                         updateAssetFileName={updateAssetFileName}
                         isReadOnly={isReadOnly}
@@ -166,7 +162,7 @@ const AssetsPage = ({}: IProps) => {
                         acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
                         buttonContent={'Upload Shapefiles'}
                         isReadOnly={isReadOnly}
-                        loading={loading}
+                        loading={uploadingAsset}
                         onSelectFiles={handleUploadSelectedShapeFiles}
                       />
                     </TabPane>,
