@@ -37,6 +37,7 @@ model_discretization_event_list = [
 ]
 
 model_layer_event_list = [
+    ModelLayerEvents.ModelLayerAddedEvent,
     ModelLayerEvents.ModelLayerConfinementUpdatedEvent,
     ModelLayerEvents.ModelLayerClonedEvent,
     ModelLayerEvents.ModelLayerCreatedEvent,

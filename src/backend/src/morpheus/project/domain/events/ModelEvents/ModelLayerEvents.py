@@ -11,6 +11,32 @@ from morpheus.project.types.layers.Layer import Layer, LayerId, LayerDescription
 from .EventNames import ModelLayerEventName
 
 
+class ModelLayerAddedEvent(EventBase):
+    @classmethod
+    def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
+        return cls(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'model_id': model_id.to_str(),
+                'layer': layer.to_dict()
+            }
+        )
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+    def get_model_id(self) -> ModelId:
+        return ModelId.from_str(self.payload['model_id'])
+
+    def get_layer(self) -> Layer:
+        return Layer.from_dict(self.payload['layer'])
+
+    @staticmethod
+    def get_event_name() -> EventName:
+        return EventName.from_str(ModelLayerEventName.MODEL_LAYER_ADDED.to_str())
+
+
 class ModelLayerClonedEvent(EventBase):
     @classmethod
     def from_layer_id(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, new_layer_id: LayerId, occurred_at: DateTime):

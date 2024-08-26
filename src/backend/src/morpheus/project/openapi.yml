@@ -113,6 +113,7 @@ paths:
                 - $ref: './application/write/Model/Discretization/schema.yml#/definitions/commands/UpdateModelTimeDiscretizationCommand'
 
                 # Model Layer Commands
+                - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/AddModelLayerCommand'
                 - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/CloneModelLayerCommand'
                 - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/CreateModelLayerCommand'
                 - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/DeleteModelLayerCommand'
