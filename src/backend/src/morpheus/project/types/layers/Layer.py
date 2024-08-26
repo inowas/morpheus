@@ -371,6 +371,9 @@ class LayerPropertyValues:
 
         return np_raster_data.tolist()
 
+    def min(self):
+        return np.min(np.array(self.get_data()))
+
 
 class LayerPropertyName(StrEnum):
     hk = 'hk'

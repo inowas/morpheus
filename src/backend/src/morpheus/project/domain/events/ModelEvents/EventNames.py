@@ -25,6 +25,7 @@ class ModelDiscretizationEventName(StrEnum):
 
 
 class ModelLayerEventName(StrEnum):
+    MODEL_LAYER_ADDED = 'Model Layer Added'
     MODEL_LAYER_CONFINEMENT_UPDATED = 'Model Layer Confinement Updated'
     MODEL_LAYER_CLONED = 'Model Layer Cloned'
     MODEL_LAYER_CREATED = 'Model Layer Created'

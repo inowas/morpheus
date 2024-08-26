@@ -3,6 +3,26 @@
 title: Schema for ModelLayerCommands
 definitions:
   commands:
+    AddModelLayerCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - add_model_layer_command
+          example: add_model_layer_command
+        payload:
+          type: object
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          required:
+            - project_id
+            - model_id
     CloneModelLayerCommand:
       type: object
       properties:
