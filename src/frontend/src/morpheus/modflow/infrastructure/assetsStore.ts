@@ -1,18 +1,29 @@
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
-import {IAsset, IError} from '../types';
+import {IAsset, IAssetId, IError} from '../types';
 
+interface IAssetLoading {
+  list: boolean;
+  asset: IAssetId | false;
+  data: IAssetId | false;
+  upload: boolean;
+}
 
 export interface IAssetsStoreState {
   assets: IAsset[];
   error: IError | null;
-  loading: boolean;
+  loading: IAssetLoading;
 }
 
 const initialState: IAssetsStoreState = {
   assets: [],
-  loading: false,
   error: null,
+  loading: {
+    list: false,
+    asset: false,
+    data: false,
+    upload: false,
+  },
 };
 
 export const assetsSlice = createSlice({
@@ -28,8 +39,17 @@ export const assetsSlice = createSlice({
     removeAsset: (state, action: PayloadAction<string>) => {
       state.assets = state.assets.filter(asset => asset.asset_id !== action.payload);
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
+    setLoadingList: (state, action: PayloadAction<boolean>) => {
+      state.loading.list = action.payload;
+    },
+    setLoadingAsset: (state, action: PayloadAction<IAssetId | false>) => {
+      state.loading.asset = action.payload;
+    },
+    setLoadingData: (state, action: PayloadAction<IAssetId | false>) => {
+      state.loading.data = action.payload;
+    },
+    setLoadingUpload: (state, action: PayloadAction<boolean>) => {
+      state.loading.upload = action.payload;
     },
     setError: (state, action: PayloadAction<IError | null>) => {
       state.error = action.payload;
@@ -42,7 +62,10 @@ export const {
   setAssets,
   removeAsset,
   updateAsset,
-  setLoading,
+  setLoadingAsset,
+  setLoadingData,
+  setLoadingList,
+  setLoadingUpload,
   setError,
 } = assetsSlice.actions;
 

@@ -11,7 +11,8 @@ interface IProps {
   className?: string;
   fileType: string;
   assets: IAsset[];
-  loading: boolean;
+  loadingAsset: IAssetId | false;
+  loadingList: boolean;
   deleteAsset: (id: string) => void;
   updateAssetFileName: (id: string, fileName: string) => void;
   isReadOnly: boolean;
@@ -40,7 +41,8 @@ const AssetTable = ({
   className,
   fileType,
   assets,
-  loading,
+  loadingAsset,
+  loadingList,
   deleteAsset,
   updateAssetFileName,
   isReadOnly,
@@ -50,9 +52,9 @@ const AssetTable = ({
 }: IProps) => {
 
   const [checkedAssets, setCheckedAssets] = useState<string[]>([]);
-
   const [sortedAssets, setSortedAssets] = useState<IAsset[]>(assets);
   const [sortBy, setSortBy] = useState<ISortBy>({name: 'file_name', direction: 'asc'});
+  const [editAssetFileNameId, setEditAssetFileNameId] = useState<string | null>(null);
 
   useEffect(() => {
     if (onChangeCheckedAssets) {
@@ -142,6 +144,8 @@ const AssetTable = ({
             value={asset.file.file_name}
             onChange={(fileName) => updateAssetFileName(asset.asset_id, fileName)}
             isReadOnly={isReadOnly}
+            edit={editAssetFileNameId === asset.asset_id}
+            onChangeEdit={(edit) => setEditAssetFileNameId(edit ? asset.asset_id : null)}
           />
         </Table.Cell>
         <Table.Cell>{calculateFileSize(asset.file.size_in_bytes)}</Table.Cell>
@@ -152,20 +156,27 @@ const AssetTable = ({
               className='buttonLink'
               onClick={(e) => {
                 e.stopPropagation();
+                setEditAssetFileNameId(asset.asset_id);
+              }}
+              icon={'edit'}
+            />
+            <Button
+              style={{padding: '0 6px 0'}}
+              className='buttonLink'
+              onClick={(e) => {
+                e.stopPropagation();
                 deleteAsset(asset.asset_id);
               }}
-            >
-              Delete
-            </Button>|
+              icon={'trash'}
+            />
             <Button
               style={{padding: '0 6px 0'}}
               className='buttonLink'
               onClick={(e) => {
                 e.stopPropagation();
               }}
-            >
-              Download
-            </Button>
+              icon={'download'}
+            />
           </Table.Cell>
         )}
       </Table.Row>
@@ -175,8 +186,10 @@ const AssetTable = ({
   return (
     <div className={`${className || ''} ${styles.assetTable}`} style={style}>
       <Segment
-        loading={loading} raised={true}
-        basic={true} style={{padding: '0px'}}
+        raised={true}
+        basic={true}
+        style={{padding: '0px'}}
+        loading={loadingList}
       >
         <div className='scrollableTable'>
           <Table

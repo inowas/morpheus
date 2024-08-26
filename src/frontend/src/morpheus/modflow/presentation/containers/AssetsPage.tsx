@@ -28,7 +28,7 @@ const AssetsPage = ({}: IProps) => {
   const location = useLocation();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
-  const {assets, loading, deleteAsset, uploadShapefile, uploadRasterFile, fetchAssetData, updateAssetFileName, error} = useAssets(projectId as string);
+  const {assets, loadingAsset, loadingData, loadingList, uploadingAsset, deleteAsset, uploadShapefile, uploadRasterFile, fetchAssetData, updateAssetFileName, error} = useAssets(projectId as string);
 
   const [selectedAssetType, setSelectedAssetType] = useState<'shape' | 'raster' | 'csv'>('raster');
   const [rasterAssets, setRasterAssets] = useState<IAsset[]>([]);
@@ -62,8 +62,7 @@ const AssetsPage = ({}: IProps) => {
   };
 
   const renderData = (asset: IAsset | null, data: IAssetData | null) => {
-
-    if (loading) {
+    if (loadingData) {
       return <Loader
         style={{marginTop: '50px'}}
         inline={'centered'}
@@ -116,7 +115,7 @@ const AssetsPage = ({}: IProps) => {
                       <AssetTable
                         fileType={selectedAssetType}
                         assets={rasterAssets}
-                        loading={loading}
+                        loadingAsset={loadingAsset}
                         deleteAsset={deleteAsset}
                         updateAssetFileName={updateAssetFileName}
                         isReadOnly={isReadOnly}
@@ -127,7 +126,7 @@ const AssetsPage = ({}: IProps) => {
                         acceptFiles={'.geotiff,.tif,.tiff'}
                         buttonContent={'Upload Raster Files'}
                         isReadOnly={isReadOnly}
-                        loading={loading}
+                        loading={!!uploadingAsset}
                         onSelectFiles={handleUploadSelectedRasterFiles}
                       />
                     </TabPane>,
@@ -138,7 +137,7 @@ const AssetsPage = ({}: IProps) => {
                       <AssetTable
                         fileType={selectedAssetType}
                         assets={shapeAssets}
-                        loading={loading}
+                        loadingAsset={loadingAsset}
                         deleteAsset={deleteAsset}
                         updateAssetFileName={updateAssetFileName}
                         isReadOnly={isReadOnly}
@@ -149,7 +148,7 @@ const AssetsPage = ({}: IProps) => {
                         acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
                         buttonContent={'Upload Shapefiles'}
                         isReadOnly={isReadOnly}
-                        loading={loading}
+                        loading={!!uploadingAsset}
                         onSelectFiles={handleUploadSelectedShapeFiles}
                       />
                     </TabPane>,

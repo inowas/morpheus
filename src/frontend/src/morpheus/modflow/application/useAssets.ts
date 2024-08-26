@@ -2,7 +2,7 @@ import {IAsset, IAssetData, IAssetId, IAssetRasterData, IAssetShapefileData, IEr
 import {useApi} from '../incoming';
 import {useDispatch, useSelector} from 'react-redux';
 import {IRootState} from '../../store';
-import {setAssets, updateAsset, setLoading, removeAsset, setError} from '../infrastructure/assetsStore';
+import {setAssets, updateAsset, removeAsset, setError, setLoadingList, setLoadingAsset, setLoadingData, setLoadingUpload} from '../infrastructure/assetsStore';
 import {useEffect} from 'react';
 import useProjectCommandBus from './useProjectCommandBus';
 import {IDeleteAssetCommand, IUpdateAssetDescriptionCommand, IUpdateAssetFileNameCommand} from './useProjectCommandBus.type';
@@ -23,7 +23,10 @@ interface IUseAssets {
   processShapefile: (files: File[]) => Promise<IAssetShapefileData>;
   uploadRasterFile: (file: File) => Promise<IAssetId | undefined>;
   uploadShapefile: (files: File[]) => Promise<IAssetId | undefined>;
-  loading: boolean;
+  loadingList: boolean;
+  loadingAsset: boolean | IAssetId;
+  loadingData: boolean | IAssetId;
+  uploadingAsset: boolean;
   error?: IError;
 }
 
@@ -40,12 +43,12 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const fetchAssets = async (): Promise<undefined> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingList(true));
     dispatch(setError(null));
 
     const getResponse = await httpGet<IGetAssetsResponse>(`/projects/${projectId}/assets`);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingList(false));
 
     if (getResponse.ok) {
       dispatch(setAssets(getResponse.val.assets));
@@ -58,12 +61,12 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const fetchAssetMetadata = async (assetId: IAssetId): Promise<IAsset | undefined> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingAsset(assetId));
     dispatch(setError(null));
 
     const getResponse = await httpGet<IAsset>(`/projects/${projectId}/assets/${assetId}`);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingAsset(false));
 
     if (getResponse.ok) {
       dispatch(updateAsset(getResponse.val));
@@ -77,12 +80,12 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const fetchAssetData = async (assetId: IAssetId): Promise<IAssetData | undefined> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingData(assetId));
     dispatch(setError(null));
 
     const getResponse = await httpGet<IAssetData>(`/projects/${projectId}/assets/${assetId}/data`);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingData(false));
 
     if (getResponse.ok) {
       return getResponse.val;
@@ -95,7 +98,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const deleteAsset = async (assetId: IAssetId): Promise<IAssetId | undefined> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingAsset(assetId));
     dispatch(setError(null));
 
     const deleteAssetCommand: IDeleteAssetCommand = {
@@ -108,7 +111,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
     const deleteResponse = await sendCommand(deleteAssetCommand);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingAsset(false));
 
     if (deleteResponse.ok) {
       dispatch(removeAsset(assetId));
@@ -122,7 +125,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const updateAssetDescription = async (assetId: IAssetId, description: string): Promise<void> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingAsset(assetId));
     dispatch(setError(null));
 
     const updateAssetFileNameCommand: IUpdateAssetDescriptionCommand = {
@@ -137,7 +140,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
     const updateResponse = await sendCommand(updateAssetFileNameCommand);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingAsset(false));
 
     if (updateResponse.ok) {
       fetchAssetMetadata(assetId);
@@ -149,7 +152,7 @@ const useAssets = (projectId: string): IUseAssets => {
   };
   const updateAssetFileName = async (assetId: IAssetId, fileName: string): Promise<void> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingAsset(assetId));
     dispatch(setError(null));
 
     const updateAssetFileNameCommand: IUpdateAssetFileNameCommand = {
@@ -164,7 +167,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
     const updateResponse = await sendCommand(updateAssetFileNameCommand);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingAsset(false));
 
     console.log(updateResponse, updateResponse.ok);
 
@@ -179,7 +182,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
   const uploadAsset = async (file: File, description?: string): Promise<IAssetId | undefined> => {
 
-    dispatch(setLoading(true));
+    dispatch(setLoadingUpload(true));
     dispatch(setError(null));
 
     const formData = new FormData();
@@ -190,7 +193,7 @@ const useAssets = (projectId: string): IUseAssets => {
 
     const postResponse = await httpPost<FormData>(`/projects/${projectId}/assets`, formData);
 
-    dispatch(setLoading(false));
+    dispatch(setLoadingUpload(false));
 
     if (postResponse.ok) {
       await fetchAssets();
@@ -264,7 +267,7 @@ const useAssets = (projectId: string): IUseAssets => {
   useEffect(() => {
     fetchAssets();
     // eslint-disable-next-line
-    }, []);
+  }, []);
 
   return {
     assets,
@@ -281,11 +284,13 @@ const useAssets = (projectId: string): IUseAssets => {
     uploadAsset,
     uploadRasterFile,
     uploadShapefile,
-    loading,
+    loadingAsset: loading.asset,
+    loadingData: loading.data,
+    loadingList: loading.list,
+    uploadingAsset: loading.upload,
     error: error ? error : undefined,
   };
-}
-;
+};
 
 export default useAssets;
 export type {IUseAssets, IAssetId};
