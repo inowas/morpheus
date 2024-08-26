@@ -47,6 +47,10 @@ class LayersCollection:
         if len(self.layers) == 1:
             raise ValueError("Cannot delete the last layer")
 
+    def assert_layer_can_be_added(self, layer: Layer):
+        if layer.layer_id in self.get_layer_ids():
+            raise ValueError("Layer to be added already exists in the collection")
+
     def assert_layer_can_be_cloned(self, layer_id: LayerId, new_layer_id: LayerId):
         if layer_id not in self.get_layer_ids():
             raise ValueError("Layer to be cloned does not exist in the collection")

@@ -1,3 +1,4 @@
+from .AddModelLayer import AddModelLayerCommand, AddModelLayerCommandHandler
 from .CloneModelLayer import CloneModelLayerCommand, CloneModelLayerCommandHandler
 from .CreateModelLayer import CreateModelLayerCommand, CreateModelLayerCommandHandler
 from .DeleteModelLayer import DeleteModelLayerCommand, DeleteModelLayerCommandHandler
@@ -9,6 +10,7 @@ from .UpdateModelLayerPropertyRasterReference import UpdateModelLayerPropertyRas
 from .UpdateModelLayerPropertyZones import UpdateModelLayerPropertyZonesCommand, UpdateModelLayerPropertyZonesCommandHandler
 
 model_layers_command_handler_map = {
+    AddModelLayerCommand: AddModelLayerCommandHandler,
     CloneModelLayerCommand: CloneModelLayerCommandHandler,
     CreateModelLayerCommand: CreateModelLayerCommandHandler,
     DeleteModelLayerCommand: DeleteModelLayerCommandHandler,

@@ -417,6 +417,14 @@ export type IModelObservationCommand = IAddModelObservationCommand |
   IUpdateModelObservationCommand;
 
 // Model Layer Commands
+export interface IAddModelLayerCommand {
+  command_name: 'add_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+  }
+}
+
 export interface ICloneModelLayerCommand {
   command_name: 'clone_model_layer_command';
   payload: {
@@ -520,7 +528,8 @@ export interface IUpdateModelLayerPropertyZonesCommand {
   }
 }
 
-export type IModelLayerCommand = ICloneModelLayerCommand |
+export type IModelLayerCommand = IAddModelLayerCommand |
+  ICloneModelLayerCommand |
   ICreateModelLayerCommand |
   IDeleteModelLayerCommand |
   IUpdateModelLayerConfinementCommand |

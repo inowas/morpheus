@@ -8,7 +8,7 @@ import morpheus.project.domain.events.ModelEvents.ModelObservationEvents as Mode
 from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelAffectedCellsRecalculatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelGridUpdatedEvent, \
     ModelGridRecalculatedEvent, ModelGeometryUpdatedEvent, ModelAffectedCellsUpdatedEvent
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent, ModelLayerMetadataUpdatedEvent, ModelLayerOrderUpdatedEvent, \
-    ModelLayerDeletedEvent, ModelLayerCreatedEvent, ModelLayerConfinementUpdatedEvent, ModelLayerClonedEvent
+    ModelLayerDeletedEvent, ModelLayerCreatedEvent, ModelLayerConfinementUpdatedEvent, ModelLayerClonedEvent, ModelLayerAddedEvent
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
@@ -120,6 +120,32 @@ class ModelProjector(EventListenerBase):
         latest = self.model_repo.get_latest_model(project_id=project_id)
         latest = latest.with_updated_time_discretization(time_discretization=time_discretization)
         self.model_repo.update_model(project_id=project_id, model=latest, updated_at=updated_at, updated_by=updated_by)
+
+    @listen_to(ModelLayerAddedEvent)
+    def on_model_layer_added(self, event: ModelLayerAddedEvent, metadata: EventMetadata) -> None:
+        project_id = event.get_project_id()
+        model_id = event.get_model_id()
+        layer = event.get_layer()
+
+        updated_by = UserId.from_str(metadata.get_created_by().to_str())
+        updated_at = event.get_occurred_at()
+
+        latest_model = self.model_repo.get_latest_model(project_id=project_id)
+
+        if latest_model.model_id != model_id:
+            return
+
+        layers = latest_model.layers
+        if layers is None:
+            return
+
+        if not isinstance(layer, Layer):
+            return
+
+        new_layers = layers.with_added_layer(layer=layer)
+        updated_model = latest_model.with_updated_layers(layers=new_layers)
+
+        self.model_repo.update_model(project_id=project_id, model=updated_model, updated_at=updated_at, updated_by=updated_by)
 
     @listen_to(ModelLayerClonedEvent)
     def on_model_layer_cloned(self, event: ModelLayerClonedEvent, metadata: EventMetadata) -> None:

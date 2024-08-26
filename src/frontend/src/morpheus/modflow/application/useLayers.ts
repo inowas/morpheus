@@ -12,6 +12,7 @@ interface IUseLayers {
   layers: ILayer[] | null;
   fetchLayerPropertyImage: (layerId: string, propertyName: ILayerProperty) => Promise<{ imageUrl: string, colorbarUrl: string } | null>;
   fetchLayerPropertyData: (layerId: string, propertyName: ILayerProperty, format?: 'raster' | 'grid') => Promise<ILayerPropertyData | null>;
+  onAddLayer: () => void;
   onCloneLayer: (layerId: string) => Promise<void>;
   onDeleteLayer: (layerId: string) => Promise<void>;
   onChangeLayerMetadata: (layerId: string, name?: string, description?: string) => Promise<void>;
@@ -103,6 +104,39 @@ const useLayers = (projectId: string): IUseLayers => {
     }
 
     return null;
+  };
+
+  const onAddLayer = async (): Promise<void> => {
+    if (!model) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const addLayerResult = await sendCommand<Commands.IAddModelLayerCommand>({
+      command_name: 'add_model_layer_command',
+      payload: {
+        project_id: projectId,
+        model_id: model.model_id,
+      },
+    });
+
+    if (!isMounted.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (addLayerResult.err) {
+      setError({
+        message: addLayerResult.val.message,
+        code: addLayerResult.val.code,
+      });
+      return;
+    }
+
+    await fetchLayers();
   };
 
   const onChangeLayerOrder = async (newOrderIds: string[]) => {
@@ -405,6 +439,7 @@ const useLayers = (projectId: string): IUseLayers => {
     layers: model?.layers || null,
     fetchLayerPropertyImage,
     fetchLayerPropertyData,
+    onAddLayer,
     onCloneLayer,
     onDeleteLayer,
     onChangeLayerConfinement,
