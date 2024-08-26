@@ -6,6 +6,7 @@ import {setAssets, updateAsset, setLoading, removeAsset, setError} from '../infr
 import {useEffect} from 'react';
 import useProjectCommandBus from './useProjectCommandBus';
 import {IDeleteAssetCommand, IUpdateAssetDescriptionCommand, IUpdateAssetFileNameCommand} from './useProjectCommandBus.type';
+import JSZip from 'jszip';
 
 interface IUseAssets {
   assets: IAsset[];
@@ -19,7 +20,9 @@ interface IUseAssets {
   fetchAssetMetadata: (assetId: IAssetId) => Promise<IAsset | undefined>;
   deleteAsset: (assetId: IAssetId) => Promise<IAssetId | undefined>;
   processRasterFile: (rasterFile: File) => Promise<IAssetRasterData>;
-  processShapefile: (zipFile: File) => Promise<IAssetShapefileData>;
+  processShapefile: (files: File[]) => Promise<IAssetShapefileData>;
+  uploadRasterFile: (file: File) => Promise<IAssetId | undefined>;
+  uploadShapefile: (files: File[]) => Promise<IAssetId | undefined>;
   loading: boolean;
   error?: IError;
 }
@@ -199,10 +202,35 @@ const useAssets = (projectId: string): IUseAssets => {
     }
   };
 
-  const processShapefile = async (zipFile: File): Promise<IAssetShapefileData> => {
+  const uploadRasterFile = async (file: File): Promise<IAssetId | undefined> => {
+    if (file.name.endsWith('.tif') || file.name.endsWith('.tiff') || file.name.endsWith('.geotiff')) {
+      return uploadAsset(file, file.name);
+    }
+  };
+
+  const uploadShapefile = async (files: File[]): Promise<IAssetId | undefined> => {
+
+    // Check if the file is a zip file and return this file directly
+    const zipFile = files.find((file) => file.name.endsWith('.zip'));
+    if (zipFile) {
+      uploadAsset(zipFile);
+    }
+
+    // if no zip file is found, compress the files and upload the zip file
+    if (!zipFile) {
+      const zip = new JSZip();
+      const fileName = files.find((file) => file.name.endsWith('.shp'))?.name.split('.shp')[0] || 'shapefile';
+      files.forEach((file) => zip.file(`${file.name}`, file));
+      const zipContent = await zip.generateAsync({type: 'blob'});
+      const file = new File([zipContent], `${fileName}.zip`, {type: 'application/zip'});
+      return uploadAsset(file, fileName);
+    }
+  };
+
+  const processShapefile = async (files: File[]): Promise<IAssetShapefileData> => {
     // upload shape file to server
     // return shapefile data from server as geojson
-    const assetId = await uploadAsset(zipFile, 'shapefile');
+    const assetId = await uploadShapefile(files);
 
     if (!assetId) {
       return Promise.reject('Failed to upload shapefile.');
@@ -219,7 +247,7 @@ const useAssets = (projectId: string): IUseAssets => {
   const processRasterFile = async (rasterFile: File): Promise<IAssetRasterData> => {
     // upload raster file to server
     // return raster file data from server
-    const assetId = await uploadAsset(rasterFile, 'rasterfile');
+    const assetId = await uploadRasterFile(rasterFile);
 
     if (!assetId) {
       return Promise.reject('Failed to upload raster file.');
@@ -251,6 +279,8 @@ const useAssets = (projectId: string): IUseAssets => {
     updateAssetDescription,
     updateAssetFileName,
     uploadAsset,
+    uploadRasterFile,
+    uploadShapefile,
     loading,
     error: error ? error : undefined,
   };
