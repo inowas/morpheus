@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {ContentWrapper, DataGrid, SectionTitle, Segment} from 'common/components';
+import {ContentWrapper, DataGrid, SectionTitle, Segment, Widget} from 'common/components';
 import {useParams} from 'react-router-dom';
 import {useCalculationResults, useTimeDiscretization} from '../../application';
 import {BodyContent, SidebarContent} from '../components';
@@ -268,7 +268,7 @@ const FlowResultsContainer = () => {
       <SidebarContent maxWidth={'33%'}>
         <DataGrid>
           <SectionTitle title={'Flow results'}/>
-          <Segment.Segment>
+          <Widget>
             <ResultsSelector
               availableLayers={layers.map(l => l.name)}
               selectedLayer={selectedLayer}
@@ -282,7 +282,7 @@ const FlowResultsContainer = () => {
               isLoading={loading}
               formatTotalTime={(totalTime: number) => formatISODate(addDays(timeDiscretization.start_date_time, totalTime))}
             />
-          </Segment.Segment>
+          </Widget>
           <Tab
             variant='primary'
             menu={{secondary: true, pointing: true}}
