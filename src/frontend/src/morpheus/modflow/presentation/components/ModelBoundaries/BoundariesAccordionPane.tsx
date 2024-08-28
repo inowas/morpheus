@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import {IBoundary, IBoundaryId, IBoundaryType, IInterpolationType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import BoundaryList from './BoundaryList';
@@ -74,6 +74,24 @@ const BoundariesAccordionPane = ({
 
   }, [selectedBoundaryAndObservation, selectedBoundaryAndObservation?.boundary, selectedBoundaryAndObservation?.observationId, boundaries]);
 
+  const availableTags = useMemo(() => {
+    if (!boundaries) {
+      return [];
+    }
+
+    const tags: string[] = [];
+    for (const boundary of boundaries) {
+      for (const tag of boundary.tags) {
+        if (!tags.includes(tag))
+          tags.push(tag);
+      }
+    }
+
+    tags.sort();
+    return tags;
+
+  }, [boundaries]);
+
   const handleChangeBoundaryName = (boundaryId: IBoundaryId, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
   const handleChangeBoundaryTags = (boundaryId: IBoundaryId, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
 
@@ -115,6 +133,7 @@ const BoundariesAccordionPane = ({
             ]}
           />
           <BoundariesForm
+            availableTags={availableTags}
             boundary={selectedBoundary}
             onChangeBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
             onChangeBoundaryInterpolation={onUpdateBoundaryInterpolation}

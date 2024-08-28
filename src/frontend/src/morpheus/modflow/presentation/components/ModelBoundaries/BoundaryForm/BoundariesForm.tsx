@@ -11,6 +11,7 @@ import {ILayerId} from '../../../../types/Layers.type';
 
 
 interface IProps {
+  availableTags: string[];
   boundary: IBoundary;
   onChangeBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
   onChangeBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
@@ -24,7 +25,7 @@ interface ILayerMetadata {
   name: string;
 }
 
-const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, onChangeBoundaryInterpolation, isReadOnly, layers}: IProps) => {
+const BoundariesForm = ({availableTags, boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, onChangeBoundaryInterpolation, isReadOnly, layers}: IProps) => {
 
   const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
   const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
@@ -60,18 +61,13 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
   useEffect(() => {
     const layerIds = layers.map(layer => layer.layer_id);
     setBoundaryLocal({...boundary, affected_layers: boundary.affected_layers.filter(affectedLayer => layerIds.includes(affectedLayer))});
-    setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
-  }, [boundary]);
+  }, [boundary, layers]);
+
+  useEffect(() => {
+    setTagOptions(availableTags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
+  }, [availableTags]);
 
   const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
-
-  const getDropdownValue = () => {
-    if (hasMultipleAffectedLayers(boundaryLocal.type)) {
-      return boundaryLocal.affected_layers;
-    }
-
-    return boundaryLocal.affected_layers[0];
-  };
 
   return (
     <Form>
