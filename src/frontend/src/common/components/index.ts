@@ -51,6 +51,7 @@ import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
 import RasterFileInput from './RasterFileInput';
 import SearchInput from './SearchComponent/SearchInput';
+import {Section, Widget} from './Section';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
@@ -119,6 +120,7 @@ export {
   RasterFileInput,
   RandomImage,
   SearchInput,
+  Section,
   SectionTitle,
   Segment,
   Select,
@@ -133,6 +135,7 @@ export {
   CsvFileInput,
   UploadCSVFile,
   UploadFile,
+  Widget,
 };
 
 export type {
