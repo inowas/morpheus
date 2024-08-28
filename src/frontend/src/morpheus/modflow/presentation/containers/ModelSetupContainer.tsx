@@ -4,11 +4,8 @@ import type {Polygon} from 'geojson';
 import {useParams} from 'react-router-dom';
 import {useAssets, useModelSetup} from '../../application';
 import {IError, ILengthUnit} from '../../types';
-import {Button, DataGrid, SectionTitle, Tab} from 'common/components';
-import {Accordion, AccordionContent} from '../components/Content';
-import {TabPane} from 'semantic-ui-react';
+import {Button, DataGrid, Section, SectionTitle} from 'common/components';
 import ShapeFileInput from '../../../../common/components/ShapeFileInput';
-import SetupGridProperties from '../components/ModelSetup/SetupGridProperties';
 import ModelSetupMap from '../components/ModelSetup/Map';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 
@@ -29,7 +26,6 @@ const defaultGrid: ICreateGrid = {
 const ModelSetupContainer = () => {
 
   const {projectId} = useParams();
-  const [gridProperties, setGridProperties] = useState<ICreateGrid>(defaultGrid);
   const [geometry, setGeometry] = useState<Polygon | undefined>();
   const {loading, error: serverError, createModel} = useModelSetup(projectId as string);
   const [shapeFileError, setShapeFileError] = useState<IError | null>(null);
@@ -43,8 +39,8 @@ const ModelSetupContainer = () => {
     try {
       await createModel({
         geometry: geometry,
-        grid_properties: gridProperties,
-        length_unit: gridProperties.length_unit,
+        grid_properties: defaultGrid,
+        length_unit: defaultGrid.length_unit,
       });
     } catch (e) {
       console.log(e);
@@ -86,37 +82,13 @@ const ModelSetupContainer = () => {
       <SidebarContent maxWidth={600}>
         <DataGrid>
           <SectionTitle title={'Model Geometry'}/>
-          <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
-            <AccordionContent title={'Model domain'}>
-              <Tab
-                variant='primary'
-                menu={{pointing: true}}
-                panes={[{
-                  menuItem: 'Upload File',
-                  render: () => <TabPane attached={false}>
-                    <ShapeFileInput onSubmit={handleSubmitShapeFiles} readOnly={isReadOnly}/>
-                    {shapeFileError && !isReadOnly && <div>{shapeFileError.message}</div>}
-                  </TabPane>,
-                }]}
-              />
-            </AccordionContent>
-            <AccordionContent title={'Model grid'}>
-              <Tab
-                variant='primary'
-                menu={{pointing: true}}
-                panes={[{
-                  menuItem: 'Grid Properties',
-                  render: () => <TabPane attached={false}>
-                    <SetupGridProperties
-                      gridProperties={gridProperties}
-                      onChange={setGridProperties}
-                      readOnly={isReadOnly}
-                    />
-                  </TabPane>,
-                }]}
-              />
-            </AccordionContent>
-          </Accordion>
+          <Section
+            title={'Model domain'} collapsable={true}
+            open={true}
+          >
+            <ShapeFileInput onSubmit={handleSubmitShapeFiles} readOnly={isReadOnly}/>
+            {shapeFileError && !isReadOnly && <div>{shapeFileError.message}</div>}
+          </Section>
         </DataGrid>
         <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
           {serverError && <div>{serverError.message}</div>}
