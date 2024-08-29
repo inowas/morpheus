@@ -171,26 +171,28 @@ const BoundariesContainer = () => {
               </DropdownComponent.Dropdown>
             </SearchInput>
           </Widget>
-          <LeafletMapProvider mapRef={mapRef}>
-            <BoundariesAccordion
-              boundaries={boundaries}
-              layers={layers}
-              formatDateTime={formatISODate}
-              selectedBoundaryAndObservation={selectedBoundaryAndObservation}
-              onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
-              onCloneBoundary={onCloneBoundary}
-              onCloneBoundaryObservation={onCloneBoundaryObservation}
-              onDisableBoundary={onDisableBoundary}
-              onEnableBoundary={onEnableBoundary}
-              onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
-              onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
-              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
-              onRemoveBoundaries={onRemoveBoundaries}
-              onRemoveBoundaryObservation={onRemoveBoundaryObservation}
-              onUpdateBoundaryObservation={onUpdateBoundaryObservation}
-              timeDiscretization={timeDiscretization}
-            />
-          </LeafletMapProvider>
+          <Widget>
+            <LeafletMapProvider mapRef={mapRef}>
+              <BoundariesAccordion
+                boundaries={boundaries}
+                layers={layers}
+                formatDateTime={formatISODate}
+                selectedBoundaryAndObservation={selectedBoundaryAndObservation}
+                onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
+                onCloneBoundary={onCloneBoundary}
+                onCloneBoundaryObservation={onCloneBoundaryObservation}
+                onDisableBoundary={onDisableBoundary}
+                onEnableBoundary={onEnableBoundary}
+                onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+                onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
+                onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
+                onRemoveBoundaries={onRemoveBoundaries}
+                onRemoveBoundaryObservation={onRemoveBoundaryObservation}
+                onUpdateBoundaryObservation={onUpdateBoundaryObservation}
+                timeDiscretization={timeDiscretization}
+              />
+            </LeafletMapProvider>
+          </Widget>
         </DataGrid>
       </SidebarContent>
       <BodyContent>
