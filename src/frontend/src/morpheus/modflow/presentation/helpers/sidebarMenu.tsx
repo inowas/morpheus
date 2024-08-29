@@ -36,7 +36,6 @@ export interface IMenuItem {
   isTitle: boolean;
   name: string;
   slug: string;
-  tooltip: string;
 }
 
 const getSidebarItems = (): IMenuItem[] => {
