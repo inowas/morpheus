@@ -24,7 +24,7 @@ const SidebarContent = ({maxWidth = 'auto', children}: IProps) => {
         className={styles.sidebarAsideButton}
         onClick={handleSidebarToggleClick}
       >
-        <Icon name={`${isOpen ? 'angle double left' : 'angle double right'}`}/>
+        <Icon name={`${isOpen ? 'angle left' : 'angle right'}`}/>
       </button>
       <div className={styles.sidebarAsideInner}>
         {children}
