@@ -52,7 +52,6 @@ const BoundariesContainer = () => {
   const {formatISODate} = useDateTimeFormat('UTC');
 
   const mapRef: IMapRef = useRef(null);
-
   const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
 
   const selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | undefined = useMemo(() => {
