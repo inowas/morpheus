@@ -1,21 +1,21 @@
 import React from 'react';
 import {
   faBarsStaggered,
-  faBorderAll,
-  faCalculator,
+  faCalendarCheck,
   faChartLine,
   faChartSimple,
   faCircle,
-  faClock,
+  faCirclePlay,
   faCompress,
-  faFlag,
+  faDisplay,
   faGear,
   faLayerGroup,
   faLocationCrosshairs,
-  faMap,
+  faLocationDot,
   faPenToSquare,
-  faSliders,
+  faScrewdriverWrench,
   faSquareCheck,
+  faVectorSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
 import BoundariesContainer from '../containers/BoundariesContainer';
@@ -31,11 +31,12 @@ import HeadObservationsContainer from '../containers/HeadObservationsContainer';
 import CalibrationStatisticsContainer from '../containers/CalibrationStatisticsContainer';
 
 export interface IMenuItem {
-  icon: React.ReactNode;
-  name: string;
-  isTitle: boolean;
-  slug: string;
   component?: React.ReactNode;
+  icon: React.ReactNode;
+  isTitle: boolean;
+  name: string;
+  slug: string;
+  tooltip: string;
 }
 
 const getSidebarItems = (): IMenuItem[] => {
@@ -50,12 +51,12 @@ const getSidebarItems = (): IMenuItem[] => {
     {
       name: 'Grid properties',
       slug: 'spatial-discretization',
-      icon: <FontAwesomeIcon icon={faBorderAll}/>,
+      icon: <FontAwesomeIcon icon={faVectorSquare}/>,
       isTitle: false,
       component: <SpatialDiscretizationContainer/>,
     },
     {
-      icon: <FontAwesomeIcon icon={faClock}/>,
+      icon: <FontAwesomeIcon icon={faCalendarCheck}/>,
       name: 'Stress periods',
       isTitle: false,
       slug: 'time-discretization',
@@ -69,7 +70,7 @@ const getSidebarItems = (): IMenuItem[] => {
       component: <LayersContainer/>,
     },
     {
-      icon: <FontAwesomeIcon icon={faFlag}/>,
+      icon: <FontAwesomeIcon icon={faLocationDot}/>,
       name: 'Boundary conditions',
       isTitle: false,
       slug: 'boundary-conditions',
@@ -101,14 +102,14 @@ const getSidebarItems = (): IMenuItem[] => {
       slug: 'calculation-header',
     },
     {
-      icon: <FontAwesomeIcon icon={faSliders}/>,
+      icon: <FontAwesomeIcon icon={faScrewdriverWrench}/>,
       name: 'Settings',
       isTitle: false,
       slug: 'calculation-profile',
       component: <CalculationProfileContainer/>,
     },
     {
-      icon: <FontAwesomeIcon icon={faCalculator}/>,
+      icon: <FontAwesomeIcon icon={faCirclePlay}/>,
       name: 'Calculation',
       isTitle: false,
       slug: 'calculation',
@@ -121,7 +122,7 @@ const getSidebarItems = (): IMenuItem[] => {
       slug: 'results',
     },
     {
-      icon: <FontAwesomeIcon icon={faMap}/>,
+      icon: <FontAwesomeIcon icon={faDisplay}/>,
       name: 'Flow Results',
       isTitle: false,
       slug: 'flow-results',
