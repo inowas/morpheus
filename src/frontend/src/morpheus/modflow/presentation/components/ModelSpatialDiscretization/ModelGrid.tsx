@@ -102,22 +102,25 @@ const ModelGrid = ({isLocked, grid, onChange, onReset, isDirty, isLoading, onSub
       </DataGrid>
       {!isLocked && !readOnly && <DataGrid style={{display: 'flex', gap: 10, marginTop: 20}}>
         <Button
+          secondary={true}
+          labelPosition={'left'}
           style={{marginLeft: 'auto'}}
           size={'tiny'}
+          icon={'remove'}
+          content={'Cancel'}
           disabled={!isDirty}
           onClick={onReset}
-        >
-          {'Reset'}
-        </Button>
+        />
         <Button
           primary={true}
+          labelPosition={'left'}
           size={'tiny'}
+          icon={'save'}
+          content={'Save'}
           disabled={!isDirty}
           onClick={onSubmit}
           loading={isLoading}
-        >
-          {'Apply'}
-        </Button>
+        />
       </DataGrid>}
     </>
   );

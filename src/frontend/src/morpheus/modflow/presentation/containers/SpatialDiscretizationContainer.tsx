@@ -5,10 +5,8 @@ import {useParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {IGrid} from '../../types';
-import {DataGrid, LockButton, Section, SectionTitle, Tab, TabPane} from 'common/components';
-import {Accordion, AccordionContent} from '../components/Content';
+import {DataGrid, LockButton, Section, SectionTitle} from 'common/components';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
-import {MenuItem} from 'semantic-ui-react';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
 
@@ -107,7 +105,7 @@ const SpatialDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700}>
         <DataGrid>
           <SectionTitle
             title={'Model Geometry'}

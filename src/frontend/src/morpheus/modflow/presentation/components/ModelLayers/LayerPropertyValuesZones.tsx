@@ -56,11 +56,13 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly}: IP
     if (!readOnly && !isEqual(existingZones, zones)) {
       return (
         <Button
+          labelPosition={'left'}
           size={'tiny'}
+          icon={'save'}
+          content={'Save'}
           onClick={() => {
             onSubmit(zones);
           }}
-          content={'Submit'}
         />
       );
     }
@@ -74,9 +76,11 @@ const LayerPropertyValuesZones = ({zones: existingZones, onSubmit, readOnly}: IP
         style={{marginBottom: 0}}
       />
       <Button
-        size={'tiny'}
         onClick={() => setShowFileUploadModal(true)}
-        content={'Load shape file'}
+        labelPosition={'left'}
+        size={'tiny'}
+        icon={'file'}
+        content={'Upload file'}
       />
       <LayerPropertyValuesZonesList
         zones={zones}
