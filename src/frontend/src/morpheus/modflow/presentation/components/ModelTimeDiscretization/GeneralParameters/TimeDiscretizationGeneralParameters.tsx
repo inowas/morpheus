@@ -68,9 +68,9 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
     <Form className={styles.stressperiodParameters}>
       <DataGrid columns={4}>
         <Form.Field className={'dateInputWrapper'}>
-          <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
+          <label className={'labelSmall'} style={{textAlign: 'left'}}>
             <Icon className={'dateIcon'} name="info circle"/>
-            Start Date
+            Start date
           </label>
           <div className={'divider'}>
             <DateInput
@@ -83,9 +83,9 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
           </div>
         </Form.Field>
         <Form.Field className={'dateInputWrapper'}>
-          <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
+          <label className={'labelSmall'} style={{textAlign: 'left'}}>
             <Icon className={'dateIcon'} name="info circle"/>
-            End Date
+            End date
           </label>
           <div className={'divider'}>
             <DateInput
@@ -97,7 +97,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
           </div>
         </Form.Field>
         <Form.Field>
-          <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
+          <label className={'labelSmall'} style={{textAlign: 'left'}}>
             <Icon className={'dateIcon'} name="info circle"/>
             Time unit
           </label>
@@ -111,7 +111,7 @@ const TimeDiscretizationGeneralParameters: React.FC<IProps> = ({timeDiscretizati
           />
         </Form.Field>
         <Form.Field>
-          <label className={'labelSmall'} style={{textAlign: 'left', fontWeight: 600}}>
+          <label className={'labelSmall'} style={{textAlign: 'left'}}>
             <Icon className={'dateIcon'} name="info circle"/>
             Total time
           </label>
