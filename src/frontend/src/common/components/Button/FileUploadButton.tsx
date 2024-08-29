@@ -1,16 +1,18 @@
 import React, {createRef} from 'react';
 import Button from './Button';
+import {File} from "source-map-explorer/lib/types";
 
 interface IProps {
-  buttonContent?: string;
-  isReadOnly: boolean;
-  loading: boolean;
-  onSelectFiles: (files: File[]) => void;
-  acceptFiles?: string;
+  buttonContent?: string,
+  isReadOnly: boolean,
+  loading: boolean,
+  onSelectFiles: (files: File[]) => void,
+  acceptFiles?: string,
+  style?: { padding: string }
 }
 
 
-const FileUploadButton = ({buttonContent, isReadOnly, loading, acceptFiles, onSelectFiles}: IProps) => {
+const FileUploadButton = ({buttonContent, isReadOnly, loading, acceptFiles, onSelectFiles, style}: IProps) => {
 
   const fileInputRef = createRef<HTMLInputElement>();
 
@@ -19,10 +21,11 @@ const FileUploadButton = ({buttonContent, isReadOnly, loading, acceptFiles, onSe
       <Button
         primary={true}
         size={'tiny'}
+        icon={'plus'}
+        labelPosition={'left'}
         content={buttonContent || 'Upload file'}
         onClick={() => fileInputRef.current?.click()}
         disabled={isReadOnly || loading}
-        style={{fontSize: '17px'}}
       />
       <input
         ref={fileInputRef}

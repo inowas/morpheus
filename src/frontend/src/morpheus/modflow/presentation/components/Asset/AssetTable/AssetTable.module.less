@@ -1,13 +1,15 @@
 @import "../../../../../../common/components/site.variables";
 
 .assetTable {
+  padding: 10px 10px 20px 10px;
+
   .table.table {
 
     thead {
-      border-bottom-color: #979797;
+      border-bottom-color: @border-grey;
 
       &:before {
-        background: #979797;
+        background: @border-grey;
       }
     }
 
@@ -26,7 +28,7 @@
     thead tr th:first-child {
       padding-right: 6px;
     }
-    
+
     thead tr th {
       font-size: 16px;
     }
@@ -35,12 +37,15 @@
       cursor: pointer;
 
       td {
-        font-size: 14px;
-        border-bottom: 1px solid @ref-color-borderTable;
+        font-size: 13.5px;
+        border-bottom: 1px solid @border-grey;
+        line-height: 12px;
       }
 
       &.selected,
       &:hover {
+        background-color: @light-grey;
+
         td:not(:last-child) {
           text-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
         }

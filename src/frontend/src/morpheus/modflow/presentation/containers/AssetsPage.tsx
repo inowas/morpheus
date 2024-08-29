@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, Section, SectionTitle, Tab, TabPane, Widget} from 'common/components';
+import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, SectionTitle, Widget} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
 import {useParams} from 'react-router-dom';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useAssets from '../../application/useAssets';
-import {MenuItem, Radio} from 'semantic-ui-react';
-import {AssetButtonsGroup, AssetTable} from '../components/Asset';
+import {Radio, Search} from 'semantic-ui-react';
+import {AssetTable} from '../components/Asset';
 import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
-import {TabButtons} from '../../../../common/components/Tab';
 
 interface IProps {
   basePath: string;
@@ -115,7 +114,11 @@ const AssetsPage = ({}: IProps) => {
       />
       <ModflowContainer>
         <ContentWrapper>
-          <SectionTitle title={'Assets'} as={'h1'}/>
+          <SectionTitle
+            style={{marginTop: '20px'}}
+            title={'Assets'}
+            as={'h1'}
+          />
           <Grid.Grid style={{minHeight: 'calc(100vh - 200px)'}}>
             <Grid.Column width={10}>
               <Widget>
@@ -156,16 +159,16 @@ const AssetsPage = ({}: IProps) => {
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
                   <p style={{fontWeight: '600', padding: '10px'}}>{selectedAsset?.file.file_name}</p>
                   {isRasterAsset(selectedAsset) &&
-                    <div style={{display: 'flex', gap: 10, margin: 10}}>
-                      {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
-                        <Radio
-                          key={index}
-                          label={`Band ${index + 1}`}
-                          value={`band_${index + 1}`}
-                          checked={0 === index}
-                        />
-                      ))}
-                    </div>}
+                      <div style={{display: 'flex', gap: 20, margin: 20}}>
+                        {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
+                          <Radio
+                            key={index}
+                            label={`Band ${index + 1}`}
+                            value={`band_${index + 1}`}
+                            checked={0 === index}
+                          />
+                        ))}
+                      </div>}
                 </div>
                 <div style={{height: '500px', overflow: 'auto'}}>
                   {renderData(selectedAsset, selectedAssetData)}
