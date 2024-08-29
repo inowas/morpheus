@@ -21,6 +21,7 @@ import ChartModal from './Charts/ChartModal';
 import Container from './Container/Container';
 import Divider from './Divider/Divider';
 import DropdownComponent from './Dropdown';
+import FileUploadButton from './Button/FileUploadButton';
 import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
@@ -88,10 +89,11 @@ export {
   Divider,
   DotsMenu,
   DropdownComponent,
+  FileUploadButton,
+  Footer,
   Form,
   Header,
   HeaderWrapper,
-  Footer,
   Icon,
   IconButton,
   Input,
