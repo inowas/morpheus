@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ContentWrapper, Grid, ImageRenderer, Loader, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
+import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, Section, SectionTitle, Tab, TabPane, Widget} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
@@ -11,6 +11,7 @@ import {AssetButtonsGroup, AssetTable} from '../components/Asset';
 import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
+import {TabButtons} from '../../../../common/components/Tab';
 
 interface IProps {
   basePath: string;
@@ -114,83 +115,62 @@ const AssetsPage = ({}: IProps) => {
       />
       <ModflowContainer>
         <ContentWrapper>
-          <Grid.Grid style={{paddingTop: '50px', minHeight: 'calc(100vh - 200px)'}}>
+          <SectionTitle title={'Assets'} as={'h1'}/>
+          <Grid.Grid style={{minHeight: 'calc(100vh - 200px)'}}>
             <Grid.Column width={10}>
-              <SectionTitle title='Assets' style={{marginBottom: '30px'}}/>
-              <Tab
-                variant='primary'
-                menu={{pointing: true}}
-                panes={[
-                  {
-                    menuItem: <MenuItem key='raster-assets' onClick={() => setSelectedAssetType('raster')}>Raster File</MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      <AssetTable
-                        fileType={selectedAssetType}
-                        assets={rasterAssets}
-                        loadingAsset={loadingAsset}
-                        loadingList={loadingList}
-                        deleteAsset={deleteAsset}
-                        updateAssetFileName={updateAssetFileName}
-                        isReadOnly={isReadOnly}
-                        selectedAsset={isRasterAsset(selectedAsset) ? selectedAsset : null}
-                        onSelectAsset={setSelectedAsset}
-                      />
-                      <AssetButtonsGroup
-                        acceptFiles={'.geotiff,.tif,.tiff'}
-                        buttonContent={'Upload Raster Files'}
-                        isReadOnly={isReadOnly}
-                        loading={uploadingAsset}
-                        onSelectFiles={handleUploadSelectedRasterFiles}
-                      />
-                    </TabPane>,
-                  },
-                  {
-                    menuItem: <MenuItem key='shapefile-assets' onClick={() => setSelectedAssetType('shape')}>Shape File</MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      <AssetTable
-                        fileType={selectedAssetType}
-                        assets={shapeAssets}
-                        loadingAsset={loadingAsset}
-                        loadingList={loadingList}
-                        deleteAsset={deleteAsset}
-                        updateAssetFileName={updateAssetFileName}
-                        isReadOnly={isReadOnly}
-                        selectedAsset={isShapeAsset(selectedAsset) ? selectedAsset : null}
-                        onSelectAsset={setSelectedAsset}
-                      />
-                      <AssetButtonsGroup
-                        acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
-                        buttonContent={'Upload Shapefiles'}
-                        isReadOnly={isReadOnly}
-                        loading={uploadingAsset}
-                        onSelectFiles={handleUploadSelectedShapeFiles}
-                      />
-                    </TabPane>,
-                  },
-                ]}
-              />
+              <Widget>
+                <FileUploadButton
+                  acceptFiles={'.geotiff,.tif,.tiff'}
+                  buttonContent={'Upload raster files'}
+                  isReadOnly={isReadOnly}
+                  loading={uploadingAsset}
+                  onSelectFiles={handleUploadSelectedRasterFiles}
+                />
+                <FileUploadButton
+                  acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
+                  buttonContent={'Upload shapefiles'}
+                  isReadOnly={isReadOnly}
+                  loading={uploadingAsset}
+                  onSelectFiles={handleUploadSelectedShapeFiles}
+                />
+              </Widget>
+              <Widget>
+                <AssetTable
+                  fileType={selectedAssetType}
+                  assets={assets}
+                  loadingAsset={loadingAsset}
+                  loadingList={loadingList}
+                  deleteAsset={deleteAsset}
+                  updateAssetFileName={updateAssetFileName}
+                  isReadOnly={isReadOnly}
+                  selectedAsset={selectedAsset}
+                  onSelectAsset={setSelectedAsset}
+                />
+              </Widget>
             </Grid.Column>
 
             {/* Preview */}
             <Grid.Column width={6} style={{display: 'flex', flexDirection: 'column'}}>
-              <SectionTitle title='Preview'/>
-              <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-                <p style={{fontWeight: '600', padding: '10px'}}>{selectedAsset?.file.file_name}</p>
-                {isRasterAsset(selectedAsset) &&
-                  <div style={{display: 'flex', gap: 10, margin: 10}}>
-                    {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
-                      <Radio
-                        key={index}
-                        label={`Band ${index + 1}`}
-                        value={`band_${index + 1}`}
-                        checked={0 === index}
-                      />
-                    ))}
-                  </div>}
-              </div>
-
-              {renderData(selectedAsset, selectedAssetData)}
-
+              <Widget>
+                <SectionTitle title='Preview'/>
+                <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+                  <p style={{fontWeight: '600', padding: '10px'}}>{selectedAsset?.file.file_name}</p>
+                  {isRasterAsset(selectedAsset) &&
+                    <div style={{display: 'flex', gap: 10, margin: 10}}>
+                      {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
+                        <Radio
+                          key={index}
+                          label={`Band ${index + 1}`}
+                          value={`band_${index + 1}`}
+                          checked={0 === index}
+                        />
+                      ))}
+                    </div>}
+                </div>
+                <div style={{height: '500px', overflow: 'auto'}}>
+                  {renderData(selectedAsset, selectedAssetData)}
+                </div>
+              </Widget>
             </Grid.Column>
           </Grid.Grid>
         </ContentWrapper>

@@ -48,8 +48,9 @@ const Section = ({title, as, open: openProp = true, children, collapsable = fals
           {title}
         </span>
       </Header>
-      <Divider/>
-      {children}
+      <div className={styles.contentWrapper}>
+        {children}
+      </div>
     </Segment>
   );
 };

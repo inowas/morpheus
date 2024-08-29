@@ -63,7 +63,7 @@ const ImageRenderer = ({data}: IImageRenderer) => {
   }
 
   return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
+    <div style={{position: 'relative', display: 'inline-block', width: '100%'}}>
       <canvas
         ref={canvasRef}
         height={data.length}
