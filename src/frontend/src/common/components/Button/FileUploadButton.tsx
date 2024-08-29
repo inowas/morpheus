@@ -21,7 +21,7 @@ const FileUploadButton = ({buttonContent, isReadOnly, loading, acceptFiles, onSe
       <Button
         primary={true}
         size={'tiny'}
-        icon={'plus'}
+        icon={'file'}
         labelPosition={'left'}
         content={buttonContent || 'Upload file'}
         onClick={() => fileInputRef.current?.click()}

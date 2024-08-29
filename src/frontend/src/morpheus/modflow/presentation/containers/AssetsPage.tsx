@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, SectionTitle, Widget} from 'common/components';
+import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, Section, SectionTitle, Widget} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
@@ -11,6 +11,7 @@ import {AssetTable} from '../components/Asset';
 import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
+import fileNameInput from '../components/Asset/AssetTable/FileNameInput';
 
 interface IProps {
   basePath: string;
@@ -153,27 +154,26 @@ const AssetsPage = ({}: IProps) => {
             </Grid.Column>
 
             {/* Preview */}
-            <Grid.Column width={6} style={{display: 'flex', flexDirection: 'column'}}>
-              <Widget>
-                <SectionTitle title='Preview'/>
-                <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-                  <p style={{fontWeight: '600', padding: '10px'}}>{selectedAsset?.file.file_name}</p>
-                  {isRasterAsset(selectedAsset) &&
-                      <div style={{display: 'flex', gap: 20, margin: 20}}>
-                        {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
-                          <Radio
-                            key={index}
-                            label={`Band ${index + 1}`}
-                            value={`band_${index + 1}`}
-                            checked={0 === index}
-                          />
-                        ))}
-                      </div>}
-                </div>
-                <div style={{height: '500px', overflow: 'auto'}}>
+            <Grid.Column width={6}>
+              <Section
+                title={'Preview'}
+                collapsable={false}
+              >
+                <div style={{height: '420px', overflow: 'auto', marginTop: '20px'}}>
                   {renderData(selectedAsset, selectedAssetData)}
                 </div>
-              </Widget>
+                {isRasterAsset(selectedAsset) &&
+                  <div style={{display: 'flex', gap: '20', margin: '0'}}>
+                    {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
+                      <Radio
+                        key={index}
+                        label={`Band ${index + 1}`}
+                        value={`band_${index + 1}`}
+                        checked={0 === index}
+                      />
+                    ))}
+                  </div>}
+              </Section>
             </Grid.Column>
           </Grid.Grid>
         </ContentWrapper>

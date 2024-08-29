@@ -9,7 +9,7 @@ interface IProps {
 
 const Widget = ({children}: IProps) => {
   return (
-    <Segment className={styles.wrapper}>
+    <Segment className={styles.wrapperWidget}>
       {children}
     </Segment>
   );
