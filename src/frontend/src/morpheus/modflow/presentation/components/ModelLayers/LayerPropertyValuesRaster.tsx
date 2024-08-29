@@ -29,6 +29,7 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly}: IProps) => {
     if (rasterIsDefined) {
       return (
         <Button
+          labelPosition={'left'}
           size={'tiny'}
           icon={'trash'}
           color={'red'}
@@ -41,8 +42,10 @@ const LayerPropertyValuesRaster = ({value, onSubmit, readOnly}: IProps) => {
 
     return (
       <Button
+        labelPosition={'left'}
         size={'tiny'}
-        content={'Load raster file'}
+        icon={'file'}
+        content={'Upload file'}
         onClick={() => setShowFileUploadModal(true)}
         disabled={readOnly}
       />

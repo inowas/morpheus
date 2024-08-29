@@ -21,6 +21,7 @@ import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
 import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
 import ImportShapefileModal from './ImportShapefileModal';
+import Widget from 'common/components/Section/Widget';
 
 
 const BoundariesContainer = () => {
@@ -137,38 +138,40 @@ const BoundariesContainer = () => {
       <SidebarContent maxWidth={700}>
         <DataGrid>
           <SectionTitle title={'Boundary conditions'}/>
-          <SearchInput
-            search={''}
-            onChange={(search) => console.log(search)}
-            placeholder={'Search boundaries'}
-          >
-            <ImportShapefileModal
-              trigger={
-                <Button
-                  text={'Import'}
-                  icon='upload'
-                  content={'Import'}
-                  disabled={isReadOnly}
-                />
-              }
-            />
-            <DropdownComponent.Dropdown
-              data-testid='test-search-component'
-              text={'Draw on map'}
-              icon='pencil'
-              floating={true}
-              labeled={true}
-              button={true}
-              className='icon'
-              disabled={isReadOnly}
+          <Widget>
+            <SearchInput
+              search={''}
+              onChange={(search) => console.log(search)}
+              placeholder={'Search boundaries'}
             >
-              <DropdownComponent.Menu>
-                {dropdownItems.map((item, key) => (
-                  <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
-                ))}
-              </DropdownComponent.Menu>
-            </DropdownComponent.Dropdown>
-          </SearchInput>
+              <ImportShapefileModal
+                trigger={
+                  <Button
+                    text={'Import'}
+                    icon='plus'
+                    content={'Add new boundary'}
+                    disabled={isReadOnly}
+                  />
+                }
+              />
+              <DropdownComponent.Dropdown
+                data-testid='test-search-component'
+                text={'Draw on map'}
+                icon='pencil'
+                floating={true}
+                labeled={true}
+                button={true}
+                className='icon'
+                disabled={isReadOnly}
+              >
+                <DropdownComponent.Menu>
+                  {dropdownItems.map((item, key) => (
+                    <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
+                  ))}
+                </DropdownComponent.Menu>
+              </DropdownComponent.Dropdown>
+            </SearchInput>
+          </Widget>
           <LeafletMapProvider mapRef={mapRef}>
             <BoundariesAccordion
               boundaries={boundaries}

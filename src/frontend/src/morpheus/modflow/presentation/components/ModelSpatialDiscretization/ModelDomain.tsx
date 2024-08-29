@@ -44,21 +44,26 @@ const ModelDomain = ({onChangeGeometry, onSubmit, onReset, isDirty, isLocked, is
     return (
       <DataGrid style={{display: 'flex', gap: '10px'}}>
         <Button
+          secondary={true}
+          labelPosition={'left'}
           style={{marginLeft: 'auto'}}
           size={'tiny'}
+          icon={'remove'}
+          content={'Cancel'}
           disabled={!isDirty}
           onClick={onReset}
         >
-          {'Reset'}
         </Button>
         <Button
           primary={true}
+          labelPosition={'left'}
           size={'tiny'}
+          icon={'save'}
+          content={'Save'}
           disabled={!isDirty}
           onClick={onSubmit}
           loading={isLoading}
         >
-          {'Apply'}
         </Button>
       </DataGrid>
     );

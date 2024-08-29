@@ -43,8 +43,11 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
       {!readOnly && valueLocal !== value && (
         <Button
           onClick={() => onSubmit(valueLocal)}
-          content='Submit'
+          primary={true}
+          labelPosition={'left'}
           size={'tiny'}
+          icon={'save'}
+          content={'Save'}
         />
       )}
     </>

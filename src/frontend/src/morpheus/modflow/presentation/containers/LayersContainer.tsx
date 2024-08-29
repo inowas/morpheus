@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Button, Icon, Menu, MenuItem, MenuMenu} from 'semantic-ui-react';
-import {DataGrid, SectionTitle} from 'common/components';
+import {Button, Icon} from 'semantic-ui-react';
+import {DataGrid, SectionTitle, Widget} from 'common/components';
 import {IMapRef, LeafletMapProvider, Map} from 'common/components/Map';
 
 import useLayers from '../../application/useLayers';
@@ -74,41 +74,41 @@ const LayersContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700}>
         <DataGrid>
-          <SectionTitle title={'Layers'}/>
+          <SectionTitle
+            title={'Layers'}
+          />
           <div>
-            <Menu pointing={true} secondary={true}>
-              <MenuItem key='properties' style={{fontWeight: 'bold'}}>Properties</MenuItem>
-              {!isReadOnly && (
-                <MenuMenu position='right'>
-                  <MenuItem>
-                    <Button
-                      size={'tiny'}
-                      onClick={handleAddLayer} icon={true}
-                      labelPosition={'right'} primary={true}
-                      loading={loading}
-                    >
-                      <Icon name='plus'/>
-                      Add Layer
-                    </Button>
-                  </MenuItem>
-                </MenuMenu>
-              )}
-            </Menu>
-            <LeafletMapProvider mapRef={mapRef}>
-              <LayersList
-                layers={layers}
-                onCloneLayer={onCloneLayer}
-                onDeleteLayer={onDeleteLayer}
-                onChangeLayerConfinement={onChangeLayerConfinement}
-                onChangeLayerMetadata={onChangeLayerMetadata}
-                onChangeLayerOrder={onChangeLayerOrder}
-                onChangeLayerProperty={handleChangeLayerProperty}
-                onSelectLayer={(layerId, property) => setSelectedLayer({layerId, property})}
-                readOnly={isReadOnly}
-              />
-            </LeafletMapProvider>
+            <Widget>
+              <Button
+                onClick={handleAddLayer}
+                loading={loading}
+                size={'tiny'}
+                icon={true}
+                labelPosition={'left'}
+                primary={true}
+              >
+                <Icon name='plus'/>
+                Add new layer
+              </Button>
+
+            </Widget>
+            <Widget>
+              <LeafletMapProvider mapRef={mapRef}>
+                <LayersList
+                  layers={layers}
+                  onCloneLayer={onCloneLayer}
+                  onDeleteLayer={onDeleteLayer}
+                  onChangeLayerConfinement={onChangeLayerConfinement}
+                  onChangeLayerMetadata={onChangeLayerMetadata}
+                  onChangeLayerOrder={onChangeLayerOrder}
+                  onChangeLayerProperty={handleChangeLayerProperty}
+                  onSelectLayer={(layerId, property) => setSelectedLayer({layerId, property})}
+                  readOnly={isReadOnly}
+                />
+              </LeafletMapProvider>
+            </Widget>
           </div>
         </DataGrid>
       </SidebarContent>
