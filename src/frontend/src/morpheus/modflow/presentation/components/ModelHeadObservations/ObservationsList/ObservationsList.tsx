@@ -140,12 +140,12 @@ const ObservationsList = ({
                   className={`${styles.dotsMenu}`}
                   actions={[
                     {
-                      text: 'Rename Item', icon: 'edit', onClick: () => {
+                      text: 'Rename', icon: 'edit', onClick: () => {
                         setEditObservationName(observation.id);
                         setInputValue(observation.name);
                       },
                     },
-                    {text: 'Copy', icon: 'copy', onClick: () => onClone(observation.id)},
+                    {text: 'Clone', icon: 'copy', onClick: () => onClone(observation.id)},
                     {text: 'Delete', icon: 'remove', onClick: () => onRemove(observation.id)},
                   ]}
                 />
