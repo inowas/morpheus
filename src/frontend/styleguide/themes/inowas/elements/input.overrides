@@ -92,7 +92,7 @@ textarea {
 .field textarea {
   width: 100% !important;
   border: none !important;
-  background: @light-grey;
+  background: @light-grey !important;
   border-radius: 6px;
   min-height: 26px !important;
   padding: 5px 10px !important;
@@ -104,7 +104,7 @@ textarea {
   }
 
   &:focus-visible {
-    outline: 1px dotted @ref-color-underline !important;
+    // outline: 1px dotted @ref-color-underline !important;
   }
 }
 

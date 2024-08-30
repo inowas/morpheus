@@ -32,7 +32,7 @@
 .ui.multiple.search.dropdown {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 2px;
 
   & > input.search {
     margin: 0;
@@ -92,7 +92,7 @@
 
 .ui.form .field > .selection.dropdown {
   display: flex;
-  gap: 10px;
+  gap: 2px;
   flex-wrap: wrap;
 }
 
@@ -111,21 +111,21 @@
   display: flex;
   align-items: center;
   box-shadow: none;
-  background: transparent;
+  background: @grey;
   border: none;
-  border-radius: unset;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 400;
   font-style: normal;
   letter-spacing: 0px;
   text-align: left;
-  padding: 0;
-  color: #000;
+  padding: 5px 10px;
+  color: @white;
   width: auto;
 }
 
 .ui.label > .close.icon, .ui.label > .delete.icon {
-  color: #DD2727;
+  color: @white;
 }
 
 .disabled.field .disabled.dropdown {

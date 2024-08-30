@@ -14,14 +14,13 @@
   }
 
   &::-webkit-scrollbar-track {
-    box-shadow: @ref-box-shadow;
-    background: @ref-color-borderTable;
-    border-radius: 0;
+    background: @light-grey;
+    border-radius: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: @ref-color-underline;
-    border-radius: 2px;
+    background: @blue;
+    border-radius: 6px;
   }
 
   .item {
@@ -147,16 +146,18 @@
 
         label:before {
           border-radius: 50%;
-          width: 12px;
-          height: 12px;
+          width: 10px;
+          height: 10px;
+          background-color: @light-grey;
+          box-shadow: none !important;
         }
 
         input:checked ~ label:after {
           content: "";
           display: block;
-          background-color: #748EB3;
-          width: 12px;
-          height: 12px;
+          background-color: @blue;
+          width: 10px;
+          height: 10px;
           border-radius: 50%;
           position: absolute;
           left: 0;
@@ -167,7 +168,7 @@
       .observationItem {
         position: relative;
         width: 100%;
-        margin: 0 18px 0 24px;
+        margin: 0 18px 0 20px;
         display: flex;
         align-items: center;
 
@@ -182,6 +183,7 @@
 
         .selected {
           background-color: @light-grey;
+          text-shadow: none !important;
         }
       }
 
@@ -189,8 +191,8 @@
         display: flex;
         align-items: center;
         font-size: 12px;
-        font-weight: 500;
-        padding: 0.5em 0 !important;
+        font-weight: 400;
+        padding: 0 !important;
         cursor: pointer;
         position: relative;
 
@@ -208,12 +210,12 @@
 
         &:before {
           width: 100%;
-          background-color: @ref-color-lightGrey;
+          //background-color: @border-grey;
         }
 
         &:after {
           width: 2px;
-          background-color: @ref-color-blackLight;
+          //background-color: @ref-color-blackLight;
         }
 
         &:hover {
@@ -232,7 +234,7 @@
           bottom: -8px;
           width: 100%;
           height: 1px;
-          background-color: @light-grey;
+          //background-color: @light-grey;
         }
       }
     }
@@ -253,7 +255,6 @@
     &:hover,
     &:focus {
       background-color: transparent !important;
-      //transform: scale(1.2);
     }
   }
 }

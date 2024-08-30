@@ -110,7 +110,7 @@ const ObservationsList = ({
                       setEditObservationName(null);
                     }}
                     >
-                      Apply
+                      Save
                     </button>
                   </div>
                 )}
