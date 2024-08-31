@@ -283,74 +283,76 @@ const FlowResultsContainer = () => {
               formatTotalTime={(totalTime: number) => formatISODate(addDays(timeDiscretization.start_date_time, totalTime))}
             />
           </Widget>
-          <Tab
-            variant='primary'
-            menu={{secondary: true, pointing: true}}
-            panes={[
-              {
-                menuItem: {
-                  key: 'cross-section',
-                  content: <span>Cross sections</span>,
-                  onClick: () => setActiveTab('cross-section'),
+          <Widget>
+            <Tab
+              variant='primary'
+              menu={{secondary: true, pointing: true}}
+              panes={[
+                {
+                  menuItem: {
+                    key: 'cross-section',
+                    content: <span>Cross sections</span>,
+                    onClick: () => setActiveTab('cross-section'),
+                  },
+                  render: () =>
+                    <TabPane attached={true}>
+                      {!(selectedDataRowAndColumn && layerData) && <p>Click on map to show cross section</p>}
+                      {selectedDataRowAndColumn && layerData && <CrossSectionChart data={layerData.data.values} selectedRowAndColumn={selectedDataRowAndColumn}/>}
+                    </TabPane>,
                 },
-                render: () =>
-                  <TabPane attached={false}>
-                    {!(selectedDataRowAndColumn && layerData) && <p>Click on map to show cross section</p>}
-                    {selectedDataRowAndColumn && layerData && <CrossSectionChart data={layerData.data.values} selectedRowAndColumn={selectedDataRowAndColumn}/>}
-                  </TabPane>,
-              },
-              {
-                menuItem: {
-                  key: 'time-series',
-                  content: <span>Time series</span>,
-                  onClick: () => setActiveTab('time-series'),
+                {
+                  menuItem: {
+                    key: 'time-series',
+                    content: <span>Time series</span>,
+                    onClick: () => setActiveTab('time-series'),
+                  },
+                  render: () =>
+                    <TabPane attached={true}>
+                      <>
+                        {0 === timeSeries.length && <p>Click on map to add time series</p>}
+                        {timeSeries.map((ts) => (
+                          <Label
+                            key={ts.id}
+                            as='a'
+                            style={{margin: '0 5px', backgroundColor: ts.color, color: 'white'}}
+                            onClick={() => setTimeSeries(timeSeries.filter((item) => item.id !== ts.id))}
+                          >
+                            {ts.name}
+                            <Icon name='delete'/>
+                          </Label>
+                        ))}
+                        <TimeSeriesChart
+                          timeSeries={timeSeries.map((ts) => ({
+                            key: ts.id,
+                            name: ts.name,
+                            color: ts.color,
+                            data: ts.data,
+                          }))}
+                          formatDateTime={formatISODate}
+                          selectedTimeStepIdx={selectedTimeStepIdx}
+                        />
+                      </>
+                    </TabPane>,
                 },
-                render: () =>
-                  <TabPane attached={false}>
-                    <>
-                      {0 === timeSeries.length && <p>Click on map to add time series</p>}
-                      {timeSeries.map((ts) => (
-                        <Label
-                          key={ts.id}
-                          as='a'
-                          style={{margin: '0 5px', backgroundColor: ts.color, color: 'white'}}
-                          onClick={() => setTimeSeries(timeSeries.filter((item) => item.id !== ts.id))}
-                        >
-                          {ts.name}
-                          <Icon name='delete'/>
-                        </Label>
-                      ))}
-                      <TimeSeriesChart
-                        timeSeries={timeSeries.map((ts) => ({
-                          key: ts.id,
-                          name: ts.name,
-                          color: ts.color,
-                          data: ts.data,
-                        }))}
-                        formatDateTime={formatISODate}
-                        selectedTimeStepIdx={selectedTimeStepIdx}
-                      />
-                    </>
-                  </TabPane>,
-              },
-              {
-                menuItem: {
-                  key: 'budget',
-                  content: <span>Budget</span>,
-                  onClick: () => setActiveTab('budget'),
+                {
+                  menuItem: {
+                    key: 'budget',
+                    content: <span>Budget</span>,
+                    onClick: () => setActiveTab('budget'),
+                  },
+                  render: () =>
+                    <TabPane attached={false}>
+                      {budgetData && <BudgetChart
+                        data={budgetData!}
+                        isIncremental={showIncrementalBudget}
+                        onChangeIsIncremental={setShowIncrementalBudget}
+                        colors={colors.normal}
+                      />}
+                    </TabPane>,
                 },
-                render: () =>
-                  <TabPane attached={false}>
-                    {budgetData && <BudgetChart
-                      data={budgetData!}
-                      isIncremental={showIncrementalBudget}
-                      onChangeIsIncremental={setShowIncrementalBudget}
-                      colors={colors.normal}
-                    />}
-                  </TabPane>,
-              },
-            ]}
-          />
+              ]}
+            />
+          </Widget>
         </DataGrid>
       </SidebarContent>
       <BodyContent>
