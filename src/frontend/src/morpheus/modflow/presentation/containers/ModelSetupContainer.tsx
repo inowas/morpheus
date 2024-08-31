@@ -18,7 +18,7 @@ interface ICreateGrid {
 
 const defaultGrid: ICreateGrid = {
   n_cols: 100,
-  n_rows: 50,
+  n_rows: 100,
   rotation: 0,
   length_unit: 'meters' as ILengthUnit,
 };
@@ -79,9 +79,9 @@ const ModelSetupContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={700}>
         <DataGrid>
-          <SectionTitle title={'Model Geometry'}/>
+          <SectionTitle title={'Model geometry'}/>
           <Section
             title={'Model domain'} collapsable={true}
             open={true}
@@ -90,18 +90,21 @@ const ModelSetupContainer = () => {
             {shapeFileError && !isReadOnly && <div>{shapeFileError.message}</div>}
           </Section>
         </DataGrid>
-        <DataGrid style={{display: 'flex', gap: '10px', marginTop: '30px'}}>
+        <DataGrid style={{display: 'flex', gap: '10px', marginTop: '15px', marginRight: '13px'}}>
           {serverError && <div>{serverError.message}</div>}
-          {!isReadOnly && <Button
-            style={{marginLeft: 'auto'}}
-            size={'tiny'}
-            primary={true}
-            disabled={!geometry}
-            onClick={handleCreateModel}
-            loading={loading}
-          >
-            {'Create Model'}
-          </Button>}
+          {!isReadOnly &&
+            <Button
+              style={{marginLeft: 'auto'}}
+              size={'tiny'}
+              primary={true}
+              labelPosition={'left'}
+              icon={'plus'}
+              disabled={!geometry}
+              onClick={handleCreateModel}
+              loading={loading}
+              content={'Create model'}
+            >
+            </Button>}
         </DataGrid>
       </SidebarContent>
       <BodyContent>
