@@ -72,10 +72,13 @@ const ProjectsFilter = ({
       <div className={styles.titleWrapper}>
         <h2 className={styles.title}>Filters</h2>
         <Button
-          secondary={true} size={'small'}
+          secondary={true}
+          size={'tiny'}
+          labelPosition={'left'}
+          icon={'delete'}
           onClick={() => onChangeFilterParams({})}
+          content={'Clear filters'}
         >
-          Clear Filters
         </Button>
       </div>
 
