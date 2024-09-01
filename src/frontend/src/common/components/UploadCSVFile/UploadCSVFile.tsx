@@ -393,23 +393,22 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
       </Modal.Content>
       <Modal.Actions>
         <Button
-          style={{
-            fontSize: '17px',
-            textTransform: 'capitalize',
-          }}
           onClick={handleCansel}
+          secondary={true}
+          labelPosition={'left'}
+          size={'tiny'}
+          icon={'delete'}
           content={'Cancel'}
         />
         <Button
-          style={{
-            fontSize: '17px',
-            textTransform: 'capitalize',
-          }}
           primary={!!processedData}
           disabled={!processedData}
           onClick={handleSave}
-          content={'Apply'}
-        />
+          labelPosition={'left'}
+          size={'tiny'}
+          icon={'save'}
+          content={'Save'}
+        ></Button>
       </Modal.Actions>
     </Modal.Modal>
   );
@@ -473,8 +472,13 @@ const UploadCSVFile: React.FC<IProps> = (props) => {
         <Button
           className='buttonLink'
           onClick={handleDownloadTemplate}
+          secondary={true}
+          labelPosition={'left'}
+          size={'tiny'}
+          icon={'download'}
+          content={'Download template'}
         >
-          Download template <FontAwesomeIcon icon={faDownload}/></Button>
+        </Button>
       </div>
       {renderConfirmationModal()}
       {renderMainModal()}

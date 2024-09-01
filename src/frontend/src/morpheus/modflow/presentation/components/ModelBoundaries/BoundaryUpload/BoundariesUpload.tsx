@@ -89,14 +89,25 @@ const BoundariesUpload = ({stressPeriods, columns, onSubmit}: IProps) => {
       <CsvFileInput
         onChange={handleCsvFileInputChange}
         content={'Upload CSV'}
-      />
+        primary={true}
+        labelPosition={'left'}
+        size={'tiny'}
+        icon={'plus'}
+        content={'Upload CSV file'}
+      >
+      </CsvFileInput>
 
       {/*// Button to download a template CSV file*/}
       {/*// This should trigger a download of a CSV file for the currently defined stress periods*/}
       {/*// The trigger is in this component, the file is created in the parent component or the stress periods object has to be injected here*/}
-      <Button className='buttonLink' onClick={handleDownloadTemplate}>
-        Download template
-        <FontAwesomeIcon icon={faDownload}/>
+      <Button
+        onClick={handleDownloadTemplate}
+        secondary={true}
+        labelPosition={'left'}
+        size={'tiny'}
+        icon={'download'}
+        content={'Download template'}
+      >
       </Button>
 
       {csvRawData && <BoundariesUploadModal
