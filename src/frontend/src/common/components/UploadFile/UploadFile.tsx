@@ -88,14 +88,23 @@ const UploadFile = ({onClose}: IUploadCSVFile) => {
       </div>
       <div className={styles.buttons}>
         <Button
-          size={'small'}
+          secondary={true}
+          labelPosition={'left'}
+          size={'tiny'}
+          icon={'delete'}
+          content={'Cancel'}
           onClick={handleCancel}
-        >Cancel</Button>
+        >
+        </Button>
         <Button
-          size={'small'}
-          primary={true}
           onClick={handleUpload}
-        >Upload</Button>
+          primary={true}
+          labelPosition={'left'}
+          size={'tiny'}
+          icon={'file'}
+          content={'Save'}
+        >
+        </Button>
       </div>
     </div>
   );

@@ -8,9 +8,6 @@ import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useUsers} from '../../incoming';
 import {useDateTimeFormat} from 'common/hooks';
-import styles from '../../../../common/components/SearchComponent/SearchInput.module.less';
-import {Search} from 'semantic-ui-react';
-import placeholder from '../../../../common/components/Placeholder/Placeholder';
 
 interface IProps {
   basePath: string;
@@ -104,15 +101,7 @@ const ProjectListPage = ({basePath}: IProps) => {
               content={'Create new project'}
             >
             </Button>
-            <Search
-              style={{display: 'inherit'}}
-              icon={false}
-              className={styles.search}
-              placeholder={placeholder}
-              onSearchChange={onSearchChange}
-              value={search}
-            >
-            </Search>
+
             <SortDropdown
               placeholder="Order by"
               sortOptions={orderOptions}

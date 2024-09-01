@@ -123,20 +123,22 @@ const AssetsPage = ({}: IProps) => {
           <Grid.Grid style={{minHeight: 'calc(100vh - 200px)'}}>
             <Grid.Column width={10}>
               <Widget>
-                <FileUploadButton
-                  acceptFiles={'.geotiff,.tif,.tiff'}
-                  buttonContent={'Upload raster files'}
-                  isReadOnly={isReadOnly}
-                  loading={uploadingAsset}
-                  onSelectFiles={handleUploadSelectedRasterFiles}
-                />
-                <FileUploadButton
-                  acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
-                  buttonContent={'Upload shapefiles'}
-                  isReadOnly={isReadOnly}
-                  loading={uploadingAsset}
-                  onSelectFiles={handleUploadSelectedShapeFiles}
-                />
+                <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+                  <FileUploadButton
+                    acceptFiles={'.geotiff,.tif,.tiff'}
+                    buttonContent={'Upload raster files'}
+                    isReadOnly={isReadOnly}
+                    loading={uploadingAsset}
+                    onSelectFiles={handleUploadSelectedRasterFiles}
+                  />
+                  <FileUploadButton
+                    acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
+                    buttonContent={'Upload shapefiles'}
+                    isReadOnly={isReadOnly}
+                    loading={uploadingAsset}
+                    onSelectFiles={handleUploadSelectedShapeFiles}
+                  />
+                </div>
               </Widget>
               <Widget>
                 <AssetTable
@@ -152,7 +154,6 @@ const AssetsPage = ({}: IProps) => {
                 />
               </Widget>
             </Grid.Column>
-
             {/* Preview */}
             <Grid.Column width={6}>
               <Section

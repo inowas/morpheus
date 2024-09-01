@@ -73,7 +73,11 @@ const Navbar: React.FC<IProps> = ({
                   value={search.value}
                   onChange={(e) => search.onChange(e.target.value)}
                 >
-                  <Button primary={true}>Search</Button>
+                  <Button
+                    primary={true}
+                  >
+                    Search
+                  </Button>
                   <input/>
                 </Input>
               </div>
@@ -96,20 +100,6 @@ const Navbar: React.FC<IProps> = ({
                 </ul>
                 {button}
               </div>
-              {(search && isMobile) && (
-                <div className={styles.searchWrapper}>
-                  <Input
-                    action={true}
-                    actionPosition="left"
-                    className={`${styles.search}`}
-                    value={search.value}
-                    onChange={(e) => search.onChange(e.target.value)}
-                  >
-                    <Button primary={true}>Search</Button>
-                    <input/>
-                  </Input>
-                </div>
-              )}
             </nav>
           </div>
         </ContentWrapper>
