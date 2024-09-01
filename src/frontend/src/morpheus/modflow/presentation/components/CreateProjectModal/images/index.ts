@@ -1,10 +1,10 @@
 const Images: string[] = [
-  require('./new-1.jpg'),
-  require('./new-2.jpg'),
-  require('./new-3.jpg'),
-  require('./new-4.jpg'),
-  require('./new-5.jpg'),
-  require('./new-6.jpg'),
+  require('./element-1.png'),
+  require('./element-2.png'),
+  require('./element-3.png'),
+  require('./element-4.png'),
+  require('./element-5.png'),
+  require('./element-6.png'),
 ];
 
 export default Images;
