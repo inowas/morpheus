@@ -108,7 +108,7 @@ const ModelCard: React.FC<ICard> = ({
             )}
 
             <Button
-              size={'small'}
+              size={'tiny'}
               onClick={(e) => {
                 e.stopPropagation();
                 if (onViewClick) onViewClick();

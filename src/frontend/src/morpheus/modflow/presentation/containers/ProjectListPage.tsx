@@ -1,4 +1,4 @@
-import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem, Widget} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
@@ -8,6 +8,9 @@ import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useUsers} from '../../incoming';
 import {useDateTimeFormat} from 'common/hooks';
+import styles from '../../../../common/components/SearchComponent/SearchInput.module.less';
+import {Search} from 'semantic-ui-react';
+import placeholder from '../../../../common/components/Placeholder/Placeholder';
 
 interface IProps {
   basePath: string;
@@ -80,14 +83,6 @@ const ProjectListPage = ({basePath}: IProps) => {
           value: search,
           onChange: onSearchChange,
         }}
-        button={
-          <Button
-            style={{whiteSpace: 'nowrap'}}
-            primary={true}
-            onClick={() => setShowCreateProjectModel(true)}
-          >
-            Create new project
-          </Button>}
       />
       <ModflowContainer>
         <SidebarContent maxWidth={400}>
@@ -98,17 +93,38 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </SidebarContent>
         <ContentWrapper style={{position: 'relative'}}>
-          <SortDropdown
-            placeholder="Order By"
-            sortOptions={orderOptions}
-            onChangeSortOption={onOrderChange}
-            style={{
-              position: 'absolute',
-              top: 20,
-              right: 50,
-              zIndex: 10,
-            }}
-          />
+          <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+            <Button
+              onClick={() => setShowCreateProjectModel(true)}
+              style={{marginTop: 20}}
+              primary={true}
+              labelPosition={'left'}
+              size={'tiny'}
+              icon={'plus'}
+              content={'Create new project'}
+            >
+            </Button>
+            <Search
+              style={{display: 'inherit'}}
+              icon={false}
+              className={styles.search}
+              placeholder={placeholder}
+              onSearchChange={onSearchChange}
+              value={search}
+            >
+            </Search>
+            <SortDropdown
+              placeholder="Order by"
+              sortOptions={orderOptions}
+              onChangeSortOption={onOrderChange}
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 50,
+                zIndex: 10,
+              }}
+            />
+          </div>
           <CardGrid
             cards={cards}
             title={<><span>{projects.length}</span> {translate('Projects found')}</>}
