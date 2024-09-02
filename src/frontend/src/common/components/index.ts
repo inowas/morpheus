@@ -61,7 +61,6 @@ import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
 import TimeSeriesDataChart from './Charts/TimeSeriesDataChart';
 import Toggle from './Toggle/Toggle';
-import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 import {Step, StepDescription, StepGroup, StepTitle, StepContent} from 'semantic-ui-react';
 
@@ -135,7 +134,6 @@ export {
   Toggle,
   TimeSeriesDataChart,
   CsvFileInput,
-  UploadCSVFile,
   UploadFile,
   Widget,
 };

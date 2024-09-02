@@ -67,7 +67,6 @@ const TimeDiscretizationContainer = () => {
     updateTimeDiscretization(timeDiscretizationLocal);
   };
 
-
   if (!timeDiscretization || !timeDiscretizationLocal) {
     return null;
   }
@@ -120,7 +119,8 @@ const TimeDiscretizationContainer = () => {
       <BodyContent>
         <Map>
           <ModelGeometryMapLayer
-            modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}
+            modelGeometry={spatialDiscretization?.geometry}
+            editModelGeometry={false}
             fill={true}
           />
         </Map>

@@ -2,17 +2,21 @@
 import path from 'path';
 import * as webpack from 'webpack';
 
+// @ts-ignore
+import 'dotenv/config';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as webpackDevServer from 'webpack-dev-server';
 import * as fs from 'fs';
 // @ts-ignore
 import HtmlWebpackPlugin = require('html-webpack-plugin');
+import * as process from 'node:process';
 
 const CopyPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+
 
 const host = process.env.HOST || 'localhost';
 
@@ -25,7 +29,6 @@ function git(command: string) {
 
 //https://github.com/webpack/webpack/blob/main/examples/multi-compiler/webpack.config.js
 //https://stackoverflow.com/a/38132106
-
 
 module.exports = (env: any, argv: any) => {
   const config: webpack.Configuration = {
@@ -113,11 +116,12 @@ module.exports = (env: any, argv: any) => {
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
         GIT_RELEASE_DATE: git('log -1 --format=%aI'),
-        MOCKSERVER_ENABLED: !!env.mockserver,
         BASE_API_URL: env.BASE_API_URL || undefined,
         KEYCLOAK_URL: env.KEYCLOAK_URL || undefined,
         KEYCLOAK_REALM: env.KEYCLOAK_REALM || undefined,
-        KEYCLOAK_CLIENT_ID: env.KEYCLOAK_CLIENT_ID || undefined,
+        KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || env.KEYCLOAK_CLIENT_ID || undefined,
+        SENTRY_ENABLED: process.env.REACT_APP_SENTRY_ENABLED || false,
+        SENTRY_DSN: process.env.REACT_APP_SENTRY_DSN || null,
       }),
       new CopyPlugin({
         patterns: [{
@@ -130,7 +134,6 @@ module.exports = (env: any, argv: any) => {
           },
         }],
       }),
-      new Dotenv(),
     ],
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.css', '.json'],
