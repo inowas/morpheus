@@ -34,9 +34,7 @@ const calculateFileSize = (size_in_bytes: number) => {
 const AssetTable = ({
   style,
   className,
-  fileType,
   assets,
-  loadingAsset,
   loadingList,
   deleteAsset,
   updateAssetFileName,
@@ -84,14 +82,17 @@ const AssetTable = ({
 
   const renderHeader = () => (
     <Table.Row>
-      {onChangeCheckedAssets && <Table.HeaderCell><Checkbox checked={checkedAssets.length === assets.length} onClick={handleSelectAll}/></Table.HeaderCell>}
+      {onChangeCheckedAssets &&
+        <Table.HeaderCell>
+          <Checkbox checked={checkedAssets.length === assets.length} onClick={handleSelectAll}/>
+        </Table.HeaderCell>}
       <Table.HeaderCell>
-        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+        <div>
           File name
         </div>
       </Table.HeaderCell>
       <Table.HeaderCell>
-        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+        <div>
           File size
         </div>
       </Table.HeaderCell>
@@ -135,7 +136,7 @@ const AssetTable = ({
         {!isReadOnly && (
           <Table.Cell style={{textAlign: 'right'}}>
             <Button
-              style={{padding: '0 6px 0'}}
+              style={{padding: '0 5px 0'}}
               className='buttonLink'
               onClick={(e) => {
                 e.stopPropagation();
@@ -144,21 +145,21 @@ const AssetTable = ({
               icon={'edit'}
             />
             <Button
-              style={{padding: '0 6px 0'}}
+              style={{padding: '0 5px 0'}}
+              className='buttonLink'
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              icon={'download'}
+            />
+            <Button
+              style={{padding: '0 5px 0', color: '#db2828'}}
               className='buttonLink'
               onClick={(e) => {
                 e.stopPropagation();
                 deleteAsset(asset.asset_id);
               }}
               icon={'trash'}
-            />
-            <Button
-              style={{padding: '0 6px 0'}}
-              className='buttonLink'
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              icon={'download'}
             />
           </Table.Cell>
         )}
@@ -176,7 +177,7 @@ const AssetTable = ({
       >
         {0 === assets.length && (
           <div style={{padding: '10px', textAlign: 'center'}}>
-            No {fileType} files available
+            There are no files uploaded yet.
           </div>
         )}
 

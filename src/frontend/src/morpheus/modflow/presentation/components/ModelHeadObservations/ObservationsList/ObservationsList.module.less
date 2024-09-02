@@ -3,9 +3,9 @@
 .list {
   font-size: 12px;
   font-weight: 400;
-  max-height: 265px;
+  max-height: 300px;
   min-height: 265px;
-  margin-bottom: 30px !important;
+  margin-bottom: 20px !important;
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -14,14 +14,14 @@
   }
 
   &::-webkit-scrollbar-track {
-    box-shadow: @ref-box-shadow;
-    background: @ref-color-borderTable;
-    border-radius: 0;
+    box-shadow: none !important;
+    background: @light-grey;
+    border-radius: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: @ref-color-underline;
-    border-radius: 2px;
+    background: @blue;
+    border-radius: 6px;
   }
 
   .item {
@@ -53,12 +53,12 @@
 
     &:before {
       width: 100%;
-      background-color: @ref-color-lightGrey;
+      background-color: @light-grey;
     }
 
     &:after {
       width: 2px;
-      background-color: @ref-color-blackLight;
+      background-color: @light-grey;
     }
 
     &:hover {
@@ -101,9 +101,9 @@
       border: none;
       border-radius: unset;
       padding: 5px 10px;
-      color: #000000;
+      color: @dark-grey;
       line-height: 16px;
-      box-shadow: @ref-box-shadow;
+      background-color: @light-grey;
     }
 
     button {
@@ -111,13 +111,14 @@
       display: flex;
       align-items: center;
       height: auto;
-      color: #FFFFFF;
+      color: @white;
       background-color: @blue;
-      font-size: 13.5px;
+      font-size: 12px;
       letter-spacing: 0px;
       text-align: center;
       line-height: 19px;
       border: none;
+      border-radius: 6px !important;
 
       &:hover {
         background-color: @hoverBlue;

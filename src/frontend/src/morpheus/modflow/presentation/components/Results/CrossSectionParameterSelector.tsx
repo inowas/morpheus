@@ -4,7 +4,6 @@ import ToolTipSlider from 'common/components/Slider/ToolTipSlider';
 
 import {Label} from 'semantic-ui-react';
 
-
 type IResultType = 'head' | 'drawdown' | 'concentration';
 
 interface IProps {
@@ -117,7 +116,7 @@ const CrossSectionParameterSelector = ({
           <div style={{margin: 'auto', width: 'calc(100% - 80px)'}}>
             {/* Todo @dmytro - add styles and info button */}
             <Label>
-                Select time step (days)
+                Select the time step
             </Label>
             <ToolTipSlider
               min={availableTotalTimes[0]}

@@ -56,7 +56,7 @@ const CrossSectionChart = ({data, selectedRowAndColumn}: IProps) => {
     <DataGrid>
       <Form.Form style={{margin: 10}}>
         <Form.Group>
-          <Label>Groundwater Piezometric Head (m)</Label>
+          <Label>Groundwater piezometric head (m)</Label>
           {/* Todo @dmytro - add styles to dropdown */}
           <Form.Radio
             label={'A-A\''}

@@ -4,11 +4,12 @@ import {Accordion, AccordionContent, AccordionTitle, Divider, Header, Segment} f
 import styles from './Section.module.less';
 
 interface IProps {
-  title: string;
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  open?: boolean;
-  collapsable?: boolean;
   children?: React.ReactNode;
+  collapsable?: boolean;
+  display?: React.ReactNode;
+  open?: boolean;
+  title: string;
 }
 
 const Section = ({title, as, open: openProp = true, children, collapsable = false}: IProps) => {

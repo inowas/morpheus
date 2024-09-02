@@ -77,10 +77,10 @@ const ObservationsLayer = ({
                 <LeafletCircleMarker
                   key={key}
                   center={position}
-                  radius={7}
+                  radius={3}
                   fill={true}
                   fillOpacity={1}
-                  color={isSelected ? 'blue' : 'grey'}
+                  color={isSelected ? 'black' : '#009fe3'}
                   eventHandlers={isEditable ? editBoundaryEventHandlers : viewModeEventHandlers}
                   pmIgnore={!isEditable}
                 >

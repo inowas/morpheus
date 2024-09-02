@@ -1,20 +1,10 @@
 const Images: string[] = [
-  require('./create-new-project.svg'),
-  require('./create-new-project-2.svg'),
-  require('./create-new-project-3.svg'),
-  require('./create-new-project-4.svg'),
-  require('./create-new-project-5.svg'),
-  require('./create-new-project-6.svg'),
-  require('./create-new-project-7.svg'),
-  require('./create-new-project-8.svg'),
-  require('./create-new-project-9.svg'),
-  require('./create-new-project-10.svg'),
-  require('./create-new-project-11.svg'),
-  require('./create-new-project-12.svg'),
-  require('./create-new-project-13.svg'),
-  require('./create-new-project-14.svg'),
-  require('./create-new-project-15.svg'),
-  require('./create-new-project-16.svg'),
+  require('./element-1.png'),
+  require('./element-2.png'),
+  require('./element-3.png'),
+  require('./element-4.png'),
+  require('./element-5.png'),
+  require('./element-6.png'),
 ];
 
 export default Images;

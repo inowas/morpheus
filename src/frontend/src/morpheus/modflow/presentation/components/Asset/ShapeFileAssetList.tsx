@@ -35,7 +35,7 @@ const ShapeFileAssetList = ({assets, assetData, selectedAsset, onChangeSelectedA
 
   return (
     <Grid.Grid>
-      <Grid.Column width={6} style={{boxShadow: '9px 0 10px -11px #BABABA'}}>
+      <Grid.Column width={6}>
         <div className={styles.assetListHeader}>
           <ShapeFileInput
             icon={'upload'}

@@ -37,9 +37,9 @@
   cursor: pointer;
   transition: color 300ms;
   background: transparent;
-  color: @ref-color-red;
+  color: @blue;
   font-size: 1.05rem;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.7;
   margin: 0;
   text-align: inherit;

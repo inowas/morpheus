@@ -25,7 +25,7 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
   return (
     <>
       <InfoTitle
-        title={`Constant value ${unit ? `(${unit.split('').join('.')})` : ''}`}
+        title={`Constant value ${unit ? `(${unit.split('').join('')})` : ''}`}
         description='You can provide a default value for the specified property for the whole layer.'
         style={{marginBottom: 0}}
       />
@@ -38,6 +38,7 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
         style={{
           width: '110px',
           textAlign: 'end',
+          backgroundColor: '#f5f5f7',
         }}
       />
       {!readOnly && valueLocal !== value && (
@@ -49,9 +50,11 @@ const LayerPropertyValuesDefaultValue = ({value, onSubmit, readOnly, unit, preci
           icon={'save'}
           content={'Save'}
         />
-      )}
+      )
+      }
     </>
-  );
+  )
+  ;
 };
 
 export default LayerPropertyValuesDefaultValue;

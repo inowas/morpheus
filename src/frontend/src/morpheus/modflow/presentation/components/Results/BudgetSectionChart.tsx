@@ -199,8 +199,8 @@ const BudgetChart = ({data, isIncremental, onChangeIsIncremental, colors}: IProp
 
       <Tab
         panes={[
-          {menuItem: 'Bars', render: () => <TabPane attached={true}>{renderBarChart()}</TabPane>},
-          {menuItem: 'Pies', render: () => <TabPane attached={true}>{renderPieChart()}</TabPane>},
+          {menuItem: 'Bar chart', render: () => <TabPane attached={true}>{renderBarChart()}</TabPane>},
+          {menuItem: 'Pie chart', render: () => <TabPane attached={true}>{renderPieChart()}</TabPane>},
         ]}
       />
     </DataGrid>

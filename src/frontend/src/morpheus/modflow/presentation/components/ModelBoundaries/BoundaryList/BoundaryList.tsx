@@ -110,7 +110,7 @@ const BoundaryList = ({
                       setEditBoundaryName(null);
                     }}
                     >
-                      Apply
+                      Save
                     </button>
                   </div>
                 )}
@@ -140,13 +140,13 @@ const BoundaryList = ({
                   className={`${styles.dotsMenu}`}
                   actions={[
                     {
-                      text: 'Rename Item', icon: 'edit', onClick: () => {
+                      text: 'Rename', icon: 'edit', onClick: () => {
                         setEditBoundaryName(boundary.id);
                         setInputValue(boundary.name);
                       },
                     },
-                    {text: 'Copy', icon: 'copy', onClick: () => onCloneBoundary(boundary.id)},
-                    {text: 'Delete', icon: 'remove', onClick: () => onRemoveBoundaries([boundary.id])},
+                    {text: 'Clone', icon: 'copy', onClick: () => onCloneBoundary(boundary.id)},
+                    {text: 'Delete', icon: 'trash', onClick: () => onRemoveBoundaries([boundary.id])},
                   ]}
                 />
                 {hasMultipleObservations(boundary.type) && (
@@ -196,17 +196,18 @@ const BoundaryList = ({
                                 setInputObservationValue(newTitle);
                               }}
                             />
-                            <button onClick={async () => {
-                              if (!inputObservationValue) {
+                            <button
+                              onClick={async () => {
+                                if (!inputObservationValue) {
+                                  setOpenEditingObservationTitle(null);
+                                  return;
+                                }
+                                await onUpdateObservation(boundary.id, boundary.type, {...observation, observation_name: inputObservationValue});
+                                setInputObservationValue('');
                                 setOpenEditingObservationTitle(null);
-                                return;
-                              }
-                              await onUpdateObservation(boundary.id, boundary.type, {...observation, observation_name: inputObservationValue});
-                              setInputObservationValue('');
-                              setOpenEditingObservationTitle(null);
-                            }}
+                              }}
                             >
-                              Apply
+                              Save
                             </button>
                           </div>
                         )}
@@ -215,13 +216,13 @@ const BoundaryList = ({
                           disabled={openEditingObservationTitle === observation.observation_id}
                           actions={[
                             {
-                              text: 'Rename Item', icon: 'edit', onClick: () => {
+                              text: 'Rename', icon: 'edit', onClick: () => {
                                 setOpenEditingObservationTitle(observation.observation_id);
                                 setInputObservationValue(observation.observation_name);
                               },
                             },
                             {text: 'Clone', icon: 'copy', onClick: () => onCloneObservation(boundary.id, observation.observation_id)},
-                            {text: 'Delete', icon: 'remove', onClick: () => onRemoveObservation(boundary.id, observation.observation_id)},
+                            {text: 'Delete', icon: 'trash', onClick: () => onRemoveObservation(boundary.id, observation.observation_id)},
                           ]}
                         />
                       </div>
