@@ -22,7 +22,7 @@ if (config.mockServerEnabled) {
   makeServer({environment: 'development'});
 }
 
-if (config.sentryDsn) {
+if ('unknown' !== config.sentryDsn) {
   Sentry.init({
     dsn: config.sentryDsn,
     integrations: [
