@@ -112,6 +112,7 @@ module.exports = (env: any, argv: any) => {
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
         GIT_RELEASE_DATE: git('log -1 --format=%aI'),
         MOCKSERVER_ENABLED: !!env.mockserver,
+        SENTRY_DSN: env.SENTRY_DSN || undefined,
       }),
       new CopyPlugin({
         patterns: [{
