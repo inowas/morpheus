@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ECsvColumnType, StressperiodsUploadModal} from './index';
+import {ECsvColumnType} from './index';
 import {Button, CsvFileInput} from 'common/components';
 import {Container} from 'semantic-ui-react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -7,6 +7,7 @@ import {faDownload} from '@fortawesome/free-solid-svg-icons';
 import Papa from 'papaparse';
 import {IColumn} from './types/StressperiodsUpload.type';
 import {IStressPeriod} from '../../../../types';
+import StressperiodsUploadModal from './StressperiodsUploadModal';
 
 interface IProps {
   stressPeriods: IStressPeriod[];
@@ -102,6 +103,5 @@ const StressperiodsUpload = ({stressPeriods, onSubmit}: IProps) => {
     </Container>
   );
 };
-
 
 export default StressperiodsUpload;
