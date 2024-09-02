@@ -7,10 +7,8 @@ import {Provider} from 'react-redux';
 import config from '../config';
 import {createRoot} from 'react-dom/client';
 import {getI18n} from './i18n';
-import {makeServer} from '../../mockServer';
 import {store} from './store';
 import AuthProvider from 'morpheus/authentication/presentation/containers/AuthProvider';
-
 
 declare global {
   interface Window {
@@ -18,13 +16,9 @@ declare global {
   }
 }
 
-if (config.mockServerEnabled) {
-  makeServer({environment: 'development'});
-}
-
-if ('unknown' !== config.sentryDsn) {
+if (config.sentry.enabled && config.sentry.dsn) {
   Sentry.init({
-    dsn: config.sentryDsn,
+    dsn: config.sentry.dsn,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration(),

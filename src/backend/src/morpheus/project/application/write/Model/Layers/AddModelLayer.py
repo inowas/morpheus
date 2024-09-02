@@ -47,7 +47,7 @@ class AddModelLayerCommandHandler(CommandHandlerBase):
         layer = Layer.from_default()
         try:
             layer.name = LayerName(value=f'Layer {len(model.layers) + 1}')
-            layer.properties.bottom.value = LayerPropertyDefaultValue(value=model.layers[-1].properties.bottom.min() - 1)
+            layer.properties.bottom.value = LayerPropertyDefaultValue(value=float(model.layers[-1].properties.bottom.min() - 1))
         except:  # noqa: E722
             pass
 
