@@ -73,7 +73,7 @@ settings = Settings.from_dynaconf(
             Validator('MORPHEUS_SENSORS_UIT_FTP_USER', must_exist=True),
             Validator('MORPHEUS_SENSORS_UIT_FTP_PASSWORD', must_exist=True),
             Validator('MORPHEUS_SENSORS_UIT_FTP_PATH', must_exist=True),
-            Validator('SENTRY_DSN', must_exist=True),
+            Validator('SENTRY_DSN', default=None),
         ]
     )
 )
