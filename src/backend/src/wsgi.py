@@ -1,5 +1,4 @@
 # from logging.config import dictConfig
-
 import sentry_sdk
 from flask import Flask
 
