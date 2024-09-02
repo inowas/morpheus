@@ -35,7 +35,7 @@ class Settings:
         self.CELERY_BROKER = values.CELERY_BROKER
         self.CELERY_RESULT_BACKEND = values.CELERY_RESULT_BACKEND
         self.CELERY_INCLUDE_TASK_MODULES = ['morpheus.project.tasks']
-        self.sentry_dsn = values.SENTRY_DSN
+        self.sentry_dsn: str = values.SENTRY_DSN
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):

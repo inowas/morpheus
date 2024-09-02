@@ -11,6 +11,7 @@ from morpheus.settings import settings
 from morpheus.project.bootstrap import bootstrap_project_module
 from morpheus.sensor.bootstrap import bootstrap_sensor_module
 from morpheus.user.bootstrap import bootstrap_user_module
+from sentry_sdk import capture_exception
 
 
 def bootstrap(app: Flask):
@@ -46,6 +47,7 @@ def bootstrap(app: Flask):
 
     @app.errorhandler(HTTPException)
     def handle_http_exceptions(exception):
+        capture_exception(exception)
         response = exception.get_response()
         if response.is_json:
             return response
@@ -68,6 +70,7 @@ def bootstrap(app: Flask):
 
         # todo: logging, sentry, ...
         app.logger.exception(exception)
+        capture_exception(exception)
 
         response = Response(status=500)
         response.content_type = 'application/json'
@@ -80,3 +83,12 @@ def bootstrap(app: Flask):
     app.json.sort_keys = False  # type: ignore
     app.json.indent = 4  # type: ignore
     app.add_url_rule('/healthcheck', 'healthcheck', lambda: 'OK', methods=['GET'])
+
+    @app.route("/hello-world")
+    def hello_world():
+        try:
+            1 / 0  # raises an error
+        except Exception as e:
+            capture_exception(e)
+            return "<p>Hello, World" + str(e) + "!</p>"
+        return "<p>Hello, World!</p>"
