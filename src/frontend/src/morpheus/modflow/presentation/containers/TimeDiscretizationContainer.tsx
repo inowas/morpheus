@@ -80,7 +80,7 @@ const TimeDiscretizationContainer = () => {
     <>
       <SidebarContent maxWidth={700}>
         <DataGrid>
-          <SectionTitle title={'Time Discretization'}/>
+          <SectionTitle title={'Time discretization'}/>
           <Section
             title={'General parameters'}
             collapsable={true}

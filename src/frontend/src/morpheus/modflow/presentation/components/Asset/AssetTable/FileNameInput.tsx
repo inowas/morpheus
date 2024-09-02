@@ -33,7 +33,7 @@ const FileNameInput = ({value, isReadOnly, onChange, edit, onChangeEdit}: IProps
 
   return (
     <Form onSubmit={handleSubmit}>
-      <div style={{width: '90%'}}>
+      <div>
         <Input
           type="text"
           value={valueLocal.split('.').shift()}
@@ -41,7 +41,6 @@ const FileNameInput = ({value, isReadOnly, onChange, edit, onChangeEdit}: IProps
           labelPosition={'right'}
           onChange={(_, {value: v}) => setValueLocal(`${v}.${extension}`)}
           readOnly={isReadOnly}
-          style={{width: '90%'}}
         >
           <input/>
           <Label>{`.${valueLocal.split('.').pop()}`}</Label>

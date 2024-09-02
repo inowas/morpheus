@@ -75,11 +75,7 @@ const footer = ({release, maxWidth}: IProps) => (
             </a>
           </div>
           <div className={styles.footerSearch}>
-            <Input
-              className={styles.footerSearch_Input}
-              action="Search"
-              placeholder="Search..."
-            />
+
             <ul className={styles.list}>
               <li>
                 <a
@@ -123,7 +119,7 @@ const footer = ({release, maxWidth}: IProps) => (
         <div className={styles.softwareVersion}>
           <span>Release: {release}</span>
         </div>
-        <BackToTopButton/>
+
       </div>
     </ContentWrapper>
   </footer>

@@ -66,34 +66,6 @@ const Header = ({
             secondary={true}
             position="right"
           >
-            <Menu.Item
-              name="Contact"
-              as="a"
-              className={styles.item}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateTo('/contact/');
-              }}
-            />
-            <Menu.Item
-              name="Legal Notice"
-              as="a"
-              className={styles.item}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateTo('/imprint/');
-              }}
-            />
-            <Menu.Item
-              name="Accessibility"
-              as="a"
-              className={styles.item}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateTo('/declaration-on-accessibility/');
-              }}
-            />
-
             {showAvatar ?
               <div className={styles.itemLogin}>
                 <AvatarButton

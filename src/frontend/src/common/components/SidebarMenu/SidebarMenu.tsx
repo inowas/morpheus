@@ -16,7 +16,7 @@ const SidebarMenu: React.FC<IProps> = ({menuItems, onClickCallback}) => {
   return (
     <div
       className={styles.sidebarMenu}
-      onMouseEnter={() => setIsOpen(true)}
+      onMouseEnter={() => setIsOpen(false)}
       onMouseLeave={() => setIsOpen(false)}
     >
       <div className={`${styles.sidebarMenuWrapper} ${isOpen ? styles.open : ''}`}>

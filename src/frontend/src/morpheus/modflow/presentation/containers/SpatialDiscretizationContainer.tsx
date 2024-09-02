@@ -108,7 +108,7 @@ const SpatialDiscretizationContainer = () => {
       <SidebarContent maxWidth={700}>
         <DataGrid>
           <SectionTitle
-            title={'Model Geometry'}
+            title={'Model geometry'}
           >
             <LockButton
               title={locked ? 'Locked' : 'Unlocked'}

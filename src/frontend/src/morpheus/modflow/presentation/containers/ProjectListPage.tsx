@@ -1,4 +1,4 @@
-import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem, Widget} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
@@ -80,14 +80,6 @@ const ProjectListPage = ({basePath}: IProps) => {
           value: search,
           onChange: onSearchChange,
         }}
-        button={
-          <Button
-            style={{whiteSpace: 'nowrap'}}
-            primary={true}
-            onClick={() => setShowCreateProjectModel(true)}
-          >
-            Create new project
-          </Button>}
       />
       <ModflowContainer>
         <SidebarContent maxWidth={400}>
@@ -98,17 +90,30 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </SidebarContent>
         <ContentWrapper style={{position: 'relative'}}>
-          <SortDropdown
-            placeholder="Order By"
-            sortOptions={orderOptions}
-            onChangeSortOption={onOrderChange}
-            style={{
-              position: 'absolute',
-              top: 20,
-              right: 50,
-              zIndex: 10,
-            }}
-          />
+          <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+            <Button
+              onClick={() => setShowCreateProjectModel(true)}
+              style={{marginTop: 20}}
+              primary={true}
+              labelPosition={'left'}
+              size={'tiny'}
+              icon={'plus'}
+              content={'Create new project'}
+            >
+            </Button>
+
+            <SortDropdown
+              placeholder="Order by"
+              sortOptions={orderOptions}
+              onChangeSortOption={onOrderChange}
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 50,
+                zIndex: 10,
+              }}
+            />
+          </div>
           <CardGrid
             cards={cards}
             title={<><span>{projects.length}</span> {translate('Projects found')}</>}

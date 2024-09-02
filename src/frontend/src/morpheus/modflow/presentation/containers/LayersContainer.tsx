@@ -77,7 +77,7 @@ const LayersContainer = () => {
       <SidebarContent maxWidth={700}>
         <DataGrid>
           <SectionTitle
-            title={'Layers'}
+            title={'Model layers'}
           />
           <div>
             <Widget>

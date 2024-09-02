@@ -89,18 +89,26 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
             <div className={styles.mandatory}>
               <span className="required">*</span>Mandatory field
             </div>
-            <div className={styles.buttons}>
-              <Button onClick={handleCancel}>
-                Cancel
-              </Button>
+            <div style={{display: 'flex', gap: 10, marginTop: 40}}>
+              <Button
+                secondary={true}
+                onClick={handleCancel}
+                labelPosition={'left'}
+                style={{marginLeft: 'auto'}}
+                size={'tiny'}
+                icon={'remove'}
+                content={'Cancel'}
+              />
               <Button
                 primary={true}
                 disabled={!formIsValid()}
                 onClick={handleSubmit}
                 loading={loading}
-              >
-                Create new project
-              </Button>
+                labelPosition={'left'}
+                size={'tiny'}
+                icon={'plus'}
+                content={'Create new project'}
+              />
             </div>
           </Form>
         </div>

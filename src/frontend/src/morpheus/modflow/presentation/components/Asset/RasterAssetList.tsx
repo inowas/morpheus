@@ -43,7 +43,7 @@ const RasterAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsse
 
   return (
     <Grid.Grid>
-      <Grid.Column width={6} style={{boxShadow: '9px 0 10px -11px #BABABA'}}>
+      <Grid.Column width={6}>
         <div className={styles.assetListHeader}>
           <RasterFileInput
             icon={'upload'}
@@ -75,7 +75,7 @@ const RasterAssetList = ({assets, assetData, selectedAsset, onChangeSelectedAsse
       </Grid.Column>
       <Grid.Column width={10}>
         <Segment loading={loading} style={{height: '100%', border: 'none', boxShadow: 'none', padding: 0}}>
-          <Header as={'h4'}>Asset Details</Header>
+          <Header as={'h4'}>Asset details</Header>
           <p>Asset ID: {selectedAsset?.asset_id}</p>
           {assetData && isAssetGeoTiffData(assetData) && <GeoTiffAssetData data={assetData}/>}
         </Segment>

@@ -22,10 +22,12 @@ const ShapeFileInput = ({onSubmit, error, readOnly, icon, content}: IShapeFileIn
   return (
     <>
       <Button
-        content={!content && !icon ? 'Choose File' : content}
-        icon={icon}
+        content={!content && !icon ? 'Choose file' : content}
         onClick={() => fileInputRef.current?.click()}
         size={'tiny'}
+        primary={true}
+        labelPosition={'left'}
+        icon={'file'}
         disabled={readOnly}
         style={{minWidth: 'auto', display: 'flex', alignItems: 'center'}}
       />
