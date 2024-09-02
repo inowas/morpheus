@@ -10,6 +10,8 @@ build-morpheus-frontend:dev:
     - cd src/frontend
     - make install-ci
     - make build-morpheus
+  variables:
+    SENTRY_DSN: $SENTRY_DSN_FRONTEND
   artifacts:
     paths:
       - src/frontend/dist/morpheus

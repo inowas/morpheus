@@ -11,7 +11,7 @@ build-mfviz-frontend:dev:
   script:
     - cd src/frontend
     - make install-ci
-    - make build-mfviz
+    - SENTRY_DSN_FRONTEND="$SENTRY_DSN_FRONTEND" make build-mfviz
   artifacts:
     paths:
       - src/frontend/dist/mfviz

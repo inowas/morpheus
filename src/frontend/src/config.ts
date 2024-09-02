@@ -5,6 +5,7 @@ const config = {
   modflowApiUrl: process.env.MODFLOW_API_URL || 'https://modflow.inowas.com',
   release: process.env.GIT_RELEASE || 'dev',
   releaseDate: process.env.GIT_RELEASE_DATE || 'unknown',
+  sentryDsn: process.env.SENTRY_DSN || 'unknown',
   mockServerEnabled: !!process.env.MOCKSERVER_ENABLED,
   keycloak: {
     url: process.env.KEYCLOAK_URL || 'https://identity.inowas.com',

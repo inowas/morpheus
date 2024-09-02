@@ -11,7 +11,7 @@ build-simpletools:dev:
   script:
     - cd src/frontend
     - make install-ci
-    - make build-simpletools
+    - SENTRY_DSN_FRONTEND="$SENTRY_DSN_FRONTEND" make build-simpletools
   artifacts:
     paths:
       - src/frontend/dist/simpletools
