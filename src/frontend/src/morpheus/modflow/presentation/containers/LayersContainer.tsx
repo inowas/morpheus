@@ -129,6 +129,7 @@ const LayersContainer = () => {
             maxValue={layerPropertyData.max_value}
             getRgbColor={getRgbColor}
             selectRowsAndCols={false}
+            options={{opacity: 0.8}}
           />}
         </Map>
       </BodyContent>
