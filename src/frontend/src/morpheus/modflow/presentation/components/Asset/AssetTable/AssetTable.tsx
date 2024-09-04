@@ -9,7 +9,6 @@ import FileNameInput from './FileNameInput';
 interface IProps {
   style?: React.CSSProperties;
   className?: string;
-  fileType: string;
   assets: IAsset[];
   loadingAsset: IAssetId | false;
   loadingList: boolean;
@@ -56,7 +55,9 @@ const AssetTable = ({
 
   useEffect(() => {
     if (!selectedAsset || !assets.find((asset) => asset.asset_id === selectedAsset.asset_id)) {
-      onSelectAsset(assets[0]);
+      if (0 < assets.length) {
+        onSelectAsset(assets[0]);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assets]);

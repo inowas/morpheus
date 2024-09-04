@@ -13,6 +13,7 @@ interface IProps {
 const FileNameInput = ({value, isReadOnly, onChange, edit, onChangeEdit}: IProps) => {
 
   const [valueLocal, setValueLocal] = useState<string>(value);
+  const extension = valueLocal.split('.').pop();
 
   useEffect(() => {
     setValueLocal(value);
@@ -29,7 +30,11 @@ const FileNameInput = ({value, isReadOnly, onChange, edit, onChangeEdit}: IProps
     return <div>{valueLocal}</div>;
   }
 
-  const extension = valueLocal.split('.').pop();
+  const handleChangeInput = (v: string) => {
+    // replace spaces and special characters with underscores
+    v = v.replace(/[^A-Za-z0-9_.]/g, '_');
+    setValueLocal(`${v}.${extension}`);
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -39,7 +44,7 @@ const FileNameInput = ({value, isReadOnly, onChange, edit, onChangeEdit}: IProps
           value={valueLocal.split('.').shift()}
           label={extension}
           labelPosition={'right'}
-          onChange={(_, {value: v}) => setValueLocal(`${v}.${extension}`)}
+          onChange={(_, {value: v}) => handleChangeInput(v)}
           readOnly={isReadOnly}
         >
           <input/>
