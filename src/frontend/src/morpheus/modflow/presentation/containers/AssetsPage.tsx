@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, Section, SectionTitle, Widget} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
@@ -8,18 +8,15 @@ import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useAssets from '../../application/useAssets';
 import {Radio, Search} from 'semantic-ui-react';
 import {AssetTable} from '../components/Asset';
-import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
+import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset} from '../../types';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
-import fileNameInput from '../components/Asset/AssetTable/FileNameInput';
 
 interface IProps {
   basePath: string;
 }
 
 const isRasterAsset = (asset: IAsset | null): asset is IRasterAsset => 'geo_tiff' === asset?.type;
-const isShapeAsset = (asset: IAsset | null): asset is IShapefileAsset => 'shapefile' === asset?.type;
-
 const isRasterAssetData = (data: IAssetData | null): data is IAssetRasterData => 'geo_tiff' === data?.type;
 const isShapeAssetData = (data: IAssetData | null): data is IAssetShapefileData => 'shapefile' === data?.type;
 
@@ -43,35 +40,45 @@ const AssetsPage = ({}: IProps) => {
     error,
   } = useAssets(projectId as string);
 
-  const [selectedAssetType, setSelectedAssetType] = useState<'shape' | 'raster' | 'csv'>('raster');
-  const [rasterAssets, setRasterAssets] = useState<IAsset[]>([]);
-  const [shapeAssets, setShapeAssets] = useState<IAsset[]>([]);
-
-  const [selectedAsset, setSelectedAsset] = useState<IAsset | null>(null);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [selectedAssetData, setSelectedAssetData] = useState<IAssetData | null>(null);
+  const [search, setSearch] = useState<string>('');
+
+  const selectedAsset = useMemo(() => {
+    return assets.find((a) => a.asset_id === selectedAssetId) || null;
+  }, [assets, selectedAssetId]);
+
+  const filteredAssets = useMemo(() => {
+    return assets.filter((asset) => asset.file.file_name.toLowerCase().includes(search.toLowerCase()));
+  }, [assets, search]);
 
   useEffect(() => {
-    setRasterAssets(assets.filter((item) => isRasterAsset(item)));
-    setShapeAssets(assets.filter((item) => isShapeAsset(item)));
-  }, [assets]);
-
-  useEffect(() => {
-    if (!selectedAsset) {
+    if (!selectedAssetId) {
       return setSelectedAssetData(null);
     }
 
-    fetchAssetData(selectedAsset.asset_id).then((data) => data && setSelectedAssetData(data));
+    fetchAssetData(selectedAssetId).then((data) => data && setSelectedAssetData(data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset]);
+  }, [selectedAssetId]);
 
   const handleUploadSelectedRasterFiles = async (files: File[]) => {
     for (const file of files) {
-      await uploadRasterFile(file);
+      const assetId = await uploadRasterFile(file);
+      if (assetId) {
+        setSelectedAssetId(assetId);
+      }
     }
   };
 
   const handleUploadSelectedShapeFiles = async (files: File[]) => {
-    await uploadShapefile(files);
+    const assetId = await uploadShapefile(files);
+    if (assetId) {
+      setSelectedAssetId(assetId);
+    }
+  };
+
+  const handleSelectAsset = (asset: IAsset) => {
+    setSelectedAssetId(asset.asset_id);
   };
 
   const renderData = (asset: IAsset | null, data: IAssetData | null) => {
@@ -138,19 +145,26 @@ const AssetsPage = ({}: IProps) => {
                     loading={uploadingAsset}
                     onSelectFiles={handleUploadSelectedShapeFiles}
                   />
+                  <div>
+                    <Search
+                      placeholder={'Search assets...'}
+                      showNoResults={false}
+                      value={search}
+                      onSearchChange={(_, {value}) => setSearch(value || '')}
+                    />
+                  </div>
                 </div>
               </Widget>
               <Widget>
                 <AssetTable
-                  fileType={selectedAssetType}
-                  assets={assets}
+                  assets={filteredAssets}
                   loadingAsset={loadingAsset}
                   loadingList={loadingList}
                   deleteAsset={deleteAsset}
                   updateAssetFileName={updateAssetFileName}
                   isReadOnly={isReadOnly}
                   selectedAsset={selectedAsset}
-                  onSelectAsset={setSelectedAsset}
+                  onSelectAsset={handleSelectAsset}
                 />
               </Widget>
             </Grid.Column>

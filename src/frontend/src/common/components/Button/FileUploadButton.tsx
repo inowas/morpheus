@@ -1,12 +1,11 @@
 import React, {createRef} from 'react';
 import Button from './Button';
-import {File} from "source-map-explorer/lib/types";
 
 interface IProps {
   buttonContent?: string,
   isReadOnly: boolean,
   loading: boolean,
-  onSelectFiles: (files: File[]) => void,
+  onSelectFiles: (files: File[]) => Promise<void>,
   acceptFiles?: string,
   style?: { padding: string }
 }
@@ -35,7 +34,7 @@ const FileUploadButton = ({buttonContent, isReadOnly, loading, acceptFiles, onSe
         onChange={async (e) => {
           const files = e.target.files;
           if (files) {
-            onSelectFiles(Array.from(files));
+            await onSelectFiles(Array.from(files));
             e.target.value = '';
           }
         }}
