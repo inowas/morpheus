@@ -1,0 +1,49 @@
+---
+- name: Update and upgrade apt packages on all nodes
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400  # One day
+
+- name: Disable swap on all nodes
+  become: true
+  shell: |
+    swapoff -a
+
+- name: Remove swap from fstab on all nodes
+  become: true
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
+- name: Set kernel parameters on all nodes
+  become: true
+  blockinfile:
+    create: yes
+    path: /etc/modules-load.d/k8s.conf
+    block: |
+      overlay
+      br_netfilter
+
+- name: Load kernel modules
+  become: true
+  command: modprobe {{ item }}
+  loop:
+    - overlay
+    - br_netfilter
+
+- name: Sysctl parameters required for Kubernetes networking
+  become: true
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  loop:
+    - { name: "net.ipv4.ip_forward", value: 1 }
+    - { name: "net.bridge.bridge-nf-call-iptables", value: 1 }
+    - { name: "net.bridge.bridge-nf-call-ip6tables", value: 1 }

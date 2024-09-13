@@ -1,0 +1,24 @@
+# parameter (from vars.yaml)
+vlan_net_0_id:    4000
+vlan_net_0_mtu:   1400
+vlan_net_0_ip:    192.168.100.3
+vlan_net_0_range: 192.168.100.0/24
+vlan_net_0_mask:  255.255.255.0
+vlan_net_0_bc:    192.168.100.255
+
+k8s_base_cidr:    192.168.100.0/24
+k8s_join_token:   NAzQRja7n5d5t7jchA5yNTBJbDaYjNGxL9AhLFLG-irgendwas-hauptsache-random
+k8s_hostname:     master-single-node
+
+k3s_version: v1.25.5+k3s2
+k3s_api_advertise_address: 192.168.100.3
+
+k3s_cluster_cidr: 192.168.100.0/24
+k3s_cluster_cidr_services: 192.168.100.0/24
+k3s_cluster_advertise_address: 192.168.200.3
+k3s_cluster_advertise_domain: k3s.junghanns.it # hier eine brauchbare domain eintragen oder localhost
+k3s_datastore_backend: etcd
+
+k3s_cni_cilium_version: 1.13.4
+k3s_cni_cilium_namespace: kube-system
+k3s_cni_cilium_replicas_ops: 1

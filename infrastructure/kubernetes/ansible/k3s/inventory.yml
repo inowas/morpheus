@@ -1,0 +1,10 @@
+all:
+  hosts:
+    master:
+      ansible_host: 195.201.2.229
+      ansible_user: root
+
+  children:
+    kubernetes:
+      hosts:
+        master:

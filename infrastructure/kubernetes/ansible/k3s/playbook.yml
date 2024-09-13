@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  roles:
+    - kubernetes
+  tasks:
+    - name: Install
+      include_role:
+        name: kubernetes
+        tasks_from: 001-preflight
+    - name: Install Kubernetes
+      include_role:
+        name: kubernetes
+        tasks_from: 002-install
+
+#- hosts: master
+#  become: yes
+#  tasks:
+#    - name: Initialize Kubernetes cluster
+#      import_tasks: tasks/004 - initialize_control_plane.yml
+#    - name: Install network plugin
+#      import_tasks: tasks/005 - install_network_plugin.yml

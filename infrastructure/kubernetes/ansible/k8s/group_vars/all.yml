@@ -1,0 +1,9 @@
+KUBERNETES_VERSION: "1.31"
+KUBERNETES_APT_KEYRING_FILE: "/etc/apt/keyrings/kubernetes-apt-keyring.gpg"
+KUBERNETES_APT_KEY: "https://pkgs.k8s.io/core:/stable:/v{{ KUBERNETES_VERSION }}/deb/Release.key"
+KUBERNETES_APT_REPOSITORY: "deb [signed-by={{ KUBERNETES_APT_KEYRING_FILE }}] https://pkgs.k8s.io/core:/stable:/v{{ KUBERNETES_VERSION }}/deb/ /"
+KUBERNETES_POD_NETWORK_CIDR: "192.168.0.0/16"
+
+DOCKER_APT_KEYRING_FILE: "/etc/apt/trusted.gpg.d/debian.gpg"
+DOCKER_APT_KEY: "https://download.docker.com/linux/debian/gpg"
+DOCKER_APT_REPOSITORY: "deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"

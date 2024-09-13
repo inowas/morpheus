@@ -1,0 +1,59 @@
+---
+- name: Install package dependencies
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - apt-transport-https
+    - curl
+  tags: package_dependencies
+
+- name: Prepare apt keyring directory
+  ansible.builtin.file:
+    path: "{{ KUBERNETES_APT_KEYRING_FILE | dirname }}"
+    state: directory
+    mode: 0755
+    force: true
+
+- name: Get Kubernetes package key
+  ansible.builtin.shell: curl -fsSL {{ KUBERNETES_APT_KEY }} | gpg --dearmor -o {{ KUBERNETES_APT_KEYRING_FILE }}
+  args:
+    creates: "{{ KUBERNETES_APT_KEYRING_FILE }}"
+
+- name: Add Kubernetes repository
+  ansible.builtin.apt_repository:
+    repo: "{{ KUBERNETES_APT_REPOSITORY }}"
+    filename: pkgs_k8s_io
+    state: present
+    update_cache: true
+
+- name: Install Kubernetes components on master
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+  tags: install_k8s_components
+
+- name: Hold Kubernetes packages
+  command: apt-mark hold {{ item }}
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+  tags: hold_k8s_packages
+
+- name: Verify kubernetes installation
+  command: kubectl version --client && echo && kubeadm version
+  register: k8s_version
+  tags: verify_installation
+
+- debug:
+    msg: "{{ k8s_version.stdout }}"
+
+

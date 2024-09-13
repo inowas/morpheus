@@ -1,0 +1,36 @@
+---
+- name: Add Helm repository for Cilium
+  ansible.builtin.shell: |
+    helm repo add cilium https://helm.cilium.io/
+    helm repo update
+  args:
+    executable: /bin/bash
+
+- name: Create Cilium namespace
+  ansible.builtin.k8s:
+    api_version: v1
+    kind: Namespace
+    name: int-net-cilium
+
+- name: Install Cilium using Helm
+  ansible.builtin.shell: |
+    helm install cilium cilium/cilium --version 1.16.0 \
+    --namespace int-net-cilium \
+    --set global.containerRuntime.integration=containerd
+  args:
+    executable: /bin/bash
+
+- name: Wait for Cilium pods to become ready
+  ansible.builtin.k8s_info:
+    kind: Pod
+    namespace: int-net-cilium
+    label_selectors:
+      - "k8s-app=cilium"
+    register: cilium_pods
+
+- name: Ensure Cilium pods are running
+  ansible.builtin.wait_for:
+    path: /tmp/cilium_pods_ready
+    delay: 15
+    timeout: 300
+    state: present

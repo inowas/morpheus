@@ -1,0 +1,186 @@
+---
+
+- stat: path=/etc/rancher/k3s/k3s.yaml
+  register: st_k3s_adm_init_root_admin_cert
+
+- stat: path=/usr/local/bin/cilium
+  register: st_k3s_cni_cilium_bin
+
+- stat: path=/usr/local/bin/hubble
+  register: st_k3s_cni_cilium_hubble_client_bin
+
+#
+# ADD k3s/k8s related kernel mod tweaks
+# @see https://github.com/coreos/fedora-coreos-tracker/issues/411
+# --
+
+- name: "ADD the overlay module"
+  modprobe:
+    name: overlay
+    state: present
+
+- name: "ADD the br_netfilter module"
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: "ADD CONFIG_CRYPTO_USER_API_HASH"
+  modprobe:
+    name: algif_hash
+    state: present
+
+- name: "ADD CONFIG_NET_CLS_BPF"
+  modprobe:
+    name: cls_bpf
+    state: present
+
+- name: "ADD CONFIG_NET_SCH_INGRESS"
+  modprobe:
+    name: sch_ingress
+    state: present
+
+- name: "ADD CONFIG_NETFILTER_XT_TARGET_TPROXY"
+  modprobe:
+    name: xt_TPROXY
+    state: present
+
+- name: "ADD CONFIG_NETFILTER_XT_MATCH_MARK"
+  modprobe:
+    name: xt_mark
+    state: present
+
+- name: "ADD CONFIG_NETFILTER_XT_MATCH_SOCKET"
+  modprobe:
+    name: xt_socket
+    state: present
+
+- name: "TWEAK rp-filter set's for systemctl (cilium-prepare)"
+  shell: echo 'net.ipv4.conf.lxc*.rp_filter = 0' > /etc/sysctl.d/999-override_cilium_rp_filter.conf && systemctl restart systemd-sysctl
+
+#
+# Create some directories
+# --
+- name: "ADD k3s-extensions folder within /opt directory"
+  file: path=/opt/k3s-ext state=directory owner=root
+
+## ASK PATRICK if this rule is needed
+## ADD kubernetes source definition and related packages
+## --
+#- name: "meta-core-apt : ensure requirements are installed"
+#  include_role:
+#    name: meta-core-apt
+#  vars:
+#    apt_packages:
+#      - "{{ meta_shared_packages }}"
+
+#
+# disable swap
+# --
+
+- name: "disable SWAP since kubernetes can't work with swap enabled (1/2)"
+  shell: swapoff -a
+
+- name: "disable SWAP in fstab since kubernetes can't work with swap enabled (2/2)"
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
+#
+# Add cilium network plugin using cilium-cli
+# --
+
+- name: "GET cilium-cli binary"
+  shell: curl -L -o /opt/k3s-ext/cilium-linux-amd64.tar.gz --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz
+  when: not st_k3s_cni_cilium_bin.stat.exists
+
+- name: "GET cilium-cli sha256sum"
+  shell: curl -L -o /opt/k3s-ext/cilium-linux-amd64.tar.gz.sha256sum --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz.sha256sum
+  when: not st_k3s_cni_cilium_bin.stat.exists
+
+- name: "CHECK cilium-cli integrity"
+  shell: (cd /opt/k3s-ext/; sha256sum --check cilium-linux-amd64.tar.gz.sha256sum)
+  when: not st_k3s_cni_cilium_bin.stat.exists
+
+- name: "ADD cilium-cli to /usr/local/bin"
+  shell: tar xzvfC /opt/k3s-ext/cilium-linux-amd64.tar.gz /usr/local/bin
+  when: not st_k3s_cni_cilium_bin.stat.exists
+  ignore_errors: yes
+
+- name: "CLEANUP cilium-cli installation fragments"
+  shell: rm -f /opt/k3s-ext/cilium-linux-amd64.tar.gz /opt/k3s-ext/cilium-linux-amd64.tar.gz.sha256sum
+  ignore_errors: yes
+
+#
+# ADD dns-/resolver tweaks & related improvements
+# --
+
+- name: "changing hostname to match new master-k3s dns based naming (master-single-node)"
+  shell: hostnamectl set-hostname {{ k8s_hostname }}
+
+- name: "SET local ns (/etc/resolv.conf) for k8s-master [{{default_hostname_k8s_node}}]"
+  template: src=../files/etc.resolv.conf.k3s dest=/etc/resolv.conf owner=root
+
+#
+# ADD k3s server environment
+# --
+
+- name: "ADD k3s-service stack [single-node-mode]"
+  when: not st_k3s_adm_init_root_admin_cert.stat.exists
+  shell: |
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }} \
+    sh -s - --flannel-backend=none \
+            --datastore-endpoint={{ k3s_datastore_backend }} \
+            --disable-network-policy \
+            --disable=servicelb \
+            --disable=traefik \
+            --cluster-cidr={{ k3s_cluster_cidr }} \
+            --service-cidr={{ k3s_cluster_cidr_services }} \
+            --advertise-address={{ k3s_cluster_advertise_address }} \
+            --tls-san=127.0.0.1,{{ k3s_cluster_advertise_address }},{{ k3s_cluster_advertise_domain }},{{ k8s_hostname }},k3s-{{ k8s_hostname }} \
+            --container-runtime-endpoint=/var/run/containerd/containerd.sock \
+            --write-kubeconfig-mode=644 \
+            --node-ip={{ vlan_net_0_ip }} \
+            --node-external-ip={{ default_public_ipv4 }} \
+            --token={{ k8s_join_token }}
+
+- name: "CHECK k3s-service stack requirements/availability [server-mode]"
+  shell: k3s check-config
+
+- name: "ADD k3s-root-certificate to current users HOME-Directory [root]"
+  shell: (mkdir -p /root/.kube ; cp -i /etc/rancher/k3s/k3s.yaml /root/.kube/config && chown $(id -u):$(id -g) /root/.kube/config ; chmod 0400 /root/.kube/config)
+
+#
+# ADD k3s-cilium CNI environment
+# --
+
+- name: "PAUSE for 5 seconds; wait for k3s-core service finalization ...(-.-)..."
+  ansible.builtin.pause:
+    seconds: 5
+
+- name: "CHECK cilium agent status within k3s environment (pod-state)"
+  shell: (kubectl get pods --field-selector=status.phase=Running -n kube-system --selector=app.kubernetes.io/name=cilium-agent -o jsonpath='{.items[*].status.containerStatuses[0].ready}')
+  register: st_k3s_cni_cilium_agent_running
+
+- name: "ADD k3s-helm cilium repository + update repo-core [{{ k3s_cni_cilium_version }}]"
+  shell: (helm repo add cilium https://helm.cilium.io/ && helm repo update)
+
+- name: "INSTALL k3s-helm cilium [{{ k3s_cni_cilium_version }}] CNI for k3s [{{ k3s_version }}]"
+  when: st_k3s_cni_cilium_agent_running.stdout != "true"
+  shell: |
+    KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm install cilium cilium/cilium \
+      --version={{ k3s_cni_cilium_version }} \
+      --set global.tag="v{{ k3s_cni_cilium_version }}" \
+      --set global.containerRuntime.integration="containerd" \
+      --set global.containerRuntime.socketPath="/var/run/containerd/containerd.sock" \
+      --set global.kubeProxyReplacement="strict" \
+      --set k8sServiceHost=127.0.0.1 \
+      --set k8sServicePort=6443 \
+      --set operator.replicas={{ k3s_cni_cilium_replicas_ops }} \
+      --set ipam.operator.clusterPoolIPv4PodCIDR={{ vlan_net_0_range }} \
+      --kube-insecure-skip-tls-verify \
+      --namespace {{ k3s_cni_cilium_namespace }}
+
+- name: "ADD cilium hubble relay [{{ k3s_cni_cilium_version }}]"
+  when: st_k3s_cni_cilium_agent_running.stdout == "true"
+  shell: (KUBECONFIG=/etc/rancher/k3s/k3s.yaml cilium hubble enable)

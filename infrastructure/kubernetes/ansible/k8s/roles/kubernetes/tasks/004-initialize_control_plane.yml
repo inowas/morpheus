@@ -1,0 +1,25 @@
+---
+- name: Ensure that the modules are correctly loaded
+  ansible.builtin.shell: lsmod | grep br_netfilter
+
+- name: Ensure that kubelet service is enabled and started
+  ansible.builtin.command: systemctl enable kubelet
+
+- name: Pull the required images
+  ansible.builtin.command: kubeadm config images pull
+
+- name: Bootstrap without shared endpoint
+  ansible.builtin.shell: kubeadm init --pod-network-cidr "{{ KUBERNETES_POD_NETWORK_CIDR }}"
+
+- name: Copy the kubeconfig file
+  ansible.builtin.shell: mkdir -p $HOME/.kube && sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Get cluster info
+  ansible.builtin.command: kubectl cluster-info
+  register: cluster_info
+
+- debug:
+    var: cluster_info.stdout
+
+- name: Untaint the master node
+  ansible.builtin.shell: kubectl taint nodes --all node-role.kubernetes.io/master-

@@ -1,0 +1,61 @@
+---
+- name: Install container runtime package dependencies
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - lsb-release
+    - software-properties-common
+  tags: package_dependencies
+
+- name: Prepare apt keyring directory
+  ansible.builtin.file:
+    path: "{{ DOCKER_APT_KEYRING_FILE | dirname }}"
+    state: directory
+    mode: 0755
+    force: true
+
+- name: Get Docker package key
+  ansible.builtin.shell: curl -fsSL {{ DOCKER_APT_KEY }} | gpg --dearmor -o {{ DOCKER_APT_KEYRING_FILE }}
+  args:
+    creates: "{{ DOCKER_APT_KEYRING_FILE }}"
+
+- name: Add Docker repository
+  ansible.builtin.apt_repository:
+    repo: "{{ DOCKER_APT_REPOSITORY }}"
+    state: present
+    filename: docker
+    update_cache: true
+
+- name: Install container runtime
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - containerd.io
+
+- name: Configure containerd
+  shell: |
+    sudo mkdir -p /etc/containerd
+    sudo containerd config default | sudo tee /etc/containerd/config.toml
+
+- name: Ensure containerd service is force restarted and enabled
+  ansible.builtin.systemd:
+    name: containerd
+    enabled: yes
+    state: restarted
+    force: yes
+
+- name: show status of containerd
+  command: systemctl status containerd
+  register: containerd_status
+  tags: containerd_status
+
+- debug:
+    var: containerd_status.stdout
