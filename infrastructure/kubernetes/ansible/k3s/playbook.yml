@@ -7,10 +7,14 @@
       include_role:
         name: kubernetes
         tasks_from: 001-preflight
-    - name: Install Kubernetes
+    - name: Install container runtime
       include_role:
         name: kubernetes
-        tasks_from: 002-install
+        tasks_from: 002-install_container_runtime
+    - name: Install Kubernetes
+      include_role:
+          name: kubernetes
+          tasks_from: 003-install_kubernetes
 
 #- hosts: master
 #  become: yes
