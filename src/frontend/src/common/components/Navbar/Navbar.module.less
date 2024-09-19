@@ -378,9 +378,9 @@
 
       input {
         border-radius: 2px;
-        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.149148) inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.149148) inset;
         background-color: rgba(242, 242, 242, 1);
-        border: 0px;
+        border: 0;
         margin: 0 0 0 5px;
       }
 
@@ -389,14 +389,15 @@
         padding: 10px 19px !important;
         text-transform: uppercase;
       }
-
     }
-
   }
 
-  .nav .searchWrapper {
+  .contentWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     width: calc(100% - 2em);
-    margin: 0 1em;
   }
 }
 

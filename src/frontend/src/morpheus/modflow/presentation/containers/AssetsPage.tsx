@@ -113,6 +113,8 @@ const AssetsPage = ({}: IProps) => {
     return null;
   };
 
+  console.log(navbarItems);
+
   return (
     <>
       <Navbar
