@@ -1,4 +1,4 @@
-import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem, Widget} from 'common/components';
+import {Button, CardGrid, ContentWrapper, ICard, Navbar, INavbarItem} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
@@ -8,6 +8,7 @@ import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useUsers} from '../../incoming';
 import {useDateTimeFormat} from 'common/hooks';
+import {Input} from 'semantic-ui-react';
 
 interface IProps {
   basePath: string;
@@ -76,11 +77,19 @@ const ProjectListPage = ({basePath}: IProps) => {
         location={location}
         navbarItems={getProjectListNavbarItems(translate)}
         navigateTo={navigateTo}
-        search={{
-          value: search,
-          onChange: onSearchChange,
-        }}
-      />
+      >
+        <Input
+          action={true}
+          actionPosition="left"
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+        >
+          <Button primary={true}>
+            Search
+          </Button>
+          <input/>
+        </Input>
+      </Navbar>
       <ModflowContainer>
         <SidebarContent maxWidth={400}>
           <ProjectsFilter

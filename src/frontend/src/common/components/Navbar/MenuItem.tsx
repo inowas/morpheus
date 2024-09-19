@@ -44,7 +44,7 @@ const MenuItem: React.FC<ListItemProps> = ({items, depthLevel = 0, onCloseMobile
   }, [setDropdown]);
 
 
-  const isActive = (path: string): boolean => location.pathname.includes(path);
+  const isActive = (path: string): boolean => location?.pathname?.includes(path);
 
   const onMouseEnter = () => {
     if (!isMobile) {

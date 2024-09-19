@@ -77,13 +77,14 @@ const BoundaryList = ({
       <List className={styles.list}>
         {filteredBoundaries.map((boundary) => (
           <ListItem
-            key={boundary.id} className={styles.item}
+            key={boundary.id}
+            className={styles.item}
             disabled={!boundary.enabled}
           >
-            <div
-              // Title styles when item is selected
-              className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}
-            >
+            <div className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}>
+              <div className={styles.checkboxBoundaryWrapper}>
+                <Checkbox/>
+              </div>
               {/*// Title open and close observations list*/}
               <div className={`${styles.titleInner}`} onClick={() => onSelectBoundaryAndObservation({boundary})}>
                 {editBoundaryName !== boundary.id &&
