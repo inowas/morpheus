@@ -12,6 +12,7 @@ from .presentation.api.read.ReadCalculationObservationResultsRequestHandler impo
 from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
 from .presentation.api.read.ReadCalculationTimeSeriesResultsRequestHandler import ReadCalculationTimeSeriesResultsRequestHandler
 from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
+from .presentation.api.read.ReadMetadataRequestHandler import ReadMetadataRequestHandler
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
 from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
@@ -175,6 +176,12 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_event_log(project_id: str):
         return ReadProjectEventLogRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+
+    @blueprint.route('/<project_id>/metadata', methods=['GET'])
+    @cross_origin()
+    @authenticate()
+    def project_get_metadata(project_id: str):
+        return ReadMetadataRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/model', methods=['GET'])
     @cross_origin()
