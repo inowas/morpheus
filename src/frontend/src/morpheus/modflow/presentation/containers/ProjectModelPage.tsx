@@ -8,6 +8,7 @@ import {Navbar} from 'common/components';
 import {useNavbarItems} from '../../../application/application';
 import {useModel} from '../../application';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
+import ProjectTitleContainer from './ProjectTitleContainer';
 
 interface IProps {
   basePath: string;
@@ -15,7 +16,7 @@ interface IProps {
 }
 
 const ProjectModelPage = ({basePath, section}: IProps) => {
-  const navigate = useNavigate();
+  const navigateTo = useNavigate();
   const location = useLocation();
 
   const {projectId, property} = useParams<{
@@ -32,7 +33,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
   const sidebarMenuItems: ISidebarMenuItem[] = useMemo(() => getSidebarItems().map((item) => ({
     ...item,
     isActive: item.slug == property,
-    onClick: () => navigate(`${basePath}/${projectId}/${section}/${item.slug}`),
+    onClick: () => navigateTo(`${basePath}/${projectId}/${section}/${item.slug}`),
     isDisabled: !(item.component || item.isTitle),
     // eslint-disable-next-line
   })), [projectId, property]);
@@ -73,8 +74,10 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
         <Navbar
           location={location}
           navbarItems={navbarItems}
-          navigateTo={navigate}
-        />
+          navigateTo={navigateTo}
+        >
+          <ProjectTitleContainer/>
+        </Navbar>
         <ModflowContainer>
           <SidebarMenu menuItems={sidebarMenuItems.slice(0, 1)}/>
           {renderContent('setup')}
@@ -92,7 +95,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
       <Navbar
         location={location}
         navbarItems={navbarItems}
-        navigateTo={navigate}
+        navigateTo={navigateTo}
       />
       <ModflowContainer>
         <SidebarMenu menuItems={sidebarMenuItems}/>

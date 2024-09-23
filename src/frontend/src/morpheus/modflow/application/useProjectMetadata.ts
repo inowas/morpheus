@@ -8,7 +8,7 @@ import {IRootState} from '../../store';
 import {setLoading, setMetadata, setError} from '../infrastructure/metadataStore';
 
 interface IUseProjectMetadata {
-  metadata: IMetadata;
+  metadata: IMetadata | null;
   updateMetadata: (metadata: IMetadata) => Promise<void>;
   loading: boolean;
   error: IError | null;
@@ -43,10 +43,10 @@ const useProjectMetadata = (projectId: string): IUseProjectMetadata => {
     }
 
     if (response.err) {
-      setError(response.val);
+      dispatch(setError(response.val));
     }
 
-    setLoading(false);
+    dispatch(setLoading(false));
   };
 
   useEffect(() => {

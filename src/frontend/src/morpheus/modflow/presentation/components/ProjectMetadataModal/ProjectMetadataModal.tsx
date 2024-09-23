@@ -14,7 +14,7 @@ interface IProps {
   onCancel: () => void;
   loading: boolean;
   error?: IError;
-  onSubmit: (metadata: IMetadata) => void;
+  onSubmit: (metadata: IMetadata) => Promise<void>;
 }
 
 const ProjectMetadataModal = ({metadata, open, onCancel, onSubmit, loading, error}: IProps) => {
@@ -28,6 +28,7 @@ const ProjectMetadataModal = ({metadata, open, onCancel, onSubmit, loading, erro
       setProjectName(metadata.name);
       setProjectDescription(metadata.description);
       setTags(metadata.tags);
+      setOptions(options.concat(metadata.tags.map((tag) => ({key: tag, text: tag, value: tag}))));
     }
   }, [metadata]);
 
@@ -50,13 +51,18 @@ const ProjectMetadataModal = ({metadata, open, onCancel, onSubmit, loading, erro
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (formIsValid()) {
-      onSubmit({name: projectName, description: projectDescription, tags});
+      await onSubmit({name: projectName, description: projectDescription, tags});
       clearForm();
     }
   };
 
   return (
-    <Modal.Modal open={open} dimmer={'blurring'}>
+    <Modal.Modal
+      open={open}
+      dimmer={'blurring'}
+      closeOnEscape={true}
+      onClose={onCancel}
+    >
       <div className={`${styles.container}`} data-testid="project-meta-data-modal">
         <div className={styles.image}>
           <RandomImage images={Images}/>
@@ -71,6 +77,11 @@ const ProjectMetadataModal = ({metadata, open, onCancel, onSubmit, loading, erro
               <input
                 type="text" value={projectName}
                 onChange={(event) => setProjectName(event.target.value)}
+                onKeyDown={(event) => {
+                  if ('Enter' === event.key) {
+                    handleSubmit(event);
+                  }
+                }}
               />
             </Form.Field>
             <Form.Field className={styles.field}>
