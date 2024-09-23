@@ -1,7 +1,8 @@
 import React from 'react';
-import CreateProjectModal from '../components/CreateProjectModal';
+import ProjectMetadataModal from '../components/ProjectMetadataModal';
 import {useProject} from '../../application';
 import {useNavigate} from 'common/hooks';
+import {IMetadata} from '../../types';
 
 interface IProps {
   open: boolean;
@@ -13,16 +14,20 @@ const CreateProjectContainer = ({open, onClose}: IProps) => {
   const {createProject, loading, error} = useProject();
   const navigate = useNavigate();
 
-  const handleSubmit = async (name: string, description: string, tags: string[]) => {
-    const projectId = await createProject(name, description, tags);
+  const handleSubmit = async (md: IMetadata) => {
+    const projectId = await createProject(md.name, md.description, md.tags);
     if (projectId) {
       navigate(`/projects/${projectId}`);
       onClose();
     }
   };
 
+  if (!open) {
+    return null;
+  }
+
   return (
-    <CreateProjectModal
+    <ProjectMetadataModal
       open={open}
       onCancel={onClose}
       loading={loading}
@@ -30,7 +35,6 @@ const CreateProjectContainer = ({open, onClose}: IProps) => {
       error={error}
     />
   );
-
 };
 
 export default CreateProjectContainer;

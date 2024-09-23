@@ -6,7 +6,7 @@ from morpheus.common.types.identity.Identity import UserId
 from morpheus.settings import settings as app_settings
 from ...types.Permissions import Visibility
 
-from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags
+from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags, Metadata
 
 
 @dataclasses.dataclass
@@ -109,6 +109,17 @@ class ProjectSummaryRepository(RepositoryBase):
 
     def exists(self, project_id: ProjectId) -> bool:
         return self.collection.count_documents({'project_id': project_id.to_str()}, limit=1) > 0
+
+    def get_metadata(self, project_id: ProjectId) -> Metadata | None:
+        document = self.collection.find_one({'project_id': project_id.to_str()})
+        if document is None:
+            return None
+
+        return Metadata(
+            name=Name.from_str(document['project_name']),
+            description=Description.from_str(document['project_description']),
+            tags=Tags.from_list(document['project_tags']),
+        )
 
 
 project_summary_repository: ProjectSummaryRepository = ProjectSummaryRepository(

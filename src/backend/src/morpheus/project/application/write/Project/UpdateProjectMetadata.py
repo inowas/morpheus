@@ -49,6 +49,7 @@ class UpdateProjectMetadataCommandHandler(CommandHandlerBase):
     @staticmethod
     def handle(command: UpdateProjectMetadataCommand) -> None:
         project_id = command.project_id
+
         if not project_reader.project_exists(project_id):
             raise NotFoundException(f'Project with id {project_id.to_str()} does not exist')
 

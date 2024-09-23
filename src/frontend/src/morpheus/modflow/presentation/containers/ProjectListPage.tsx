@@ -4,11 +4,11 @@ import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
 import {useProjectList, useTranslate} from '../../application';
 import Error from 'common/components/Error';
-import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useUsers} from '../../incoming';
 import {useDateTimeFormat} from 'common/hooks';
 import {Input} from 'semantic-ui-react';
+import CreateProjectContainer from './CreateProjectContainer';
 
 interface IProps {
   basePath: string;

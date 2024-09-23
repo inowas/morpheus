@@ -19,7 +19,7 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
   const {projectId} = useParams();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
 
-  const {assets, loading, uploadAsset, fetchAssetData} = useAssets(projectId as string);
+  const {assets, loadingList, uploadAsset, fetchAssetData} = useAssets(projectId as string);
   const [selectedAsset, setSelectedAsset] = useState<IAsset | null>(null);
   const [rasterFiles, setRasterFiles] = useState<IAsset[]>([]);
   const [shapeFiles, setShapeFiles] = useState<IAsset[]>([]);
@@ -79,7 +79,7 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
             <RasterAssetList
               assets={rasterFiles} selectedAsset={selectedAsset}
               assetData={assetData} onChangeSelectedAsset={setSelectedAsset}
-              loading={loading}
+              loading={loadingList}
               isReadOnly={isReadOnly}
               onFileUpload={handleFileUpload}
             />
@@ -96,7 +96,7 @@ const AssetsModalContainer = ({onClose, onSelectRasterFile, onSelectShapefile}: 
               selectedAsset={selectedAsset}
               assetData={assetData}
               onChangeSelectedAsset={setSelectedAsset}
-              loading={loading}
+              loading={loadingList}
               isReadOnly={isReadOnly}
               onFileUpload={handleFileUpload}
             />

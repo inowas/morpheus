@@ -13,4 +13,10 @@ interface IProjectListItem {
   user_privileges: IUserPrivilege[];
 }
 
-export type {IProjectListItem};
+interface IMetadata {
+  name: string;
+  description: string;
+  tags: string[];
+}
+
+export type {IProjectListItem, IMetadata};
