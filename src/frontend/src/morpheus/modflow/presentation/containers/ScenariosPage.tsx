@@ -6,6 +6,7 @@ import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
 import {useParams} from 'react-router-dom';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
+import ProjectTitleContainer from './ProjectTitleContainer';
 
 interface IProps {
   basePath: string;
@@ -26,7 +27,9 @@ const ScenariosPage = ({}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-      />
+      >
+        <ProjectTitleContainer/>
+      </Navbar>
       <ModflowContainer>
         <ContentWrapper>
           <Placeholder header={'Scenarios Page'} message={'Page for Scenario Management'}/>

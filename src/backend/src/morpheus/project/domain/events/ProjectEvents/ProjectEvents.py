@@ -90,13 +90,13 @@ class ProjectMetadataUpdatedEvent(EventBase):
         return ProjectId.from_str(self.entity_uuid.to_str())
 
     def get_name(self) -> Name | None:
-        return Name.from_str(self.payload['name']) if self.payload['name'] else None
+        return Name.from_str(self.payload['name']) if self.payload['name'] is not None else None
 
     def get_description(self) -> Description | None:
-        return Description.from_str(self.payload['description']) if self.payload['description'] else None
+        return Description.from_str(self.payload['description']) if self.payload['description'] is not None else None
 
     def get_tags(self) -> Tags | None:
-        return Tags.from_list(self.payload['tags']) if self.payload['tags'] else None
+        return Tags.from_list(self.payload['tags']) if self.payload['tags'] is not None else None
 
     @staticmethod
     def get_event_name() -> EventName:

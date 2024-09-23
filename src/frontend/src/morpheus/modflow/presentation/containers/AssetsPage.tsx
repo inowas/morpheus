@@ -11,6 +11,7 @@ import {AssetTable} from '../components/Asset';
 import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset} from '../../types';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
+import ProjectTitleContainer from './ProjectTitleContainer';
 
 interface IProps {
   basePath: string;
@@ -121,7 +122,9 @@ const AssetsPage = ({}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-      />
+      >
+        <ProjectTitleContainer/>
+      </Navbar>
       <ModflowContainer>
         <ContentWrapper>
           <SectionTitle

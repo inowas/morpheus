@@ -1,25 +1,36 @@
 import {Button, Form, TextArea} from 'semantic-ui-react';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import RandomImage from 'common/components/RandomImage';
-import styles from './CreateProjectModal.module.less';
+import styles from './ProjectMetadataModal.module.less';
 import Images from './images';
 import {DropdownComponent, Modal} from 'common/components';
 import {IError} from '../../../../types';
+import {IMetadata} from '../../../types';
 
 interface IProps {
+  metadata?: IMetadata;
   open: boolean;
   onCancel: () => void;
   loading: boolean;
   error?: IError;
-  onSubmit: (name: string, description: string, keywords: string[]) => void;
+  onSubmit: (metadata: IMetadata) => Promise<void>;
 }
 
-const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) => {
+const ProjectMetadataModal = ({metadata, open, onCancel, onSubmit, loading, error}: IProps) => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [options, setOptions] = useState([{key: '0', text: 'Modflow', value: 'modflow'}]);
+
+  useEffect(() => {
+    if (metadata) {
+      setProjectName(metadata.name);
+      setProjectDescription(metadata.description);
+      setTags(metadata.tags);
+      setOptions(options.concat(metadata.tags.map((tag) => ({key: tag, text: tag, value: tag}))));
+    }
+  }, [metadata]);
 
   const formIsValid = () => {
     return 0 < projectName.trim().length;
@@ -40,20 +51,25 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (formIsValid()) {
-      onSubmit(projectName, projectDescription, tags);
+      await onSubmit({name: projectName, description: projectDescription, tags});
       clearForm();
     }
   };
 
   return (
-    <Modal.Modal open={open} dimmer={'blurring'}>
-      <div className={`${styles.container}`} data-testid="create-project-modal">
+    <Modal.Modal
+      open={open}
+      dimmer={'blurring'}
+      closeOnEscape={true}
+      onClose={onCancel}
+    >
+      <div className={`${styles.container}`} data-testid="project-meta-data-modal">
         <div className={styles.image}>
           <RandomImage images={Images}/>
         </div>
         <div className={styles.form}>
           <h1 className={styles.title}>
-            Create new project
+            {metadata ? 'Edit project metadata' : 'Create new project'}
           </h1>
           <Form onSubmit={handleSubmit}>
             <Form.Field className={styles.field}>
@@ -61,6 +77,11 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
               <input
                 type="text" value={projectName}
                 onChange={(event) => setProjectName(event.target.value)}
+                onKeyDown={(event) => {
+                  if ('Enter' === event.key) {
+                    handleSubmit(event);
+                  }
+                }}
               />
             </Form.Field>
             <Form.Field className={styles.field}>
@@ -107,7 +128,7 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
                 labelPosition={'left'}
                 size={'tiny'}
                 icon={'plus'}
-                content={'Create new project'}
+                content={metadata ? 'Save changes' : 'Create project'}
               />
             </div>
           </Form>
@@ -117,4 +138,4 @@ const CreateProjectModal = ({open, onCancel, onSubmit, loading, error}: IProps) 
   );
 };
 
-export default CreateProjectModal;
+export default ProjectMetadataModal;
