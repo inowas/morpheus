@@ -96,7 +96,9 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-      />
+      >
+        <ProjectTitleContainer/>
+      </Navbar>
       <ModflowContainer>
         <SidebarMenu menuItems={sidebarMenuItems}/>
         {renderContent(property)}
