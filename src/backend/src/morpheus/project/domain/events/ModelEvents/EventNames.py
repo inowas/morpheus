@@ -55,6 +55,7 @@ class ModelBoundaryEventName(StrEnum):
     MODEL_BOUNDARY_OBSERVATION_GEOMETRY_RECALCULATED = 'Model Boundary Observation Geometry Recalculated'
     MODEL_BOUNDARY_OBSERVATION_REMOVED = 'Model Boundary Observation Removed'
     MODEL_BOUNDARY_OBSERVATION_UPDATED = 'Model Boundary Observation Updated'
+    MODEL_BOUNDARY_TAGS_UPDATED = 'Model Boundary Tags Updated'
 
     def to_str(self):
         return self.value

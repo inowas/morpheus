@@ -27,7 +27,7 @@ class GroupEventBase(EventBase):
 class GroupCreatedEvent(GroupEventBase):
     @classmethod
     def from_group(cls, group: Group, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(group.group_id.to_str()),
             occurred_at=occurred_at,
             payload=group.to_dict(),
@@ -45,7 +45,7 @@ class GroupCreatedEvent(GroupEventBase):
 class MemberAddedEvent(GroupEventBase):
     @classmethod
     def from_user_id(cls, group_id: GroupId, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(group_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -65,7 +65,7 @@ class MemberAddedEvent(GroupEventBase):
 class MemberRemovedEvent(GroupEventBase):
     @classmethod
     def from_user_id(cls, group_id: GroupId, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(group_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -85,7 +85,7 @@ class MemberRemovedEvent(GroupEventBase):
 class AdminAddedEvent(GroupEventBase):
     @classmethod
     def from_user_id(cls, group_id: GroupId, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(group_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -105,7 +105,7 @@ class AdminAddedEvent(GroupEventBase):
 class AdminRemovedEvent(GroupEventBase):
     @classmethod
     def from_user_id(cls, group_id: GroupId, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(group_id.to_str()),
             occurred_at=occurred_at,
             payload={

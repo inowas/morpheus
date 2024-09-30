@@ -12,7 +12,7 @@ from .EventNames import ModelDiscretizationEventName
 class ModelAffectedCellsUpdatedEvent(EventBase):
     @classmethod
     def from_affected_cells(cls, project_id: ProjectId, affected_cells: ActiveCells, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -34,7 +34,7 @@ class ModelAffectedCellsUpdatedEvent(EventBase):
 class ModelAffectedCellsRecalculatedEvent(EventBase):
     @classmethod
     def from_affected_cells(cls, project_id: ProjectId, affected_cells: ActiveCells, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -56,7 +56,7 @@ class ModelAffectedCellsRecalculatedEvent(EventBase):
 class ModelGeometryUpdatedEvent(EventBase):
     @classmethod
     def from_geometry(cls, project_id: ProjectId, polygon: Polygon, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -78,7 +78,7 @@ class ModelGeometryUpdatedEvent(EventBase):
 class ModelGridRecalculatedEvent(EventBase):
     @classmethod
     def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -100,7 +100,7 @@ class ModelGridRecalculatedEvent(EventBase):
 class ModelGridUpdatedEvent(EventBase):
     @classmethod
     def from_grid(cls, project_id: ProjectId, grid: Grid, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -122,7 +122,7 @@ class ModelGridUpdatedEvent(EventBase):
 class ModelTimeDiscretizationUpdatedEvent(EventBase):
     @classmethod
     def from_time_discretization(cls, project_id: ProjectId, time_discretization: TimeDiscretization, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={

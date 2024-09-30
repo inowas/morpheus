@@ -10,7 +10,7 @@ from .EventNames import CalculationEventName
 class CalculationProfileRemovedEvent(EventBase):
     @classmethod
     def from_calculation_profile(cls, project_id: ProjectId, calculation_profile_id: CalculationProfileId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={

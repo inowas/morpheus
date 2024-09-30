@@ -24,10 +24,11 @@ interface IProps {
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
-  onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
-  onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
+  onUpdateBoundaryAffectedLayers: (boundaryIds: IBoundaryId[], affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryInterpolation: (boundaryIds: IBoundaryId[], interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
+  onUpdateBoundaryTags: (boundaryIds: IBoundaryId[], boundaryTags: string[]) => Promise<void>;
   timeDiscretization: ITimeDiscretization;
   isReadOnly: boolean;
 }
@@ -49,10 +50,12 @@ const BoundariesAccordionPane = ({
   onUpdateBoundaryInterpolation,
   onUpdateBoundaryMetadata,
   onUpdateBoundaryObservation,
+  onUpdateBoundaryTags,
   isReadOnly,
   timeDiscretization,
 }: IProps) => {
 
+  const [checkedBoundaries, setCheckedBoundaries] = useState<IBoundaryId[]>([]);
   const [selectedBoundary, setSelectedBoundary] = useState<IBoundary | undefined>(undefined);
   const [selectedBoundaryObservation, setSelectedBoundaryObservation] = useState<IObservation<any> | undefined>(undefined);
 
@@ -60,6 +63,9 @@ const BoundariesAccordionPane = ({
     const boundary = boundaries.find((b) => b.id === selectedBoundaryAndObservation?.boundary.id);
     if (boundary) {
       setSelectedBoundary(boundary);
+      if (0 === checkedBoundaries.length) {
+        setCheckedBoundaries([boundary.id]);
+      }
       const observation = boundary.observations.find((o) => o.observation_id === selectedBoundaryAndObservation?.observationId);
       if (observation) {
         return setSelectedBoundaryObservation(observation);
@@ -93,8 +99,6 @@ const BoundariesAccordionPane = ({
   }, [boundaries]);
 
   const handleChangeBoundaryName = (boundaryId: IBoundaryId, boundary_name: string) => onUpdateBoundaryMetadata(boundaryId, boundary_name);
-  const handleChangeBoundaryTags = (boundaryId: IBoundaryId, boundaryTags: string[]) => onUpdateBoundaryMetadata(boundaryId, undefined, boundaryTags);
-
 
   if (!selectedBoundary || !selectedBoundaryObservation) {
     return null;
@@ -111,9 +115,11 @@ const BoundariesAccordionPane = ({
           <BoundaryList
             boundaries={boundaries}
             isReadOnly={isReadOnly}
+            checkedBoundaries={checkedBoundaries}
             selectedBoundaryAndObservation={{boundary: selectedBoundary, observationId: selectedBoundaryObservation.observation_id}}
             type={boundaryType}
             onChangeBoundaryName={handleChangeBoundaryName}
+            onChangeCheckedBoundaries={setCheckedBoundaries}
             onDisableBoundary={onDisableBoundary}
             onEnableBoundary={onEnableBoundary}
             onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
@@ -128,22 +134,22 @@ const BoundariesAccordionPane = ({
           <InfoTitle
             title="Properties"
             secondary={true}
-            actions={[
-              {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
-            ]}
+            // actions={[
+            //   {actionText: 'Edit on map', onClick: () => console.log('Action 2')},
+            // ]}
           />
           <BoundariesForm
             availableTags={availableTags}
-            boundary={selectedBoundary}
+            boundaries={boundaries.filter((b) => checkedBoundaries.includes(b.id))}
             onChangeBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
             onChangeBoundaryInterpolation={onUpdateBoundaryInterpolation}
-            onChangeBoundaryTags={handleChangeBoundaryTags}
+            onChangeBoundaryTags={onUpdateBoundaryTags}
             isReadOnly={isReadOnly}
             layers={layers}
           />
         </Grid.Column>
       </Grid.Grid>
-      <Grid.Grid>
+      {1 == checkedBoundaries.length && <Grid.Grid>
         <Tab
           style={{width: '100%'}}
           variant='primary'
@@ -180,7 +186,7 @@ const BoundariesAccordionPane = ({
             },
           ]}
         />
-      </Grid.Grid>
+      </Grid.Grid>}
     </>
   );
 };

@@ -14,7 +14,7 @@ from .ProjectEventName import ProjectEventName
 class ProjectCalculationProfileIdUpdatedEvent(EventBase):
     @classmethod
     def from_calculation_profile_id(cls, project_id: ProjectId, calculation_profile_id: CalculationProfileId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -37,7 +37,7 @@ class ProjectCalculationProfileIdUpdatedEvent(EventBase):
 class ProjectCreatedEvent(EventBase):
     @classmethod
     def from_project(cls, project: Project, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project.project_id.to_str()),
             occurred_at=occurred_at,
             payload=project.to_dict(),
@@ -58,7 +58,7 @@ class ProjectCreatedEvent(EventBase):
 class ProjectDeletedEvent(EventBase):
     @classmethod
     def from_project_id(cls, project_id: ProjectId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={}
@@ -76,7 +76,7 @@ class ProjectDeletedEvent(EventBase):
 class ProjectMetadataUpdatedEvent(EventBase):
     @classmethod
     def from_props(cls, project_id: ProjectId, occurred_at: DateTime, name: Name | None = None, description: Description | None = None, tags: Tags | None = None):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -107,7 +107,7 @@ class ProjectMetadataUpdatedEvent(EventBase):
 class ProjectPreviewImageUpdatedEvent(EventBase):
     @classmethod
     def occurred_now(cls, project_id: ProjectId, asset_id: AssetId):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=DateTime.now(),
             payload={
@@ -130,7 +130,7 @@ class ProjectPreviewImageUpdatedEvent(EventBase):
 class ProjectPreviewImageDeletedEvent(EventBase):
     @classmethod
     def occurred_now(cls, project_id: ProjectId):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=DateTime.now(),
             payload={}

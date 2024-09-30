@@ -38,10 +38,11 @@ interface IProps {
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
-  onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
-  onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
+  onUpdateBoundaryAffectedLayers: (boundaryIds: IBoundaryId[], affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryInterpolation: (boundaryIds: IBoundaryId[], interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
+  onUpdateBoundaryTags: (boundaryIds: IBoundaryId[], boundaryTags: string[]) => Promise<void>;
   onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   timeDiscretization: ITimeDiscretization;
@@ -60,6 +61,7 @@ const BoundariesAccordion = ({
   onUpdateBoundaryInterpolation,
   onUpdateBoundaryMetadata,
   onUpdateBoundaryObservation,
+  onUpdateBoundaryTags,
   onRemoveBoundaries,
   onRemoveBoundaryObservation,
   onSelectBoundaryAndObservation,
@@ -112,6 +114,7 @@ const BoundariesAccordion = ({
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
               onUpdateBoundaryObservation={onUpdateBoundaryObservation}
+              onUpdateBoundaryTags={onUpdateBoundaryTags}
               selectedBoundaryAndObservation={selectedBoundaryAndObservation?.boundary?.type === panel.type ? selectedBoundaryAndObservation : undefined}
               onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
               isReadOnly={false}

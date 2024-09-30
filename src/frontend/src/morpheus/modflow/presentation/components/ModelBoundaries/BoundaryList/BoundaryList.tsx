@@ -1,5 +1,5 @@
 import {Accordion, Checkbox, Icon, List, ListItem} from 'semantic-ui-react';
-import {DotsMenu} from 'common/components';
+import {Button, DotsMenu} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import styles from './BoundaryList.module.less';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../../types/Boundaries.type';
@@ -9,7 +9,10 @@ import {hasMultipleObservations} from '../helpers';
 interface ISelectedListProps {
   type: IBoundaryType;
   boundaries: IBoundary[];
+  checkedBoundaries: IBoundaryId[];
+  selectedBoundaryObservation?: IObservation<any>;
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
+  onChangeCheckedBoundaries: (boundaryIds: IBoundaryId[]) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onChangeBoundaryName: (boundaryId: IBoundaryId, name: string) => Promise<void>;
@@ -26,9 +29,11 @@ interface ISelectedListProps {
 const BoundaryList = ({
   type,
   boundaries,
+  checkedBoundaries,
   selectedBoundaryAndObservation,
   onChangeBoundaryName,
   onSelectBoundaryAndObservation,
+  onChangeCheckedBoundaries,
   onCloneBoundary,
   onCloneObservation,
   onDisableBoundary,
@@ -49,10 +54,47 @@ const BoundaryList = ({
   const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
   const [inputObservationValue, setInputObservationValue] = useState('');
 
+  const isChecked = (boundary: IBoundary) => checkedBoundaries.includes(boundary.id);
   const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
+
+  const allBoundariesSelected = 0 < boundaries.length && boundaries.length === checkedBoundaries.length;
+
+  const handleChangeAllSelected = () => {
+    if (allBoundariesSelected) {
+      return onChangeCheckedBoundaries([selectedBoundaryAndObservation?.boundary.id as IBoundaryId]);
+    }
+
+    return onChangeCheckedBoundaries(boundaries.map((b) => b.id));
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+  };
+
+  const handleCheckBoundaryClick = (boundary: IBoundary) => {
+    if (isChecked(boundary)) {
+      const newCheckedBoundaries = checkedBoundaries.filter((id) => id !== boundary.id);
+      if (0 === newCheckedBoundaries.length) {
+        onChangeCheckedBoundaries([selectedBoundaryAndObservation?.boundary.id as IBoundaryId]);
+      }
+
+      if (boundary.id === selectedBoundaryAndObservation?.boundary.id) {
+        const newSelectedBoundary = boundaries.find((b) => b.id === newCheckedBoundaries[0]);
+        if (!newSelectedBoundary) {
+          return;
+        }
+        onSelectBoundaryAndObservation({boundary: newSelectedBoundary});
+      }
+
+      return onChangeCheckedBoundaries(newCheckedBoundaries);
+    }
+
+    return onChangeCheckedBoundaries([...checkedBoundaries, boundary.id]);
+  };
+
+  const handleBoundaryListItemClick = (boundary: IBoundary) => {
+    onChangeCheckedBoundaries([boundary.id]);
+    onSelectBoundaryAndObservation({boundary});
   };
 
   const filteredBoundaries = useMemo(() => {
@@ -66,8 +108,8 @@ const BoundaryList = ({
       {/* for the moment, the select all checkbox is not implemented */}
       {/**/}
       <BoundaryListHeader
-        allSelected={undefined}
-        onChangeAllSelected={undefined}
+        allSelected={allBoundariesSelected}
+        onChangeAllSelected={handleChangeAllSelected}
         searchInput={search}
         onChangeSearchInput={handleSearchChange}
       />
@@ -81,12 +123,12 @@ const BoundaryList = ({
             className={styles.item}
             disabled={!boundary.enabled}
           >
-            <div className={`${styles.title} ${isSelected(boundary) ? styles.titleSelected : ''}`}>
+            <div className={`${styles.title} ${(isSelected(boundary) || isChecked(boundary)) ? styles.titleSelected : ''}`}>
               <div className={styles.checkboxBoundaryWrapper}>
-                <Checkbox/>
+                <Checkbox checked={isChecked(boundary)} onChange={(() => handleCheckBoundaryClick(boundary))}/>
               </div>
               {/*// Title open and close observations list*/}
-              <div className={`${styles.titleInner}`} onClick={() => onSelectBoundaryAndObservation({boundary})}>
+              <div className={`${styles.titleInner}`} onClick={() => handleBoundaryListItemClick(boundary)}>
                 {editBoundaryName !== boundary.id &&
                   <div style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
                     {boundary.name}
@@ -235,6 +277,15 @@ const BoundaryList = ({
           </ListItem>
         ))}
       </List>
+      <Button
+        size={'tiny'}
+        icon={'trash'}
+        content={'Remove selected'}
+        secondary={true}
+        disabled={isReadOnly}
+        onClick={() => onRemoveBoundaries(checkedBoundaries)}
+        color={'red'}
+      />
     </>
   );
 };

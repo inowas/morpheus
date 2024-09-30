@@ -83,12 +83,3 @@ def bootstrap(app: Flask):
     app.json.sort_keys = False  # type: ignore
     app.json.indent = 4  # type: ignore
     app.add_url_rule('/healthcheck', 'healthcheck', lambda: 'OK', methods=['GET'])
-
-    @app.route("/hello-world")
-    def hello_world():
-        try:
-            1 / 0  # raises an error
-        except Exception as e:
-            capture_exception(e)
-            return "<p>Hello, World" + str(e) + "!</p>"
-        return "<p>Hello, World!</p>"
