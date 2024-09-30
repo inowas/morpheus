@@ -15,7 +15,7 @@ from .EventNames import ModelObservationEventName
 class ModelObservationAddedEvent(EventBase):
     @classmethod
     def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation: HeadObservation, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -41,7 +41,7 @@ class ModelObservationAddedEvent(EventBase):
 class ModelObservationClonedEvent(EventBase):
     @classmethod
     def from_observation_id(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, new_observation_id: ObservationId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -71,7 +71,7 @@ class ModelObservationClonedEvent(EventBase):
 class ModelObservationEnabledEvent(EventBase):
     @classmethod
     def from_observation_id(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -97,7 +97,7 @@ class ModelObservationEnabledEvent(EventBase):
 class ModelObservationDisabledEvent(EventBase):
     @classmethod
     def from_observation_id(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -123,7 +123,7 @@ class ModelObservationDisabledEvent(EventBase):
 class ModelObservationRemovedEvent(EventBase):
     @classmethod
     def from_observation_id(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -150,7 +150,7 @@ class ModelObservationUpdatedEvent(EventBase):
     @classmethod
     def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, type: ObservationType, tags: ObservationTags, name: ObservationName,
                          geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[HeadObservationValue], enabled: bool, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={

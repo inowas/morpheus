@@ -15,6 +15,7 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 @dataclasses.dataclass(frozen=True)
 class EventStoreDocument:
     event_name: str
+    event_version: int
     occurred_at: str
     entity_uuid: str
     version: str
@@ -26,6 +27,7 @@ class EventStoreDocument:
         event = envelope.get_event()
         return cls(
             event_name=event.get_event_name().to_str(),
+            event_version=event.get_event_version(),
             occurred_at=event.get_occurred_at().to_iso_with_timezone(),
             entity_uuid=event.get_entity_uuid().to_str(),
             version=version,
@@ -37,6 +39,7 @@ class EventStoreDocument:
     def from_raw_document(cls, raw_document: Mapping[str, Any]):
         return cls(
             event_name=raw_document['event_name'],
+            event_version=raw_document['event_version'] if 'event_version' in raw_document else 0,
             occurred_at=raw_document['occurred_at'],
             entity_uuid=raw_document['entity_uuid'],
             version=raw_document['version'],
@@ -47,6 +50,7 @@ class EventStoreDocument:
     def to_dict(self) -> dict:
         return {
             'event_name': self.event_name,
+            'event_version': self.event_version,
             'occurred_at': self.occurred_at,
             'entity_uuid': self.entity_uuid,
             'version': self.version,
@@ -58,6 +62,7 @@ class EventStoreDocument:
         return EventEnvelope(
             event=event_factory.create_event(
                 event_name=EventName.from_str(self.event_name),
+                event_version=self.event_version,
                 entity_uuid=Uuid.from_str(self.entity_uuid),
                 occurred_at=DateTime.from_str(self.occurred_at),
                 payload=self.payload

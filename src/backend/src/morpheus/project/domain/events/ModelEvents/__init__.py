@@ -25,6 +25,7 @@ model_boundary_event_list = [
     ModelBoundaryEvents.ModelBoundaryObservationGeometryRecalculatedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationUpdatedEvent,
+    ModelBoundaryEvents.ModelBoundaryTagsUpdatedEvent,
 ]
 
 model_discretization_event_list = [

@@ -44,6 +44,7 @@ const BoundariesContainer = () => {
     onUpdateBoundaryInterpolation,
     onUpdateBoundaryMetadata,
     onUpdateBoundaryObservation,
+    onUpdateBoundaryTags,
     onDisableBoundary,
     onEnableBoundary,
   } = useBoundaries(projectId as string);
@@ -186,6 +187,7 @@ const BoundariesContainer = () => {
                 onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
                 onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
                 onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
+                onUpdateBoundaryTags={onUpdateBoundaryTags}
                 onRemoveBoundaries={onRemoveBoundaries}
                 onRemoveBoundaryObservation={onRemoveBoundaryObservation}
                 onUpdateBoundaryObservation={onUpdateBoundaryObservation}

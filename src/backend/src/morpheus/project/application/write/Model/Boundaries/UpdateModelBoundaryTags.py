@@ -7,42 +7,41 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryAffectedLayersUpdatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryTagsUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
 from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.boundaries.Boundary import BoundaryId
-from morpheus.project.types.layers import LayerId
+from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryTags
 
 
-class UpdateModelBoundaryAffectedLayersCommandPayload(TypedDict):
+class UpdateModelBoundaryTagsCommandPayload(TypedDict):
     project_id: str
     model_id: str
     boundary_ids: list[str]
-    affected_layers: list[str]
+    tags: list[str]
 
 
 @dataclasses.dataclass(frozen=True)
-class UpdateModelBoundaryAffectedLayersCommand(ProjectCommandBase):
+class UpdateModelBoundaryTagsCommand(ProjectCommandBase):
     model_id: ModelId
     boundary_ids: list[BoundaryId]
-    affected_layers: list[LayerId]
+    tags: BoundaryTags
 
     @classmethod
-    def from_payload(cls, user_id: UserId, payload: UpdateModelBoundaryAffectedLayersCommandPayload):
+    def from_payload(cls, user_id: UserId, payload: UpdateModelBoundaryTagsCommandPayload):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             boundary_ids=[BoundaryId.from_str(boundary_id) for boundary_id in payload['boundary_ids']],
-            affected_layers=[LayerId.from_str(layer_id) for layer_id in payload['affected_layers']],
+            tags=BoundaryTags.from_list(payload['tags']),
         )
 
 
-class UpdateModelBoundaryAffectedLayersCommandHandler(CommandHandlerBase):
+class UpdateModelBoundaryTagsCommandHandler(CommandHandlerBase):
     @staticmethod
-    def handle(command: UpdateModelBoundaryAffectedLayersCommand):
+    def handle(command: UpdateModelBoundaryTagsCommand):
         project_id = command.project_id
         user_id = command.user_id
 
@@ -54,17 +53,11 @@ class UpdateModelBoundaryAffectedLayersCommandHandler(CommandHandlerBase):
             if not model.boundaries.has_boundary(boundary_id=boundary_id):
                 raise ValueError(f'Boundary {boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
-        # check if affected layer ids are present and filter if needed
-        # throw exception if no valid affected layer is uploaded!
-        affected_layers = [layer_id for layer_id in command.affected_layers if model.layers.has_layer(layer_id=layer_id)]
-        if len(affected_layers) == 0:
-            raise ValueError('Affected layers property is empty or contains invalid layer ids')
-
-        event = ModelBoundaryAffectedLayersUpdatedEvent.from_props(
+        event = ModelBoundaryTagsUpdatedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
             boundary_ids=command.boundary_ids,
-            affected_layers=affected_layers,
+            tags=command.tags,
             occurred_at=DateTime.now()
         )
 

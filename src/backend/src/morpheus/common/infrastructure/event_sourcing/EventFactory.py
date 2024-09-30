@@ -24,9 +24,9 @@ class EventFactory:
     def __init__(self, registry: EventRegistry):
         self._registry = registry
 
-    def create_event(self, event_name: EventName, entity_uuid: Uuid, occurred_at: DateTime, payload: dict):
+    def create_event(self, event_name: EventName, entity_uuid: Uuid, occurred_at: DateTime, payload: dict, event_version: int = 0) -> EventBase:
         event_class = self._registry.get_event_by_name(name=event_name)
         if event_class is None:
             raise ValueError(f'Unknown event name: {event_name}')
 
-        return event_class.create(entity_uuid, occurred_at, payload)
+        return event_class.create(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload, event_version=event_version)

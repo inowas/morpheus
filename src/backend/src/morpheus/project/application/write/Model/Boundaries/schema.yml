@@ -253,7 +253,6 @@ definitions:
               items:
                 type: string
                 example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-              minItems: 1
           required:
             - project_id
             - model_id
@@ -328,51 +327,18 @@ definitions:
             model_id:
               type: string
               example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            boundary_id:
-              type: string
-              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_ids:
+              type: array
+              items:
+                type: string
+                example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
             affected_layers:
               "$ref": "#/definitions/components/AffectedLayers"
           required:
             - project_id
             - model_id
-            - boundary_id
+            - boundary_ids
             - affected_layers
-    UpdateModelBoundaryInterpolationCommand:
-      type: object
-      properties:
-        command_name:
-          type: string
-          enum:
-            - update_model_boundary_interpolation_command
-          example: update_model_boundary_interpolation_command
-        payload:
-          properties:
-            project_id:
-              type: string
-              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
-            model_id:
-              type: string
-              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            boundary_id:
-              type: string
-              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
-            interpolation:
-              type: string
-              enum:
-                - none
-                - linear
-                - nearest
-                - forward_fill
-              example: none
-          required:
-            - project_id
-            - model_id
-            - boundary_id
-            - interpolation
-      required:
-        - command_name
-        - payload
     UpdateModelBoundaryGeometryCommand:
       type: object
       properties:
@@ -402,6 +368,43 @@ definitions:
             - model_id
             - boundary_id
             - geometry
+      required:
+        - command_name
+        - payload
+    UpdateModelBoundaryInterpolationCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_interpolation_command
+          example: update_model_boundary_interpolation_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_ids:
+              type: array
+              items:
+                type: string
+                example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            interpolation:
+              type: string
+              enum:
+                - none
+                - linear
+                - nearest
+                - forward_fill
+              example: none
+          required:
+            - project_id
+            - model_id
+            - boundary_ids
+            - interpolation
       required:
         - command_name
         - payload
@@ -480,6 +483,34 @@ definitions:
       required:
         - command_name
         - payload
+    UpdateModelBoundaryTagsCommand:
+      type: object
+      properties:
+        command_name:
+          type: string
+          enum:
+            - update_model_boundary_tags_command
+          example: update_model_boundary_tags_command
+        payload:
+          properties:
+            project_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+            model_id:
+              type: string
+              example: e3b3b3b3-3b3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            boundary_ids:
+              type: array
+              items:
+                type: string
+                example: e3b3b3b3-3b-3b-3b-3b-3b3b-3b3b3b3b3b3b
+            tags:
+              "$ref": "#/definitions/components/Tags"
+          required:
+            - project_id
+            - model_id
+            - boundary_ids
+            - tags
   components:
     AffectedCells:
       type: object

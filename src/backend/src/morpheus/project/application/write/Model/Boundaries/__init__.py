@@ -13,6 +13,7 @@ from .UpdateModelBoundaryGeometry import UpdateModelBoundaryGeometryCommand, Upd
 from .UpdateModelBoundaryInterpolation import UpdateModelBoundaryInterpolationCommand, UpdateModelBoundaryInterpolationCommandHandler
 from .UpdateModelBoundaryMetadata import UpdateModelBoundaryMetadataCommand, UpdateModelBoundaryMetadataCommandHandler
 from .UpdateModelBoundaryObservation import UpdateModelBoundaryObservationCommand, UpdateModelBoundaryObservationCommandHandler
+from .UpdateModelBoundaryTags import UpdateModelBoundaryTagsCommand, UpdateModelBoundaryTagsCommandHandler
 
 model_boundaries_command_handler_map = {
     AddModelBoundaryCommand: AddModelBoundaryCommandHandler,
@@ -30,4 +31,5 @@ model_boundaries_command_handler_map = {
     UpdateModelBoundaryInterpolationCommand: UpdateModelBoundaryInterpolationCommandHandler,
     UpdateModelBoundaryMetadataCommand: UpdateModelBoundaryMetadataCommandHandler,
     UpdateModelBoundaryObservationCommand: UpdateModelBoundaryObservationCommandHandler,
+    UpdateModelBoundaryTagsCommand: UpdateModelBoundaryTagsCommandHandler,
 }

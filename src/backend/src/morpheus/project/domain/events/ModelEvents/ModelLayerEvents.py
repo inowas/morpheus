@@ -14,7 +14,7 @@ from .EventNames import ModelLayerEventName
 class ModelLayerAddedEvent(EventBase):
     @classmethod
     def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -40,7 +40,7 @@ class ModelLayerAddedEvent(EventBase):
 class ModelLayerClonedEvent(EventBase):
     @classmethod
     def from_layer_id(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, new_layer_id: LayerId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -70,7 +70,7 @@ class ModelLayerClonedEvent(EventBase):
 class ModelLayerConfinementUpdatedEvent(EventBase):
     @classmethod
     def from_confinement(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, confinement: LayerConfinement, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -100,7 +100,7 @@ class ModelLayerConfinementUpdatedEvent(EventBase):
 class ModelLayerCreatedEvent(EventBase):
     @classmethod
     def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -126,7 +126,7 @@ class ModelLayerCreatedEvent(EventBase):
 class ModelLayerDeletedEvent(EventBase):
     @classmethod
     def from_layer_id(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -153,7 +153,7 @@ class ModelLayerMetadataUpdatedEvent(EventBase):
     @classmethod
     def from_props(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, layer_name: LayerName | None, layer_description: LayerDescription | None,
                    occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -187,7 +187,7 @@ class ModelLayerMetadataUpdatedEvent(EventBase):
 class ModelLayerOrderUpdatedEvent(EventBase):
     @classmethod
     def from_layer_ids(cls, project_id: ProjectId, model_id: ModelId, layer_ids: List[LayerId], occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -214,7 +214,7 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
     @classmethod
     def from_default_value(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_default_value: LayerPropertyDefaultValue,
                            occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -228,7 +228,7 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
     @classmethod
     def from_raster(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_raster: LayerPropertyRaster | None,
                     occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -242,7 +242,7 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
     @classmethod
     def from_zones(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_zones: LayerPropertyZones | None,
                    occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={

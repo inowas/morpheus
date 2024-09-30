@@ -15,7 +15,7 @@ from .PermissionEventName import PermissionEventName
 class MemberAddedEvent(EventBase):
     @classmethod
     def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -42,7 +42,7 @@ class MemberAddedEvent(EventBase):
 class MemberRemovedEvent(EventBase):
     @classmethod
     def from_user_id(cls, project_id: ProjectId, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -65,7 +65,7 @@ class MemberRemovedEvent(EventBase):
 class MemberRoleUpdatedEvent(EventBase):
     @classmethod
     def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, new_role: Role, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -92,7 +92,7 @@ class MemberRoleUpdatedEvent(EventBase):
 class OwnershipUpdatedEvent(EventBase):
     @classmethod
     def from_old_and_new_owner(cls, project_id: ProjectId, old_owner: UserId, new_owner: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -119,7 +119,7 @@ class OwnershipUpdatedEvent(EventBase):
 class VisibilityUpdatedEvent(EventBase):
     @classmethod
     def from_visibility(cls, project_id: ProjectId, visibility: Visibility, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={

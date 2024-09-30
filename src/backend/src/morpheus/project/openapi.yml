@@ -105,6 +105,7 @@ paths:
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryInterpolationCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryMetadataCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryObservationCommand'
+                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryTagsCommand'
 
                 # Model Discretization Commands
                 - $ref: './application/write/Model/Discretization/schema.yml#/definitions/commands/UpdateModelAffectedCellsCommand'
