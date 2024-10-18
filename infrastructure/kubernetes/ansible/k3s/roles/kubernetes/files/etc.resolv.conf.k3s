@@ -1,4 +1,4 @@
-### k8s/k3s template (hetzner-related)
+### k8s/k3s template (tu-dresden related)
 # ---------------------------------------------------------------------------------------------------------------------
-nameserver 185.12.64.1
-nameserver 185.12.64.2
+nameserver 141.30.1.1
+nameserver 141.76.14.1
