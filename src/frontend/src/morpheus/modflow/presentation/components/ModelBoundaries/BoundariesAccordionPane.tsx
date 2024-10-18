@@ -16,7 +16,9 @@ interface IProps {
   layers: ILayer[];
   formatDateTime: (value: string) => string;
   boundaryType: IBoundaryType;
+  checkedBoundaries: IBoundaryId[];
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
+  onChangeCheckedBoundaries: (checkedBoundaries: IBoundaryId[]) => void;
   onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
@@ -36,10 +38,12 @@ interface IProps {
 const BoundariesAccordionPane = ({
   boundaryType,
   boundaries,
+  checkedBoundaries,
   formatDateTime,
   layers,
   selectedBoundaryAndObservation,
   onSelectBoundaryAndObservation,
+  onChangeCheckedBoundaries,
   onCloneBoundary,
   onCloneBoundaryObservation,
   onDisableBoundary,
@@ -55,7 +59,6 @@ const BoundariesAccordionPane = ({
   timeDiscretization,
 }: IProps) => {
 
-  const [checkedBoundaries, setCheckedBoundaries] = useState<IBoundaryId[]>([]);
   const [selectedBoundary, setSelectedBoundary] = useState<IBoundary | undefined>(undefined);
   const [selectedBoundaryObservation, setSelectedBoundaryObservation] = useState<IObservation<any> | undefined>(undefined);
 
@@ -64,7 +67,7 @@ const BoundariesAccordionPane = ({
     if (boundary) {
       setSelectedBoundary(boundary);
       if (0 === checkedBoundaries.length) {
-        setCheckedBoundaries([boundary.id]);
+        onChangeCheckedBoundaries([boundary.id]);
       }
       const observation = boundary.observations.find((o) => o.observation_id === selectedBoundaryAndObservation?.observationId);
       if (observation) {
@@ -119,7 +122,7 @@ const BoundariesAccordionPane = ({
             selectedBoundaryAndObservation={{boundary: selectedBoundary, observationId: selectedBoundaryObservation.observation_id}}
             type={boundaryType}
             onChangeBoundaryName={handleChangeBoundaryName}
-            onChangeCheckedBoundaries={setCheckedBoundaries}
+            onChangeCheckedBoundaries={onChangeCheckedBoundaries}
             onDisableBoundary={onDisableBoundary}
             onEnableBoundary={onEnableBoundary}
             onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}

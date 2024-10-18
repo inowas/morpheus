@@ -1,5 +1,5 @@
 import {Accordion, Checkbox, Icon, List, ListItem} from 'semantic-ui-react';
-import {Button, DotsMenu} from 'common/components';
+import {Button, Confirm, DotsMenu} from 'common/components';
 import React, {useMemo, useState} from 'react';
 import styles from './BoundaryList.module.less';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservation, IObservationId, ISelectedBoundaryAndObservation} from '../../../../types/Boundaries.type';
@@ -54,6 +54,9 @@ const BoundaryList = ({
   const [openEditingObservationTitle, setOpenEditingObservationTitle] = useState<number | string | null>(null);
   const [inputObservationValue, setInputObservationValue] = useState('');
 
+  // Remove Boundaries Confirm Modal
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false);
+
   const isChecked = (boundary: IBoundary) => checkedBoundaries.includes(boundary.id);
   const isSelected = (boundary: IBoundary) => selectedBoundaryAndObservation?.boundary.id === boundary.id;
 
@@ -97,9 +100,22 @@ const BoundaryList = ({
     onSelectBoundaryAndObservation({boundary});
   };
 
-  const filteredBoundaries = useMemo(() => {
-    return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
-  }, [boundaries, search, type]);
+  const filteredBoundaries = useMemo(() => boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase())), [boundaries, search, type]);
+
+  const handleRemoveBoundaries = (boundaryIds: IBoundaryId[]) => {
+    onRemoveBoundaries(boundaryIds);
+
+    const newFilteredBoundaries = boundaries.filter((b) => !boundaryIds.includes(b.id));
+    if (0 === newFilteredBoundaries.length) {
+      return onChangeCheckedBoundaries([]);
+    }
+
+    if (newFilteredBoundaries.includes(selectedBoundaryAndObservation?.boundary as IBoundary)) {
+      return;
+    }
+
+    onSelectBoundaryAndObservation({boundary: newFilteredBoundaries[0]});
+  };
 
   return (
     <>
@@ -189,7 +205,7 @@ const BoundaryList = ({
                       },
                     },
                     {text: 'Clone', icon: 'copy', onClick: () => onCloneBoundary(boundary.id)},
-                    {text: 'Delete', icon: 'trash', onClick: () => onRemoveBoundaries([boundary.id])},
+                    {text: 'Delete', icon: 'trash', onClick: () => handleRemoveBoundaries([boundary.id])},
                   ]}
                 />
                 {hasMultipleObservations(boundary.type) && (
@@ -283,8 +299,18 @@ const BoundaryList = ({
         content={'Remove selected'}
         secondary={true}
         disabled={isReadOnly}
-        onClick={() => onRemoveBoundaries(checkedBoundaries)}
+        onClick={() => setIsOpenConfirmModal(true)}
         color={'red'}
+      />
+      <Confirm
+        dimmer={'blurring'}
+        open={isOpenConfirmModal}
+        onConfirm={() => {
+          handleRemoveBoundaries(checkedBoundaries);
+          setIsOpenConfirmModal(false);
+        }}
+        onCancel={() => setIsOpenConfirmModal(false)}
+        content={`Delete ${checkedBoundaries.length} selected boundaries?`}
       />
     </>
   );
