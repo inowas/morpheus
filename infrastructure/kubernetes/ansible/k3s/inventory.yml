@@ -1,7 +1,7 @@
 all:
   hosts:
     master:
-      ansible_host: 195.201.2.229
+      ansible_host: 141.76.19.147
       ansible_user: root
 
   children:
