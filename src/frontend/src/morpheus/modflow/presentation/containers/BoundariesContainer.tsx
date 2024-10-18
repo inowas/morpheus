@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button} from 'semantic-ui-react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
@@ -54,32 +54,43 @@ const BoundariesContainer = () => {
 
   const mapRef: IMapRef = useRef(null);
   const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
+  const [checkedBoundaries, setCheckedBoundaries] = useState<IBoundaryId[]>([]);
+  const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
-  const selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | undefined = useMemo(() => {
+
+  useEffect(() => {
     if (!boundaries.length) {
-      return undefined;
+      setSelectedBoundaryAndObservation(undefined);
+      setCheckedBoundaries([]);
+      return;
     }
 
     if (!boundaryId) {
-      return undefined;
+      setSelectedBoundaryAndObservation(undefined);
+      setCheckedBoundaries([]);
+      return;
     }
 
     const boundary = boundaries.find((b) => b.id === boundaryId);
     if (!boundary) {
-      return undefined;
+      setSelectedBoundaryAndObservation(undefined);
+      setCheckedBoundaries([]);
+      return;
     }
 
     if (!observationId) {
-      return {boundary, observationId: boundary.observations[0].observation_id};
+      setSelectedBoundaryAndObservation({boundary, observationId: boundary.observations[0].observation_id});
+      setCheckedBoundaries([boundary.id]);
+      return;
     }
 
     if (!(boundary.observations.find((o) => o.observation_id === observationId))) {
-      return {boundary, observationId: boundary.observations[0].observation_id};
+      setSelectedBoundaryAndObservation({boundary, observationId: boundary.observations[0].observation_id});
+      setCheckedBoundaries([boundary.id]);
+      return;
     }
-
-    return {boundary, observationId};
-
   }, [boundaryId, observationId, boundaries]);
+
 
   const handleSelectBoundaryAndObservation = (selected: ISelectedBoundaryAndObservation | null) => {
     if (!selected) {
@@ -176,10 +187,12 @@ const BoundariesContainer = () => {
             <LeafletMapProvider mapRef={mapRef}>
               <BoundariesAccordion
                 boundaries={boundaries}
+                checkedBoundaries={checkedBoundaries}
                 layers={layers}
                 formatDateTime={formatISODate}
                 selectedBoundaryAndObservation={selectedBoundaryAndObservation}
                 onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
+                onChangeCheckedBoundaries={setCheckedBoundaries}
                 onCloneBoundary={onCloneBoundary}
                 onCloneBoundaryObservation={onCloneBoundaryObservation}
                 onDisableBoundary={onDisableBoundary}
@@ -204,6 +217,7 @@ const BoundariesContainer = () => {
           <DrawBoundaryLayer boundaryType={addBoundaryOnMap} onAddBoundary={handleAddBoundary}/>
           <BoundariesLayer
             boundaries={boundaries}
+            checkedBoundaries={checkedBoundaries}
             selectedBoundaryAndObservation={selectedBoundaryAndObservation}
             onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
             onChangeBoundaryGeometry={handleChangeBoundaryGeometry}
