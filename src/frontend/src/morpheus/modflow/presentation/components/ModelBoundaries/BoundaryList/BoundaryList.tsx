@@ -100,9 +100,22 @@ const BoundaryList = ({
     onSelectBoundaryAndObservation({boundary});
   };
 
-  const filteredBoundaries = useMemo(() => {
-    return boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase()));
-  }, [boundaries, search, type]);
+  const filteredBoundaries = useMemo(() => boundaries.filter((b) => b.type === type && b.name.toLowerCase().includes(search.toLowerCase())), [boundaries, search, type]);
+
+  const handleRemoveBoundaries = (boundaryIds: IBoundaryId[]) => {
+    onRemoveBoundaries(boundaryIds);
+
+    const newFilteredBoundaries = boundaries.filter((b) => !boundaryIds.includes(b.id));
+    if (0 === newFilteredBoundaries.length) {
+      return onChangeCheckedBoundaries([]);
+    }
+
+    if (newFilteredBoundaries.includes(selectedBoundaryAndObservation?.boundary as IBoundary)) {
+      return;
+    }
+
+    onSelectBoundaryAndObservation({boundary: newFilteredBoundaries[0]});
+  };
 
   return (
     <>
@@ -192,7 +205,7 @@ const BoundaryList = ({
                       },
                     },
                     {text: 'Clone', icon: 'copy', onClick: () => onCloneBoundary(boundary.id)},
-                    {text: 'Delete', icon: 'trash', onClick: () => onRemoveBoundaries([boundary.id])},
+                    {text: 'Delete', icon: 'trash', onClick: () => handleRemoveBoundaries([boundary.id])},
                   ]}
                 />
                 {hasMultipleObservations(boundary.type) && (
@@ -293,7 +306,7 @@ const BoundaryList = ({
         dimmer={'blurring'}
         open={isOpenConfirmModal}
         onConfirm={() => {
-          onRemoveBoundaries(checkedBoundaries);
+          handleRemoveBoundaries(checkedBoundaries);
           setIsOpenConfirmModal(false);
         }}
         onCancel={() => setIsOpenConfirmModal(false)}
