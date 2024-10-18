@@ -17,6 +17,7 @@ import {LeafletEventHandlerFnMap} from 'leaflet';
 
 interface IProps {
   boundaries: IBoundary[];
+  checkedBoundaries: IBoundaryId[];
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundary: ISelectedBoundaryAndObservation) => void;
   onChangeBoundaryGeometry: (boundaryId: IBoundaryId, geometry: Point | LineString | Polygon) => void;
@@ -47,6 +48,7 @@ const isPolygonBoundary = (boundaryType: IBoundaryType | null) => {
 };
 const BoundariesLayer = ({
   boundaries,
+  checkedBoundaries,
   selectedBoundaryAndObservation,
   onSelectBoundaryAndObservation,
   onChangeBoundaryGeometry,
@@ -126,8 +128,8 @@ const BoundariesLayer = ({
       >
         <LayerGroup>
           {filteredBoundaries.map((boundary) => {
-            const isEditable = !isReadOnly && selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id;
-            const isSelected = selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id;
+            const isEditable = !isReadOnly && ((selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id) || (checkedBoundaries.includes(boundary.id)));
+            const isSelected = selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id || checkedBoundaries.includes(boundary.id);
             const hash = objectHash(boundary.geometry);
             const key = `${boundary.id}-${hash}-${isSelected ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : ''}`;
 
