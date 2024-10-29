@@ -91,7 +91,7 @@ const ProjectListPage = ({basePath}: IProps) => {
         </Input>
       </Navbar>
       <ModflowContainer>
-        <SidebarContent maxWidth={400}>
+        <SidebarContent maxWidth={400} defaultOpen={false}>
           <ProjectsFilter
             filterParams={filter}
             filterOptions={filterOptions}

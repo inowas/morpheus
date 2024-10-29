@@ -9,12 +9,12 @@ const filterOptions: IFilterOptions = {
   number_of_my_group_projects: 12,
   users: [{
     user_id: 'Dmytro',
-    unsername: 'Dmytro',
+    username: 'Dmytro',
     count: 10,
   },
   {
     user_id: 'Ralf',
-    unsername: 'Ralf',
+    username: 'Ralf',
     count: 2,
   }],
   by_status: {
