@@ -59,7 +59,7 @@ const BoundariesContainer = () => {
 
 
   useEffect(() => {
-    if (!boundaries.length) {
+    if (0 == boundaries.length) {
       setSelectedBoundaryAndObservation(undefined);
       setCheckedBoundaries([]);
       return;
@@ -89,6 +89,10 @@ const BoundariesContainer = () => {
       setCheckedBoundaries([boundary.id]);
       return;
     }
+
+    setSelectedBoundaryAndObservation({boundary, observationId});
+    setCheckedBoundaries([boundary.id]);
+
   }, [boundaryId, observationId, boundaries]);
 
 
