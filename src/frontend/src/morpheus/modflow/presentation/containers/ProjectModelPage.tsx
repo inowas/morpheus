@@ -38,7 +38,7 @@ const ProjectModelPage = ({basePath, section}: IProps) => {
     // eslint-disable-next-line
   })), [projectId, property]);
 
-  const redirectToSpatialDiscretization = () => <Navigate to={`${basePath}/${projectId}/model/spatial-discretization`}/>;
+  const redirectToSpatialDiscretization = () => <Navigate to={`${basePath}/${projectId}/model/spatial-discretization?sidebar=false`}/>;
 
   const renderContent = (slug: string | undefined) => {
     const component = sidebarMenuItems.find((item) => item.slug === slug)?.component;
