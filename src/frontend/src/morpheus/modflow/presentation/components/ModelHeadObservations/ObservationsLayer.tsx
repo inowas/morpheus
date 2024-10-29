@@ -11,19 +11,28 @@ import {
 import {GeomanControls} from 'common/components/Map';
 import {Point} from 'geojson';
 import {LeafletEventHandlerFnMap} from 'leaflet';
-import {IHeadObservation, IObservationId, IObservationType} from '../../../types/HeadObservations.type';
+import {IObservation, IObservationId, IObservationType} from '../../../types/Observations.type';
 
 interface IProps {
-  observations: IHeadObservation[];
-  selected?: IHeadObservation;
-  onSelect: (observation: IHeadObservation) => void;
-  onChange: (observation: IHeadObservation) => void;
+  observations: IObservation[];
+  selected?: IObservation;
+  onSelect: (observation: IObservation) => void;
+  onChange: (observation: IObservation) => void;
   isReadOnly: boolean;
 }
 
 interface LeafletEventHandlers extends LeafletEventHandlerFnMap {
   'pm:update'?: (e: any) => void;
 }
+
+const mapObservationTypeToTitle = (type: IObservationType) => {
+  switch (type) {
+  case 'head':
+    return 'Head Observations';
+  default:
+    return 'Observations';
+  }
+};
 
 const ObservationsLayer = ({
   observations,
@@ -47,7 +56,7 @@ const ObservationsLayer = ({
     return onChange({...observation, geometry: newGeometry});
   };
 
-  const renderObservationsByType = (observationsToRender: IHeadObservation[], type: IObservationType) => {
+  const renderObservationsByType = (observationsToRender: IObservation[], type: IObservationType) => {
     const filteredObservations = observationsToRender.filter((obs) => obs.type === type);
     if (0 === filteredObservations.length) {
       return null;
@@ -57,7 +66,7 @@ const ObservationsLayer = ({
       <LayersControl.Overlay
         checked={true}
         key={type}
-        name={type}
+        name={mapObservationTypeToTitle(type)}
       >
         <LayerGroup>
           {filteredObservations.map((observation) => {
@@ -102,7 +111,7 @@ const ObservationsLayer = ({
     }
 
     return (
-      <LayersControl position="topright">
+      <LayersControl position="topright" collapsed={false}>
         {renderObservationsByType(observations, 'head')}
       </LayersControl>
     );

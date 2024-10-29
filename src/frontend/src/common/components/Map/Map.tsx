@@ -1,5 +1,5 @@
 import {L, LatLngTuple} from 'common/infrastructure/Leaflet';
-import {MapContainer, TileLayer, useMap} from 'react-leaflet';
+import {LayersControl, MapContainer, TileLayer, useMap} from 'react-leaflet';
 
 import React, {useEffect, useRef} from 'react';
 import {createLeafletContext, LeafletContext} from '@react-leaflet/core';
@@ -106,16 +106,14 @@ const Map = ({center, zoom, children, boxZoom = true, dragging = true, zoomContr
         {/*More providers here: https://leaflet-extras.github.io/leaflet-providers/preview/*/}
         {/*<TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"/>*/}
 
-        <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>
-
-        {/*<LayersControl position="topright">*/}
-        {/*  <LayersControl.BaseLayer name="Topo" checked={true}>*/}
-        {/*    <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>*/}
-        {/*  </LayersControl.BaseLayer>*/}
-        {/*  <LayersControl.BaseLayer name="Street">*/}
-        {/*    <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"/>*/}
-        {/*  </LayersControl.BaseLayer>*/}
-        {/*</LayersControl>*/}
+        <LayersControl position="bottomright" collapsed={false}>
+          <LayersControl.BaseLayer name="Topo" checked={true}>
+            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"/>
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Satellite">
+            <TileLayer url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg" />
+          </LayersControl.BaseLayer>
+        </LayersControl>
 
         {children}
       </MapContainer>
