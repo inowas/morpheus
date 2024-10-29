@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Polygon} from 'geojson';
-import {useParams} from 'react-router-dom';
+import {useParams, useSearchParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {IGrid} from '../../types';
@@ -23,6 +23,7 @@ const SpatialDiscretizationContainer = () => {
   const [locked, setLocked] = useState<boolean>(false);
 
   const {projectId} = useParams();
+  const [searchParams] = useSearchParams();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const getInitialEditMode = () => {
@@ -103,9 +104,11 @@ const SpatialDiscretizationContainer = () => {
     return <Error message={error.message}/>;
   }
 
+  const sidebarVisible = 'false' !== searchParams.get('sidebar');
+
   return (
     <>
-      <SidebarContent maxWidth={700}>
+      <SidebarContent maxWidth={700} defaultOpen={sidebarVisible}>
         <DataGrid>
           <SectionTitle
             title={'Model geometry'}
