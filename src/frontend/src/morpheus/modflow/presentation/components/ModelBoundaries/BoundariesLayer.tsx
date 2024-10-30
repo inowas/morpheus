@@ -14,6 +14,7 @@ import {GeomanControls} from 'common/components/Map';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import {LineString, Point, Polygon} from 'geojson';
 import {LeafletEventHandlerFnMap} from 'leaflet';
+import {boundarySettings} from './helpers';
 
 interface IProps {
   boundaries: IBoundary[];
@@ -123,8 +124,9 @@ const BoundariesLayer = ({
 
     return (
       <LayersControl.Overlay
-        checked={true} key={boundaryType}
-        name={boundaryType}
+        checked={true}
+        key={boundaryType}
+        name={boundarySettings.find((b) => b.type === boundaryType)?.title || boundaryType}
       >
         <LayerGroup>
           {filteredBoundaries.map((boundary) => {
@@ -247,7 +249,7 @@ const BoundariesLayer = ({
     }
 
     return (
-      <LayersControl position="topright">
+      <LayersControl position="topright" collapsed={false}>
         {renderBoundariesByType(boundaries, 'drain')}
         {renderBoundariesByType(boundaries, 'general_head')}
         {renderBoundariesByType(boundaries, 'constant_head')}
