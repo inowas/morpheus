@@ -17,7 +17,9 @@ fi
 outputHeadline "Setup local python venv"
 
 venvPath=$backendRoot/.venv
-python -m venv "$venvPath"
+
+# Use pyenv's Python explicitly
+$(pyenv which python) -m venv "$venvPath"
 exitWithErrorIfLastCommandFailed "Could not setup Pyenv in $venvPath"
 outputSuccess "Successfully setup local python venv in $venvPath"
 
