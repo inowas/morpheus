@@ -26,9 +26,10 @@ class Polygon:
 
     def centroid(self) -> Point:
         shapely_polygon = ShapelyPolygon(self.coordinates[0])
-        return Point(coordinates=shapely_polygon.centroid.coords[0])
+        coords = shapely_polygon.centroid.coords[0]
+        return Point(coordinates=(coords[0], coords[1]))
 
-    def bbox(self) -> list[list[float]]:
+    def bbox(self) -> list[float]:
         shapely_polygon = ShapelyPolygon(self.coordinates[0])
         return list(shapely_polygon.bounds)
 

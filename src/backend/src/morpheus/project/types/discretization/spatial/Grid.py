@@ -118,12 +118,12 @@ class Grid:
         if any([percentage < 0 or percentage > 1 for percentage in relative_col_coordinates + relative_row_coordinates]):
             raise ValueError('percentages must be between 0 and 1')
 
-        polygon = ShapelyPolygon(polygon.coordinates[0])
+        shapely_polygon = ShapelyPolygon(polygon.coordinates[0])
         from_4326_to_3857 = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
         from_3867_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
         # transform polygon to 3857
-        polygon_3857 = ShapelyPolygon([from_4326_to_3857.transform(x, y) for x, y in polygon.exterior.coords])
+        polygon_3857 = ShapelyPolygon([from_4326_to_3857.transform(x, y) for x, y in shapely_polygon.exterior.coords])
 
         # rotate polygon to 0 degrees
         polygon_3857_0_degrees = rotate(polygon_3857, -rotation.to_float(), origin=polygon_3857.centroid)

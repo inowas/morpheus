@@ -38,7 +38,7 @@ class Settings:
 
     @classmethod
     def from_dynaconf(cls, dynaconf: Dynaconf):
-        return cls(dynaconf.current_env, dynaconf)
+        return cls(str(dynaconf.current_env), dynaconf)
 
     def __getitem__(self, key):
         return getattr(self, key)

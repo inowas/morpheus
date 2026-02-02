@@ -1,5 +1,6 @@
 import dataclasses
 from typing import Literal
+from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
 from .Point import Point
 
@@ -19,8 +20,11 @@ class MultiPolygon:
         }
 
     def centroid(self) -> Point:
-        shapely_polygon = ShapelyMultiPolygon(self.coordinates[0])
-        return Point(coordinates=shapely_polygon.centroid.coords[0])
+        # Convert each polygon's coordinates to a ShapelyPolygon
+        shapely_polygons = [ShapelyPolygon(poly_coords[0]) for poly_coords in self.coordinates]
+        shapely_multipolygon = ShapelyMultiPolygon(shapely_polygons)
+        coords = shapely_multipolygon.centroid.coords[0]
+        return Point(coordinates=(coords[0], coords[1]))
 
     @classmethod
     def from_dict(cls, obj: dict):

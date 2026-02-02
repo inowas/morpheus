@@ -96,7 +96,7 @@ class ActiveCells:
     @classmethod
     def from_linestring(cls, linestring: LineString, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        linestring = ShapelyLineString(linestring.coordinates)
+        shapely_linestring = ShapelyLineString(linestring.coordinates)
 
         # algorithm to find the cells that intersect the linestring
         # 1. check all row and column geometries if they intersect the linestring
@@ -107,20 +107,22 @@ class ActiveCells:
 
         intersected_rows = []
         for row_idx in range(len(row_geometries)):
-            row_geometry = ShapelyPolygon(row_geometries[row_idx].geometry.coordinates[0])
-            if row_geometry.intersects(linestring):
+            row_coords: list[tuple[float, float]] = row_geometries[row_idx].geometry.coordinates[0]  # type: ignore[assignment]
+            row_geometry = ShapelyPolygon(row_coords)
+            if row_geometry.intersects(shapely_linestring):
                 intersected_rows.append(row_idx)
 
         intersected_cols = []
         for col_idx in range(len(col_geometries)):
-            col_geometry = ShapelyPolygon(col_geometries[col_idx].geometry.coordinates[0])
-            if col_geometry.intersects(linestring):
+            col_coords: list[tuple[float, float]] = col_geometries[col_idx].geometry.coordinates[0]  # type: ignore[assignment]
+            col_geometry = ShapelyPolygon(col_coords)
+            if col_geometry.intersects(shapely_linestring):
                 intersected_cols.append(col_idx)
 
         for col_idx in intersected_cols:
             for row_idx in intersected_rows:
                 cell_geometry = ShapelyPolygon(cell_geometries[row_idx][col_idx].coordinates[0])
-                if cell_geometry.intersects(linestring):
+                if cell_geometry.intersects(shapely_linestring):
                     cells.set_active(col=col_idx, row=row_idx)
 
         return cells
@@ -141,7 +143,9 @@ class ActiveCells:
     @classmethod
     def from_multipolygon(cls, polygon: MultiPolygon, grid: Grid):
         cells = cls.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        areas = ShapelyMultiPolygon(polygon.coordinates)
+        # Convert each polygon's coordinates to a ShapelyPolygon
+        shapely_polygons = [ShapelyPolygon(poly_coords[0]) for poly_coords in polygon.coordinates]
+        areas = ShapelyMultiPolygon(shapely_polygons)
         grid_cell_centers = grid.get_wgs_cell_centers()
         for col in range(grid.n_cols()):
             for row in range(grid.n_rows()):
@@ -154,24 +158,26 @@ class ActiveCells:
     @classmethod
     def from_point(cls, point: Point, grid: Grid):
         cells = ActiveCells.empty_from_shape(n_cols=grid.n_cols(), n_rows=grid.n_rows())
-        point = ShapelyPoint(point.coordinates)
+        shapely_point = ShapelyPoint(point.coordinates)
         grid_row_geometries = grid.get_wgs_row_geometries()
         grid_col_geometries = grid.get_wgs_column_geometries()
 
         row = None
         for row_idx in range(len(grid_row_geometries)):
-            if ShapelyPolygon(grid_row_geometries[row_idx].geometry.coordinates[0]).contains(point):
+            row_coords: list[tuple[float, float]] = grid_row_geometries[row_idx].geometry.coordinates[0]  # type: ignore[assignment]
+            if ShapelyPolygon(row_coords).contains(shapely_point):
                 row = row_idx
                 break
 
         col = None
         for col_idx in range(len(grid_col_geometries)):
-            if ShapelyPolygon(grid_col_geometries[col_idx].geometry.coordinates[0]).contains(point):
+            col_coords: list[tuple[float, float]] = grid_col_geometries[col_idx].geometry.coordinates[0]  # type: ignore[assignment]
+            if ShapelyPolygon(col_coords).contains(shapely_point):
                 col = col_idx
                 break
 
         if row is None or col is None:
-            raise ValueError(f'Point {point} is not contained in any grid cell')
+            raise ValueError(f'Point {shapely_point} is not contained in any grid cell')
 
         cells.set_active(col=col, row=row)
         return cells
@@ -328,8 +334,8 @@ class ActiveCells:
 
     def outline_to_geojson(self, grid: Grid) -> Feature:
         geometries = self.to_geojson(grid).geometries
-        geometries = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]
-        geometry = unary_union(geometries)
+        shapely_polygons = [ShapelyPolygon(geometry.coordinates[0]) for geometry in geometries]  # type: ignore[arg-type]
+        geometry = unary_union(shapely_polygons)
         if isinstance(geometry, ShapelyPolygon):
             geometry_dict = geometry.__geo_interface__
             feature = Feature(geometry=Polygon(coordinates=geometry_dict['coordinates']))
