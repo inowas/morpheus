@@ -14,22 +14,33 @@ then
     outputSuccess "Successfully switched to python version $pythonVersion"
 fi
 
-outputHeadline "Setup local python venv"
+outputHeadline "Installing uv if not present"
 
-venvPath=$backendRoot/.venv
+if ! command -v uv &> /dev/null
+then
+    outputInfo "uv not found, installing..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    exitWithErrorIfLastCommandFailed "Could not install uv"
+    outputSuccess "Successfully installed uv"
+else
+    outputSuccess "uv is already installed"
+fi
 
-# Use pyenv's Python explicitly
-$(pyenv which python) -m venv "$venvPath"
-exitWithErrorIfLastCommandFailed "Could not setup Pyenv in $venvPath"
-outputSuccess "Successfully setup local python venv in $venvPath"
-
-
-outputHeadline "Installing requirements"
+outputHeadline "Setup local python venv and install dependencies with uv"
 
 cd $backendRoot
-source $backendRoot/.venv/bin/activate && pip install --upgrade pip && pip install -r requirements/dev.txt && get-modflow :python
-exitWithErrorIfLastCommandFailed "Error installing requirements"
-outputSuccess "Successfully installed requirements"
+# uv will automatically create a venv in .venv if it doesn't exist
+# and install dependencies from pyproject.toml
+uv sync --extra dev
+exitWithErrorIfLastCommandFailed "Error installing dependencies with uv"
+outputSuccess "Successfully installed dependencies with uv"
+
+outputHeadline "Installing MODFLOW"
+
+cd $backendRoot
+source $backendRoot/.venv/bin/activate && get-modflow :python
+exitWithErrorIfLastCommandFailed "Error installing MODFLOW"
+outputSuccess "Successfully installed MODFLOW"
 
 
 outputHeadline "Build OpenAPI spec"
