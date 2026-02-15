@@ -12,7 +12,7 @@ dependencies = [
   "SQLAlchemy==2.0.25",
   "celery==5.3.6",
   "flopy==3.7.0",
-  "geopandas==0.14.2",
+  "geopandas==1.1.2",
   "geotiff==0.2.10",
   "gunicorn==21.2.0",
   "inflection==0.5.1",
@@ -30,7 +30,7 @@ dependencies = [
   "scipy==1.12.0",
   "shapely==2.1.2",
   "simplejson==3.19.2",
-  "zarr==2.12.0",
+  "zarr==2.12.0"
 ]
 
 [project.optional-dependencies]
