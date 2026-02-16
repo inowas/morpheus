@@ -44,6 +44,27 @@ run-notebooks:
 run-tests:
 	scripts/dev/qa_check/run-tests.sh
 
+## run integration tests (based on RioPrimeroWithCommands notebook) - requires MongoDB
+run-integration-tests:
+	@echo "⚠️  Note: Integration tests require MongoDB to be running."
+	@echo "   Start MongoDB with: make start-dev"
+	@echo ""
+	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/ -v
+
+## run integration tests with coverage - requires MongoDB
+run-integration-tests-coverage:
+	@echo "⚠️  Note: Integration tests require MongoDB to be running."
+	@echo "   Start MongoDB with: make start-dev"
+	@echo ""
+	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/ --cov=morpheus --cov-report=html --cov-report=term -v
+
+## run complete workflow test only - requires MongoDB
+run-workflow-test:
+	@echo "⚠️  Note: Integration tests require MongoDB to be running."
+	@echo "   Start MongoDB with: make start-dev"
+	@echo ""
+	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/test_rio_primero_workflow.py -v
+
 ## fix code style
 fix-code-style:
 	scripts/dev/qa_check/fix-code-style.sh

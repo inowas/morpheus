@@ -1851,6 +1851,7 @@ dependencies = [
     { name = "shapely" },
     { name = "simplejson" },
     { name = "sqlalchemy" },
+    { name = "tifffile" },
     { name = "zarr" },
 ]
 
@@ -1911,6 +1912,7 @@ requires-dist = [
     { name = "shapely", specifier = "==2.1.2" },
     { name = "simplejson", specifier = "==3.19.2" },
     { name = "sqlalchemy", specifier = "==2.0.25" },
+    { name = "tifffile", specifier = ">=2023.0.0,<2024.8.0" },
     { name = "zarr", specifier = "==2.12.0" },
 ]
 provides-extras = ["dev"]
@@ -3268,14 +3270,14 @@ wheels = [
 
 [[package]]
 name = "tifffile"
-version = "2026.1.28"
+version = "2024.7.24"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/94/32/38498d2a1a5d70f33f6c3909bbad48557c9a54b0e33a9307ff06b6d416ba/tifffile-2026.1.28.tar.gz", hash = "sha256:537ae6466a8bb555c336108bb1878d8319d52c9c738041d3349454dea6956e1c", size = 374675, upload-time = "2026-01-29T05:17:24.992Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/a0/8f93f5281f46763b147ce2c7b37fa1cc675fb09c5ef347a8f5a36997c93d/tifffile-2024.7.24.tar.gz", hash = "sha256:723456ebf2b4918878ae05a7b50fa366ff3b3a686293317eb7a0f294c3eea050", size = 362806, upload-time = "2024-07-24T04:11:14.201Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/19/529b28ca338c5a88315e71e672badc85eef89460c248c4164f6ce058f8c7/tifffile-2026.1.28-py3-none-any.whl", hash = "sha256:45b08a19cf603dd99952eff54a61519626a1912e4e2a4d355f05938fe4a6e9fd", size = 233011, upload-time = "2026-01-29T05:17:23.078Z" },
+    { url = "https://files.pythonhosted.org/packages/05/a9/f7b3fd6c73e0ac29e7f9c9c86c3b7367b182a3dd60495da7b8129e6df681/tifffile-2024.7.24-py3-none-any.whl", hash = "sha256:f5cce1a915c37bc44ae4a792e3b42c07a30a3fa88406f5c6060a3de076487ed1", size = 226196, upload-time = "2024-07-24T04:11:11.197Z" },
 ]
 
 [[package]]
