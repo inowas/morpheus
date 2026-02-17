@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button} from 'semantic-ui-react';
 import {BodyContent, SidebarContent} from '../components';
 import {useParams} from 'react-router-dom';
@@ -21,6 +21,7 @@ import DrawBoundaryLayer from '../components/ModelBoundaries/DrawBoundaryLayer';
 import AffectedCellsMapLayer from '../components/ModelSpatialDiscretization/AffectedCellsMapLayer';
 import {useDateTimeFormat, useNavigate} from 'common/hooks';
 import ImportShapefileModal from './ImportShapefileModal';
+import Widget from 'common/components/Section/Widget';
 
 
 const BoundariesContainer = () => {
@@ -35,7 +36,7 @@ const BoundariesContainer = () => {
     onAddBoundary,
     onCloneBoundary,
     onCloneBoundaryObservation,
-    onRemoveBoundary,
+    onRemoveBoundaries,
     onRemoveBoundaryObservation,
     onUpdateBoundaryAffectedCells,
     onUpdateBoundaryAffectedLayers,
@@ -43,6 +44,7 @@ const BoundariesContainer = () => {
     onUpdateBoundaryInterpolation,
     onUpdateBoundaryMetadata,
     onUpdateBoundaryObservation,
+    onUpdateBoundaryTags,
     onDisableBoundary,
     onEnableBoundary,
   } = useBoundaries(projectId as string);
@@ -51,34 +53,48 @@ const BoundariesContainer = () => {
   const {formatISODate} = useDateTimeFormat('UTC');
 
   const mapRef: IMapRef = useRef(null);
-
   const [addBoundaryOnMap, setAddBoundaryOnMap] = useState<IBoundaryType | null>(null);
+  const [checkedBoundaries, setCheckedBoundaries] = useState<IBoundaryId[]>([]);
+  const [selectedBoundaryAndObservation, setSelectedBoundaryAndObservation] = useState<ISelectedBoundaryAndObservation | undefined>(undefined);
 
-  const selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | undefined = useMemo(() => {
-    if (!boundaries.length) {
-      return undefined;
+
+  useEffect(() => {
+    if (0 == boundaries.length) {
+      setSelectedBoundaryAndObservation(undefined);
+      setCheckedBoundaries([]);
+      return;
     }
 
     if (!boundaryId) {
-      return undefined;
+      setSelectedBoundaryAndObservation(undefined);
+      setCheckedBoundaries([]);
+      return;
     }
 
     const boundary = boundaries.find((b) => b.id === boundaryId);
     if (!boundary) {
-      return undefined;
+      setSelectedBoundaryAndObservation(undefined);
+      setCheckedBoundaries([]);
+      return;
     }
 
     if (!observationId) {
-      return {boundary, observationId: boundary.observations[0].observation_id};
+      setSelectedBoundaryAndObservation({boundary, observationId: boundary.observations[0].observation_id});
+      setCheckedBoundaries([boundary.id]);
+      return;
     }
 
     if (!(boundary.observations.find((o) => o.observation_id === observationId))) {
-      return {boundary, observationId: boundary.observations[0].observation_id};
+      setSelectedBoundaryAndObservation({boundary, observationId: boundary.observations[0].observation_id});
+      setCheckedBoundaries([boundary.id]);
+      return;
     }
 
-    return {boundary, observationId};
+    setSelectedBoundaryAndObservation({boundary, observationId});
+    setCheckedBoundaries([boundary.id]);
 
   }, [boundaryId, observationId, boundaries]);
+
 
   const handleSelectBoundaryAndObservation = (selected: ISelectedBoundaryAndObservation | null) => {
     if (!selected) {
@@ -137,58 +153,65 @@ const BoundariesContainer = () => {
       <SidebarContent maxWidth={700}>
         <DataGrid>
           <SectionTitle title={'Boundary conditions'}/>
-          <SearchInput
-            search={''}
-            onChange={(search) => console.log(search)}
-            placeholder={'Search boundaries'}
-          >
-            <ImportShapefileModal
-              trigger={
-                <Button
-                  text={'Import'}
-                  icon='upload'
-                  content={'Import'}
-                  disabled={isReadOnly}
-                />
-              }
-            />
-            <DropdownComponent.Dropdown
-              data-testid='test-search-component'
-              text={'Draw on map'}
-              icon='pencil'
-              floating={true}
-              labeled={true}
-              button={true}
-              className='icon'
-              disabled={isReadOnly}
+          <Widget>
+            <SearchInput
+              search={''}
+              onChange={(search) => console.log(search)}
+              placeholder={'Search boundaries'}
             >
-              <DropdownComponent.Menu>
-                {dropdownItems.map((item, key) => (
-                  <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
-                ))}
-              </DropdownComponent.Menu>
-            </DropdownComponent.Dropdown>
-          </SearchInput>
-          <LeafletMapProvider mapRef={mapRef}>
-            <BoundariesAccordion
-              boundaries={boundaries}
-              layers={layers}
-              formatDateTime={formatISODate}
-              selectedBoundaryAndObservation={selectedBoundaryAndObservation}
-              onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
-              onCloneBoundary={onCloneBoundary}
-              onCloneBoundaryObservation={onCloneBoundaryObservation}
-              onDisableBoundary={onDisableBoundary}
-              onEnableBoundary={onEnableBoundary}
-              onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
-              onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
-              onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
-              onRemoveBoundary={onRemoveBoundary}
-              onRemoveBoundaryObservation={onRemoveBoundaryObservation}
-              onUpdateBoundaryObservation={onUpdateBoundaryObservation}
-              timeDiscretization={timeDiscretization}
-            />
-          </LeafletMapProvider>
+              <ImportShapefileModal
+                trigger={
+                  <Button
+                    text={'Import'}
+                    icon='plus'
+                    content={'Add new boundary'}
+                    disabled={isReadOnly}
+                  />
+                }
+              />
+              <DropdownComponent.Dropdown
+                data-testid='test-search-component'
+                text={'Draw on map'}
+                icon='pencil'
+                floating={true}
+                labeled={true}
+                button={true}
+                className='icon'
+                disabled={isReadOnly}
+              >
+                <DropdownComponent.Menu>
+                  {dropdownItems.map((item, key) => (
+                    <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
+                  ))}
+                </DropdownComponent.Menu>
+              </DropdownComponent.Dropdown>
+            </SearchInput>
+          </Widget>
+          <Widget>
+            <LeafletMapProvider mapRef={mapRef}>
+              <BoundariesAccordion
+                boundaries={boundaries}
+                checkedBoundaries={checkedBoundaries}
+                layers={layers}
+                formatDateTime={formatISODate}
+                selectedBoundaryAndObservation={selectedBoundaryAndObservation}
+                onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
+                onChangeCheckedBoundaries={setCheckedBoundaries}
+                onCloneBoundary={onCloneBoundary}
+                onCloneBoundaryObservation={onCloneBoundaryObservation}
+                onDisableBoundary={onDisableBoundary}
+                onEnableBoundary={onEnableBoundary}
+                onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
+                onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
+                onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
+                onUpdateBoundaryTags={onUpdateBoundaryTags}
+                onRemoveBoundaries={onRemoveBoundaries}
+                onRemoveBoundaryObservation={onRemoveBoundaryObservation}
+                onUpdateBoundaryObservation={onUpdateBoundaryObservation}
+                timeDiscretization={timeDiscretization}
+              />
+            </LeafletMapProvider>
+          </Widget>
         </DataGrid>
       </SidebarContent>
       <BodyContent>
@@ -198,6 +221,7 @@ const BoundariesContainer = () => {
           <DrawBoundaryLayer boundaryType={addBoundaryOnMap} onAddBoundary={handleAddBoundary}/>
           <BoundariesLayer
             boundaries={boundaries}
+            checkedBoundaries={checkedBoundaries}
             selectedBoundaryAndObservation={selectedBoundaryAndObservation}
             onSelectBoundaryAndObservation={handleSelectBoundaryAndObservation}
             onChangeBoundaryGeometry={handleChangeBoundaryGeometry}

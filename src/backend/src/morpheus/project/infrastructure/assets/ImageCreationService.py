@@ -64,7 +64,7 @@ class ImageCreationService:
         fig, (ax) = plt.subplots(nrows=1, ncols=1)
         fig.patch.set_facecolor('None')
         fig.patch.set_alpha(0.0)
-        im = ax.imshow(img_data, cmap=cmap, vmin=v_min, vmax=v_max)
+        im = ax.imshow(img_data, cmap=cmap, vmin=float(v_min), vmax=float(v_max))
         plt.colorbar(im, ax=ax)
         ax.remove()
 

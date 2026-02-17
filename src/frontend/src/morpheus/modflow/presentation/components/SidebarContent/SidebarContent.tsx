@@ -5,11 +5,12 @@ import React from 'react';
 interface IProps {
   maxWidth?: number | string;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 }
 
-const SidebarContent = ({maxWidth = 'auto', children}: IProps) => {
+const SidebarContent = ({maxWidth = 'auto', defaultOpen = true, children}: IProps) => {
 
-  const [isOpen, setIsOpen] = React.useState<boolean>(true);
+  const [isOpen, setIsOpen] = React.useState<boolean>(defaultOpen);
 
   const handleSidebarToggleClick = () => {
     setIsOpen(!isOpen);
@@ -24,7 +25,7 @@ const SidebarContent = ({maxWidth = 'auto', children}: IProps) => {
         className={styles.sidebarAsideButton}
         onClick={handleSidebarToggleClick}
       >
-        <Icon name={`${isOpen ? 'angle double left' : 'angle double right'}`}/>
+        <Icon name={`${isOpen ? 'angle left' : 'angle right'}`}/>
       </button>
       <div className={styles.sidebarAsideInner}>
         {children}

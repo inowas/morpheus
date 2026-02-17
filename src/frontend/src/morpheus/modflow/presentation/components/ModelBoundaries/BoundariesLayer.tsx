@@ -14,9 +14,11 @@ import {GeomanControls} from 'common/components/Map';
 import {IBoundary, IBoundaryId, IBoundaryType, IObservationId, ISelectedBoundaryAndObservation} from '../../../types/Boundaries.type';
 import {LineString, Point, Polygon} from 'geojson';
 import {LeafletEventHandlerFnMap} from 'leaflet';
+import {boundarySettings} from './helpers';
 
 interface IProps {
   boundaries: IBoundary[];
+  checkedBoundaries: IBoundaryId[];
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
   onSelectBoundaryAndObservation: (selectedBoundary: ISelectedBoundaryAndObservation) => void;
   onChangeBoundaryGeometry: (boundaryId: IBoundaryId, geometry: Point | LineString | Polygon) => void;
@@ -47,6 +49,7 @@ const isPolygonBoundary = (boundaryType: IBoundaryType | null) => {
 };
 const BoundariesLayer = ({
   boundaries,
+  checkedBoundaries,
   selectedBoundaryAndObservation,
   onSelectBoundaryAndObservation,
   onChangeBoundaryGeometry,
@@ -121,13 +124,14 @@ const BoundariesLayer = ({
 
     return (
       <LayersControl.Overlay
-        checked={true} key={boundaryType}
-        name={boundaryType}
+        checked={true}
+        key={boundaryType}
+        name={boundarySettings.find((b) => b.type === boundaryType)?.title || boundaryType}
       >
         <LayerGroup>
           {filteredBoundaries.map((boundary) => {
-            const isEditable = !isReadOnly && selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id;
-            const isSelected = selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id;
+            const isEditable = !isReadOnly && ((selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id) || (checkedBoundaries.includes(boundary.id)));
+            const isSelected = selectedBoundaryAndObservation && selectedBoundaryAndObservation.boundary.id === boundary.id || checkedBoundaries.includes(boundary.id);
             const hash = objectHash(boundary.geometry);
             const key = `${boundary.id}-${hash}-${isSelected ? 'selected' : 'not_selected'}-${isEditable ? 'edit' : ''}`;
 
@@ -143,10 +147,10 @@ const BoundariesLayer = ({
                   <LeafletCircleMarker
                     key={key}
                     center={position}
-                    radius={7}
+                    radius={3}
                     fill={true}
                     fillOpacity={1}
-                    color={isSelected ? 'blue' : 'grey'}
+                    color={isSelected ? 'black' : '#009fe3'}
                     eventHandlers={isEditable ? editBoundaryEventHandlers : viewModeEventHandlers}
                     pmIgnore={!isEditable}
                   >
@@ -245,7 +249,7 @@ const BoundariesLayer = ({
     }
 
     return (
-      <LayersControl position="topright">
+      <LayersControl position="topright" collapsed={false}>
         {renderBoundariesByType(boundaries, 'drain')}
         {renderBoundariesByType(boundaries, 'general_head')}
         {renderBoundariesByType(boundaries, 'constant_head')}

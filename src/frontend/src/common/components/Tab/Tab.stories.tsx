@@ -3,6 +3,7 @@ import {Button, InfoTitle, Tab} from 'common/components';
 import {Icon, MenuItem, TabPane} from 'semantic-ui-react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
+import TabButtons from './TabButtons';
 
 export default {
   /* 👇 The title prop is optional.
@@ -376,5 +377,29 @@ export const TabSecondary: StoryFn<typeof Button> = () => {
         />
       </div>
     </div>
+  );
+};
+
+export const TabButtonsExample: StoryFn<typeof TabButtons> = () => {
+  return (
+    <TabButtons
+      panes={[
+        {
+          title: 'Tab 1',
+          onClick: () => console.log('Tab 1 clicked'),
+          content: <div>Tab 1 Content</div>,
+        },
+        {
+          title: 'Tab 2',
+          onClick: () => console.log('Tab 2 clicked'),
+          content: <div>Tab 2 Content</div>,
+        },
+        {
+          title: 'Tab 3',
+          onClick: () => console.log('Tab 3 clicked'),
+          content: <div>Tab 3 Content</div>,
+        },
+      ]}
+    />
   );
 };

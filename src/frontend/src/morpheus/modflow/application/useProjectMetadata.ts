@@ -1,63 +1,85 @@
-import {IError} from '../types';
-import {useEffect, useRef, useState} from 'react';
+import {IError, IMetadata} from '../types';
+import {useEffect} from 'react';
 
 import {useApi} from '../incoming';
+import useProjectCommandBus, {Commands} from './useProjectCommandBus';
+import {useDispatch, useSelector} from 'react-redux';
+import {IRootState} from '../../store';
+import {setLoading, setMetadata, setError} from '../infrastructure/metadataStore';
 
 interface IUseProjectMetadata {
-  metadata: any;
+  metadata: IMetadata | null;
+  updateMetadata: (metadata: IMetadata) => Promise<void>;
   loading: boolean;
   error: IError | null;
 }
 
 const useProjectMetadata = (projectId: string): IUseProjectMetadata => {
-  const isMounted = useRef(true);
-  const [metadata, setMetadata] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<IError | null>(null);
+
+  const {metadata, loading, error} = useSelector((state: IRootState) => state.project.metadata);
+  const dispatch = useDispatch();
 
   const {httpGet} = useApi();
+  const {sendCommand} = useProjectCommandBus();
+
+  const updateMetadata = async (md: IMetadata): Promise<void> => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const updateMetadataCommand: Commands.IUpdateProjectMetadataCommand = {
+      command_name: 'update_project_metadata_command',
+      payload: {
+        project_id: projectId,
+        name: md.name,
+        description: md.description,
+        tags: md.tags,
+      },
+    };
+
+    const response = await sendCommand(updateMetadataCommand);
+
+    if (response.ok) {
+      dispatch(setMetadata(md));
+    }
+
+    if (response.err) {
+      dispatch(setError(response.val));
+    }
+
+    dispatch(setLoading(false));
+  };
 
   useEffect(() => {
-    if (!projectId) {
+    if (!projectId || metadata) {
       return;
     }
 
     const fetch = async () => {
-      if (!isMounted.current) {
-        return;
-      }
-      setLoading(true);
-      setError(null);
+      dispatch(setLoading(true));
+      dispatch(setError(null));
       const result = await httpGet<any>(`/projects/${projectId}/metadata`);
 
-      if (!isMounted.current) {
-        return;
-      }
-
       if (result.ok) {
-        setMetadata(result.val);
+        dispatch(setMetadata(result.val));
       }
 
       if (result.err) {
-        setError({
+        dispatch(setError({
           message: result.val.message,
           code: result.val.code,
-        });
+        }));
       }
 
-      setLoading(false);
+      dispatch(setLoading(false));
     };
 
     fetch();
-
-    return (): void => {
-      isMounted.current = false;
-    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   return {
+    updateMetadata,
     metadata,
     loading,
     error,

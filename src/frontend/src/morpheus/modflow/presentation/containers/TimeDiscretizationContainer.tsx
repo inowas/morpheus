@@ -4,13 +4,11 @@ import useTimeDiscretization from '../../application/useTimeDiscretization';
 import useSpatialDiscretization from '../../application/useSpatialDiscretization';
 import {useParams} from 'react-router-dom';
 import Error from 'common/components/Error';
-import {Button, DataGrid, SectionTitle} from '../../../../common/components';
-import {Accordion, AccordionContent} from '../components/Content';
+import {Button, DataGrid, Section, SectionTitle} from '../../../../common/components';
 import TimeDiscretizationGeneralParameters from '../components/ModelTimeDiscretization/GeneralParameters';
 import {IStressPeriod, ITimeDiscretization} from '../../types';
 import cloneDeep from 'lodash.clonedeep';
 import {useDateTimeFormat} from 'common/hooks';
-import {StressperiodsUpload} from '../components/ModelTimeDiscretization/StressperiodsUpload';
 import TimeDiscretizationStressPeriods from '../components/ModelTimeDiscretization/StressPeriods';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
@@ -69,7 +67,6 @@ const TimeDiscretizationContainer = () => {
     updateTimeDiscretization(timeDiscretizationLocal);
   };
 
-
   if (!timeDiscretization || !timeDiscretizationLocal) {
     return null;
   }
@@ -80,38 +77,50 @@ const TimeDiscretizationContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={600}>
+      <SidebarContent maxWidth={700}>
         <DataGrid>
-          <SectionTitle title={'Time Discretization'}/>
-          <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
-            <AccordionContent title={'General parameters'}>
-              <TimeDiscretizationGeneralParameters
-                timeDiscretization={timeDiscretizationLocal}
-                onChange={handleTimeDiscretizationChange}
-                isReadOnly={isReadOnly}
-              />
-            </AccordionContent>
-            <AccordionContent title={'Stress periods'}>
-              <StressperiodsUpload onSubmit={handleStressPeriodsUpload} stressPeriods={timeDiscretizationLocal.stress_periods}/>
-              <TimeDiscretizationStressPeriods
-                stressPeriods={timeDiscretizationLocal.stress_periods}
-                onChange={(value) => handleTimeDiscretizationChange({...timeDiscretizationLocal, stress_periods: [...value]})}
-                isReadOnly={isReadOnly}
-              />
-            </AccordionContent>
-          </Accordion>
+          <SectionTitle title={'Time discretization'}/>
+          <Section
+            title={'General parameters'}
+            collapsable={true}
+            open={true}
+          >
+            <TimeDiscretizationGeneralParameters
+              timeDiscretization={timeDiscretizationLocal}
+              onChange={handleTimeDiscretizationChange}
+              isReadOnly={isReadOnly}
+            />
+          </Section>
+          <Section
+            title={'Stress periods'}
+            collapsable={true}
+            open={true}
+          >
+            <TimeDiscretizationStressPeriods
+              stressPeriods={timeDiscretizationLocal.stress_periods}
+              onChange={(value) => handleTimeDiscretizationChange({...timeDiscretizationLocal, stress_periods: [...value]})}
+              isReadOnly={isReadOnly}
+            />
+          </Section>
+
           {!isReadOnly && <Button
             onClick={handleSubmit}
             disabled={JSON.stringify(timeDiscretization) === JSON.stringify(timeDiscretizationLocal)}
             loading={loading}
-            content={'Submit'}
+            style={{marginLeft: 'auto'}}
+            primary={true}
+            labelPosition={'left'}
+            size={'tiny'}
+            icon={'save'}
+            content={'Save'}
           />}
         </DataGrid>
       </SidebarContent>
       <BodyContent>
         <Map>
           <ModelGeometryMapLayer
-            modelGeometry={spatialDiscretization?.geometry} editModelGeometry={false}
+            modelGeometry={spatialDiscretization?.geometry}
+            editModelGeometry={false}
             fill={true}
           />
         </Map>

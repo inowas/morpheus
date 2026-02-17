@@ -63,13 +63,8 @@ const DataLayer = ({title, data, rotation, outline, getRgbColor, minValue, maxVa
     let max = maxValue;
 
     if (min == max) {
-      min = 0;
-      max = max * 2;
-    }
-
-    if (min === max && 0 === max) {
-      min = -1;
-      max = 1;
+      min = min - 1;
+      max = max + 1;
     }
 
     min = min - (max - min) * 0.1;

@@ -37,6 +37,8 @@ const LayerConfinement = ({layerType, onSubmit, readOnly}: IProps) => {
         />
         {layerTypeLocal !== layerType && !readOnly && (
           <Button
+            labelPosition={'left'}
+            icon={'save'}
             size={'tiny'}
             onClick={() => onSubmit(layerTypeLocal)}
             content={'Save'}

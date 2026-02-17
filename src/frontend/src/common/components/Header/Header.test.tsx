@@ -43,19 +43,4 @@ describe('Header Tests', () => {
 
     expect(mockNavigateTo).toHaveBeenCalledWith('/');
   });
-
-  test('It calls navigateTo with the correct path on menu item click', async () => {
-    render(
-      <Header
-        language={language}
-        languageList={languageList}
-        onChangeLanguage={mockOnChangeLanguage}
-        navigateTo={mockNavigateTo}
-      />,
-    );
-    const contactItem = screen.getByText('Contact');
-    await userEvent.click(contactItem);
-
-    expect(mockNavigateTo).toHaveBeenCalledWith('/contact/');
-  });
 });

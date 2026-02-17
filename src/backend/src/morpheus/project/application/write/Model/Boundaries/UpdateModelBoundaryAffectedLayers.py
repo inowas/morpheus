@@ -19,14 +19,14 @@ from morpheus.project.types.layers import LayerId
 class UpdateModelBoundaryAffectedLayersCommandPayload(TypedDict):
     project_id: str
     model_id: str
-    boundary_id: str
+    boundary_ids: list[str]
     affected_layers: list[str]
 
 
 @dataclasses.dataclass(frozen=True)
 class UpdateModelBoundaryAffectedLayersCommand(ProjectCommandBase):
     model_id: ModelId
-    boundary_id: BoundaryId
+    boundary_ids: list[BoundaryId]
     affected_layers: list[LayerId]
 
     @classmethod
@@ -35,7 +35,7 @@ class UpdateModelBoundaryAffectedLayersCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
-            boundary_id=BoundaryId.from_str(payload['boundary_id']),
+            boundary_ids=[BoundaryId.from_str(boundary_id) for boundary_id in payload['boundary_ids']],
             affected_layers=[LayerId.from_str(layer_id) for layer_id in payload['affected_layers']],
         )
 
@@ -50,14 +50,21 @@ class UpdateModelBoundaryAffectedLayersCommandHandler(CommandHandlerBase):
         if model.model_id != command.model_id:
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
-        if not model.boundaries.has_boundary(boundary_id=command.boundary_id):
-            raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+        for boundary_id in command.boundary_ids:
+            if not model.boundaries.has_boundary(boundary_id=boundary_id):
+                raise ValueError(f'Boundary {boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+
+        # check if affected layer ids are present and filter if needed
+        # throw exception if no valid affected layer is uploaded!
+        affected_layers = [layer_id for layer_id in command.affected_layers if model.layers.has_layer(layer_id=layer_id)]
+        if len(affected_layers) == 0:
+            raise ValueError('Affected layers property is empty or contains invalid layer ids')
 
         event = ModelBoundaryAffectedLayersUpdatedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
-            boundary_id=command.boundary_id,
-            affected_layers=command.affected_layers,
+            boundary_ids=command.boundary_ids,
+            affected_layers=affected_layers,
             occurred_at=DateTime.now()
         )
 

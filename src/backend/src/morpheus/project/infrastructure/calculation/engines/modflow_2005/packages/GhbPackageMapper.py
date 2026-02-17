@@ -20,7 +20,6 @@ def calculate_ghb_boundary_stress_period_data(
     layers: LayersCollection,
     ghb_boundary: GeneralHeadBoundary
 ) -> GhbStressPeriodData:
-    layer_ids = [layer.layer_id for layer in layers]
     sp_data = GhbStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -35,11 +34,19 @@ def calculate_ghb_boundary_stress_period_data(
             # we do not apply any data for this stress period
             continue
 
-        layer_indices = [layer_ids.index(layer_id) for layer_id in ghb_boundary.affected_layers]
+        # filter affected layers to only include layers that are part of the model
+        layer_ids = [layer.layer_id for layer in layers]
+        affected_layers = [layer_id for layer_id in ghb_boundary.affected_layers if layers.has_layer(layer_id)]
+        layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
+
+        if len(layer_indices) == 0:
+            # if we have no affected layers
+            # we do not apply any data for this stress period
+            # We should log a warning here
+            continue
 
         # we need to filter the affected cells to only include cells that are part of the model
-        ghb_boundary.affected_cells = ghb_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        ghb_boundary.affected_cells = ghb_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
 
         if ghb_boundary.number_of_observations() == 1:
             # if we only have one observation point

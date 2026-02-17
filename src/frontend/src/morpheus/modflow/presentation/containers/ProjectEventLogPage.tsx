@@ -9,6 +9,7 @@ import {BodyContent, ModflowContainer, SidebarContent} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
+import ProjectTitleContainer from './ProjectTitleContainer';
 
 
 const ProjectEventLogPage = () => {
@@ -37,7 +38,9 @@ const ProjectEventLogPage = () => {
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-      />
+      >
+        <ProjectTitleContainer/>
+      </Navbar>
       <ModflowContainer overflow={'auto'}>
         <SidebarContent maxWidth={400}>
           <DataGrid>
@@ -78,7 +81,6 @@ const ProjectEventLogPage = () => {
         </BodyContent>
       </ModflowContainer>
     </>
-
   );
 };
 

@@ -21,6 +21,7 @@ import ChartModal from './Charts/ChartModal';
 import Container from './Container/Container';
 import Divider from './Divider/Divider';
 import DropdownComponent from './Dropdown';
+import FileUploadButton from './Button/FileUploadButton';
 import Footer from './Footer';
 import Form from './Form';
 import Grid from './Grid';
@@ -51,6 +52,7 @@ import Progress from './Progress/Progress';
 import RandomImage from './RandomImage/RandomImage';
 import RasterFileInput from './RasterFileInput';
 import SearchInput from './SearchComponent/SearchInput';
+import {Section, Widget} from './Section';
 import SectionTitle from './SectionTitle/SectionTitle';
 import Segment from './Segment';
 import SliderSwiper from './SliderSwiper/SliderSwiper';
@@ -59,7 +61,6 @@ import SortButtons from './SortButtons/SortButtons';
 import {Tab, TabPane} from 'common/components/Tab';
 import TimeSeriesDataChart from './Charts/TimeSeriesDataChart';
 import Toggle from './Toggle/Toggle';
-import UploadCSVFile from './UploadCSVFile/UploadCSVFile';
 import UploadFile from './UploadFile/UploadFile';
 import {Step, StepDescription, StepGroup, StepTitle, StepContent} from 'semantic-ui-react';
 
@@ -87,10 +88,11 @@ export {
   Divider,
   DotsMenu,
   DropdownComponent,
+  FileUploadButton,
+  Footer,
   Form,
   Header,
   HeaderWrapper,
-  Footer,
   Icon,
   IconButton,
   Input,
@@ -119,6 +121,7 @@ export {
   RasterFileInput,
   RandomImage,
   SearchInput,
+  Section,
   SectionTitle,
   Segment,
   Select,
@@ -131,8 +134,8 @@ export {
   Toggle,
   TimeSeriesDataChart,
   CsvFileInput,
-  UploadCSVFile,
   UploadFile,
+  Widget,
 };
 
 export type {

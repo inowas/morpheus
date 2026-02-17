@@ -110,7 +110,7 @@ const TimeDiscretizationStressPeriods: React.FC<IProps> = ({stressPeriods, onCha
     <Table.Header className={styles.tableHeader}>
       <Table.Row className={styles.tableRow}>
         <Table.HeaderCell>No</Table.HeaderCell>
-        <Table.HeaderCell><Icon className={'dateIcon'} name="info circle"/>Start Date</Table.HeaderCell>
+        <Table.HeaderCell><Icon className={'dateIcon'} name="info circle"/>Start date</Table.HeaderCell>
         <Popup
           trigger={
             <Table.HeaderCell>

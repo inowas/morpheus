@@ -17,7 +17,6 @@ def calculate_wel_boundary_stress_period_data(
     layers: LayersCollection,
     wel_boundary: WellBoundary
 ) -> WelStressPeriodData:
-    layer_ids = [layer.layer_id for layer in layers]
     sp_data = WelStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -35,10 +34,19 @@ def calculate_wel_boundary_stress_period_data(
         if wel_boundary.number_of_observations() > 1:
             raise NotImplementedError("Multiple observations for well boundaries are not supported")
 
-        layer_indices = [layer_ids.index(layer_id) for layer_id in wel_boundary.affected_layers]
+        # filter affected layers to only include layers that are part of the model
+        layer_ids = [layer.layer_id for layer in layers]
+        affected_layers = [layer_id for layer_id in wel_boundary.affected_layers if layers.has_layer(layer_id)]
+        layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
+
+        if len(layer_indices) == 0:
+            # if we have no affected layers
+            # we do not apply any data for this stress period
+            # We should log a warning here
+            continue
 
         # we need to filter the affected cells to only include cells that are part of the model
-        wel_boundary.affected_cells = wel_boundary.affected_cells.filter(lambda cell: spatial_discretization.affected_cells.contains(cell))
+        wel_boundary.affected_cells = wel_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
 
         if wel_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]

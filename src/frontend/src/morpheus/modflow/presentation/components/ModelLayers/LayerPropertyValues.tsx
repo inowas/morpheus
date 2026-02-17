@@ -15,6 +15,7 @@ interface IProps {
   onSubmitZoneChange: (zones: IChangeLayerPropertyValues['zones']) => void;
   unit?: string;
   readOnly: boolean;
+  precision?: number;
 }
 
 const LayerPropertyValues = ({
@@ -24,6 +25,7 @@ const LayerPropertyValues = ({
   onSubmitZoneChange,
   readOnly,
   unit,
+  precision = 3,
 }: IProps) => {
 
   const [layerPropertyValuesLocal, setLayerPropertyValuesLocal] = useState<ILayerPropertyValues | null>(values);
@@ -81,6 +83,7 @@ const LayerPropertyValues = ({
           onSubmit={(value) => onSubmitDefaultValueChange(value)}
           readOnly={readOnly}
           unit={unit}
+          precision={precision}
         />
       </DataRow>
 

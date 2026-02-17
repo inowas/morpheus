@@ -19,6 +19,9 @@ interface IProps {
   }[]
   onChangeLanguage?: (language: ILanguageCode) => void;
   navigateTo: (path: string) => void;
+  isAuthenticated?: boolean;
+  onLogout?: () => void;
+  onLogin?: () => void;
 }
 
 const Header = ({
@@ -26,6 +29,9 @@ const Header = ({
   languageList,
   onChangeLanguage,
   navigateTo,
+  isAuthenticated,
+  onLogout,
+  onLogin,
 }: IProps) => {
   const [showAvatar, setShowAvatar] = useState(false);
 
@@ -60,34 +66,6 @@ const Header = ({
             secondary={true}
             position="right"
           >
-            <Menu.Item
-              name="Contact"
-              as="a"
-              className={styles.item}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateTo('/contact/');
-              }}
-            />
-            <Menu.Item
-              name="Legal Notice"
-              as="a"
-              className={styles.item}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateTo('/imprint/');
-              }}
-            />
-            <Menu.Item
-              name="Accessibility"
-              as="a"
-              className={styles.item}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateTo('/declaration-on-accessibility/');
-              }}
-            />
-
             {showAvatar ?
               <div className={styles.itemLogin}>
                 <AvatarButton
@@ -97,12 +75,17 @@ const Header = ({
               :
               <div className={styles.itemLogin}>
                 <Menu.Item
-                  name="Sign in!"
+                  name={isAuthenticated ? 'Logout' : 'Login'}
                   as="a"
                   className={styles.item}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigateTo('/auth');
+                    if (isAuthenticated && onLogout) {
+                      onLogout();
+                    }
+                    if (!isAuthenticated && onLogin) {
+                      onLogin();
+                    }
                     toggleAvatar();
                   }}
                 />

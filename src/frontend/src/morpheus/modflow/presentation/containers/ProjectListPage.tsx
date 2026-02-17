@@ -4,10 +4,11 @@ import {useLocation, useNavigate} from 'common/hooks';
 import {ModflowContainer, ProjectsFilter, SidebarContent} from '../components';
 import {useProjectList, useTranslate} from '../../application';
 import Error from 'common/components/Error';
-import CreateProjectContainer from './CreateProjectContainer';
 import SortDropdown from 'common/components/CardGrid/SortDropdown';
 import {useUsers} from '../../incoming';
 import {useDateTimeFormat} from 'common/hooks';
+import {Input} from 'semantic-ui-react';
+import CreateProjectContainer from './CreateProjectContainer';
 
 interface IProps {
   basePath: string;
@@ -76,21 +77,21 @@ const ProjectListPage = ({basePath}: IProps) => {
         location={location}
         navbarItems={getProjectListNavbarItems(translate)}
         navigateTo={navigateTo}
-        search={{
-          value: search,
-          onChange: onSearchChange,
-        }}
-        button={
-          <Button
-            style={{whiteSpace: 'nowrap'}}
-            primary={true}
-            onClick={() => setShowCreateProjectModel(true)}
-          >
-            Create new project
-          </Button>}
-      />
+      >
+        <Input
+          action={true}
+          actionPosition="left"
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+        >
+          <Button primary={true}>
+            Search
+          </Button>
+          <input/>
+        </Input>
+      </Navbar>
       <ModflowContainer>
-        <SidebarContent maxWidth={400}>
+        <SidebarContent maxWidth={400} defaultOpen={false}>
           <ProjectsFilter
             filterParams={filter}
             filterOptions={filterOptions}
@@ -98,17 +99,30 @@ const ProjectListPage = ({basePath}: IProps) => {
           />
         </SidebarContent>
         <ContentWrapper style={{position: 'relative'}}>
-          <SortDropdown
-            placeholder="Order By"
-            sortOptions={orderOptions}
-            onChangeSortOption={onOrderChange}
-            style={{
-              position: 'absolute',
-              top: 20,
-              right: 50,
-              zIndex: 10,
-            }}
-          />
+          <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+            <Button
+              onClick={() => setShowCreateProjectModel(true)}
+              style={{marginTop: 20}}
+              primary={true}
+              labelPosition={'left'}
+              size={'tiny'}
+              icon={'plus'}
+              content={'Create new project'}
+            >
+            </Button>
+
+            <SortDropdown
+              placeholder="Order by"
+              sortOptions={orderOptions}
+              onChangeSortOption={onOrderChange}
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 50,
+                zIndex: 10,
+              }}
+            />
+          </div>
           <CardGrid
             cards={cards}
             title={<><span>{projects.length}</span> {translate('Projects found')}</>}

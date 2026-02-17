@@ -109,7 +109,7 @@ const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnCl
                 marginRight: '12px',
                 padding: '6px',
                 color: value.content.editTitle ? '#009FE3' : '#fff',
-                backgroundColor: '#002557',
+                backgroundColor: '@red',
               }}
             />
 
@@ -127,7 +127,7 @@ const MovableAccordionList = ({items, actions, onMovableListChange, openEachOnCl
                 setInputValue(null);
               }}
               >
-                Apply
+                Save
               </button>
             </div>}
 

@@ -71,48 +71,60 @@ const ProjectsFilter = ({
     <Form className={styles.projectsFilterForm} style={{...style}}>
       <div className={styles.titleWrapper}>
         <h2 className={styles.title}>Filters</h2>
-        <Button
-          secondary={true} size={'small'}
+        {/*        <Button
+          secondary={true}
+          size={'tiny'}
+          labelPosition={'left'}
+          icon={'delete'}
           onClick={() => onChangeFilterParams({})}
+          content={'Clear filters'}
         >
-          Clear Filters
-        </Button>
+        </Button>*/}
       </div>
 
       {/*// By ownership*/}
       <Form.Field className={styles.field}>
         <label className={styles.label}>By ownership</label>
         <div className={styles.checkboxWrapper}>
-          <Checkbox
+          <Radio
             className={styles.checkbox}
             label="My models"
             name="myModels"
-            checked={!!filterParams.my_projects}
-            onChange={(_, {checked}) => onChangeFilterParams({...filterParams, my_projects: checked || undefined})}
+            checked={!!filterParams.show_my_projects}
+            onChange={(_, {checked}) => onChangeFilterParams({
+              ...filterParams,
+              show_my_projects: checked || undefined,
+              show_my_groups_projects: !checked || undefined,
+            })}
           />
           <span className={styles.count}>(<span>{filterOptions.number_of_my_projects}</span>)</span>
         </div>
         <div className={styles.checkboxWrapper}>
-          <Checkbox
+          <Radio
             className={styles.checkbox}
-            label="Models from my groups"
+            label="All models"
             name="modelsFromGroups"
-            checked={!!filterParams.my_groups}
-            onChange={(_, {checked}) => onChangeFilterParams({...filterParams, my_groups: checked || undefined})}
+            checked={!filterParams.show_my_projects}
+            onChange={(_, {checked}) => onChangeFilterParams({
+              ...filterParams,
+              show_my_groups_projects: checked || undefined,
+              show_my_projects: !checked || undefined,
+            })}
           />
           <span className={styles.count}>(<span>{filterOptions.number_of_my_group_projects}</span>)</span>
         </div>
+        {/*
         <label className={styles.labelSmall}>Owners</label>
-        <DropdownComponent.Dropdown
+          <DropdownComponent.Dropdown
           className={styles.dropdown}
           name="selectedOwners"
-          clearable={true}
-          multiple={true}
+          clearable={false}
+          multiple={false}
           selection={true}
           options={filterOptions.users.map(user => ({
             key: user.user_id,
-            value: user.unsername,
-            text: <span>{user.unsername} <span className={styles.count}>(<span>{user.count}</span>)</span></span>,
+            value: user.username,
+            text: <span>{user.username} <span className={styles.count}>(<span>{user.count}</span>)</span></span>,
           }))}
           placeholder="Select Owner"
           value={filterParams.users || []}
@@ -122,10 +134,10 @@ const ProjectsFilter = ({
               onChangeFilterParams({...filterParams, users: 0 < selectedOptions.length ? selectedOptions : undefined});
             }
           }}
-        />
+        />*/}
       </Form.Field>
 
-      {/*// By status*/}
+      {/*      // By status
       <Form.Field className={styles.field}>
         <label className={styles.label}>By status</label>
         <div className={styles.checkboxWrapper}>
@@ -165,7 +177,7 @@ const ProjectsFilter = ({
         </div>
       </Form.Field>
 
-      {/*// By Date*/}
+      // By Date
       <Form.Field className={styles.field}>
         <Checkbox
           className={styles.checkboxLabel}
@@ -301,7 +313,7 @@ const ProjectsFilter = ({
         </div>
       </Form.Field>
 
-      {/*// By Boundary Conditions*/}
+      // By Boundary Conditions
       <Form.Field className={styles.field}>
         <label className={styles.label}>By boundary conditions</label>
         {Object.entries(filterOptions.boundary_conditions).map(([key, value]) => (
@@ -332,7 +344,7 @@ const ProjectsFilter = ({
         ))}
       </Form.Field>
 
-      {/*// By Number of Grid Cells*/}
+      // By Number of Grid Cells
       <Form.Field className={styles.field}>
         <Checkbox
           className={styles.checkboxLabel}
@@ -373,7 +385,7 @@ const ProjectsFilter = ({
         </div>
       </Form.Field>
 
-      {/*// By Number of Stress Periods*/}
+      // By Number of Stress Periods
       <Form.Field className={styles.field}>
         <Checkbox
           className={styles.checkboxLabel}
@@ -414,7 +426,7 @@ const ProjectsFilter = ({
         </div>
       </Form.Field>
 
-      {/*// By Number of Layers*/}
+      // By Number of Layers
       <Form.Field className={styles.field}>
         <Checkbox
           className={styles.checkboxLabel}
@@ -455,7 +467,7 @@ const ProjectsFilter = ({
         </div>
       </Form.Field>
 
-      {/*// By Additional Features*/}
+      // By Additional Features
       <Form.Field className={styles.field}>
         <label className={styles.label}>By additional features</label>
         {Object.entries(filterOptions.additional_features).map(([key, value]) => (
@@ -485,7 +497,7 @@ const ProjectsFilter = ({
         ))}
       </Form.Field>
 
-      {/*// By Keywords*/}
+      // By Keywords
       <Form.Field className={styles.field}>
         <label className={styles.label}>By keywords</label>
         <DropdownComponent.Dropdown
@@ -516,7 +528,7 @@ const ProjectsFilter = ({
 
       </Form.Field>
 
-      {/*// By Map*/}
+      // By Map
       <Form.Field className={styles.field}>
         <Checkbox
           className={styles.checkboxLabel}
@@ -535,7 +547,7 @@ const ProjectsFilter = ({
             />
           </MapContainer>
         </div>
-      </Form.Field>
+      </Form.Field>*/}
 
     </Form>
 

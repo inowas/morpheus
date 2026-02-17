@@ -1,4 +1,4 @@
-import {Form, Input} from 'semantic-ui-react';
+import {Button, Form, Input, Label} from 'semantic-ui-react';
 import React, {useEffect, useState} from 'react';
 
 
@@ -6,42 +6,56 @@ interface IProps {
   value: string;
   isReadOnly: boolean;
   onChange: (value: string) => void;
+  edit: boolean;
+  onChangeEdit: (edit: boolean) => void;
 }
 
-const FileNameInput = ({value, isReadOnly, onChange}: IProps) => {
+const FileNameInput = ({value, isReadOnly, onChange, edit, onChangeEdit}: IProps) => {
 
   const [valueLocal, setValueLocal] = useState<string>(value);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const extension = valueLocal.split('.').pop();
 
   useEffect(() => {
     setValueLocal(value);
   }, [value]);
 
   const handleSubmit = () => {
-    setIsEditing(false);
+    if (onChangeEdit) {
+      onChangeEdit(false);
+    }
     onChange(valueLocal);
   };
 
-  if (!isEditing) {
-    return <div onClick={() => setIsEditing(true)}>{valueLocal}</div>;
+  if (!edit) {
+    return <div>{valueLocal}</div>;
   }
 
-  return (
+  const handleChangeInput = (v: string) => {
+    // replace spaces and special characters with underscores
+    v = v.replace(/[^A-Za-z0-9_.]/g, '_');
+    setValueLocal(`${v}.${extension}`);
+  };
 
+  return (
     <Form onSubmit={handleSubmit}>
-      <Form.Group>
-        <Form.Input
+      <div>
+        <Input
           type="text"
-          value={valueLocal}
-          onChange={(_, {value: v}) => setValueLocal(v)}
+          value={valueLocal.split('.').shift()}
+          label={extension}
+          labelPosition={'right'}
+          onChange={(_, {value: v}) => handleChangeInput(v)}
           readOnly={isReadOnly}
-        />
-        <Form.Button
-          icon={'check'}
-          onClick={handleSubmit}
-          type={'submit'}
-        />
-      </Form.Group>
+        >
+          <input/>
+          <Label>{`.${valueLocal.split('.').pop()}`}</Label>
+          <Button
+            type="submit"
+            icon={'check'}
+            floated={'right'}
+          ></Button>
+        </Input>
+      </div>
     </Form>
   );
 };

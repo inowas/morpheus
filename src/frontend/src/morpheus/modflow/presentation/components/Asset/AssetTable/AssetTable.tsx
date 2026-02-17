@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Checkbox, Segment, Table} from 'semantic-ui-react';
-import {Button, SortButtons} from 'common/components';
+import {Button} from 'common/components';
 import styles from './AssetTable.module.less';
 
 import {IAsset, IAssetId} from '../../../../types';
@@ -9,20 +9,15 @@ import FileNameInput from './FileNameInput';
 interface IProps {
   style?: React.CSSProperties;
   className?: string;
-  fileType: string;
   assets: IAsset[];
-  loading: boolean;
+  loadingAsset: IAssetId | false;
+  loadingList: boolean;
   deleteAsset: (id: string) => void;
   updateAssetFileName: (id: string, fileName: string) => void;
   isReadOnly: boolean;
   selectedAsset: IAsset | null;
   onSelectAsset: (asset: IAsset) => void;
   onChangeCheckedAssets?: (assetId: IAssetId[] | null) => void;
-}
-
-interface ISortBy {
-  name: 'file_name' | 'file_size';
-  direction: 'asc' | 'desc';
 }
 
 const calculateFileSize = (size_in_bytes: number) => {
@@ -38,9 +33,8 @@ const calculateFileSize = (size_in_bytes: number) => {
 const AssetTable = ({
   style,
   className,
-  fileType,
   assets,
-  loading,
+  loadingList,
   deleteAsset,
   updateAssetFileName,
   isReadOnly,
@@ -50,9 +44,7 @@ const AssetTable = ({
 }: IProps) => {
 
   const [checkedAssets, setCheckedAssets] = useState<string[]>([]);
-
-  const [sortedAssets, setSortedAssets] = useState<IAsset[]>(assets);
-  const [sortBy, setSortBy] = useState<ISortBy>({name: 'file_name', direction: 'asc'});
+  const [editAssetFileNameId, setEditAssetFileNameId] = useState<string | null>(null);
 
   useEffect(() => {
     if (onChangeCheckedAssets) {
@@ -61,31 +53,25 @@ const AssetTable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedAssets]);
 
-  const handleSort = (assetsToSort: IAsset[], sort: ISortBy) => (
-    assetsToSort.toSorted((a, b) => {
-      switch (sort.name) {
-      case 'file_name':
-        const fileNameCompareResult = a.file.file_name.localeCompare(b.file.file_name);
-        return 'asc' === sort.direction ? fileNameCompareResult : -fileNameCompareResult;
-      case 'file_size':
-        const sizeCompareResult = a.file.size_in_bytes - b.file.size_in_bytes;
-        return 'asc' === sort.direction ? sizeCompareResult : -sizeCompareResult;
-      default :
-        return 0;
-      }
-    }));
-
   useEffect(() => {
-    const newSortedAssets = handleSort(assets, sortBy);
-    setSortedAssets(newSortedAssets);
-    if (0 === newSortedAssets.length) {
-      return;
-    }
-
-    if (!selectedAsset || !newSortedAssets.find((asset) => asset.asset_id === selectedAsset.asset_id)) {
-      onSelectAsset(newSortedAssets[0]);
+    if (!selectedAsset || !assets.find((asset) => asset.asset_id === selectedAsset.asset_id)) {
+      if (0 < assets.length) {
+        onSelectAsset(assets[0]);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assets]);
+
+  const sortedAssets = useMemo(() => {
+    return assets.toSorted((a, b) => {
+      if (a.file.file_name < b.file.file_name) {
+        return -1;
+      }
+      if (a.file.file_name > b.file.file_name) {
+        return 1;
+      }
+      return 0;
+    });
   }, [assets]);
 
   const handleSelectAll = () => {
@@ -97,17 +83,18 @@ const AssetTable = ({
 
   const renderHeader = () => (
     <Table.Row>
-      {onChangeCheckedAssets && <Table.HeaderCell><Checkbox checked={checkedAssets.length === assets.length} onClick={handleSelectAll}/></Table.HeaderCell>}
+      {onChangeCheckedAssets &&
+        <Table.HeaderCell>
+          <Checkbox checked={checkedAssets.length === assets.length} onClick={handleSelectAll}/>
+        </Table.HeaderCell>}
       <Table.HeaderCell>
-        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+        <div>
           File name
-          <SortButtons onClick={(direction) => setSortBy({name: 'file_name', direction})} direction={'file_name' === sortBy.name ? sortBy.direction : null}/>
         </div>
       </Table.HeaderCell>
       <Table.HeaderCell>
-        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+        <div>
           File size
-          <SortButtons onClick={(direction) => setSortBy({name: 'file_size', direction})} direction={'file_size' === sortBy.name ? sortBy.direction : null}/>
         </div>
       </Table.HeaderCell>
       {!isReadOnly && <Table.HeaderCell></Table.HeaderCell>}
@@ -142,30 +129,39 @@ const AssetTable = ({
             value={asset.file.file_name}
             onChange={(fileName) => updateAssetFileName(asset.asset_id, fileName)}
             isReadOnly={isReadOnly}
+            edit={editAssetFileNameId === asset.asset_id}
+            onChangeEdit={(edit) => setEditAssetFileNameId(edit ? asset.asset_id : null)}
           />
         </Table.Cell>
         <Table.Cell>{calculateFileSize(asset.file.size_in_bytes)}</Table.Cell>
         {!isReadOnly && (
           <Table.Cell style={{textAlign: 'right'}}>
             <Button
-              style={{padding: '0 6px 0'}}
+              style={{padding: '0 5px 0'}}
+              className='buttonLink'
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditAssetFileNameId(asset.asset_id);
+              }}
+              icon={'edit'}
+            />
+            <Button
+              style={{padding: '0 5px 0'}}
+              className='buttonLink'
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              icon={'download'}
+            />
+            <Button
+              style={{padding: '0 5px 0', color: '#db2828'}}
               className='buttonLink'
               onClick={(e) => {
                 e.stopPropagation();
                 deleteAsset(asset.asset_id);
               }}
-            >
-              Delete
-            </Button>|
-            <Button
-              style={{padding: '0 6px 0'}}
-              className='buttonLink'
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              Download
-            </Button>
+              icon={'trash'}
+            />
           </Table.Cell>
         )}
       </Table.Row>
@@ -175,22 +171,32 @@ const AssetTable = ({
   return (
     <div className={`${className || ''} ${styles.assetTable}`} style={style}>
       <Segment
-        loading={loading} raised={true}
-        basic={true} style={{padding: '0px'}}
+        raised={true}
+        basic={true}
+        style={{padding: '0px'}}
+        loading={loadingList}
       >
-        <div className='scrollableTable'>
-          <Table
-            className={styles.table} celled={true}
-            singleLine={true}
-          >
-            <Table.Header>
-              {renderHeader()}
-            </Table.Header>
-            <Table.Body>
-              {renderContent()}
-            </Table.Body>
-          </Table>
-        </div>
+        {0 === assets.length && (
+          <div style={{padding: '10px', textAlign: 'center'}}>
+            There are no files uploaded yet.
+          </div>
+        )}
+
+        {0 < assets.length && (
+          <div className='scrollableTable'>
+            <Table
+              className={styles.table} celled={true}
+              singleLine={true}
+            >
+              <Table.Header>
+                {renderHeader()}
+              </Table.Header>
+              <Table.Body>
+                {renderContent()}
+              </Table.Body>
+            </Table>
+          </div>
+        )}
       </Segment>
     </div>
   );

@@ -2,7 +2,7 @@ import {IBoundary} from './Boundaries.type';
 import {ILayer} from './Layers.type';
 import {ISpatialDiscretization} from './SpatialDiscretization.type';
 import {ITimeDiscretization} from './TimeDiscretization.type';
-import {IHeadObservation} from './HeadObservations.type';
+import {IObservation} from './Observations.type';
 
 
 interface IModel {
@@ -11,7 +11,7 @@ interface IModel {
   time_discretization: ITimeDiscretization | undefined;
   layers: ILayer[];
   boundaries: IBoundary[];
-  observations: IHeadObservation[];
+  observations: IObservation[];
   transport: any;
   variable_density: any;
 }

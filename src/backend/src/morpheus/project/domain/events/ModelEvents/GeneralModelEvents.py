@@ -11,7 +11,7 @@ from .EventNames import GeneralModelEventName
 class ModelCreatedEvent(EventBase):
     @classmethod
     def from_model(cls, project_id: ProjectId, model: Model, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload=model.to_dict(),
@@ -32,7 +32,7 @@ class VersionCreatedEvent(EventBase):
 
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload=version.to_dict(),
@@ -53,7 +53,7 @@ class VersionAssignedToModelEvent(EventBase):
 
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={'version_id': version.version_id.to_str()},
@@ -61,7 +61,7 @@ class VersionAssignedToModelEvent(EventBase):
 
     @classmethod
     def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={'version_id': version_id.to_str()},
@@ -82,7 +82,7 @@ class VersionDeletedEvent(EventBase):
 
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={'version_id': version.version_id.to_str()},
@@ -90,7 +90,7 @@ class VersionDeletedEvent(EventBase):
 
     @classmethod
     def from_version_id(cls, project_id: ProjectId, version_id: VersionId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={'version_id': version_id.to_str()},
@@ -111,7 +111,7 @@ class VersionDescriptionUpdatedEvent(EventBase):
 
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={'version_id': version.version_id.to_str(), 'description': version.description.to_str()},
@@ -119,7 +119,7 @@ class VersionDescriptionUpdatedEvent(EventBase):
 
     @classmethod
     def from_version_id(cls, project_id: ProjectId, version_id: VersionId, description: VersionDescription, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
             payload={'version_id': version_id.to_str(), 'description': description.to_str()},

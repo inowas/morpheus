@@ -11,10 +11,11 @@ import {ILayerId} from '../../../../types/Layers.type';
 
 
 interface IProps {
-  boundary: IBoundary;
-  onChangeBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
-  onChangeBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
-  onChangeBoundaryTags: (boundaryId: IBoundaryId, boundaryTags: string[]) => Promise<void>;
+  availableTags: string[];
+  boundaries: IBoundary[];
+  onChangeBoundaryAffectedLayers: (boundaryIds: IBoundaryId[], affectedLayers: ILayerId[]) => Promise<void>;
+  onChangeBoundaryInterpolation: (boundaryIds: IBoundaryId[], interpolation: IInterpolationType) => Promise<void>;
+  onChangeBoundaryTags: (boundaryIds: IBoundaryId[], boundaryTags: string[]) => Promise<void>;
   layers: ILayerMetadata[];
   isReadOnly: boolean;
 }
@@ -24,46 +25,91 @@ interface ILayerMetadata {
   name: string;
 }
 
-const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffectedLayers, onChangeBoundaryInterpolation, isReadOnly, layers}: IProps) => {
+const BoundariesForm = ({availableTags, boundaries, onChangeBoundaryAffectedLayers, onChangeBoundaryInterpolation, onChangeBoundaryTags, isReadOnly, layers}: IProps) => {
 
-  const [boundaryLocal, setBoundaryLocal] = useState<IBoundary>(boundary);
   const [tagOptions, setTagOptions] = useState<DropdownItemProps[]>([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const isDirty = () => {
-    if (!isEqual(boundaryLocal.tags, boundary.tags)) {
-      return true;
+  // If state is none, then mixed values are present and no changes will be made
+  const [tags, setTags] = useState<string[] | null>(null);
+  const [affectedLayers, setAffectedLayers] = useState<ILayerId[] | null>(null);
+  const [interpolation, setInterpolation] = useState<IInterpolationType | null>(null);
+
+  const hasMixedTags = () => boundaries.some(b => !isEqual(b.tags, boundaries[0].tags));
+  const hasMixedAffectedLayers = () => boundaries.some(b => !isEqual(b.affected_layers, boundaries[0].affected_layers));
+  const hasMixedInterpolation = () => boundaries.some(b => !isEqual(b.interpolation, boundaries[0].interpolation));
+
+  useEffect(() => {
+    setTags(null);
+    setAffectedLayers(null);
+    setInterpolation(null);
+
+    if (0 === boundaries.length) {
+      return;
     }
 
-    if (!isEqual(boundaryLocal.interpolation, boundary.interpolation)) {
-      return true;
+    if (!hasMixedTags()) {
+      setTags(boundaries[0].tags);
     }
 
-    return !isEqual(boundaryLocal.affected_layers, boundary.affected_layers);
-  };
+    if (!hasMixedAffectedLayers()) {
+      setAffectedLayers(boundaries[0].affected_layers);
+    }
+
+    if (!hasMixedInterpolation()) {
+      setInterpolation(boundaries[0].interpolation);
+    }
+  }, [boundaries, layers]);
+
+  useEffect(() => {
+    setTagOptions(availableTags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
+  }, [availableTags]);
+
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    if (boundary.tags !== boundaryLocal.tags) {
-      await onChangeBoundaryTags(boundaryLocal.id, boundaryLocal.tags);
+    if (tags && (hasMixedTags() || boundaries.some(b => !isEqual(b.tags, tags)))) {
+      await onChangeBoundaryTags(boundaries.map(b => b.id), tags);
     }
 
-    if (boundary.affected_layers !== boundaryLocal.affected_layers) {
-      await onChangeBoundaryAffectedLayers(boundaryLocal.id, boundaryLocal.affected_layers);
+    if (affectedLayers && (hasMixedAffectedLayers() || boundaries.some(b => !isEqual(b.affected_layers, affectedLayers)))) {
+      await onChangeBoundaryAffectedLayers(boundaries.map(b => b.id), affectedLayers);
     }
 
-    if (boundary.interpolation !== boundaryLocal.interpolation) {
-      await onChangeBoundaryInterpolation(boundaryLocal.id, boundaryLocal.interpolation);
+    if (interpolation && (hasMixedInterpolation() || boundaries.some(b => !isEqual(b.interpolation, interpolation)))) {
+      await onChangeBoundaryInterpolation(boundaries.map(b => b.id), interpolation);
     }
+
     setSubmitting(false);
   };
 
-  useEffect(() => {
-    setBoundaryLocal(boundary);
-    setTagOptions(boundary.tags.map((tag) => ({key: tag, text: tag, value: tag})) as DropdownItemProps[]);
-  }, [boundary]);
+  const getAffectedLayersValue = (bType: IBoundary['type']) => {
 
-  const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundary.type)?.isTimeSeriesDependent || false;
+    if (null === affectedLayers) {
+      return '';
+    }
+
+    if (hasMultipleAffectedLayers(bType)) {
+      return affectedLayers;
+    }
+
+    return affectedLayers[0];
+  };
+
+  if (0 === boundaries.length) {
+    return null;
+  }
+
+  const isDirty = () => {
+    return (
+      (tags && (hasMixedTags() || boundaries.some(b => !isEqual(b.tags, tags))) || false) ||
+      (affectedLayers && (hasMixedAffectedLayers() || boundaries.some(b => !isEqual(b.affected_layers, affectedLayers))) || false) ||
+      (interpolation && (hasMixedInterpolation() || boundaries.some(b => !isEqual(b.interpolation, interpolation))) || false)
+    ) || false;
+  };
+
+  const boundaryType = boundaries[0].type;
+  const isTimeSeriesDependent = boundarySettings.find((b) => b.type === boundaryType)?.isTimeSeriesDependent || false;
 
   return (
     <Form>
@@ -84,10 +130,11 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
 
           <DropdownComponent.Dropdown
             disabled={isReadOnly}
+            placeholder={'Mixed Values'}
             name={'selectedLayer'}
-            multiple={hasMultipleAffectedLayers(boundaryLocal.type)}
+            multiple={hasMultipleAffectedLayers(boundaryType)}
             selection={true}
-            value={hasMultipleAffectedLayers(boundaryLocal.type) ? boundaryLocal.affected_layers : boundaryLocal.affected_layers[0]}
+            value={getAffectedLayersValue(boundaryType)}
             options={layers.map((layer) => ({
               key: layer.layer_id,
               text: layer.name,
@@ -102,7 +149,7 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
                 value = [value];
               }
 
-              setBoundaryLocal({...boundaryLocal, affected_layers: value as ILayerId[]});
+              setAffectedLayers(value as ILayerId[]);
             }}
           />
         </Form.Field>
@@ -122,11 +169,11 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
             fluid={true}
             multiple={true}
             onAddItem={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTagOptions([...tagOptions, {key: data.value, text: data.value, value: data.value}])}
-            onChange={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setBoundaryLocal({...boundaryLocal, tags: data.value as string[]})}
+            onChange={(_: React.SyntheticEvent<HTMLElement, Event>, data: any) => setTags(data.value as string[])}
             options={tagOptions}
             search={true}
             selection={true}
-            value={boundaryLocal.tags}
+            value={tags || []}
           />
         </Form.Field>
 
@@ -150,8 +197,8 @@ const BoundariesForm = ({boundary, onChangeBoundaryTags, onChangeBoundaryAffecte
                 {key: 'linear', text: 'Linear', value: 'linear'},
               ]}
               selection={true}
-              value={boundaryLocal.interpolation}
-              onChange={(_, {value}) => setBoundaryLocal({...boundaryLocal, interpolation: value as IInterpolationType})}
+              value={interpolation || ''}
+              onChange={(_, {value}) => setInterpolation(value as IInterpolationType)}
             />)}
         </Form.Field>
         {!isReadOnly && (

@@ -57,11 +57,11 @@ const LayersList = ({
 
     const actions: IMovableAccordionListAction[] = [
       {text: 'Clone', icon: 'clone', onClick: (item: IMovableAccordionItem) => onCloneLayer(item.key)},
-      {text: 'Rename Item', icon: 'edit', onClick: (item: IMovableAccordionItem) => setEditTitle(item.key)},
+      {text: 'Rename', icon: 'edit', onClick: (item: IMovableAccordionItem) => setEditTitle(item.key)},
     ];
 
     if (1 < layersLocal.length) {
-      actions.push({text: 'Delete', icon: 'remove', onClick: (item: IMovableAccordionItem) => onDeleteLayer(item.key)});
+      actions.push({text: 'Delete', icon: 'trash', onClick: (item: IMovableAccordionItem) => onDeleteLayer(item.key)});
     }
 
     return actions;

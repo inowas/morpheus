@@ -9,6 +9,8 @@ general_model_event_list = [
 ]
 
 model_boundary_event_list = [
+    ModelBoundaryEvents.ModelBoundariesImportedEvent,
+    ModelBoundaryEvents.ModelBoundariesRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryAddedEvent,
     ModelBoundaryEvents.ModelBoundaryClonedEvent,
     ModelBoundaryEvents.ModelBoundaryAffectedCellsRecalculatedEvent,
@@ -19,11 +21,11 @@ model_boundary_event_list = [
     ModelBoundaryEvents.ModelBoundaryGeometryUpdatedEvent,
     ModelBoundaryEvents.ModelBoundaryInterpolationUpdatedEvent,
     ModelBoundaryEvents.ModelBoundaryMetadataUpdatedEvent,
-    ModelBoundaryEvents.ModelBoundaryRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationAddedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationGeometryRecalculatedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationRemovedEvent,
     ModelBoundaryEvents.ModelBoundaryObservationUpdatedEvent,
+    ModelBoundaryEvents.ModelBoundaryTagsUpdatedEvent,
 ]
 
 model_discretization_event_list = [
@@ -36,6 +38,7 @@ model_discretization_event_list = [
 ]
 
 model_layer_event_list = [
+    ModelLayerEvents.ModelLayerAddedEvent,
     ModelLayerEvents.ModelLayerConfinementUpdatedEvent,
     ModelLayerEvents.ModelLayerClonedEvent,
     ModelLayerEvents.ModelLayerCreatedEvent,

@@ -97,12 +97,15 @@ paths:
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/DisableModelBoundaryCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/EnableModelBoundaryCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/ImportModelBoundariesCommand'
-                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/RemoveModelBoundaryCommand'
+                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/RemoveModelBoundariesCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/RemoveModelBoundaryObservationCommand'
+                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryAffectedCellsCommand'
+                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryAffectedLayersCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryGeometryCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryInterpolationCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryMetadataCommand'
                 - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryObservationCommand'
+                - $ref: './application/write/Model/Boundaries/schema.yml#/definitions/commands/UpdateModelBoundaryTagsCommand'
 
                 # Model Discretization Commands
                 - $ref: './application/write/Model/Discretization/schema.yml#/definitions/commands/UpdateModelAffectedCellsCommand'
@@ -111,6 +114,7 @@ paths:
                 - $ref: './application/write/Model/Discretization/schema.yml#/definitions/commands/UpdateModelTimeDiscretizationCommand'
 
                 # Model Layer Commands
+                - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/AddModelLayerCommand'
                 - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/CloneModelLayerCommand'
                 - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/CreateModelLayerCommand'
                 - $ref: './application/write/Model/Layers/schema.yml#/definitions/commands/DeleteModelLayerCommand'

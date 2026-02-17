@@ -18,6 +18,7 @@ import HeadObservationListDetails from '../components/ModelHeadObservations/Head
 import DrawObservationLayer from '../components/ModelHeadObservations/DrawObservationLayer';
 import {Point} from 'geojson';
 import ObservationsLayer from '../components/ModelHeadObservations/ObservationsLayer';
+import Widget from 'common/components/Section/Widget';
 
 
 const HeadObservationsContainer = () => {
@@ -85,46 +86,52 @@ const HeadObservationsContainer = () => {
 
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700}>
         <LeafletMapProvider mapRef={mapRef}>
           <DataGrid>
-            <SectionTitle title={'Observations'}/>
-            <SearchInput
-              search={''}
-              onChange={(search) => console.log(search)}
-              placeholder={'Search boundaries'}
-            >
-              <DropdownComponent.Dropdown
-                data-testid='test-search-component'
-                text={'Draw on map'}
-                icon='pencil'
-                floating={true}
-                labeled={true}
-                button={true}
-                className='icon'
-                disabled={isReadOnly}
-              >
-                <DropdownComponent.Menu>
-                  {dropdownItems.map((item, key) => (
-                    <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
-                  ))}
-                </DropdownComponent.Menu>
-              </DropdownComponent.Dropdown>
-            </SearchInput>
-            <HeadObservationListDetails
-              observations={observations}
-              selected={selectedHeadObservation || null}
-              layers={layers}
-              onClone={handleCloneObservation}
-              onDisable={onDisable}
-              onEnable={onEnable}
-              onSelect={handleSelectObservation}
-              onChange={handleChangeObservation}
-              onRemove={handleRemoveObservation}
-              isReadOnly={isReadOnly}
-              timeDiscretization={timeDiscretization}
-              formatDateTime={formatISODate}
+            <SectionTitle
+              title={'Observations'}
             />
+            <Widget>
+              <SearchInput
+                search={''}
+                onChange={(search) => console.log(search)}
+                placeholder={'Search observations'}
+              >
+                <DropdownComponent.Dropdown
+                  data-testid='test-search-component'
+                  text={'Draw on map'}
+                  icon='pencil'
+                  floating={true}
+                  labeled={true}
+                  button={true}
+                  className='icon'
+                  disabled={isReadOnly}
+                >
+                  <DropdownComponent.Menu>
+                    {dropdownItems.map((item, key) => (
+                      <DropdownComponent.Item key={key} onClick={item.action}>{item.text}</DropdownComponent.Item>
+                    ))}
+                  </DropdownComponent.Menu>
+                </DropdownComponent.Dropdown>
+              </SearchInput>
+            </Widget>
+            <Widget>
+              <HeadObservationListDetails
+                observations={observations}
+                selected={selectedHeadObservation || null}
+                layers={layers}
+                onClone={handleCloneObservation}
+                onDisable={onDisable}
+                onEnable={onEnable}
+                onSelect={handleSelectObservation}
+                onChange={handleChangeObservation}
+                onRemove={handleRemoveObservation}
+                isReadOnly={isReadOnly}
+                timeDiscretization={timeDiscretization}
+                formatDateTime={formatISODate}
+              />
+            </Widget>
           </DataGrid>
         </LeafletMapProvider>
       </SidebarContent>

@@ -31,6 +31,9 @@ class LayersCollection:
     def get_layer(self, layer_id: LayerId):
         return next((layer for layer in self.layers if layer.layer_id == layer_id), None)
 
+    def has_layer(self, layer_id: LayerId) -> bool:
+        return any(layer.layer_id == layer_id for layer in self.layers)
+
     def with_added_layer(self, layer: Layer):
         return dataclasses.replace(self, layers=self.layers + [layer])
 
@@ -43,6 +46,10 @@ class LayersCollection:
 
         if len(self.layers) == 1:
             raise ValueError("Cannot delete the last layer")
+
+    def assert_layer_can_be_added(self, layer: Layer):
+        if layer.layer_id in self.get_layer_ids():
+            raise ValueError("Layer to be added already exists in the collection")
 
     def assert_layer_can_be_cloned(self, layer_id: LayerId, new_layer_id: LayerId):
         if layer_id not in self.get_layer_ids():

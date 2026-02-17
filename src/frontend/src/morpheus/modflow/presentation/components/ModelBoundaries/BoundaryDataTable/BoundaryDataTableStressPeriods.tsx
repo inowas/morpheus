@@ -125,7 +125,12 @@ const BoundaryDataTableStressPeriods = ({boundaryType, observation, onChangeObse
       {!isReadOnly && <Button
         onClick={handleSubmit}
         disabled={JSON.stringify(observation.data) === JSON.stringify(mapData(data))}
-        content={'Submit'}
+        content={'Save'}
+        style={{marginLeft: 'auto'}}
+        primary={true}
+        labelPosition={'left'}
+        size={'tiny'}
+        icon={'save'}
       />}
     </>
   );

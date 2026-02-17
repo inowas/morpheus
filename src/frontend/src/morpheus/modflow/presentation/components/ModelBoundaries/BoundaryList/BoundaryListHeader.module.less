@@ -1,4 +1,4 @@
-@import "../../../../../../common/components/site.variables";
+@import "common/components/site.variables";
 
 
 .header {
@@ -8,7 +8,7 @@
   padding: 0 0 10px 0;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid @ref-color-underline;
+  border-bottom: 1px solid @border-grey;
 
   span {
     font-size: 16px;
@@ -23,10 +23,11 @@
     }
 
     input {
-      border-radius: 0 !important;
       border: 0 !important;
       padding: 5px !important;
-      box-shadow: @ref-box-shadow !important;
+      border-radius: 6px !important;
+      background-color: @light-grey;
+      box-shadow: none !important;
     }
 
     [class*="results"] {

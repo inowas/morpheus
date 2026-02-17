@@ -10,6 +10,9 @@ build-morpheus-frontend:dev:
     - cd src/frontend
     - make install-ci
     - make build-morpheus
+  variables:
+    REACT_APP_SENTRY_DSN: $SENTRY_DSN_FRONTEND
+    REACT_APP_SENTRY_ENABLED: true
   artifacts:
     paths:
       - src/frontend/dist/morpheus

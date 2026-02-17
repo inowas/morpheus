@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {BodyContent, SidebarContent} from '../components';
 import type {Polygon} from 'geojson';
-import {useParams} from 'react-router-dom';
+import {useParams, useSearchParams} from 'react-router-dom';
 import {useAssets, useSpatialDiscretization} from '../../application';
 import Error from 'common/components/Error';
 import {IGrid} from '../../types';
-import {DataGrid, LockButton, SectionTitle, Tab, TabPane} from 'common/components';
-import {Accordion, AccordionContent} from '../components/Content';
+import {DataGrid, LockButton, Section, SectionTitle} from 'common/components';
 import ModelDomain from '../components/ModelSpatialDiscretization/ModelDomain';
-import {MenuItem} from 'semantic-ui-react';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import {Map} from 'common/components/Map';
 
@@ -25,6 +23,7 @@ const SpatialDiscretizationContainer = () => {
   const [locked, setLocked] = useState<boolean>(false);
 
   const {projectId} = useParams();
+  const [searchParams] = useSearchParams();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
 
   const getInitialEditMode = () => {
@@ -105,12 +104,14 @@ const SpatialDiscretizationContainer = () => {
     return <Error message={error.message}/>;
   }
 
+  const sidebarVisible = 'false' !== searchParams.get('sidebar');
+
   return (
     <>
-      <SidebarContent maxWidth={500}>
+      <SidebarContent maxWidth={700} defaultOpen={sidebarVisible}>
         <DataGrid>
           <SectionTitle
-            title={'Model Geometry'}
+            title={'Model geometry'}
           >
             <LockButton
               title={locked ? 'Locked' : 'Unlocked'}
@@ -118,67 +119,40 @@ const SpatialDiscretizationContainer = () => {
               locked={locked}
             />
           </SectionTitle>
-          <Accordion defaultActiveIndex={[0, 1]} exclusive={false}>
-            <AccordionContent title={'Model domain'}>
-              <Tab
-                variant='primary'
-                menu={{pointing: true}}
-                panes={[
-                  {
-                    menuItem: <MenuItem
-                      role='tabitem'
-                      as='span'
-                      key='model_domain'
-                      onClick={() => setEditMode('geometry')}
-                    >
-                      Model Domain
-                    </MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      <ModelDomain
-                        isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
-                        isLoading={loading}
-                        isLocked={locked}
-                        onChangeGeometry={setModelGeometry}
-                        onReset={() => setModelGeometry(spatialDiscretization.geometry)}
-                        onSubmit={handleSubmitGeometry}
-                        processShapefile={processShapefile}
-                        readOnly={isReadOnly}
-                      />
-                    </TabPane>,
-                  },
-                ]}
-              />
-            </AccordionContent>
-            <AccordionContent title={'Model grid'}>
-              <Tab
-                variant='primary'
-                menu={{pointing: true}}
-                panes={[
-                  {
-                    menuItem: <MenuItem
-                      role='tabitem'
-                      as='span'
-                      key='grid_properties'
-                    >
-                      Grid Properties
-                    </MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      <ModelGrid
-                        grid={grid}
-                        onChange={setGrid}
-                        isDirty={JSON.stringify(grid) !== JSON.stringify(spatialDiscretization.grid)}
-                        isLoading={loading}
-                        isLocked={locked}
-                        onReset={() => setGrid(spatialDiscretization.grid)}
-                        onSubmit={handleSubmitGrid}
-                        readOnly={isReadOnly}
-                      />
-                    </TabPane>,
-                  },
-                ]}
-              />
-            </AccordionContent>
-          </Accordion>
+
+          <Section
+            title={'Model domain'}
+            collapsable={true}
+            open={false}
+          >
+            <ModelDomain
+              isDirty={JSON.stringify(modelGeometry) !== JSON.stringify(spatialDiscretization.geometry)}
+              isLoading={loading}
+              isLocked={locked}
+              onChangeGeometry={setModelGeometry}
+              onReset={() => setModelGeometry(spatialDiscretization.geometry)}
+              onSubmit={handleSubmitGeometry}
+              processShapefile={processShapefile}
+              readOnly={isReadOnly}
+            />
+          </Section>
+
+          <Section
+            title={'Model grid'}
+            collapsable={true}
+            open={true}
+          >
+            <ModelGrid
+              grid={grid}
+              onChange={setGrid}
+              isDirty={JSON.stringify(grid) !== JSON.stringify(spatialDiscretization.grid)}
+              isLoading={loading}
+              isLocked={locked}
+              onReset={() => setGrid(spatialDiscretization.grid)}
+              onSubmit={handleSubmitGrid}
+              readOnly={isReadOnly}
+            />
+          </Section>
         </DataGrid>
       </SidebarContent>
       <BodyContent>

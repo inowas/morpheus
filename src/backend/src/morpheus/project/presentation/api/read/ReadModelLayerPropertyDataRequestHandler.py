@@ -75,7 +75,7 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'min_value': min([min(row) for row in data]) if isinstance(data, list) else data,
                 'max_value': max([max(row) for row in data]) if isinstance(data, list) else data,
                 'data': data,
-                'grid_outline': grid.get_wgs_outline_geometry().to_dict(),
+                'grid_outline': grid.get_wgs_outline_feature().to_dict(),
                 'nodata_value': None,
             }), 200
 
@@ -94,7 +94,7 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'n_rows': len(result_data),
                 'width': grid_width,
                 'height': grid_height,
-                'outline': grid.get_wgs_outline_geometry().to_dict(),
+                'outline': grid.get_wgs_outline_feature().to_dict(),
                 'bounds': grid.get_wgs_bbox(),
                 'rotation': grid.rotation.to_float(),
                 'min_value': min_value,
@@ -121,7 +121,7 @@ class ReadModelLayerPropertyDataRequestHandler:
                 'n_rows': cartesian_grid.n_rows(),
                 'width': grid_width,
                 'height': grid_height,
-                'outline': cartesian_grid.get_wgs_outline_geometry().to_dict(),
+                'outline': cartesian_grid.get_wgs_outline_feature().to_dict(),
                 'bounds': {
                     'x_min': x_min,
                     'y_min': y_min,

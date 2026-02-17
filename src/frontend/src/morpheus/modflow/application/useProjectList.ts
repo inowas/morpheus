@@ -1,7 +1,7 @@
 import {IError, IProjectListItem, IUserPrivilege} from '../types';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
-import {useApi, useUsers} from '../incoming';
+import {IUser, useApi, useUsers} from '../incoming';
 import useProjectCommandBus, {Commands} from './useProjectCommandBus';
 
 interface IUseProjectList {
@@ -20,8 +20,9 @@ interface IUseProjectList {
 }
 
 export interface IFilterParams {
-  my_projects?: boolean;
-  my_groups?: boolean;
+  show_my_projects?: boolean;
+  show_my_groups_projects?: boolean;
+  show_all_projects?: boolean;
   users?: string[];
   is_public?: boolean;
   status?: string[];
@@ -102,7 +103,7 @@ export interface IFilterOptions {
 
 export interface IUserSummary {
   user_id: string;
-  unsername: string;
+  username: string;
   count?: number
 }
 
@@ -143,29 +144,34 @@ type IProjectSummaryGetResponse = {
 const useProjectList = (): IUseProjectList => {
   const isMounted = useRef(true);
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
-  const [filter, setFilter] = useState<IFilterParams>({my_projects: true});
+  const [filter, setFilter] = useState<IFilterParams>({show_my_projects: true});
   const [orderOption, setOrderOption] = useState<IOrderOption>(orderOptions[0]);
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
-  const {authenticatedUser} = useUsers();
+  const {authenticatedUser, users} = useUsers();
+
+  console.log(authenticatedUser, users);
 
   const {sendCommand} = useProjectCommandBus();
+
+  const parseUsers = (userList: IUser[]) => {
+    const ownerIds = projects.map((project) => project.owner_id);
+    const uniqueOwnerIds = Array.from(new Set(ownerIds));
+    return uniqueOwnerIds.map((ownerId) => {
+      return {
+        user_id: ownerId,
+        username: userList.find((user) => user.user_id === ownerId)?.full_name || '',
+        count: projects.filter((project) => project.owner_id === ownerId).length,
+      };
+    });
+  };
 
   const filterOptions: IFilterOptions = useMemo(() => {
     return {
       number_of_my_projects: projects.filter((project) => project.owner_id === authenticatedUser?.user_id).length,
       number_of_my_group_projects: projects.filter((project) => project.owner_id !== authenticatedUser?.user_id).length,
-      users: [{
-        user_id: 'Dmytro',
-        unsername: 'Dmytro',
-        count: 10,
-      },
-      {
-        user_id: 'Ralf',
-        unsername: 'Ralf',
-        count: 2,
-      }],
+      users: parseUsers(users),
       by_status: {
         green: 100,
         yellow: 100,
@@ -229,7 +235,7 @@ const useProjectList = (): IUseProjectList => {
 
     let newListOfProjects: IProjectListItem[] = projects.filter((project) => {
 
-      if (filter.my_projects && project.owner_id !== authenticatedUser?.user_id) {
+      if (filter.show_my_projects && project.owner_id !== authenticatedUser?.user_id) {
         return false;
       }
 

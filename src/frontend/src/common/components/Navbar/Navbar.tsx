@@ -1,5 +1,4 @@
-import {Button, ContentWrapper} from 'common/components';
-import {Image, Input} from 'semantic-ui-react';
+import {Image} from 'semantic-ui-react';
 import React, {useState} from 'react';
 
 import {INavbarItem} from './types/navbar.type';
@@ -7,31 +6,25 @@ import MenuItem from './MenuItem';
 import logoInowas from './images/logo-inowas.png';
 import styles from './Navbar.module.less';
 import useIsMobile from 'common/hooks/useIsMobile';
+import ContentWrapper from '../ContentWrapper/ContentWrapper';
 
 interface IProps {
   navbarItems: INavbarItem[];
   location: any;
   navigateTo: (path: string) => void;
-  search?: {
-    value: string;
-    onChange: (value: string) => void;
-  };
   button?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const Navbar: React.FC<IProps> = ({
   navbarItems,
   location,
   navigateTo,
-  search,
   button,
+  children,
 }) => {
   const {isMobile} = useIsMobile();
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-
-  const handleCloseMobileMenu = () => {
-    setOpenMobileMenu((prevState) => !prevState);
-  };
 
   return (
     <>
@@ -44,7 +37,7 @@ const Navbar: React.FC<IProps> = ({
           <div className={styles.inner}>
             <div className={styles.mainMenuLogo}>
               <Image
-                alt="An example alt"
+                alt="inowas logo"
                 as="a"
                 href="/"
                 size="tiny"
@@ -56,7 +49,7 @@ const Navbar: React.FC<IProps> = ({
             {isMobile && (
               <div
                 className={`${styles.menuTrigger} ${openMobileMenu ? styles.menuTrigger__open : ''}`}
-                onClick={handleCloseMobileMenu}
+                onClick={() => setOpenMobileMenu((prevState) => !prevState)}
                 data-testid={'menu-trigger'}
               >
                 <span></span>
@@ -64,18 +57,9 @@ const Navbar: React.FC<IProps> = ({
                 <span></span>
               </div>
             )}
-            {(search && !isMobile) && (
-              <div className={styles.searchWrapper}>
-                <Input
-                  action={true}
-                  actionPosition="left"
-                  className={`${styles.search}`}
-                  value={search.value}
-                  onChange={(e) => search.onChange(e.target.value)}
-                >
-                  <Button primary={true}>Search</Button>
-                  <input/>
-                </Input>
+            {(children && !isMobile) && (
+              <div className={styles.contentWrapper}>
+                {children}
               </div>
             )}
             <nav
@@ -83,33 +67,20 @@ const Navbar: React.FC<IProps> = ({
               className={`${styles.nav} ${openMobileMenu ? styles.navOpen : ''}`}
             >
               <div className={styles.navWrapper}>
+                {isMobile && children}
                 <ul className={styles.menu}>
-                  {navbarItems.map((item: INavbarItem, idx: number) => {
-                    return <MenuItem
+                  {navbarItems.map((item: INavbarItem, idx: number) => (
+                    <MenuItem
                       key={idx}
                       items={item}
-                      onCloseMobileMenu={handleCloseMobileMenu}
+                      onCloseMobileMenu={() => setOpenMobileMenu(false)}
                       location={location}
                       navigateTo={navigateTo}
-                    />;
-                  })}
+                    />
+                  ))}
                 </ul>
                 {button}
               </div>
-              {(search && isMobile) && (
-                <div className={styles.searchWrapper}>
-                  <Input
-                    action={true}
-                    actionPosition="left"
-                    className={`${styles.search}`}
-                    value={search.value}
-                    onChange={(e) => search.onChange(e.target.value)}
-                  >
-                    <Button primary={true}>Search</Button>
-                    <input/>
-                  </Input>
-                </div>
-              )}
             </nav>
           </div>
         </ContentWrapper>

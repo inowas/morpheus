@@ -30,28 +30,33 @@ const getPanelDetails = (boundaries: IBoundary[], selectedBoundaryAndObservation
 
 interface IProps {
   boundaries: IBoundary[];
+  checkedBoundaries: IBoundaryId[];
   layers: ILayer[];
   formatDateTime: (value: string) => string;
   selectedBoundaryAndObservation?: ISelectedBoundaryAndObservation;
-  onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | null) => void;
+  onChangeCheckedBoundaries: (checkedBoundaries: IBoundaryId[]) => void;
   onCloneBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onCloneBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   onDisableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
   onEnableBoundary: (boundaryId: IBoundaryId) => Promise<void>;
-  onUpdateBoundaryAffectedLayers: (boundaryId: IBoundaryId, affectedLayers: ILayerId[]) => Promise<void>;
-  onUpdateBoundaryInterpolation: (boundaryId: IBoundaryId, interpolation: IInterpolationType) => Promise<void>;
+  onSelectBoundaryAndObservation: (selectedBoundaryAndObservation: ISelectedBoundaryAndObservation | null) => void;
+  onUpdateBoundaryAffectedLayers: (boundaryIds: IBoundaryId[], affectedLayers: ILayerId[]) => Promise<void>;
+  onUpdateBoundaryInterpolation: (boundaryIds: IBoundaryId[], interpolation: IInterpolationType) => Promise<void>;
   onUpdateBoundaryMetadata: (boundaryId: IBoundaryId, boundary_name?: string, boundary_tags?: string[]) => Promise<void>;
   onUpdateBoundaryObservation: (boundaryId: IBoundaryId, boundaryType: IBoundaryType, observation: IObservation<any>) => Promise<void>;
-  onRemoveBoundary: (boundaryId: IBoundaryId) => Promise<void>;
+  onUpdateBoundaryTags: (boundaryIds: IBoundaryId[], boundaryTags: string[]) => Promise<void>;
+  onRemoveBoundaries: (boundaryIds: IBoundaryId[]) => Promise<void>;
   onRemoveBoundaryObservation: (boundaryId: IBoundaryId, observationId: IObservationId) => Promise<void>;
   timeDiscretization: ITimeDiscretization;
 }
 
 const BoundariesAccordion = ({
   boundaries,
-  layers,
+  checkedBoundaries,
   formatDateTime,
+  layers,
   selectedBoundaryAndObservation,
+  onChangeCheckedBoundaries,
   onCloneBoundary,
   onCloneBoundaryObservation,
   onDisableBoundary,
@@ -60,7 +65,8 @@ const BoundariesAccordion = ({
   onUpdateBoundaryInterpolation,
   onUpdateBoundaryMetadata,
   onUpdateBoundaryObservation,
-  onRemoveBoundary,
+  onUpdateBoundaryTags,
+  onRemoveBoundaries,
   onRemoveBoundaryObservation,
   onSelectBoundaryAndObservation,
   timeDiscretization,
@@ -102,16 +108,19 @@ const BoundariesAccordion = ({
             <BoundariesAccordionPane
               boundaries={panel.boundaries}
               boundaryType={panel.type}
+              checkedBoundaries={checkedBoundaries}
+              onChangeCheckedBoundaries={onChangeCheckedBoundaries}
               onCloneBoundary={onCloneBoundary}
               onCloneBoundaryObservation={onCloneBoundaryObservation}
               onDisableBoundary={onDisableBoundary}
               onEnableBoundary={onEnableBoundary}
-              onRemoveBoundary={onRemoveBoundary}
+              onRemoveBoundaries={onRemoveBoundaries}
               onRemoveBoundaryObservation={onRemoveBoundaryObservation}
               onUpdateBoundaryMetadata={onUpdateBoundaryMetadata}
               onUpdateBoundaryAffectedLayers={onUpdateBoundaryAffectedLayers}
               onUpdateBoundaryInterpolation={onUpdateBoundaryInterpolation}
               onUpdateBoundaryObservation={onUpdateBoundaryObservation}
+              onUpdateBoundaryTags={onUpdateBoundaryTags}
               selectedBoundaryAndObservation={selectedBoundaryAndObservation?.boundary?.type === panel.type ? selectedBoundaryAndObservation : undefined}
               onSelectBoundaryAndObservation={onSelectBoundaryAndObservation}
               isReadOnly={false}

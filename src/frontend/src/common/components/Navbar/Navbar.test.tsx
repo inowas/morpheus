@@ -95,7 +95,7 @@ describe('Navbar Tests', () => {
     expect(screen.getByTestId('test-navbar')).toBeInTheDocument();
     expect(screen.getByTestId('test-nav')).not.toHaveClass('navOpen');
     expect(screen.getByText('Innovative Groundwater Solutions')).toBeInTheDocument();
-    expect(screen.getByAltText('An example alt')).toBeInTheDocument();
+    expect(screen.getByAltText('inowas logo')).toBeInTheDocument();
   });
 
   test('renders sub-menu items when a parent menu item is clicked', async () => {

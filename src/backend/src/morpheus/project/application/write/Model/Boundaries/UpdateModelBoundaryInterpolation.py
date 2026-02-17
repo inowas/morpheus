@@ -18,14 +18,14 @@ from morpheus.project.types.boundaries.Boundary import BoundaryId, Interpolation
 class UpdateModelBoundaryInterpolationCommandPayload(TypedDict):
     project_id: str
     model_id: str
-    boundary_id: str
+    boundary_ids: list[str]
     interpolation: Literal['none', 'linear', 'nearest', 'forward_fill']
 
 
 @dataclasses.dataclass(frozen=True)
 class UpdateModelBoundaryInterpolationCommand(ProjectCommandBase):
     model_id: ModelId
-    boundary_id: BoundaryId
+    boundary_ids: list[BoundaryId]
     interpolation: InterpolationType
 
     @classmethod
@@ -34,7 +34,7 @@ class UpdateModelBoundaryInterpolationCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
-            boundary_id=BoundaryId.from_str(payload['boundary_id']),
+            boundary_ids=[BoundaryId.from_str(boundary_id) for boundary_id in payload['boundary_ids']],
             interpolation=InterpolationType(payload['interpolation']),
         )
 
@@ -49,13 +49,14 @@ class UpdateModelBoundaryInterpolationCommandHandler(CommandHandlerBase):
         if model.model_id != command.model_id:
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
-        if not model.boundaries.has_boundary(boundary_id=command.boundary_id):
-            raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+        for boundary_id in command.boundary_ids:
+            if not model.boundaries.has_boundary(boundary_id=boundary_id):
+                raise ValueError(f'Boundary {boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
         event = ModelBoundaryInterpolationUpdatedEvent.from_props(
             project_id=project_id,
             model_id=command.model_id,
-            boundary_id=command.boundary_id,
+            boundary_ids=command.boundary_ids,
             interpolation=command.interpolation,
             occurred_at=DateTime.now()
         )

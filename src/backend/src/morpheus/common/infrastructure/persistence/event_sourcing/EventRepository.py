@@ -4,6 +4,7 @@ from typing import Mapping, Any
 import pymongo
 from pymongo.collection import Collection
 from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFactory
+from morpheus.common.infrastructure.persistence.event_sourcing.uuid7 import uuid7
 from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
 from morpheus.common.types import Uuid, DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
@@ -14,17 +15,19 @@ from morpheus.common.types.event_sourcing.EventName import EventName
 @dataclasses.dataclass(frozen=True)
 class EventStoreDocument:
     event_name: str
+    event_version: int
     occurred_at: str
     entity_uuid: str
-    version: int
+    version: str
     payload: dict
     metadata: dict
 
     @classmethod
-    def from_envelope_and_version(cls, envelope: EventEnvelope, version: int):
+    def from_envelope_and_version(cls, envelope: EventEnvelope, version: str):
         event = envelope.get_event()
         return cls(
             event_name=event.get_event_name().to_str(),
+            event_version=event.get_event_version(),
             occurred_at=event.get_occurred_at().to_iso_with_timezone(),
             entity_uuid=event.get_entity_uuid().to_str(),
             version=version,
@@ -36,6 +39,7 @@ class EventStoreDocument:
     def from_raw_document(cls, raw_document: Mapping[str, Any]):
         return cls(
             event_name=raw_document['event_name'],
+            event_version=raw_document['event_version'] if 'event_version' in raw_document else 0,
             occurred_at=raw_document['occurred_at'],
             entity_uuid=raw_document['entity_uuid'],
             version=raw_document['version'],
@@ -46,6 +50,7 @@ class EventStoreDocument:
     def to_dict(self) -> dict:
         return {
             'event_name': self.event_name,
+            'event_version': self.event_version,
             'occurred_at': self.occurred_at,
             'entity_uuid': self.entity_uuid,
             'version': self.version,
@@ -57,6 +62,7 @@ class EventStoreDocument:
         return EventEnvelope(
             event=event_factory.create_event(
                 event_name=EventName.from_str(self.event_name),
+                event_version=self.event_version,
                 entity_uuid=Uuid.from_str(self.entity_uuid),
                 occurred_at=DateTime.from_str(self.occurred_at),
                 payload=self.payload
@@ -72,21 +78,9 @@ class EventRepository(RepositoryBase):
         self._event_factory = event_factory
 
     def insert(self, event_envelope: EventEnvelope):
-        version = self._get_next_version_for_entity_uuid(
-            entity_uuid=event_envelope.get_event().get_entity_uuid().to_str()
-        )
         self.collection.insert_one(
-            EventStoreDocument.from_envelope_and_version(event_envelope, version).to_dict(),
+            EventStoreDocument.from_envelope_and_version(event_envelope, uuid7()).to_dict(),
         )
-
-    def _get_next_version_for_entity_uuid(self, entity_uuid: str) -> int:
-        count = self.collection.count_documents(
-            filter={
-                'entity_uuid': entity_uuid,
-            },
-        )
-
-        return count + 1
 
     def find_all_ordered_by_version(self):
         documents = self.collection.find({}).sort('version', pymongo.ASCENDING)

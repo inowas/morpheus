@@ -28,7 +28,7 @@ class UserEventBase(EventBase):
 class UserCreatedEvent(UserEventBase):
     @classmethod
     def from_user_data(cls, user_id: UserId, user_data: UserData, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(user_id.to_str()),
             occurred_at=occurred_at,
             payload=user_data.to_dict()
@@ -46,7 +46,7 @@ class UserCreatedEvent(UserEventBase):
 class UserDataUpdatedEvent(UserEventBase):
     @classmethod
     def from_user_data(cls, user_id: UserId, user_data: UserData, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(user_id.to_str()),
             occurred_at=occurred_at,
             payload=user_data.to_dict(),
@@ -64,7 +64,7 @@ class UserDataUpdatedEvent(UserEventBase):
 class UserLinkedToKeycloakEvent(UserEventBase):
     @classmethod
     def from_keycloak_user_id(cls, user_id: UserId, keycloak_user_id: KeycloakUserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(user_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -84,7 +84,7 @@ class UserLinkedToKeycloakEvent(UserEventBase):
 class UserLinkedToGeonodeEvent(UserEventBase):
     @classmethod
     def from_geonode_user_id(cls, user_id: UserId, geo_node_user_id: GeoNodeUserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(user_id.to_str()),
             occurred_at=occurred_at,
             payload={
@@ -104,7 +104,7 @@ class UserLinkedToGeonodeEvent(UserEventBase):
 class UserPromotedToAdminEvent(UserEventBase):
     @classmethod
     def new(cls, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(user_id.to_str()),
             occurred_at=occurred_at,
             payload={}
@@ -119,7 +119,7 @@ class UserPromotedToAdminEvent(UserEventBase):
 class UserDemotedFromAdminEvent(UserEventBase):
     @classmethod
     def new(cls, user_id: UserId, occurred_at: DateTime):
-        return cls(
+        return cls.create(
             entity_uuid=Uuid.from_str(user_id.to_str()),
             occurred_at=occurred_at,
             payload={}

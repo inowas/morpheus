@@ -8,7 +8,6 @@ import * as fs from 'fs';
 import HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const CopyPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -124,7 +123,6 @@ module.exports = (env: any, argv: any) => {
           },
         }],
       }),
-      new Dotenv(),
     ],
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.css', '.json'],

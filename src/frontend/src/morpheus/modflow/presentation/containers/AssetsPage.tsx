@@ -1,25 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {ContentWrapper, Grid, ImageRenderer, Loader, Navbar, SectionTitle, Tab, TabPane} from 'common/components';
+import React, {useEffect, useMemo, useState} from 'react';
+import {ContentWrapper, FileUploadButton, Grid, ImageRenderer, Loader, Navbar, Section, SectionTitle, Widget} from 'common/components';
 import {ModflowContainer} from '../components';
 import {useLocation, useNavigate} from 'common/hooks';
 import {useNavbarItems} from '../../../application/application';
 import {useParams} from 'react-router-dom';
 import useProjectPrivileges from '../../application/useProjectPrivileges';
 import useAssets from '../../application/useAssets';
-import {MenuItem, Radio} from 'semantic-ui-react';
-import {AssetButtonsGroup, AssetTable} from '../components/Asset';
-import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset, IShapefileAsset} from '../../types';
-import JSZip from 'jszip';
+import {Radio, Search} from 'semantic-ui-react';
+import {AssetTable} from '../components/Asset';
+import {IAsset, IAssetData, IAssetRasterData, IAssetShapefileData, IRasterAsset} from '../../types';
 import {Map, GeoJsonLayer} from 'common/components/Map';
 import {GeoJSON} from 'geojson';
+import ProjectTitleContainer from './ProjectTitleContainer';
 
 interface IProps {
   basePath: string;
 }
 
 const isRasterAsset = (asset: IAsset | null): asset is IRasterAsset => 'geo_tiff' === asset?.type;
-const isShapeAsset = (asset: IAsset | null): asset is IShapefileAsset => 'shapefile' === asset?.type;
-
 const isRasterAssetData = (data: IAssetData | null): data is IAssetRasterData => 'geo_tiff' === data?.type;
 const isShapeAssetData = (data: IAssetData | null): data is IAssetShapefileData => 'shapefile' === data?.type;
 
@@ -29,58 +27,63 @@ const AssetsPage = ({}: IProps) => {
   const location = useLocation();
   const {isReadOnly} = useProjectPrivileges(projectId as string);
   const {navbarItems} = useNavbarItems(projectId as string, isReadOnly);
-  const {assets, loading, deleteAsset, uploadAsset, fetchAssetData, updateAssetFileName, error} = useAssets(projectId as string);
+  const {
+    assets,
+    loadingAsset,
+    loadingData,
+    loadingList,
+    uploadingAsset,
+    deleteAsset,
+    uploadShapefile,
+    uploadRasterFile,
+    fetchAssetData,
+    updateAssetFileName,
+    error,
+  } = useAssets(projectId as string);
 
-  const [selectedAssetType, setSelectedAssetType] = useState<'shape' | 'raster' | 'csv'>('raster');
-  const [rasterAssets, setRasterAssets] = useState<IAsset[]>([]);
-  const [shapeAssets, setShapeAssets] = useState<IAsset[]>([]);
-
-  const [selectedAsset, setSelectedAsset] = useState<IAsset | null>(null);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [selectedAssetData, setSelectedAssetData] = useState<IAssetData | null>(null);
+  const [search, setSearch] = useState<string>('');
+
+  const selectedAsset = useMemo(() => {
+    return assets.find((a) => a.asset_id === selectedAssetId) || null;
+  }, [assets, selectedAssetId]);
+
+  const filteredAssets = useMemo(() => {
+    return assets.filter((asset) => asset.file.file_name.toLowerCase().includes(search.toLowerCase()));
+  }, [assets, search]);
 
   useEffect(() => {
-    setRasterAssets(assets.filter((item) => isRasterAsset(item)));
-    setShapeAssets(assets.filter((item) => isShapeAsset(item)));
-  }, [assets]);
-
-  useEffect(() => {
-    if (!selectedAsset) {
+    if (!selectedAssetId) {
       return setSelectedAssetData(null);
     }
 
-    fetchAssetData(selectedAsset.asset_id).then((data) => data && setSelectedAssetData(data));
+    fetchAssetData(selectedAssetId).then((data) => data && setSelectedAssetData(data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset]);
+  }, [selectedAssetId]);
 
   const handleUploadSelectedRasterFiles = async (files: File[]) => {
     for (const file of files) {
-      if (file.name.endsWith('.tif') || file.name.endsWith('.tiff') || file.name.endsWith('.geotiff')) {
-        await uploadAsset(file);
+      const assetId = await uploadRasterFile(file);
+      if (assetId) {
+        setSelectedAssetId(assetId);
       }
     }
   };
 
   const handleUploadSelectedShapeFiles = async (files: File[]) => {
-    // Check if the file is a zip file and return this file directly
-    const zipFile = files.find((file) => file.name.endsWith('.zip'));
-    if (zipFile) {
-      uploadAsset(zipFile);
-    }
-
-    // if no zip file is found, compress the files and upload the zip file
-    if (!zipFile) {
-      const zip = new JSZip();
-      const fileName = files[0].name.split('.')[0];
-      files.forEach((file) => zip.file(`${file.name}`, file));
-      const zipContent = await zip.generateAsync({type: 'blob'});
-      const file = new File([zipContent], `${fileName}.zip`, {type: 'application/zip'});
-      await uploadAsset(file);
+    const assetId = await uploadShapefile(files);
+    if (assetId) {
+      setSelectedAssetId(assetId);
     }
   };
 
-  const renderData = (asset: IAsset | null, data: IAssetData | null) => {
+  const handleSelectAsset = (asset: IAsset) => {
+    setSelectedAssetId(asset.asset_id);
+  };
 
-    if (loading) {
+  const renderData = (asset: IAsset | null, data: IAssetData | null) => {
+    if (loadingData) {
       return <Loader
         style={{marginTop: '50px'}}
         inline={'centered'}
@@ -111,77 +114,76 @@ const AssetsPage = ({}: IProps) => {
     return null;
   };
 
+  console.log(navbarItems);
+
   return (
     <>
       <Navbar
         location={location}
         navbarItems={navbarItems}
         navigateTo={navigateTo}
-      />
+      >
+        <ProjectTitleContainer/>
+      </Navbar>
       <ModflowContainer>
         <ContentWrapper>
-          <Grid.Grid style={{paddingTop: '50px', minHeight: 'calc(100vh - 200px)'}}>
+          <SectionTitle
+            style={{marginTop: '20px'}}
+            title={'Assets'}
+            as={'h1'}
+          />
+          <Grid.Grid style={{minHeight: 'calc(100vh - 200px)'}}>
             <Grid.Column width={10}>
-              <SectionTitle title='Assets' style={{marginBottom: '30px'}}/>
-              <Tab
-                variant='primary'
-                menu={{pointing: true}}
-                panes={[
-                  {
-                    menuItem: <MenuItem key='raster-assets' onClick={() => setSelectedAssetType('raster')}>Raster File</MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      <AssetTable
-                        fileType={selectedAssetType}
-                        assets={rasterAssets}
-                        loading={loading}
-                        deleteAsset={deleteAsset}
-                        updateAssetFileName={updateAssetFileName}
-                        isReadOnly={isReadOnly}
-                        selectedAsset={isRasterAsset(selectedAsset) ? selectedAsset : null}
-                        onSelectAsset={setSelectedAsset}
-                      />
-                      <AssetButtonsGroup
-                        acceptFiles={'.geotiff,.tif,.tiff'}
-                        buttonContent={'Upload Raster Files'}
-                        isReadOnly={isReadOnly}
-                        loading={loading}
-                        onSelectFiles={handleUploadSelectedRasterFiles}
-                      />
-                    </TabPane>,
-                  },
-                  {
-                    menuItem: <MenuItem key='shapefile-assets' onClick={() => setSelectedAssetType('shape')}>Shape File</MenuItem>,
-                    render: () => <TabPane attached={false}>
-                      <AssetTable
-                        fileType={selectedAssetType}
-                        assets={shapeAssets}
-                        loading={loading}
-                        deleteAsset={deleteAsset}
-                        updateAssetFileName={updateAssetFileName}
-                        isReadOnly={isReadOnly}
-                        selectedAsset={isShapeAsset(selectedAsset) ? selectedAsset : null}
-                        onSelectAsset={setSelectedAsset}
-                      />
-                      <AssetButtonsGroup
-                        acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
-                        buttonContent={'Upload Shapefiles'}
-                        isReadOnly={isReadOnly}
-                        loading={loading}
-                        onSelectFiles={handleUploadSelectedShapeFiles}
-                      />
-                    </TabPane>,
-                  },
-                ]}
-              />
+              <Widget>
+                <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+                  <FileUploadButton
+                    acceptFiles={'.geotiff,.tif,.tiff'}
+                    buttonContent={'Upload raster files'}
+                    isReadOnly={isReadOnly}
+                    loading={uploadingAsset}
+                    onSelectFiles={handleUploadSelectedRasterFiles}
+                  />
+                  <FileUploadButton
+                    acceptFiles={'.zip,.shp,.shx,.dbf,.prj,.cpg,.qmd,.sbn,.sbx,.shx'}
+                    buttonContent={'Upload shapefiles'}
+                    isReadOnly={isReadOnly}
+                    loading={uploadingAsset}
+                    onSelectFiles={handleUploadSelectedShapeFiles}
+                  />
+                  <div>
+                    <Search
+                      placeholder={'Search assets...'}
+                      showNoResults={false}
+                      value={search}
+                      onSearchChange={(_, {value}) => setSearch(value || '')}
+                    />
+                  </div>
+                </div>
+              </Widget>
+              <Widget>
+                <AssetTable
+                  assets={filteredAssets}
+                  loadingAsset={loadingAsset}
+                  loadingList={loadingList}
+                  deleteAsset={deleteAsset}
+                  updateAssetFileName={updateAssetFileName}
+                  isReadOnly={isReadOnly}
+                  selectedAsset={selectedAsset}
+                  onSelectAsset={handleSelectAsset}
+                />
+              </Widget>
             </Grid.Column>
-
             {/* Preview */}
-            <Grid.Column width={6} style={{display: 'flex', flexDirection: 'column'}}>
-              <SectionTitle title='Preview'/>
-              <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-                <p style={{fontWeight: '600', padding: '10px'}}>{selectedAsset?.file.file_name}</p>
+            <Grid.Column width={6}>
+              <Section
+                title={'Preview'}
+                collapsable={false}
+              >
+                <div style={{height: '420px', overflow: 'auto', marginTop: '20px'}}>
+                  {renderData(selectedAsset, selectedAssetData)}
+                </div>
                 {isRasterAsset(selectedAsset) &&
-                  <div style={{display: 'flex', gap: 10, margin: 10}}>
+                  <div style={{display: 'flex', gap: '20', margin: '0'}}>
                     {new Array(selectedAsset.metadata.n_bands).fill(0).map((_, index) => (
                       <Radio
                         key={index}
@@ -191,10 +193,7 @@ const AssetsPage = ({}: IProps) => {
                       />
                     ))}
                   </div>}
-              </div>
-
-              {renderData(selectedAsset, selectedAssetData)}
-
+              </Section>
             </Grid.Column>
           </Grid.Grid>
         </ContentWrapper>

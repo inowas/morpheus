@@ -1,7 +1,7 @@
 import {LineString, Point, Polygon} from 'geojson';
 import {IAffectedCells, ILengthUnit, ITimeDiscretization} from '../types';
 import {ILayerId, ILayerProperty, IZone} from '../types/Layers.type';
-import {IBoundaryObservationValue, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
+import {IBoundaryId, IBoundaryObservationValue, IBoundaryType, IInterpolationType, IObservationId} from '../types/Boundaries.type';
 import {ICalculationProfile} from '../types/CalculationProfile.type';
 import {IObservationValue} from '../types/Observations.type';
 import {IImportItem} from '../types/Import.type';
@@ -154,12 +154,12 @@ export interface IImportModelBoundariesCommand {
   }
 }
 
-export interface IRemoveModelBoundaryCommand {
-  command_name: 'remove_model_boundary_command';
+export interface IRemoveModelBoundariesCommand {
+  command_name: 'remove_model_boundaries_command';
   payload: {
     project_id: string;
     model_id: string;
-    boundary_id: string;
+    boundary_ids: string[];
   }
 }
 
@@ -188,7 +188,7 @@ export interface IUpdateModelBoundaryAffectedLayersCommand {
   payload: {
     project_id: string;
     model_id: string;
-    boundary_id: string;
+    boundary_ids: string[];
     affected_layers: ILayerId[];
   }
 }
@@ -208,7 +208,7 @@ export interface IUpdateModelBoundaryInterpolationCommand {
   payload: {
     project_id: string;
     model_id: string;
-    boundary_id: string;
+    boundary_ids: string[];
     interpolation: IInterpolationType;
   }
 }
@@ -238,6 +238,16 @@ export interface IUpdateModelBoundaryObservationCommand {
   }
 }
 
+export interface IUpdateModelBoundaryTagsCommand {
+  command_name: 'update_model_boundary_tags_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+    boundary_ids: IBoundaryId[];
+    tags: string[];
+  }
+}
+
 export type IModelBoundaryCommand = IAddModelBoundaryCommand |
   IAddModelBoundaryObservationCommand |
   ICloneModelBoundaryCommand |
@@ -245,14 +255,15 @@ export type IModelBoundaryCommand = IAddModelBoundaryCommand |
   IDisableModelBoundaryCommand |
   IEnableModelBoundaryCommand |
   IImportModelBoundariesCommand |
-  IRemoveModelBoundaryCommand |
+  IRemoveModelBoundariesCommand |
   IRemoveModelBoundaryObservationCommand |
   IUpdateModelBoundaryAffectedCellsCommand |
   IUpdateModelBoundaryAffectedLayersCommand |
   IUpdateModelBoundaryGeometryCommand |
   IUpdateModelBoundaryInterpolationCommand |
   IUpdateModelBoundaryMetadataCommand |
-  IUpdateModelBoundaryObservationCommand;
+  IUpdateModelBoundaryObservationCommand |
+  IUpdateModelBoundaryTagsCommand;
 
 
 // Model Discretization Commands
@@ -417,6 +428,14 @@ export type IModelObservationCommand = IAddModelObservationCommand |
   IUpdateModelObservationCommand;
 
 // Model Layer Commands
+export interface IAddModelLayerCommand {
+  command_name: 'add_model_layer_command';
+  payload: {
+    project_id: string;
+    model_id: string;
+  }
+}
+
 export interface ICloneModelLayerCommand {
   command_name: 'clone_model_layer_command';
   payload: {
@@ -520,7 +539,8 @@ export interface IUpdateModelLayerPropertyZonesCommand {
   }
 }
 
-export type IModelLayerCommand = ICloneModelLayerCommand |
+export type IModelLayerCommand = IAddModelLayerCommand |
+  ICloneModelLayerCommand |
   ICreateModelLayerCommand |
   IDeleteModelLayerCommand |
   IUpdateModelLayerConfinementCommand |
