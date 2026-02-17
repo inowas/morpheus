@@ -24,6 +24,7 @@ publish-morpheus-backend-api:dev:
     refs:
       - main
       - tags
+      - fix/local-setup
 
 publish-morpheus-backend-task-queue-worker:dev:
   stage: publish
@@ -43,6 +44,7 @@ publish-morpheus-backend-task-queue-worker:dev:
     refs:
       - main
       - tags
+      - fix/local-setup
 
 publish-morpheus-backend-api:prod:
   stage: publish
