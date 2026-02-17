@@ -27,6 +27,7 @@ dependencies = [
   "pymongo==4.6.1",
   "pyproj==3.6.1",
   "python-keycloak==3.7.0",
+  "sentry-sdk[flask]==2.13.0",
   "scipy==1.12.0",
   "shapely==2.1.2",
   "simplejson==3.19.2",
