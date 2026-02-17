@@ -54,3 +54,5 @@ WORKDIR ${BACKEND_APP_ROOT_PATH}/src
 ENTRYPOINT ["../docker/docker-entrypoint.sh"]
 CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
 EXPOSE 8000
+
+# FORCE Start
