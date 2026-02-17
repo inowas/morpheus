@@ -12,6 +12,7 @@ This repository contains the source code for the frontend and backend of the Mor
 - [Node.js](https://nodejs.org/en/)
 - [NVM](https://github.com/nvm-sh/nvm)
 - [Python 3](https://www.python.org/)
+- [LibMagick](https://imagemagick.org/script/download.php) (for backend development)
 
 ### Prepare etc/hosts
 
@@ -69,6 +70,7 @@ A mailcatcher can be found at http://mailcatcher.inowas.localhost. All mail can 
 A keycloak server runs at http://identity.inowas.localhost. It has a preconfigured dev realm "inowas" with the client
 "morpheus-frontend" and a user "dev@inowas.localhost" with the password "dev". The default dev user for the admin
 console is:
+
 * username: `admin`
 * password: `dev`
 
@@ -78,10 +80,12 @@ committed to the repository.
 Two users are available in the dev realm:
 
 Morpheus admin user:
+
 * username: `admin@inowas.localhost`
 * password: `dev`
 
 Normal morpheus user:
+
 * username: `dev@inowas.localhost`
 * password: `dev`
 

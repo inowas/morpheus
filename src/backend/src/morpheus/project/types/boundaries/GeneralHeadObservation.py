@@ -89,7 +89,7 @@ class GeneralHeadObservation(Observation):
             'data': [d.to_dict() for d in self.data]
         }
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> GeneralHeadDataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> GeneralHeadDataItem | None:
 
         # No interpolation
         # if this is set, we are expecting that the start_date_time is present in the time series

@@ -1,15 +1,13 @@
 services:
   traefik:
-    image:
-      traefik:2.10
+    image: traefik:v3.6
     restart: always
-    container_name: traefik
+    container_name: morpheus_dev_traefik
     command:
       - "--log.level=DEBUG"
       - "--accesslog=true"
       - "--api=true"
       - "--api.dashboard=true"
-      - "--api.insecure=true"
       - "--api.debug=true"
       - "--ping=true"
       - "--entrypoints.web.address=:80"
@@ -17,25 +15,31 @@ services:
       - "--entrypoints.mongodb.address=:27017"
       - "--entrypoints.rabbitmq.address=:5672"
       - "--providers.docker=true"
+      - "--providers.docker.defaultRule=Host(`{{ normalize .Name }}.${DOMAIN}`)"
       - "--providers.docker.exposedByDefault=false"
       - "--providers.file.directory=/etc/traefik"
       - "--providers.file.watch=true"
       - "--global.checkNewVersion=true"
       - "--global.sendAnonymousUsage=false"
       - "--log.filePath=/var/log/traefik/traefik.log"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
     ports:
       - "80:80"
-      - "8080:8080" # for traefik api, dashboard and healthcheck local access
-      - "5432:5432" # for postgres local access
+      - "8080:8080"   # for traefik api, dashboard and healthcheck local access
+      - "5432:5432"   # for postgres local access
       - "27017:27017" # for mongodb local access
-      - "5672:5672" # for rabbitmq local access
+      - "5672:5672"   # for rabbitmq local access
     healthcheck:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
       timeout: 5s
       retries: 3
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - auth
       - backend

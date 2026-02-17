@@ -82,7 +82,7 @@ class ConstantHeadObservation(Observation):
             data=data
         )
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> ConstantHeadDataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> ConstantHeadDataItem | None:
 
         # No interpolation
         # if this is set, we are expecting that the start_date_time is present in the time series
