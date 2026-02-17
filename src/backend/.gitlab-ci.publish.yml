@@ -20,11 +20,11 @@ publish-morpheus-backend-api:dev:
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
-      - src/backend/requirements/**/*.*
+      - src/backend/pyproject.toml
+      - src/backend/uv.lock
     refs:
       - main
       - tags
-      - fix/local-setup
 
 publish-morpheus-backend-task-queue-worker:dev:
   stage: publish
@@ -40,11 +40,11 @@ publish-morpheus-backend-task-queue-worker:dev:
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
-      - src/backend/requirements/**/*.*
+      - src/backend/pyproject.toml
+      - src/backend/uv.lock
     refs:
       - main
       - tags
-      - fix/local-setup
 
 publish-morpheus-backend-api:prod:
   stage: publish
@@ -61,7 +61,8 @@ publish-morpheus-backend-api:prod:
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
-      - src/backend/requirements/**/*.*
+      - src/backend/pyproject.toml
+      - src/backend/uv.lock
     refs:
       - tags
 
@@ -80,6 +81,7 @@ publish-morpheus-backend-task-queue-worker:prod:
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
-      - src/backend/requirements/**/*.*
+      - src/backend/pyproject.toml
+      - src/backend/uv.lock
     refs:
       - tags

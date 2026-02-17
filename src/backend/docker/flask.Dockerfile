@@ -16,7 +16,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/pyproject.toml ${BACKEND_APP_ROOT_PATH}/pyproject.toml
-ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
+ADD src/backend/uv.lock ${BACKEND_APP_ROOT_PATH}/uv.lock
+ADD src/backend/README.md ${BACKEND_APP_ROOT_PATH}/README.md
 ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
 ADD src/backend/docker/docker-entrypoint.d ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d
 COPY --from=build_openapi_spec /src/morpheus/openapi.bundle.json ${BACKEND_APP_ROOT_PATH}/src/morpheus/openapi.bundle.json
@@ -25,7 +26,7 @@ COPY --from=build_openapi_spec /src/morpheus/openapi.bundle.json ${BACKEND_APP_R
 # Use system python (no venv needed in Docker)
 WORKDIR ${BACKEND_APP_ROOT_PATH}
 ENV UV_SYSTEM_PYTHON=1
-RUN uv pip install --no-cache -r requirements/prod.txt
+RUN uv pip install --no-cache .
 
 # prepare python environment
 ENV PYTHONUNBUFFERED 1
@@ -46,6 +47,8 @@ RUN chown -R flask:flask /mnt
 
 
 FROM base AS flask_app
+
+
 ARG BACKEND_APP_ROOT_PATH
 
 # start gunicorn as user flask
@@ -54,5 +57,3 @@ WORKDIR ${BACKEND_APP_ROOT_PATH}/src
 ENTRYPOINT ["../docker/docker-entrypoint.sh"]
 CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "wsgi:app"]
 EXPOSE 8000
-
-# FORCE Start

@@ -11,13 +11,15 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/pyproject.toml ${BACKEND_APP_ROOT_PATH}/pyproject.toml
-ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
+ADD src/backend/uv.lock ${BACKEND_APP_ROOT_PATH}/uv.lock
+ADD src/backend/README.md ${BACKEND_APP_ROOT_PATH}/README.md
 
 # install python dependencies with uv
 # Use system python (no venv needed in Docker)
 WORKDIR ${BACKEND_APP_ROOT_PATH}
 ENV UV_SYSTEM_PYTHON=1
-RUN uv pip install --no-cache -r requirements/prod.txt
+RUN uv pip install --no-cache .
+# Download MODFLOW executables using FloPy
 RUN get-modflow :python
 
 # prepare python environment
