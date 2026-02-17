@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Literal
-from shapely.geometry import MultiPolygon as ShapelyMultiPolygon, Polygon as ShapelyPolygon
+from shapely.geometry import Polygon as ShapelyPolygon
+from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
 from .Point import Point
 
 
@@ -19,19 +20,17 @@ class MultiPolygon:
         }
 
     def centroid(self) -> Point:
-        shapely_polygon = self.to_shapely_multipolygon()
-        return Point(coordinates=shapely_polygon.centroid.coords[0])
+        # Convert each polygon's coordinates to a ShapelyPolygon
+        shapely_polygons = [ShapelyPolygon(poly_coords[0]) for poly_coords in self.coordinates]
+        shapely_multipolygon = ShapelyMultiPolygon(shapely_polygons)
+        coords = shapely_multipolygon.centroid.coords[0]
+        return Point(coordinates=(coords[0], coords[1]))
 
     @classmethod
     def from_dict(cls, obj: dict):
         if str(obj['type']).lower() != 'MultiPolygon'.lower():
             raise ValueError('Geometry Type must be a MultiPolygon')
         return cls(coordinates=obj['coordinates'])
-
-    @classmethod
-    def from_shapely_multipolygon(cls, shapely_multipolygon: ShapelyMultiPolygon):
-        coordinates = shapely_multipolygon.__geo_interface__["coordinates"]
-        return cls(coordinates=list(map(lambda x: list(map(lambda y: list(y), x)), coordinates)))
 
     def to_dict(self):
         return {
@@ -41,9 +40,3 @@ class MultiPolygon:
 
     def as_geojson(self):
         return self.__geo_interface__()
-
-    def to_shapely_multipolygon(self):
-        polygons = []
-        for polygon in self.coordinates:
-            polygons.append(ShapelyPolygon(polygon[0], holes=polygon[1:]))
-        return ShapelyMultiPolygon(polygons)

@@ -1,25 +1,32 @@
 ARG BACKEND_APP_ROOT_PATH=/app
 
-FROM node:20 as build_openapi_spec
+FROM node:20 AS build_openapi_spec
 ADD src/backend/src /src
 RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle.json /src/morpheus/openapi.yml
 
 
-FROM python:3.12-bookworm as base
+FROM python:3.12-bookworm AS base
 ARG BACKEND_APP_ROOT_PATH
 ARG FLASK_USER_ID
 ARG FLASK_GROUP_ID
 
+# install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 # add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
-ADD src/backend/requirements/prod.txt ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
+ADD src/backend/pyproject.toml ${BACKEND_APP_ROOT_PATH}/pyproject.toml
+ADD src/backend/uv.lock ${BACKEND_APP_ROOT_PATH}/uv.lock
+ADD src/backend/README.md ${BACKEND_APP_ROOT_PATH}/README.md
 ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
 ADD src/backend/docker/docker-entrypoint.d ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d
 COPY --from=build_openapi_spec /src/morpheus/openapi.bundle.json ${BACKEND_APP_ROOT_PATH}/src/morpheus/openapi.bundle.json
 
-# install python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r ${BACKEND_APP_ROOT_PATH}/requirements/prod.txt
+# install python dependencies with uv
+# Use system python (no venv needed in Docker)
+WORKDIR ${BACKEND_APP_ROOT_PATH}
+ENV UV_SYSTEM_PYTHON=1
+RUN uv pip install --no-cache .
 
 # prepare python environment
 ENV PYTHONUNBUFFERED 1
@@ -39,7 +46,9 @@ RUN mkdir -p /mnt/sensors
 RUN chown -R flask:flask /mnt
 
 
-FROM base as flask_app
+FROM base AS flask_app
+
+
 ARG BACKEND_APP_ROOT_PATH
 
 # start gunicorn as user flask

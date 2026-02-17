@@ -172,7 +172,7 @@ class LakeObservation(Observation):
             'stage_range': self.stage_range.to_dict(),
         }
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> LakeDataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> LakeDataItem | None:
 
         # No interpolation
         # if this is set, we are expecting that the start_date_time is present in the time series

@@ -18,11 +18,6 @@ class Polygon:
             raise ValueError('Geometry Type must be a Polygon')
         return cls(coordinates=obj['coordinates'])
 
-    @classmethod
-    def from_shapely_polygon(cls, shapely_polygon: ShapelyPolygon):
-        coordinates = shapely_polygon.__geo_interface__["coordinates"]
-        return cls(coordinates=list(map(lambda x: list(x), coordinates)))
-
     def __geo_interface__(self):
         return {
             'type': self.type,
@@ -30,10 +25,13 @@ class Polygon:
         }
 
     def centroid(self) -> Point:
-        return Point(coordinates=self.to_shapely_polygon().centroid.coords[0])
+        shapely_polygon = ShapelyPolygon(self.coordinates[0])
+        coords = shapely_polygon.centroid.coords[0]
+        return Point(coordinates=(coords[0], coords[1]))
 
     def bbox(self) -> list[float]:
-        return list(self.to_shapely_polygon().bounds)
+        shapely_polygon = ShapelyPolygon(self.coordinates[0])
+        return list(shapely_polygon.bounds)
 
     def to_dict(self):
         return {
@@ -43,6 +41,3 @@ class Polygon:
 
     def as_geojson(self):
         return self.__geo_interface__()
-
-    def to_shapely_polygon(self):
-        return ShapelyPolygon(self.coordinates[0], holes=self.coordinates[1:])

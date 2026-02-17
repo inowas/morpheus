@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:v2.10
+    image: traefik:v3.6
     command:
       - "--log.level=INFO"
       - "--log.filePath=/var/logs/traefik/traefik.log"
@@ -38,6 +38,9 @@ services:
     networks:
       - traefik
     read_only: true
+    security_opt:
+      - no-new-privileges:true
+
 networks:
   traefik:
     name: ${TRAEFIK_NETWORK}

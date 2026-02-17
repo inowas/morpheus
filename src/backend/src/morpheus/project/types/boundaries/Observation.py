@@ -56,7 +56,7 @@ class Observation:
     def to_dict(self):
         raise NotImplementedError()
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> DataItem | None:
+    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> DataItem | None:
         raise NotImplementedError()
 
     def as_geojson(self):

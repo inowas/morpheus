@@ -43,7 +43,8 @@ class LineString:
         shapely_line = ShapelyLineString(self.coordinates)
         shapely_point = ShapelyPoint(point.coordinates)
         nearest_shapely_point_on_linestring = shapely_line.interpolate(shapely_line.project(shapely_point))
-        nearest_point = Point(coordinates=nearest_shapely_point_on_linestring.coords[0])
+        coords = nearest_shapely_point_on_linestring.coords[0]
+        nearest_point = Point(coordinates=(coords[0], coords[1]))
         return nearest_point
 
     def to_shapely_linestring(self):

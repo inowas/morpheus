@@ -12,6 +12,6 @@ class CommandBus:
     def register(self, command: Type[CommandBase], handler: Type[CommandHandlerBase]):
         self._command_handlers[command.command_name()] = handler
 
-    def dispatch(self, command: Type[CommandBase]):
+    def dispatch(self, command: CommandBase):
         handler = self._command_handlers[command.command_name()]
         return handler.handle(command)

@@ -16,16 +16,16 @@ class ImageCreationService:
         img_data = np.where(img_data == no_data_value, np.nan, img_data)
 
         if v_min is None:
-            v_min = np.nanmin(img_data) - np.nanstd(img_data)
+            v_min = float(np.nanmin(img_data) - np.nanstd(img_data))
 
         if v_max is None:
-            v_max = np.nanmax(img_data) + np.nanstd(img_data)
+            v_max = float(np.nanmax(img_data) + np.nanstd(img_data))
 
         if v_min == np.nan:
-            v_min = np.nanmin(img_data)
+            v_min = float(np.nanmin(img_data))
 
         if v_max == np.nan:
-            v_max = np.nanmax(img_data)
+            v_max = float(np.nanmax(img_data))
 
         if v_min == v_max:
             v_min -= 1
@@ -46,16 +46,16 @@ class ImageCreationService:
             img_data = np.where(img_data == no_data_value, np.nan, img_data)
 
         if v_min is None:
-            v_min = np.nanmin(img_data) - np.nanstd(img_data)
+            v_min = float(np.nanmin(img_data) - np.nanstd(img_data))
 
         if v_max is None:
-            v_max = np.nanmax(img_data) + np.nanstd(img_data)
+            v_max = float(np.nanmax(img_data) + np.nanstd(img_data))
 
         if v_min == np.nan:
-            v_min = np.nanmin(data)
+            v_min = float(np.nanmin(data))
 
         if v_max == np.nan:
-            v_max = np.nanmax(data)
+            v_max = float(np.nanmax(data))
 
         if v_min == v_max:
             v_min -= 1
