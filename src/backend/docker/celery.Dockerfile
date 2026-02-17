@@ -1,6 +1,6 @@
 ARG BACKEND_APP_ROOT_PATH=/app
 
-FROM python:3.12-bookworm as base
+FROM python:3.12-bookworm AS base
 ARG BACKEND_APP_ROOT_PATH
 ARG CELERY_USER_ID
 ARG CELERY_GROUP_ID
@@ -35,7 +35,7 @@ RUN mkdir -p /mnt/project/calculations
 RUN chown -R celery:celery /mnt
 
 
-FROM base as celery_worker
+FROM base AS celery_worker
 ARG BACKEND_APP_ROOT_PATH
 
 # start celery worker as user celery
