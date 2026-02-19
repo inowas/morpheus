@@ -1,0 +1,11 @@
+# Environment files with secrets
+.env
+
+# Traefik data
+traefik/acme/*.json
+traefik/logs/*.log
+
+# Backups
+*.backup
+*.tar.gz
+*.sql

@@ -1,0 +1,361 @@
+# INOWAS Suite - Unified Deployment
+# Includes: Traefik, Keycloak, Morpheus, MfViz, SimpleTools
+
+services:
+  # ============================================================================
+  # TRAEFIK - Reverse Proxy
+  # ============================================================================
+  traefik:
+    image: traefik:v3.6
+    container_name: ${COMPOSE_PROJECT_NAME}-traefik
+    command:
+      - "--log.level=INFO"
+      - "--log.filePath=/var/logs/traefik/traefik.log"
+      - "--accesslog=true"
+      - "--api=false"
+      - "--api.dashboard=false"
+      - "--api.insecure=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--global.checkNewVersion=true"
+      - "--global.sendAnonymousUsage=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.file.filename=/etc/traefik/config.yml"
+      # Let's Encrypt
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.caserver=${TRAEFIK_ACME_LETSENCRYPT_CASERVER}"
+      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme_letsencrypt.json"
+      # TU-Dresden CA (optional)
+      - "--certificatesresolvers.tud-resolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.tud-resolver.acme.caserver=${TRAEFIK_ACME_TUD_CASERVER}"
+      - "--certificatesresolvers.tud-resolver.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.tud-resolver.acme.eab.kid=${TRAEFIK_ACME_TUD_EAB_KID}"
+      - "--certificatesresolvers.tud-resolver.acme.eab.hmacencoded=${TRAEFIK_ACME_TUD_EAB_HMAC_ENCODED}"
+      - "--certificatesresolvers.tud-resolver.acme.storage=/etc/traefik/acme/acme_tud.json"
+    volumes:
+      - ${DOCKER_SOCKET}:/var/run/docker.sock
+      - ./traefik/acme:/etc/traefik/acme
+      - ./traefik/config.yml:/etc/traefik/config.yml:ro
+      - ./traefik/logs:/var/logs/traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    networks:
+      - traefik
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+
+  # ============================================================================
+  # KEYCLOAK - Authentication & Identity
+  # ============================================================================
+  keycloak:
+    image: inowas/keycloak:${KEYCLOAK_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-keycloak
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/${KEYCLOAK_POSTGRES_DB}
+      KC_PROXY: edge
+      KC_HOSTNAME: ${KEYCLOAK_HOST}
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true
+    command:
+      start --optimized --proxy-headers=xforwarded
+    networks:
+      - auth
+      - traefik
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    read_only: true
+    restart: always
+    tmpfs:
+      - /tmp
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak-http.entrypoints=web"
+      - "traefik.http.routers.keycloak-http.rule=Host(`${KEYCLOAK_HOST}`)"
+      - "traefik.http.routers.keycloak-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.rule=Host(`${KEYCLOAK_HOST}`)"
+      - "traefik.http.routers.keycloak.tls=true"
+      - "traefik.http.routers.keycloak.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik"
+
+  keycloak-db:
+    image: postgres:13.12
+    container_name: ${COMPOSE_PROJECT_NAME}-keycloak-db
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
+    volumes:
+      - keycloak-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${KEYCLOAK_POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - auth
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+
+  # ============================================================================
+  # MORPHEUS - Main Application
+  # ============================================================================
+  morpheus-frontend:
+    image: inowas/morpheus-frontend:${MORPHEUS_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-morpheus-frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.morpheus-frontend-http.entrypoints=web"
+      - "traefik.http.routers.morpheus-frontend-http.rule=Host(`${MORPHEUS_FRONTEND_HOST}`)"
+      - "traefik.http.routers.morpheus-frontend-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.morpheus-frontend.entrypoints=websecure"
+      - "traefik.http.routers.morpheus-frontend.rule=Host(`${MORPHEUS_FRONTEND_HOST}`)"
+      - "traefik.http.routers.morpheus-frontend.tls=true"
+      - "traefik.http.routers.morpheus-frontend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.morpheus-frontend.service=morpheus-frontend"
+      - "traefik.http.services.morpheus-frontend.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+    restart: always
+    read_only: true
+    tmpfs:
+      - /var/run:mode=777,size=100m
+      - /var/cache/nginx:mode=777,size=100m
+
+  morpheus-backend:
+    image: inowas/morpheus-backend-api:${MORPHEUS_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-morpheus-backend
+    depends_on:
+      morpheus-db:
+        condition: service_healthy
+      morpheus-mq:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - BACKEND_APP_ROOT_PATH=/app
+      - MPLCONFIGDIR=/tmp
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthcheck').read()" ]
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.morpheus-backend-http.entrypoints=web"
+      - "traefik.http.routers.morpheus-backend-http.rule=Host(`${MORPHEUS_BACKEND_HOST}`)"
+      - "traefik.http.routers.morpheus-backend-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.morpheus-backend.entrypoints=websecure"
+      - "traefik.http.routers.morpheus-backend.rule=Host(`${MORPHEUS_BACKEND_HOST}`)"
+      - "traefik.http.routers.morpheus-backend.tls=true"
+      - "traefik.http.routers.morpheus-backend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.morpheus-backend.service=morpheus-backend"
+      - "traefik.http.services.morpheus-backend.loadbalancer.server.port=8000"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp:mode=777,size=200m
+      - /var/cache:mode=777,size=200m
+    restart: always
+    user: flask
+    volumes:
+      - morpheus-assets:/mnt/project/assets
+      - morpheus-calculations:/mnt/project/calculations
+      - morpheus-sensors:/mnt/sensors
+
+  morpheus-worker:
+    image: inowas/morpheus-backend-task-queue-worker:${MORPHEUS_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-morpheus-worker
+    depends_on:
+      morpheus-backend:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - morpheus-calculations:/mnt/project/calculations
+    tmpfs:
+      - /tmp:mode=777,size=200m
+    restart: always
+    user: celery
+    read_only: true
+    networks:
+      - backend
+      - celery
+    healthcheck:
+      test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping" ]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+
+  morpheus-cron:
+    image: inowas/cron:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-morpheus-cron
+    restart: always
+    depends_on:
+      morpheus-backend:
+        condition: service_healthy
+    environment:
+      - BACKEND_CONTAINER_NAME=${COMPOSE_PROJECT_NAME}-morpheus-backend
+    networks:
+      - backend
+    read_only: true
+    volumes:
+      - ./cron/jobs/hourly:/etc/periodic/hourly:ro
+      - ${DOCKER_SOCKET}:/var/run/docker.sock
+    command: crond -f -l 8
+
+  morpheus-db:
+    image: mongo:7.0
+    container_name: ${COMPOSE_PROJECT_NAME}-morpheus-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${BACKEND_MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${BACKEND_MONGO_INITDB_ROOT_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - morpheus-mongodb-data:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.runCommand('ping').ok", "--quiet" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend
+    read_only: true
+    user: mongodb
+    tmpfs:
+      - /tmp
+
+  morpheus-mq:
+    image: rabbitmq:3.12.9-management
+    container_name: ${COMPOSE_PROJECT_NAME}-morpheus-mq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    volumes:
+      - morpheus-rabbitmq-data:/var/lib/rabbitmq
+    read_only: true
+    user: rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend
+      - celery
+    hostname: ${COMPOSE_PROJECT_NAME}-morpheus-mq
+    tmpfs:
+      - /tmp
+
+  # ============================================================================
+  # MFVIZ - MODFLOW Visualizer
+  # ============================================================================
+  mfviz-frontend:
+    image: inowas/mfviz:${MFVIZ_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-mfviz-frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mfviz-frontend-http.entrypoints=web"
+      - "traefik.http.routers.mfviz-frontend-http.rule=Host(`${MFVIZ_HOST}`)"
+      - "traefik.http.routers.mfviz-frontend-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.mfviz-frontend.entrypoints=websecure"
+      - "traefik.http.routers.mfviz-frontend.rule=Host(`${MFVIZ_HOST}`)"
+      - "traefik.http.routers.mfviz-frontend.tls=true"
+      - "traefik.http.routers.mfviz-frontend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.mfviz-frontend.service=mfviz-frontend"
+      - "traefik.http.services.mfviz-frontend.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+    restart: always
+    read_only: true
+    tmpfs:
+      - /var/run:mode=777,size=100m
+      - /var/cache/nginx:mode=777,size=100m
+
+  # ============================================================================
+  # SIMPLETOOLS - Standalone Tools
+  # ============================================================================
+  simpletools-frontend:
+    image: inowas/simpletools-frontend:${SIMPLETOOLS_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-simpletools-frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.simpletools-frontend-http.entrypoints=web"
+      - "traefik.http.routers.simpletools-frontend-http.rule=Host(`${SIMPLETOOLS_HOST}`)"
+      - "traefik.http.routers.simpletools-frontend-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.simpletools-frontend.entrypoints=websecure"
+      - "traefik.http.routers.simpletools-frontend.rule=Host(`${SIMPLETOOLS_HOST}`)"
+      - "traefik.http.routers.simpletools-frontend.tls=true"
+      - "traefik.http.routers.simpletools-frontend.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      - "traefik.http.routers.simpletools-frontend.service=simpletools-frontend"
+      - "traefik.http.services.simpletools-frontend.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+    restart: always
+    read_only: true
+    tmpfs:
+      - /var/run:mode=777,size=100m
+      - /var/cache/nginx:mode=777,size=100m
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+volumes:
+  # Keycloak
+  keycloak-data:
+    driver: local
+  keycloak-postgres-data:
+    driver: local
+
+  # Morpheus
+  morpheus-mongodb-data:
+    driver: local
+  morpheus-assets:
+    driver: local
+  morpheus-calculations:
+    driver: local
+  morpheus-sensors:
+    driver: local
+  morpheus-rabbitmq-data:
+    driver: local
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+networks:
+  traefik:
+    name: traefik
+  auth:
+    name: ${COMPOSE_PROJECT_NAME}-auth
+  backend:
+    name: ${COMPOSE_PROJECT_NAME}-backend
+  celery:
+    name: ${COMPOSE_PROJECT_NAME}-celery
