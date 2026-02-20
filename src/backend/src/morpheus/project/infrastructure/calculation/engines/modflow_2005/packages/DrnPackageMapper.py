@@ -20,6 +20,7 @@ def calculate_drn_boundary_stress_period_data(
     layers: LayersCollection,
     drn_boundary: DrainBoundary
 ) -> DrnStressPeriodData:
+    layer_ids = [layer.layer_id for layer in layers.layers]
     sp_data = DrnStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -34,19 +35,11 @@ def calculate_drn_boundary_stress_period_data(
             # we do not apply any data for this stress period
             continue
 
-        # filter affected layers to only include layers that are part of the model
-        layer_ids = [layer.layer_id for layer in layers.layers]
-        affected_layers = [layer_id for layer_id in drn_boundary.affected_layers if layers.has_layer(layer_id)]
-        layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
-
-        if len(layer_indices) == 0:
-            # if we have no affected layers
-            # we do not apply any data for this stress period
-            # We should log a warning here
-            continue
+        layer_indices = [layer_ids.index(layer_id) for layer_id in drn_boundary.affected_layers]
 
         # we need to filter the affected cells to only include cells that are part of the model
-        drn_boundary.affected_cells = drn_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
+        drn_boundary.affected_cells = drn_boundary.affected_cells.filter(
+            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if drn_boundary.number_of_observations() == 1:
             # if we only have one observation point

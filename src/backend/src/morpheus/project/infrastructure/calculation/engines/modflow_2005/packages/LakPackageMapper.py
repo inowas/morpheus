@@ -88,7 +88,8 @@ def calculate_lak_boundary_stress_period_data(
                 raise NotImplementedError("Multiple observations for well boundaries are not supported")
 
             # we need to filter the affected cells to only include cells that are part of the model
-            lak_boundary.affected_cells = lak_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
+            lak_boundary.affected_cells = lak_boundary.affected_cells.filter(
+                lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
             mean_data = mean_data[0]
             if not isinstance(mean_data, LakeDataItem):

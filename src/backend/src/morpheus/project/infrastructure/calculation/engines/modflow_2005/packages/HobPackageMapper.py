@@ -50,25 +50,16 @@ class HeadObservationData:
 
 
 def calculate_observation_items(model: Model) -> HeadObservationData:
+    layers = model.layers
     time_discretization = model.time_discretization
+    layer_ids = [layer.layer_id for layer in layers]
 
     head_observation_data = HeadObservationData.new()
     for observation in model.observations:
+        layer_indices = [layer_ids.index(layer_id) for layer_id in observation.affected_layers]
         data_items = observation.get_data_items(start=time_discretization.start_date_time, end=time_discretization.end_date_time)
 
         if len(data_items) == 0:
-            continue
-
-        # filter affected layers to only include layers that are part of the model
-        layers = model.layers
-        layer_ids = [layer.layer_id for layer in layers]
-        affected_layers = [layer_id for layer_id in observation.affected_layers if layers.has_layer(layer_id)]
-        layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
-
-        if len(layer_indices) == 0:
-            # if we have no affected layers
-            # we do not apply any data for this stress period
-            # We should log a warning here
             continue
 
         for layer_idx in layer_indices:

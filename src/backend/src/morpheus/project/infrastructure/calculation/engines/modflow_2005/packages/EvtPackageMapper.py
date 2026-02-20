@@ -32,17 +32,8 @@ def calculate_evt_boundary_stress_period_data(
     grid = spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
 
-    # filter affected layers to only include layers that are part of the model
     layer_ids = [layer.layer_id for layer in layers]
-    affected_layers = [layer_id for layer_id in evt_boundary.affected_layers if layers.has_layer(layer_id)]
-    layer_indices = [layer_ids.index(layer_id) for layer_id in affected_layers]
-
-    if len(layer_indices) == 0:
-        # if we have no affected layers
-        # we do not apply any data for this stress period
-        # We should log a warning here
-        return sp_data
-
+    layer_indices = [layer_ids.index(layer_id) for layer_id in evt_boundary.affected_layers]
     layer_index = layer_indices[0] if len(layer_indices) > 0 else 0
 
     # first we need to calculate the mean values for each observation point and each stress period
@@ -61,7 +52,8 @@ def calculate_evt_boundary_stress_period_data(
             raise NotImplementedError("Multiple observations for well boundaries are not supported")
 
         # we need to filter the affected cells to only include cells that are part of the model
-        evt_boundary.affected_cells = evt_boundary.affected_cells.mask(other=spatial_discretization.affected_cells)
+        evt_boundary.affected_cells = evt_boundary.affected_cells.filter(
+            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         mean_data = mean_data[0]
         if not isinstance(mean_data, EvapotranspirationDataItem):
