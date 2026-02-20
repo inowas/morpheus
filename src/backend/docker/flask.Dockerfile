@@ -5,7 +5,7 @@ ADD src/backend/src /src
 RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle.json /src/morpheus/openapi.yml
 
 
-FROM python:3.12-bookworm AS base
+FROM python:3.13-bookworm AS base
 ARG BACKEND_APP_ROOT_PATH
 ARG FLASK_USER_ID
 ARG FLASK_GROUP_ID
