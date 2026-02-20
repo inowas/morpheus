@@ -1,7 +1,12 @@
 import dataclasses
-from typing import Sequence
+from collections.abc import Sequence
 
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import String, Uuid
+
+from ..discretization.spatial import ActiveCells, Grid
+from ..discretization.time.Stressperiods import EndDateTime, StartDateTime
+from ..geometry import GeometryCollection, LineString, Point, Polygon
+from ..layers import LayerId
 from .BoundaryInterpolationType import InterpolationType
 from .BoundaryType import BoundaryType
 from .ConstantHeadObservation import ConstantHeadObservation, ConstantHeadObservationValue
@@ -9,16 +14,11 @@ from .DrainObservation import DrainObservation, DrainRawDataItem
 from .EvapotranspirationObservation import EvapotranspirationObservation, EvapotranspirationObservationValue
 from .FlowAndHeadObservation import FlowAndHeadObservation, FlowAndHeadRawDataItem
 from .GeneralHeadObservation import GeneralHeadObservation, GeneralHeadRawDataItem
-from .LakeObservation import LakeObservation, LakeObservationValue, BedLeakance, InitialStage, StageRange
-from .Observation import Observation, DataItem, ObservationName, ObservationId
+from .LakeObservation import BedLeakance, InitialStage, LakeObservation, LakeObservationValue, StageRange
+from .Observation import DataItem, Observation, ObservationId, ObservationName
 from .RechargeObservation import RechargeObservation, RechargeObservationValue
 from .RiverObservation import RiverObservation, RiverObservationValue
 from .WellObservation import WellObservation, WellObservationValue
-
-from ..discretization.spatial import ActiveCells, Grid
-from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
-from ..geometry import Point, LineString, Polygon, GeometryCollection
-from ..layers import LayerId
 
 
 class BoundaryId(Uuid):
@@ -68,10 +68,19 @@ class Boundary:
     def __eq__(self, other):
         return self.to_dict() == other.to_dict()
 
-    def __init__(self, id: BoundaryId, type: BoundaryType, name: BoundaryName,
-                 interpolation: InterpolationType, tags: BoundaryTags, geometry: LineString | Point | Polygon,
-                 affected_cells: ActiveCells, affected_layers: Sequence[LayerId], observations: Sequence[Observation],
-                 enabled: bool = True):
+    def __init__(
+        self,
+        id: BoundaryId,
+        type: BoundaryType,
+        name: BoundaryName,
+        interpolation: InterpolationType,
+        tags: BoundaryTags,
+        geometry: LineString | Point | Polygon,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        observations: Sequence[Observation],
+        enabled: bool = True,
+    ):
         self.id = id
         self.type = type
         self.name = name
@@ -117,7 +126,7 @@ class Boundary:
             'affected_cells': self.affected_cells.to_dict(),
             'affected_layers': [layer_id.to_value() for layer_id in self.affected_layers],
             'observations': [observation.to_dict() for observation in self.observations],
-            'enabled': self.enabled
+            'enabled': self.enabled,
         }
 
     def with_new_id(self, boundary_id: BoundaryId):
@@ -152,16 +161,14 @@ class Boundary:
         return dataclasses.replace(self, observations=observations)
 
     def with_updated_observation(self, observation_id: ObservationId, update: Observation):
-        observations = [update if observation.observation_id == observation_id else observation for observation in
-                        self.observations]
+        observations = [update if observation.observation_id == observation_id else observation for observation in self.observations]
         return dataclasses.replace(self, observations=observations)
 
     def with_updated_observations(self, observations: Sequence[Observation]):
         return dataclasses.replace(self, observations=observations)
 
     def with_removed_observation(self, observation_id: ObservationId):
-        observations = [observation for observation in self.observations if
-                        observation.observation_id != observation_id]
+        observations = [observation for observation in self.observations if observation.observation_id != observation_id]
         return dataclasses.replace(self, observations=observations)
 
     def number_of_observations(self):
@@ -177,16 +184,13 @@ class Boundary:
         if observation_id is None:
             return self.observations[0]
 
-        return next((observation for observation in self.observations if observation.observation_id == observation_id),
-                    None)
+        return next((observation for observation in self.observations if observation.observation_id == observation_id), None)
 
     def as_geojson(self):
         return self.geometry.as_geojson()
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime,
-                      interpolation: InterpolationType) -> list[DataItem | None]:
-        return [observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time,
-                                          interpolation=interpolation) for observation in self.observations]
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> list[DataItem | None]:
+        return [observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=interpolation) for observation in self.observations]
 
 
 @dataclasses.dataclass
@@ -233,13 +237,11 @@ class BoundaryCollection:
         return dataclasses.replace(self, boundaries=sorted_boundaries)
 
     def update_boundary(self, update: Boundary):
-        updated_boundaries = [update if boundary.id == update.id else boundary for boundary in
-                              self.boundaries]
+        updated_boundaries = [update if boundary.id == update.id else boundary for boundary in self.boundaries]
         self.boundaries = sorted(updated_boundaries, key=lambda boundary: boundary.name.to_lower())
 
     def with_updated_boundary(self, update: Boundary):
-        updated_boundaries = [update if boundary.id == update.id else boundary for boundary in
-                              self.boundaries]
+        updated_boundaries = [update if boundary.id == update.id else boundary for boundary in self.boundaries]
         sorted_boundaries = sorted(updated_boundaries, key=lambda boundary: boundary.name.to_lower())
         return dataclasses.replace(self, boundaries=sorted_boundaries)
 
@@ -273,13 +275,26 @@ class ConstantHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.constant_head
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells,
-            affected_layers: Sequence[LayerId], data: list[ConstantHeadObservationValue],
-            tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-            interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[ConstantHeadObservationValue],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
 
         if not isinstance(geometry, LineString):
             raise ValueError('Constant head boundaries must be lines')
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -294,12 +309,21 @@ class ConstantHeadBoundary(Boundary):
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: list[LayerId],
-                      observations: Sequence[Observation] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        grid: Grid,
+        affected_layers: list[LayerId],
+        observations: Sequence[Observation] | None = None,
+        tags: BoundaryTags | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, LineString):
             raise ValueError('Constant head boundaries must be lines')
+
+        if tags is None:
+            tags = BoundaryTags.empty()
 
         if observations is None:
             observations = [ConstantHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default())]
@@ -328,7 +352,7 @@ class ConstantHeadBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[ConstantHeadObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -336,12 +360,26 @@ class DrainBoundary(Boundary):
     type: BoundaryType = BoundaryType.drain
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells,
-            affected_layers: Sequence[LayerId], data: list[DrainRawDataItem], tags: BoundaryTags = BoundaryTags.empty(),
-            boundary_id: BoundaryId = BoundaryId.new(), interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[DrainRawDataItem],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
 
         if not isinstance(geometry, LineString):
             raise ValueError('Drain boundaries must be lines')
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -352,24 +390,33 @@ class DrainBoundary(Boundary):
             geometry=geometry,
             affected_cells=affected_cells,
             affected_layers=affected_layers,
-            observations=[
-                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data,
-                                     name=ObservationName.default())
-            ],
+            observations=[DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: Sequence[LayerId],
-                      observations: Sequence[Observation] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        observations: Sequence[Observation] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, LineString):
             raise ValueError('Drain boundaries must be lines')
 
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         if observations is None:
             observations = [
-                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[],
-                                     name=ObservationName.default()),
+                DrainObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -396,7 +443,7 @@ class DrainBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[DrainObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -404,10 +451,24 @@ class EvapotranspirationBoundary(Boundary):
     type: BoundaryType = BoundaryType.evapotranspiration
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: Sequence[LayerId],
-            data: list[EvapotranspirationObservationValue],
-            tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-            interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: Polygon,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[EvapotranspirationObservationValue],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         return cls(
             id=boundary_id,
             type=cls.type,
@@ -417,17 +478,28 @@ class EvapotranspirationBoundary(Boundary):
             geometry=geometry,
             affected_cells=affected_cells,
             affected_layers=affected_layers,
-            observations=[
-                EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data,
-                                                  name=ObservationName.default())
-            ],
+            observations=[EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data, name=ObservationName.default())],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: Sequence[LayerId],
-                      data: list[EvapotranspirationObservationValue] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: Polygon,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        data: list[EvapotranspirationObservationValue] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         return cls(
             id=boundary_id,
             type=cls.type,
@@ -437,11 +509,8 @@ class EvapotranspirationBoundary(Boundary):
             geometry=geometry,
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
-            observations=[
-                EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data or [],
-                                                  name=ObservationName.default())
-            ],
-            enabled=True
+            observations=[EvapotranspirationObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())],
+            enabled=True,
         )
 
     @classmethod
@@ -456,7 +525,7 @@ class EvapotranspirationBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[EvapotranspirationObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -464,10 +533,23 @@ class FlowAndHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.flow_and_head
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells,
-            affected_layers: Sequence[LayerId], data: list[FlowAndHeadRawDataItem],
-            tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-            interpolation: InterpolationType = InterpolationType.none):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[FlowAndHeadRawDataItem],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.none,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -478,24 +560,33 @@ class FlowAndHeadBoundary(Boundary):
             geometry=geometry,
             affected_cells=affected_cells,
             affected_layers=affected_layers,
-            observations=[
-                FlowAndHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data,
-                                           name=ObservationName.default())
-            ],
+            observations=[FlowAndHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: Sequence[LayerId],
-                      observations: Sequence[Observation] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.none):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        observations: Sequence[Observation] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.none,
+    ):
         if not isinstance(geometry, LineString):
             raise ValueError('Flow and Head boundaries must be lines')
 
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         if observations is None:
             observations = [
-                FlowAndHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[],
-                                           name=ObservationName.default()),
+                FlowAndHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -522,11 +613,10 @@ class FlowAndHeadBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[FlowAndHeadObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
-    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime,
-                      interpolation: InterpolationType) -> list[DataItem | None]:
+    def get_mean_data(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType) -> list[DataItem | None]:
         raise NotImplementedError()
 
     def get_head_data(self, start_date_time: StartDateTime):
@@ -563,10 +653,23 @@ class GeneralHeadBoundary(Boundary):
     type: BoundaryType = BoundaryType.general_head
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells,
-            affected_layers: Sequence[LayerId], data: list[GeneralHeadRawDataItem],
-            tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-            interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[GeneralHeadRawDataItem],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -577,24 +680,33 @@ class GeneralHeadBoundary(Boundary):
             geometry=geometry,
             affected_cells=affected_cells,
             affected_layers=affected_layers,
-            observations=[
-                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data,
-                                           name=ObservationName.default())
-            ],
+            observations=[GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default())],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: Sequence[LayerId],
-                      observations: Sequence[Observation] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        observations: Sequence[Observation] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, LineString):
             raise ValueError('General head boundaries must be lines')
 
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         if observations is None:
             observations = [
-                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[],
-                                           name=ObservationName.default()),
+                GeneralHeadObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -621,7 +733,7 @@ class GeneralHeadBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[GeneralHeadObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -629,11 +741,27 @@ class LakeBoundary(Boundary):
     type: BoundaryType = BoundaryType.lake
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: Sequence[LayerId],
-            data: list[LakeObservationValue], bed_leakance: BedLeakance | None = None,
-            initial_stage: InitialStage | None = None, stage_range: StageRange | None = None,
-            tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-            interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: Polygon,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[LakeObservationValue],
+        bed_leakance: BedLeakance | None = None,
+        initial_stage: InitialStage | None = None,
+        stage_range: StageRange | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         return cls(
             id=boundary_id,
             type=cls.type,
@@ -650,20 +778,35 @@ class LakeBoundary(Boundary):
                     bed_leakance=bed_leakance or BedLeakance.from_float(100.0),
                     initial_stage=initial_stage or InitialStage.from_float(1.0),
                     stage_range=stage_range or StageRange(min=0.0, max=1.0),
-                    name=ObservationName.default()
+                    name=ObservationName.default(),
                 )
             ],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: Sequence[LayerId],
-                      data: list[LakeObservationValue] | None = None, bed_leakance: BedLeakance | None = None,
-                      initial_stage: InitialStage | None = None, stage_range: StageRange | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: Polygon,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        data: list[LakeObservationValue] | None = None,
+        bed_leakance: BedLeakance | None = None,
+        initial_stage: InitialStage | None = None,
+        stage_range: StageRange | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         bed_leakance = bed_leakance or BedLeakance.from_float(0.0)
         initial_stage = initial_stage or InitialStage.from_float(0.0)
         stage_range = stage_range or StageRange(min=0.0, max=0.0)
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -675,9 +818,9 @@ class LakeBoundary(Boundary):
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
             observations=[
-                LakeObservation.new(geometry=geometry.centroid(), data=data or [], bed_leakance=bed_leakance,
-                                    initial_stage=initial_stage, stage_range=stage_range,
-                                    name=ObservationName.default())
+                LakeObservation.new(
+                    geometry=geometry.centroid(), data=data or [], bed_leakance=bed_leakance, initial_stage=initial_stage, stage_range=stage_range, name=ObservationName.default()
+                )
             ],
             enabled=True,
         )
@@ -694,7 +837,7 @@ class LakeBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[LakeObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -702,9 +845,24 @@ class RechargeBoundary(Boundary):
     type: BoundaryType = BoundaryType.recharge
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Polygon, affected_cells: ActiveCells, affected_layers: Sequence[LayerId],
-            data: list[RechargeObservationValue], tags: BoundaryTags = BoundaryTags.empty(),
-            boundary_id: BoundaryId = BoundaryId.new(), interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: Polygon,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[RechargeObservationValue],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         return cls(
             id=boundary_id,
             type=cls.type,
@@ -714,16 +872,28 @@ class RechargeBoundary(Boundary):
             geometry=geometry,
             affected_cells=affected_cells,
             affected_layers=affected_layers,
-            observations=[
-                RechargeObservation.new(geometry=geometry.centroid(), data=data, name=ObservationName.default())
-            ],
+            observations=[RechargeObservation.new(geometry=geometry.centroid(), data=data, name=ObservationName.default())],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Polygon, grid: Grid, affected_layers: Sequence[LayerId],
-                      data: list[RechargeObservationValue] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: Polygon,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        data: list[RechargeObservationValue] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         return cls(
             id=boundary_id,
             type=cls.type,
@@ -733,10 +903,8 @@ class RechargeBoundary(Boundary):
             geometry=geometry,
             affected_cells=ActiveCells.from_polygon(polygon=geometry, grid=grid),
             affected_layers=affected_layers,
-            observations=[
-                RechargeObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())
-            ],
-            enabled=True
+            observations=[RechargeObservation.new(geometry=geometry.centroid(), data=data or [], name=ObservationName.default())],
+            enabled=True,
         )
 
     @classmethod
@@ -751,7 +919,7 @@ class RechargeBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[RechargeObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -759,11 +927,25 @@ class RiverBoundary(Boundary):
     type: BoundaryType = BoundaryType.river
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: LineString, affected_cells: ActiveCells,
-            affected_layers: Sequence[LayerId], data: list[RiverObservationValue], tags: BoundaryTags = BoundaryTags.empty(),
-            boundary_id: BoundaryId = BoundaryId.new(), interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[RiverObservationValue],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, LineString):
             raise ValueError('River boundaries must be lines')
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -775,23 +957,34 @@ class RiverBoundary(Boundary):
             affected_cells=affected_cells,
             affected_layers=affected_layers,
             observations=[
-                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data,
-                                     name=ObservationName.default()),
+                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=data, name=ObservationName.default()),
             ],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: LineString, grid: Grid, affected_layers: Sequence[LayerId],
-                      observations: Sequence[Observation] | None = None,
-                      tags: BoundaryTags = BoundaryTags.empty(), boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: LineString,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        observations: Sequence[Observation] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, LineString):
             raise ValueError('River boundaries must be lines')
 
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
+
         if observations is None:
             observations = [
-                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[],
-                                     name=ObservationName.default()),
+                RiverObservation.new(geometry=Point(coordinates=geometry.coordinates[0]), data=[], name=ObservationName.default()),
             ]
 
         return cls(
@@ -818,7 +1011,7 @@ class RiverBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[RiverObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )
 
 
@@ -826,11 +1019,25 @@ class WellBoundary(Boundary):
     type: BoundaryType = BoundaryType.well
 
     @classmethod
-    def new(cls, name: BoundaryName, geometry: Point, affected_cells: ActiveCells, affected_layers: Sequence[LayerId],
-            data: Sequence[WellObservationValue], tags: BoundaryTags = BoundaryTags.empty(),
-            boundary_id: BoundaryId = BoundaryId.new(), interpolation: InterpolationType = InterpolationType.forward_fill):
+    def new(
+        cls,
+        name: BoundaryName,
+        geometry: Point,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: Sequence[WellObservationValue],
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, Point):
             raise ValueError('Well boundaries must be points')
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         return cls(
             id=boundary_id,
@@ -841,18 +1048,29 @@ class WellBoundary(Boundary):
             geometry=geometry,
             affected_cells=affected_cells,
             affected_layers=affected_layers,
-            observations=[
-                WellObservation.new(geometry=geometry, data=data, name=ObservationName.default())
-            ],
+            observations=[WellObservation.new(geometry=geometry, data=data, name=ObservationName.default())],
         )
 
     @classmethod
-    def from_geometry(cls, name: BoundaryName, geometry: Point, grid: Grid, affected_layers: Sequence[LayerId],
-                      data: list[WellObservationValue] | None = None, tags: BoundaryTags = BoundaryTags.empty(),
-                      boundary_id: BoundaryId = BoundaryId.new(),
-                      interpolation: InterpolationType = InterpolationType.forward_fill):
+    def from_geometry(
+        cls,
+        name: BoundaryName,
+        geometry: Point,
+        grid: Grid,
+        affected_layers: Sequence[LayerId],
+        data: list[WellObservationValue] | None = None,
+        tags: BoundaryTags | None = None,
+        boundary_id: BoundaryId | None = None,
+        interpolation: InterpolationType = InterpolationType.forward_fill,
+    ):
         if not isinstance(geometry, Point):
             raise ValueError('Well boundaries must be points')
+
+        if tags is None:
+            tags = BoundaryTags.empty()
+
+        if boundary_id is None:
+            boundary_id = BoundaryId.new()
 
         observations = [
             WellObservation.new(geometry=geometry, data=data or [], name=ObservationName.default()),
@@ -882,5 +1100,5 @@ class WellBoundary(Boundary):
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             observations=[WellObservation.from_dict(observation) for observation in obj['observations']],
-            enabled=obj['enabled']
+            enabled=obj['enabled'],
         )

@@ -19,10 +19,4 @@ class SensorListItem:
     parameters: list[str]
 
     def to_dict(self) -> dict:
-        return {
-            'id': self.id,
-            'location': self.location,
-            'project': self.project,
-            'name': self.name,
-            'parameters': self.parameters
-        }
+        return {'id': self.id, 'location': self.location, 'project': self.project, 'name': self.name, 'parameters': self.parameters}

@@ -13,10 +13,7 @@ class GeometryCollection:
     type: Literal['GeometryCollection'] = 'GeometryCollection'
 
     def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'geometries': [geometry.__geo_interface__() for geometry in self.geometries]
-        }
+        return {'type': self.type, 'geometries': [geometry.__geo_interface__() for geometry in self.geometries]}
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -25,10 +22,7 @@ class GeometryCollection:
         return cls(geometries=[GeometryFactory.from_dict(geometry) for geometry in obj['geometries']])
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'geometries': [geometry.to_dict() for geometry in self.geometries]
-        }
+        return {'type': self.type, 'geometries': [geometry.to_dict() for geometry in self.geometries]}
 
     def as_geojson(self):
         return self.__geo_interface__()

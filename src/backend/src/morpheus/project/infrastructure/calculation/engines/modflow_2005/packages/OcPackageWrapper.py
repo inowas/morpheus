@@ -1,5 +1,6 @@
 import dataclasses
 from enum import Enum
+
 from flopy.modflow import ModflowOc as FlopyModflowOc
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
@@ -43,7 +44,7 @@ class OcPackageSettings:
     compact: bool
     label: str
 
-    def __init__(self, ihedfm: int = 0, iddnfm: int = 0, chedfm: str | None = None, cddnfm: str | None = None, cboufm: str | None = None, compact: bool = True, label: str = "OC"):
+    def __init__(self, ihedfm: int = 0, iddnfm: int = 0, chedfm: str | None = None, cddnfm: str | None = None, cboufm: str | None = None, compact: bool = True, label: str = 'OC'):
         self.ihedfm = ihedfm
         self.iddnfm = iddnfm
         self.chedfm = chedfm
@@ -79,10 +80,20 @@ class OcPackageData:
     filenames: list[str] | str | None
     label: str
 
-    def __init__(self, ihedfm: int = 0, iddnfm: int = 0, chedfm: str | None = None, cddnfm: str | None = None,
-                 cboufm: str | None = None, compact: bool = True, stress_period_data: StressPeriodData | None = None,
-                 extension: list[str] | None = None, unitnumber: list[int] | None = None,
-                 filenames: list[str] | str | None = None, label: str = "OC"):
+    def __init__(
+        self,
+        ihedfm: int = 0,
+        iddnfm: int = 0,
+        chedfm: str | None = None,
+        cddnfm: str | None = None,
+        cboufm: str | None = None,
+        compact: bool = True,
+        stress_period_data: StressPeriodData | None = None,
+        extension: list[str] | None = None,
+        unitnumber: list[int] | None = None,
+        filenames: list[str] | str | None = None,
+        label: str = 'OC',
+    ):
         self.ihedfm = ihedfm
         self.iddnfm = iddnfm
         self.chedfm = chedfm

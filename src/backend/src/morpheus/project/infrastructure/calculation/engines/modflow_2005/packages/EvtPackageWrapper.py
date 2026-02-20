@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowEvt as FlopyModflowEvt
 
-from .EvtPackageMapper import EvtStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .EvtPackageMapper import EvtStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -35,13 +36,22 @@ class EvtPackageData:
     ievt: int
     nevtop: int
     ipakcb: int
-    extension: Literal["evt"]
+    extension: Literal['evt']
     unitnumber: None | int
     filenames: None | str | list[str]
     external: bool
 
-    def __init__(self, stress_period_data: EvtStressPeriodData, nevtop: int = 1, ievt: int = 1, ipakcb: int = 0,
-                 extension: Literal["evt"] = 'evt', unitnumber: int | None = None, filenames: list[str] | str | None = None, external: bool = False):
+    def __init__(
+        self,
+        stress_period_data: EvtStressPeriodData,
+        nevtop: int = 1,
+        ievt: int = 1,
+        ipakcb: int = 0,
+        extension: Literal['evt'] = 'evt',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+        external: bool = False,
+    ):
         self.stress_period_data = stress_period_data
         self.ievt = ievt
         self.nevtop = nevtop

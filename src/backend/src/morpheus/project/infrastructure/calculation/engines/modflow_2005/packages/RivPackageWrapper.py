@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowRiv as FlopyModflowRiv
 
-from .RivPackageMapper import RivStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .RivPackageMapper import RivStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -33,13 +34,20 @@ class RivPackageData:
     ipakcb: int
     dtype: None | list
     options: None | list
-    extension: Literal["riv"]
+    extension: Literal['riv']
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: RivStressPeriodData, ipakcb=0, dtype: None | list = None,
-                 options: None | list = None, extension: Literal["riv"] = "riv",
-                 unitnumber: int | None = None, filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        stress_period_data: RivStressPeriodData,
+        ipakcb=0,
+        dtype: None | list = None,
+        options: None | list = None,
+        extension: Literal['riv'] = 'riv',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.stress_period_data = stress_period_data
         self.ipakcb = ipakcb
         self.dtype = dtype
@@ -50,13 +58,13 @@ class RivPackageData:
 
     def to_dict(self) -> dict:
         return {
-            "stress_period_data": self.stress_period_data.to_dict(),
-            "ipakcb": self.ipakcb,
-            "dtype": self.dtype,
-            "options": self.options,
-            "extension": self.extension,
-            "unitnumber": self.unitnumber,
-            "filenames": self.filenames
+            'stress_period_data': self.stress_period_data.to_dict(),
+            'ipakcb': self.ipakcb,
+            'dtype': self.dtype,
+            'options': self.options,
+            'extension': self.extension,
+            'unitnumber': self.unitnumber,
+            'filenames': self.filenames,
         }
 
     @classmethod
@@ -68,7 +76,7 @@ class RivPackageData:
             options=obj['options'],
             extension=obj['extension'],
             unitnumber=obj['unitnumber'],
-            filenames=obj['filenames']
+            filenames=obj['filenames'],
         )
 
 

@@ -1,4 +1,5 @@
 import os
+
 from dynaconf import Dynaconf, Validator
 
 
@@ -6,7 +7,7 @@ class Settings:
     def __init__(self, env: str, values):
         valid_environments = ['production', 'development', 'testing']
         if env not in valid_environments:
-            raise ValueError(f"environment must be one of {valid_environments}")
+            raise ValueError(f'environment must be one of {valid_environments}')
 
         self.ENV: str = env
         self.SECRET_KEY: str = values.SECRET_KEY
@@ -74,6 +75,6 @@ settings = Settings.from_dynaconf(
             Validator('MORPHEUS_SENSORS_UIT_FTP_PASSWORD', must_exist=True),
             Validator('MORPHEUS_SENSORS_UIT_FTP_PATH', must_exist=True),
             Validator('SENTRY_DSN', default=None),
-        ]
+        ],
     )
 )

@@ -20,37 +20,23 @@ class StressPeriodData:
 
     def merge(self, other: 'StressPeriodData', sum_up_values: bool = False):
         for item in other.data:
-            self.set_value(
-                time_step=item.time_step,
-                layer=item.layer,
-                row=item.row,
-                column=item.column,
-                values=item.values,
-                sum_up_values=sum_up_values
-            )
+            self.set_value(time_step=item.time_step, layer=item.layer, row=item.row, column=item.column, values=item.values, sum_up_values=sum_up_values)
         return self
 
-    def set_value(self, time_step: int, row: int, column: int, values: list[float], layer: int = 0,
-                  sum_up_values: bool = False):
+    def set_value(self, time_step: int, row: int, column: int, values: list[float], layer: int = 0, sum_up_values: bool = False):
         if time_step < 0:
-            raise ValueError(f"Time step must be greater than or equal to 0. Got {time_step}")
+            raise ValueError(f'Time step must be greater than or equal to 0. Got {time_step}')
         if layer < 0:
-            raise ValueError(f"Layer must be greater than or equal to 0. Got {layer}")
+            raise ValueError(f'Layer must be greater than or equal to 0. Got {layer}')
 
         for item in self.data:
             if item.time_step == time_step and item.layer == layer and item.row == row and item.column == column:
                 if sum_up_values:
-                    item.values = [item_value + new_value for item_value, new_value in zip(item.values, values)]
+                    item.values = [item_value + new_value for item_value, new_value in zip(item.values, values, strict=True)]
                 item.values = values
                 return
 
-        self.data.append(StressPeriodDataItem(
-            time_step=time_step,
-            layer=layer,
-            row=row,
-            column=column,
-            values=values
-        ))
+        self.data.append(StressPeriodDataItem(time_step=time_step, layer=layer, row=row, column=column, values=values))
 
     def is_empty(self):
         return len(self.data) == 0
@@ -68,13 +54,7 @@ class StressPeriodData:
         sp_data = cls()
         for time_step, items in obj.items():
             for item in items:
-                sp_data.set_value(
-                    time_step=int(time_step),
-                    layer=int(item[0]),
-                    row=int(item[1]),
-                    column=int(item[2]),
-                    values=item[3:]
-                )
+                sp_data.set_value(time_step=int(time_step), layer=int(item[0]), row=int(item[1]), column=int(item[2]), values=item[3:])
         return sp_data
 
 

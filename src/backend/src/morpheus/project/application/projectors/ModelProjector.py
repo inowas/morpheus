@@ -1,22 +1,40 @@
-from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
-from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import VersionDeletedEvent, VersionAssignedToModelEvent, VersionDescriptionUpdatedEvent, VersionCreatedEvent, \
-    ModelCreatedEvent
 import morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents as ModelBoundaryEvents
 import morpheus.project.domain.events.ModelEvents.ModelObservationEvents as ModelObservationEvents
-from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelAffectedCellsRecalculatedEvent, ModelTimeDiscretizationUpdatedEvent, ModelGridUpdatedEvent, \
-    ModelGridRecalculatedEvent, ModelGeometryUpdatedEvent, ModelAffectedCellsUpdatedEvent
-from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent, ModelLayerMetadataUpdatedEvent, ModelLayerOrderUpdatedEvent, \
-    ModelLayerDeletedEvent, ModelLayerCreatedEvent, ModelLayerConfinementUpdatedEvent, ModelLayerClonedEvent, ModelLayerAddedEvent
+from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
+from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
+from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import (
+    ModelCreatedEvent,
+    VersionAssignedToModelEvent,
+    VersionCreatedEvent,
+    VersionDeletedEvent,
+    VersionDescriptionUpdatedEvent,
+)
+from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import (
+    ModelAffectedCellsRecalculatedEvent,
+    ModelAffectedCellsUpdatedEvent,
+    ModelGeometryUpdatedEvent,
+    ModelGridRecalculatedEvent,
+    ModelGridUpdatedEvent,
+    ModelTimeDiscretizationUpdatedEvent,
+)
+from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import (
+    ModelLayerAddedEvent,
+    ModelLayerClonedEvent,
+    ModelLayerConfinementUpdatedEvent,
+    ModelLayerCreatedEvent,
+    ModelLayerDeletedEvent,
+    ModelLayerMetadataUpdatedEvent,
+    ModelLayerOrderUpdatedEvent,
+    ModelLayerPropertyUpdatedEvent,
+)
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.ModelRepository import ModelRepository, model_repository
 from morpheus.project.infrastructure.persistence.ModelVersionTagRepository import ModelVersionTagRepository, model_version_tag_repository
-from morpheus.project.types.layers.Layer import LayerPropertyValues, Layer
+from morpheus.project.types.layers.Layer import Layer, LayerPropertyValues
 
 
 class ModelProjector(EventListenerBase):
-
     def __init__(self, model_repo: ModelRepository, model_version_tag_repo: ModelVersionTagRepository) -> None:
         self.model_repo = model_repo
         self.model_version_repo = model_version_tag_repo
@@ -342,11 +360,7 @@ class ModelProjector(EventListenerBase):
         if event.has_property_zones():
             zones = event.get_property_zones()
 
-        new_property_values = LayerPropertyValues(
-            value=default_value,
-            raster=raster,
-            zones=zones
-        )
+        new_property_values = LayerPropertyValues(value=default_value, raster=raster, zones=zones)
 
         layer = layer.with_updated_property(property_name=event.get_property_name(), property_values=new_property_values)
         latest = latest.with_updated_layers(layers=layers.with_updated_layer(updated_layer=layer))

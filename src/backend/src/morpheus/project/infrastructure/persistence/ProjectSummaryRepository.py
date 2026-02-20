@@ -1,12 +1,12 @@
 import dataclasses
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.common.types import DateTime
 from morpheus.common.types.identity.Identity import UserId
 from morpheus.settings import settings as app_settings
-from ...types.Permissions import Visibility
 
-from ...types.Project import ProjectSummary, ProjectId, Name, Description, Tags, Metadata
+from ...types.Permissions import Visibility
+from ...types.Project import Description, Metadata, Name, ProjectId, ProjectSummary, Tags
 
 
 @dataclasses.dataclass
@@ -91,13 +91,12 @@ class ProjectSummaryRepository(RepositoryBase):
         return [document.to_summary() for document in documents]
 
     def find_all_public_or_owned_by_user_or_by_project_id(self, owner_id: UserId, project_ids: list[ProjectId]) -> list[ProjectSummary]:
-        documents = [ProjectSummaryRepositoryDocument.from_dict(obj) for obj in self.collection.find({
-            '$or': [
-                {'owner_id': owner_id.to_str()},
-                {'is_public': True},
-                {'project_id': {'$in': [project_id.to_str() for project_id in project_ids]}}
-            ]
-        })]
+        documents = [
+            ProjectSummaryRepositoryDocument.from_dict(obj)
+            for obj in self.collection.find(
+                {'$or': [{'owner_id': owner_id.to_str()}, {'is_public': True}, {'project_id': {'$in': [project_id.to_str() for project_id in project_ids]}}]}
+            )
+        ]
         return [document.to_summary() for document in documents]
 
     def get_summary(self, project_id: ProjectId) -> ProjectSummary | None:
@@ -123,8 +122,5 @@ class ProjectSummaryRepository(RepositoryBase):
 
 
 project_summary_repository: ProjectSummaryRepository = ProjectSummaryRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'project_summaries'
-    )
+    collection=create_or_get_collection(get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'project_summaries')
 )

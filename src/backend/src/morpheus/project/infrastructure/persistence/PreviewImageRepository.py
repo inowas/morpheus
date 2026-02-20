@@ -1,8 +1,12 @@
 import dataclasses
-from typing import Mapping, Any
+from collections.abc import Mapping
+from typing import Any
+
 import pymongo
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.settings import settings as app_settings
+
 from ...types.Asset import AssetId
 from ...types.Project import ProjectId
 
@@ -65,6 +69,6 @@ preview_image_repository = PreviewImageRepository(
                 ('project_id', pymongo.ASCENDING),
             ],
             unique=True,
-        )
+        ),
     )
 )

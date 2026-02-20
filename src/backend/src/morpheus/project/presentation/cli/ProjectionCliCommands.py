@@ -1,4 +1,4 @@
-from morpheus.common.infrastructure.cli.io import write_success, write_error, write_header, write_info
+from morpheus.common.infrastructure.cli.io import write_error, write_header, write_info, write_success
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventPublisher
 from morpheus.project.application.projectors.PreviewImageProjector import preview_image_projector
 from morpheus.project.application.projectors.ProjectSummaryProjector import project_summary_projector
@@ -11,7 +11,7 @@ class ReprojectProjectSummariesCliCommand:
         publisher_with_only_project_summary_projector = EventPublisher()
         publisher_with_only_project_summary_projector.register(project_summary_projector)
 
-        write_header("Reprojecting project summaries")
+        write_header('Reprojecting project summaries')
 
         event_envelopes = project_event_store.get_all_events_ordered_by_version()
         write_info(f'Found {len(event_envelopes)} events')
@@ -34,7 +34,7 @@ class ReprojectPreviewImagesCliCommand:
         publisher_with_only_preview_image_projector = EventPublisher()
         publisher_with_only_preview_image_projector.register(preview_image_projector)
 
-        write_header("Reprojecting project preview images")
+        write_header('Reprojecting project preview images')
 
         event_envelopes = project_event_store.get_all_events_ordered_by_version()
         write_info(f'Found {len(event_envelopes)} events')

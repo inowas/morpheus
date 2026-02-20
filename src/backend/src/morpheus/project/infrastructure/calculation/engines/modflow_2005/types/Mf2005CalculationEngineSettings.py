@@ -16,8 +16,8 @@ from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.L
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import LpfPackageSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import MfPackageSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.OcPackageWrapper import OcPackageSettings
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import PcgPackageSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import PcgnPackageSettings
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import PcgPackageSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import RchPackageSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import RivPackageSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import SipPackageSettings
@@ -89,7 +89,7 @@ class Mf2005CalculationEngineSettings(CalculationEngineSettingsBase):
             pcgn=PcgnPackageSettings.from_dict(obj['pcgn']) if 'pcgn' in obj else PcgnPackageSettings.default(),
             rch=RchPackageSettings.from_dict(obj['rch']) if 'rch' in obj else RchPackageSettings.default(),
             riv=RivPackageSettings.from_dict(obj['riv']) if 'riv' in obj else RivPackageSettings.default(),
-            selected_solver_package=obj['selected_solver_package'] if 'selected_solver_package' in obj else 'pcg',
+            selected_solver_package=obj.get('selected_solver_package', 'pcg'),
             selected_flow_package=obj['selected_flow_package'],
             sip=SipPackageSettings.from_dict(obj['sip']) if 'sip' in obj else SipPackageSettings.default(),
             wel=WelPackageSettings.from_dict(obj['wel']) if 'wel' in obj else WelPackageSettings.default(),

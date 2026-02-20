@@ -1,6 +1,6 @@
 from flask import Request, abort
-from ...application.read.ReadSensorData import ReadSensorDataQuery, ReadSensorDataQueryHandler, \
-    InvalidTimeResolutionException, InvalidDateFormatException, SensorNotFoundException
+
+from ...application.read.ReadSensorData import InvalidDateFormatException, InvalidTimeResolutionException, ReadSensorDataQuery, ReadSensorDataQueryHandler, SensorNotFoundException
 
 
 class ReadSensorDataRequestHandler:
@@ -49,8 +49,9 @@ class ReadSensorDataRequestHandler:
                     lt=lt,
                     excl=excl,
                     time_resolution=request.args.get('timeResolution', '1D'),
-                    date_format=request.args.get('dateFormat', 'iso')
-                ))
+                    date_format=request.args.get('dateFormat', 'iso'),
+                )
+            )
             return result.to_dict(), 200
 
         except InvalidTimeResolutionException as e:

@@ -5,9 +5,9 @@ from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
 from morpheus.user.application.read.UserReader import user_reader
-from morpheus.user.domain.events.UserEvents import UserDataUpdatedEvent, UserDemotedFromAdminEvent, UserPromotedToAdminEvent, UserCreatedEvent, UserLinkedToKeycloakEvent
+from morpheus.user.domain.events.UserEvents import UserCreatedEvent, UserDataUpdatedEvent, UserDemotedFromAdminEvent, UserLinkedToKeycloakEvent, UserPromotedToAdminEvent
 from morpheus.user.infrastructure.event_sourcing.UserEventBus import user_event_bus
-from morpheus.user.types.User import KeycloakUserId, UserEmail, Username, UserFirstName, UserLastName, UserData, User
+from morpheus.user.types.User import KeycloakUserId, User, UserData, UserEmail, UserFirstName, UserLastName, Username
 
 
 @dataclasses.dataclass(frozen=True)

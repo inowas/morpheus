@@ -2,21 +2,22 @@ import dataclasses
 
 from morpheus.common.infrastructure.files.FileService import FileService
 from morpheus.common.types import Uuid
-from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.File import FileName, FilePath
 from morpheus.common.types.identity.Identity import UserId
-from ..read.ProjectReader import project_reader
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectPreviewImageDeletedEvent, ProjectPreviewImageUpdatedEvent
+
 from ...domain.AssetService import AssetService
-from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectPreviewImageUpdatedEvent, ProjectPreviewImageDeletedEvent
 from ...infrastructure.assets.AssetHandlingService import asset_handling_service
 from ...infrastructure.assets.GeoTiffService import geo_tiff_service
 from ...infrastructure.assets.PreviewImageService import preview_image_service
 from ...infrastructure.assets.ShapefileService import shapefile_service
 from ...infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository
-from ...types.Asset import AssetId, Asset, AssetType, AssetDescription
+from ...types.Asset import Asset, AssetDescription, AssetId, AssetType
 from ...types.Project import ProjectId
+from ..read.ProjectReader import project_reader
 
 
 @dataclasses.dataclass(frozen=True)
@@ -40,13 +41,7 @@ class UpdatePreviewImageCommandHandler:
         # prepare preview image asset
         preview_image_service.resize_as_preview_image(command.file_path)
         metadata = preview_image_service.extract_asset_metadata(command.file_path)
-        asset = Asset(
-            asset_id=command.asset_id,
-            project_id=command.project_id,
-            type=AssetType.IMAGE,
-            file=file,
-            metadata=metadata
-        )
+        asset = Asset(asset_id=command.asset_id, project_id=command.project_id, type=AssetType.IMAGE, file=file, metadata=metadata)
 
         # delete existing asset
         existing_asset_id = preview_image_repository.get_preview_image(command.project_id)

@@ -1,18 +1,17 @@
 import dataclasses
-from typing import Tuple
 
 import numpy as np
 import pyproj
-
-from shapely import Polygon as ShapelyPolygon, Point as ShapelyPoint
+from shapely import Point as ShapelyPoint
+from shapely import Polygon as ShapelyPolygon
 from shapely.affinity import rotate as rotate
 
-from .LengthUnit import LengthUnit
-from .Rotation import Rotation
-from .Crs import Crs
 from ...geometry import Point, Polygon
 from ...geometry.Feature import Feature
 from ...geometry.FeatureCollection import FeatureCollection
+from .Crs import Crs
+from .LengthUnit import LengthUnit
+from .Rotation import Rotation
 
 
 @dataclasses.dataclass
@@ -88,7 +87,7 @@ class Grid:
     _from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
 
     @classmethod
-    def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> "Grid":
+    def cartesian_from_polygon(cls, polygon: Polygon, rotation: Rotation, n_cols: int, n_rows: int) -> 'Grid':
         relative_col_coordinates = []
         relative_row_coordinates = []
         for col in range(n_cols):
@@ -100,14 +99,11 @@ class Grid:
         relative_row_coordinates.append(1)
 
         return cls.from_polygon_with_relative_coordinates(
-            polygon=polygon,
-            rotation=rotation,
-            relative_col_coordinates=relative_col_coordinates,
-            relative_row_coordinates=relative_row_coordinates
+            polygon=polygon, rotation=rotation, relative_col_coordinates=relative_col_coordinates, relative_row_coordinates=relative_row_coordinates
         )
 
     @classmethod
-    def from_polygon_with_relative_coordinates(cls, polygon: Polygon, rotation: Rotation, relative_col_coordinates: list[float], relative_row_coordinates: list[float]) -> "Grid":
+    def from_polygon_with_relative_coordinates(cls, polygon: Polygon, rotation: Rotation, relative_col_coordinates: list[float], relative_row_coordinates: list[float]) -> 'Grid':
 
         if len(relative_col_coordinates) < 1 or len(relative_row_coordinates) < 1:
             raise ValueError('percentages must have at least one element')
@@ -194,10 +190,7 @@ class Grid:
             raise NotImplementedError('Resize Grid with Flag preserve_absolute_coordinates set to True is not implemented  yet!')
 
         return Grid.from_polygon_with_relative_coordinates(
-            polygon=polygon,
-            rotation=self.rotation,
-            relative_col_coordinates=self.col_coordinates_relative(),
-            relative_row_coordinates=self.row_coordinates_relative()
+            polygon=polygon, rotation=self.rotation, relative_col_coordinates=self.col_coordinates_relative(), relative_row_coordinates=self.row_coordinates_relative()
         )
 
     def n_cols(self):
@@ -226,7 +219,7 @@ class Grid:
         row_coordinates = self.row_coordinates()
         return [row_coordinates[i] / self.total_height for i in range(len(row_coordinates))]
 
-    def get_mercator_cell_center_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
+    def get_mercator_cell_center_coordinates(self) -> tuple[list[list[float]], list[list[float]]]:
         cell_centers = self.get_mercator_cell_centers()
         xx_coords = [[point.coordinates[0] for point in row] for row in cell_centers]
         yy_coords = [[point.coordinates[1] for point in row] for row in cell_centers]
@@ -239,9 +232,8 @@ class Grid:
         origin_3857 = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         for row in range(self.n_rows()):
             for col in range(self.n_cols()):
-                point_3857 = ShapelyPoint((
-                    origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2,
-                    origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
+                point_3857 = ShapelyPoint(
+                    (origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2, origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
                 )
 
                 rotated_point_3857: ShapelyPoint = rotate(geom=point_3857, angle=self.rotation.to_float(), origin=origin_3857)  # type: ignore
@@ -249,7 +241,7 @@ class Grid:
 
         return centers.tolist()
 
-    def get_wgs_cell_center_coordinates(self) -> Tuple[list[list[float]], list[list[float]]]:
+    def get_wgs_cell_center_coordinates(self) -> tuple[list[list[float]], list[list[float]]]:
         cell_centers = self.get_wgs_cell_centers()
         xx_coords = [[point.coordinates[0] for point in row] for row in cell_centers]
         yy_coords = [[point.coordinates[1] for point in row] for row in cell_centers]
@@ -264,9 +256,8 @@ class Grid:
         from_3857_to_4326 = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
         for row in range(self.n_rows()):
             for col in range(self.n_cols()):
-                point_3857 = ShapelyPoint((
-                    origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2,
-                    origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
+                point_3857 = ShapelyPoint(
+                    (origin_3857[0] + (col_coordinates[col] + col_coordinates[col + 1]) / 2, origin_3857[1] - (row_coordinates[row] + row_coordinates[row + 1]) / 2)
                 )
 
                 rotated_point_3857: ShapelyPoint = rotate(geom=point_3857, angle=self.rotation.to_float(), origin=origin_3857)  # type: ignore
@@ -284,13 +275,15 @@ class Grid:
 
         for row in range(n_rows):
             for col in range(n_cols):
-                polygon_3857 = ShapelyPolygon((
-                    (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
-                    (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[row]),
-                    (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[row + 1]),
-                    (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row + 1]),
-                    (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
-                ))
+                polygon_3857 = ShapelyPolygon(
+                    (
+                        (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
+                        (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[row]),
+                        (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[row + 1]),
+                        (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row + 1]),
+                        (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[row]),
+                    )
+                )
 
                 rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
                 geometry_4326 = [from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
@@ -305,13 +298,15 @@ class Grid:
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
 
         for row in range(n_rows):
-            polygon_3857 = ShapelyPolygon((
-                (origin_3857_x, origin_3857_y - row_coordinates[row]),
-                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row]),
-                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row + 1]),
-                (origin_3857_x, origin_3857_y - row_coordinates[row + 1]),
-                (origin_3857_x, origin_3857_y - row_coordinates[row]),
-            ))
+            polygon_3857 = ShapelyPolygon(
+                (
+                    (origin_3857_x, origin_3857_y - row_coordinates[row]),
+                    (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row]),
+                    (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[row + 1]),
+                    (origin_3857_x, origin_3857_y - row_coordinates[row + 1]),
+                    (origin_3857_x, origin_3857_y - row_coordinates[row]),
+                )
+            )
 
             rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
@@ -326,13 +321,15 @@ class Grid:
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
 
         for col in range(n_cols):
-            polygon_3857 = ShapelyPolygon((
-                (origin_3857_x + col_coordinates[col], origin_3857_y),
-                (origin_3857_x + col_coordinates[col + 1], origin_3857_y),
-                (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[-1]),
-                (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[-1]),
-                (origin_3857_x + col_coordinates[col], origin_3857_y),
-            ))
+            polygon_3857 = ShapelyPolygon(
+                (
+                    (origin_3857_x + col_coordinates[col], origin_3857_y),
+                    (origin_3857_x + col_coordinates[col + 1], origin_3857_y),
+                    (origin_3857_x + col_coordinates[col + 1], origin_3857_y - row_coordinates[-1]),
+                    (origin_3857_x + col_coordinates[col], origin_3857_y - row_coordinates[-1]),
+                    (origin_3857_x + col_coordinates[col], origin_3857_y),
+                )
+            )
 
             rotated_polygon_3857 = rotate(geom=polygon_3857, angle=self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
             geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
@@ -345,19 +342,21 @@ class Grid:
 
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
 
-        polygon_3857 = ShapelyPolygon((
-            (origin_3857_x, origin_3857_y),
-            (origin_3857_x + col_coordinates[-1], origin_3857_y),
-            (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
-            (origin_3857_x, origin_3857_y - row_coordinates[-1]),
-            (origin_3857_x, origin_3857_y),
-        ))
+        polygon_3857 = ShapelyPolygon(
+            (
+                (origin_3857_x, origin_3857_y),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x, origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x, origin_3857_y),
+            )
+        )
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
         geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
         return Feature(geometry=Polygon(coordinates=[geometry_4326]), properties={'type': 'bounding_box'})
 
-    def get_wgs_width_height(self) -> Tuple[float, float]:
+    def get_wgs_width_height(self) -> tuple[float, float]:
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         corner_upper_left = ShapelyPoint((origin_3857_x, origin_3857_y))
         corner_upper_right = ShapelyPoint((origin_3857_x + self.total_width), origin_3857_y)
@@ -367,9 +366,9 @@ class Grid:
         rotated_corner_upper_right = rotate(corner_upper_right, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
         rotated_corner_lower_left = rotate(corner_lower_left, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
 
-        corner_upper_left_4326 = ShapelyPoint((self._from_3857_to_4326.transform(rotated_corner_upper_left.x, rotated_corner_upper_left.y)))
-        corner_upper_right_4326 = ShapelyPoint((self._from_3857_to_4326.transform(rotated_corner_upper_right.x, rotated_corner_upper_right.y)))
-        corner_lower_left_4326 = ShapelyPoint((self._from_3857_to_4326.transform(rotated_corner_lower_left.x, rotated_corner_lower_left.y)))
+        corner_upper_left_4326 = ShapelyPoint(self._from_3857_to_4326.transform(rotated_corner_upper_left.x, rotated_corner_upper_left.y))
+        corner_upper_right_4326 = ShapelyPoint(self._from_3857_to_4326.transform(rotated_corner_upper_right.x, rotated_corner_upper_right.y))
+        corner_lower_left_4326 = ShapelyPoint(self._from_3857_to_4326.transform(rotated_corner_lower_left.x, rotated_corner_lower_left.y))
 
         width = corner_upper_left_4326.distance(corner_upper_right_4326)
         height = corner_upper_left_4326.distance(corner_lower_left_4326)
@@ -380,13 +379,15 @@ class Grid:
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
 
-        polygon_3857 = ShapelyPolygon((
-            (origin_3857_x, origin_3857_y),
-            (origin_3857_x + col_coordinates[-1], origin_3857_y),
-            (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
-            (origin_3857_x, origin_3857_y - row_coordinates[-1]),
-            (origin_3857_x, origin_3857_y),
-        ))
+        polygon_3857 = ShapelyPolygon(
+            (
+                (origin_3857_x, origin_3857_y),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x, origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x, origin_3857_y),
+            )
+        )
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
         geometry_4326 = [self._from_3857_to_4326.transform(point[0], point[1]) for point in list(rotated_polygon_3857.exterior.coords)]
@@ -398,13 +399,15 @@ class Grid:
         origin_3857_x, origin_3857_y = self._from_4326_to_3857.transform(self.origin.coordinates[0], self.origin.coordinates[1])
         col_coordinates, row_coordinates = self.col_coordinates(), self.row_coordinates()
 
-        polygon_3857 = ShapelyPolygon((
-            (origin_3857_x, origin_3857_y),
-            (origin_3857_x + col_coordinates[-1], origin_3857_y),
-            (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
-            (origin_3857_x, origin_3857_y - row_coordinates[-1]),
-            (origin_3857_x, origin_3857_y),
-        ))
+        polygon_3857 = ShapelyPolygon(
+            (
+                (origin_3857_x, origin_3857_y),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y),
+                (origin_3857_x + col_coordinates[-1], origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x, origin_3857_y - row_coordinates[-1]),
+                (origin_3857_x, origin_3857_y),
+            )
+        )
 
         rotated_polygon_3857 = rotate(polygon_3857, self.rotation.to_float(), origin=(origin_3857_x, origin_3857_y))  # type: ignore
         return (rotated_polygon_3857.bounds[2] - rotated_polygon_3857.bounds[0]) / (rotated_polygon_3857.bounds[3] - rotated_polygon_3857.bounds[1])
@@ -425,19 +428,10 @@ class Grid:
         relative_row_coordinates.append(1)
 
         (min_x, min_y, max_x, max_y) = self.get_wgs_bbox()
-        polygon = Polygon(coordinates=[[
-            (min_x, max_y),
-            (max_x, max_y),
-            (max_x, min_y),
-            (min_x, min_y),
-            (min_x, max_y)
-        ]])
+        polygon = Polygon(coordinates=[[(min_x, max_y), (max_x, max_y), (max_x, min_y), (min_x, min_y), (min_x, max_y)]])
 
         new_grid = Grid.from_polygon_with_relative_coordinates(
-            polygon=polygon,
-            rotation=Rotation.from_float(0.0),
-            relative_col_coordinates=relative_col_coordinates,
-            relative_row_coordinates=relative_row_coordinates
+            polygon=polygon, rotation=Rotation.from_float(0.0), relative_col_coordinates=relative_col_coordinates, relative_row_coordinates=relative_row_coordinates
         )
 
         return new_grid
@@ -461,10 +455,7 @@ class Grid:
             raise ValueError('Grid bounding box is not a polygon')
 
         return Grid.from_polygon_with_relative_coordinates(
-            polygon=polygon,
-            rotation=self.rotation,
-            relative_col_coordinates=col_coordinates_relative,
-            relative_row_coordinates=row_coordinates_relative
+            polygon=polygon, rotation=self.rotation, relative_col_coordinates=col_coordinates_relative, relative_row_coordinates=row_coordinates_relative
         )
 
     def is_regular(self) -> bool:
@@ -472,4 +463,5 @@ class Grid:
         average_col_width = sum(self.col_widths) / len(self.col_widths)
         average_row_height = sum(self.row_heights) / len(self.row_heights)
         return all([abs(width - average_col_width) / average_col_width < 0.1 for width in self.col_widths]) and all(
-            [abs(height - average_row_height) / average_row_height < 0.1 for height in self.row_heights])
+            [abs(height - average_row_height) / average_row_height < 0.1 for height in self.row_heights]
+        )

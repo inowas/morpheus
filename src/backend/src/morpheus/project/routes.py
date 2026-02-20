@@ -3,43 +3,48 @@ from typing import Literal
 from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
+from ..common.presentation.api.middleware.schema_validation import validate_request
 from .incoming import authenticate
+from .presentation.api.read.AssetReadRequestHandlers import (
+    DownloadAssetRequestHandler,
+    ReadAssetDataRequestHandler,
+    ReadAssetListRequestHandler,
+    ReadAssetRequestHandler,
+    ReadPreviewImageRequestHandler,
+)
+from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectEventLogRequestHandler, ReadProjectListRequestHandler
 from .presentation.api.read.ReadCalculationBudgetResultsRequestHandler import ReadCalculationBudgetResultsRequestHandler
 from .presentation.api.read.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
 from .presentation.api.read.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
 from .presentation.api.read.ReadCalculationLayerResultsRequestHandler import ReadCalculationLayerResultsRequestHandler
 from .presentation.api.read.ReadCalculationObservationResultsRequestHandler import ReadCalculationObservationResultsRequestHandler
 from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
-from .presentation.api.read.ReadCalculationTimeSeriesResultsRequestHandler import ReadCalculationTimeSeriesResultsRequestHandler
 from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
+from .presentation.api.read.ReadCalculationTimeSeriesResultsRequestHandler import ReadCalculationTimeSeriesResultsRequestHandler
 from .presentation.api.read.ReadMetadataRequestHandler import ReadMetadataRequestHandler
 from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
 from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
 from .presentation.api.read.ReadModelCalculationDetailsRequestHandler import ReadModelCalculationDetailsRequestHandler
 from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
-from .presentation.api.read.ReadModelObservationsRequestHandler import ReadModelHeadObservationsRequestHandler
-from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ReadModelLayerPropertyImageRequestHandler, ImageOutputFormat
-from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler, DataOutputFormat
+from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import DataOutputFormat, ReadModelLayerPropertyDataRequestHandler
+from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ImageOutputFormat, ReadModelLayerPropertyImageRequestHandler
 from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
+from .presentation.api.read.ReadModelObservationsRequestHandler import ReadModelHeadObservationsRequestHandler
 from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
 from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
 from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
 from .presentation.api.read.ReadPrivilegesRequestHandler import ReadPrivilegesRequestHandler
 from .presentation.api.read.ReadSelectedCalculationProfileRequestHandler import ReadSelectedCalculationProfileRequestHandler
+from .presentation.api.write.AssetWriteRequestHandlers import DeletePreviewImageRequestHandler, UploadAssetRequestHandler, UploadPreviewImageRequestHandler
 from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequestHandler
 from .types.Asset import AssetId
-from .types.Project import ProjectId
-from .presentation.api.read.AssetReadRequestHandlers import ReadPreviewImageRequestHandler, ReadAssetListRequestHandler, DownloadAssetRequestHandler, ReadAssetRequestHandler, \
-    ReadAssetDataRequestHandler
-from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectListRequestHandler, ReadProjectEventLogRequestHandler
-from .presentation.api.write.AssetWriteRequestHandlers import UploadPreviewImageRequestHandler, DeletePreviewImageRequestHandler, UploadAssetRequestHandler
 from .types.boundaries.Boundary import BoundaryId
 from .types.calculation.Calculation import CalculationId
 from .types.calculation.CalculationProfile import CalculationProfileId
-from .types.layers.Layer import LayerPropertyName, LayerId
+from .types.layers.Layer import LayerId, LayerPropertyName
 from .types.observations.HeadObservation import ObservationId
-from ..common.presentation.api.middleware.schema_validation import validate_request
+from .types.Project import ProjectId
 
 
 def register_routes(blueprint: Blueprint):
@@ -93,11 +98,7 @@ def register_routes(blueprint: Blueprint):
         time_idx = int(request.args.get('time_idx', 0))
         incremental = request.args.get('incremental', 'false').lower() == 'true'
         return ReadCalculationBudgetResultsRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            calculation_id=CalculationId.from_str(calculation_id),
-            result_type=result_type,
-            time_idx=time_idx,
-            incremental=incremental
+            project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), result_type=result_type, time_idx=time_idx, incremental=incremental
         )
 
     @blueprint.route('/<project_id>/calculations/<calculation_id>/results/layer/<result_type>', methods=['GET'])
@@ -149,7 +150,9 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_selected_calculation_profile(project_id: str, calculation_profile_id: str | None = None):
-        return ReadSelectedCalculationProfileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_profile_id=CalculationProfileId.try_from_str(calculation_profile_id))
+        return ReadSelectedCalculationProfileRequestHandler().handle(
+            project_id=ProjectId.from_str(project_id), calculation_profile_id=CalculationProfileId.try_from_str(calculation_profile_id)
+        )
 
     @blueprint.route('/<project_id>/calculation-profiles', methods=['GET'])
     @cross_origin()
@@ -229,10 +232,7 @@ def register_routes(blueprint: Blueprint):
     def project_model_layer_property(project_id: str, layer_id: str, property_name: str):
         output_format = DataOutputFormat(request.args.get('format', DataOutputFormat.raster))
         return ReadModelLayerPropertyDataRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            layer_id=LayerId.from_str(layer_id),
-            property_name=LayerPropertyName.from_str(property_name),
-            output_format=output_format
+            project_id=ProjectId.from_str(project_id), layer_id=LayerId.from_str(layer_id), property_name=LayerPropertyName.from_str(property_name), output_format=output_format
         )
 
     @blueprint.route('/<project_id>/model/layers/<layer_id>/properties/<property_name>/image', methods=['GET'])
@@ -241,10 +241,7 @@ def register_routes(blueprint: Blueprint):
     def project_model_layer_property_image(project_id: str, layer_id: str, property_name: str):
         output_format = ImageOutputFormat(request.args.get('format', ImageOutputFormat.raster))
         return ReadModelLayerPropertyImageRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            layer_id=LayerId.from_str(layer_id),
-            property_name=LayerPropertyName.from_str(property_name),
-            output_format=output_format
+            project_id=ProjectId.from_str(project_id), layer_id=LayerId.from_str(layer_id), property_name=LayerPropertyName.from_str(property_name), output_format=output_format
         )
 
     @blueprint.route('/<project_id>/model/boundaries', methods=['GET'])
@@ -259,11 +256,7 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_boundary_affected_cells(project_id: str, boundary_id: str):
         output_format: Literal['json', 'geojson', 'geojson_outline'] | str = request.args.get('format', 'json')  # default to json
-        return ReadModelBoundaryAffectedCellsRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            boundary_id=BoundaryId.from_str(boundary_id),
-            format=output_format
-        )
+        return ReadModelBoundaryAffectedCellsRequestHandler().handle(project_id=ProjectId.from_str(project_id), boundary_id=BoundaryId.from_str(boundary_id), format=output_format)
 
     @blueprint.route('/<project_id>/model/head-observations', methods=['GET'])
     @blueprint.route('/<project_id>/model/head-observations/<head_observation_id>', methods=['GET'])
@@ -305,20 +298,14 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def project_asset(project_id: str, asset_id: str):
-        return ReadAssetRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            asset_id=AssetId.from_str(asset_id)
-        )
+        return ReadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id), asset_id=AssetId.from_str(asset_id))
 
     @blueprint.route('/<project_id>/assets/<asset_id>/file', methods=['GET'])
     @cross_origin()
     @authenticate()
     @validate_request
     def download_project_asset(project_id: str, asset_id: str):
-        return DownloadAssetRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            asset_id=AssetId.from_str(asset_id)
-        )
+        return DownloadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id), asset_id=AssetId.from_str(asset_id))
 
     @blueprint.route('/<project_id>/assets/<asset_id>/data', methods=['GET'])
     @cross_origin()
@@ -326,8 +313,4 @@ def register_routes(blueprint: Blueprint):
     @validate_request
     def project_asset_data(project_id: str, asset_id: str):
         band = request.args.get('band', None)
-        return ReadAssetDataRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id),
-            asset_id=AssetId.from_str(asset_id),
-            band=int(band) if band is not None else None
-        )
+        return ReadAssetDataRequestHandler().handle(project_id=ProjectId.from_str(project_id), asset_id=AssetId.from_str(asset_id), band=int(band) if band is not None else None)

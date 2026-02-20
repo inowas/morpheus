@@ -1,5 +1,5 @@
-from .Point import Point
 from .LineString import LineString
+from .Point import Point
 from .Polygon import Polygon
 
 

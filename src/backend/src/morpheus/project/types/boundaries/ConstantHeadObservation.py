@@ -1,11 +1,11 @@
 import dataclasses
+
 import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
-
-from morpheus.project.types.boundaries.Observation import DataItem, ObservationId, ObservationName, StartDateTime, EndDateTime, ObservationValue, Observation
+from morpheus.project.types.boundaries.Observation import DataItem, EndDateTime, Observation, ObservationId, ObservationName, ObservationValue, StartDateTime
 from morpheus.project.types.geometry import Point
 
 
@@ -20,23 +20,14 @@ class ConstantHeadObservationValue(ObservationValue):
 
     @classmethod
     def default(cls, date_time: StartDateTime):
-        return cls(
-            date_time=date_time,
-            head=HeadValue.from_float(0.0)
-        )
+        return cls(date_time=date_time, head=HeadValue.from_float(0.0))
 
     @classmethod
     def from_dict(cls, obj):
-        return cls(
-            date_time=StartDateTime.from_value(obj['date_time']),
-            head=HeadValue.from_value(obj['head'])
-        )
+        return cls(date_time=StartDateTime.from_value(obj['date_time']), head=HeadValue.from_value(obj['head']))
 
     def to_dict(self):
-        return {
-            'date_time': self.date_time.to_value(),
-            'head': self.head.to_value()
-        }
+        return {'date_time': self.date_time.to_value(), 'head': self.head.to_value()}
 
 
 @dataclasses.dataclass
@@ -54,7 +45,7 @@ class ConstantHeadDataItem(DataItem):
             start_date_time=StartDateTime.from_value(obj['start_date_time']),
             end_date_time=EndDateTime.from_value(obj['end_date_time']),
             start_head=HeadValue.from_value(obj['start_head']),
-            end_head=HeadValue.from_value(obj['end_head'])
+            end_head=HeadValue.from_value(obj['end_head']),
         )
 
     def to_dict(self):
@@ -63,7 +54,7 @@ class ConstantHeadDataItem(DataItem):
             'start_date_time': self.start_date_time.to_value(),
             'end_date_time': self.end_date_time.to_value(),
             'start_head': self.start_head.to_value(),
-            'end_head': self.end_head.to_value()
+            'end_head': self.end_head.to_value(),
         }
 
 
@@ -75,12 +66,7 @@ class ConstantHeadObservation(Observation):
     def new(cls, name: ObservationName, geometry: Point, data: list[ConstantHeadObservationValue], observation_id: ObservationId | None = None):
         data = list({d.date_time: d for d in data}.values())
         data = sorted(data, key=lambda x: x.date_time)
-        return cls(
-            observation_id=observation_id or ObservationId.new(),
-            observation_name=name,
-            geometry=geometry,
-            data=data
-        )
+        return cls(observation_id=observation_id or ObservationId.new(), observation_name=name, geometry=geometry, data=data)
 
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> ConstantHeadDataItem | None:
 
@@ -91,11 +77,7 @@ class ConstantHeadObservation(Observation):
             for item in self.data:
                 if item.date_time == start_date_time:
                     return ConstantHeadDataItem(
-                        observation_id=self.observation_id,
-                        start_date_time=start_date_time,
-                        end_date_time=end_date_time,
-                        start_head=item.head,
-                        end_head=item.head
+                        observation_id=self.observation_id, start_date_time=start_date_time, end_date_time=end_date_time, start_head=item.head, end_head=item.head
                     )
             return None
 
@@ -108,17 +90,13 @@ class ConstantHeadObservation(Observation):
                 return None
 
             last_known_value = sorted_data[0]
-            for i, item in enumerate(self.data):
+            for _i, item in enumerate(self.data):
                 if item.date_time < start_date_time:
                     last_known_value = item
 
                 if item.date_time == start_date_time:
                     return ConstantHeadDataItem(
-                        observation_id=self.observation_id,
-                        start_date_time=start_date_time,
-                        end_date_time=end_date_time,
-                        start_head=item.head,
-                        end_head=item.head
+                        observation_id=self.observation_id, start_date_time=start_date_time, end_date_time=end_date_time, start_head=item.head, end_head=item.head
                     )
 
                 # do not process any further if the item is after the start_date_time
@@ -127,11 +105,7 @@ class ConstantHeadObservation(Observation):
 
             # return the last known value if the start_date_time is not present in the time series
             return ConstantHeadDataItem(
-                observation_id=self.observation_id,
-                start_date_time=start_date_time,
-                end_date_time=end_date_time,
-                start_head=last_known_value.head,
-                end_head=last_known_value.head
+                observation_id=self.observation_id, start_date_time=start_date_time, end_date_time=end_date_time, start_head=last_known_value.head, end_head=last_known_value.head
             )
 
         # In range check
@@ -151,7 +125,7 @@ class ConstantHeadObservation(Observation):
             time_series.values.astype(float),
             heads.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         heads = heads_interpolator(date_range.values.astype(float))
 
@@ -163,7 +137,7 @@ class ConstantHeadObservation(Observation):
             start_date_time=start_date_time,
             end_date_time=end_date_time,
             start_head=HeadValue.from_value(start_head),
-            end_head=HeadValue.from_value(end_head)
+            end_head=HeadValue.from_value(end_head),
         )
 
     @classmethod
@@ -172,7 +146,7 @@ class ConstantHeadObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[ConstantHeadObservationValue.from_dict(d) for d in obj['data']]
+            data=[ConstantHeadObservationValue.from_dict(d) for d in obj['data']],
         )
 
     def to_dict(self):
@@ -180,5 +154,5 @@ class ConstantHeadObservation(Observation):
             'observation_id': self.observation_id.to_value(),
             'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
-            'data': [d.to_dict() for d in self.data]
+            'data': [d.to_dict() for d in self.data],
         }

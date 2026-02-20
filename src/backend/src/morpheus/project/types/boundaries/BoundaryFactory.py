@@ -1,8 +1,21 @@
-from typing import Sequence
+from collections.abc import Sequence
 
-from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryType, WellBoundary, ConstantHeadBoundary, \
-    EvapotranspirationBoundary, FlowAndHeadBoundary, DrainBoundary, \
-    GeneralHeadBoundary, LakeBoundary, RechargeBoundary, RiverBoundary, BoundaryName, BoundaryTags, BoundaryId
+from morpheus.project.types.boundaries.Boundary import (
+    Boundary,
+    BoundaryId,
+    BoundaryName,
+    BoundaryTags,
+    BoundaryType,
+    ConstantHeadBoundary,
+    DrainBoundary,
+    EvapotranspirationBoundary,
+    FlowAndHeadBoundary,
+    GeneralHeadBoundary,
+    LakeBoundary,
+    RechargeBoundary,
+    RiverBoundary,
+    WellBoundary,
+)
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadObservationValue
 from morpheus.project.types.boundaries.DrainObservation import DrainRawDataItem
@@ -15,12 +28,11 @@ from morpheus.project.types.boundaries.RechargeObservation import RechargeObserv
 from morpheus.project.types.boundaries.RiverObservation import RiverObservationValue
 from morpheus.project.types.boundaries.WellObservation import WellObservationValue
 from morpheus.project.types.discretization.spatial import ActiveCells
-from morpheus.project.types.geometry import Point, LineString, Polygon
+from morpheus.project.types.geometry import LineString, Point, Polygon
 from morpheus.project.types.layers import LayerId
 
 
 class BoundaryFactory:
-
     @staticmethod
     def assert_is_point(geometry: Point | LineString | Polygon) -> Point:
         if not isinstance(geometry, Point):
@@ -39,9 +51,17 @@ class BoundaryFactory:
             raise ValueError('Geometry must be a polygon')
         return geometry
 
-    def create_with_default_observation_values(self, boundary_id: BoundaryId, boundary_type: BoundaryType, geometry: Point | LineString | Polygon, affected_cells: ActiveCells,
-                                               affected_layers: Sequence[LayerId], start_date_time: StartDateTime, name: BoundaryName | None = None,
-                                               tags: BoundaryTags | None = None) -> Boundary | None:
+    def create_with_default_observation_values(
+        self,
+        boundary_id: BoundaryId,
+        boundary_type: BoundaryType,
+        geometry: Point | LineString | Polygon,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        start_date_time: StartDateTime,
+        name: BoundaryName | None = None,
+        tags: BoundaryTags | None = None,
+    ) -> Boundary | None:
 
         if boundary_type == BoundaryType.constant_head:
             geometry = self.assert_is_line_string(geometry)
@@ -153,18 +173,19 @@ class BoundaryFactory:
 
         return None
 
-    def create_from_single_observation_import(self,
-                                              boundary_id: BoundaryId,
-                                              boundary_type: BoundaryType,
-                                              name: BoundaryName,
-                                              interpolation: InterpolationType,
-                                              tags: BoundaryTags,
-                                              geometry: Point | LineString | Polygon,
-                                              affected_cells: ActiveCells,
-                                              affected_layers: Sequence[LayerId],
-                                              data: list[dict],
-                                              start_date_time: StartDateTime,
-                                              ) -> Boundary | None:
+    def create_from_single_observation_import(
+        self,
+        boundary_id: BoundaryId,
+        boundary_type: BoundaryType,
+        name: BoundaryName,
+        interpolation: InterpolationType,
+        tags: BoundaryTags,
+        geometry: Point | LineString | Polygon,
+        affected_cells: ActiveCells,
+        affected_layers: Sequence[LayerId],
+        data: list[dict],
+        start_date_time: StartDateTime,
+    ) -> Boundary | None:
 
         boundary_type = BoundaryType.from_str(boundary_type)
         if boundary_type == BoundaryType.constant_head:

@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowFhb as FlopyModflowFhb
 
-from .FhbPackageMapper import FhbStressPeriodData, calculate_fhb_boundary_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .FhbPackageMapper import FhbStressPeriodData, calculate_fhb_boundary_stress_period_data
 
 
 @dataclasses.dataclass
@@ -47,21 +48,23 @@ class FhbPackageData:
     ds5: list[list[float]] | None
     cnstm7: float
     ds7: list[list[float]] | None
-    extension: Literal["fhb"] = "fhb"
+    extension: Literal['fhb'] = 'fhb'
     unitnumber: int | None = None
     filenames: list[str] | str | None = None
 
-    def __init__(self,
-                 fhb_stress_period_data: FhbStressPeriodData,
-                 ifhbss: int = 0,
-                 ipakcb: int = 0,
-                 ifhbpt: int = 0,
-                 bdtimecnstm: float = 0.0,
-                 cnstm5: float = 1.0,
-                 cnstm7: float = 1.0,
-                 extension: Literal["fhb"] = "fhb",
-                 unitnumber: int | None = None,
-                 filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        fhb_stress_period_data: FhbStressPeriodData,
+        ifhbss: int = 0,
+        ipakcb: int = 0,
+        ifhbpt: int = 0,
+        bdtimecnstm: float = 0.0,
+        cnstm5: float = 1.0,
+        cnstm7: float = 1.0,
+        extension: Literal['fhb'] = 'fhb',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         ds5 = fhb_stress_period_data.get_ds5()
         ds7 = fhb_stress_period_data.get_ds7()
 
@@ -101,7 +104,7 @@ class FhbPackageData:
             'ds7': self.ds7,
             'extension': self.extension,
             'unitnumber': self.unitnumber,
-            'filenames': self.filenames
+            'filenames': self.filenames,
         }
 
 

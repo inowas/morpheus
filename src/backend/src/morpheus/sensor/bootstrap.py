@@ -1,7 +1,7 @@
 from flask import Blueprint
 
-from .routes import register_routes
 from .cli_commands import register_cli_commands
+from .routes import register_routes
 
 
 def bootstrap_sensor_module(app):

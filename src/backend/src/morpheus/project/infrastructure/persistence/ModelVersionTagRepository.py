@@ -1,10 +1,10 @@
 import dataclasses
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.common.types import DateTime
-from morpheus.project.types.Project import ProjectId
 from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.ModelVersion import ModelVersion, VersionId, VersionTag, VersionDescription
+from morpheus.project.types.ModelVersion import ModelVersion, VersionDescription, VersionId, VersionTag
+from morpheus.project.types.Project import ProjectId
 from morpheus.settings import settings as app_settings
 
 
@@ -69,15 +69,9 @@ class ModelVersionTagRepository(RepositoryBase):
         self.collection.delete_one({'project_id': project_id.to_str(), 'version_id': version_id.to_str()})
 
     def update_version_description(self, project_id: ProjectId, version_id: VersionId, description: VersionDescription) -> None:
-        self.collection.update_one(
-            {'project_id': project_id.to_str(), 'version_id': version_id.to_str()},
-            {'$set': {'description': description.to_str()}}
-        )
+        self.collection.update_one({'project_id': project_id.to_str(), 'version_id': version_id.to_str()}, {'$set': {'description': description.to_str()}})
 
 
 model_version_tag_repository = ModelVersionTagRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'model_version_tags'
-    )
+    collection=create_or_get_collection(get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'model_version_tags')
 )

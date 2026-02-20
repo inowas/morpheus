@@ -5,4 +5,4 @@ from .Integer import Integer
 from .String import String
 from .Uuid import Uuid
 
-__all__ = ["Bool", "DateTime", "Float", "Integer", "String", "Uuid"]
+__all__ = ['Bool', 'DateTime', 'Float', 'Integer', 'String', 'Uuid']

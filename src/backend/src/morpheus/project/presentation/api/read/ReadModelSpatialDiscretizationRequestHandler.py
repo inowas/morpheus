@@ -1,13 +1,14 @@
 import dataclasses
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
+
 from ....application.read.ModelReader import ModelReader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
-from ....types.Project import ProjectId
 from ....types.discretization import SpatialDiscretization
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 @dataclasses.dataclass(frozen=True)
@@ -31,7 +32,7 @@ class SpatialDiscretizationResponseObject:
                 'origin': self.spatial_discretization.grid.origin.to_dict(),
                 'rotation': self.spatial_discretization.grid.rotation.to_value(),
                 'outline': self.spatial_discretization.grid.get_wgs_outline_geometry().geometry.to_dict(),
-            }
+            },
         }
 
 

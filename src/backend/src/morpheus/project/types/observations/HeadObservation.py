@@ -1,10 +1,12 @@
 import dataclasses
-from typing import List, Sequence, Literal
+from collections.abc import Sequence
+from typing import Literal
 
-from morpheus.common.types import Uuid, Float, String, DateTime
+from morpheus.common.types import DateTime, Float, String, Uuid
+
 from ..discretization.spatial import ActiveCells, Grid
-from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
-from ..geometry import Point, GeometryCollection
+from ..discretization.time.Stressperiods import EndDateTime, StartDateTime
+from ..geometry import GeometryCollection, Point
 from ..layers import LayerId
 
 
@@ -79,16 +81,10 @@ class HeadObservationValue:
 
     @classmethod
     def from_dict(cls, obj):
-        return cls(
-            date_time=DateTime.from_value(obj['date_time']),
-            head=Head.from_value(obj['head'])
-        )
+        return cls(date_time=DateTime.from_value(obj['date_time']), head=Head.from_value(obj['head']))
 
     def to_dict(self):
-        return {
-            'date_time': self.date_time.to_value(),
-            'head': self.head.to_value()
-        }
+        return {'date_time': self.date_time.to_value(), 'head': self.head.to_value()}
 
 
 @dataclasses.dataclass
@@ -107,10 +103,20 @@ class HeadObservation:
         return self.to_dict() == other.to_dict()
 
     @classmethod
-    def from_geometry(cls, name: ObservationName, geometry: Point, grid: Grid, affected_layers: list[LayerId],
-                      tags: ObservationTags = ObservationTags.empty(),
-                      data: list[HeadObservationValue] | None = None,
-                      id: ObservationId | None = None, enabled: bool = True):
+    def from_geometry(
+        cls,
+        name: ObservationName,
+        geometry: Point,
+        grid: Grid,
+        affected_layers: list[LayerId],
+        tags: ObservationTags | None = None,
+        data: list[HeadObservationValue] | None = None,
+        id: ObservationId | None = None,
+        enabled: bool = True,
+    ):
+        if tags is None:
+            tags = ObservationTags.empty()
+
         return cls(
             id=id or ObservationId.new(),
             type=ObservationType.head(),
@@ -134,7 +140,7 @@ class HeadObservation:
             affected_cells=ActiveCells.from_dict(obj['affected_cells']),
             affected_layers=[LayerId.from_value(layer_id) for layer_id in obj['affected_layers']],
             data=[HeadObservationValue.from_dict(value) for value in obj['data']],
-            enabled=obj['enabled'] if 'enabled' in obj else True
+            enabled=obj.get('enabled', True),
         )
 
     def to_dict(self):
@@ -147,10 +153,10 @@ class HeadObservation:
             'affected_cells': self.affected_cells.to_dict(),
             'affected_layers': [layer_id.to_value() for layer_id in self.affected_layers],
             'data': [value.to_dict() for value in self.data],
-            'enabled': self.enabled
+            'enabled': self.enabled,
         }
 
-    def get_data_items(self, start: StartDateTime, end: EndDateTime) -> List[HeadObservationValue]:
+    def get_data_items(self, start: StartDateTime, end: EndDateTime) -> list[HeadObservationValue]:
         return [value for value in self.data if start.to_datetime() <= value.date_time.to_datetime() <= end.to_datetime()]
 
     def as_geojson(self):

@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventName import EventName
 
 
@@ -13,12 +13,7 @@ class EventBase:
 
     @classmethod
     def create(cls, entity_uuid: Uuid, occurred_at: DateTime, payload: dict, event_version: int = 0):
-        return cls(
-            entity_uuid=entity_uuid,
-            occurred_at=occurred_at,
-            payload=payload,
-            version=event_version
-        )
+        return cls(entity_uuid=entity_uuid, occurred_at=occurred_at, payload=payload, version=event_version)
 
     @staticmethod
     def get_event_name() -> EventName:

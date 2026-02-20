@@ -1,6 +1,7 @@
 import dataclasses
 
 from flopy.modflow import ModflowSip as FlopyModflowSip
+
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
 
@@ -15,8 +16,7 @@ class SipPackageSettings:
     wseed: float
     iprsip: int
 
-    def __init__(self, mxiter: int = 200, nparm: int = 5, accl: float = 1, hclose: float = 1e-5,
-                 ipcalc: int = 1, wseed: float = 0.0, iprsip: int = 0):
+    def __init__(self, mxiter: int = 200, nparm: int = 5, accl: float = 1, hclose: float = 1e-5, ipcalc: int = 1, wseed: float = 0.0, iprsip: int = 0):
         self.mxiter = mxiter
         self.nparm = nparm
         self.accl = accl
@@ -50,7 +50,7 @@ class SipPackageData:
     unitnumber: int | None
     filenames: list[str] | str | None
 
-    def __init__(self, mxiter=200, nparm=5, accl=1, hclose=1e-5, ipcalc=1, wseed=0, iprsip=0, extension: str = "sip", unitnumber=None, filenames=None):
+    def __init__(self, mxiter=200, nparm=5, accl=1, hclose=1e-5, ipcalc=1, wseed=0, iprsip=0, extension: str = 'sip', unitnumber=None, filenames=None):
         self.mxiter = mxiter
         self.nparm = nparm
         self.accl = accl

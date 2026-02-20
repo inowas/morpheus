@@ -1,12 +1,9 @@
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import (
-    LayerBasedStressPeriodData
-)
-from morpheus.project.types.Model import Model
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import LayerBasedStressPeriodData
 from morpheus.project.types.boundaries.Boundary import BoundaryType, EvapotranspirationBoundary
 from morpheus.project.types.boundaries.EvapotranspirationObservation import EvapotranspirationDataItem
-
-from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.layers import LayersCollection
+from morpheus.project.types.Model import Model
 
 
 class EvtStressPeriodData(LayerBasedStressPeriodData):
@@ -24,10 +21,7 @@ class EvtStressPeriodData(LayerBasedStressPeriodData):
 
 
 def calculate_evt_boundary_stress_period_data(
-    layers: LayersCollection,
-    spatial_discretization: SpatialDiscretization,
-    time_discretization: TimeDiscretization,
-    evt_boundary: EvapotranspirationBoundary
+    layers: LayersCollection, spatial_discretization: SpatialDiscretization, time_discretization: TimeDiscretization, evt_boundary: EvapotranspirationBoundary
 ) -> EvtStressPeriodData:
     grid = spatial_discretization.grid
     sp_data = EvtStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
@@ -37,7 +31,7 @@ def calculate_evt_boundary_stress_period_data(
     layer_index = layer_indices[0] if len(layer_indices) > 0 else 0
 
     # first we need to calculate the mean values for each observation point and each stress period
-    for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
+    for stress_period_idx, _stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
         mean_data = evt_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=evt_boundary.interpolation)
@@ -49,15 +43,14 @@ def calculate_evt_boundary_stress_period_data(
             continue
 
         if evt_boundary.number_of_observations() > 1:
-            raise NotImplementedError("Multiple observations for well boundaries are not supported")
+            raise NotImplementedError('Multiple observations for well boundaries are not supported')
 
         # we need to filter the affected cells to only include cells that are part of the model
-        evt_boundary.affected_cells = evt_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        evt_boundary.affected_cells = evt_boundary.affected_cells.filter(lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         mean_data = mean_data[0]
         if not isinstance(mean_data, EvapotranspirationDataItem):
-            raise TypeError("Expected EvapotranspirationDataItem but got {}".format(type(mean_data)))
+            raise TypeError(f'Expected EvapotranspirationDataItem but got {type(mean_data)}')
 
         surface_elevation = mean_data.surface_elevation
         evapotranspiration = mean_data.evapotranspiration
@@ -66,10 +59,11 @@ def calculate_evt_boundary_stress_period_data(
         for cell in evt_boundary.affected_cells:
             # evapotranspiration rates will be replaced
             sp_data.set_value(
-                time_step=stress_period_idx, row=cell.row, column=cell.col,
-                values=[surface_elevation.to_float(), evapotranspiration.to_float(),
-                        extinction_depth.to_float(), layer_index],
-                sum_up_values=False
+                time_step=stress_period_idx,
+                row=cell.row,
+                column=cell.col,
+                values=[surface_elevation.to_float(), evapotranspiration.to_float(), extinction_depth.to_float(), layer_index],
+                sum_up_values=False,
             )
 
     return sp_data
@@ -81,17 +75,10 @@ def calculate_stress_period_data(model: Model) -> EvtStressPeriodData | None:
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.evapotranspiration)
     for boundary in boundaries:
         if not isinstance(boundary, EvapotranspirationBoundary):
-            raise TypeError(
-                "Expected boundary of type {} but got {}".format(
-                    EvapotranspirationBoundary.__name__, type(boundary)
-                )
-            )
+            raise TypeError(f'Expected boundary of type {EvapotranspirationBoundary.__name__} but got {type(boundary)}')
 
         sp_data_boundary = calculate_evt_boundary_stress_period_data(
-            layers=model.layers,
-            spatial_discretization=model.spatial_discretization,
-            time_discretization=model.time_discretization,
-            evt_boundary=boundary
+            layers=model.layers, spatial_discretization=model.spatial_discretization, time_discretization=model.time_discretization, evt_boundary=boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
 

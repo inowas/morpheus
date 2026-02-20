@@ -1,5 +1,7 @@
 import dataclasses
+
 from flopy.modflow import Modflow as FlopyModflow
+
 from morpheus.project.types.Model import Model
 
 
@@ -34,9 +36,18 @@ class MfPackageData:
     external_path: str | None
     verbose: bool
 
-    def __init__(self, modelname: str = 'model', namefile_ext: str = 'nam', version: str = 'mf2005',
-                 exe_name: str = 'mf2005', structured: bool = True, listunit: int = 2, model_ws: str = '.',
-                 external_path: str | None = None, verbose: bool = False):
+    def __init__(
+        self,
+        modelname: str = 'model',
+        namefile_ext: str = 'nam',
+        version: str = 'mf2005',
+        exe_name: str = 'mf2005',
+        structured: bool = True,
+        listunit: int = 2,
+        model_ws: str = '.',
+        external_path: str | None = None,
+        verbose: bool = False,
+    ):
         self.modelname = modelname
         self.namefile_ext = namefile_ext
         self.version = version
@@ -60,12 +71,7 @@ class MfPackageData:
 
 
 def create_mf_package_data(model: Model, model_name: str, model_ws: str, settings: MfPackageSettings) -> MfPackageData:
-    return MfPackageData(
-        modelname=model_name,
-        exe_name='mf2005',
-        model_ws=model_ws,
-        verbose=settings.verbose
-    )
+    return MfPackageData(modelname=model_name, exe_name='mf2005', model_ws=model_ws, verbose=settings.verbose)
 
 
 def create_mf_package(model: Model, model_name: str, model_ws: str, settings: MfPackageSettings) -> FlopyModflow:

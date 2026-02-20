@@ -1,12 +1,12 @@
-from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
+from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
+
 from ...domain.events.ProjectPermissionEvents.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent
 from ...infrastructure.persistence.UserRoleAssignmentRepository import UserRoleAssignmentRepository, user_role_assignment_repository
 
 
 class UserRoleAssignmentProjector(EventListenerBase):
-
     def __init__(self, repository: UserRoleAssignmentRepository):
         self.repository = repository
 

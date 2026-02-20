@@ -123,9 +123,12 @@ class CalculationResult:
             flow_head_results=AvailableResults.from_dict(obj['flow_head_results']) if 'flow_head_results' in obj and obj['flow_head_results'] is not None else None,
             flow_drawdown_results=AvailableResults.from_dict(obj['flow_drawdown_results']) if 'flow_drawdown_results' in obj and obj['flow_drawdown_results'] is not None else None,
             flow_budget_results=AvailableResults.from_dict(obj['flow_budget_results']) if 'flow_budget_results' in obj and obj['flow_budget_results'] is not None else None,
-            transport_concentration_results=AvailableResults.from_dict(obj['transport_concentration_results']) if 'transport_concentration_results' in obj and obj[
-                'transport_concentration_results'] is not None else None,
-            transport_budget_results=AvailableResults.from_dict(obj['transport_budget_results']) if 'transport_budget_results' in obj and obj['transport_budget_results'] is not None else None,
+            transport_concentration_results=AvailableResults.from_dict(obj['transport_concentration_results'])
+            if 'transport_concentration_results' in obj and obj['transport_concentration_results'] is not None
+            else None,
+            transport_budget_results=AvailableResults.from_dict(obj['transport_budget_results'])
+            if 'transport_budget_results' in obj and obj['transport_budget_results'] is not None
+            else None,
             packages=obj['packages'] if 'packages' in obj and obj['packages'] is not None and obj['packages'] != '' else [],
         )
 

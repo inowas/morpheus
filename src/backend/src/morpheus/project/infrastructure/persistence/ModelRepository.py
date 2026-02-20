@@ -1,11 +1,11 @@
 import dataclasses
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.common.types import DateTime
-from morpheus.project.types.Model import Model, Sha1Hash
-from morpheus.project.types.Project import ProjectId
 from morpheus.common.types.identity.Identity import UserId
+from morpheus.project.types.Model import Model, Sha1Hash
 from morpheus.project.types.ModelVersion import ModelVersion, VersionId
+from morpheus.project.types.Project import ProjectId
 from morpheus.settings import settings as app_settings
 
 
@@ -55,24 +55,30 @@ class ModelRepositoryDocument:
         sha1_hash = model.get_sha1_hash().to_str()
 
         return dataclasses.replace(
-            self, model=model.to_dict(), sha1_hash=sha1_hash, number_of_changes=self.number_of_changes + 1,
-            version_string=version_string, last_change_at=changed_at.to_str(), last_change_by=changed_by.to_str()
+            self,
+            model=model.to_dict(),
+            sha1_hash=sha1_hash,
+            number_of_changes=self.number_of_changes + 1,
+            version_string=version_string,
+            last_change_at=changed_at.to_str(),
+            last_change_by=changed_by.to_str(),
         )
 
     def with_assigned_version(self, version: ModelVersion, changed_at: DateTime, changed_by: UserId):
         return dataclasses.replace(
-            self, version_id=version.version_id.to_str(), version_string=version.to_str(), number_of_changes=0, last_change_at=changed_at.to_str(),
-            last_change_by=changed_by.to_str()
+            self,
+            version_id=version.version_id.to_str(),
+            version_string=version.to_str(),
+            number_of_changes=0,
+            last_change_at=changed_at.to_str(),
+            last_change_by=changed_by.to_str(),
         )
 
     def with_updated_datetime(self, changed_at: DateTime, changed_by: UserId):
-        return dataclasses.replace(
-            self, last_change_at=changed_at.to_str(), last_change_by=changed_by.to_str()
-        )
+        return dataclasses.replace(self, last_change_at=changed_at.to_str(), last_change_by=changed_by.to_str())
 
 
 class ModelRepository(RepositoryBase):
-
     def get_latest_document(self, project_id: ProjectId, user_id: UserId | None = None) -> ModelRepositoryDocument | None:
         if user_id is None:
             data = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0}, sort=[('last_change_at', -1)])
@@ -202,9 +208,4 @@ class ModelRepository(RepositoryBase):
         )
 
 
-model_repository = ModelRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'models'
-    )
-)
+model_repository = ModelRepository(collection=create_or_get_collection(get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'models'))

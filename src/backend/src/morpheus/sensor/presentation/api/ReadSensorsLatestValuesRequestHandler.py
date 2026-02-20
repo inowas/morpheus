@@ -1,10 +1,9 @@
 from flask import Request
 
-from ...application.read.ReadSensorsLatestValues import ReadSensorsLatestValuesQuery, \
-    ReadSensorsLatestValuesQueryHandler
+from ...application.read.ReadSensorsLatestValues import ReadSensorsLatestValuesQuery, ReadSensorsLatestValuesQueryHandler
 
 
-class ReadSensorsLatestValuesRequestHandler():
+class ReadSensorsLatestValuesRequestHandler:
     @staticmethod
     def handle(request: Request):
         result = ReadSensorsLatestValuesQueryHandler.handle(ReadSensorsLatestValuesQuery())

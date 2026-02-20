@@ -1,7 +1,7 @@
 # from logging.config import dictConfig
 import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
 from flask import Flask
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from morpheus.app import bootstrap
 from morpheus.settings import settings
@@ -37,12 +37,12 @@ if settings.sentry_dsn:
         # of sampled transactions.
         # We recommend adjusting this value in production.
         profiles_sample_rate=1.0,
-        integrations=[FlaskIntegration()]
+        integrations=[FlaskIntegration()],
     )
 
 app = Flask(__name__)
 
 for key, value in vars(settings).items():
-    app.config[key] = settings.__getattribute__(key)
+    app.config[key] = value
 
 bootstrap(app)

@@ -1,7 +1,8 @@
 import geopandas
+
 from morpheus.common.types.EpsgCode import EpsgCode
 from morpheus.common.types.File import FilePath
-from morpheus.project.types.Asset import ShapefileMetadata, ShapefileAssetData
+from morpheus.project.types.Asset import ShapefileAssetData, ShapefileMetadata
 from morpheus.project.types.Exceptions import InvalidShapefileException
 from morpheus.project.types.geometry.BoundingBox import BoundingBox
 
@@ -24,17 +25,14 @@ class ShapefileService:
 
     def extract_asset_data(self, file: FilePath) -> ShapefileAssetData:
         geo_data_frame = self._read_wgs_84_geo_data_frame(file)
-        return ShapefileAssetData(
-            data=geo_data_frame.__geo_interface__,
-            wgs_84_bounding_box=BoundingBox.from_tuple_of_coordinates(geo_data_frame.total_bounds.tolist())
-        )
+        return ShapefileAssetData(data=geo_data_frame.__geo_interface__, wgs_84_bounding_box=BoundingBox.from_tuple_of_coordinates(geo_data_frame.total_bounds.tolist()))
 
     def _read_wgs_84_geo_data_frame(self, file: FilePath) -> geopandas.GeoDataFrame:
         try:
             gpd = geopandas.read_file(file)
             return gpd.to_crs(EpsgCode.WGS_84)
         except Exception as e:
-            raise InvalidShapefileException(f'Failed to read geo data frame: {e}')
+            raise InvalidShapefileException(f'Failed to read geo data frame: {e}') from e
 
 
 shapefile_service = ShapefileService()

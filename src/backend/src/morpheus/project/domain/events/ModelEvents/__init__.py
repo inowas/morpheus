@@ -1,4 +1,4 @@
-from . import GeneralModelEvents, ModelBoundaryEvents, ModelObservationEvents, ModelDiscretizationEvents, ModelLayerEvents
+from . import GeneralModelEvents, ModelBoundaryEvents, ModelDiscretizationEvents, ModelLayerEvents, ModelObservationEvents
 
 general_model_event_list = [
     GeneralModelEvents.ModelCreatedEvent,

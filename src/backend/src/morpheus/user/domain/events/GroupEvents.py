@@ -1,12 +1,11 @@
 import dataclasses
 
-from morpheus.common.infrastructure.event_sourcing.EventFactory import EventRegistry, EventFactory
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFactory, EventRegistry
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.user.types.Group import Group
-from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 class GroupEventName:
@@ -45,13 +44,7 @@ class GroupCreatedEvent(GroupEventBase):
 class MemberAddedEvent(GroupEventBase):
     @classmethod
     def from_user_id(cls, group_id: GroupId, user_id: UserId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(group_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'user_id': user_id.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(group_id.to_str()), occurred_at=occurred_at, payload={'user_id': user_id.to_str()})
 
     def get_user_id(self) -> UserId:
         return UserId.from_str(self.payload['user_id'])
@@ -70,7 +63,7 @@ class MemberRemovedEvent(GroupEventBase):
             occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
-            }
+            },
         )
 
     def get_user_id(self) -> UserId:
@@ -85,13 +78,7 @@ class MemberRemovedEvent(GroupEventBase):
 class AdminAddedEvent(GroupEventBase):
     @classmethod
     def from_user_id(cls, group_id: GroupId, user_id: UserId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(group_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'user_id': user_id.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(group_id.to_str()), occurred_at=occurred_at, payload={'user_id': user_id.to_str()})
 
     def get_user_id(self) -> UserId:
         return UserId.from_str(self.payload['user_id'])
@@ -110,7 +97,7 @@ class AdminRemovedEvent(GroupEventBase):
             occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
-            }
+            },
         )
 
     def get_user_id(self) -> UserId:

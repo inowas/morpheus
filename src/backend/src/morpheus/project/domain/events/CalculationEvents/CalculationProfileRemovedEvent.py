@@ -1,8 +1,8 @@
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
+from morpheus.project.types.Project import ProjectId
 
 from .EventNames import CalculationEventName
 
@@ -13,9 +13,7 @@ class CalculationProfileRemovedEvent(EventBase):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
-            payload={
-                'calculation_profile_id': calculation_profile_id.to_str()
-            },
+            payload={'calculation_profile_id': calculation_profile_id.to_str()},
         )
 
     def get_project_id(self) -> ProjectId:

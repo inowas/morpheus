@@ -1,5 +1,4 @@
 import inspect
-from typing import Type
 
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
@@ -8,7 +7,7 @@ from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 ListenToEventAttribute = 'listen_to_event'
 
 
-def listen_to(event: Type[EventBase]):
+def listen_to(event: type[EventBase]):
     def method_listening_to(listener_method):
         setattr(listener_method, ListenToEventAttribute, event.__name__)
         return listener_method
@@ -26,9 +25,7 @@ class EventPublisher:
         self.listeners = {}
 
     def register(self, event_listener: EventListenerBase):
-        listener_methods = [
-            getattr(event_listener, attribute) for attribute in dir(event_listener) if hasattr(getattr(event_listener, attribute), ListenToEventAttribute)
-        ]
+        listener_methods = [getattr(event_listener, attribute) for attribute in dir(event_listener) if hasattr(getattr(event_listener, attribute), ListenToEventAttribute)]
 
         event_listener_id = id(event_listener)
 
@@ -48,7 +45,7 @@ class EventPublisher:
                 self.listeners[event_class] = {}
 
             if event_listener_id in self.listeners[event_class]:
-                raise Exception("Event handler already registered")
+                raise Exception('Event handler already registered')
 
             self.listeners[event_class][event_listener_id] = listener_method
 

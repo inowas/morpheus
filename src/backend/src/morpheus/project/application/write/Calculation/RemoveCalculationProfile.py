@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -9,8 +9,8 @@ from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileRemovedEvent import CalculationProfileRemovedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
+from morpheus.project.types.Project import ProjectId
 
 
 class RemoveCalculationProfileCommandPayload(TypedDict):
@@ -24,11 +24,7 @@ class RemoveCalculationProfileCommand(ProjectCommandBase):
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: dict):
-        return cls(
-            user_id=user_id,
-            project_id=ProjectId.from_str(payload['project_id']),
-            calculation_profile_id=CalculationProfileId.from_str(payload['calculation_profile_id'])
-        )
+        return cls(user_id=user_id, project_id=ProjectId.from_str(payload['project_id']), calculation_profile_id=CalculationProfileId.from_str(payload['calculation_profile_id']))
 
 
 class RemoveCalculationProfileCommandHandler(CommandHandlerBase):

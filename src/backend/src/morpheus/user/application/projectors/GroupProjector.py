@@ -1,7 +1,7 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.user.domain.events.GroupEvents import GroupCreatedEvent, MemberAddedEvent, MemberRemovedEvent, AdminAddedEvent, AdminRemovedEvent
-from morpheus.user.infrastructure.persistence.GroupRepository import group_repository, GroupRepository
+from morpheus.user.domain.events.GroupEvents import AdminAddedEvent, AdminRemovedEvent, GroupCreatedEvent, MemberAddedEvent, MemberRemovedEvent
+from morpheus.user.infrastructure.persistence.GroupRepository import GroupRepository, group_repository
 
 
 class GroupProjector(EventListenerBase):

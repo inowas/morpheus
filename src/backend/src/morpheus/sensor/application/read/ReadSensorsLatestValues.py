@@ -20,8 +20,7 @@ class ReadSensorsLatestValuesQueryResult:
 class ReadSensorsLatestValuesQueryHandler:
     @staticmethod
     def handle(query: ReadSensorsLatestValuesQuery) -> ReadSensorsLatestValuesQueryResult:
-        sensor_names = [collection_name for collection_name in find_all_collections() if
-                        collection_name.startswith('sensor')]
+        sensor_names = [collection_name for collection_name in find_all_collections() if collection_name.startswith('sensor')]
 
         items = {}
         for sensor_name in sensor_names:

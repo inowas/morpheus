@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -10,10 +10,10 @@ from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerAddedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from morpheus.project.types.layers import Layer
+from morpheus.project.types.layers.Layer import LayerName, LayerPropertyDefaultValue
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.layers import Layer
-from morpheus.project.types.layers.Layer import LayerPropertyDefaultValue, LayerName
 
 
 class AddModelLayerCommandPayload(TypedDict):
@@ -53,12 +53,7 @@ class AddModelLayerCommandHandler(CommandHandlerBase):
 
         model.layers.assert_layer_can_be_added(layer=layer)
 
-        event = ModelLayerAddedEvent.from_layer(
-            project_id=project_id,
-            model_id=command.model_id,
-            layer=layer,
-            occurred_at=DateTime.now()
-        )
+        event = ModelLayerAddedEvent.from_layer(project_id=project_id, model_id=command.model_id, layer=layer, occurred_at=DateTime.now())
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)

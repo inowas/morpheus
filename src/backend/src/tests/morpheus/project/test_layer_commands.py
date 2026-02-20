@@ -3,17 +3,9 @@
 These tests verify layer creation, deletion, and property updates,
 following the patterns from the RioPrimeroWithCommands notebook.
 """
+
 import pytest
 
-from morpheus.project.types.Project import Name, Description, Tags
-from morpheus.project.types.discretization.spatial import Rotation
-from morpheus.project.types.layers.Layer import (
-    LayerId, LayerName, LayerProperties, LayerDescription,
-    LayerConfinement, LayerPropertyName, LayerPropertyDefaultValue
-)
-from morpheus.project.types.geometry import Polygon
-from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
-from morpheus.project.application.write.Project import CreateProjectCommand
 from morpheus.project.application.write.Model.General import CreateModelCommand
 from morpheus.project.application.write.Model.Layers import (
     CreateModelLayerCommand,
@@ -21,10 +13,13 @@ from morpheus.project.application.write.Model.Layers import (
     UpdateModelLayerMetadataCommand,
     UpdateModelLayerPropertyDefaultValueCommand,
 )
-from morpheus.project.application.write.Model.Layers.UpdateModelLayerPropertyZones import (
-    LayerPropertyZoneWithOptionalAffectedCells,
-    UpdateModelLayerPropertyZonesCommand
-)
+from morpheus.project.application.write.Model.Layers.UpdateModelLayerPropertyZones import LayerPropertyZoneWithOptionalAffectedCells, UpdateModelLayerPropertyZonesCommand
+from morpheus.project.application.write.Project import CreateProjectCommand
+from morpheus.project.types.discretization.spatial import Rotation
+from morpheus.project.types.geometry import Polygon
+from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
+from morpheus.project.types.layers.Layer import LayerConfinement, LayerDescription, LayerId, LayerName, LayerProperties, LayerPropertyDefaultValue, LayerPropertyName
+from morpheus.project.types.Project import Description, Name, Tags
 
 pytestmark = [pytest.mark.integration, pytest.mark.layer]
 
@@ -34,11 +29,7 @@ def setup_project_and_model(user_id, project_id, model_id, test_polygon, command
     """Fixture that creates a project and model for layer tests."""
     # Create project
     create_project_command = CreateProjectCommand(
-        project_id=project_id,
-        name=Name('Test Project for Layers'),
-        description=Description('Test project'),
-        tags=Tags.from_list(['test', 'layers']),
-        user_id=user_id
+        project_id=project_id, name=Name('Test Project for Layers'), description=Description('Test project'), tags=Tags.from_list(['test', 'layers']), user_id=user_id
     )
     command_bus.dispatch(create_project_command)
 
@@ -78,16 +69,7 @@ class TestCreateModelLayerCommand:
             name=LayerName('Top Layer'),
             confinement=LayerConfinement.convertible(),
             description=LayerDescription('Top aquifer layer'),
-            properties=LayerProperties.from_values(
-                top=460,
-                bottom=450,
-                initial_head=460,
-                hk=8.64,
-                hani=1,
-                vka=0.864,
-                specific_storage=1e-5,
-                specific_yield=0.2
-            )
+            properties=LayerProperties.from_values(top=460, bottom=450, initial_head=460, hk=8.64, hani=1, vka=0.864, specific_storage=1e-5, specific_yield=0.2),
         )
 
         # Act
@@ -116,7 +98,7 @@ class TestCreateModelLayerCommand:
                 vka=0.1,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
 
         # Act
@@ -145,7 +127,7 @@ class TestCreateModelLayerCommand:
                 vka=0.864,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
 
         # Act
@@ -182,7 +164,7 @@ class TestCreateModelLayerCommand:
                     vka=0.864,
                     specific_storage=1e-5,
                     specific_yield=0.2,
-                )
+                ),
             )
             command_bus.dispatch(command)
 
@@ -221,19 +203,14 @@ class TestDeleteModelLayerCommand:
                 vka=0.1,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
         command_bus.dispatch(command)
 
     def test_delete_layer(self):
         """Test deleting a layer."""
         # Arrange
-        command = DeleteModelLayerCommand(
-            project_id=self.project_id,
-            model_id=self.model_id,
-            user_id=self.user_id,
-            layer_id=self.test_layer_id
-        )
+        command = DeleteModelLayerCommand(project_id=self.project_id, model_id=self.model_id, user_id=self.user_id, layer_id=self.test_layer_id)
 
         # Act
         self.command_bus.dispatch(command)
@@ -250,12 +227,7 @@ class TestDeleteModelLayerCommand:
         # Find the default layer (typically the first one)
         default_layer_id = layers[0].layer_id
 
-        command = DeleteModelLayerCommand(
-            project_id=self.project_id,
-            model_id=self.model_id,
-            user_id=self.user_id,
-            layer_id=default_layer_id
-        )
+        command = DeleteModelLayerCommand(project_id=self.project_id, model_id=self.model_id, user_id=self.user_id, layer_id=default_layer_id)
 
         # Act
         self.command_bus.dispatch(command)
@@ -295,7 +267,7 @@ class TestUpdateModelLayerMetadataCommand:
                 vka=0.1,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
         command_bus.dispatch(command)
 
@@ -316,10 +288,7 @@ class TestUpdateModelLayerMetadataCommand:
 
         # Assert - verify the change
         model = self.model_reader.get_latest_model(self.project_id)
-        updated_layer = next(
-            (layer for layer in model.layers if layer.layer_id == self.test_layer_id),
-            None
-        )
+        updated_layer = next((layer for layer in model.layers if layer.layer_id == self.test_layer_id), None)
         assert updated_layer is not None
         assert updated_layer.name.value == 'Updated Layer Name'
         assert updated_layer.description.value == 'Updated description'
@@ -380,7 +349,7 @@ class TestUpdateModelLayerPropertyDefaultValueCommand:
                 vka=0.1,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
         command_bus.dispatch(command)
 
@@ -401,10 +370,7 @@ class TestUpdateModelLayerPropertyDefaultValueCommand:
 
         # Assert - verify the change
         model = self.model_reader.get_latest_model(self.project_id)
-        test_layer = next(
-            (layer for layer in model.layers if layer.layer_id == self.test_layer_id),
-            None
-        )
+        test_layer = next((layer for layer in model.layers if layer.layer_id == self.test_layer_id), None)
         assert test_layer is not None
         assert test_layer.properties.hk.value.value == 8.64
 
@@ -425,10 +391,7 @@ class TestUpdateModelLayerPropertyDefaultValueCommand:
 
         # Assert - verify the change
         model = self.model_reader.get_latest_model(self.project_id)
-        test_layer = next(
-            (layer for layer in model.layers if layer.layer_id == self.test_layer_id),
-            None
-        )
+        test_layer = next((layer for layer in model.layers if layer.layer_id == self.test_layer_id), None)
         assert test_layer is not None
         assert test_layer.properties.vka.value.value == 0.5
 
@@ -449,10 +412,7 @@ class TestUpdateModelLayerPropertyDefaultValueCommand:
 
         # Assert - verify the change
         model = self.model_reader.get_latest_model(self.project_id)
-        test_layer = next(
-            (layer for layer in model.layers if layer.layer_id == self.test_layer_id),
-            None
-        )
+        test_layer = next((layer for layer in model.layers if layer.layer_id == self.test_layer_id), None)
         assert test_layer is not None
         assert test_layer.properties.specific_storage.value.value == 1e-4
 
@@ -488,7 +448,7 @@ class TestUpdateModelLayerPropertyZonesCommand:
                 vka=0.1,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
         command_bus.dispatch(command)
 
@@ -498,45 +458,16 @@ class TestUpdateModelLayerPropertyZonesCommand:
         bottom_left_top_right_polygons = MultiPolygon(
             type='MultiPolygon',
             coordinates=[
-                [[
-                    (13.92223, 50.9647),
-                    (13.92223, 50.9650),
-                    (13.92400, 50.9650),
-                    (13.92400, 50.9647),
-                    (13.92223, 50.9647)
-                ]],
-                [[
-                    (13.924, 50.965),
-                    (13.924, 50.966),
-                    (13.925, 50.966),
-                    (13.925, 50.965),
-                    (13.924, 50.965)
-                ]]
-            ]
+                [[(13.92223, 50.9647), (13.92223, 50.9650), (13.92400, 50.9650), (13.92400, 50.9647), (13.92223, 50.9647)]],
+                [[(13.924, 50.965), (13.924, 50.966), (13.925, 50.966), (13.925, 50.965), (13.924, 50.965)]],
+            ],
         )
 
-        bottom_right_polygon = Polygon(
-            type='Polygon',
-            coordinates=[[
-                (13.923, 50.965),
-                (13.923, 50.966),
-                (13.924, 50.966),
-                (13.924, 50.965),
-                (13.923, 50.965)
-            ]]
-        )
+        bottom_right_polygon = Polygon(type='Polygon', coordinates=[[(13.923, 50.965), (13.923, 50.966), (13.924, 50.966), (13.924, 50.965), (13.923, 50.965)]])
 
         zones = [
-            LayerPropertyZoneWithOptionalAffectedCells.from_payload({
-                'name': 'Zone 1',
-                'geometry': bottom_left_top_right_polygons.to_dict(),
-                'value': 5
-            }),
-            LayerPropertyZoneWithOptionalAffectedCells.from_payload({
-                'name': 'Zone 2',
-                'geometry': bottom_right_polygon.to_dict(),
-                'value': 10
-            })
+            LayerPropertyZoneWithOptionalAffectedCells.from_payload({'name': 'Zone 1', 'geometry': bottom_left_top_right_polygons.to_dict(), 'value': 5}),
+            LayerPropertyZoneWithOptionalAffectedCells.from_payload({'name': 'Zone 2', 'geometry': bottom_right_polygon.to_dict(), 'value': 10}),
         ]
 
         command = UpdateModelLayerPropertyZonesCommand(
@@ -553,10 +484,7 @@ class TestUpdateModelLayerPropertyZonesCommand:
 
         # Assert - verify zones were applied
         model = self.model_reader.get_latest_model(self.project_id)
-        test_layer = next(
-            (layer for layer in model.layers if layer.layer_id == self.test_layer_id),
-            None
-        )
+        test_layer = next((layer for layer in model.layers if layer.layer_id == self.test_layer_id), None)
         assert test_layer is not None
         # The property should now have zones
         hk_data = test_layer.properties.hk.get_data()
@@ -571,24 +499,9 @@ class TestUpdateModelLayerPropertyZonesCommand:
     def test_update_property_with_single_zone(self):
         """Test updating layer property with a single zone."""
         # Arrange
-        zone_polygon = Polygon(
-            type='Polygon',
-            coordinates=[[
-                (13.922, 50.964),
-                (13.922, 50.965),
-                (13.923, 50.965),
-                (13.923, 50.964),
-                (13.922, 50.964)
-            ]]
-        )
+        zone_polygon = Polygon(type='Polygon', coordinates=[[(13.922, 50.964), (13.922, 50.965), (13.923, 50.965), (13.923, 50.964), (13.922, 50.964)]])
 
-        zones = [
-            LayerPropertyZoneWithOptionalAffectedCells.from_payload({
-                'name': 'High Permeability Zone',
-                'geometry': zone_polygon.to_dict(),
-                'value': 50.0
-            })
-        ]
+        zones = [LayerPropertyZoneWithOptionalAffectedCells.from_payload({'name': 'High Permeability Zone', 'geometry': zone_polygon.to_dict(), 'value': 50.0})]
 
         command = UpdateModelLayerPropertyZonesCommand(
             project_id=self.project_id,
@@ -604,10 +517,7 @@ class TestUpdateModelLayerPropertyZonesCommand:
 
         # Assert
         model = self.model_reader.get_latest_model(self.project_id)
-        test_layer = next(
-            (layer for layer in model.layers if layer.layer_id == self.test_layer_id),
-            None
-        )
+        test_layer = next((layer for layer in model.layers if layer.layer_id == self.test_layer_id), None)
         assert test_layer is not None
         hk_data = test_layer.properties.hk.get_data()
         assert hk_data is not None

@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowDrn as FlopyModflowDrn
 
-from .DrnPackageMapper import DrnStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .DrnPackageMapper import DrnStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -33,13 +34,20 @@ class DrnPackageData:
     ipakcb: int
     dtype: None | list
     options: None | list
-    extension: Literal["drn"]
+    extension: Literal['drn']
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: DrnStressPeriodData, ipakcb: int = 0, dtype: None | list = None,
-                 options: None | list = None, extension: Literal["drn"] = "drn", unitnumber: int | None = None,
-                 filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        stress_period_data: DrnStressPeriodData,
+        ipakcb: int = 0,
+        dtype: None | list = None,
+        options: None | list = None,
+        extension: Literal['drn'] = 'drn',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.stress_period_data = stress_period_data
         self.ipakcb = ipakcb
         self.dtype = dtype

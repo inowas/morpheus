@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowWel as FlopyModflowWel
 
-from .WelPackageMapper import WelStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .WelPackageMapper import WelStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -34,14 +35,23 @@ class WelPackageData:
     dtype: None | list
     options: None | list
     binary: bool
-    extension: Literal["wel"]
+    extension: Literal['wel']
     unitnumber: None | int
     filenames: None | str | list[str]
     add_package: bool
 
-    def __init__(self, stress_period_data: WelStressPeriodData, ipakcb=0, dtype: None | list = None,
-                 options: None | list = None, binary: bool = False, extension: Literal["wel"] = "wel",
-                 unitnumber: int | None = None, filenames: list[str] | str | None = None, add_package: bool = True):
+    def __init__(
+        self,
+        stress_period_data: WelStressPeriodData,
+        ipakcb=0,
+        dtype: None | list = None,
+        options: None | list = None,
+        binary: bool = False,
+        extension: Literal['wel'] = 'wel',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+        add_package: bool = True,
+    ):
         self.stress_period_data = stress_period_data
         self.ipakcb = ipakcb
         self.dtype = dtype
@@ -54,15 +64,15 @@ class WelPackageData:
 
     def to_dict(self) -> dict:
         return {
-            "stress_period_data": self.stress_period_data.to_dict(),
-            "ipakcb": self.ipakcb,
-            "dtype": self.dtype,
-            "options": self.options,
-            "binary": self.binary,
-            "extension": self.extension,
-            "unitnumber": self.unitnumber,
-            "filenames": self.filenames,
-            "add_package": self.add_package
+            'stress_period_data': self.stress_period_data.to_dict(),
+            'ipakcb': self.ipakcb,
+            'dtype': self.dtype,
+            'options': self.options,
+            'binary': self.binary,
+            'extension': self.extension,
+            'unitnumber': self.unitnumber,
+            'filenames': self.filenames,
+            'add_package': self.add_package,
         }
 
     @classmethod
@@ -76,7 +86,7 @@ class WelPackageData:
             extension=obj['extension'],
             unitnumber=obj['unitnumber'],
             filenames=obj['filenames'],
-            add_package=obj['add_package']
+            add_package=obj['add_package'],
         )
 
 

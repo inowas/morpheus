@@ -1,9 +1,10 @@
 import dataclasses
 
 from morpheus.common.types import Uuid
-from .Model import Model, ModelId
-from .boundaries.Boundary import BoundaryCollection, BoundaryId, Boundary
+
+from .boundaries.Boundary import Boundary, BoundaryCollection, BoundaryId
 from .discretization import TimeDiscretization
+from .Model import Model, ModelId
 
 
 class ScenarioId(Uuid):
@@ -19,12 +20,7 @@ class Scenario:
 
     @classmethod
     def new(cls):
-        return cls(
-            scenario_id=ScenarioId.new(),
-            time_discretization=TimeDiscretization.new(),
-            boundaries=BoundaryCollection.new(),
-            removed_boundaries=[]
-        )
+        return cls(scenario_id=ScenarioId.new(), time_discretization=TimeDiscretization.new(), boundaries=BoundaryCollection.new(), removed_boundaries=[])
 
     def with_updated_time_discretization(self, time_discretization: TimeDiscretization):
         return dataclasses.replace(self, time_discretization=time_discretization)
@@ -33,13 +29,8 @@ class Scenario:
         return dataclasses.replace(self, boundaries=self.boundaries.with_added_boundary(boundary))
 
     def with_updated_boundary(self, boundary: Boundary):
-        boundaries = self.boundaries
-        if boundaries.has_boundary(boundary.id):
-            boundaries = boundaries.with_updated_boundary(boundary)
-        else:
-            boundaries = boundaries.with_added_boundary(boundary)
-
-        return dataclasses.replace(self, boundaries=boundaries)
+        new_boundaries = self.boundaries.with_updated_boundary(boundary) if self.boundaries.has_boundary(boundary.id) else self.boundaries.with_added_boundary(boundary)
+        return dataclasses.replace(self, boundaries=new_boundaries)
 
     def with_removed_boundary(self, boundary_id: BoundaryId):
         return dataclasses.replace(self, removed_boundaries=self.removed_boundaries + [boundary_id])
@@ -50,7 +41,7 @@ class Scenario:
             scenario_id=ScenarioId.from_value(obj['scenario_id']),
             time_discretization=TimeDiscretization.from_dict(obj['time_discretization']),
             boundaries=BoundaryCollection.from_dict(obj['boundaries']),
-            removed_boundaries=[BoundaryId.from_value(boundary_id) for boundary_id in obj['removed_boundaries']]
+            removed_boundaries=[BoundaryId.from_value(boundary_id) for boundary_id in obj['removed_boundaries']],
         )
 
     def to_dict(self) -> dict:
@@ -58,7 +49,7 @@ class Scenario:
             'scenario_id': self.scenario_id.to_value(),
             'time_discretization': self.time_discretization.to_dict() if self.time_discretization is not None else None,
             'boundaries': self.boundaries.to_dict(),
-            'removed_boundaries': [boundary_id.to_value() for boundary_id in self.removed_boundaries]
+            'removed_boundaries': [boundary_id.to_value() for boundary_id in self.removed_boundaries],
         }
 
     def apply_model(self, model: Model) -> 'Model':
@@ -79,7 +70,7 @@ class Scenario:
             observations=model.observations,
             layers=model.layers,
             transport=model.transport,
-            variable_density=model.variable_density
+            variable_density=model.variable_density,
         )
 
 
@@ -93,9 +84,7 @@ class ScenarioCollection:
 
     @classmethod
     def from_dict(cls, obj):
-        return cls(
-            scenarios=[Scenario.from_dict(scenario) for scenario in obj['scenarios']]
-        )
+        return cls(scenarios=[Scenario.from_dict(scenario) for scenario in obj['scenarios']])
 
     def to_dict(self) -> dict:
         return {'scenarios': [scenario.to_dict() for scenario in self.scenarios]}

@@ -1,40 +1,40 @@
 import dataclasses
+import os
 import tempfile
-from typing import Tuple
 
 import flopy.utils.binaryfile as bf
-from flopy.utils.util_array import Util3d
 import numpy as np
-import os
 from flopy.utils.mflistfile import MfListBudget
+from flopy.utils.util_array import Util3d
+
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BasPackageWrapper import create_bas_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import create_bcf_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.ChdPackageWrapper import create_chd_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import create_de4_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DisPackageWrapper import create_dis_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DrnPackageWrapper import create_drn_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.EvtPackageWrapper import create_evt_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.FhbPackageWrapper import create_fhb_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageMapper import calculate_observation_items, HeadObservationItem
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
-from morpheus.project.types.calculation.Calculation import Log, CalculationState
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationEngineType
-from morpheus.project.types.calculation.CalculationResult import CalculationResult, AvailableResults, CalculationObservationResultItem
-from morpheus.project.types.Model import Model
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GhbPackageWrapper import create_ghb_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.GmgPackageWrapper import create_gmg_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageMapper import HeadObservationItem, calculate_observation_items
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.HobPackageWrapper import create_hob_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LakPackageWrapper import create_lak_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import create_lpf_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import FlopyModflow, create_mf_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.OcPackageWrapper import create_oc_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgnPackageWrapper import create_pcgn_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import create_pcg_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RchPackageWrapper import create_rch_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.RivPackageWrapper import create_riv_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.SipPackageWrapper import create_sip_package
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.WelPackageWrapper import create_wel_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.MfPackageWrapper import create_mf_package, FlopyModflow
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BasPackageWrapper import create_bas_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.ChdPackageWrapper import create_chd_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.DisPackageWrapper import create_dis_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.OcPackageWrapper import create_oc_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.LpfPackageWrapper import create_lpf_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.BcfPackageWrapper import create_bcf_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.De4PackageWrapper import create_de4_package
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.PcgPackageWrapper import create_pcg_package
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.Mf2005CalculationEngineSettings import Mf2005CalculationEngineSettings
+from morpheus.project.types.calculation.Calculation import CalculationState, Log
+from morpheus.project.types.calculation.CalculationProfile import CalculationEngineType, CalculationProfile
+from morpheus.project.types.calculation.CalculationResult import AvailableResults, CalculationObservationResultItem, CalculationResult
+from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
@@ -73,7 +73,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         self.trigger_calculation_state_change(CalculationState.PREPROCESSED)
         return Log.from_list(check_log)
 
-    def run(self, model: Model, calculation_profile: CalculationProfile) -> Tuple[Log, CalculationResult]:
+    def run(self, model: Model, calculation_profile: CalculationProfile) -> tuple[Log, CalculationResult]:
         if calculation_profile.engine_type != CalculationEngineType.MF2005:
             raise Exception('Calculation profile is not for Mf2005')
 
@@ -189,60 +189,37 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             lak_array = lak.lakarr.array[0]
             ibound[lak_array > 0] = 0
 
-            bas.ibound = Util3d(
-                flopy_model,
-                shape=bas.ibound.shape,
-                dtype=bas.ibound.dtype,
-                name=bas.ibound.name,
-                locat=bas.ibound.locat,
-                value=ibound)
+            bas.ibound = Util3d(flopy_model, shape=bas.ibound.shape, dtype=bas.ibound.dtype, name=bas.ibound.name, locat=bas.ibound.locat, value=ibound)
 
             if lpf is not None:
                 wetdry = np.array(lpf.wetdry.array)
                 wetdry[lak_array > 0] = 0
-                lpf.wetdry = Util3d(
-                    flopy_model,
-                    shape=lpf.wetdry.shape,
-                    dtype=lpf.wetdry.dtype,
-                    name=lpf.wetdry.name,
-                    locat=lpf.wetdry.locat,
-                    value=wetdry)
+                lpf.wetdry = Util3d(flopy_model, shape=lpf.wetdry.shape, dtype=lpf.wetdry.dtype, name=lpf.wetdry.name, locat=lpf.wetdry.locat, value=wetdry)
 
-            if bcf is not None:
-                if isinstance(bcf.wetdry, Util3d):
-                    wetdry = np.array(bcf.wetdry.array)
-                    wetdry[lak_array > 0] = 0
-                    bcf.wetdry = Util3d(
-                        flopy_model,
-                        shape=bcf.wetdry.shape,
-                        dtype=bcf.wetdry.dtype,
-                        name=bcf.wetdry.name,
-                        locat=bcf.wetdry.locat,
-                        value=wetdry)
+            if bcf is not None and isinstance(bcf.wetdry, Util3d):
+                wetdry = np.array(bcf.wetdry.array)
+                wetdry[lak_array > 0] = 0
+                bcf.wetdry = Util3d(flopy_model, shape=bcf.wetdry.shape, dtype=bcf.wetdry.dtype, name=bcf.wetdry.name, locat=bcf.wetdry.locat, value=wetdry)
 
         return flopy_model
 
-    def __calculate(self, flopy_model: FlopyModflow) -> Tuple[Log, CalculationResult]:
+    def __calculate(self, flopy_model: FlopyModflow) -> tuple[Log, CalculationResult]:
         success, report = flopy_model.run_model(report=True)
         return Log.from_list(report), self.__build_results(success)
 
     def __build_results(self, success: bool) -> CalculationResult:
         if not success:
-            return CalculationResult.failure(
-                message="Calculation failed",
-                files=os.listdir(self.workspace_path),
-                packages=self.get_packages()
-            )
+            return CalculationResult.failure(message='Calculation failed', files=os.listdir(self.workspace_path), packages=self.get_packages())
 
         return CalculationResult.success(
-            message="Calculation finished successfully",
+            message='Calculation finished successfully',
             files=os.listdir(self.workspace_path),
             flow_head_results=self.__read_flow_head_results(),
             flow_drawdown_results=self.__read_flow_drawdown_results(),
             flow_budget_results=self.__read_flow_budget_results(),
             transport_concentration_results=self.__read_transport_concentration_results(),
             transport_budget_results=self.__read_transport_concentration_budget_results(),
-            packages=self.get_packages()
+            packages=self.get_packages(),
         )
 
     def __get_file_with_extension_from_workspace(self, extension: str) -> str | None:
@@ -251,7 +228,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                 return os.path.join(self.workspace_path, file)
         return None
 
-    def __read_min_max_values_from_binary_file(self, head_file: bf.HeadFile) -> Tuple[float | None, float | None]:
+    def __read_min_max_values_from_binary_file(self, head_file: bf.HeadFile) -> tuple[float | None, float | None]:
         try:
             all_data = head_file.get_alldata(nodata=self.no_data_value)  # type: ignore # noqa # nodata is expected to be float, intrisic type is int
             if not isinstance(all_data, np.ndarray):
@@ -267,7 +244,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         return min_value, max_value
 
     def __read_flow_head_results(self) -> AvailableResults | None:
-        file = self.__get_file_with_extension_from_workspace(".hds")
+        file = self.__get_file_with_extension_from_workspace('.hds')
         if file is None:
             return None
 
@@ -280,11 +257,11 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_layers=int(bf_head_file.get_data().shape[0]),
             number_of_observations=self.read_number_of_head_observations(),
             min_value=min_value,
-            max_value=max_value
+            max_value=max_value,
         )
 
     def __read_flow_drawdown_results(self) -> AvailableResults | None:
-        file = self.__get_file_with_extension_from_workspace(".ddn")
+        file = self.__get_file_with_extension_from_workspace('.ddn')
         if file is None:
             return None
 
@@ -297,11 +274,11 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             number_of_layers=int(bf_head_file.get_data().shape[0]),
             number_of_observations=0,
             min_value=min_value,
-            max_value=max_value
+            max_value=max_value,
         )
 
     def __read_flow_budget_results(self) -> AvailableResults | None:
-        budget_file = self.__get_file_with_extension_from_workspace(".list")
+        budget_file = self.__get_file_with_extension_from_workspace('.list')
         if budget_file is None:
             return None
 
@@ -310,9 +287,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         times_list = mf_list_budget.get_times()
         return AvailableResults(
             times=[float(time) for time in times_list] if times_list is not None else [],
-            kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in kstpkper_list]
-            if kstpkper_list is not None
-            else [],
+            kstpkper=[(int(kstpkper[0]), int(kstpkper[1])) for kstpkper in kstpkper_list] if kstpkper_list is not None else [],
             number_of_layers=0,
             number_of_observations=0,
             min_value=None,
@@ -332,17 +307,11 @@ class Mf2005CalculationEngine(CalculationEngineBase):
 
         return FlopyModflow.load(f=namefile, verbose=False, check=False, exe_name='mf2005', version='mf2005', model_ws=self.workspace_path)
 
-    def read_flow_budget(
-        self,
-        totim: float | None = None,
-        idx: int | None = None,
-        kstpkper: Tuple[int, int] | None = None,
-        incremental=False
-    ):
+    def read_flow_budget(self, totim: float | None = None, idx: int | None = None, kstpkper: tuple[int, int] | None = None, incremental=False):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
 
-        file = self.__get_file_with_extension_from_workspace(".list")
+        file = self.__get_file_with_extension_from_workspace('.list')
         if file is None:
             return []
 
@@ -356,46 +325,20 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             values[param] = float(str(x[1]))
         return values
 
-    def read_transport_concentration(
-        self,
-        totim: float | None = None,
-        idx: int | None = None,
-        kstpkper: Tuple[int, int] | None = None,
-        layer=0,
-        precision=4
-    ):
+    def read_transport_concentration(self, totim: float | None = None, idx: int | None = None, kstpkper: tuple[int, int] | None = None, layer=0, precision=4):
         raise NotImplementedError('Transport is not available in Mf2005')
 
-    def read_transport_concentration_time_series(
-        self,
-        layer: int,
-        row: int,
-        col: int,
-        precision=4
-    ):
+    def read_transport_concentration_time_series(self, layer: int, row: int, col: int, precision=4):
         raise NotImplementedError('Transport is not available in Mf2005')
 
-    def read_transport_budget(
-        self,
-        totim: float | None = None,
-        idx: int | None = None,
-        kstpkper: Tuple[int, int] | None = None,
-        incremental=False
-    ):
+    def read_transport_budget(self, totim: float | None = None, idx: int | None = None, kstpkper: tuple[int, int] | None = None, incremental=False):
         raise NotImplementedError('Transport is not available in Mf2005')
 
-    def read_flow_drawdown(
-        self,
-        totim: float | None = None,
-        idx: int | None = None,
-        kstpkper: Tuple[int, int] | None = None,
-        layer=0,
-        precision=4
-    ):
+    def read_flow_drawdown(self, totim: float | None = None, idx: int | None = None, kstpkper: tuple[int, int] | None = None, layer=0, precision=4):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
 
-        file = self.__get_file_with_extension_from_workspace(".ddn")
+        file = self.__get_file_with_extension_from_workspace('.ddn')
         if file is None:
             return []
 
@@ -405,14 +348,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = np.round(data, precision)
         return data.tolist()
 
-    def read_flow_drawdown_time_series(
-        self,
-        layer: int,
-        row: int,
-        col: int,
-        precision=4
-    ):
-        file = self.__get_file_with_extension_from_workspace(".ddn")
+    def read_flow_drawdown_time_series(self, layer: int, row: int, col: int, precision=4):
+        file = self.__get_file_with_extension_from_workspace('.ddn')
         if file is None:
             return []
 
@@ -422,18 +359,11 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = np.round(data, precision)
         return data.tolist()
 
-    def read_flow_head(
-        self,
-        totim: float | None = None,
-        idx: int | None = None,
-        kstpkper: Tuple[int, int] | None = None,
-        layer=0,
-        precision=4
-    ):
+    def read_flow_head(self, totim: float | None = None, idx: int | None = None, kstpkper: tuple[int, int] | None = None, layer=0, precision=4):
         if totim is None and idx is None and kstpkper is None:
             raise Exception('Either totim, idx or kstpkper must be specified')
 
-        file = self.__get_file_with_extension_from_workspace(".hds")
+        file = self.__get_file_with_extension_from_workspace('.hds')
         if file is None:
             return []
 
@@ -443,14 +373,8 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         data = np.round(data, precision)
         return data.tolist()
 
-    def read_flow_head_time_series(
-        self,
-        layer: int,
-        row: int,
-        col: int,
-        precision=4
-    ):
-        file = self.__get_file_with_extension_from_workspace(".hds")
+    def read_flow_head_time_series(self, layer: int, row: int, col: int, precision=4):
+        file = self.__get_file_with_extension_from_workspace('.hds')
         if file is None:
             return []
 
@@ -461,7 +385,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         return data.tolist()
 
     def read_number_of_head_observations(self) -> int:
-        hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
+        hob_out_file = self.__get_file_with_extension_from_workspace('.hob.out')
         if hob_out_file is None:
             return 0
 
@@ -481,7 +405,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
         return count
 
     def read_head_observations(self, model: Model) -> list[CalculationObservationResultItem]:
-        hob_out_file = self.__get_file_with_extension_from_workspace(".hob.out")
+        hob_out_file = self.__get_file_with_extension_from_workspace('.hob.out')
         if hob_out_file is None:
             return []
 
@@ -532,7 +456,7 @@ class Mf2005CalculationEngine(CalculationEngineBase):
                         col=col,
                         date_time=date_time.to_str(),
                         simulated=simulated,
-                        observed=observed.to_value()
+                        observed=observed.to_value(),
                     )
                 )
 
@@ -544,10 +468,10 @@ class Mf2005CalculationEngine(CalculationEngineBase):
             return None
 
         try:
-            with open(file, 'r') as f:
+            with open(file) as f:
                 return f.read()
         except UnicodeError:
-            return "Binary file"
+            return 'Binary file'
 
     def get_packages(self) -> list[str]:
         flopy_model = self.__load_flopy_model()

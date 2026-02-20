@@ -1,4 +1,5 @@
 import dataclasses
+
 import numpy as np
 
 
@@ -10,8 +11,9 @@ class RasterData:
     _data: list[list[float]]
     _nodata_value: float
 
-    def __init__(self, xx_centers: list[list[float]], yy_centers: list[list[float]], bounds: tuple[float, float, float, float], data: list[list[float]],
-                 nodata_value: float = -9999.0):
+    def __init__(
+        self, xx_centers: list[list[float]], yy_centers: list[list[float]], bounds: tuple[float, float, float, float], data: list[list[float]], nodata_value: float = -9999.0
+    ):
         self._xx_centers = xx_centers
         self._yy_centers = yy_centers
         self._bounds = bounds

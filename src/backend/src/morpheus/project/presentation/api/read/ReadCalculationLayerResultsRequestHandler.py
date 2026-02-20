@@ -1,14 +1,16 @@
 import math
+
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
+from ....application.read.CalculationReader import get_calculation_reader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
-from ....application.read.CalculationReader import get_calculation_reader
 from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService
 from ....infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
-from ....types.Project import ProjectId
 from ....types.calculation.Calculation import CalculationId
-from ....types.permissions.Privilege import Privilege
 from ....types.discretization.spatial import Grid
+from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadCalculationLayerResultsRequestHandler:
@@ -35,7 +37,7 @@ class ReadCalculationLayerResultsRequestHandler:
             'rotation': grid.rotation.to_float(),
             'values': data,
             'min_value': min_value if not math.isinf(min_value) else None,
-            'max_value': max_value if not math.isinf(max_value) else None
+            'max_value': max_value if not math.isinf(max_value) else None,
         }
 
     def handle(self, project_id: ProjectId, calculation_id: CalculationId, result_type: str, time_idx: int, layer: int = 0):
@@ -71,12 +73,7 @@ class ReadCalculationLayerResultsRequestHandler:
                 if not grid.is_regular() or grid.n_cols() > 200:
                     data = self._interpolate_data(data, grid)
 
-                result = {
-                    'type': result_type,
-                    'layer': layer,
-                    'time_idx': time_idx,
-                    'data': self._get_result_data_object(data=data, grid=grid)
-                }
+                result = {'type': result_type, 'layer': layer, 'time_idx': time_idx, 'data': self._get_result_data_object(data=data, grid=grid)}
 
                 return result, 200
 
@@ -88,12 +85,7 @@ class ReadCalculationLayerResultsRequestHandler:
                 if not grid.is_regular():
                     data = self._interpolate_data(data, grid)
 
-                result = {
-                    'result_type': result_type,
-                    'layer_idx': layer,
-                    'time_idx': time_idx,
-                    'data': self._get_result_data_object(data=data, grid=grid)
-                }
+                result = {'result_type': result_type, 'layer_idx': layer, 'time_idx': time_idx, 'data': self._get_result_data_object(data=data, grid=grid)}
 
                 return result, 200
 
@@ -105,12 +97,7 @@ class ReadCalculationLayerResultsRequestHandler:
                 if not grid.is_regular():
                     data = self._interpolate_data(data, grid)
 
-                result = {
-                    'result_type': result_type,
-                    'layer_idx': layer,
-                    'time_idx': time_idx,
-                    'data': self._get_result_data_object(data=data, grid=grid)
-                }
+                result = {'result_type': result_type, 'layer_idx': layer, 'time_idx': time_idx, 'data': self._get_result_data_object(data=data, grid=grid)}
 
                 return result, 200
 

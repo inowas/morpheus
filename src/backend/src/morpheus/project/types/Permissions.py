@@ -1,7 +1,8 @@
 import dataclasses
 from enum import Enum, StrEnum
 from typing import Literal
-from morpheus.common.types.identity.Identity import UserId, GroupId
+
+from morpheus.common.types.identity.Identity import GroupId, UserId
 
 
 class Visibility(Enum):
@@ -50,20 +51,14 @@ class MemberCollection:
 
     @classmethod
     def new(cls) -> 'MemberCollection':
-        return cls(
-            members={}
-        )
+        return cls(members={})
 
     @classmethod
     def from_dict(cls, obj: dict) -> 'MemberCollection':
-        return cls(
-            members={UserId.from_value(user_id): Role.from_str(role) for user_id, role in obj.items()}
-        )
+        return cls(members={UserId.from_value(user_id): Role.from_str(role) for user_id, role in obj.items()})
 
     def to_dict(self) -> dict:
-        return {
-            user_id.to_value(): role.value for user_id, role in self.members.items()
-        }
+        return {user_id.to_value(): role.value for user_id, role in self.members.items()}
 
     def with_added_member(self, user_id: UserId, role: Role) -> 'MemberCollection':
         return dataclasses.replace(self, members={**self.members, user_id: role})
@@ -94,20 +89,14 @@ class GroupCollection:
 
     @classmethod
     def new(cls):
-        return cls(
-            groups={}
-        )
+        return cls(groups={})
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls(
-            groups={GroupId.from_value(group_id): Role.from_str(role) for group_id, role in obj.items()}
-        )
+        return cls(groups={GroupId.from_value(group_id): Role.from_str(role) for group_id, role in obj.items()})
 
     def to_dict(self):
-        return {
-            group_id.to_value(): role.value for group_id, role in self.groups.items()
-        }
+        return {group_id.to_value(): role.value for group_id, role in self.groups.items()}
 
     def get_groups(self):
         return self.groups
@@ -122,12 +111,7 @@ class Permissions:
 
     @classmethod
     def new(cls, owner_id: UserId):
-        return cls(
-            owner_id=owner_id,
-            groups=GroupCollection.new(),
-            members=MemberCollection.new(),
-            visibility=Visibility.PRIVATE
-        )
+        return cls(owner_id=owner_id, groups=GroupCollection.new(), members=MemberCollection.new(), visibility=Visibility.PRIVATE)
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -135,16 +119,11 @@ class Permissions:
             owner_id=UserId.from_value(obj['owner_id']),
             groups=GroupCollection.from_dict(obj['groups']),
             members=MemberCollection.from_dict(obj['members']),
-            visibility=Visibility.from_str(obj['visibility'])
+            visibility=Visibility.from_str(obj['visibility']),
         )
 
     def to_dict(self):
-        return {
-            'owner_id': self.owner_id.to_value(),
-            'groups': self.groups.to_dict(),
-            'members': self.members.to_dict(),
-            'visibility': self.visibility.value
-        }
+        return {'owner_id': self.owner_id.to_value(), 'groups': self.groups.to_dict(), 'members': self.members.to_dict(), 'visibility': self.visibility.value}
 
     def with_updated_members(self, members: MemberCollection):
         return dataclasses.replace(self, members=members)

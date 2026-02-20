@@ -7,5 +7,5 @@ asset_command_handler_map = {
     DeleteAssetCommand: DeleteAssetCommandHandler,
     UpdateAssetDescriptionCommand: UpdateAssetDescriptionCommandHandler,
     UpdateAssetFileNameCommand: UpdateAssetFileNameCommandHandler,
-    UpdateRasterAssetNoDataValueCommand: UpdateRasterAssetNoDataValueCommandHandler
+    UpdateRasterAssetNoDataValueCommand: UpdateRasterAssetNoDataValueCommandHandler,
 }

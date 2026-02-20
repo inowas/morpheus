@@ -1,6 +1,7 @@
 import dataclasses
 
 from flopy.modflow import ModflowGmg as FlopyModflowGmg
+
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
 
@@ -70,9 +71,26 @@ class GmgPackageData:
     unitnumber: int | None
     filenames: list[str] | str | None
 
-    def __init__(self, mxiter=50, iiter=30, iadamp=0, hclose=1e-5, rclose=1e-5, relax=1.0, ioutgmg=0,
-                 iunitmhc=0, ism=0, isc=0, damp=1.0, dup=0.75, dlow=0.01, chglimit=1.0, extension="gmg",
-                 unitnumber: int | None = None, filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        mxiter=50,
+        iiter=30,
+        iadamp=0,
+        hclose=1e-5,
+        rclose=1e-5,
+        relax=1.0,
+        ioutgmg=0,
+        iunitmhc=0,
+        ism=0,
+        isc=0,
+        damp=1.0,
+        dup=0.75,
+        dlow=0.01,
+        chglimit=1.0,
+        extension='gmg',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.mxiter = mxiter
         self.iiter = iiter
         self.iadamp = iadamp

@@ -22,11 +22,7 @@ class DeleteAssetCommand(ProjectCommandBase):
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: DeleteAssetCommandPayload):
-        return cls(
-            user_id=user_id,
-            project_id=ProjectId.from_str(payload['project_id']),
-            asset_id=AssetId.from_str(payload['asset_id'])
-        )
+        return cls(user_id=user_id, project_id=ProjectId.from_str(payload['project_id']), asset_id=AssetId.from_str(payload['asset_id']))
 
 
 class DeleteAssetCommandHandler(CommandHandlerBase):

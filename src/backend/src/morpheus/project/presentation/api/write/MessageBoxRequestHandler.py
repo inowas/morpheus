@@ -1,11 +1,12 @@
 from flask import Request, abort
 from sentry_sdk import capture_exception
 
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
-from ..helpers.message_box import generate_response_for, assert_identity_can_execute_command
+from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.write import project_command_bus
 from ....application.write.CommandFactory import command_factory
 from ....incoming import get_identity
+from ..helpers.message_box import assert_identity_can_execute_command, generate_response_for
 
 
 class MessageBoxRequestHandler:

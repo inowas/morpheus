@@ -1,8 +1,10 @@
 import os
 import tempfile
+
 from flask import abort, request
 from werkzeug.utils import secure_filename
-from morpheus.common.types.File import FilePath, FileName
+
+from morpheus.common.types.File import FileName, FilePath
 
 
 def move_uploaded_files_to_tmp_dir(request_files_key: str, max_allowed_number_of_files: int | None = None) -> list[tuple[FileName, FilePath]]:

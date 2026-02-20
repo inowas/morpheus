@@ -1,13 +1,14 @@
 import dataclasses
-import pandas as pd
 
+import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .BoundaryInterpolationType import InterpolationType
-from .Observation import ObservationId, ObservationValue, DataItem, Observation, ObservationName
-from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
+
+from ..discretization.time.Stressperiods import EndDateTime, StartDateTime
 from ..geometry import Point
+from .BoundaryInterpolationType import InterpolationType
+from .Observation import DataItem, Observation, ObservationId, ObservationName, ObservationValue
 
 
 class RiverbedBottom(Float):
@@ -31,12 +32,7 @@ class RiverObservationValue(ObservationValue):
 
     @classmethod
     def default(cls, date_time: StartDateTime):
-        return cls(
-            date_time=date_time,
-            river_stage=RiverStage.from_float(0.0),
-            riverbed_bottom=RiverbedBottom.from_float(0.0),
-            conductance=Conductance.from_float(0.0)
-        )
+        return cls(date_time=date_time, river_stage=RiverStage.from_float(0.0), riverbed_bottom=RiverbedBottom.from_float(0.0), conductance=Conductance.from_float(0.0))
 
     @classmethod
     def from_dict(cls, obj):
@@ -44,7 +40,7 @@ class RiverObservationValue(ObservationValue):
             date_time=StartDateTime.from_value(obj['date_time']),
             river_stage=RiverStage.from_value(obj['river_stage']),
             riverbed_bottom=RiverbedBottom.from_value(obj['riverbed_bottom']),
-            conductance=Conductance.from_value(obj['conductance'])
+            conductance=Conductance.from_value(obj['conductance']),
         )
 
     def to_dict(self):
@@ -52,7 +48,7 @@ class RiverObservationValue(ObservationValue):
             'date_time': self.date_time.to_value(),
             'river_stage': self.river_stage.to_value(),
             'riverbed_bottom': self.riverbed_bottom.to_value(),
-            'conductance': self.conductance.to_value()
+            'conductance': self.conductance.to_value(),
         }
 
 
@@ -73,7 +69,7 @@ class RiverDataItem(DataItem):
             end_date_time=EndDateTime.from_value(obj['end_date_time']),
             river_stage=RiverStage.from_value(obj['river_stage']),
             riverbed_bottom=RiverbedBottom.from_value(obj['riverbed_bottom']),
-            conductance=Conductance.from_value(obj['conductance'])
+            conductance=Conductance.from_value(obj['conductance']),
         )
 
     def to_dict(self):
@@ -83,7 +79,7 @@ class RiverDataItem(DataItem):
             'end_date_time': self.end_date_time.to_value(),
             'river_stage': self.river_stage.to_value(),
             'riverbed_bottom': self.riverbed_bottom.to_value(),
-            'conductance': self.conductance.to_value()
+            'conductance': self.conductance.to_value(),
         }
 
 
@@ -95,12 +91,7 @@ class RiverObservation(Observation):
     def new(cls, name: ObservationName, geometry: Point, data: list[RiverObservationValue], observation_id: ObservationId | None = None):
         data = list({d.date_time: d for d in data}.values())
         data = sorted(data, key=lambda x: x.date_time)
-        return cls(
-            observation_id=observation_id or ObservationId.new(),
-            observation_name=name,
-            geometry=geometry,
-            data=data
-        )
+        return cls(observation_id=observation_id or ObservationId.new(), observation_name=name, geometry=geometry, data=data)
 
     @classmethod
     def from_dict(cls, obj):
@@ -108,7 +99,7 @@ class RiverObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[RiverObservationValue.from_dict(d) for d in obj['data']]
+            data=[RiverObservationValue.from_dict(d) for d in obj['data']],
         )
 
     def to_dict(self):
@@ -116,7 +107,7 @@ class RiverObservation(Observation):
             'observation_id': self.observation_id.to_value(),
             'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
-            'data': [d.to_dict() for d in self.data]
+            'data': [d.to_dict() for d in self.data],
         }
 
     def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> RiverDataItem | None:
@@ -133,7 +124,7 @@ class RiverObservation(Observation):
                         end_date_time=end_date_time,
                         river_stage=item.river_stage,
                         riverbed_bottom=item.riverbed_bottom,
-                        conductance=item.conductance
+                        conductance=item.conductance,
                     )
 
             return None
@@ -147,7 +138,7 @@ class RiverObservation(Observation):
                 return None
 
             last_known_value = sorted_data[0]
-            for i, item in enumerate(self.data):
+            for _i, item in enumerate(self.data):
                 if item.date_time < start_date_time:
                     last_known_value = item
 
@@ -158,7 +149,7 @@ class RiverObservation(Observation):
                         end_date_time=end_date_time,
                         river_stage=item.river_stage,
                         riverbed_bottom=item.riverbed_bottom,
-                        conductance=item.conductance
+                        conductance=item.conductance,
                     )
 
                 # do not process any further if the item is after the start_date_time
@@ -172,7 +163,7 @@ class RiverObservation(Observation):
                 end_date_time=end_date_time,
                 river_stage=last_known_value.river_stage,
                 riverbed_bottom=last_known_value.riverbed_bottom,
-                conductance=last_known_value.conductance
+                conductance=last_known_value.conductance,
             )
 
         # if interpolation is set, we need to interpolate the values
@@ -200,7 +191,7 @@ class RiverObservation(Observation):
             time_series.values.astype(float),
             river_stages.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         river_stages = river_stages_interpolator(date_range.values.astype(float))
         river_stage = RiverStage.from_value(river_stages.mean())
@@ -209,7 +200,7 @@ class RiverObservation(Observation):
             time_series.values.astype(float),
             riverbed_bottoms.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         riverbed_bottoms = riverbed_bottoms_interpolator(date_range.values.astype(float))
         riverbed_bottom = RiverbedBottom.from_value(riverbed_bottoms.mean())
@@ -218,7 +209,7 @@ class RiverObservation(Observation):
             time_series.values.astype(float),
             conductances.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         conductances = conductances_interpolator(date_range.values.astype(float))
         conductance = Conductance.from_value(conductances.mean())
@@ -229,7 +220,7 @@ class RiverObservation(Observation):
             end_date_time=end_date_time,
             river_stage=river_stage,
             riverbed_bottom=riverbed_bottom,
-            conductance=conductance
+            conductance=conductance,
         )
 
     def as_geojson(self):

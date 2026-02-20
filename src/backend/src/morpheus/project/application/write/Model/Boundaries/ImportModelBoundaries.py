@@ -1,7 +1,7 @@
 import dataclasses
-from typing import TypedDict, Optional
+from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -10,24 +10,24 @@ from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundariesImportedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryName, BoundaryTags
 from morpheus.project.types.boundaries.BoundaryFactory import BoundaryFactory
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
-from morpheus.project.types.boundaries.BoundaryType import BoundaryTypeLiteral, BoundaryType
+from morpheus.project.types.boundaries.BoundaryType import BoundaryType, BoundaryTypeLiteral
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import GeometryFactory
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.Project import ProjectId
 
 
 class ImportBoundaryDict(TypedDict):
-    id: Optional[str]
+    id: str | None
     type: BoundaryTypeLiteral
     name: str
-    interpolation: Optional[str]
-    tags: Optional[list[str]]
+    interpolation: str | None
+    tags: list[str] | None
     geometry: dict
-    affected_cells: Optional[dict]
+    affected_cells: dict | None
     affected_layers: list[int]
     data: list[dict]
 
@@ -45,12 +45,7 @@ class ImportModelBoundariesCommand(ProjectCommandBase):
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: ImportModelBoundaryCommandPayload):
-        return cls(
-            user_id=user_id,
-            project_id=ProjectId.from_str(payload['project_id']),
-            model_id=ModelId.from_str(payload['model_id']),
-            boundaries=payload['boundaries']
-        )
+        return cls(user_id=user_id, project_id=ProjectId.from_str(payload['project_id']), model_id=ModelId.from_str(payload['model_id']), boundaries=payload['boundaries'])
 
 
 class ImportModelBoundariesCommandHandler(CommandHandlerBase):
@@ -77,7 +72,9 @@ class ImportModelBoundariesCommandHandler(CommandHandlerBase):
             tags = BoundaryTags.from_list(boundary_dict['tags']) if 'tags' in boundary_dict else BoundaryTags.empty()
             interpolation = InterpolationType(boundary_dict['interpolation']) if 'interpolation' in boundary_dict else InterpolationType.default
             geometry = GeometryFactory.from_dict(boundary_dict['geometry'])
-            affected_cells = ActiveCells.from_dict(boundary_dict['affected_cells']) if 'affected_cells' in boundary_dict else ActiveCells.from_geometry(geometry=geometry, grid=grid)
+            affected_cells = (
+                ActiveCells.from_dict(boundary_dict['affected_cells']) if 'affected_cells' in boundary_dict else ActiveCells.from_geometry(geometry=geometry, grid=grid)
+            )
             affected_layers = [layer_ids[layer_id] for layer_id in boundary_dict['affected_layers']]
             data = boundary_dict['data']
 
@@ -97,12 +94,7 @@ class ImportModelBoundariesCommandHandler(CommandHandlerBase):
             if boundary is not None:
                 boundaries.append(boundary)
 
-        event = ModelBoundariesImportedEvent.from_boundaries(
-            project_id=project_id,
-            model_id=command.model_id,
-            boundaries=boundaries,
-            occurred_at=DateTime.now()
-        )
+        event = ModelBoundariesImportedEvent.from_boundaries(project_id=project_id, model_id=command.model_id, boundaries=boundaries, occurred_at=DateTime.now())
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)

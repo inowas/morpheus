@@ -16,11 +16,13 @@ class ReadGroupListRequestHandler:
 
         result = []
         for group in groups:
-            result.append({
-                'group_id': group.group_id.to_str(),
-                'group_name': group.group_name.to_str(),
-                'members': [member.to_str() for member in group.members],
-                'admins': [admin.to_str() for admin in group.admins],
-            })
+            result.append(
+                {
+                    'group_id': group.group_id.to_str(),
+                    'group_name': group.group_name.to_str(),
+                    'members': [member.to_str() for member in group.members],
+                    'admins': [admin.to_str() for admin in group.admins],
+                }
+            )
 
         return result, 200

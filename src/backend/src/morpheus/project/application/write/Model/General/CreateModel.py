@@ -1,23 +1,23 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileAddedEvent import CalculationProfileAddedEvent
-from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import ModelCreatedEvent, VersionCreatedEvent, VersionAssignedToModelEvent
+from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import ModelCreatedEvent, VersionAssignedToModelEvent, VersionCreatedEvent
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId, Model
-from morpheus.project.types.ModelVersion import VersionDescription, VersionTag, ModelVersion
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.discretization import SpatialDiscretization
-from morpheus.project.types.discretization.spatial import Rotation, ActiveCells, Grid
+from morpheus.project.types.discretization.spatial import ActiveCells, Grid, Rotation
 from morpheus.project.types.geometry import Polygon
+from morpheus.project.types.Model import Model, ModelId
+from morpheus.project.types.ModelVersion import ModelVersion, VersionDescription, VersionTag
+from morpheus.project.types.Project import ProjectId
 
 
 class CreateModelCommandPayload(TypedDict):
@@ -94,7 +94,9 @@ class CreateModelCommandHandler(CommandHandlerBase):
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)
 
-        event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=default_calculation_profile.id, occurred_at=DateTime.now())
+        event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(
+            project_id=project_id, calculation_profile_id=default_calculation_profile.id, occurred_at=DateTime.now()
+        )
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(command.user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

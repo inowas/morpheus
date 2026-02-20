@@ -1,7 +1,7 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -10,9 +10,9 @@ from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryInterpolationUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from morpheus.project.types.boundaries.Boundary import BoundaryId, InterpolationType
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.boundaries.Boundary import BoundaryId, InterpolationType
 
 
 class UpdateModelBoundaryInterpolationCommandPayload(TypedDict):
@@ -54,11 +54,7 @@ class UpdateModelBoundaryInterpolationCommandHandler(CommandHandlerBase):
                 raise ValueError(f'Boundary {boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
         event = ModelBoundaryInterpolationUpdatedEvent.from_props(
-            project_id=project_id,
-            model_id=command.model_id,
-            boundary_ids=command.boundary_ids,
-            interpolation=command.interpolation,
-            occurred_at=DateTime.now()
+            project_id=project_id, model_id=command.model_id, boundary_ids=command.boundary_ids, interpolation=command.interpolation, occurred_at=DateTime.now()
         )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

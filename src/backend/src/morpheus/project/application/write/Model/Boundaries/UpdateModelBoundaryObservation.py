@@ -1,22 +1,22 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryObservationUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryType
 from morpheus.project.types.boundaries.BoundaryType import BoundaryTypeLiteral
 from morpheus.project.types.boundaries.Observation import ObservationId, ObservationName
 from morpheus.project.types.boundaries.ObservationFactory import ObservationFactory
-from morpheus.project.types.geometry import Point, LineString, Polygon
+from morpheus.project.types.geometry import LineString, Point, Polygon
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.Project import ProjectId
 
 
 class UpdateModelBoundaryObservationCommandPayload(TypedDict):
@@ -53,7 +53,7 @@ class UpdateModelBoundaryObservationCommand(ProjectCommandBase):
             observation_id=ObservationId.from_str(payload['observation_id']),
             observation_name=ObservationName.from_str(payload['observation_name']),
             observation_geometry=Point.from_dict(payload['observation_geometry']),
-            observation_data=payload['observation_data']
+            observation_data=payload['observation_data'],
         )
 
 
@@ -96,8 +96,11 @@ class UpdateModelBoundaryObservationCommandHandler(CommandHandlerBase):
             observation_geometry = boundary.geometry.nearest_point(command.observation_geometry)
 
         updated_observation = ObservationFactory.new(
-            boundary_type=command.boundary_type, observation_id=command.observation_id, observation_name=command.observation_name,
-            observation_geometry=observation_geometry, observation_data=command.observation_data,
+            boundary_type=command.boundary_type,
+            observation_id=command.observation_id,
+            observation_name=command.observation_name,
+            observation_geometry=observation_geometry,
+            observation_data=command.observation_data,
         )
 
         event = ModelBoundaryObservationUpdatedEvent.from_props(
@@ -107,7 +110,7 @@ class UpdateModelBoundaryObservationCommandHandler(CommandHandlerBase):
             boundary_type=command.boundary_type,
             observation_id=command.observation_id,
             observation=updated_observation,
-            occurred_at=DateTime.now()
+            occurred_at=DateTime.now(),
         )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

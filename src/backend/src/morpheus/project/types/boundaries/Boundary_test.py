@@ -1,6 +1,6 @@
 import unittest
 
-from morpheus.project.types.boundaries.Boundary import BoundaryType, BoundaryId, BoundaryName
+from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryName, BoundaryType
 
 
 class BoundaryTest(unittest.TestCase):

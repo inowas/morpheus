@@ -1,11 +1,12 @@
 import dataclasses
 import uuid
+from collections.abc import Mapping
 from enum import StrEnum
-from typing import Literal, Mapping
+from typing import Literal
 
 import numpy as np
 
-from morpheus.common.types import Float, Uuid, String
+from morpheus.common.types import Float, String, Uuid
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Polygon
 from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
@@ -178,17 +179,11 @@ class LayerPropertyRasterData:
         return len(self.data)
 
     def to_dict(self):
-        return {
-            'data': self.data,
-            'nodata_value': self.nodata_value
-        }
+        return {'data': self.data, 'nodata_value': self.nodata_value}
 
     @classmethod
     def from_dict(cls, obj: dict):
-        return cls(
-            data=obj['data'],
-            nodata_value=obj['nodata_value']
-        )
+        return cls(data=obj['data'], nodata_value=obj['nodata_value'])
 
 
 class LayerPropertyDefaultValue(Float):
@@ -211,16 +206,13 @@ class LayerPropertyRaster:
         return self.data == other.data and self.reference == other.reference
 
     def to_dict(self):
-        return {
-            'data': self.data.to_dict(),
-            'reference': self.reference.to_dict() if self.reference is not None else None
-        }
+        return {'data': self.data.to_dict(), 'reference': self.reference.to_dict() if self.reference is not None else None}
 
     @classmethod
     def from_dict(cls, obj):
         return cls(
             data=LayerPropertyRasterData.from_dict(obj['data']),
-            reference=LayerPropertyRasterReference.from_dict(obj['reference']) if 'reference' in obj and obj['reference'] is not None else None
+            reference=LayerPropertyRasterReference.from_dict(obj['reference']) if 'reference' in obj and obj['reference'] is not None else None,
         )
 
     @classmethod
@@ -263,7 +255,7 @@ class LayerPropertyZone:
             'name': self.name.to_str(),
             'affected_cells': self.affected_cells.to_dict(),
             'geometry': self.geometry.to_dict(),
-            'value': self.value
+            'value': self.value,
         }
 
     @classmethod
@@ -273,7 +265,7 @@ class LayerPropertyZone:
             name=ZoneName.from_str(obj['name']),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']) if obj['affected_cells'] is not None else ActiveCells.empty_from_shape(1, 1),
             geometry=Polygon.from_dict(obj['geometry']) if obj['geometry']['type'] == 'Polygon' else MultiPolygon.from_dict(obj['geometry']),
-            value=obj['value']
+            value=obj['value'],
         )
 
 
@@ -328,7 +320,7 @@ class LayerPropertyValues:
         return cls(
             value=LayerPropertyDefaultValue.from_float(obj['value']),
             raster=LayerPropertyRaster.from_dict(obj['raster']) if 'raster' and obj['raster'] is not None else None,
-            zones=LayerPropertyZones.from_list(obj['zones']) if 'zones' and obj['zones'] is not None else None
+            zones=LayerPropertyZones.from_list(obj['zones']) if 'zones' and obj['zones'] is not None else None,
         )
 
     @classmethod
@@ -339,7 +331,7 @@ class LayerPropertyValues:
         return {
             'value': self.value.to_float(),
             'raster': self.raster.to_dict() if self.raster is not None else None,
-            'zones': [zone.to_dict() for zone in self.zones] if self.zones is not None else None
+            'zones': [zone.to_dict() for zone in self.zones] if self.zones is not None else None,
         }
 
     def get_shape(self) -> tuple[int, ...] | None:
@@ -507,7 +499,7 @@ class LayerProperties:
             specific_yield=LayerPropertyValues.from_dict(obj['specific_yield']),
             initial_head=LayerPropertyValues.from_dict(obj['initial_head']),
             top=LayerPropertyValues.from_dict(obj['top']) if obj['top'] is not None else None,
-            bottom=LayerPropertyValues.from_dict(obj['bottom'])
+            bottom=LayerPropertyValues.from_dict(obj['bottom']),
         )
 
     @classmethod
@@ -520,7 +512,7 @@ class LayerProperties:
             specific_yield=LayerPropertyValues.from_value(value=specific_yield),
             initial_head=LayerPropertyValues.from_value(value=initial_head),
             top=LayerPropertyValues.from_value(value=top) if top is not None else None,
-            bottom=LayerPropertyValues.from_value(value=bottom)
+            bottom=LayerPropertyValues.from_value(value=bottom),
         )
 
     def to_dict(self):
@@ -532,7 +524,7 @@ class LayerProperties:
             'specific_yield': self.specific_yield.to_dict(),
             'initial_head': self.initial_head.to_dict(),
             'top': self.top.to_dict() if self.top is not None else None,
-            'bottom': self.bottom.to_dict()
+            'bottom': self.bottom.to_dict(),
         }
 
 
@@ -551,16 +543,7 @@ class Layer:
             name=LayerName.new(),
             description=LayerDescription.new(),
             confinement=LayerConfinement.confined(),
-            properties=LayerProperties.from_values(
-                hk=1.0,
-                hani=1.0,
-                vka=1.0,
-                specific_storage=0.0001,
-                specific_yield=0.1,
-                initial_head=1.0,
-                top=1.0,
-                bottom=0.0
-            )
+            properties=LayerProperties.from_values(hk=1.0, hani=1.0, vka=1.0, specific_storage=0.0001, specific_yield=0.1, initial_head=1.0, top=1.0, bottom=0.0),
         )
 
     @classmethod
@@ -570,7 +553,7 @@ class Layer:
             name=LayerName.from_value(obj['name']),
             description=LayerDescription.from_value(obj['description']),
             confinement=LayerConfinement.from_value(obj['confinement']),
-            properties=LayerProperties.from_dict(obj['properties'])
+            properties=LayerProperties.from_dict(obj['properties']),
         )
 
     def to_dict(self):
@@ -579,7 +562,7 @@ class Layer:
             'name': self.name.to_value(),
             'description': self.description.to_value(),
             'confinement': self.confinement.to_value(),
-            'properties': self.properties.to_dict()
+            'properties': self.properties.to_dict(),
         }
 
     def is_confined(self):

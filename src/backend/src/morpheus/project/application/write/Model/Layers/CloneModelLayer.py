@@ -1,18 +1,18 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerClonedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from morpheus.project.types.layers.Layer import LayerId
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.layers.Layer import LayerId
 
 
 class CloneModelLayerCommandPayload(TypedDict):
@@ -34,7 +34,7 @@ class CloneModelLayerCommand(ProjectCommandBase):
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             layer_id=LayerId.from_str(payload['layer_id']),
-            new_layer_id=LayerId.new()
+            new_layer_id=LayerId.new(),
         )
 
 
@@ -51,11 +51,7 @@ class CloneModelLayerCommandHandler(CommandHandlerBase):
         model.layers.assert_layer_can_be_cloned(layer_id=command.layer_id, new_layer_id=command.new_layer_id)
 
         event = ModelLayerClonedEvent.from_layer_id(
-            project_id=project_id,
-            model_id=command.model_id,
-            layer_id=command.layer_id,
-            new_layer_id=command.new_layer_id,
-            occurred_at=DateTime.now()
+            project_id=project_id, model_id=command.model_id, layer_id=command.layer_id, new_layer_id=command.new_layer_id, occurred_at=DateTime.now()
         )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

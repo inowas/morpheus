@@ -1,10 +1,14 @@
 import dataclasses
 
 import numpy as np
-from shapely import LineString as ShapelyLineString, Point as ShapelyPoint, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
+from shapely import LineString as ShapelyLineString
+from shapely import MultiPolygon as ShapelyMultiPolygon
+from shapely import Point as ShapelyPoint
+from shapely import Polygon as ShapelyPolygon
 from shapely.ops import unary_union
+
 from morpheus.project.types.discretization.spatial import Grid
-from morpheus.project.types.geometry import GeometryCollection, Polygon, Point, LineString
+from morpheus.project.types.geometry import GeometryCollection, LineString, Point, Polygon
 from morpheus.project.types.geometry.Feature import Feature
 from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
 
@@ -56,23 +60,14 @@ class ActiveCells:
 
     @classmethod
     def empty_from_shape(cls, n_cols: int, n_rows: int):
-        return cls(
-            shape=(n_rows, n_cols),
-            data=[]
-        )
+        return cls(shape=(n_rows, n_cols), data=[])
 
     @classmethod
     def empty_from_grid(cls, grid: Grid):
-        return cls(
-            shape=(grid.n_rows(), grid.n_cols()),
-            data=[]
-        )
+        return cls(shape=(grid.n_rows(), grid.n_cols()), data=[])
 
     def filter(self, predicate):
-        return ActiveCells(
-            shape=self.shape,
-            data=[cell for cell in self.data if predicate(cell)]
-        )
+        return ActiveCells(shape=self.shape, data=[cell for cell in self.data if predicate(cell)])
 
     def contains(self, cell: ActiveCell) -> bool:
         return self.is_active(col=cell.col, row=cell.row)
@@ -194,7 +189,7 @@ class ActiveCells:
             if raster_data.shape != tuple(obj['shape']):
                 raise ValueError(f'Grid cells shape {obj["shape"]} does not match raster data shape {raster_data.shape}')
 
-            empty_value = obj['empty_value'] if 'empty_value' in obj else False
+            empty_value = obj.get('empty_value', False)
             grid_cells = []
             for row in range(obj['shape'][0]):
                 for col in range(obj['shape'][1]):
@@ -202,16 +197,10 @@ class ActiveCells:
                     if value and value != empty_value:
                         grid_cells.append(ActiveCell(col=col, row=row))
 
-            return cls(
-                shape=obj['shape'],
-                data=grid_cells
-            )
+            return cls(shape=obj['shape'], data=grid_cells)
 
         if obj['type'] == 'sparse':
-            return cls(
-                shape=obj['shape'],
-                data=[ActiveCell.from_tuple(cell) for cell in obj['data']]
-            )
+            return cls(shape=obj['shape'], data=[ActiveCell.from_tuple(cell) for cell in obj['data']])
 
         if obj['type'] == 'sparse_inverse':
             raster_data = np.full(shape=obj['shape'], fill_value=True, dtype=bool)
@@ -225,10 +214,7 @@ class ActiveCells:
                     if raster_data[row, col]:
                         grid_cells.append(ActiveCell(col=col, row=row))
 
-            return cls(
-                shape=obj['shape'],
-                data=grid_cells
-            )
+            return cls(shape=obj['shape'], data=grid_cells)
 
         raise ValueError(f'Unknown grid cells type: {obj["type"]}')
 
@@ -251,11 +237,7 @@ class ActiveCells:
             raise ValueError(f'Unknown grid cells dict_type: {dict_type}')
 
         if dict_type == 'sparse':
-            return {
-                'type': dict_type,
-                'shape': self.shape,
-                'data': [cell.to_tuple() for cell in self.data]
-            }
+            return {'type': dict_type, 'shape': self.shape, 'data': [cell.to_tuple() for cell in self.data]}
 
         if dict_type == 'sparse_inverse':
             inverted_value = False
@@ -270,11 +252,7 @@ class ActiveCells:
                     if inverted_raster[row, col]:
                         data.append(ActiveCell(col=col, row=row))
 
-            return {
-                'type': dict_type,
-                'shape': self.shape,
-                'data': [cell.to_tuple() for cell in data]
-            }
+            return {'type': dict_type, 'shape': self.shape, 'data': [cell.to_tuple() for cell in data]}
 
         # save as Raster data
         empty_value = False
@@ -282,12 +260,7 @@ class ActiveCells:
         for cell in self.data:
             data[cell.row, cell.col] = True
 
-        return {
-            'type': dict_type,
-            'empty_value': empty_value,
-            'shape': self.shape,
-            'data': data.tolist()
-        }
+        return {'type': dict_type, 'empty_value': empty_value, 'shape': self.shape, 'data': data.tolist()}
 
     def n_cols(self) -> int:
         return self.shape[1]

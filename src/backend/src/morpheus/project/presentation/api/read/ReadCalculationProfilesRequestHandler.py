@@ -1,9 +1,10 @@
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.read.CalculationProfilesReader import get_calculation_profiles_reader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
-from ....types.Project import ProjectId
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadCalculationProfilesRequestHandler:
@@ -16,11 +17,14 @@ class ReadCalculationProfilesRequestHandler:
             permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)
             calculation_profiles = get_calculation_profiles_reader().get_calculation_profiles(project_id)
 
-            return [{'id': calculation_profile.id.to_str(),
-                     'name': calculation_profile.name.to_str(),
-                     'type': calculation_profile.engine_type,
-                     } for calculation_profile in calculation_profiles
-                    ], 200
+            return [
+                {
+                    'id': calculation_profile.id.to_str(),
+                    'name': calculation_profile.name.to_str(),
+                    'type': calculation_profile.engine_type,
+                }
+                for calculation_profile in calculation_profiles
+            ], 200
         except InsufficientPermissionsException as e:
             return str(e), 403
         except NotFoundException:

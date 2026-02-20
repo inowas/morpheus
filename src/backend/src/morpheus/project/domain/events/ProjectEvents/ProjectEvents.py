@@ -1,11 +1,11 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 from morpheus.project.types.Asset import AssetId
-from morpheus.project.types.Project import Project, ProjectId, Name, Description, Tags
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
+from morpheus.project.types.Project import Description, Name, Project, ProjectId, Tags
 
 from .ProjectEventName import ProjectEventName
 
@@ -58,11 +58,7 @@ class ProjectCreatedEvent(EventBase):
 class ProjectDeletedEvent(EventBase):
     @classmethod
     def from_project_id(cls, project_id: ProjectId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={}
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={})
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -83,7 +79,7 @@ class ProjectMetadataUpdatedEvent(EventBase):
                 'name': name.to_str() if name else None,
                 'description': description.to_str() if description else None,
                 'tags': tags.to_list() if tags else None,
-            }
+            },
         )
 
     def get_project_id(self) -> ProjectId:
@@ -112,7 +108,7 @@ class ProjectPreviewImageUpdatedEvent(EventBase):
             occurred_at=DateTime.now(),
             payload={
                 'asset_id': asset_id.to_str(),
-            }
+            },
         )
 
     def get_project_id(self) -> ProjectId:
@@ -130,11 +126,7 @@ class ProjectPreviewImageUpdatedEvent(EventBase):
 class ProjectPreviewImageDeletedEvent(EventBase):
     @classmethod
     def occurred_now(cls, project_id: ProjectId):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=DateTime.now(),
-            payload={}
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=DateTime.now(), payload={})
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())

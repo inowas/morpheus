@@ -1,4 +1,5 @@
 import dataclasses
+
 import pyproj
 
 
@@ -12,8 +13,8 @@ class Crs:
         try:
             pyproj.CRS.from_user_input(crs)
             return cls(value=crs)
-        except Exception:
-            raise ValueError('Invalid CRS')
+        except Exception as e:
+            raise ValueError('Invalid CRS') from e
 
     @classmethod
     def from_epsg(cls, epsg: int):

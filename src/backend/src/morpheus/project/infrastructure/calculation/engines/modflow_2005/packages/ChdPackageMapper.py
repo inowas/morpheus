@@ -1,13 +1,13 @@
 import numpy as np
-from shapely import LineString as ShapelyLineString, Point as ShapelyPoint
+from shapely import LineString as ShapelyLineString
+from shapely import Point as ShapelyPoint
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import StressPeriodData
-from morpheus.project.types.Model import Model
 from morpheus.project.types.boundaries.Boundary import BoundaryType, ConstantHeadBoundary
 from morpheus.project.types.boundaries.ConstantHeadObservation import ConstantHeadDataItem
-
-from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.layers import LayersCollection
+from morpheus.project.types.Model import Model
 
 
 class ChdStressPeriodData(StressPeriodData):
@@ -15,16 +15,13 @@ class ChdStressPeriodData(StressPeriodData):
 
 
 def calculate_chd_boundary_stress_period_data(
-    spatial_discretization: SpatialDiscretization,
-    time_discretization: TimeDiscretization,
-    layers: LayersCollection,
-    chd_boundary: ConstantHeadBoundary
+    spatial_discretization: SpatialDiscretization, time_discretization: TimeDiscretization, layers: LayersCollection, chd_boundary: ConstantHeadBoundary
 ) -> ChdStressPeriodData:
     layer_ids = [layer.layer_id for layer in layers.layers]
     sp_data = ChdStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
-    for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
+    for stress_period_idx, _stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
         mean_data = chd_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=chd_boundary.interpolation)
@@ -38,8 +35,7 @@ def calculate_chd_boundary_stress_period_data(
         layer_indices = [layer_ids.index(layer_id) for layer_id in chd_boundary.affected_layers]
 
         # we need to filter the affected cells to only include cells that are part of the model
-        chd_boundary.affected_cells = chd_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        chd_boundary.affected_cells = chd_boundary.affected_cells.filter(lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if chd_boundary.number_of_observations() == 1:
             # if we only have one observation point
@@ -47,7 +43,7 @@ def calculate_chd_boundary_stress_period_data(
 
             mean_data = mean_data[0]
             if not isinstance(mean_data, ConstantHeadDataItem):
-                raise TypeError("Expected ConstantHeadDataItem but got {}".format(type(mean_data)))
+                raise TypeError(f'Expected ConstantHeadDataItem but got {type(mean_data)}')
 
             start_head = mean_data.start_head
             end_head = mean_data.end_head
@@ -59,7 +55,9 @@ def calculate_chd_boundary_stress_period_data(
                     continue
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[start_head.to_float(), end_head.to_float()], sum_up_values=False)
+                    sp_data.set_value(
+                        time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[start_head.to_float(), end_head.to_float()], sum_up_values=False
+                    )
 
         if chd_boundary.number_of_observations() > 1:
             # if we have multiple observation points
@@ -76,7 +74,7 @@ def calculate_chd_boundary_stress_period_data(
                 xx.append(line_string.project(shapely_point, normalized=True))
                 mean_data = observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=chd_boundary.interpolation)
                 if not isinstance(mean_data, ConstantHeadDataItem):
-                    raise TypeError("Expected ConstantHeadDataItem but got {}".format(type(mean_data)))
+                    raise TypeError(f'Expected ConstantHeadDataItem but got {type(mean_data)}')
                 yy_start_heads.append(mean_data.start_head.to_float())
                 yy_end_heads.append(mean_data.end_head.to_float())
 
@@ -103,15 +101,10 @@ def calculate_stress_period_data(model: Model) -> ChdStressPeriodData | None:
     chd_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.constant_head)
     for chd_boundary in chd_boundaries:
         if not isinstance(chd_boundary, ConstantHeadBoundary):
-            raise TypeError(
-                "Expected boundary of type {} but got {}".format(ConstantHeadBoundary.__name__, type(chd_boundary))
-            )
+            raise TypeError(f'Expected boundary of type {ConstantHeadBoundary.__name__} but got {type(chd_boundary)}')
 
         sp_data_boundary = calculate_chd_boundary_stress_period_data(
-            spatial_discretization=model.spatial_discretization,
-            time_discretization=model.time_discretization,
-            layers=model.layers,
-            chd_boundary=chd_boundary
+            spatial_discretization=model.spatial_discretization, time_discretization=model.time_discretization, layers=model.layers, chd_boundary=chd_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
 

@@ -1,7 +1,8 @@
 from morpheus.common.types.Exceptions import NotFoundException
+
 from ...infrastructure.persistence.CalculationProfilesRepository import CalculationProfilesRepository, calculation_profiles_repository
-from ...types.Project import ProjectId
 from ...types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId
+from ...types.Project import ProjectId
 
 
 class CalculationProfilesReader:

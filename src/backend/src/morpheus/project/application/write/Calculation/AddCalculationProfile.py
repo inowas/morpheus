@@ -1,20 +1,17 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.CalculationEvents.CalculationProfileAddedEvent import \
-    CalculationProfileAddedEvent
-from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineSettingsFactory import \
-    CalculationEngineSettingsFactory
+from morpheus.project.domain.events.CalculationEvents.CalculationProfileAddedEvent import CalculationProfileAddedEvent
+from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineSettingsFactory import CalculationEngineSettingsFactory
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from morpheus.project.types.calculation.CalculationProfile import CalculationEngineType, CalculationProfile, CalculationProfileId, CalculationProfileName
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId, \
-    CalculationProfileName, CalculationEngineType
 
 
 class AddCalculationProfileCommandPayload(TypedDict):
@@ -37,8 +34,8 @@ class AddCalculationProfileCommand(ProjectCommandBase):
                 id=CalculationProfileId.new(),
                 name=CalculationProfileName.from_str(payload['calculation_profile_name']),
                 engine_type=engine_type,
-                engine_settings=CalculationEngineSettingsFactory.create_default_engine_settings(engine_type=engine_type)
-            )
+                engine_settings=CalculationEngineSettingsFactory.create_default_engine_settings(engine_type=engine_type),
+            ),
         )
 
 

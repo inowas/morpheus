@@ -21,9 +21,21 @@ class PcgPackageSettings:
     dampt: float
     ihcofadd: int
 
-    def __init__(self, mxiter: int = 50, iter1: int = 30, npcond: int = 1, hclose: float = 1e-5,
-                 rclose: float = 1e-5, relax: float = 1.0, nbpol: int = 0, iprpcg: int = 0,
-                 mutpcg: int = 3, damp: float = 1.0, dampt: float = 1.0, ihcofadd: int = 0):
+    def __init__(
+        self,
+        mxiter: int = 50,
+        iter1: int = 30,
+        npcond: int = 1,
+        hclose: float = 1e-5,
+        rclose: float = 1e-5,
+        relax: float = 1.0,
+        nbpol: int = 0,
+        iprpcg: int = 0,
+        mutpcg: int = 3,
+        damp: float = 1.0,
+        dampt: float = 1.0,
+        ihcofadd: int = 0,
+    ):
         self.mxiter = mxiter
         self.iter1 = iter1
         self.npcond = npcond
@@ -67,10 +79,24 @@ class PcgPackageData:
     unitnumber: int | None
     filenames: list[str] | str | None
 
-    def __init__(self, mxiter: int = 50, iter1: int = 30, npcond: int = 1, hclose: float = 1e-5,
-                 rclose: float = 1e-5, relax: float = 1.0, nbpol: int = 0, iprpcg: int = 0, mutpcg: int = 3,
-                 damp: float = 1.0, dampt: float = 1.0, ihcofadd: int = 0, extension: str = "pcg",
-                 unitnumber: int | None = None, filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        mxiter: int = 50,
+        iter1: int = 30,
+        npcond: int = 1,
+        hclose: float = 1e-5,
+        rclose: float = 1e-5,
+        relax: float = 1.0,
+        nbpol: int = 0,
+        iprpcg: int = 0,
+        mutpcg: int = 3,
+        damp: float = 1.0,
+        dampt: float = 1.0,
+        ihcofadd: int = 0,
+        extension: str = 'pcg',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.mxiter = mxiter
         self.iter1 = iter1
         self.npcond = npcond

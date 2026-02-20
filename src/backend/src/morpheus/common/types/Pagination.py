@@ -1,7 +1,6 @@
 import dataclasses
-from typing import NewType, TypeVar, Generic
-
 from math import ceil
+from typing import NewType, TypeVar
 
 Page = NewType('Page', int)
 PageSize = NewType('PageSize', int)
@@ -28,15 +27,15 @@ PaginatedItem = TypeVar('PaginatedItem')
 
 
 @dataclasses.dataclass(frozen=True)
-class PaginatedResults(Generic[PaginatedItem]):
+class PaginatedResults[T]:
     pagination_parameters: PaginationParameters
     total_number_of_results: int
-    items: list[PaginatedItem]
+    results: list[T]
 
     def __post_init__(self):
         if self.total_number_of_results < 0:
             raise ValueError('Total number of results must be greater than or equal to 0')
-        if len(self.items) > self.total_number_of_results:
+        if len(self.results) > self.total_number_of_results:
             raise ValueError('Number of items must be less than or equal to total number of results')
 
     def get_total_number_of_pages(self) -> int:

@@ -1,16 +1,16 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.GeneralModelEvents import VersionDescriptionUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.ModelVersion import VersionId, VersionDescription
+from morpheus.project.types.ModelVersion import VersionDescription, VersionId
 from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 
 
 class UpdateModelVersionDescriptionCommandPayload(TypedDict):
@@ -40,8 +40,9 @@ class UpdateModelVersionDescriptionCommandHandler(CommandHandlerBase):
         project_id = command.project_id
         user_id = command.user_id
 
-        event = VersionDescriptionUpdatedEvent.from_version_id(project_id=project_id, version_id=command.version_id, description=command.version_description,
-                                                               occurred_at=DateTime.now())
+        event = VersionDescriptionUpdatedEvent.from_version_id(
+            project_id=project_id, version_id=command.version_id, description=command.version_description, occurred_at=DateTime.now()
+        )
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=event_envelope)

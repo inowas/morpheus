@@ -3,13 +3,12 @@ from typing import TypedDict
 
 from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.identity.Identity import UserId
-
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.AssetService import AssetService
 from morpheus.project.infrastructure.assets.AssetHandlingService import get_asset_handling_service
-from morpheus.project.types.Asset import AssetId, NoDataValue, GeoTiffMetadata
+from morpheus.project.types.Asset import AssetId, GeoTiffMetadata, NoDataValue
 from morpheus.project.types.Project import ProjectId
 
 
@@ -30,7 +29,7 @@ class UpdateRasterAssetNoDataValueCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             asset_id=AssetId.from_str(payload['asset_id']),
-            no_data_value=NoDataValue.from_float(float(payload['no_data_value']))
+            no_data_value=NoDataValue.from_float(float(payload['no_data_value'])),
         )
 
 
@@ -49,7 +48,4 @@ class UpdateRasterAssetNoDataValueCommandHandler(CommandHandlerBase):
         if not isinstance(asset.metadata, GeoTiffMetadata):
             raise ValueError(f'Asset {command.asset_id.to_str()} for project {command.project_id.to_str()} is not a GeoTiff asset')
 
-        asset_handling_service.update_asset_metadata(
-            asset_id=asset.asset_id,
-            metadata=asset.metadata.with_updated_no_data_value(command.no_data_value)
-        )
+        asset_handling_service.update_asset_metadata(asset_id=asset.asset_id, metadata=asset.metadata.with_updated_no_data_value(command.no_data_value))

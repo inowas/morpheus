@@ -1,14 +1,15 @@
 import dataclasses
+
 from flopy.modflow import ModflowChd as FlopyModflowChd
 
-from .ChdPackageMapper import ChdStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .ChdPackageMapper import ChdStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
 class ChdPackageSettings:
-
     def __init__(self):
         pass
 
@@ -33,8 +34,15 @@ class ChdPackageData:
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: ChdStressPeriodData, dtype: None | list = None, options: None | list = None,
-                 extension="chd", unitnumber: int | None = None, filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        stress_period_data: ChdStressPeriodData,
+        dtype: None | list = None,
+        options: None | list = None,
+        extension='chd',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.stress_period_data = stress_period_data
         self.dtype = dtype
         self.options = options

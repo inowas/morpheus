@@ -1,6 +1,6 @@
-from morpheus.common.types.File import FilePath
 from PIL import Image
 
+from morpheus.common.types.File import FilePath
 from morpheus.project.types.Asset import ImageMetadata
 from morpheus.settings import settings
 

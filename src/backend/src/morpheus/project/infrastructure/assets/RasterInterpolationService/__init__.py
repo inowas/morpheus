@@ -2,7 +2,7 @@ from .RasterInterpolationService import InterpolationMethod, RasterInterpolation
 from .types.RasterData import RasterData
 
 __all__ = [
-    "InterpolationMethod",
-    "RasterInterpolationService",
-    "RasterData",
+    'InterpolationMethod',
+    'RasterInterpolationService',
+    'RasterData',
 ]

@@ -1,13 +1,14 @@
 from typing import Literal
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.read.ModelReader import ModelReader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
-from ....types.Project import ProjectId
 from ....types.boundaries.Boundary import BoundaryId
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadModelBoundaryAffectedCellsRequestHandler:

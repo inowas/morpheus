@@ -1,13 +1,14 @@
 import dataclasses
-import pandas as pd
 
+import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .BoundaryInterpolationType import InterpolationType
-from .Observation import ObservationId, ObservationValue, DataItem, Observation, ObservationName
-from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
+
+from ..discretization.time.Stressperiods import EndDateTime, StartDateTime
 from ..geometry import Point
+from .BoundaryInterpolationType import InterpolationType
+from .Observation import DataItem, Observation, ObservationId, ObservationName, ObservationValue
 
 
 class SurfaceElevation(Float):
@@ -35,7 +36,7 @@ class EvapotranspirationObservationValue(ObservationValue):
             date_time=date_time,
             surface_elevation=SurfaceElevation.from_float(0.0),
             evapotranspiration=Evapotranspiration.from_float(0.0),
-            extinction_depth=ExtinctionDepth.from_float(0.0)
+            extinction_depth=ExtinctionDepth.from_float(0.0),
         )
 
     @classmethod
@@ -95,12 +96,7 @@ class EvapotranspirationObservation(Observation):
     def new(cls, name: ObservationName, geometry: Point, data: list[EvapotranspirationObservationValue], observation_id: ObservationId | None = None):
         data = list({d.date_time: d for d in data}.values())
         data = sorted(data, key=lambda x: x.date_time)
-        return cls(
-            observation_id=observation_id or ObservationId.new(),
-            observation_name=name,
-            geometry=geometry,
-            data=data
-        )
+        return cls(observation_id=observation_id or ObservationId.new(), observation_name=name, geometry=geometry, data=data)
 
     @classmethod
     def from_dict(cls, obj):
@@ -108,7 +104,7 @@ class EvapotranspirationObservation(Observation):
             observation_id=ObservationId.from_value(obj['observation_id']),
             observation_name=ObservationName.from_value(obj['observation_name']),
             geometry=Point.from_dict(obj['geometry']),
-            data=[EvapotranspirationObservationValue.from_dict(d) for d in obj['data']]
+            data=[EvapotranspirationObservationValue.from_dict(d) for d in obj['data']],
         )
 
     def to_dict(self):
@@ -116,10 +112,12 @@ class EvapotranspirationObservation(Observation):
             'observation_id': self.observation_id.to_value(),
             'observation_name': self.observation_name.to_value(),
             'geometry': self.geometry.to_dict(),
-            'data': [d.to_dict() for d in self.data]
+            'data': [d.to_dict() for d in self.data],
         }
 
-    def get_data_item(self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none) -> EvapotranspirationDataItem | None:
+    def get_data_item(
+        self, start_date_time: StartDateTime, end_date_time: EndDateTime, interpolation: InterpolationType = InterpolationType.none
+    ) -> EvapotranspirationDataItem | None:
 
         # No interpolation
         # if this is set, we are expecting that the start_date_time is present in the time series
@@ -133,7 +131,7 @@ class EvapotranspirationObservation(Observation):
                         end_date_time=end_date_time,
                         surface_elevation=item.surface_elevation,
                         evapotranspiration=item.evapotranspiration,
-                        extinction_depth=item.extinction_depth
+                        extinction_depth=item.extinction_depth,
                     )
 
             return None
@@ -147,7 +145,7 @@ class EvapotranspirationObservation(Observation):
                 return None
 
             last_known_value = sorted_data[0]
-            for i, item in enumerate(self.data):
+            for _i, item in enumerate(self.data):
                 if item.date_time < start_date_time:
                     last_known_value = item
 
@@ -158,7 +156,7 @@ class EvapotranspirationObservation(Observation):
                         end_date_time=end_date_time,
                         surface_elevation=item.surface_elevation,
                         evapotranspiration=item.evapotranspiration,
-                        extinction_depth=item.extinction_depth
+                        extinction_depth=item.extinction_depth,
                     )
 
                 # do not process any further if the item is after the start_date_time
@@ -172,7 +170,7 @@ class EvapotranspirationObservation(Observation):
                 end_date_time=end_date_time,
                 surface_elevation=last_known_value.surface_elevation,
                 evapotranspiration=last_known_value.evapotranspiration,
-                extinction_depth=last_known_value.extinction_depth
+                extinction_depth=last_known_value.extinction_depth,
             )
 
         # In range check
@@ -199,7 +197,7 @@ class EvapotranspirationObservation(Observation):
             time_series.values.astype(float),
             surface_elevations.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         surface_elevations = surface_elevations_interpolator(date_range.values.astype(float))
 
@@ -207,7 +205,7 @@ class EvapotranspirationObservation(Observation):
             time_series.values.astype(float),
             evapotranspirations.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
 
         evapotranspirations = evapotranspiration_interpolator(date_range.values.astype(float))
@@ -216,7 +214,7 @@ class EvapotranspirationObservation(Observation):
             time_series.values.astype(float),
             extinction_depths.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         extinction_depths = extinction_depths_interpolator(date_range.values.astype(float))
 

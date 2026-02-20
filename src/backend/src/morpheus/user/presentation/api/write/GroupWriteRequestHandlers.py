@@ -1,11 +1,11 @@
 from flask import Request
+
 from morpheus.authentication.outgoing import get_identity
 from morpheus.common.types.Exceptions import NotFoundException
-from morpheus.common.types.identity.Identity import Identity, GroupId
+from morpheus.common.types.identity.Identity import GroupId, Identity, UserId
 from morpheus.user.application.write.AddMemberToGroup import AddMembersToGroupCommand, AddMembersToGroupCommandHandler
 from morpheus.user.application.write.CreateGroup import CreateGroupCommand, CreateGroupCommandHandler
 from morpheus.user.types.Group import GroupName
-from morpheus.common.types.identity.Identity import UserId
 
 
 class CreateGroupRequestHandler:

@@ -1,14 +1,13 @@
 from morpheus.common.application.Projector import ProjectorBase
-from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
+from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectMetadataUpdatedEvent, ProjectDeletedEvent
-from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import VisibilityUpdatedEvent, OwnershipUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent, ProjectDeletedEvent, ProjectMetadataUpdatedEvent
+from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import OwnershipUpdatedEvent, VisibilityUpdatedEvent
 from morpheus.project.infrastructure.persistence.ProjectSummaryRepository import ProjectSummaryRepository, project_summary_repository
 from morpheus.project.types.Project import ProjectSummary
 
 
 class ProjectSummaryProjector(EventListenerBase, ProjectorBase):
-
     def __init__(self, repository: ProjectSummaryRepository):
         self.repository = repository
 

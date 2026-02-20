@@ -2,10 +2,10 @@ import dataclasses
 from enum import StrEnum
 from typing import Literal
 
+from morpheus.common.types import Float, Integer, String, Uuid
 from morpheus.common.types.File import File, FileName
-from morpheus.common.types import Uuid, String, Float, Integer
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry.BoundingBox import BoundingBox
+from morpheus.project.types.Project import ProjectId
 
 
 class AssetId(Uuid):
@@ -185,7 +185,7 @@ class GeoTiffAssetData(AssetData):
             'n_rows': self.n_rows,
             'band': self.band,
             'wgs_84_bounding_box': self.wgs_84_bounding_box.to_dict(),
-            'data': self.data
+            'data': self.data,
         }
 
 

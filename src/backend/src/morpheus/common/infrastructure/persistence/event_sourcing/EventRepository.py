@@ -1,12 +1,14 @@
 import dataclasses
-from typing import Mapping, Any
+from collections.abc import Mapping
+from typing import Any
 
 import pymongo
 from pymongo.collection import Collection
+
 from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFactory
 from morpheus.common.infrastructure.persistence.event_sourcing.uuid7 import uuid7
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.event_sourcing.EventName import EventName
@@ -39,7 +41,7 @@ class EventStoreDocument:
     def from_raw_document(cls, raw_document: Mapping[str, Any]):
         return cls(
             event_name=raw_document['event_name'],
-            event_version=raw_document['event_version'] if 'event_version' in raw_document else 0,
+            event_version=raw_document.get('event_version', 0),
             occurred_at=raw_document['occurred_at'],
             entity_uuid=raw_document['entity_uuid'],
             version=raw_document['version'],
@@ -65,14 +67,13 @@ class EventStoreDocument:
                 event_version=self.event_version,
                 entity_uuid=Uuid.from_str(self.entity_uuid),
                 occurred_at=DateTime.from_str(self.occurred_at),
-                payload=self.payload
+                payload=self.payload,
             ),
             metadata=EventMetadata.from_dict(self.metadata),
         )
 
 
 class EventRepository(RepositoryBase):
-
     def __init__(self, collection: Collection, event_factory: EventFactory):
         super().__init__(collection)
         self._event_factory = event_factory
@@ -91,11 +92,7 @@ class EventRepository(RepositoryBase):
         return [EventStoreDocument.from_raw_document(document).to_envelope(self._event_factory) for document in documents]
 
 
-def create_event_repository(
-    database_name: str,
-    collection_name: str,
-    event_factory: EventFactory
-) -> EventRepository:
+def create_event_repository(database_name: str, collection_name: str, event_factory: EventFactory) -> EventRepository:
     return EventRepository(
         collection=create_or_get_collection(
             get_database_client(database_name, create_if_not_exist=True),
@@ -106,7 +103,7 @@ def create_event_repository(
                     ('version', pymongo.ASCENDING),
                 ],
                 unique=True,
-            )
+            ),
         ),
         event_factory=event_factory,
     )

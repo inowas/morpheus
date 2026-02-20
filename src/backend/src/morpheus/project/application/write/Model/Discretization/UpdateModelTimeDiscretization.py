@@ -1,16 +1,16 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelTimeDiscretizationUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.discretization import TimeDiscretization
+from morpheus.project.types.Project import ProjectId
 
 
 class StressPeriod(TypedDict):
@@ -37,12 +37,14 @@ class UpdateModelTimeDiscretizationCommand(ProjectCommandBase):
         return cls(
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
-            time_discretization=TimeDiscretization.from_dict({
-                'start_date_time': payload['start_date_time'],
-                'end_date_time': payload['end_date_time'],
-                'stress_periods': payload['stress_periods'],
-                'time_unit': payload['time_unit']
-            }),
+            time_discretization=TimeDiscretization.from_dict(
+                {
+                    'start_date_time': payload['start_date_time'],
+                    'end_date_time': payload['end_date_time'],
+                    'stress_periods': payload['stress_periods'],
+                    'time_unit': payload['time_unit'],
+                }
+            ),
         )
 
 

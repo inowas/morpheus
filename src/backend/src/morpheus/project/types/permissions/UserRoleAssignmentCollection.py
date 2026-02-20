@@ -1,8 +1,8 @@
 import dataclasses
 
-from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.permissions.UserRoleAssignment import UserRoleAssignment
 from morpheus.common.types.identity.Identity import UserId
+from morpheus.project.types.permissions.UserRoleAssignment import UserRoleAssignment
+from morpheus.project.types.Project import ProjectId
 
 
 @dataclasses.dataclass()

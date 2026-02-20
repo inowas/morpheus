@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -11,8 +11,8 @@ from morpheus.project.application.write.CommandHandlerBase import CommandHandler
 from morpheus.project.domain.events.ModelEvents.ModelObservationEvents import ModelObservationClonedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.observations.HeadObservation import ObservationId
+from morpheus.project.types.Project import ProjectId
 
 
 class CloneModelObservationCommandPayload(TypedDict):
@@ -34,7 +34,7 @@ class CloneModelObservationCommand(ProjectCommandBase):
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
             observation_id=ObservationId.from_str(payload['observation_id']),
-            new_observation_id=ObservationId.new()
+            new_observation_id=ObservationId.new(),
         )
 
 
@@ -51,11 +51,7 @@ class CloneModelObservationCommandHandler(CommandHandlerBase):
             raise ValueError(f'Model {command.model_id.to_str()} does not exist in project {project_id.to_str()}')
 
         event = ModelObservationClonedEvent.from_observation_id(
-            project_id=project_id,
-            model_id=command.model_id,
-            observation_id=command.observation_id,
-            new_observation_id=command.new_observation_id,
-            occurred_at=DateTime.now()
+            project_id=project_id, model_id=command.model_id, observation_id=command.observation_id, new_observation_id=command.new_observation_id, occurred_at=DateTime.now()
         )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

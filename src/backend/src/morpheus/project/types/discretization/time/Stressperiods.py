@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import DateTime, Integer, Float, Bool
+from morpheus.common.types import Bool, DateTime, Float, Integer
 
 
 class StartDateTime(DateTime):
@@ -36,7 +36,7 @@ class StressPeriod:
             start_date_time=StartDateTime.from_value(obj['start_date_time']),
             number_of_time_steps=NumberOfTimeSteps.from_value(obj['number_of_time_steps']),
             time_step_multiplier=TimeStepMultiplier.from_value(obj['time_step_multiplier']),
-            steady_state=IsSteadyState.from_value(obj['steady_state'])
+            steady_state=IsSteadyState.from_value(obj['steady_state']),
         )
 
     def to_dict(self):
@@ -44,7 +44,7 @@ class StressPeriod:
             'start_date_time': self.start_date_time.to_value(),
             'number_of_time_steps': self.number_of_time_steps.to_value(),
             'time_step_multiplier': self.time_step_multiplier.to_value(),
-            'steady_state': self.steady_state.to_value()
+            'steady_state': self.steady_state.to_value(),
         }
 
     def get_start_date_time(self):
@@ -67,12 +67,16 @@ class StressPeriodCollection:
 
     @classmethod
     def new(cls, start_date: StartDateTime):
-        return cls(value=[StressPeriod(
-            start_date_time=start_date,
-            number_of_time_steps=NumberOfTimeSteps.from_int(1),
-            time_step_multiplier=TimeStepMultiplier.from_float(1.0),
-            steady_state=IsSteadyState.yes()
-        )])
+        return cls(
+            value=[
+                StressPeriod(
+                    start_date_time=start_date,
+                    number_of_time_steps=NumberOfTimeSteps.from_int(1),
+                    time_step_multiplier=TimeStepMultiplier.from_float(1.0),
+                    steady_state=IsSteadyState.yes(),
+                )
+            ]
+        )
 
     @classmethod
     def from_list(cls, value: list):

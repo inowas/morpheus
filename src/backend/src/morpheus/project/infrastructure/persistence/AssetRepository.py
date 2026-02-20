@@ -1,11 +1,13 @@
 import dataclasses
 import re
-from typing import Mapping, Any
+from collections.abc import Mapping
+from typing import Any
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.common.types.File import File, FileName
 from morpheus.settings import settings as app_settings
-from ...types.Asset import AssetId, AssetType, Asset, AssetMetadata, AssetFilter, AssetDescription
+
+from ...types.Asset import Asset, AssetDescription, AssetFilter, AssetId, AssetMetadata, AssetType
 from ...types.Project import ProjectId
 
 
@@ -115,9 +117,4 @@ class AssetRepository(RepositoryBase):
         self.collection.update_one({'asset_id': asset_id.to_str()}, {'$set': {'metadata': metadata.to_dict()}})
 
 
-asset_repository = AssetRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'assets'
-    )
-)
+asset_repository = AssetRepository(collection=create_or_get_collection(get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'assets'))

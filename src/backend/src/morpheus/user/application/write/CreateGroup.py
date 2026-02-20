@@ -3,10 +3,10 @@ import dataclasses
 from morpheus.common.types import DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.user.domain.events.GroupEvents import GroupCreatedEvent
 from morpheus.user.infrastructure.event_sourcing.GroupEventBus import group_event_bus
 from morpheus.user.types.Group import Group, GroupName
-from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 @dataclasses.dataclass(frozen=True)

@@ -1,7 +1,9 @@
 import dataclasses
 from typing import Literal
-from shapely.geometry import Polygon as ShapelyPolygon
+
 from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
+from shapely.geometry import Polygon as ShapelyPolygon
+
 from .Point import Point
 
 
@@ -14,10 +16,7 @@ class MultiPolygon:
         return self.coordinates == other.coordinates and self.type == other.type
 
     def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     def centroid(self) -> Point:
         # Convert each polygon's coordinates to a ShapelyPolygon
@@ -33,10 +32,7 @@ class MultiPolygon:
         return cls(coordinates=obj['coordinates'])
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     def as_geojson(self):
         return self.__geo_interface__()

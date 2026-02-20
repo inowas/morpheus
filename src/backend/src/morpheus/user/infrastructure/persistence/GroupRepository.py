@@ -1,10 +1,14 @@
 import dataclasses
-from typing import Mapping, Any
+from collections.abc import Mapping
+from typing import Any
+
 import pymongo
 from pymongo.collection import Collection
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.common.types.identity.Identity import UserId, GroupId
+
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.settings import settings as app_settings
+
 from ...types.Group import Group, GroupName
 
 
@@ -21,7 +25,7 @@ class GroupRepositoryDocument:
             group_id=group.group_id.to_str(),
             group_name=group.group_name.to_str(),
             members=[member.to_str() for member in group.members],
-            admins=[admin.to_str() for admin in group.admins]
+            admins=[admin.to_str() for admin in group.admins],
         )
 
     @classmethod
@@ -29,8 +33,8 @@ class GroupRepositoryDocument:
         return cls(
             group_id=raw_document['group_id'],
             group_name=raw_document['group_name'],
-            members=raw_document['members'] if 'members' in raw_document else [],
-            admins=raw_document['admins'] if 'admins' in raw_document else [],
+            members=raw_document.get('members', []),
+            admins=raw_document.get('admins', []),
         )
 
     def to_dict(self):
@@ -50,28 +54,16 @@ class GroupRepository(RepositoryBase):
         self.collection.insert_one(GroupRepositoryDocument.from_group(group).to_dict())
 
     def add_member_to_group(self, group_id: GroupId, member: UserId) -> None:
-        self.collection.update_one(
-            filter={'group_id': group_id.to_str()},
-            update={'$addToSet': {'members': member.to_str()}}
-        )
+        self.collection.update_one(filter={'group_id': group_id.to_str()}, update={'$addToSet': {'members': member.to_str()}})
 
     def remove_member_from_group(self, group_id: GroupId, member: UserId) -> None:
-        self.collection.update_one(
-            filter={'group_id': group_id.to_str()},
-            update={'$pull': {'members': member.to_str()}}
-        )
+        self.collection.update_one(filter={'group_id': group_id.to_str()}, update={'$pull': {'members': member.to_str()}})
 
     def add_admin_to_group(self, group_id: GroupId, admin: UserId) -> None:
-        self.collection.update_one(
-            filter={'group_id': group_id.to_str()},
-            update={'$addToSet': {'admins': admin.to_str()}}
-        )
+        self.collection.update_one(filter={'group_id': group_id.to_str()}, update={'$addToSet': {'admins': admin.to_str()}})
 
     def remove_admin_from_group(self, group_id: GroupId, admin: UserId) -> None:
-        self.collection.update_one(
-            filter={'group_id': group_id.to_str()},
-            update={'$pull': {'admins': admin.to_str()}}
-        )
+        self.collection.update_one(filter={'group_id': group_id.to_str()}, update={'$pull': {'admins': admin.to_str()}})
 
     def find_all_groups(self) -> list[Group]:
         return [GroupRepositoryDocument.from_raw_document(raw_document).get_group() for raw_document in self.collection.find()]
@@ -94,9 +86,5 @@ def __create_indices_for_repository(collection: Collection):
 
 
 group_repository = GroupRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_USER_DATABASE, create_if_not_exist=True),
-        'groups',
-        __create_indices_for_repository
-    )
+    collection=create_or_get_collection(get_database_client(app_settings.MONGO_USER_DATABASE, create_if_not_exist=True), 'groups', __create_indices_for_repository)
 )

@@ -1,22 +1,21 @@
 import dataclasses
-from typing import TypedDict, Literal, Optional
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.discretization.spatial import ActiveCells, Grid
 from morpheus.project.types.geometry import Polygon
 from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
-from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, LayerPropertyZones, Layer, \
-    LayerPropertyZone, ZoneId, ZoneName
+from morpheus.project.types.layers.Layer import Layer, LayerId, LayerPropertyName, LayerPropertyZone, LayerPropertyZones, ZoneId, ZoneName
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.Project import ProjectId
 
 
 @dataclasses.dataclass
@@ -34,7 +33,7 @@ class LayerPropertyZoneWithOptionalAffectedCells:
             name=ZoneName.from_str(obj['name']) if 'name' in obj else ZoneName('New Zone'),
             affected_cells=ActiveCells.from_dict(obj['affected_cells']) if 'affected_cells' in obj and obj['affected_cells'] else None,
             geometry=Polygon.from_dict(obj['geometry']) if obj['geometry']['type'] == 'Polygon' else MultiPolygon.from_dict(obj['geometry']),
-            value=obj['value']
+            value=obj['value'],
         )
 
     def to_layer_property_zone(self, grid: Grid):
@@ -48,7 +47,7 @@ class ModelLayerPropertyValueZonePayload(TypedDict):
     zone_id: str
     name: str
     geometry: dict  # geojson Polygon or MultiPolygon
-    affected_cells: Optional[dict]  # ActiveCells
+    affected_cells: dict | None  # ActiveCells
     value: float
 
 
@@ -70,8 +69,11 @@ class UpdateModelLayerPropertyZonesCommand(ProjectCommandBase):
     @classmethod
     def from_payload(cls, user_id: UserId, payload: UpdateModelLayerPropertyZonesCommandPayload):
         property_name = LayerPropertyName(payload['property_name'])
-        property_zones = [LayerPropertyZoneWithOptionalAffectedCells.from_payload(obj=zone) for zone in payload['property_zones']] if 'property_zones' in payload and payload[
-            'property_zones'] else None
+        property_zones = (
+            [LayerPropertyZoneWithOptionalAffectedCells.from_payload(obj=zone) for zone in payload['property_zones']]
+            if 'property_zones' in payload and payload['property_zones']
+            else None
+        )
 
         return cls(
             user_id=user_id,
@@ -79,7 +81,7 @@ class UpdateModelLayerPropertyZonesCommand(ProjectCommandBase):
             model_id=ModelId.from_str(payload['model_id']),
             layer_id=LayerId.from_str(payload['layer_id']),
             property_name=property_name,
-            property_zones=property_zones
+            property_zones=property_zones,
         )
 
 
@@ -90,12 +92,7 @@ class UpdateModelLayerPropertyZonesCommandHandler(CommandHandlerBase):
         user_id = command.user_id
 
         event = ModelLayerPropertyUpdatedEvent.from_zones(
-            project_id=project_id,
-            model_id=command.model_id,
-            layer_id=command.layer_id,
-            property_name=command.property_name,
-            property_zones=None,
-            occurred_at=DateTime.now()
+            project_id=project_id, model_id=command.model_id, layer_id=command.layer_id, property_name=command.property_name, property_zones=None, occurred_at=DateTime.now()
         )
 
         if command.property_zones:
@@ -115,7 +112,7 @@ class UpdateModelLayerPropertyZonesCommandHandler(CommandHandlerBase):
                 layer_id=command.layer_id,
                 property_name=command.property_name,
                 property_zones=property_zones,
-                occurred_at=DateTime.now()
+                occurred_at=DateTime.now(),
             )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

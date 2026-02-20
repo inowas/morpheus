@@ -1,10 +1,11 @@
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
 from morpheus.common.types.identity.Identity import Identity
+
 from ...domain.PermissionService import PermissionService
 from ...infrastructure.persistence.PermissionsRepository import permissions_repository
 from ...types.Permissions import Permissions
-from ...types.Project import ProjectId
 from ...types.permissions.Privilege import Privilege
+from ...types.Project import ProjectId
 
 
 class PermissionsReader:

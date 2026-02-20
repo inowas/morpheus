@@ -2,9 +2,9 @@ from morpheus.common.infrastructure.event_sourcing.EventBus import EventBus
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventPublisher
 from morpheus.project.application.projectors.CalculationProfilesProjector import calculation_profiles_projector
 from morpheus.project.application.projectors.ModelProjector import model_projector
+from morpheus.project.application.projectors.PermissionsProjector import permissions_projector
 from morpheus.project.application.projectors.PreviewImageProjector import preview_image_projector
 from morpheus.project.application.projectors.ProjectSummaryProjector import project_summary_projector
-from morpheus.project.application.projectors.PermissionsProjector import permissions_projector
 from morpheus.project.application.projectors.UserRoleAssignmentProjector import user_role_assignment_projector
 from morpheus.project.infrastructure.event_sourcing.ProjectEventStore import project_event_store
 

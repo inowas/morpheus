@@ -1,5 +1,6 @@
 from morpheus.common.infrastructure.persistence.event_sourcing.EventRepository import EventRepository
 from morpheus.common.types.event_sourcing.EventBase import EventBase
+
 from ...infrastructure.persistence.ProjectEventRepository import project_event_repository
 from ...types.Project import ProjectId
 

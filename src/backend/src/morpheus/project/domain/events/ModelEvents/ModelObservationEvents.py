@@ -1,13 +1,12 @@
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Point
 from morpheus.project.types.layers import LayerId
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationValue, HeadObservation
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.observations.HeadObservation import HeadObservation, HeadObservationValue, ObservationId, ObservationName, ObservationTags, ObservationType
+from morpheus.project.types.Project import ProjectId
 
 from .EventNames import ModelObservationEventName
 
@@ -15,14 +14,7 @@ from .EventNames import ModelObservationEventName
 class ModelObservationAddedEvent(EventBase):
     @classmethod
     def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation: HeadObservation, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'observation': observation.to_dict()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'model_id': model_id.to_str(), 'observation': observation.to_dict()})
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -44,11 +36,7 @@ class ModelObservationClonedEvent(EventBase):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'observation_id': observation_id.to_str(),
-                'new_observation_id': new_observation_id.to_str()
-            }
+            payload={'model_id': model_id.to_str(), 'observation_id': observation_id.to_str(), 'new_observation_id': new_observation_id.to_str()},
         )
 
     def get_project_id(self) -> ProjectId:
@@ -77,7 +65,7 @@ class ModelObservationEnabledEvent(EventBase):
             payload={
                 'model_id': model_id.to_str(),
                 'observation_id': observation_id.to_str(),
-            }
+            },
         )
 
     def get_project_id(self) -> ProjectId:
@@ -103,7 +91,7 @@ class ModelObservationDisabledEvent(EventBase):
             payload={
                 'model_id': model_id.to_str(),
                 'observation_id': observation_id.to_str(),
-            }
+            },
         )
 
     def get_project_id(self) -> ProjectId:
@@ -124,12 +112,7 @@ class ModelObservationRemovedEvent(EventBase):
     @classmethod
     def from_observation_id(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, occurred_at: DateTime):
         return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'observation_id': observation_id.to_str()
-            }
+            entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'model_id': model_id.to_str(), 'observation_id': observation_id.to_str()}
         )
 
     def get_project_id(self) -> ProjectId:
@@ -148,8 +131,21 @@ class ModelObservationRemovedEvent(EventBase):
 
 class ModelObservationUpdatedEvent(EventBase):
     @classmethod
-    def from_observation(cls, project_id: ProjectId, model_id: ModelId, observation_id: ObservationId, type: ObservationType, tags: ObservationTags, name: ObservationName,
-                         geometry: Point, affected_cells: ActiveCells, affected_layers: list[LayerId], data: list[HeadObservationValue], enabled: bool, occurred_at: DateTime):
+    def from_observation(
+        cls,
+        project_id: ProjectId,
+        model_id: ModelId,
+        observation_id: ObservationId,
+        type: ObservationType,
+        tags: ObservationTags,
+        name: ObservationName,
+        geometry: Point,
+        affected_cells: ActiveCells,
+        affected_layers: list[LayerId],
+        data: list[HeadObservationValue],
+        enabled: bool,
+        occurred_at: DateTime,
+    ):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -163,8 +159,8 @@ class ModelObservationUpdatedEvent(EventBase):
                 'affected_cells': affected_cells.to_dict(),
                 'affected_layers': [layer_id.to_str() for layer_id in affected_layers],
                 'data': [value.to_dict() for value in data],
-                'enabled': enabled
-            }
+                'enabled': enabled,
+            },
         )
 
     def get_project_id(self) -> ProjectId:

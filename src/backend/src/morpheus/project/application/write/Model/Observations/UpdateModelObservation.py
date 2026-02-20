@@ -1,7 +1,7 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -10,12 +10,12 @@ from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelObservationEvents import ModelObservationUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.discretization.spatial import ActiveCells
 from morpheus.project.types.geometry import Point
 from morpheus.project.types.layers import LayerId
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationType, ObservationName, ObservationTags, HeadObservationValue
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.observations.HeadObservation import HeadObservationValue, ObservationId, ObservationName, ObservationTags, ObservationType
+from morpheus.project.types.Project import ProjectId
 
 
 class HeadObservationDict(TypedDict):
@@ -71,7 +71,7 @@ class UpdateModelObservationCommand(ProjectCommandBase):
             affected_cells=ActiveCells.from_dict(payload['affected_cells']),
             affected_layers=[LayerId.from_str(layer_id) for layer_id in payload['affected_layers']],
             data=[HeadObservationValue.from_dict(value) for value in payload['data']],
-            enabled=payload['enabled']
+            enabled=payload['enabled'],
         )
 
 
@@ -99,7 +99,7 @@ class UpdateModelObservationCommandHandler(CommandHandlerBase):
             affected_layers=command.affected_layers,
             data=command.data,
             enabled=command.enabled,
-            occurred_at=DateTime.now()
+            occurred_at=DateTime.now(),
         )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

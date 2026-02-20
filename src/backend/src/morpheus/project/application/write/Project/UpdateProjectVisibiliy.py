@@ -1,16 +1,16 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ProjectPermissionEvents.PermissionEvents import VisibilityUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Permissions import Visibility
 from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 
 
 class UpdateProjectVisibilityCommandPayload(TypedDict):

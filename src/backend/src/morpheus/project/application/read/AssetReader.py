@@ -1,10 +1,11 @@
-from morpheus.common.types.Pagination import PaginationParameters, PaginatedResults
+from morpheus.common.types.Pagination import PaginatedResults, PaginationParameters
+
 from ...infrastructure.assets.AssetHandlingService import asset_handling_service
 from ...infrastructure.assets.GeoTiffService import get_geo_tiff_service
 from ...infrastructure.assets.ShapefileService import shapefile_service
-from ...infrastructure.persistence.AssetRepository import asset_repository, AssetRepository
-from ...infrastructure.persistence.PreviewImageRepository import preview_image_repository, PreviewImageRepository
-from ...types.Asset import Asset, AssetFilter, AssetId, AssetData, AssetType, GeoTiffMetadata, NoDataValue
+from ...infrastructure.persistence.AssetRepository import AssetRepository, asset_repository
+from ...infrastructure.persistence.PreviewImageRepository import PreviewImageRepository, preview_image_repository
+from ...types.Asset import Asset, AssetData, AssetFilter, AssetId, AssetType, GeoTiffMetadata, NoDataValue
 from ...types.Project import ProjectId
 
 IBbox = tuple[float, float, float, float]
@@ -35,7 +36,7 @@ class AssetReader:
         return PaginatedResults(
             pagination_parameters=pagination,
             total_number_of_results=count,
-            items=self._asset_repository.get_assets(filter, skip=pagination.get_number_of_skipped_items_from_beginning(), limit=pagination.page_size),
+            results=self._asset_repository.get_assets(filter, skip=pagination.get_number_of_skipped_items_from_beginning(), limit=pagination.page_size),
         )
 
     def get_asset(self, project_id: ProjectId, asset_id: AssetId) -> Asset | None:
@@ -51,7 +52,7 @@ class AssetReader:
             return None
 
         if asset.type != AssetType.SHAPEFILE:
-            raise ValueError(f"Asset {asset_id} is not a vector asset")
+            raise ValueError(f'Asset {asset_id} is not a vector asset')
 
         return shapefile_service.extract_asset_data(asset_handling_service.get_full_path_to_asset(asset))
 
@@ -61,7 +62,7 @@ class AssetReader:
             return None
 
         if asset.type != AssetType.GEO_TIFF:
-            raise ValueError(f"Asset {asset_id} is not a raster asset")
+            raise ValueError(f'Asset {asset_id} is not a raster asset')
 
         geo_tiff_service = get_geo_tiff_service()
         return geo_tiff_service.extract_asset_data(file=asset_handling_service.get_full_path_to_asset(asset), band=band)
@@ -73,7 +74,7 @@ class AssetReader:
             return None
 
         if asset.type != AssetType.GEO_TIFF:
-            raise ValueError(f"Asset {asset_id} is not a raster asset")
+            raise ValueError(f'Asset {asset_id} is not a raster asset')
 
         geo_tiff_service = get_geo_tiff_service()
         return geo_tiff_service.extract_asset_coordinates(file=asset_handling_service.get_full_path_to_asset(asset), bbox=bbox)
@@ -82,15 +83,15 @@ class AssetReader:
 
         asset = self.get_asset(project_id, asset_id)
         if asset is None:
-            raise ValueError(f"Asset {asset_id} not found")
+            raise ValueError(f'Asset {asset_id} not found')
 
         if asset.type != AssetType.GEO_TIFF:
-            raise ValueError(f"Asset {asset_id} is not a raster asset")
+            raise ValueError(f'Asset {asset_id} is not a raster asset')
 
         metadata = asset.metadata
 
         if not isinstance(metadata, GeoTiffMetadata):
-            raise ValueError(f"Asset {asset_id} does not have GeoTiff metadata")
+            raise ValueError(f'Asset {asset_id} does not have GeoTiff metadata')
 
         return metadata.no_data_value
 

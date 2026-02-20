@@ -1,11 +1,15 @@
 import dataclasses
-from typing import Mapping, Any
+from collections.abc import Mapping
+from typing import Any
+
 import pymongo
 from pymongo.collection import Collection
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.common.types.identity.Identity import UserId
 from morpheus.settings import settings as app_settings
-from ...types.User import KeycloakUserId, User, GeoNodeUserId, UserData
+
+from ...types.User import GeoNodeUserId, KeycloakUserId, User, UserData
 
 
 @dataclasses.dataclass(frozen=True)
@@ -30,9 +34,9 @@ class UserRepositoryDocument:
     def from_raw_document(cls, raw_document: Mapping[str, Any]):
         return cls(
             user_id=raw_document['user_id'],
-            keycloak_user_id=raw_document['keycloak_user_id'] if 'keycloak_user_id' in raw_document else None,
-            geo_node_user_id=raw_document['geo_node_user_id'] if 'geo_node_user_id' in raw_document else None,
-            is_admin=True if 'is_admin' in raw_document and raw_document['is_admin'] is True else False,
+            keycloak_user_id=raw_document.get('keycloak_user_id'),
+            geo_node_user_id=raw_document.get('geo_node_user_id'),
+            is_admin=bool(raw_document.get('is_admin', False)),
             user_data=raw_document['user_data'],
         )
 
@@ -61,22 +65,13 @@ class UserRepository(RepositoryBase):
         self.collection.insert_one(UserRepositoryDocument.from_user(user).to_dict())
 
     def update_user_data(self, user_id: UserId, user_data: UserData) -> None:
-        self.collection.update_one(
-            filter={'user_id': user_id.to_str()},
-            update={'$set': {'user_data': user_data.to_dict()}}
-        )
+        self.collection.update_one(filter={'user_id': user_id.to_str()}, update={'$set': {'user_data': user_data.to_dict()}})
 
     def set_keycloak_id_for_user(self, user_id: UserId, keycloak_user_id: KeycloakUserId) -> None:
-        self.collection.update_one(
-            filter={'user_id': user_id.to_str()},
-            update={'$set': {'keycloak_user_id': keycloak_user_id.to_str()}}
-        )
+        self.collection.update_one(filter={'user_id': user_id.to_str()}, update={'$set': {'keycloak_user_id': keycloak_user_id.to_str()}})
 
     def set_admin_flag_for_user(self, user_id: UserId, is_admin: bool) -> None:
-        self.collection.update_one(
-            filter={'user_id': user_id.to_str()},
-            update={'$set': {'is_admin': is_admin}}
-        )
+        self.collection.update_one(filter={'user_id': user_id.to_str()}, update={'$set': {'is_admin': is_admin}})
 
     def find_all_users(self) -> list[User]:
         return [UserRepositoryDocument.from_raw_document(raw_document).get_user() for raw_document in self.collection.find({}, {'_id': 0})]
@@ -113,21 +108,17 @@ def __create_indices_for_repository(collection: Collection):
             ('keycloak_user_id', pymongo.ASCENDING),
         ],
         unique=True,
-        partialFilterExpression={'geo_node_user_id': {'$type': 'string'}}
+        partialFilterExpression={'geo_node_user_id': {'$type': 'string'}},
     )
     collection.create_index(
         [
             ('geo_node_user_id', pymongo.ASCENDING),
         ],
         unique=True,
-        partialFilterExpression={'geo_node_user_id': {'$type': 'number'}}
+        partialFilterExpression={'geo_node_user_id': {'$type': 'number'}},
     )
 
 
 user_repository = UserRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_USER_DATABASE, create_if_not_exist=True),
-        'users',
-        __create_indices_for_repository
-    )
+    collection=create_or_get_collection(get_database_client(app_settings.MONGO_USER_DATABASE, create_if_not_exist=True), 'users', __create_indices_for_repository)
 )

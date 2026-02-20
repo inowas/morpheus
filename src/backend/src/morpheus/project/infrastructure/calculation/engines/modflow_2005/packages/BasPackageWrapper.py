@@ -43,10 +43,19 @@ class BasPackageData:
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, ibound: int | list[list[list[int]]] = 1, strt: float | list[float | list[list[float]]] = 1.0,
-                 ifrefm: bool = True, ixsec: bool = False, ichflg: bool = False, stoper: None | float = None,
-                 hnoflo: float = -9999, extension: str = "bas", unitnumber: None | int = None,
-                 filenames: None | str | list[str] = None):
+    def __init__(
+        self,
+        ibound: int | list[list[list[int]]] = 1,
+        strt: float | list[float | list[list[float]]] = 1.0,
+        ifrefm: bool = True,
+        ixsec: bool = False,
+        ichflg: bool = False,
+        stoper: None | float = None,
+        hnoflo: float = -9999,
+        extension: str = 'bas',
+        unitnumber: None | int = None,
+        filenames: None | str | list[str] = None,
+    ):
         self.ibound = ibound
         self.strt = strt
         self.ifrefm = ifrefm
@@ -84,13 +93,7 @@ def calculate_bas_package_data(model: Model, settings: BasPackageSettings) -> Ba
 
     initial_heads = model.layers.initial_heads()
 
-    return BasPackageData(
-        ibound=ibound,
-        strt=initial_heads,
-        ichflg=settings.ichflg,
-        hnoflo=settings.hnoflo,
-        stoper=settings.stoper
-    )
+    return BasPackageData(ibound=ibound, strt=initial_heads, ichflg=settings.ichflg, hnoflo=settings.hnoflo, stoper=settings.stoper)
 
 
 def create_bas_package(flopy_modflow: FlopyModflow, model: Model, settings: BasPackageSettings) -> FlopyModflowBas:

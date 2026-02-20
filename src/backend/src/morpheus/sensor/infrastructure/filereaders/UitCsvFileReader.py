@@ -1,7 +1,8 @@
-import numpy as np
-import pandas as pd
 import os
 import re
+
+import numpy as np
+import pandas as pd
 
 
 class ParsingHeaderErrorException(Exception):
@@ -19,7 +20,7 @@ class EmptyCsvFileException(Exception):
 class UitCsvFileReader:
     def __init__(self, file_path, time_field='timestamp') -> None:
         if os.path.exists(file_path) is False:
-            raise FileNotFoundError(f"File {file_path} does not exist")
+            raise FileNotFoundError(f'File {file_path} does not exist')
 
         self.file_path = file_path
         self.time_field = time_field
@@ -37,19 +38,19 @@ class UitCsvFileReader:
                 return x  # Return the value unchanged if it's not a string
 
         try:
-            df = pd.read_csv(self.file_path, sep=";", encoding="ISO-8859-1")
-            df.columns.values[0] = "{timestamp}"
+            df = pd.read_csv(self.file_path, sep=';', encoding='ISO-8859-1')
+            df.columns.values[0] = '{timestamp}'
             df.rename(columns=self.parse_header, inplace=True)
             df.replace({np.nan: None}, inplace=True)
             df[self.time_field] = pd.to_datetime(df['timestamp'], dayfirst=True)
             df = df.map(replace_comma_with_dot, na_action='ignore')
             return df
-        except pd.errors.EmptyDataError:
-            raise EmptyCsvFileException(f"File {self.file_path} is empty")
-        except ParsingHeaderErrorException:
-            raise ParsingHeaderErrorException(f"Could not parse header of file {self.file_path}")
-        except Exception:
-            raise ParsingCsvErrorException(f"Could not parse datetime of file {self.file_path}")
+        except pd.errors.EmptyDataError as err:
+            raise EmptyCsvFileException(f'File {self.file_path} is empty') from err
+        except ParsingHeaderErrorException as err:
+            raise ParsingHeaderErrorException(f'Could not parse header of file {self.file_path}') from err
+        except Exception as err:
+            raise ParsingCsvErrorException(f'Could not parse datetime of file {self.file_path}') from err
 
     def to_dataframe(self) -> pd.DataFrame:
         return self.df
@@ -64,5 +65,5 @@ class UitCsvFileReader:
     def parse_header(header):
         res = re.findall(r'\{.*?}', header)
         if len(res) > 0:
-            return res[0].replace("{", "").replace("}", "")
-        raise ParsingHeaderErrorException("No header variable within {} found")
+            return res[0].replace('{', '').replace('}', '')
+        raise ParsingHeaderErrorException('No header variable within {} found')

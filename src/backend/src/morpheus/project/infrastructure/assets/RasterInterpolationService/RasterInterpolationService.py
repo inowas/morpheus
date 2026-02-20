@@ -6,6 +6,7 @@ from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator, Regul
 from scipy.ndimage import generic_filter
 
 from morpheus.project.types.discretization.spatial import Grid
+
 from .types.RasterData import RasterData
 
 IData = list[list[float | None]] | list[list[float]] | float
@@ -21,7 +22,6 @@ class InterpolationMethod(StrEnum):
 
 
 class RasterInterpolationService:
-
     @staticmethod
     def expand_island(data, iterations=1):
         """
@@ -43,9 +43,7 @@ class RasterInterpolationService:
             return center
 
         # Define the 3x3 footprint
-        footprint = np.array([[1, 1, 1],
-                              [1, 1, 1],
-                              [1, 1, 1]])
+        footprint = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
         # Perform the iterative expansion
         for _ in range(iterations):
@@ -58,11 +56,7 @@ class RasterInterpolationService:
 
     @staticmethod
     def raster_data_to_grid_data(
-        raster_data: RasterData,
-        grid: Grid,
-        method: InterpolationMethod = InterpolationMethod.linear,
-        no_data_value: float = -9999,
-        precision: int = 6
+        raster_data: RasterData, grid: Grid, method: InterpolationMethod = InterpolationMethod.linear, no_data_value: float = -9999, precision: int = 6
     ) -> tuple[list[list[float]], float]:
 
         src_xx = np.array(raster_data.get_xx_centers())
@@ -72,11 +66,11 @@ class RasterInterpolationService:
 
         try:
             if method == InterpolationMethod.nearest:
-                interp = NearestNDInterpolator(list(zip(src_xx.ravel(), src_yy.ravel())), src_data.ravel())
+                interp = NearestNDInterpolator(list(zip(src_xx.ravel(), src_yy.ravel(), strict=True)), src_data.ravel())
             else:
-                interp = LinearNDInterpolator(list(zip(src_xx.ravel(), src_yy.ravel())), src_data.ravel(), fill_value=np.nan, rescale=True)
+                interp = LinearNDInterpolator(list(zip(src_xx.ravel(), src_yy.ravel(), strict=True)), src_data.ravel(), fill_value=np.nan, rescale=True)
         except Exception as e:
-            raise ValueError(f'Failed to interpolate raster: {e}')
+            raise ValueError(f'Failed to interpolate raster: {e}') from e
 
         grid_xx, grid_yy = grid.get_wgs_cell_center_coordinates()
 
@@ -92,7 +86,9 @@ class RasterInterpolationService:
         return grid_data.tolist(), no_data_value
 
     @staticmethod
-    def grid_to_raster_data(grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256, method: InterpolationMethod = InterpolationMethod.linear, precision=6) -> RasterData:
+    def grid_to_raster_data(
+        grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256, method: InterpolationMethod = InterpolationMethod.linear, precision=6
+    ) -> RasterData:
         # get grid coordinates
         xx_coords, yy_coords = grid.get_wgs_cell_center_coordinates()
         xx_coords = np.array(xx_coords)
@@ -109,9 +105,9 @@ class RasterInterpolationService:
             grid_data = np.ones_like(xx_coords) * data
 
         if method == InterpolationMethod.nearest:
-            interp = NearestNDInterpolator(list(zip(xx_coords.ravel(), yy_coords.ravel())), grid_data.ravel())
+            interp = NearestNDInterpolator(list(zip(xx_coords.ravel(), yy_coords.ravel(), strict=True)), grid_data.ravel())
         else:
-            interp = LinearNDInterpolator(list(zip(xx_coords.ravel(), yy_coords.ravel())), grid_data.ravel(), fill_value=np.nan, rescale=True)
+            interp = LinearNDInterpolator(list(zip(xx_coords.ravel(), yy_coords.ravel(), strict=True)), grid_data.ravel(), fill_value=np.nan, rescale=True)
 
         # get bounding box from grid to create Euclidean raster
         (x_min, y_min, x_max, y_max) = grid.get_wgs_bbox()
@@ -125,16 +121,12 @@ class RasterInterpolationService:
         target_data.astype(np.float32)
         target_data = np.around(target_data, precision)
 
-        return RasterData(
-            xx_centers=target_xx.tolist(),
-            yy_centers=target_yy.tolist(),
-            bounds=(x_min, y_min, x_max, y_max),
-            data=target_data.tolist(),
-            nodata_value=no_data_value
-        )
+        return RasterData(xx_centers=target_xx.tolist(), yy_centers=target_yy.tolist(), bounds=(x_min, y_min, x_max, y_max), data=target_data.tolist(), nodata_value=no_data_value)
 
     @staticmethod
-    def grid_data_to_grid_data_with_equal_cells(grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256, expand: int = 0, precision: int = 6) -> list[list[float]]:
+    def grid_data_to_grid_data_with_equal_cells(
+        grid: Grid, data: IData, no_data_value: Any = None, target_resolution_x: int = 256, expand: int = 0, precision: int = 6
+    ) -> list[list[float]]:
 
         src_col_coordinates = np.array(grid.col_coordinates_relative())
         src_row_coordinates = np.array(grid.row_coordinates_relative())
@@ -168,12 +160,7 @@ class RasterInterpolationService:
 
     @staticmethod
     def grid_to_grid(
-        source_grid: Grid,
-        source_data: IData,
-        target_grid: Grid,
-        no_data_value: Any = None,
-        method: InterpolationMethod = InterpolationMethod.linear,
-        precision: int = 6
+        source_grid: Grid, source_data: IData, target_grid: Grid, no_data_value: Any = None, method: InterpolationMethod = InterpolationMethod.linear, precision: int = 6
     ) -> list[list[float]]:
 
         # get source grid coordinates
@@ -193,9 +180,9 @@ class RasterInterpolationService:
         source_data_array = np.where(source_data == no_data_value, np.nan, source_data_array)
 
         if method == InterpolationMethod.nearest:
-            interp = NearestNDInterpolator(list(zip(source_xx_coords.ravel(), source_yy_coords.ravel())), source_data_array.ravel())
+            interp = NearestNDInterpolator(list(zip(source_xx_coords.ravel(), source_yy_coords.ravel(), strict=True)), source_data_array.ravel())
         else:
-            interp = LinearNDInterpolator(list(zip(source_xx_coords.ravel(), source_yy_coords.ravel())), source_data_array.ravel(), fill_value=np.nan, rescale=False)
+            interp = LinearNDInterpolator(list(zip(source_xx_coords.ravel(), source_yy_coords.ravel(), strict=True)), source_data_array.ravel(), fill_value=np.nan, rescale=False)
 
         target_data = interp((target_xx_coords, target_yy_coords))
         target_data = RasterInterpolationService.expand_island(target_data, 1)

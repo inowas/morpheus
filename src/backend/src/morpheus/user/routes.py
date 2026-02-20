@@ -5,8 +5,8 @@ from morpheus.common.presentation.api.middleware.schema_validation import valida
 from morpheus.common.types.identity.Identity import GroupId
 from morpheus.user.incoming import authenticate
 from morpheus.user.presentation.api.read.GroupReadRequestHandlers import ReadGroupListRequestHandler
-from morpheus.user.presentation.api.read.UserReadRequestHandlers import ReadUserListRequestHandler, ReadAuthenticatedUserRequestHandler
-from morpheus.user.presentation.api.write.GroupWriteRequestHandlers import CreateGroupRequestHandler, AddMembersToGroupRequestHandler
+from morpheus.user.presentation.api.read.UserReadRequestHandlers import ReadAuthenticatedUserRequestHandler, ReadUserListRequestHandler
+from morpheus.user.presentation.api.write.GroupWriteRequestHandlers import AddMembersToGroupRequestHandler, CreateGroupRequestHandler
 
 
 def register_routes(blueprint: Blueprint):

@@ -1,5 +1,3 @@
-from typing import Type
-
 from morpheus.project.application.write.Asset import asset_command_handler_map
 from morpheus.project.application.write.Calculation import calculation_command_handler_map
 from morpheus.project.application.write.CommandBase import CommandBase
@@ -8,7 +6,7 @@ from morpheus.project.application.write.Project import project_command_handler_m
 
 
 class CommandFactory:
-    def __init__(self, registry: dict[str, Type[CommandBase]]):
+    def __init__(self, registry: dict[str, type[CommandBase]]):
         self._registry = registry
 
     def create_from_request_body(self, user_id, body):
@@ -28,13 +26,13 @@ class CommandFactory:
 
 command_registry = {}
 
-for command in calculation_command_handler_map.keys():
+for command in calculation_command_handler_map:
     command_registry[command.command_name()] = command
-for command in asset_command_handler_map.keys():
+for command in asset_command_handler_map:
     command_registry[command.command_name()] = command
-for command in model_command_handler_map.keys():
+for command in model_command_handler_map:
     command_registry[command.command_name()] = command
-for command in project_command_handler_map.keys():
+for command in project_command_handler_map:
     command_registry[command.command_name()] = command
 
 command_factory = CommandFactory(registry=command_registry)

@@ -1,16 +1,16 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfileId
+from morpheus.project.types.Project import ProjectId
 
 
 class UpdateProjectCalculationProfileIdCommandPayload(TypedDict):
@@ -38,7 +38,9 @@ class UpdateProjectCalculationProfileIdCommandHandler(CommandHandlerBase):
         calculation_profile_id = command.calculation_profile_id
         user_id = command.user_id
 
-        event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(project_id=project_id, calculation_profile_id=calculation_profile_id, occurred_at=DateTime.now())
+        event = ProjectCalculationProfileIdUpdatedEvent.from_calculation_profile_id(
+            project_id=project_id, calculation_profile_id=calculation_profile_id, occurred_at=DateTime.now()
+        )
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         envelope = EventEnvelope(event=event, metadata=event_metadata)
         project_event_bus.record(event_envelope=envelope)

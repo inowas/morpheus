@@ -1,8 +1,8 @@
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 from morpheus.project.types.Model import Model
-from morpheus.project.types.ModelVersion import ModelVersion, VersionId, VersionDescription
+from morpheus.project.types.ModelVersion import ModelVersion, VersionDescription, VersionId
 from morpheus.project.types.Project import ProjectId
 
 from .EventNames import GeneralModelEventName
@@ -29,7 +29,6 @@ class ModelCreatedEvent(EventBase):
 
 
 class VersionCreatedEvent(EventBase):
-
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls.create(
@@ -50,7 +49,6 @@ class VersionCreatedEvent(EventBase):
 
 
 class VersionAssignedToModelEvent(EventBase):
-
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls.create(
@@ -79,7 +77,6 @@ class VersionAssignedToModelEvent(EventBase):
 
 
 class VersionDeletedEvent(EventBase):
-
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls.create(
@@ -108,7 +105,6 @@ class VersionDeletedEvent(EventBase):
 
 
 class VersionDescriptionUpdatedEvent(EventBase):
-
     @classmethod
     def from_version(cls, project_id: ProjectId, version: ModelVersion, occurred_at: DateTime):
         return cls.create(

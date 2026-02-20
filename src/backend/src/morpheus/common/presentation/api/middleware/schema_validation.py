@@ -32,8 +32,13 @@ def validate_request(f):
 
         try:
             openapi.validate_request(openapi_request)
+
         except OpenAPIError as open_api_error:
-            raise SchemaValidationException('Schema Validation Error:', [str(open_api_error)], open_api_error)
+            raise SchemaValidationException(
+                'Schema Validation Error:',
+                [str(open_api_error)],
+                open_api_error,
+            ) from open_api_error
 
         return f(*args, **kwargs)
 
@@ -44,4 +49,4 @@ def parse_schema_file() -> None:
     try:
         OpenAPI.from_file_path(settings.OPENAPI_BUNDLED_SPEC_FILE)
     except Exception as e:
-        raise SchemaValidationException('Schema Validation Error:', [str(e)], e)
+        raise SchemaValidationException('Schema Validation Error:', [str(e)], e) from e

@@ -4,12 +4,18 @@ from morpheus.common.types.identity.Identity import Identity
 from morpheus.project.application.read.PermissionsReader import permissions_reader
 from morpheus.project.application.write.Calculation import AddCalculationProfileCommand, StartCalculationCommand
 from morpheus.project.application.write.CommandBase import CommandBase, ProjectCommandBase
-from morpheus.project.application.write.Model.Boundaries import AddModelBoundaryCommand, CloneModelBoundaryCommand, AddModelBoundaryObservationCommand
+from morpheus.project.application.write.Model.Boundaries import AddModelBoundaryCommand, AddModelBoundaryObservationCommand, CloneModelBoundaryCommand
 from morpheus.project.application.write.Model.General import CreateModelCommand, CreateModelVersionCommand
-from morpheus.project.application.write.Model.Layers import CreateModelLayerCommand, CloneModelLayerCommand
+from morpheus.project.application.write.Model.Layers import CloneModelLayerCommand, CreateModelLayerCommand
 from morpheus.project.application.write.Model.Observations import AddModelObservationCommand, CloneModelObservationCommand
-from morpheus.project.application.write.Project import CreateProjectCommand, AddProjectMemberCommand, RemoveProjectMemberCommand, UpdateProjectMemberRoleCommand, UpdateProjectVisibilityCommand, \
-    DeleteProjectCommand
+from morpheus.project.application.write.Project import (
+    AddProjectMemberCommand,
+    CreateProjectCommand,
+    DeleteProjectCommand,
+    RemoveProjectMemberCommand,
+    UpdateProjectMemberRoleCommand,
+    UpdateProjectVisibilityCommand,
+)
 from morpheus.project.types.permissions.Privilege import Privilege
 
 
@@ -50,9 +56,7 @@ def generate_response_for(command: CommandBase) -> Response:
     if isinstance(command, AddModelBoundaryObservationCommand):
         return Response(
             status=201,
-            headers={
-                'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.boundary_id.to_str()}/observations/{command.observation_id.to_str()}'
-            }
+            headers={'location': f'projects/{command.project_id.to_str()}/model/boundaries/{command.boundary_id.to_str()}/observations/{command.observation_id.to_str()}'},
         )
 
     return Response(status=204)
@@ -69,12 +73,14 @@ def assert_identity_can_execute_command(identity: Identity, command: CommandBase
         return
 
     # you need management privilege to edit members and visibility of a project
-    if (
-        isinstance(command, AddProjectMemberCommand)
-        or isinstance(command, RemoveProjectMemberCommand)
-        or isinstance(command, UpdateProjectMemberRoleCommand)
-        or isinstance(command, UpdateProjectVisibilityCommand)
-    ):
+    MANAGE_PROJECT_COMMANDS = (
+        AddProjectMemberCommand,
+        RemoveProjectMemberCommand,
+        UpdateProjectMemberRoleCommand,
+        UpdateProjectVisibilityCommand,
+    )
+
+    if isinstance(command, MANAGE_PROJECT_COMMANDS):
         permissions_reader.assert_identity_can(Privilege.MANAGE_PROJECT, identity, command.project_id)
         return
 

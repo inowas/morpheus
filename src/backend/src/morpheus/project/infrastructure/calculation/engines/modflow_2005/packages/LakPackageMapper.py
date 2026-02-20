@@ -1,11 +1,10 @@
 import dataclasses
-from typing import Sequence
+from collections.abc import Sequence
 
-from morpheus.project.types.Model import Model
-from morpheus.project.types.boundaries.Boundary import BoundaryType, Boundary
+from morpheus.project.types.boundaries.Boundary import Boundary, BoundaryType
 from morpheus.project.types.boundaries.LakeObservation import LakeDataItem
-
-from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
+from morpheus.project.types.Model import Model
 
 
 @dataclasses.dataclass
@@ -24,10 +23,9 @@ class LakStressPeriodData:
     def __init__(self, data: list[LakStressPeriodDataItem] | None = None):
         self.data = data or []
 
-    def set_value(self, time_step: int, lake_idx: int, evaporation: float, precipitation: float, runoff: float,
-                  withdrawal: float):
+    def set_value(self, time_step: int, lake_idx: int, evaporation: float, precipitation: float, runoff: float, withdrawal: float):
         if time_step < 0:
-            raise ValueError(f"Time step must be greater than or equal to 0. Got {time_step}")
+            raise ValueError(f'Time step must be greater than or equal to 0. Got {time_step}')
 
         for item in self.data:
             if item.time_step == time_step and item.lake_idx == lake_idx:
@@ -37,14 +35,9 @@ class LakStressPeriodData:
                 item.withdrawal = withdrawal
                 return
 
-        self.data.append(LakStressPeriodDataItem(
-            time_step=time_step,
-            lake_idx=lake_idx,
-            evaporation=evaporation,
-            precipitation=precipitation,
-            runoff=runoff,
-            withdrawal=withdrawal
-        ))
+        self.data.append(
+            LakStressPeriodDataItem(time_step=time_step, lake_idx=lake_idx, evaporation=evaporation, precipitation=precipitation, runoff=runoff, withdrawal=withdrawal)
+        )
 
     def is_empty(self):
         return len(self.data) == 0
@@ -57,21 +50,18 @@ class LakStressPeriodData:
         sp_data = {}
         for item in self.data:
             sp_data.setdefault(item.time_step, [[] * number_of_lakes])
-            sp_data[item.time_step][item.lake_idx] = [item.evaporation, item.precipitation, item.runoff,
-                                                      item.withdrawal]
+            sp_data[item.time_step][item.lake_idx] = [item.evaporation, item.precipitation, item.runoff, item.withdrawal]
 
         return sp_data
 
 
 def calculate_lak_boundary_stress_period_data(
-    spatial_discretization: SpatialDiscretization,
-    time_discretization: TimeDiscretization,
-    lak_boundaries: Sequence[Boundary]
+    spatial_discretization: SpatialDiscretization, time_discretization: TimeDiscretization, lak_boundaries: Sequence[Boundary]
 ) -> LakStressPeriodData:
     sp_data = LakStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
-    for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
+    for stress_period_idx, _stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
 
@@ -85,15 +75,14 @@ def calculate_lak_boundary_stress_period_data(
                 continue
 
             if lak_boundary.number_of_observations() > 1:
-                raise NotImplementedError("Multiple observations for well boundaries are not supported")
+                raise NotImplementedError('Multiple observations for well boundaries are not supported')
 
             # we need to filter the affected cells to only include cells that are part of the model
-            lak_boundary.affected_cells = lak_boundary.affected_cells.filter(
-                lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+            lak_boundary.affected_cells = lak_boundary.affected_cells.filter(lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
             mean_data = mean_data[0]
             if not isinstance(mean_data, LakeDataItem):
-                raise TypeError("Expected LakeDataItem but got {}".format(type(mean_data)))
+                raise TypeError(f'Expected LakeDataItem but got {type(mean_data)}')
 
             evaporation = mean_data.evaporation
             precipitation = mean_data.precipitation
@@ -101,9 +90,12 @@ def calculate_lak_boundary_stress_period_data(
             withdrawal = mean_data.withdrawal
 
             sp_data.set_value(
-                time_step=stress_period_idx, lake_idx=lake_idx,
-                evaporation=evaporation.to_float(), precipitation=precipitation.to_float(),
-                runoff=runoff.to_float(), withdrawal=withdrawal.to_float()
+                time_step=stress_period_idx,
+                lake_idx=lake_idx,
+                evaporation=evaporation.to_float(),
+                precipitation=precipitation.to_float(),
+                runoff=runoff.to_float(),
+                withdrawal=withdrawal.to_float(),
             )
 
     return sp_data
@@ -113,7 +105,7 @@ def calculate_stress_period_data(model: Model) -> LakStressPeriodData | None:
     sp_data = calculate_lak_boundary_stress_period_data(
         spatial_discretization=model.spatial_discretization,
         time_discretization=model.time_discretization,
-        lak_boundaries=model.boundaries.get_boundaries_of_type(BoundaryType.lake)  # Sequence[Boundary]
+        lak_boundaries=model.boundaries.get_boundaries_of_type(BoundaryType.lake),  # Sequence[Boundary]
     )
 
     if sp_data.is_empty():

@@ -1,10 +1,11 @@
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.read.CalculationProfilesReader import get_calculation_profiles_reader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
-from ....types.Project import ProjectId
 from ....types.calculation.CalculationProfile import CalculationProfileId
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadSelectedCalculationProfileRequestHandler:

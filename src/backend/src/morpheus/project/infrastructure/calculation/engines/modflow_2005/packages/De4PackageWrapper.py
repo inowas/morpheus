@@ -56,8 +56,21 @@ class De4PackageData:
     unitnumber: int | None
     filenames: list[str] | str | None
 
-    def __init__(self, itmx=50, mxup=0, mxlow=0, mxbw=0, ifreq=3, mutd4=0, accl=1, hclose=1e-5, iprd4=1,
-                 extension="de4", unitnumber: int | None = None, filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        itmx=50,
+        mxup=0,
+        mxlow=0,
+        mxbw=0,
+        ifreq=3,
+        mutd4=0,
+        accl=1,
+        hclose=1e-5,
+        iprd4=1,
+        extension='de4',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.itmx = itmx
         self.mxup = mxup
         self.mxlow = mxlow

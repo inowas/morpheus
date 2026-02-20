@@ -3,15 +3,16 @@ from enum import StrEnum
 from flask import send_file
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
+
 from ....application.read.ModelReader import ModelReader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
 from ....infrastructure.assets.ImageCreationService import ImageCreationService
-from ....infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod
+from ....infrastructure.assets.RasterInterpolationService import InterpolationMethod, RasterInterpolationService
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
-from ....types.Project import ProjectId
-from ....types.layers.Layer import LayerPropertyName, LayerId, Layer
+from ....types.layers.Layer import Layer, LayerId, LayerPropertyName
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ImageOutputFormat(StrEnum):
@@ -58,8 +59,7 @@ class ReadModelLayerPropertyImageRequestHandler:
 
             target_resolution_x = grid.n_cols() * 5 if grid.n_cols() < 200 else grid.n_cols()
 
-            result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x,
-                                                                                      no_data_value=no_data_value)
+            result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, no_data_value=no_data_value)
 
             image = image_creation_service.create_image_from_data(data=result_data, cmap='jet_r', no_data_value=no_data_value)
             return send_file(image, mimetype='image/png', max_age=0)

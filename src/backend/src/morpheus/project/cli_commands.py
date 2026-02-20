@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from morpheus.project.presentation.cli.ProjectionCliCommands import ReprojectProjectSummariesCliCommand, ReprojectPreviewImagesCliCommand
+from morpheus.project.presentation.cli.ProjectionCliCommands import ReprojectPreviewImagesCliCommand, ReprojectProjectSummariesCliCommand
 
 
 def register_cli_commands(blueprint: Blueprint):

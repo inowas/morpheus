@@ -2,11 +2,11 @@ import dataclasses
 import hashlib
 import json
 
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import String, Uuid
 from morpheus.project.types.boundaries.Boundary import BoundaryCollection
 from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
-from morpheus.project.types.observations.HeadObservation import ObservationCollection
 from morpheus.project.types.layers.LayersCollection import LayersCollection
+from morpheus.project.types.observations.HeadObservation import ObservationCollection
 from morpheus.project.types.transport.Transport import Transport
 from morpheus.project.types.variable_density.VariableDensityFlow import VariableDensityFlow
 
@@ -39,8 +39,9 @@ class Model:
             boundaries=BoundaryCollection.from_dict(obj['boundaries']),
             observations=ObservationCollection.from_dict(obj['observations']) if 'observations' in obj else ObservationCollection.new(),
             layers=LayersCollection.from_dict(obj['layers']),
-            transport=Transport.from_dict(obj['transport'] if 'transport' in obj else None),
-            variable_density=VariableDensityFlow.from_dict(obj['variable_density'] if 'variable_density' in obj else None))
+            transport=Transport.from_dict(obj.get('transport')),
+            variable_density=VariableDensityFlow.from_dict(obj.get('variable_density')),
+        )
 
     @classmethod
     def new(cls, model_id: ModelId | None = None):

@@ -1,11 +1,12 @@
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
+from ....application.read.CalculationReader import get_calculation_reader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
-from ....application.read.CalculationReader import get_calculation_reader
 from ....infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
-from ....types.Project import ProjectId
 from ....types.calculation.Calculation import CalculationId
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadCalculationBudgetResultsRequestHandler:
@@ -35,22 +36,12 @@ class ReadCalculationBudgetResultsRequestHandler:
 
             if result_type == 'flow':
                 data = engine.read_flow_budget(idx=time_idx, incremental=incremental)
-                result = {
-                    'result_type': result_type,
-                    'time_idx': time_idx,
-                    'data': data,
-                    'incremental': incremental
-                }
+                result = {'result_type': result_type, 'time_idx': time_idx, 'data': data, 'incremental': incremental}
                 return result, 200
 
             if result_type == 'transport':
                 data = engine.read_transport_budget(idx=time_idx, incremental=incremental)
-                result = {
-                    'result_type': result_type,
-                    'time_idx': time_idx,
-                    'data': data,
-                    'incremental': incremental
-                }
+                result = {'result_type': result_type, 'time_idx': time_idx, 'data': data, 'incremental': incremental}
                 return result, 200
 
             raise ValueError(f'Result type not found, available types are: {", ".join(available_result_types)}')

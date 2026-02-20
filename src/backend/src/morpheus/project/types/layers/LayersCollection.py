@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Iterator
+from collections.abc import Iterator
 
 from .Layer import Layer, LayerId
 
@@ -42,33 +42,33 @@ class LayersCollection:
 
     def assert_layer_can_be_deleted(self, layer_id: LayerId):
         if layer_id not in self.get_layer_ids():
-            raise ValueError("Layer to be deleted does not exist in the collection")
+            raise ValueError('Layer to be deleted does not exist in the collection')
 
         if len(self.layers) == 1:
-            raise ValueError("Cannot delete the last layer")
+            raise ValueError('Cannot delete the last layer')
 
     def assert_layer_can_be_added(self, layer: Layer):
         if layer.layer_id in self.get_layer_ids():
-            raise ValueError("Layer to be added already exists in the collection")
+            raise ValueError('Layer to be added already exists in the collection')
 
     def assert_layer_can_be_cloned(self, layer_id: LayerId, new_layer_id: LayerId):
         if layer_id not in self.get_layer_ids():
-            raise ValueError("Layer to be cloned does not exist in the collection")
+            raise ValueError('Layer to be cloned does not exist in the collection')
 
         if new_layer_id in self.get_layer_ids():
-            raise ValueError("New layer id already exists in the collection")
+            raise ValueError('New layer id already exists in the collection')
 
     def assert_order_can_be_updated(self, layer_ids: list[LayerId]):
         # check if all layer_ids are in the collection
         if not all(layer_id in self.get_layer_ids() for layer_id in layer_ids):
-            raise ValueError("Not all layer_ids are part of the collection")
+            raise ValueError('Not all layer_ids are part of the collection')
 
         if len(layer_ids) != len(set(layer_ids)):
-            raise ValueError("Not all layer_ids are unique")
+            raise ValueError('Not all layer_ids are unique')
 
         # check if the number of layer_ids is the same as the number of layers
         if len(layer_ids) != len(self.layers):
-            raise ValueError("Number of layer_ids does not match the number of layers")
+            raise ValueError('Number of layer_ids does not match the number of layers')
 
     def with_updated_order(self, layer_ids: list[LayerId]):
         self.assert_order_can_be_updated(layer_ids)
@@ -86,7 +86,7 @@ class LayersCollection:
         if top is not None:
             return top
 
-        raise ValueError("Top of first layer is not set")
+        raise ValueError('Top of first layer is not set')
 
     def bottom(self):
         return self.layers[-1].properties.bottom.get_data()

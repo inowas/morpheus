@@ -1,4 +1,4 @@
-from morpheus.common.infrastructure.event_sourcing.EventFactory import EventRegistry, EventFactory
+from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFactory, EventRegistry
 from morpheus.project.domain.events.CalculationEvents import get_calculation_event_list
 from morpheus.project.domain.events.ModelEvents import get_model_event_list
 from morpheus.project.domain.events.ProjectEvents import get_project_event_list

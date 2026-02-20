@@ -1,7 +1,7 @@
 from ...infrastructure.persistence.ModelRepository import model_repository
 from ...infrastructure.persistence.ModelVersionTagRepository import model_version_tag_repository
-from ...types.ModelVersion import ModelVersion, VersionTag
 from ...types.Model import Model, Sha1Hash
+from ...types.ModelVersion import ModelVersion, VersionTag
 from ...types.Project import ProjectId
 
 

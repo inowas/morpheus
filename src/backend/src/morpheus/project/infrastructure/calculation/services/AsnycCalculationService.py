@@ -4,11 +4,11 @@ from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
 from morpheus.project.infrastructure.persistence.CalculationRepository import CalculationRepository, get_calculation_repository
-from morpheus.project.types.Model import Model
-from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.Calculation import Log, CalculationId, Calculation, CalculationState
+from morpheus.project.types.calculation.Calculation import Calculation, CalculationId, CalculationState, Log
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.calculation.CalculationResult import CalculationResult
+from morpheus.project.types.Model import Model
+from morpheus.project.types.Project import ProjectId
 
 
 class AsyncCalculationService:
@@ -27,16 +27,12 @@ class AsyncCalculationService:
         self.engine = CalculationEngineFactory().create_engine(engine_type=profile.engine_type, calculation_id=calculation_id)
 
     @staticmethod
-    def create_async_calculation(project_id: ProjectId, model: Model, model_version: str, profile: CalculationProfile, calculation_id: CalculationId | None = None) -> CalculationId:
+    def create_async_calculation(
+        project_id: ProjectId, model: Model, model_version: str, profile: CalculationProfile, calculation_id: CalculationId | None = None
+    ) -> CalculationId:
         calculation_id = calculation_id if calculation_id else CalculationId.new()
         repository = get_calculation_repository()
-        repository.create_calculation(
-            project_id=project_id,
-            calculation_id=calculation_id,
-            model=model,
-            model_version=model_version,
-            profile=profile
-        )
+        repository.create_calculation(project_id=project_id, calculation_id=calculation_id, model=model, model_version=model_version, profile=profile)
 
         repository.update_calculation_state(calculation_id=calculation_id, state=CalculationState.CREATED)
         return calculation_id

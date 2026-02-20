@@ -1,12 +1,11 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-
-from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.Permissions import Role, Visibility
 from morpheus.common.types.identity.Identity import UserId
+from morpheus.project.types.Permissions import Role, Visibility
+from morpheus.project.types.Project import ProjectId
 
 from .PermissionEventName import PermissionEventName
 
@@ -15,14 +14,7 @@ from .PermissionEventName import PermissionEventName
 class MemberAddedEvent(EventBase):
     @classmethod
     def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, role: Role, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'user_id': user_id.to_str(),
-                'role': role.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'user_id': user_id.to_str(), 'role': role.to_str()})
 
     def get_user_id(self) -> UserId:
         return UserId.from_str(self.payload['user_id'])
@@ -47,7 +39,7 @@ class MemberRemovedEvent(EventBase):
             occurred_at=occurred_at,
             payload={
                 'user_id': user_id.to_str(),
-            }
+            },
         )
 
     def get_user_id(self) -> UserId:
@@ -65,14 +57,7 @@ class MemberRemovedEvent(EventBase):
 class MemberRoleUpdatedEvent(EventBase):
     @classmethod
     def from_user_id_and_role(cls, project_id: ProjectId, user_id: UserId, new_role: Role, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'user_id': user_id.to_str(),
-                'role': new_role.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'user_id': user_id.to_str(), 'role': new_role.to_str()})
 
     def get_user_id(self) -> UserId:
         return UserId.from_str(self.payload['user_id'])
@@ -98,7 +83,7 @@ class OwnershipUpdatedEvent(EventBase):
             payload={
                 'old_owner_id': old_owner.to_str(),
                 'new_owner_id': new_owner.to_str(),
-            }
+            },
         )
 
     def get_old_owner_id(self) -> UserId:
@@ -119,13 +104,7 @@ class OwnershipUpdatedEvent(EventBase):
 class VisibilityUpdatedEvent(EventBase):
     @classmethod
     def from_visibility(cls, project_id: ProjectId, visibility: Visibility, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'visibility': visibility.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'visibility': visibility.to_str()})
 
     def get_visibility(self) -> Visibility:
         return Visibility.from_str(self.payload['visibility'])

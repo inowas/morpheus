@@ -1,7 +1,8 @@
 import dataclasses
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.settings import settings as app_settings
+
 from ...types.Project import ProjectId
 from ...types.Scenarios import ScenarioCollection
 
@@ -60,9 +61,4 @@ class ScenariosRepository(RepositoryBase):
             self.save_scenarios(project_id, scenarios)
 
 
-scenarios_repository = ScenariosRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'scenarios'
-    )
-)
+scenarios_repository = ScenariosRepository(collection=create_or_get_collection(get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'scenarios'))

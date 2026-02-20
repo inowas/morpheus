@@ -1,10 +1,9 @@
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import StressPeriodData
-from morpheus.project.types.Model import Model
 from morpheus.project.types.boundaries.Boundary import BoundaryType, WellBoundary
 from morpheus.project.types.boundaries.WellObservation import WellDataItem
-
-from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.layers import LayersCollection
+from morpheus.project.types.Model import Model
 
 
 class WelStressPeriodData(StressPeriodData):
@@ -12,16 +11,13 @@ class WelStressPeriodData(StressPeriodData):
 
 
 def calculate_wel_boundary_stress_period_data(
-    spatial_discretization: SpatialDiscretization,
-    time_discretization: TimeDiscretization,
-    layers: LayersCollection,
-    wel_boundary: WellBoundary
+    spatial_discretization: SpatialDiscretization, time_discretization: TimeDiscretization, layers: LayersCollection, wel_boundary: WellBoundary
 ) -> WelStressPeriodData:
     layer_ids = [layer.layer_id for layer in layers]
     sp_data = WelStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
-    for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
+    for stress_period_idx, _stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
         mean_data = wel_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=wel_boundary.interpolation)
@@ -33,7 +29,7 @@ def calculate_wel_boundary_stress_period_data(
             continue
 
         if wel_boundary.number_of_observations() > 1:
-            raise NotImplementedError("Multiple observations for well boundaries are not supported")
+            raise NotImplementedError('Multiple observations for well boundaries are not supported')
 
         layer_indices = [layer_ids.index(layer_id) for layer_id in wel_boundary.affected_layers]
 
@@ -43,7 +39,7 @@ def calculate_wel_boundary_stress_period_data(
         if wel_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]
             if not isinstance(mean_data, WellDataItem):
-                raise TypeError("Expected GeneralHeadDataItem but got {}".format(type(mean_data)))
+                raise TypeError(f'Expected GeneralHeadDataItem but got {type(mean_data)}')
 
             pumping_rate = mean_data.pumping_rate
 
@@ -56,7 +52,9 @@ def calculate_wel_boundary_stress_period_data(
                 # for pumping rates we distribute the pumping rate equally over all layers
                 # pumping rates will be summed up
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[pumping_rate.to_float() / len(layer_indices)], sum_up_values=True)
+                    sp_data.set_value(
+                        time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[pumping_rate.to_float() / len(layer_indices)], sum_up_values=True
+                    )
 
     return sp_data
 
@@ -67,15 +65,10 @@ def calculate_stress_period_data(model: Model) -> WelStressPeriodData | None:
     wel_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.well)
     for wel_boundary in wel_boundaries:
         if not isinstance(wel_boundary, WellBoundary):
-            raise TypeError(
-                "Expected boundary of type {} but got {}".format(WellBoundary.__name__, type(wel_boundary))
-            )
+            raise TypeError(f'Expected boundary of type {WellBoundary.__name__} but got {type(wel_boundary)}')
 
         sp_data_boundary = calculate_wel_boundary_stress_period_data(
-            spatial_discretization=model.spatial_discretization,
-            time_discretization=model.time_discretization,
-            layers=model.layers,
-            wel_boundary=wel_boundary
+            spatial_discretization=model.spatial_discretization, time_discretization=model.time_discretization, layers=model.layers, wel_boundary=wel_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=True)
 

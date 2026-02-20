@@ -1,4 +1,5 @@
 import dataclasses
+
 from flopy.modflow import ModflowDis as FlopyModflowDis
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005 import FlopyModflow
@@ -7,7 +8,6 @@ from morpheus.project.types.Model import Model
 
 @dataclasses.dataclass
 class DisPackageSettings:
-
     def __init__(self):
         pass
 
@@ -49,13 +49,32 @@ class DisPackageData:
     crs: str | None
     start_datetime: str | None
 
-    def __init__(self, nlay: int = 1, nrow: int = 2, ncol: int = 2, nper: int = 1, delr: list[float] | float = 1.0,
-                 delc: list[float] | float = 1.0, laycbd: int | list[int] = 0, top: float | list[list[float]] = 1.0,
-                 botm: float | list[float | list[list[float]]] = 0.0, perlen: float | list[float] = 1,
-                 nstp: int | list[int] = 1, tsmult: float | list[float] = 1, steady: bool | list[bool] = True,
-                 itmuni: int = 4, lenuni: int = 2, extension: str = "dis", unitnumber: None | int = None,
-                 filenames: None | str | list[str] = None, xul: None | float = None, yul: None | float = None,
-                 rotation: None | float = None, crs: str | None = None, start_datetime: str | None = None):
+    def __init__(
+        self,
+        nlay: int = 1,
+        nrow: int = 2,
+        ncol: int = 2,
+        nper: int = 1,
+        delr: list[float] | float = 1.0,
+        delc: list[float] | float = 1.0,
+        laycbd: int | list[int] = 0,
+        top: float | list[list[float]] = 1.0,
+        botm: float | list[float | list[list[float]]] = 0.0,
+        perlen: float | list[float] = 1,
+        nstp: int | list[int] = 1,
+        tsmult: float | list[float] = 1,
+        steady: bool | list[bool] = True,
+        itmuni: int = 4,
+        lenuni: int = 2,
+        extension: str = 'dis',
+        unitnumber: None | int = None,
+        filenames: None | str | list[str] = None,
+        xul: None | float = None,
+        yul: None | float = None,
+        rotation: None | float = None,
+        crs: str | None = None,
+        start_datetime: str | None = None,
+    ):
         self.nlay = nlay
         self.nrow = nrow
         self.ncol = ncol

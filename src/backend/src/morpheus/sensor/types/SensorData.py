@@ -16,7 +16,4 @@ class SensorDataItem:
     value: float | None
 
     def to_dict(self) -> dict:
-        return {
-            'date_time': self.date_time,
-            'value': self.value
-        }
+        return {'date_time': self.date_time, 'value': self.value}

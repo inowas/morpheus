@@ -4,7 +4,6 @@ from typing import TypedDict
 from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.File import FileName
 from morpheus.common.types.identity.Identity import UserId
-
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
@@ -31,7 +30,7 @@ class UpdateAssetFileNameCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             asset_id=AssetId.from_str(payload['asset_id']),
-            asset_file_name=FileName(payload['asset_file_name'])
+            asset_file_name=FileName(payload['asset_file_name']),
         )
 
 

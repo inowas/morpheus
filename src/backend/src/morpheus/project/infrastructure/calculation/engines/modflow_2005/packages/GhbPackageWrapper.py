@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowGhb as FlopyModflowGhb
 
-from .GhbPackageMapper import GhbStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .GhbPackageMapper import GhbStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -34,13 +35,21 @@ class GhbPackageData:
     dtype: None | list
     no_print: bool
     options: None | list
-    extension: Literal["ghb"]
+    extension: Literal['ghb']
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: GhbStressPeriodData, ipakcb=0, dtype: None | list = None,
-                 no_print: bool = False, options: None | list = None, extension: Literal["ghb"] = "ghb",
-                 unitnumber: int | None = None, filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        stress_period_data: GhbStressPeriodData,
+        ipakcb=0,
+        dtype: None | list = None,
+        no_print: bool = False,
+        options: None | list = None,
+        extension: Literal['ghb'] = 'ghb',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.stress_period_data = stress_period_data
         self.ipakcb = ipakcb
         self.dtype = dtype
@@ -52,14 +61,14 @@ class GhbPackageData:
 
     def to_dict(self) -> dict:
         return {
-            "stress_period_data": self.stress_period_data.to_dict(),
-            "ipakcb": self.ipakcb,
-            "dtype": self.dtype,
-            "no_print": self.no_print,
-            "options": self.options,
-            "extension": self.extension,
-            "unitnumber": self.unitnumber,
-            "filenames": self.filenames
+            'stress_period_data': self.stress_period_data.to_dict(),
+            'ipakcb': self.ipakcb,
+            'dtype': self.dtype,
+            'no_print': self.no_print,
+            'options': self.options,
+            'extension': self.extension,
+            'unitnumber': self.unitnumber,
+            'filenames': self.filenames,
         }
 
     @classmethod
@@ -72,7 +81,7 @@ class GhbPackageData:
             options=obj['options'],
             extension=obj['extension'],
             unitnumber=obj['unitnumber'],
-            filenames=obj['filenames']
+            filenames=obj['filenames'],
         )
 
 

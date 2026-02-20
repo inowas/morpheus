@@ -1,17 +1,18 @@
-import os
 import json
+import os
 import traceback
 
 from flask import Flask, jsonify
 from flask_cors import cross_origin
-from werkzeug.exceptions import HTTPException
+from sentry_sdk import capture_exception
 from werkzeug import Response
+from werkzeug.exceptions import HTTPException
+
 from morpheus.common.presentation.api.middleware.schema_validation import SchemaValidationException, parse_schema_file
-from morpheus.settings import settings
 from morpheus.project.bootstrap import bootstrap_project_module
 from morpheus.sensor.bootstrap import bootstrap_sensor_module
+from morpheus.settings import settings
 from morpheus.user.bootstrap import bootstrap_user_module
-from sentry_sdk import capture_exception
 
 
 def bootstrap(app: Flask):
@@ -52,11 +53,13 @@ def bootstrap(app: Flask):
         if response.is_json:
             return response
 
-        response.data = json.dumps({
-            'code': exception.code,
-            'name': exception.name,
-            'description': exception.description,
-        })
+        response.data = json.dumps(
+            {
+                'code': exception.code,
+                'name': exception.name,
+                'description': exception.description,
+            }
+        )
         response.content_type = 'application/json'
         return response
 

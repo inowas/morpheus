@@ -37,6 +37,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "basedpyright",
   "autoflake==2.3.1",
   "autopep8==2.3.2",
   "dep-check==3.1.0",
@@ -48,8 +49,8 @@ dev = [
   "papermill==2.6.0",
   "pep8-naming==0.13.3",
   "pip==26.0",
-  "pyright==1.1.408",
   "pytest==8.4.2",
+  "ruff"
 ]
 
 [build-system]
@@ -65,3 +66,67 @@ packages = ["src/morpheus"]
 
 [tool.uv.sources]
 # If you need to use local packages or git repos, configure them here
+
+[tool.basedpyright]
+include = ["src/morpheus"]
+exclude = [
+  "**/__pycache__",
+  "**/.pytest_cache",
+  "**/notebooks/*",
+]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+ignore = []
+reportAny = false
+reportMissingImports = "error"
+reportMissingTypeStubs = false
+pythonPlatform = "Linux"
+executionEnvironments = [
+  { root = "src" }
+]
+
+[tool.ruff]
+line-length = 180
+include = ["src/morpheus/**/*.py", "src/tests/**/*.py", "src/*.py"]
+
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "single"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+
+# Disable rules that overlap/conflict with formatting:
+ignore = [
+  # indentation (formatter owns this)
+  "W191", # tab-indentation
+  "E111", # indentation-with-invalid-multiple
+  "E114", # indentation-with-invalid-multiple-comment
+  "E117", # over-indented
+
+  # docstring/quote style (formatter owns this)
+  "D206", # docstring-tab-indentation
+  "D300", # triple-single-quotes
+  "Q000", # bad-quotes-inline-string
+  "Q001", # bad-quotes-multiline-string
+  "Q002", # bad-quotes-docstring
+  "Q003", # avoidable-escaped-quote
+
+  # trailing-comma rules (formatter owns this)
+  "COM812", # missing-trailing-comma
+  "COM819", # prohibited-trailing-comma
+]

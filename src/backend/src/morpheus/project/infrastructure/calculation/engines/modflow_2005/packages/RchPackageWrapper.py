@@ -3,9 +3,10 @@ from typing import Literal
 
 from flopy.modflow import ModflowRch as FlopyModflowRch
 
-from .RchPackageMapper import RchStressPeriodData, calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .RchPackageMapper import RchStressPeriodData, calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -32,13 +33,20 @@ class RchPackageData:
     stress_period_data: RchStressPeriodData
     ipakcb: int
     irch: int
-    extension: Literal["rch"]
+    extension: Literal['rch']
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, stress_period_data: RchStressPeriodData, nrchop: int = 3, ipakcb=0, irch: int = 0,
-                 extension: Literal["rch"] = "rch", unitnumber: int | None = None,
-                 filenames: list[str] | str | None = None):
+    def __init__(
+        self,
+        stress_period_data: RchStressPeriodData,
+        nrchop: int = 3,
+        ipakcb=0,
+        irch: int = 0,
+        extension: Literal['rch'] = 'rch',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+    ):
         self.stress_period_data = stress_period_data
         self.nrchop = nrchop
         self.ipakcb = ipakcb

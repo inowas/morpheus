@@ -1,12 +1,19 @@
-from typing import List
-
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
+from morpheus.project.types.layers.Layer import (
+    Layer,
+    LayerConfinement,
+    LayerDescription,
+    LayerId,
+    LayerName,
+    LayerPropertyDefaultValue,
+    LayerPropertyName,
+    LayerPropertyRaster,
+    LayerPropertyZones,
+)
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.layers.Layer import Layer, LayerId, LayerDescription, LayerName, LayerPropertyName, \
-    LayerPropertyDefaultValue, LayerPropertyRaster, LayerPropertyZones, LayerConfinement
 
 from .EventNames import ModelLayerEventName
 
@@ -14,14 +21,7 @@ from .EventNames import ModelLayerEventName
 class ModelLayerAddedEvent(EventBase):
     @classmethod
     def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'layer': layer.to_dict()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'model_id': model_id.to_str(), 'layer': layer.to_dict()})
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -43,11 +43,7 @@ class ModelLayerClonedEvent(EventBase):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'layer_id': layer_id.to_str(),
-                'new_layer_id': new_layer_id.to_str()
-            }
+            payload={'model_id': model_id.to_str(), 'layer_id': layer_id.to_str(), 'new_layer_id': new_layer_id.to_str()},
         )
 
     def get_project_id(self) -> ProjectId:
@@ -73,11 +69,7 @@ class ModelLayerConfinementUpdatedEvent(EventBase):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'layer_id': layer_id.to_str(),
-                'confinement': confinement.to_value()
-            }
+            payload={'model_id': model_id.to_str(), 'layer_id': layer_id.to_str(), 'confinement': confinement.to_value()},
         )
 
     def get_project_id(self) -> ProjectId:
@@ -100,14 +92,7 @@ class ModelLayerConfinementUpdatedEvent(EventBase):
 class ModelLayerCreatedEvent(EventBase):
     @classmethod
     def from_layer(cls, project_id: ProjectId, model_id: ModelId, layer: Layer, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'layer': layer.to_dict()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'model_id': model_id.to_str(), 'layer': layer.to_dict()})
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -126,14 +111,7 @@ class ModelLayerCreatedEvent(EventBase):
 class ModelLayerDeletedEvent(EventBase):
     @classmethod
     def from_layer_id(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'layer_id': layer_id.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'model_id': model_id.to_str(), 'layer_id': layer_id.to_str()})
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())
@@ -151,8 +129,9 @@ class ModelLayerDeletedEvent(EventBase):
 
 class ModelLayerMetadataUpdatedEvent(EventBase):
     @classmethod
-    def from_props(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, layer_name: LayerName | None, layer_description: LayerDescription | None,
-                   occurred_at: DateTime):
+    def from_props(
+        cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, layer_name: LayerName | None, layer_description: LayerDescription | None, occurred_at: DateTime
+    ):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -161,7 +140,7 @@ class ModelLayerMetadataUpdatedEvent(EventBase):
                 'layer_id': layer_id.to_str(),
                 'layer_name': layer_name.to_str() if layer_name else None,
                 'layer_description': layer_description.to_str() if layer_description else None,
-            }
+            },
         )
 
     def get_project_id(self) -> ProjectId:
@@ -186,14 +165,9 @@ class ModelLayerMetadataUpdatedEvent(EventBase):
 
 class ModelLayerOrderUpdatedEvent(EventBase):
     @classmethod
-    def from_layer_ids(cls, project_id: ProjectId, model_id: ModelId, layer_ids: List[LayerId], occurred_at: DateTime):
+    def from_layer_ids(cls, project_id: ProjectId, model_id: ModelId, layer_ids: list[LayerId], occurred_at: DateTime):
         return cls.create(
-            entity_uuid=Uuid.from_str(project_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'model_id': model_id.to_str(),
-                'order': [layer_id.to_str() for layer_id in layer_ids]
-            }
+            entity_uuid=Uuid.from_str(project_id.to_str()), occurred_at=occurred_at, payload={'model_id': model_id.to_str(), 'order': [layer_id.to_str() for layer_id in layer_ids]}
         )
 
     def get_project_id(self) -> ProjectId:
@@ -202,7 +176,7 @@ class ModelLayerOrderUpdatedEvent(EventBase):
     def get_model_id(self) -> ModelId:
         return ModelId.from_str(self.payload['model_id'])
 
-    def get_order(self) -> List[LayerId]:
+    def get_order(self) -> list[LayerId]:
         return [LayerId.from_str(layer_id) for layer_id in self.payload['order']]
 
     @staticmethod
@@ -212,8 +186,9 @@ class ModelLayerOrderUpdatedEvent(EventBase):
 
 class ModelLayerPropertyUpdatedEvent(EventBase):
     @classmethod
-    def from_default_value(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_default_value: LayerPropertyDefaultValue,
-                           occurred_at: DateTime):
+    def from_default_value(
+        cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_default_value: LayerPropertyDefaultValue, occurred_at: DateTime
+    ):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -222,12 +197,13 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
                 'layer_id': layer_id.to_str(),
                 'property_name': property_name.to_value(),
                 'property_default_value': property_default_value.to_value(),
-            }
+            },
         )
 
     @classmethod
-    def from_raster(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_raster: LayerPropertyRaster | None,
-                    occurred_at: DateTime):
+    def from_raster(
+        cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_raster: LayerPropertyRaster | None, occurred_at: DateTime
+    ):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -235,13 +211,14 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
                 'model_id': model_id.to_str(),
                 'layer_id': layer_id.to_str(),
                 'property_name': property_name.to_value(),
-                'property_raster': property_raster.to_dict() if property_raster else None
-            }
+                'property_raster': property_raster.to_dict() if property_raster else None,
+            },
         )
 
     @classmethod
-    def from_zones(cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_zones: LayerPropertyZones | None,
-                   occurred_at: DateTime):
+    def from_zones(
+        cls, project_id: ProjectId, model_id: ModelId, layer_id: LayerId, property_name: LayerPropertyName, property_zones: LayerPropertyZones | None, occurred_at: DateTime
+    ):
         return cls.create(
             entity_uuid=Uuid.from_str(project_id.to_str()),
             occurred_at=occurred_at,
@@ -249,8 +226,8 @@ class ModelLayerPropertyUpdatedEvent(EventBase):
                 'model_id': model_id.to_str(),
                 'layer_id': layer_id.to_str(),
                 'property_name': property_name.to_value(),
-                'property_zones': property_zones.to_list() if property_zones else None
-            }
+                'property_zones': property_zones.to_list() if property_zones else None,
+            },
         )
 
     def get_project_id(self) -> ProjectId:

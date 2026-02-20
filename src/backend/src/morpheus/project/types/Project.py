@@ -1,11 +1,12 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, String, DateTime
+from morpheus.common.types import DateTime, String, Uuid
+
+from ...common.types.identity.Identity import UserId
+from .calculation.CalculationProfile import CalculationProfileId
 from .Model import Model
 from .Permissions import Permissions, Visibility
 from .Scenarios import ScenarioCollection
-from .calculation.CalculationProfile import CalculationProfileId
-from ...common.types.identity.Identity import UserId
 
 
 class ProjectId(Uuid):
@@ -51,11 +52,7 @@ class Metadata:
 
     @classmethod
     def new(cls):
-        return cls(
-            name=Name('New Model'),
-            description=Description('New Model description'),
-            tags=Tags([])
-        )
+        return cls(name=Name('New Model'), description=Description('New Model description'), tags=Tags([]))
 
     @classmethod
     def from_dict(cls, obj: dict):

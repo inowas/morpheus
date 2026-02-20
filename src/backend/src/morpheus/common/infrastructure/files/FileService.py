@@ -1,6 +1,8 @@
-import magic
 import os
-from morpheus.common.types.File import FilePath, File, FileName, FileSize, MimeType
+
+import magic
+
+from morpheus.common.types.File import File, FileName, FilePath, FileSize, MimeType
 
 
 class FileService:

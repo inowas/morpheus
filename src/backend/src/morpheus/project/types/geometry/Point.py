@@ -11,10 +11,7 @@ class Point:
         return self.coordinates == other.coordinates and self.type == other.type
 
     def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -31,10 +28,7 @@ class Point:
         return cls(coordinates=(x, y))
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     def as_geojson(self):
         return self.__geo_interface__()

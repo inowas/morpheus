@@ -1,7 +1,9 @@
 import dataclasses
+from collections.abc import Iterator
 
 from morpheus.common.types import DateTime
-from .Stressperiods import StartDateTime, EndDateTime, StressPeriodCollection
+
+from .Stressperiods import EndDateTime, StartDateTime, StressPeriodCollection
 from .TimeUnit import TimeUnit
 
 
@@ -32,10 +34,7 @@ class TimeDiscretization:
         start_date_time = StartDateTime.from_str('2020-01-01T00:00:00+00:00')
         end_date_time = EndDateTime.from_str('2020-01-02T00:00:00+00:00')
         return TimeDiscretization(
-            start_date_time=start_date_time,
-            end_date_time=end_date_time,
-            stress_periods=StressPeriodCollection.new(start_date=start_date_time),
-            time_unit=TimeUnit.days()
+            start_date_time=start_date_time, end_date_time=end_date_time, stress_periods=StressPeriodCollection.new(start_date=start_date_time), time_unit=TimeUnit.days()
         )
 
     @classmethod
@@ -44,7 +43,7 @@ class TimeDiscretization:
             start_date_time=StartDateTime.from_value(obj['start_date_time']),
             end_date_time=EndDateTime.from_value(obj['end_date_time']),
             stress_periods=StressPeriodCollection.from_value(obj['stress_periods']),
-            time_unit=TimeUnit.from_value(obj['time_unit'])
+            time_unit=TimeUnit.from_value(obj['time_unit']),
         )
 
     def to_dict(self):
@@ -52,7 +51,7 @@ class TimeDiscretization:
             'start_date_time': self.start_date_time.to_value(),
             'end_date_time': self.end_date_time.to_value(),
             'stress_periods': self.stress_periods.to_value(),
-            'time_unit': self.time_unit.to_value()
+            'time_unit': self.time_unit.to_value(),
         }
 
     def number_of_stress_periods(self):
@@ -81,25 +80,30 @@ class TimeDiscretization:
     def stress_period_types(self):
         return self.stress_periods.stress_period_types()
 
-    def stress_period_lengths(self):
-        for idx, stress_period in enumerate(self.stress_periods):
-            start = self.stress_periods.values[idx].start_date_time.to_datetime()
-            end = self.stress_periods.values[idx + 1].start_date_time.to_datetime() if idx + 1 < len(
-                self.stress_periods.values) else self.end_date_time.to_datetime()
-            yield (end - start).total_seconds() / self.time_unit_length_in_seconds()
+    def stress_period_lengths(self) -> Iterator[float]:
+        values = self.stress_periods.values
+        unit_length = self.time_unit_length_in_seconds()
+
+        for i in range(len(values)):
+            start = values[i].start_date_time.to_datetime()
+            end = values[i + 1].start_date_time.to_datetime() if i + 1 < len(values) else self.end_date_time.to_datetime()
+            yield (end - start).total_seconds() / unit_length
 
     def get_start_date_times(self) -> list[StartDateTime]:
         return [stress_period.start_date_time for stress_period in self.stress_periods]
 
     def get_end_date_times(self) -> list[EndDateTime]:
         start_date_times = self.get_start_date_times()
-        end_date_times = []
-        for idx, stress_period in enumerate(self.stress_periods):
-            if idx + 1 < len(start_date_times):
-                end_date_times.append(EndDateTime.from_value(start_date_times[idx + 1].to_value()))
-                continue
+        last_index = len(start_date_times) - 1
 
-            end_date_times.append(self.end_date_time)
+        end_date_times: list[EndDateTime] = []
+
+        for idx in range(len(self.stress_periods)):
+            if idx < last_index:
+                next_start = start_date_times[idx + 1]
+                end_date_times.append(EndDateTime.from_value(next_start.to_value()))
+            else:
+                end_date_times.append(self.end_date_time)
 
         return end_date_times
 

@@ -1,7 +1,7 @@
-from morpheus.common.types.File import FilePath, FileName
+from morpheus.common.types.File import FileName, FilePath
 from morpheus.project.infrastructure.filesystem.AssetFileStorage import AssetFileStorage, asset_file_storage
-from morpheus.project.infrastructure.persistence.AssetRepository import asset_repository, AssetRepository
-from morpheus.project.types.Asset import Asset, AssetId, AssetDescription, AssetMetadata
+from morpheus.project.infrastructure.persistence.AssetRepository import AssetRepository, asset_repository
+from morpheus.project.types.Asset import Asset, AssetDescription, AssetId, AssetMetadata
 from morpheus.project.types.Project import ProjectId
 
 

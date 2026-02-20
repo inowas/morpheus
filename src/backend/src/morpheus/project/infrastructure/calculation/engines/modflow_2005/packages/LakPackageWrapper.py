@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal, Tuple
+from typing import Literal
 
 import numpy as np
 from flopy.modflow import ModflowLak as FlopyModflowLak
@@ -7,9 +7,10 @@ from flopy.modflow import ModflowLak as FlopyModflowLak
 from morpheus.project.types.boundaries.Boundary import BoundaryType, LakeBoundary
 from morpheus.project.types.boundaries.LakeObservation import LakeObservation
 from morpheus.project.types.discretization.spatial.ActiveCells import ActiveCell
-from .LakPackageMapper import calculate_stress_period_data
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .LakPackageMapper import calculate_stress_period_data
 
 
 @dataclasses.dataclass
@@ -41,19 +42,32 @@ class LakPackageData:
     nssitr: int
     surfdep: float
     stages: float | list[float]
-    stage_range: list[Tuple[float, float]]
+    stage_range: list[tuple[float, float]]
     lakarr: np.ndarray
     bdlknc: np.ndarray
     sill_data: dict[int, list] | None
     flux_data: dict[int, list]
-    extension: Literal["lak"]
+    extension: Literal['lak']
     unitnumber: None | int
     filenames: None | str | list[str]
     options: None | list[str]
     lwrt: int
 
-    def __init__(self, flux_data: dict[int, list], lakarr: np.ndarray, bdlknc: np.ndarray, stages: list[float], stage_range: list[Tuple[float, float]], sill_data: dict[int, list] | None = None,
-                 nlakes: int = 1, ipakcb: int = 0, theta: float = 1.0, nssitr: int = 0, sscncr: float = 0.001, surfdep: float = 0.0):
+    def __init__(
+        self,
+        flux_data: dict[int, list],
+        lakarr: np.ndarray,
+        bdlknc: np.ndarray,
+        stages: list[float],
+        stage_range: list[tuple[float, float]],
+        sill_data: dict[int, list] | None = None,
+        nlakes: int = 1,
+        ipakcb: int = 0,
+        theta: float = 1.0,
+        nssitr: int = 0,
+        sscncr: float = 0.001,
+        surfdep: float = 0.0,
+    ):
         self.nlakes = nlakes
         self.ipakcb = ipakcb
         self.theta = theta
@@ -112,10 +126,10 @@ def calculate_lak_package_data(model: Model, settings: LakPackageSettings) -> La
 
     for lake_id, lake_boundary in enumerate(lake_boundaries):
         if not isinstance(lake_boundary, LakeBoundary):
-            raise TypeError("Expected LakeBoundary but got {}".format(type(lake_boundary)))
+            raise TypeError(f'Expected LakeBoundary but got {type(lake_boundary)}')
         observation = lake_boundary.get_observation()
         if not isinstance(observation, LakeObservation):
-            raise ValueError("Expected LakeObservation but got {}".format(type(observation)))
+            raise ValueError(f'Expected LakeObservation but got {type(observation)}')
 
         stages.append(observation.initial_stage.to_float())
         stage_range.append((observation.stage_range.min, observation.stage_range.max))
@@ -125,7 +139,7 @@ def calculate_lak_package_data(model: Model, settings: LakPackageSettings) -> La
 
         for affected_cell in lake_boundary.affected_cells:
             if not isinstance(affected_cell, ActiveCell):
-                raise TypeError("Expected GridCell but got {}".format(type(affected_cell)))
+                raise TypeError(f'Expected GridCell but got {type(affected_cell)}')
 
             for layer_idx in layer_indices:
                 lakarr[layer_idx, affected_cell.row, affected_cell.col] = lake_id + 1
@@ -159,7 +173,7 @@ def calculate_lak_package_data(model: Model, settings: LakPackageSettings) -> La
         sill_data=None,
         flux_data=lak_flux_data.to_dict(),
         ipakcb=settings.ipakcb,
-        theta=settings.theta
+        theta=settings.theta,
     )
 
 

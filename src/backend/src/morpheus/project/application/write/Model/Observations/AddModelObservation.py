@@ -1,7 +1,7 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.identity.Identity import UserId
@@ -10,10 +10,10 @@ from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelObservationEvents import ModelObservationAddedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
 from morpheus.project.types.geometry import Point
-from morpheus.project.types.observations.HeadObservation import ObservationId, ObservationName, ObservationTags, HeadObservation, HeadObservationValue, Head
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.observations.HeadObservation import Head, HeadObservation, HeadObservationValue, ObservationId, ObservationName, ObservationTags
+from morpheus.project.types.Project import ProjectId
 
 
 class AddModelObservationCommandPayload(TypedDict):
@@ -69,15 +69,10 @@ class AddModelObservationCommandHandler(CommandHandlerBase):
             geometry=command.geometry,
             grid=current_grid,
             affected_layers=[top_layer_id],
-            data=[HeadObservationValue(date_time=start_date_time, head=Head.from_value(0.0))]
+            data=[HeadObservationValue(date_time=start_date_time, head=Head.from_value(0.0))],
         )
 
-        event = ModelObservationAddedEvent.from_observation(
-            project_id=project_id,
-            model_id=command.model_id,
-            observation=head_observation,
-            occurred_at=DateTime.now()
-        )
+        event = ModelObservationAddedEvent.from_observation(project_id=project_id, model_id=command.model_id, observation=head_observation, occurred_at=DateTime.now())
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)

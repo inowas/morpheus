@@ -1,15 +1,13 @@
-from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
+from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileAddedEvent import CalculationProfileAddedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileRemovedEvent import CalculationProfileRemovedEvent
 from morpheus.project.domain.events.CalculationEvents.CalculationProfileUpdatedEvent import CalculationProfileUpdatedEvent
-
-from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectDeletedEvent, ProjectCalculationProfileIdUpdatedEvent
+from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCalculationProfileIdUpdatedEvent, ProjectDeletedEvent
 from morpheus.project.infrastructure.persistence.CalculationProfilesRepository import CalculationProfilesRepository, calculation_profiles_repository
 
 
 class CalculationProfilesProjector(EventListenerBase):
-
     def __init__(self, calculation_profiles_repo: CalculationProfilesRepository):
         self.calculation_profile_repo = calculation_profiles_repo
 

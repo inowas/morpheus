@@ -1,44 +1,44 @@
 import dataclasses
-from typing import TypedDict, Optional, Literal
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelGridUpdatedEvent, ModelAffectedCellsRecalculatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelDiscretizationEvents import ModelAffectedCellsRecalculatedEvent, ModelGridUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.discretization.spatial import ActiveCells, Grid, Rotation
 from morpheus.project.types.geometry import Point
+from morpheus.project.types.Project import ProjectId
 
 
 class UpdateModelGridCommandPayload(TypedDict):
     project_id: str
     n_cols: int
     n_rows: int
-    origin: Optional[dict]
-    col_widths: Optional[list[float]]
-    total_width: Optional[float]
-    row_heights: Optional[list[float]]
-    total_height: Optional[float]
-    rotation: Optional[float]
-    length_unit: Optional[Literal["meters", "centimeters", "feet", "unknown"]]
+    origin: dict | None
+    col_widths: list[float] | None
+    total_width: float | None
+    row_heights: list[float] | None
+    total_height: float | None
+    rotation: float | None
+    length_unit: Literal['meters', 'centimeters', 'feet', 'unknown'] | None
 
 
 @dataclasses.dataclass(frozen=True)
 class UpdateModelGridCommand(ProjectCommandBase):
     n_cols: int
     n_rows: int
-    origin: Optional[Point] = None
-    col_widths: Optional[list[float]] = None
-    total_width: Optional[float] = None
-    row_heights: Optional[list[float]] = None
-    total_height: Optional[float] = None
-    rotation: Optional[float] = None
-    length_unit: Optional[Literal["meters", "centimeters", "feet", "unknown"]] = None
+    origin: Point | None = None
+    col_widths: list[float] | None = None
+    total_width: float | None = None
+    row_heights: list[float] | None = None
+    total_height: float | None = None
+    rotation: float | None = None
+    length_unit: Literal['meters', 'centimeters', 'feet', 'unknown'] | None = None
 
     @classmethod
     def from_payload(cls, user_id: UserId, payload: UpdateModelGridCommandPayload):
@@ -48,12 +48,12 @@ class UpdateModelGridCommand(ProjectCommandBase):
             n_cols=payload['n_cols'],
             n_rows=payload['n_rows'],
             origin=Point.from_dict(payload['origin']) if 'origin' in payload else None,  # pyright: ignore
-            col_widths=payload['col_widths'] if 'col_widths' in payload else None,
-            total_width=payload['total_width'] if 'total_width' in payload else None,
-            row_heights=payload['row_heights'] if 'row_heights' in payload else None,
-            total_height=payload['total_height'] if 'total_height' in payload else None,
-            rotation=payload['rotation'] if 'rotation' in payload else None,
-            length_unit=payload['length_unit'] if 'length_unit' in payload else None,
+            col_widths=payload.get('col_widths'),
+            total_width=payload.get('total_width'),
+            row_heights=payload.get('row_heights'),
+            total_height=payload.get('total_height'),
+            rotation=payload.get('rotation'),
+            length_unit=payload.get('length_unit'),
         )
 
 

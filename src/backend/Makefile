@@ -65,6 +65,10 @@ run-workflow-test:
 	@echo ""
 	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/test_rio_primero_workflow.py -v
 
+## check code style
+check-code-style:
+	scripts/dev/qa_check/check-code-style.sh
+
 ## fix code style
 fix-code-style:
 	scripts/dev/qa_check/fix-code-style.sh

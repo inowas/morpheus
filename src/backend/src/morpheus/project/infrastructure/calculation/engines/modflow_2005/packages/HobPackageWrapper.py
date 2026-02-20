@@ -1,12 +1,13 @@
 import dataclasses
 from typing import Literal
 
-from flopy.modflow import ModflowHob as FlopyModflowHob
 from flopy.modflow import HeadObservation as FlopyModflowHeadObservation
+from flopy.modflow import ModflowHob as FlopyModflowHob
 
-from .HobPackageMapper import calculate_observation_items, HeadObservationData, HeadObservationItem
-from ...modflow_2005 import FlopyModflow
 from morpheus.project.types.Model import Model
+
+from ...modflow_2005 import FlopyModflow
+from .HobPackageMapper import HeadObservationData, HeadObservationItem, calculate_observation_items
 
 
 @dataclasses.dataclass
@@ -38,16 +39,25 @@ class HobPackageData:
     hobdry: float
     tomulth: float
     hobname: str | None
-    extension: Literal["hob"]
+    extension: Literal['hob']
     no_print: bool
     options: None | list
     unitnumber: None | int
     filenames: None | str | list[str]
 
-    def __init__(self, head_observation_data: HeadObservationData, iuhobsv: int = 1, hobdry: float = 0.0,
-                 tomulth: float = 1.0, hobname: str | None = None, extension: Literal["hob"] = "hob",
-                 no_print: bool = False, options: None | list = None, unitnumber: int | None = None,
-                 filenames: None | str | list[str] = None):
+    def __init__(
+        self,
+        head_observation_data: HeadObservationData,
+        iuhobsv: int = 1,
+        hobdry: float = 0.0,
+        tomulth: float = 1.0,
+        hobname: str | None = None,
+        extension: Literal['hob'] = 'hob',
+        no_print: bool = False,
+        options: None | list = None,
+        unitnumber: int | None = None,
+        filenames: None | str | list[str] = None,
+    ):
         self.head_observation_data = head_observation_data
         self.iuhobsv = iuhobsv
         self.hobdry = hobdry
@@ -69,7 +79,7 @@ class HobPackageData:
             'no_print': self.no_print,
             'options': self.options,
             'unitnumber': self.unitnumber,
-            'filenames': self.filenames
+            'filenames': self.filenames,
         }
 
 
@@ -102,7 +112,7 @@ def create_hob_package(flopy_modflow: FlopyModflow, model: Model, settings: HobP
                 row=item.row,
                 column=item.column,
                 time_series_data=[item.to_list() for item in item.time_series_data],
-                names=item.names
+                names=item.names,
             )
         )
 

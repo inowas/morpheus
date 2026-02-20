@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Float, DateTime
+from morpheus.common.types import DateTime, Float
 from morpheus.project.types.Model import Model
 from morpheus.project.types.observations.HeadObservation import Head, ObservationId, ObservationName
 
@@ -66,24 +66,28 @@ def calculate_observation_items(model: Model) -> HeadObservationData:
             for cell in observation.affected_cells:
                 time_series_data = []
                 for data_item in data_items:
-                    time_series_data.append(HeadObservationTimeSeriesItem(
-                        date_time=data_item.date_time,
-                        total_time=TotalTime.from_float(time_discretization.get_total_time_from_date_time(data_item.date_time)),
-                        head_value=data_item.head
-                    ))
+                    time_series_data.append(
+                        HeadObservationTimeSeriesItem(
+                            date_time=data_item.date_time,
+                            total_time=TotalTime.from_float(time_discretization.get_total_time_from_date_time(data_item.date_time)),
+                            head_value=data_item.head,
+                        )
+                    )
 
                     if len(time_series_data) == 0:
                         continue
 
-                head_observation_data.add_item(item=HeadObservationItem(
-                    observation_id=observation.id,
-                    observation_name=observation.name,
-                    obs_name=observation.id.to_str()[:6],
-                    names=[f'{observation.id.to_str()[:6]}.{idx}' for idx in range(len(time_series_data))],
-                    layer=layer_idx,
-                    row=cell.row,
-                    column=cell.col,
-                    time_series_data=time_series_data
-                ))
+                head_observation_data.add_item(
+                    item=HeadObservationItem(
+                        observation_id=observation.id,
+                        observation_name=observation.name,
+                        obs_name=observation.id.to_str()[:6],
+                        names=[f'{observation.id.to_str()[:6]}.{idx}' for idx in range(len(time_series_data))],
+                        layer=layer_idx,
+                        row=cell.row,
+                        column=cell.col,
+                        time_series_data=time_series_data,
+                    )
+                )
 
     return head_observation_data

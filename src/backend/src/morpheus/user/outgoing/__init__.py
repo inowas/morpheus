@@ -1,16 +1,9 @@
 from morpheus.user.application.read.UserReader import user_reader
 from morpheus.user.application.write.CreateOrUpdateUserFromKeycloak import CreateOrUpdateUserFromKeycloakCommand, CreateOrUpdateUserFromKeycloakCommandHandler
-from morpheus.user.types.User import KeycloakUserId, UserEmail, Username, UserFirstName, UserLastName
+from morpheus.user.types.User import KeycloakUserId, UserEmail, UserFirstName, UserLastName, Username
 
 
-def create_or_update_user_from_keycloak(
-    keycloak_user_id: str,
-    is_admin: bool,
-    email: str,
-    username: str,
-    first_name: str | None,
-    last_name: str | None
-) -> None:
+def create_or_update_user_from_keycloak(keycloak_user_id: str, is_admin: bool, email: str, username: str, first_name: str | None, last_name: str | None) -> None:
     if is_admin is True:
         CreateOrUpdateUserFromKeycloakCommandHandler.handle(
             CreateOrUpdateUserFromKeycloakCommand.as_admin_user(

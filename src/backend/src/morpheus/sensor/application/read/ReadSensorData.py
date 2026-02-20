@@ -1,4 +1,5 @@
 import dataclasses
+
 import pandas as pd
 
 from ...infrastructure.persistence.sensors import collection_exists, read_timeseries
@@ -48,17 +49,12 @@ class ReadSensorDataQueryHandler:
         valid_time_resolution_list = ['RAW', '6H', '12H', '1D', '2D', '1W', '1M', '1Y']
         time_resolution = query.time_resolution.upper()
         if time_resolution not in valid_time_resolution_list:
-            raise InvalidTimeResolutionException(
-                f'Invalid timeResolution {time_resolution} provided.'f'Valid values are: '
-                f'{", ".join(valid_time_resolution_list)}'
-            )
+            raise InvalidTimeResolutionException(f'Invalid timeResolution {time_resolution} provided.Valid values are: {", ".join(valid_time_resolution_list)}')
 
         valid_date_formats = ['iso', 'epoch']
         date_format = query.date_format.lower()
         if date_format not in valid_date_formats:
-            raise InvalidDateFormatException(
-                f'Invalid dateFormat {date_format} provided.'f'Valid values are: {", ".join(valid_date_formats)}'
-            )
+            raise InvalidDateFormatException(f'Invalid dateFormat {date_format} provided.Valid values are: {", ".join(valid_date_formats)}')
 
         start_timestamp = query.start_timestamp
         end_timestamp = query.end_timestamp
@@ -87,10 +83,7 @@ class ReadSensorDataQueryHandler:
                 continue
             if excl is not None and item[query.parameter] == excl:
                 continue
-            filtered_data.append({
-                'date_time': item['date_time'],
-                'value': item[query.parameter] if query.parameter in item else None,
-            })
+            filtered_data.append({'date_time': item['date_time'], 'value': item.get(query.parameter)})
 
         if len(filtered_data) == 0:
             return ReadSensorDataQueryResult(SensorData(items=[]))
@@ -106,9 +99,6 @@ class ReadSensorDataQueryHandler:
         data = df.to_dict(orient='records')
         sensor_data = []
         for item in data:
-            sensor_data.append(SensorDataItem(
-                date_time=item['date_time'].strftime('%Y-%m-%dT%H:%M:%SZ'),
-                value=item['value'] if 'value' in item else None,
-            ))
+            sensor_data.append(SensorDataItem(date_time=item['date_time'].strftime('%Y-%m-%dT%H:%M:%SZ'), value=item.get('value', None)))
 
         return ReadSensorDataQueryResult(SensorData(items=sensor_data))

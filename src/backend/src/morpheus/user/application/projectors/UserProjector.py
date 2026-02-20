@@ -1,6 +1,6 @@
 from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.user.domain.events.UserEvents import UserCreatedEvent, UserLinkedToKeycloakEvent, UserDataUpdatedEvent, UserPromotedToAdminEvent, UserDemotedFromAdminEvent
+from morpheus.user.domain.events.UserEvents import UserCreatedEvent, UserDataUpdatedEvent, UserDemotedFromAdminEvent, UserLinkedToKeycloakEvent, UserPromotedToAdminEvent
 from morpheus.user.infrastructure.persistence.UserRepository import UserRepository, user_repository
 from morpheus.user.types.User import User
 
@@ -11,13 +11,7 @@ class UserProjector(EventListenerBase):
 
     @listen_to(UserCreatedEvent)
     def on_user_created(self, event: UserCreatedEvent, metadata: EventMetadata) -> None:
-        user = User(
-            user_id=event.get_user_id(),
-            keycloak_user_id=None,
-            geo_node_user_id=None,
-            is_admin=False,
-            user_data=event.get_user_data()
-        )
+        user = User(user_id=event.get_user_id(), keycloak_user_id=None, geo_node_user_id=None, is_admin=False, user_data=event.get_user_data())
         self.user_repository.add_user(user)
 
     @listen_to(UserDataUpdatedEvent)

@@ -1,6 +1,8 @@
 import dataclasses
 from typing import Literal
+
 from shapely.geometry import Polygon as ShapelyPolygon
+
 from .Point import Point
 
 
@@ -34,10 +36,7 @@ class Polygon:
         return list(shapely_polygon.bounds)
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     def as_geojson(self):
         return self.__geo_interface__()

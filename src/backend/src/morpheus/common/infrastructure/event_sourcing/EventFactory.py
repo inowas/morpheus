@@ -1,6 +1,4 @@
-from typing import Type
-
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 
@@ -9,12 +7,12 @@ class EventRegistry:
     def __init__(self):
         self._event_registry = {}
 
-    def register_event(self, event_to_register: Type[EventBase]):
+    def register_event(self, event_to_register: type[EventBase]):
         if event_to_register.get_event_name().to_str() in self._event_registry:
             raise ValueError(f'Duplicate event name: {event_to_register.get_event_name().to_str()}')
         self._event_registry[event_to_register.get_event_name().to_str()] = event_to_register
 
-    def get_event_by_name(self, name: EventName) -> Type[EventBase] | None:
+    def get_event_by_name(self, name: EventName) -> type[EventBase] | None:
         return self._event_registry.get(name.to_str())
 
 

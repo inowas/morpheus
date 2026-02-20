@@ -1,21 +1,24 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import ModelBoundaryGeometryUpdatedEvent, \
-    ModelBoundaryAffectedCellsRecalculatedEvent, ModelBoundaryObservationGeometryRecalculatedEvent
+from morpheus.project.domain.events.ModelEvents.ModelBoundaryEvents import (
+    ModelBoundaryAffectedCellsRecalculatedEvent,
+    ModelBoundaryGeometryUpdatedEvent,
+    ModelBoundaryObservationGeometryRecalculatedEvent,
+)
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.boundaries.Boundary import BoundaryId
 from morpheus.project.types.discretization.spatial import ActiveCells
-from morpheus.project.types.geometry import Polygon, LineString, Point, GeometryFactory
+from morpheus.project.types.geometry import GeometryFactory, LineString, Point, Polygon
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.Project import ProjectId
 
 
 class UpdateModelBoundaryGeometryCommandPayload(TypedDict):
@@ -55,8 +58,7 @@ class UpdateModelBoundaryGeometryCommandHandler(CommandHandlerBase):
 
         boundary = latest_model.boundaries.get_boundary(boundary_id=command.boundary_id)
         if not boundary:
-            raise ValueError(
-                f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
+            raise ValueError(f'Boundary {command.boundary_id.to_str()} does not exist in model {command.model_id.to_str()}')
 
         if boundary.geometry.type != command.geometry.type:
             raise ValueError(f'Geometry type mismatch: {boundary.geometry.type} != {command.geometry.type}')
@@ -86,11 +88,7 @@ class UpdateModelBoundaryGeometryCommandHandler(CommandHandlerBase):
                     observation_geometries_to_update[observation.observation_id] = new_observation_geometry
 
         event = ModelBoundaryGeometryUpdatedEvent.from_props(
-            project_id=project_id,
-            model_id=command.model_id,
-            boundary_id=command.boundary_id,
-            geometry=command.geometry,
-            occurred_at=DateTime.now()
+            project_id=project_id, model_id=command.model_id, boundary_id=command.boundary_id, geometry=command.geometry, occurred_at=DateTime.now()
         )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
@@ -99,11 +97,7 @@ class UpdateModelBoundaryGeometryCommandHandler(CommandHandlerBase):
 
         if boundary.affected_cells != new_affected_cells:
             event = ModelBoundaryAffectedCellsRecalculatedEvent.from_props(
-                project_id=project_id,
-                model_id=command.model_id,
-                boundary_id=command.boundary_id,
-                affected_cells=new_affected_cells,
-                occurred_at=DateTime.now()
+                project_id=project_id, model_id=command.model_id, boundary_id=command.boundary_id, affected_cells=new_affected_cells, occurred_at=DateTime.now()
             )
             event_envelope = EventEnvelope(event=event, metadata=event_metadata)
             project_event_bus.record(event_envelope=event_envelope)
@@ -115,7 +109,7 @@ class UpdateModelBoundaryGeometryCommandHandler(CommandHandlerBase):
                 boundary_id=command.boundary_id,
                 observation_id=observation_id,
                 observation_geometry=observation_geometry,
-                occurred_at=DateTime.now()
+                occurred_at=DateTime.now(),
             )
 
             event_envelope = EventEnvelope(event=event, metadata=event_metadata)

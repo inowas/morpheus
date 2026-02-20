@@ -1,12 +1,12 @@
 import dataclasses
 from datetime import datetime
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
-from morpheus.project.types.Model import Model, Sha1Hash
-from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.Calculation import CalculationId, Calculation, CalculationState, Log
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
+from morpheus.project.types.calculation.Calculation import Calculation, CalculationId, CalculationState, Log
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.calculation.CalculationResult import CalculationResult
+from morpheus.project.types.Model import Model, Sha1Hash
+from morpheus.project.types.Project import ProjectId
 from morpheus.settings import settings
 
 
@@ -43,7 +43,7 @@ class CalculationRepositoryDocument:
             calculation_log=obj['calculation_log'],
             result=obj['result'],
             created_at=obj['created_at'],
-            last_modified_at=obj['last_modified_at']
+            last_modified_at=obj['last_modified_at'],
         )
 
     def to_dict(self):
@@ -71,10 +71,7 @@ class CalculationRepositoryDocument:
 
 class CalculationRepository(RepositoryBase):
     def has_calculation(self, project_id: ProjectId, calculation_id: CalculationId) -> bool:
-        return self.collection.find_one({
-            'project_id': project_id.to_str(),
-            'calculation_id': calculation_id.to_str()
-        }) is not None
+        return self.collection.find_one({'project_id': project_id.to_str(), 'calculation_id': calculation_id.to_str()}) is not None
 
     def create_calculation(self, project_id: ProjectId, calculation_id: CalculationId, model: Model, model_version: str, profile: CalculationProfile) -> None:
 
@@ -95,51 +92,22 @@ class CalculationRepository(RepositoryBase):
             calculation_log=None,
             result=None,
             last_modified_at=datetime.now(),
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         self.collection.insert_one(document.to_dict())
 
     def update_calculation_state(self, calculation_id: CalculationId, state: CalculationState) -> None:
-        self.collection.update_one(
-            {'calculation_id': calculation_id.to_str()},
-            {
-                '$set': {
-                    'state': state,
-                    'last_modified_at': datetime.now()
-                },
-                '$push': {
-                    'lifecycle': state
-                }
-            }
-        )
+        self.collection.update_one({'calculation_id': calculation_id.to_str()}, {'$set': {'state': state, 'last_modified_at': datetime.now()}, '$push': {'lifecycle': state}})
 
     def update_calculation_check_model_log(self, calculation_id: CalculationId, check_model_log: Log) -> None:
-        self.collection.update_one(
-            {'calculation_id': calculation_id.to_str()},
-            {'$set': {
-                'check_model_log': check_model_log.to_list(),
-                'last_modified_at': datetime.now()
-            }}
-        )
+        self.collection.update_one({'calculation_id': calculation_id.to_str()}, {'$set': {'check_model_log': check_model_log.to_list(), 'last_modified_at': datetime.now()}})
 
     def update_calculation_log(self, calculation_id: CalculationId, calculation_log: Log) -> None:
-        self.collection.update_one(
-            {'calculation_id': calculation_id.to_str()},
-            {'$set': {
-                'calculation_log': calculation_log.to_list(),
-                'last_modified_at': datetime.now()
-            }}
-        )
+        self.collection.update_one({'calculation_id': calculation_id.to_str()}, {'$set': {'calculation_log': calculation_log.to_list(), 'last_modified_at': datetime.now()}})
 
     def update_calculation_result(self, calculation_id: CalculationId, result: CalculationResult) -> None:
-        self.collection.update_one(
-            {'calculation_id': calculation_id.to_str()},
-            {'$set': {
-                'result': result.to_dict(),
-                'last_modified_at': datetime.now()
-            }}
-        )
+        self.collection.update_one({'calculation_id': calculation_id.to_str()}, {'$set': {'result': result.to_dict(), 'last_modified_at': datetime.now()}})
 
     def delete_calculation_by_id(self, calculation_id: CalculationId) -> None:
         self.collection.delete_one({'calculation_id': calculation_id.to_str()})
@@ -179,11 +147,7 @@ class CalculationRepository(RepositoryBase):
         return [CalculationRepositoryDocument.from_dict(raw_document).to_calculation() for raw_document in raw_documents]
 
     def get_calculation_by_project_id_model_hash_and_profile_hash(self, project_id: ProjectId, model_hash: Sha1Hash, profile_hash: Sha1Hash) -> Calculation | None:
-        raw_document = self.collection.find_one({
-            'project_id': project_id.to_str(),
-            'model_hash': model_hash.to_str(),
-            'profile_hash': profile_hash.to_str()
-        })
+        raw_document = self.collection.find_one({'project_id': project_id.to_str(), 'model_hash': model_hash.to_str(), 'profile_hash': profile_hash.to_str()})
 
         if raw_document is None:
             return None
@@ -195,12 +159,7 @@ class CalculationRepository(RepositoryBase):
         self.collection.delete_many({'project_id': project_id.to_str()})
 
 
-calculation_repository = CalculationRepository(
-    collection=create_or_get_collection(
-        get_database_client(settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'calculations'
-    )
-)
+calculation_repository = CalculationRepository(collection=create_or_get_collection(get_database_client(settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'calculations'))
 
 
 def get_calculation_repository() -> CalculationRepository:

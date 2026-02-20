@@ -1,4 +1,5 @@
 import dataclasses
+
 from morpheus.common.types import Uuid
 
 
@@ -16,9 +17,7 @@ class EventMetadata:
     def with_creator(cls, user_id: Uuid, obj: dict | None = None):
         if obj is None:
             obj = {}
-        return cls(
-            obj={'created_by': user_id.to_str(), **obj}
-        )
+        return cls(obj={'created_by': user_id.to_str(), **obj})
 
     def get_created_by(self) -> Uuid:
         if 'created_by' not in self.obj:

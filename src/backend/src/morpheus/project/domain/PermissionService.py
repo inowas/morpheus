@@ -1,9 +1,9 @@
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
-from morpheus.project.types.Permissions import Role, Permissions
-from morpheus.project.types.Project import ProjectSummary
 from morpheus.common.types.identity.Identity import Identity
+from morpheus.project.types.Permissions import Permissions, Role
 from morpheus.project.types.permissions.Privilege import Privilege
 from morpheus.project.types.permissions.UserRoleAssignmentCollection import UserRoleAssignmentCollection
+from morpheus.project.types.Project import ProjectSummary
 
 
 class PermissionService:
@@ -25,7 +25,7 @@ class PermissionService:
         Privilege.VIEW_PROJECT: [Role.VIEWER, Role.EDITOR, Role.ADMIN, Role.OWNER],
         Privilege.EDIT_PROJECT: [Role.EDITOR, Role.ADMIN, Role.OWNER],
         Privilege.MANAGE_PROJECT: [Role.ADMIN, Role.OWNER],
-        Privilege.FULL_ACCESS: [Role.OWNER]
+        Privilege.FULL_ACCESS: [Role.OWNER],
     }
 
     # will be calculated on first access
@@ -64,7 +64,9 @@ class PermissionService:
         return PermissionService.OWNER_PROJECT_PRIVILEGES
 
     @staticmethod
-    def get_privileges_for_identity_by_role_assignment_and_summary(identity: Identity, role_assignments: UserRoleAssignmentCollection, project_summary: ProjectSummary) -> list[Privilege]:
+    def get_privileges_for_identity_by_role_assignment_and_summary(
+        identity: Identity, role_assignments: UserRoleAssignmentCollection, project_summary: ProjectSummary
+    ) -> list[Privilege]:
         if identity.is_admin:
             return PermissionService.get_privileges_for_admin_user()
 

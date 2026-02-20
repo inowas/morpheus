@@ -1,13 +1,14 @@
 import dataclasses
-import pandas as pd
 
+import pandas as pd
 from scipy.interpolate import interp1d
 
 from morpheus.common.types import Float
-from .BoundaryInterpolationType import InterpolationType
-from .Observation import ObservationId, ObservationValue, DataItem, Observation, ObservationName
-from ..discretization.time.Stressperiods import StartDateTime, EndDateTime
+
+from ..discretization.time.Stressperiods import EndDateTime, StartDateTime
 from ..geometry import Point
+from .BoundaryInterpolationType import InterpolationType
+from .Observation import DataItem, Observation, ObservationId, ObservationName, ObservationValue
 
 
 class Precipitation(Float):
@@ -68,7 +69,7 @@ class LakeObservationValue(ObservationValue):
             precipitation=Precipitation.from_float(0.0),
             evaporation=Evaporation.from_float(0.0),
             runoff=Runoff.from_float(0.0),
-            withdrawal=Withdrawal.from_float(0.0)
+            withdrawal=Withdrawal.from_float(0.0),
         )
 
     @classmethod
@@ -135,8 +136,16 @@ class LakeObservation(Observation):
     stage_range: StageRange
 
     @classmethod
-    def new(cls, name: ObservationName, geometry: Point, data: list[LakeObservationValue], bed_leakance: BedLeakance,
-            initial_stage: InitialStage, stage_range: StageRange, observation_id: ObservationId | None = None):
+    def new(
+        cls,
+        name: ObservationName,
+        geometry: Point,
+        data: list[LakeObservationValue],
+        bed_leakance: BedLeakance,
+        initial_stage: InitialStage,
+        stage_range: StageRange,
+        observation_id: ObservationId | None = None,
+    ):
         data = list({d.date_time: d for d in data}.values())
         data = sorted(data, key=lambda x: x.date_time)
         return cls(
@@ -200,7 +209,7 @@ class LakeObservation(Observation):
                 return None
 
             last_known_value = sorted_data[0]
-            for i, item in enumerate(self.data):
+            for _i, item in enumerate(self.data):
                 if item.date_time < start_date_time:
                     last_known_value = item
 
@@ -256,7 +265,7 @@ class LakeObservation(Observation):
             time_series.values.astype(float),
             precipitations.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         precipitations = precipitations_interpolator(date_range.values.astype(float))
 
@@ -265,7 +274,7 @@ class LakeObservation(Observation):
             time_series.values.astype(float),
             evaporations.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         evaporations = evaporations_interpolator(date_range.values.astype(float))
 
@@ -274,7 +283,7 @@ class LakeObservation(Observation):
             time_series.values.astype(float),
             runoffs.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
         runoffs = runoff_interpolator(date_range.values.astype(float))
 
@@ -283,7 +292,7 @@ class LakeObservation(Observation):
             time_series.values.astype(float),
             withdrawals.values.astype(float),
             kind='nearest' if interpolation == InterpolationType.nearest else 'linear',
-            fill_value='extrapolate'  # type: ignore
+            fill_value='extrapolate',  # type: ignore
         )
 
         withdrawals = withdrawal_interpolator(date_range.values.astype(float))

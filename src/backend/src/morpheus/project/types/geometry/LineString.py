@@ -1,6 +1,8 @@
 import dataclasses
 from typing import Literal
-from shapely.geometry import LineString as ShapelyLineString, Point as ShapelyPoint
+
+from shapely.geometry import LineString as ShapelyLineString
+from shapely.geometry import Point as ShapelyPoint
 
 from .Point import Point
 
@@ -11,10 +13,7 @@ class LineString:
     type: Literal['LineString'] = 'LineString'
 
     def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     def __eq__(self, other):
         return self.coordinates == other.coordinates and self.type == other.type
@@ -31,10 +30,7 @@ class LineString:
         return cls(coordinates=list(coordinates))
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'coordinates': self.coordinates
-        }
+        return {'type': self.type, 'coordinates': self.coordinates}
 
     def as_geojson(self):
         return self.__geo_interface__()

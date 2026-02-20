@@ -1,10 +1,12 @@
 from flask import abort
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
-from ....incoming import get_identity
+
+from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.read.PermissionsReader import permissions_reader
 from ....application.read.ProjectReader import get_project_reader
-from ....types.Project import ProjectId
+from ....incoming import get_identity
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadMetadataRequestHandler:

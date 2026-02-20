@@ -1,6 +1,7 @@
 import dataclasses
+
 from ...geometry import Polygon
-from . import Crs, Grid, ActiveCells, Rotation
+from . import ActiveCells, Crs, Grid, Rotation
 
 
 @dataclasses.dataclass

@@ -1,12 +1,9 @@
-from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import (
-    LayerBasedStressPeriodData
-)
-from morpheus.project.types.Model import Model
+from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import LayerBasedStressPeriodData
 from morpheus.project.types.boundaries.Boundary import BoundaryType, RechargeBoundary
 from morpheus.project.types.boundaries.RechargeObservation import RechargeDataItem
-
-from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.layers import LayersCollection
+from morpheus.project.types.Model import Model
 
 
 class RchStressPeriodData(LayerBasedStressPeriodData):
@@ -14,16 +11,13 @@ class RchStressPeriodData(LayerBasedStressPeriodData):
 
 
 def calculate_rch_boundary_stress_period_data(
-    spatial_discretization: SpatialDiscretization,
-    time_discretization: TimeDiscretization,
-    layers: LayersCollection,
-    rch_boundary: RechargeBoundary
+    spatial_discretization: SpatialDiscretization, time_discretization: TimeDiscretization, layers: LayersCollection, rch_boundary: RechargeBoundary
 ) -> RchStressPeriodData:
     grid = spatial_discretization.grid
     sp_data = RchStressPeriodData(nx=grid.n_cols(), ny=grid.n_rows())
 
     # first we need to calculate the mean values for each observation point and each stress period
-    for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
+    for stress_period_idx, _stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
         mean_data = rch_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=rch_boundary.interpolation)
@@ -35,23 +29,21 @@ def calculate_rch_boundary_stress_period_data(
             continue
 
         if rch_boundary.number_of_observations() > 1:
-            raise NotImplementedError("Multiple observations for well boundaries are not supported")
+            raise NotImplementedError('Multiple observations for well boundaries are not supported')
 
         # we need to filter the affected cells to only include cells that are part of the model
-        rch_boundary.affected_cells = rch_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        rch_boundary.affected_cells = rch_boundary.affected_cells.filter(lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if rch_boundary.number_of_observations() == 1:
             mean_data = mean_data[0]
             if not isinstance(mean_data, RechargeDataItem):
-                raise TypeError("Expected RechargeDataItem but got {}".format(type(mean_data)))
+                raise TypeError(f'Expected RechargeDataItem but got {type(mean_data)}')
 
             recharge_rate = mean_data.recharge_rate
 
             for cell in rch_boundary.affected_cells:
                 # recharge rates will be replaced if already set
-                sp_data.set_value(time_step=stress_period_idx, row=cell.row, column=cell.col,
-                                  values=[recharge_rate.to_float()], sum_up_values=False)
+                sp_data.set_value(time_step=stress_period_idx, row=cell.row, column=cell.col, values=[recharge_rate.to_float()], sum_up_values=False)
 
     return sp_data
 
@@ -62,15 +54,10 @@ def calculate_stress_period_data(model: Model) -> RchStressPeriodData | None:
     boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.recharge)
     for boundary in boundaries:
         if not isinstance(boundary, RechargeBoundary):
-            raise TypeError(
-                "Expected boundary of type {} but got {}".format(RechargeBoundary.__name__, type(boundary))
-            )
+            raise TypeError(f'Expected boundary of type {RechargeBoundary.__name__} but got {type(boundary)}')
 
         sp_data_boundary = calculate_rch_boundary_stress_period_data(
-            layers=model.layers,
-            spatial_discretization=model.spatial_discretization,
-            time_discretization=model.time_discretization,
-            rch_boundary=boundary
+            layers=model.layers, spatial_discretization=model.spatial_discretization, time_discretization=model.time_discretization, rch_boundary=boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
 

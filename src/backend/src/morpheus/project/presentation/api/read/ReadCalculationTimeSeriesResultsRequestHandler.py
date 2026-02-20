@@ -1,11 +1,12 @@
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
+from ....application.read.CalculationReader import get_calculation_reader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
-from ....application.read.CalculationReader import get_calculation_reader
 from ....infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
-from ....types.Project import ProjectId
 from ....types.calculation.Calculation import CalculationId
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class ReadCalculationTimeSeriesResultsRequestHandler:
@@ -47,13 +48,7 @@ class ReadCalculationTimeSeriesResultsRequestHandler:
                 data = [[None if cell < -999 else cell for cell in row] for row in data]
                 data = [[round(cell, 3) if cell is not None else cell for cell in row] for row in data]
 
-                result = {
-                    'result_type': result_type,
-                    'layer_idx': layer,
-                    'row_idx': row,
-                    'col_idx': col,
-                    'data': data
-                }
+                result = {'result_type': result_type, 'layer_idx': layer, 'row_idx': row, 'col_idx': col, 'data': data}
 
                 return result, 200
 
@@ -61,13 +56,7 @@ class ReadCalculationTimeSeriesResultsRequestHandler:
                 data = engine.read_transport_concentration_time_series(layer=layer, row=row, col=col, precision=4)
                 data = [[None if cell < -999 else cell for cell in row] for row in data]
 
-                result = {
-                    'result_type': result_type,
-                    'layer_idx': layer,
-                    'row_idx': row,
-                    'col_idx': col,
-                    'data': data
-                }
+                result = {'result_type': result_type, 'layer_idx': layer, 'row_idx': row, 'col_idx': col, 'data': data}
 
                 return result, 200
 

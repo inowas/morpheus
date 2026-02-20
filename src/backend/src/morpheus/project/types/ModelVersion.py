@@ -1,6 +1,6 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import String, Uuid
 
 
 class VersionId(Uuid):
@@ -30,11 +30,7 @@ class ModelVersion:
 
     @classmethod
     def new(cls, tag: VersionTag, description: VersionDescription):
-        return cls(
-            version_id=VersionId.new(),
-            tag=tag,
-            description=description
-        )
+        return cls(version_id=VersionId.new(), tag=tag, description=description)
 
     @classmethod
     def from_dict(cls, obj: dict):

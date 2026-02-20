@@ -2,10 +2,10 @@ import dataclasses
 from enum import StrEnum
 
 from morpheus.common.types import Uuid
+from morpheus.project.types.calculation.CalculationProfile import CalculationEngineType, CalculationProfile, CalculationProfileId
+from morpheus.project.types.calculation.CalculationResult import CalculationResult
 from morpheus.project.types.Model import Model, ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.project.types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId, CalculationEngineType
-from morpheus.project.types.calculation.CalculationResult import CalculationResult
 
 
 class CalculationId(Uuid):

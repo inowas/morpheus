@@ -1,9 +1,9 @@
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineBase import CalculationEngineBase
 from morpheus.project.infrastructure.calculation.engines.base.CalculationEngineFactory import CalculationEngineFactory
-from morpheus.project.types.Model import Model
 from morpheus.project.types.calculation.Calculation import Log
 from morpheus.project.types.calculation.CalculationProfile import CalculationProfile
 from morpheus.project.types.calculation.CalculationResult import CalculationResult
+from morpheus.project.types.Model import Model
 
 
 class CalculationService:

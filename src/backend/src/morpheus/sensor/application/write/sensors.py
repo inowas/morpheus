@@ -19,8 +19,5 @@ def insert_record(sensor_name: str, data: dict) -> None:
 
 
 def is_already_recorded(sensor_name: str, filename: str, source: str) -> bool:
-    result = sensor_db.find(sensor_name, {
-        'filename': filename,
-        'metadata.source': source
-    })
+    result = sensor_db.find(sensor_name, {'filename': filename, 'metadata.source': source})
     return len(list(result)) > 0

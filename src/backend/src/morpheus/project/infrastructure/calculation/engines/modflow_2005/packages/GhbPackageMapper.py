@@ -1,13 +1,13 @@
 import numpy as np
-from shapely import LineString as ShapelyLineString, Point as ShapelyPoint
+from shapely import LineString as ShapelyLineString
+from shapely import Point as ShapelyPoint
 
 from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import StressPeriodData
-from morpheus.project.types.Model import Model
 from morpheus.project.types.boundaries.Boundary import BoundaryType, GeneralHeadBoundary
 from morpheus.project.types.boundaries.GeneralHeadObservation import GeneralHeadDataItem
-
-from morpheus.project.types.discretization import TimeDiscretization, SpatialDiscretization
+from morpheus.project.types.discretization import SpatialDiscretization, TimeDiscretization
 from morpheus.project.types.layers import LayersCollection
+from morpheus.project.types.Model import Model
 
 
 class GhbStressPeriodData(StressPeriodData):
@@ -15,16 +15,13 @@ class GhbStressPeriodData(StressPeriodData):
 
 
 def calculate_ghb_boundary_stress_period_data(
-    spatial_discretization: SpatialDiscretization,
-    time_discretization: TimeDiscretization,
-    layers: LayersCollection,
-    ghb_boundary: GeneralHeadBoundary
+    spatial_discretization: SpatialDiscretization, time_discretization: TimeDiscretization, layers: LayersCollection, ghb_boundary: GeneralHeadBoundary
 ) -> GhbStressPeriodData:
     layer_ids = [layer.layer_id for layer in layers]
     sp_data = GhbStressPeriodData()
 
     # first we need to calculate the mean values for each observation point and each stress period
-    for stress_period_idx, stress_period in enumerate(time_discretization.stress_periods):
+    for stress_period_idx, _stress_period in enumerate(time_discretization.stress_periods):
         start_date_time = time_discretization.get_start_date_times()[stress_period_idx]
         end_date_time = time_discretization.get_end_date_times()[stress_period_idx]
         mean_data = ghb_boundary.get_mean_data(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=ghb_boundary.interpolation)
@@ -38,8 +35,7 @@ def calculate_ghb_boundary_stress_period_data(
         layer_indices = [layer_ids.index(layer_id) for layer_id in ghb_boundary.affected_layers]
 
         # we need to filter the affected cells to only include cells that are part of the model
-        ghb_boundary.affected_cells = ghb_boundary.affected_cells.filter(
-            lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
+        ghb_boundary.affected_cells = ghb_boundary.affected_cells.filter(lambda affected_cell: spatial_discretization.affected_cells.contains(affected_cell))
 
         if ghb_boundary.number_of_observations() == 1:
             # if we only have one observation point
@@ -47,7 +43,7 @@ def calculate_ghb_boundary_stress_period_data(
 
             mean_data = mean_data[0]
             if not isinstance(mean_data, GeneralHeadDataItem):
-                raise TypeError("Expected GeneralHeadDataItem but got {}".format(type(mean_data)))
+                raise TypeError(f'Expected GeneralHeadDataItem but got {type(mean_data)}')
 
             stage = mean_data.stage
             conductance = mean_data.conductance
@@ -59,17 +55,16 @@ def calculate_ghb_boundary_stress_period_data(
                     continue
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
-                                      values=[stage.to_float(), conductance.to_float()], sum_up_values=False)
+                    sp_data.set_value(
+                        time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[stage.to_float(), conductance.to_float()], sum_up_values=False
+                    )
 
         if ghb_boundary.number_of_observations() > 1:
             # if we have multiple observation points
             # we need to interpolate the mean data for each affected cell ;(
             line_string = ShapelyLineString(ghb_boundary.geometry.coordinates)
             observations = ghb_boundary.get_observations()
-            observations.sort(
-                key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True)
-            )
+            observations.sort(key=lambda obs: line_string.project(ShapelyPoint(obs.geometry.coordinates), normalized=True))
 
             xx: list[float] = []
             yy_stages: list[float] = []
@@ -80,7 +75,7 @@ def calculate_ghb_boundary_stress_period_data(
 
                 mean_data = observation.get_data_item(start_date_time=start_date_time, end_date_time=end_date_time, interpolation=ghb_boundary.interpolation)
                 if not isinstance(mean_data, GeneralHeadDataItem):
-                    raise TypeError("Expected GeneralHeadDataItem but got {}".format(type(mean_data)))
+                    raise TypeError(f'Expected GeneralHeadDataItem but got {type(mean_data)}')
 
                 yy_stages.append(mean_data.stage.to_float())
                 yy_conductances.append(mean_data.conductance.to_float())
@@ -98,8 +93,7 @@ def calculate_ghb_boundary_stress_period_data(
                 yy_new_conductance = float(np.interp(xx_new, xx, yy_conductances)[0])
 
                 for layer_idx in layer_indices:
-                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col,
-                                      values=[yy_new_stage, yy_new_conductance], sum_up_values=False)
+                    sp_data.set_value(time_step=stress_period_idx, layer=layer_idx, row=cell.row, column=cell.col, values=[yy_new_stage, yy_new_conductance], sum_up_values=False)
 
     return sp_data
 
@@ -109,15 +103,10 @@ def calculate_stress_period_data(model: Model) -> GhbStressPeriodData | None:
     ghb_boundaries = model.boundaries.get_boundaries_of_type(BoundaryType.general_head)
     for ghb_boundary in ghb_boundaries:
         if not isinstance(ghb_boundary, GeneralHeadBoundary):
-            raise TypeError(
-                "Expected boundary of type {} but got {}".format(GeneralHeadBoundary.__name__, type(ghb_boundary))
-            )
+            raise TypeError(f'Expected boundary of type {GeneralHeadBoundary.__name__} but got {type(ghb_boundary)}')
 
         sp_data_boundary = calculate_ghb_boundary_stress_period_data(
-            spatial_discretization=model.spatial_discretization,
-            time_discretization=model.time_discretization,
-            layers=model.layers,
-            ghb_boundary=ghb_boundary
+            spatial_discretization=model.spatial_discretization, time_discretization=model.time_discretization, layers=model.layers, ghb_boundary=ghb_boundary
         )
         sp_data = sp_data.merge(other=sp_data_boundary, sum_up_values=False)
 

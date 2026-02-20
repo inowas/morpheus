@@ -1,24 +1,24 @@
 import dataclasses
-from typing import TypedDict, List, Optional
+from typing import TypedDict
 
 from morpheus.common.types import DateTime, Uuid
-from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.Exceptions import NotFoundException
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
-from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectMetadataUpdatedEvent
-from morpheus.project.types.Project import ProjectId, Name, Description, Tags
-from morpheus.common.types.identity.Identity import UserId
+from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from morpheus.project.types.Project import Description, Name, ProjectId, Tags
 
 
 class UpdateProjectMetadataPayload(TypedDict):
     project_id: str
-    name: Optional[str]
-    description: Optional[str]
-    tags: Optional[List[str]]
+    name: str | None
+    description: str | None
+    tags: list[str] | None
 
 
 @dataclasses.dataclass(frozen=True)

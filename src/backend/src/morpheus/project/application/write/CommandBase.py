@@ -1,6 +1,8 @@
 import dataclasses
 from typing import Any
+
 import inflection
+
 from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.types.Project import ProjectId
 

@@ -1,12 +1,12 @@
-from morpheus.common.infrastructure.event_sourcing.EventPublisher import listen_to, EventListenerBase
+from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventListenerBase, listen_to
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
+
 from ...domain.events.ProjectPermissionEvents.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, OwnershipUpdatedEvent, VisibilityUpdatedEvent
-from ...infrastructure.persistence.PermissionsRepository import permissions_repository, PermissionsRepository
+from ...infrastructure.persistence.PermissionsRepository import PermissionsRepository, permissions_repository
 
 
 class PermissionsProjector(EventListenerBase):
-
     def __init__(self, repository: PermissionsRepository):
         self.repository = repository
 

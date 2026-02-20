@@ -4,43 +4,41 @@ This test module replicates the complete workflow from the
 RioPrimeroWithCommands.ipynb notebook, testing the entire flow
 from project creation through layer configuration.
 """
+
 from datetime import datetime
 
 import pytest
 
 from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.Project import ProjectId, Name, Description, Tags
-from morpheus.project.types.Model import ModelId
-from morpheus.project.types.discretization.spatial import Rotation
-from morpheus.project.types.discretization.time import TimeDiscretization
-from morpheus.project.types.discretization.time.TimeUnit import TimeUnit
-from morpheus.project.types.discretization.time.Stressperiods import (
-    StartDateTime, EndDateTime, StressPeriodCollection, StressPeriod,
-    NumberOfTimeSteps, TimeStepMultiplier, IsSteadyState
-)
-from morpheus.project.types.geometry import Polygon
-from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
-from morpheus.project.types.layers.Layer import (
-    LayerId, LayerName, LayerProperties, LayerDescription,
-    LayerConfinement, LayerPropertyName, LayerPropertyDefaultValue
-)
-from morpheus.project.application.write import project_command_bus
 from morpheus.project.application.read.ModelReader import ModelReader
-from morpheus.project.application.write.Project import CreateProjectCommand
+from morpheus.project.application.write import project_command_bus
+from morpheus.project.application.write.Model.Discretization import UpdateModelTimeDiscretizationCommand
 from morpheus.project.application.write.Model.General import CreateModelCommand
-from morpheus.project.application.write.Model.Discretization import (
-    UpdateModelTimeDiscretizationCommand
-)
 from morpheus.project.application.write.Model.Layers import (
     CreateModelLayerCommand,
     DeleteModelLayerCommand,
     UpdateModelLayerMetadataCommand,
     UpdateModelLayerPropertyDefaultValueCommand,
 )
-from morpheus.project.application.write.Model.Layers.UpdateModelLayerPropertyZones import (
-    LayerPropertyZoneWithOptionalAffectedCells,
-    UpdateModelLayerPropertyZonesCommand
+from morpheus.project.application.write.Model.Layers.UpdateModelLayerPropertyZones import LayerPropertyZoneWithOptionalAffectedCells, UpdateModelLayerPropertyZonesCommand
+from morpheus.project.application.write.Project import CreateProjectCommand
+from morpheus.project.types.discretization.spatial import Rotation
+from morpheus.project.types.discretization.time import TimeDiscretization
+from morpheus.project.types.discretization.time.Stressperiods import (
+    EndDateTime,
+    IsSteadyState,
+    NumberOfTimeSteps,
+    StartDateTime,
+    StressPeriod,
+    StressPeriodCollection,
+    TimeStepMultiplier,
 )
+from morpheus.project.types.discretization.time.TimeUnit import TimeUnit
+from morpheus.project.types.geometry import Polygon
+from morpheus.project.types.geometry.MultiPolygon import MultiPolygon
+from morpheus.project.types.layers.Layer import LayerConfinement, LayerDescription, LayerId, LayerName, LayerProperties, LayerPropertyDefaultValue, LayerPropertyName
+from morpheus.project.types.Model import ModelId
+from morpheus.project.types.Project import Description, Name, ProjectId, Tags
 
 pytestmark = [pytest.mark.integration, pytest.mark.workflow, pytest.mark.slow]
 
@@ -63,13 +61,15 @@ class TestRioPrimeroCompleteWorkflow:
         # Test polygon (same as in notebook)
         self.polygon = Polygon(
             type='Polygon',
-            coordinates=[[
-                (13.922514437551428, 50.964720483303836),
-                (13.925250781947113, 50.965228748412386),
-                (13.925036413951403, 50.96623732041704),
-                (13.92222441026388, 50.96629040370362),
-                (13.922514437551428, 50.964720483303836)
-            ]]
+            coordinates=[
+                [
+                    (13.922514437551428, 50.964720483303836),
+                    (13.925250781947113, 50.965228748412386),
+                    (13.925036413951403, 50.96623732041704),
+                    (13.92222441026388, 50.96629040370362),
+                    (13.922514437551428, 50.964720483303836),
+                ]
+            ],
         )
 
     def test_complete_rio_primero_workflow(self):
@@ -83,7 +83,7 @@ class TestRioPrimeroCompleteWorkflow:
             name=Name('Rio Primero Integration Test'),
             description=Description('Rio Primero Project in Argentina - Integration Test'),
             tags=Tags.from_list(['rio primero', 'argentina', 'integration-test']),
-            user_id=self.user_id
+            user_id=self.user_id,
         )
         self.command_bus.dispatch(create_project_command)
 
@@ -103,15 +103,17 @@ class TestRioPrimeroCompleteWorkflow:
         time_discretization = TimeDiscretization(
             start_date_time=StartDateTime.from_datetime(datetime(2015, 1, 1)),
             end_date_time=EndDateTime.from_datetime(datetime(2020, 12, 31)),
-            stress_periods=StressPeriodCollection([
-                StressPeriod(
-                    start_date_time=StartDateTime.from_datetime(datetime(2015, 1, 1)),
-                    number_of_time_steps=NumberOfTimeSteps(1),
-                    time_step_multiplier=TimeStepMultiplier(1),
-                    steady_state=IsSteadyState.yes()
-                ),
-            ]),
-            time_unit=TimeUnit.days()
+            stress_periods=StressPeriodCollection(
+                [
+                    StressPeriod(
+                        start_date_time=StartDateTime.from_datetime(datetime(2015, 1, 1)),
+                        number_of_time_steps=NumberOfTimeSteps(1),
+                        time_step_multiplier=TimeStepMultiplier(1),
+                        steady_state=IsSteadyState.yes(),
+                    ),
+                ]
+            ),
+            time_unit=TimeUnit.days(),
         )
 
         update_time_discretization_command = UpdateModelTimeDiscretizationCommand(
@@ -131,16 +133,7 @@ class TestRioPrimeroCompleteWorkflow:
             name=LayerName('Top Layer'),
             confinement=LayerConfinement.convertible(),
             description=LayerDescription('Top Layer'),
-            properties=LayerProperties.from_values(
-                top=460,
-                bottom=450,
-                initial_head=460,
-                hk=8.64,
-                hani=1,
-                vka=0.864,
-                specific_storage=1e-5,
-                specific_yield=0.2
-            )
+            properties=LayerProperties.from_values(top=460, bottom=450, initial_head=460, hk=8.64, hani=1, vka=0.864, specific_storage=1e-5, specific_yield=0.2),
         )
         self.command_bus.dispatch(create_top_layer_command)
 
@@ -168,7 +161,7 @@ class TestRioPrimeroCompleteWorkflow:
                 vka=0.1,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
         self.command_bus.dispatch(create_aquitard_command)
 
@@ -191,7 +184,7 @@ class TestRioPrimeroCompleteWorkflow:
                 vka=0.864,
                 specific_storage=1e-5,
                 specific_yield=0.2,
-            )
+            ),
         )
         self.command_bus.dispatch(create_aquifer_command)
 
@@ -204,12 +197,7 @@ class TestRioPrimeroCompleteWorkflow:
         layers = model.layers
         default_layer_id = layers[0].layer_id
 
-        delete_default_layer_command = DeleteModelLayerCommand(
-            project_id=self.project_id,
-            model_id=self.model_id,
-            user_id=self.user_id,
-            layer_id=default_layer_id
-        )
+        delete_default_layer_command = DeleteModelLayerCommand(project_id=self.project_id, model_id=self.model_id, user_id=self.user_id, layer_id=default_layer_id)
         self.command_bus.dispatch(delete_default_layer_command)
 
         # Verify default layer was deleted
@@ -255,45 +243,16 @@ class TestRioPrimeroCompleteWorkflow:
         bottom_left_top_right_polygons = MultiPolygon(
             type='MultiPolygon',
             coordinates=[
-                [[
-                    (13.92223, 50.9647),
-                    (13.92223, 50.9650),
-                    (13.92400, 50.9650),
-                    (13.92400, 50.9647),
-                    (13.92223, 50.9647)
-                ]],
-                [[
-                    (13.924, 50.965),
-                    (13.924, 50.966),
-                    (13.925, 50.966),
-                    (13.925, 50.965),
-                    (13.924, 50.965)
-                ]]
-            ]
+                [[(13.92223, 50.9647), (13.92223, 50.9650), (13.92400, 50.9650), (13.92400, 50.9647), (13.92223, 50.9647)]],
+                [[(13.924, 50.965), (13.924, 50.966), (13.925, 50.966), (13.925, 50.965), (13.924, 50.965)]],
+            ],
         )
 
-        bottom_right_polygon = Polygon(
-            type='Polygon',
-            coordinates=[[
-                (13.923, 50.965),
-                (13.923, 50.966),
-                (13.924, 50.966),
-                (13.924, 50.965),
-                (13.923, 50.965)
-            ]]
-        )
+        bottom_right_polygon = Polygon(type='Polygon', coordinates=[[(13.923, 50.965), (13.923, 50.966), (13.924, 50.966), (13.924, 50.965), (13.923, 50.965)]])
 
         zones = [
-            LayerPropertyZoneWithOptionalAffectedCells.from_payload({
-                'name': 'Zone 1',
-                'geometry': bottom_left_top_right_polygons.to_dict(),
-                'value': 5
-            }),
-            LayerPropertyZoneWithOptionalAffectedCells.from_payload({
-                'name': 'Zone 2',
-                'geometry': bottom_right_polygon.to_dict(),
-                'value': 10
-            })
+            LayerPropertyZoneWithOptionalAffectedCells.from_payload({'name': 'Zone 1', 'geometry': bottom_left_top_right_polygons.to_dict(), 'value': 5}),
+            LayerPropertyZoneWithOptionalAffectedCells.from_payload({'name': 'Zone 2', 'geometry': bottom_right_polygon.to_dict(), 'value': 10}),
         ]
 
         update_zones_command = UpdateModelLayerPropertyZonesCommand(

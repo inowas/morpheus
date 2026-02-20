@@ -2,7 +2,7 @@ import dataclasses
 from enum import StrEnum
 
 from morpheus.common.infrastructure.event_sourcing.EventFactory import EventFactory, EventRegistry
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
 from morpheus.common.types.identity.Identity import UserId
@@ -28,11 +28,7 @@ class UserEventBase(EventBase):
 class UserCreatedEvent(UserEventBase):
     @classmethod
     def from_user_data(cls, user_id: UserId, user_data: UserData, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(user_id.to_str()),
-            occurred_at=occurred_at,
-            payload=user_data.to_dict()
-        )
+        return cls.create(entity_uuid=Uuid.from_str(user_id.to_str()), occurred_at=occurred_at, payload=user_data.to_dict())
 
     def get_user_data(self) -> UserData:
         return UserData.from_dict(self.payload)
@@ -64,13 +60,7 @@ class UserDataUpdatedEvent(UserEventBase):
 class UserLinkedToKeycloakEvent(UserEventBase):
     @classmethod
     def from_keycloak_user_id(cls, user_id: UserId, keycloak_user_id: KeycloakUserId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(user_id.to_str()),
-            occurred_at=occurred_at,
-            payload={
-                'keycloak_user_id': keycloak_user_id.to_str()
-            }
-        )
+        return cls.create(entity_uuid=Uuid.from_str(user_id.to_str()), occurred_at=occurred_at, payload={'keycloak_user_id': keycloak_user_id.to_str()})
 
     def get_keycloak_user_id(self) -> KeycloakUserId:
         return KeycloakUserId.from_str(self.payload['keycloak_user_id'])
@@ -89,7 +79,7 @@ class UserLinkedToGeonodeEvent(UserEventBase):
             occurred_at=occurred_at,
             payload={
                 'geo_node_user_id': geo_node_user_id.to_int(),
-            }
+            },
         )
 
     def get_geo_node_user_id(self) -> GeoNodeUserId:
@@ -104,11 +94,7 @@ class UserLinkedToGeonodeEvent(UserEventBase):
 class UserPromotedToAdminEvent(UserEventBase):
     @classmethod
     def new(cls, user_id: UserId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(user_id.to_str()),
-            occurred_at=occurred_at,
-            payload={}
-        )
+        return cls.create(entity_uuid=Uuid.from_str(user_id.to_str()), occurred_at=occurred_at, payload={})
 
     @staticmethod
     def get_event_name() -> EventName:
@@ -119,11 +105,7 @@ class UserPromotedToAdminEvent(UserEventBase):
 class UserDemotedFromAdminEvent(UserEventBase):
     @classmethod
     def new(cls, user_id: UserId, occurred_at: DateTime):
-        return cls.create(
-            entity_uuid=Uuid.from_str(user_id.to_str()),
-            occurred_at=occurred_at,
-            payload={}
-        )
+        return cls.create(entity_uuid=Uuid.from_str(user_id.to_str()), occurred_at=occurred_at, payload={})
 
     @staticmethod
     def get_event_name() -> EventName:

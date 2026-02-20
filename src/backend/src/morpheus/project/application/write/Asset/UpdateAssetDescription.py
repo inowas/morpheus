@@ -7,7 +7,7 @@ from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.infrastructure.assets.AssetHandlingService import get_asset_handling_service
-from morpheus.project.types.Asset import AssetId, AssetDescription
+from morpheus.project.types.Asset import AssetDescription, AssetId
 from morpheus.project.types.Project import ProjectId
 
 
@@ -28,7 +28,7 @@ class UpdateAssetDescriptionCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             asset_id=AssetId.from_str(payload['asset_id']),
-            asset_description=AssetDescription.from_str(payload['asset_description'])
+            asset_description=AssetDescription.from_str(payload['asset_description']),
         )
 
 

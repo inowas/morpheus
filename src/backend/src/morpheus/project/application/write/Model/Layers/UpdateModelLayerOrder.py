@@ -1,18 +1,18 @@
 import dataclasses
 from typing import TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerOrderUpdatedEvent
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
+from morpheus.project.types.layers.Layer import LayerId
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.layers.Layer import LayerId
 
 
 class UpdateModelLayerOrderPayload(TypedDict):
@@ -32,7 +32,7 @@ class UpdateModelLayerOrderCommand(ProjectCommandBase):
             user_id=user_id,
             project_id=ProjectId.from_str(payload['project_id']),
             model_id=ModelId.from_str(payload['model_id']),
-            layer_ids=[LayerId.from_str(layer_id) for layer_id in payload['layer_ids']]
+            layer_ids=[LayerId.from_str(layer_id) for layer_id in payload['layer_ids']],
         )
 
 
@@ -48,12 +48,7 @@ class UpdateModelLayerOrderCommandHandler(CommandHandlerBase):
 
         model.layers.assert_order_can_be_updated(layer_ids=command.layer_ids)
 
-        event = ModelLayerOrderUpdatedEvent.from_layer_ids(
-            project_id=project_id,
-            model_id=command.model_id,
-            layer_ids=command.layer_ids,
-            occurred_at=DateTime.now()
-        )
+        event = ModelLayerOrderUpdatedEvent.from_layer_ids(project_id=project_id, model_id=command.model_id, layer_ids=command.layer_ids, occurred_at=DateTime.now())
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))
         event_envelope = EventEnvelope(event=event, metadata=event_metadata)

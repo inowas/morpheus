@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal, Any
+from typing import Any, Literal
 
 from .GeometryFactory import GeometryFactory
 from .LineString import LineString
@@ -18,7 +18,7 @@ class Feature:
         return {
             'type': self.type,
             'geometry': self.geometry.__geo_interface__() if self.geometry is not None else None,
-            'properties': self.properties if self.properties is not None else None
+            'properties': self.properties if self.properties is not None else None,
         }
 
     @classmethod
@@ -27,11 +27,7 @@ class Feature:
         return cls(geometry=geometry, properties=obj['properties'], type=obj['type'])
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'geometry': self.geometry.to_dict() if self.geometry is not None else None,
-            'properties': self.properties
-        }
+        return {'type': self.type, 'geometry': self.geometry.to_dict() if self.geometry is not None else None, 'properties': self.properties}
 
     def as_geojson(self):
         return self.__geo_interface__()

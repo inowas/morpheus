@@ -1,6 +1,7 @@
 import dataclasses
+
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.common.types.String import NonEmptyString
-from morpheus.common.types.identity.Identity import UserId, GroupId
 
 
 @dataclasses.dataclass(frozen=True)
@@ -30,7 +31,7 @@ class Group:
             group_id=GroupId.from_str(obj['group_id']),
             group_name=GroupName.from_str(obj['group_name']),
             members=set([UserId.from_str(member) for member in obj['members']]),
-            admins=set([UserId.from_str(admin) for admin in obj['admins']])
+            admins=set([UserId.from_str(admin) for admin in obj['admins']]),
         )
 
     def to_dict(self):

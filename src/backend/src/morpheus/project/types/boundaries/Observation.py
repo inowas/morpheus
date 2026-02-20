@@ -1,8 +1,8 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, String
+from morpheus.common.types import String, Uuid
 from morpheus.project.types.boundaries.BoundaryInterpolationType import InterpolationType
-from morpheus.project.types.discretization.time.Stressperiods import StartDateTime, EndDateTime
+from morpheus.project.types.discretization.time.Stressperiods import EndDateTime, StartDateTime
 from morpheus.project.types.geometry import Point
 
 

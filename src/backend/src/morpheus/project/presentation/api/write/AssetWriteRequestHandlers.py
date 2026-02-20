@@ -1,15 +1,22 @@
-from flask import abort, request, Response
+from flask import Response, abort, request
 
-from morpheus.common.presentation.api.helpers.file_upload import remove_uploaded_file, move_uploaded_files_to_tmp_dir
-from morpheus.common.types.Exceptions import NotFoundException, InsufficientPermissionsException
+from morpheus.common.presentation.api.helpers.file_upload import move_uploaded_files_to_tmp_dir, remove_uploaded_file
+from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.read.PermissionsReader import permissions_reader
-from ....application.write.AssetCommandHandlers import UpdatePreviewImageCommand, UpdatePreviewImageCommandHandler, DeletePreviewImageCommand, DeletePreviewImageCommandHandler, \
-    UploadAssetCommand, UploadAssetCommandHandler
+from ....application.write.AssetCommandHandlers import (
+    DeletePreviewImageCommand,
+    DeletePreviewImageCommandHandler,
+    UpdatePreviewImageCommand,
+    UpdatePreviewImageCommandHandler,
+    UploadAssetCommand,
+    UploadAssetCommandHandler,
+)
 from ....incoming import get_identity
-from ....types.Asset import AssetId, AssetDescription
-from ....types.Exceptions import InvalidMimeTypeException, InvalidShapefileException, InvalidGeoTiffException
-from ....types.Project import ProjectId
+from ....types.Asset import AssetDescription, AssetId
+from ....types.Exceptions import InvalidGeoTiffException, InvalidMimeTypeException, InvalidShapefileException
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 
 class UploadPreviewImageRequestHandler:
@@ -19,20 +26,14 @@ class UploadPreviewImageRequestHandler:
         if identity is None:
             abort(401, 'Unauthorized')
 
-        if not request.mimetype == 'multipart/form-data':
+        if request.mimetype != 'multipart/form-data':
             abort(415, 'Request body must multipart/form-data')
 
         file_name, file_path = move_uploaded_files_to_tmp_dir('file', 1)[0]
 
         try:
             permissions_reader.assert_identity_can(Privilege.EDIT_PROJECT, identity, project_id)
-            command = UpdatePreviewImageCommand(
-                asset_id=AssetId.new(),
-                project_id=project_id,
-                file_name=file_name,
-                file_path=file_path,
-                updated_by=identity.user_id
-            )
+            command = UpdatePreviewImageCommand(asset_id=AssetId.new(), project_id=project_id, file_name=file_name, file_path=file_path, updated_by=identity.user_id)
             UpdatePreviewImageCommandHandler.handle(command)
         except NotFoundException as e:
             abort(404, str(e))
@@ -55,12 +56,7 @@ class DeletePreviewImageRequestHandler:
 
         try:
             permissions_reader.assert_identity_can(Privilege.EDIT_PROJECT, identity, project_id)
-            DeletePreviewImageCommandHandler.handle(
-                DeletePreviewImageCommand(
-                    project_id=project_id,
-                    updated_by=identity.user_id
-                )
-            )
+            DeletePreviewImageCommandHandler.handle(DeletePreviewImageCommand(project_id=project_id, updated_by=identity.user_id))
         except NotFoundException as e:
             abort(404, str(e))
         except InsufficientPermissionsException as e:
@@ -76,7 +72,7 @@ class UploadAssetRequestHandler:
         if identity is None:
             abort(401, 'Unauthorized')
 
-        if not request.mimetype == 'multipart/form-data':
+        if request.mimetype != 'multipart/form-data':
             abort(415, 'Request body must multipart/form-data')
 
         file_name, file_path = move_uploaded_files_to_tmp_dir('file', 1)[0]

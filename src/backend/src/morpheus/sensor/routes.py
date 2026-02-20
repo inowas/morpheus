@@ -1,9 +1,8 @@
 from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
-from .presentation.api import ReadSensorListRequestHandler, ReadSensorsLatestValuesRequestHandler, \
-    ReadSensorDataRequestHandler
 from ..common.presentation.api.middleware.schema_validation import validate_request
+from .presentation.api import ReadSensorDataRequestHandler, ReadSensorListRequestHandler, ReadSensorsLatestValuesRequestHandler
 
 
 def register_routes(blueprint: Blueprint):

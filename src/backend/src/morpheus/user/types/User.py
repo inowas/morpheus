@@ -1,8 +1,8 @@
 import dataclasses
 
-from morpheus.common.types import Uuid, Integer
-from morpheus.common.types.String import NonEmptyString
+from morpheus.common.types import Integer, Uuid
 from morpheus.common.types.identity.Identity import UserId
+from morpheus.common.types.String import NonEmptyString
 
 
 @dataclasses.dataclass(frozen=True)
@@ -82,7 +82,7 @@ class User:
             user_id=UserId.from_str(obj['user_id']),
             keycloak_user_id=KeycloakUserId.from_str(obj['keycloak_user_id']) if obj['keycloak_user_id'] else None,
             geo_node_user_id=GeoNodeUserId(obj['geo_node_user_id']) if obj['geo_node_user_id'] else None,
-            is_admin=True if obj['is_admin'] is True else False,
+            is_admin=bool(obj['is_admin']),
             user_data=UserData.from_dict(obj),
         )
 

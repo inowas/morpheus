@@ -2,8 +2,8 @@ import os.path
 import re
 
 from morpheus.common.types.File import File, FileName
-from morpheus.project.types.Asset import AssetType, Asset
-from morpheus.project.types.Exceptions import InvalidMimeTypeException, InvalidFileNameException
+from morpheus.project.types.Asset import Asset, AssetType
+from morpheus.project.types.Exceptions import InvalidFileNameException, InvalidMimeTypeException
 
 
 class AssetService:
@@ -11,13 +11,13 @@ class AssetService:
     def assert_file_can_be_used_as_preview_image(file: File):
         allowed_mimetypes = ['image/png', 'image/jpeg']
         if file.mime_type not in allowed_mimetypes:
-            raise InvalidMimeTypeException(f'Mimetype {file.mime_type} not allowed for preview image (allowed mimetypes: {', '.join(allowed_mimetypes)})')
+            raise InvalidMimeTypeException(f'Mimetype {file.mime_type} not allowed for preview image (allowed mimetypes: {", ".join(allowed_mimetypes)})')
 
     @staticmethod
     def guess_asset_type_for_file(file: File):
         mime_type_asset_type_map = {'image/tiff': AssetType.GEO_TIFF, 'application/zip': AssetType.SHAPEFILE}
         if file.mime_type not in mime_type_asset_type_map:
-            raise InvalidMimeTypeException(f'Mimetype {file.mime_type} not allowed for assets (allowed mimetypes: {', '.join(mime_type_asset_type_map.keys())})')
+            raise InvalidMimeTypeException(f'Mimetype {file.mime_type} not allowed for assets (allowed mimetypes: {", ".join(mime_type_asset_type_map.keys())})')
 
         return mime_type_asset_type_map[file.mime_type]
 

@@ -1,5 +1,6 @@
 import dataclasses
 from typing import Literal
+
 from .Feature import Feature
 
 
@@ -9,10 +10,7 @@ class FeatureCollection:
     type: Literal['FeatureCollection'] = 'FeatureCollection'
 
     def __geo_interface__(self):
-        return {
-            'type': self.type,
-            'features': [feature.__geo_interface__() for feature in self.features if feature.geometry is not None]
-        }
+        return {'type': self.type, 'features': [feature.__geo_interface__() for feature in self.features if feature.geometry is not None]}
 
     @classmethod
     def from_dict(cls, obj: dict):
@@ -21,10 +19,7 @@ class FeatureCollection:
         return cls(features=[Feature.from_dict(feature) for feature in obj['features']])
 
     def to_dict(self):
-        return {
-            'type': self.type,
-            'features': [feature.to_dict() for feature in self.features]
-        }
+        return {'type': self.type, 'features': [feature.to_dict() for feature in self.features]}
 
     def as_geojson(self):
         return self.__geo_interface__()

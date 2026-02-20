@@ -1,10 +1,11 @@
 import dataclasses
 
-from morpheus.common.infrastructure.persistence.mongodb import get_database_client, RepositoryBase, create_or_get_collection
+from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
 from morpheus.settings import settings as app_settings
+
+from ...types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId
 from ...types.Model import Sha1Hash
 from ...types.Project import ProjectId
-from ...types.calculation.CalculationProfile import CalculationProfile, CalculationProfileId
 
 
 @dataclasses.dataclass
@@ -98,59 +99,44 @@ class CalculationProfilesRepository(RepositoryBase):
 
     def add_calculation_profile(self, project_id: ProjectId, calculation_profile: CalculationProfile) -> None:
         if not self.has_calculation_profiles(project_id):
-            self.collection.insert_one({
-                'project_id': project_id.to_str(),
-                'selected_calculation_profile_id': calculation_profile.id.to_str(),
-                'calculation_profiles': {
-                    calculation_profile.id.to_str(): calculation_profile.to_dict()
+            self.collection.insert_one(
+                {
+                    'project_id': project_id.to_str(),
+                    'selected_calculation_profile_id': calculation_profile.id.to_str(),
+                    'calculation_profiles': {calculation_profile.id.to_str(): calculation_profile.to_dict()},
                 }
-            })
+            )
             return
 
         document = self.get_document(project_id)
         document.add_calculation_profile(calculation_profile)
 
-        self.collection.replace_one(
-            filter={'project_id': project_id.to_str()},
-            replacement=document.to_dict()
-        )
+        self.collection.replace_one(filter={'project_id': project_id.to_str()}, replacement=document.to_dict())
 
     def update_calculation_profile(self, project_id: ProjectId, calculation_profile: CalculationProfile) -> None:
         document = self.get_document(project_id)
         document.update_calculation_profile(calculation_profile)
 
-        self.collection.replace_one(
-            filter={'project_id': project_id.to_str()},
-            replacement=document.to_dict()
-        )
+        self.collection.replace_one(filter={'project_id': project_id.to_str()}, replacement=document.to_dict())
 
     def update_selected_calculation_profile(self, project_id: ProjectId, calculation_profile_id: CalculationProfileId) -> None:
         document = self.get_document(project_id)
         document.set_selected_profile_id(calculation_profile_id)
 
-        self.collection.replace_one(
-            filter={'project_id': project_id.to_str()},
-            replacement=document.to_dict()
-        )
+        self.collection.replace_one(filter={'project_id': project_id.to_str()}, replacement=document.to_dict())
 
     def delete_calculation_profile(self, project_id: ProjectId, profile_id: CalculationProfileId) -> None:
         document = self.get_document(project_id)
         document.delete_calculation_profile(profile_id)
 
-        self.collection.replace_one(
-            filter={'project_id': project_id.to_str()},
-            replacement=document.to_dict()
-        )
+        self.collection.replace_one(filter={'project_id': project_id.to_str()}, replacement=document.to_dict())
 
     def delete_all(self, project_id: ProjectId) -> None:
         self.collection.delete_one({'project_id': project_id.to_str()})
 
 
 calculation_profiles_repository = CalculationProfilesRepository(
-    collection=create_or_get_collection(
-        get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True),
-        'calculation_profiles'
-    )
+    collection=create_or_get_collection(get_database_client(app_settings.MONGO_PROJECT_DATABASE, create_if_not_exist=True), 'calculation_profiles')
 )
 
 

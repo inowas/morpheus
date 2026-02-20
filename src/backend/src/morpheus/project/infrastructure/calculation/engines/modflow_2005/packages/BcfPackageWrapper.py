@@ -1,4 +1,5 @@
 import dataclasses
+
 import numpy as np
 from flopy.modflow import ModflowBcf as FlopyModflowBcf
 
@@ -59,13 +60,28 @@ class BcfPackageData:
     filenames: list[str] | str | None
     add_package: bool
 
-    def __init__(self, ipakcb: int = 0, intercellt: list[int] | int = 0, laycon: list[int] | int = 3,
-                 trpy: list[float] | float = 1.0, hdry: float = -1e+30, iwdflg: int = 0, wetfct: float = 0.1,
-                 iwetit: int = 1, ihdwet: int = 0, tran: list[list[list[float]]] | float = 1.0,
-                 hy: list[list[list[float]]] | float = 1.0, vcont: list[list[list[float]]] | float = 1.0,
-                 sf1: list[list[list[float]]] | float = 1e-5, sf2: list[list[list[float]]] | float = 0.15,
-                 wetdry: float = -0.01, extension: str = "bcf", unitnumber: int | None = None,
-                 filenames: list[str] | str | None = None, add_package: bool = True):
+    def __init__(
+        self,
+        ipakcb: int = 0,
+        intercellt: list[int] | int = 0,
+        laycon: list[int] | int = 3,
+        trpy: list[float] | float = 1.0,
+        hdry: float = -1e30,
+        iwdflg: int = 0,
+        wetfct: float = 0.1,
+        iwetit: int = 1,
+        ihdwet: int = 0,
+        tran: list[list[list[float]]] | float = 1.0,
+        hy: list[list[list[float]]] | float = 1.0,
+        vcont: list[list[list[float]]] | float = 1.0,
+        sf1: list[list[list[float]]] | float = 1e-5,
+        sf2: list[list[list[float]]] | float = 0.15,
+        wetdry: float = -0.01,
+        extension: str = 'bcf',
+        unitnumber: int | None = None,
+        filenames: list[str] | str | None = None,
+        add_package: bool = True,
+    ):
         self.ipakcb = ipakcb
         self.intercellt = intercellt
         self.laycon = laycon
@@ -90,7 +106,7 @@ class BcfPackageData:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, data: dict) -> "BcfPackageData":
+    def from_dict(cls, data: dict) -> 'BcfPackageData':
         return cls(**data)
 
     @classmethod
@@ -104,7 +120,7 @@ def calculate_bcf_package_data(model: Model, settings: BcfPackageSettings) -> Bc
         if layer_idx == 0:
             top = layer.properties.top
             if top is None:
-                raise ValueError("Top of first layer is not set")
+                raise ValueError('Top of first layer is not set')
             transmissivity.append(layer.properties.get_transmissivity(top).get_data())
             continue
 
@@ -126,10 +142,10 @@ def calculate_bcf_package_data(model: Model, settings: BcfPackageSettings) -> Bc
         sf1=1e-5,
         sf2=0.15,
         wetdry=settings.wetdry,
-        extension="bcf",
+        extension='bcf',
         unitnumber=None,
         filenames=None,
-        add_package=True
+        add_package=True,
     )
     return bcf_package_data
 

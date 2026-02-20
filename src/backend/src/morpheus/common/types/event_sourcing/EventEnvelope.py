@@ -1,7 +1,7 @@
 import dataclasses
 
-from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.common.types.event_sourcing.EventBase import EventBase
+from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 
 
 @dataclasses.dataclass(frozen=True)

@@ -1,12 +1,13 @@
 from typing import Literal
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
+
 from ....application.read.ModelReader import ModelReader
 from ....application.read.PermissionsReader import permissions_reader
 from ....incoming import get_identity
 from ....infrastructure.persistence.ModelRepository import ModelNotFoundException
-from ....types.Project import ProjectId
 from ....types.permissions.Privilege import Privilege
+from ....types.Project import ProjectId
 
 format_type = Literal['json', 'geojson', 'geojson_outline'] | str
 

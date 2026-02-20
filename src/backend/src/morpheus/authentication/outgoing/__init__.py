@@ -1,6 +1,9 @@
 import functools
-from typing import Callable
-from flask import request, g as request_global_context
+from collections.abc import Callable
+
+from flask import g as request_global_context
+from flask import request
+
 from morpheus.authentication.incoming import create_or_update_user_from_keycloak, get_identity_by_keycloak_id
 from morpheus.authentication.infrastructure import keycloak_openid_provider
 from morpheus.authentication.infrastructure.bearer_token import extract_bearer_token_from
@@ -31,7 +34,7 @@ def authenticate(requires_logged_in_user: bool = True):
                     keycloak_user_data.email,
                     keycloak_user_data.username,
                     keycloak_user_data.first_name,
-                    keycloak_user_data.last_name
+                    keycloak_user_data.last_name,
                 )
                 identity = get_identity_by_keycloak_id(keycloak_user_data.user_id)
 

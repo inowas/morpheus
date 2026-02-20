@@ -1,21 +1,21 @@
 import dataclasses
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
 
-from morpheus.common.types import Uuid, DateTime
+from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
+from morpheus.common.types.identity.Identity import UserId
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.ModelReader import ModelReader
 from morpheus.project.application.write.CommandBase import ProjectCommandBase
 from morpheus.project.application.write.CommandHandlerBase import CommandHandlerBase
 from morpheus.project.domain.events.ModelEvents.ModelLayerEvents import ModelLayerPropertyUpdatedEvent
-from morpheus.project.infrastructure.assets.RasterInterpolationService import RasterInterpolationService, InterpolationMethod, RasterData
+from morpheus.project.infrastructure.assets.RasterInterpolationService import InterpolationMethod, RasterData, RasterInterpolationService
 from morpheus.project.infrastructure.event_sourcing.ProjectEventBus import project_event_bus
 from morpheus.project.types.Asset import AssetId, GeoTiffAssetData, RasterBand
+from morpheus.project.types.layers.Layer import Layer, LayerId, LayerPropertyName, LayerPropertyRaster, LayerPropertyRasterData, LayerPropertyRasterReference
 from morpheus.project.types.Model import ModelId
 from morpheus.project.types.Project import ProjectId
-from morpheus.common.types.identity.Identity import UserId
-from morpheus.project.types.layers.Layer import LayerId, LayerPropertyName, LayerPropertyRaster, LayerPropertyRasterData, Layer, LayerPropertyRasterReference
 
 
 class ModelLayerPropertyValueRasterReferencePayload(TypedDict):
@@ -52,7 +52,7 @@ class UpdateModelLayerPropertyRasterReferenceCommand(ProjectCommandBase):
             model_id=ModelId.from_str(payload['model_id']),
             layer_id=LayerId.from_str(payload['layer_id']),
             property_name=property_name,
-            property_raster_reference=raster_reference
+            property_raster_reference=raster_reference,
         )
 
     def get_asset_id(self) -> AssetId | None:
@@ -69,12 +69,7 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
         user_id = command.user_id
 
         event = ModelLayerPropertyUpdatedEvent.from_raster(
-            project_id=project_id,
-            model_id=command.model_id,
-            layer_id=command.layer_id,
-            property_name=command.property_name,
-            property_raster=None,
-            occurred_at=DateTime.now()
+            project_id=project_id, model_id=command.model_id, layer_id=command.layer_id, property_name=command.property_name, property_raster=None, occurred_at=DateTime.now()
         )
 
         if command.property_raster_reference:
@@ -106,11 +101,7 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
 
             input_raster_xx, input_raster_yy = raster_coordinates
             input_raster_data = RasterData(
-                xx_centers=input_raster_xx,
-                yy_centers=input_raster_yy,
-                bounds=grid.get_wgs_bbox(),
-                data=raster_asset_data.data,
-                nodata_value=raster_asset_no_data_value.to_float()
+                xx_centers=input_raster_xx, yy_centers=input_raster_yy, bounds=grid.get_wgs_bbox(), data=raster_asset_data.data, nodata_value=raster_asset_no_data_value.to_float()
             )
 
             # interpolate raster data to model geometry
@@ -119,7 +110,7 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
             data, nodata_value = interpolation_service.raster_data_to_grid_data(raster_data=input_raster_data, grid=grid, method=InterpolationMethod.linear, no_data_value=-9999)
             property_raster = LayerPropertyRaster(
                 reference=LayerPropertyRasterReference(asset_id=raster_asset_id.to_str(), band=raster_band.to_int()),
-                data=LayerPropertyRasterData(data=data, nodata_value=nodata_value)
+                data=LayerPropertyRasterData(data=data, nodata_value=nodata_value),
             )
 
             event = ModelLayerPropertyUpdatedEvent.from_raster(
@@ -128,7 +119,7 @@ class UpdateModelLayerPropertyRasterReferenceCommandHandler(CommandHandlerBase):
                 layer_id=command.layer_id,
                 property_name=command.property_name,
                 property_raster=property_raster,
-                occurred_at=DateTime.now()
+                occurred_at=DateTime.now(),
             )
 
         event_metadata = EventMetadata.with_creator(user_id=Uuid.from_str(user_id.to_str()))

@@ -6,7 +6,7 @@ event_list = [
     ProjectEvents.ProjectDeletedEvent,
     ProjectEvents.ProjectMetadataUpdatedEvent,
     ProjectEvents.ProjectPreviewImageUpdatedEvent,
-    ProjectEvents.ProjectPreviewImageDeletedEvent
+    ProjectEvents.ProjectPreviewImageDeletedEvent,
 ]
 
 
