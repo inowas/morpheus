@@ -31,7 +31,7 @@ class ReadCalculationLayerResultsRequestHandler:
         return {
             'n_cols': len(data[0]),
             'n_rows': len(data),
-            'outline': grid.get_wgs_outline_feature().to_dict(),
+            'outline': grid.get_wgs_outline_geometry().to_dict(),
             'rotation': grid.rotation.to_float(),
             'values': data,
             'min_value': min_value if not math.isinf(min_value) else None,

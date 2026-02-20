@@ -30,7 +30,7 @@ class SpatialDiscretizationResponseObject:
                 'length_unit': self.spatial_discretization.grid.length_unit.to_value(),
                 'origin': self.spatial_discretization.grid.origin.to_dict(),
                 'rotation': self.spatial_discretization.grid.rotation.to_value(),
-                'outline': self.spatial_discretization.grid.get_wgs_outline_feature().geometry.to_dict(),
+                'outline': self.spatial_discretization.grid.get_wgs_outline_geometry().geometry.to_dict(),
             }
         }
 
