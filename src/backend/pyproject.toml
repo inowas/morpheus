@@ -23,6 +23,7 @@ dependencies = [
   "pillow",
   "psycopg2-binary",
   "pyarrow",
+  "pydantic",
   "pygeoif",
   "pymongo",
   "pyproj",
