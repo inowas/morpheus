@@ -1,27 +1,30 @@
-from morpheus.common.api.Pydantic import BaseModel
+from pydantic import BaseModel, Field
+
 from morpheus.user.application.read.GroupReader import group_reader
+from morpheus.user.exceptions.InsufficientPermissionsException import InsufficientPermissionsException
+from morpheus.user.exceptions.UnauthorizedException import UnauthorizedException
 from morpheus.user.incoming import get_identity
 
 
 class GroupResponseItem(BaseModel):
-    group_id: str
-    group_name: str
-    members: list[str]
-    admins: list[str]
+    group_id: str = Field(..., examples=['123e4567-e89b-12d3-a456-426614174000'])
+    group_name: str = Field(..., examples=['Admins'])
+    members: list[str] = Field(..., examples=[['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001']])
+    admins: list[str] = Field(..., examples=[['123e4567-e89b-12d3-a456-426614174000']])
 
 
-GetGroupsResponse = list[GroupResponseItem]
+GetGroupsResponse = list[dict]
 
 
 class GetGroupsRequestHandler:
     @staticmethod
-    def handle():
+    def handle() -> GetGroupsResponse:
         identity = get_identity()
         if identity is None:
-            return '', 401
+            raise UnauthorizedException()
 
         if not identity.is_admin:
-            return '', 403
+            raise InsufficientPermissionsException()
 
         groups = group_reader.get_all_groups()
 
@@ -36,4 +39,4 @@ class GetGroupsRequestHandler:
                 )
             )
 
-        return [group_response_item.dict() for group_response_item in result], 200
+        return [group_response_item.dict() for group_response_item in result]

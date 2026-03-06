@@ -3,10 +3,10 @@ import dataclasses
 from morpheus.common.types import DateTime
 from morpheus.common.types.event_sourcing.EventEnvelope import EventEnvelope
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
-from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.user.application.read.GroupReader import group_reader
 from morpheus.user.domain.events.GroupEvents import MemberAddedEvent
+from morpheus.user.exceptions.GroupNotFoundException import GroupNotFoundException
 from morpheus.user.infrastructure.event_sourcing.GroupEventBus import group_event_bus
 
 
@@ -22,7 +22,7 @@ class AddMembersToGroupCommandHandler:
     def handle(cls, command: AddMembersToGroupCommand):
         group = group_reader.get_group(command.group_id)
         if group is None:
-            raise NotFoundException(f'Group with id {command.group_id} not found')
+            raise GroupNotFoundException(command.group_id)
 
         current_members = group.members
         new_members = command.members.difference(current_members)

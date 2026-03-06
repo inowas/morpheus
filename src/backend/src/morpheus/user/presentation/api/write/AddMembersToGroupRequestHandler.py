@@ -1,8 +1,10 @@
+from pydantic import BaseModel, Field
+
 from morpheus.authentication.outgoing import get_identity
-from morpheus.common.api.Pydantic import BaseModel, Field
-from morpheus.common.types.Exceptions import NotFoundException
 from morpheus.common.types.identity.Identity import GroupId, Identity, UserId
 from morpheus.user.application.write.AddMemberToGroup import AddMembersToGroupCommand, AddMembersToGroupCommandHandler
+from morpheus.user.exceptions.InsufficientPermissionsException import InsufficientPermissionsException
+from morpheus.user.exceptions.UnauthorizedException import UnauthorizedException
 
 
 class AddMembersToGroupRequest(BaseModel):
@@ -14,18 +16,14 @@ class AddMembersToGroupRequestHandler:
     def handle(group_id: GroupId, request: AddMembersToGroupRequest):
         identity = Identity.try_from_dict(get_identity())
         if identity is None:
-            return '', 401
+            raise UnauthorizedException()
 
         if not identity.is_admin:
-            return '', 403
+            raise InsufficientPermissionsException()
 
-        try:
-            command = AddMembersToGroupCommand(
-                group_id=group_id,
-                members=set([UserId.from_str(member_id) for member_id in request.member_ids]),
-                creator_id=identity.user_id,
-            )
-            AddMembersToGroupCommandHandler.handle(command)
-            return '', 204
-        except NotFoundException:
-            return '', 404
+        command = AddMembersToGroupCommand(
+            group_id=group_id,
+            members=set([UserId.from_str(member_id) for member_id in request.member_ids]),
+            creator_id=identity.user_id,
+        )
+        AddMembersToGroupCommandHandler.handle(command)

@@ -1,4 +1,4 @@
-from morpheus.common.api.Pydantic import BaseModel
+from pydantic import BaseModel
 
 from ...application.read.ReadSensorData import ReadSensorDataQuery, ReadSensorDataQueryHandler
 

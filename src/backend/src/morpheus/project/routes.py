@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from flask_cors import CORS, cross_origin
 
 from ..common.presentation.api.middleware.schema_validation import validate_request
+from ..common.types.ResourceCreated import ResourceCreated
 from .incoming import authenticate
 from .presentation.api.read.AssetReadRequestHandlers import (
     DownloadAssetRequestHandler,
@@ -37,7 +38,7 @@ from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import Rea
 from .presentation.api.read.ReadPrivilegesRequestHandler import ReadPrivilegesRequestHandler
 from .presentation.api.read.ReadSelectedCalculationProfileRequestHandler import ReadSelectedCalculationProfileRequestHandler
 from .presentation.api.write.AssetWriteRequestHandlers import DeletePreviewImageRequestHandler, UploadAssetRequestHandler, UploadPreviewImageRequestHandler
-from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequestHandler
+from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequest, MessageBoxRequestHandler
 from .types.Asset import AssetId
 from .types.boundaries.Boundary import BoundaryId
 from .types.calculation.Calculation import CalculationId
@@ -57,7 +58,13 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def create_project():
-        return MessageBoxRequestHandler().handle(request=request)
+        message_box_request = MessageBoxRequest(**request.get_json())
+        response = MessageBoxRequestHandler().handle(request=message_box_request)
+
+        if isinstance(response, ResourceCreated):
+            return {}, 201, {'Location': response.location}
+
+        return None, 204
 
     @blueprint.route('/<project_id>/assets', methods=['POST'])
     @cross_origin(expose_headers='Location')
