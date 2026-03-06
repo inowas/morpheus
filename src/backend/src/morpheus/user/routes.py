@@ -38,11 +38,11 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def create_group():
-        return CreateGroupRequestHandler().handle(CreateGroupRequest(**request.get_json()))
+        return CreateGroupRequestHandler().handle(request=CreateGroupRequest(**request.get_json()))
 
     @blueprint.route('/groups/<group_id>/members', methods=['POST'])
     @cross_origin()
     @authenticate()
     @validate_request
     def add_members_to_group(group_id: str):
-        return AddMembersToGroupRequestHandler().handle(GroupId.from_str(group_id), AddMembersToGroupRequest(**request.get_json()))
+        return AddMembersToGroupRequestHandler().handle(group_id=GroupId.from_str(group_id), request=AddMembersToGroupRequest(**request.get_json()))

@@ -13,13 +13,13 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @validate_request
     def read_sensors():
-        return ReadSensorListRequestHandler.handle(request)
+        return ReadSensorListRequestHandler.handle()
 
     @blueprint.route('/latest', methods=['GET'])
     @cross_origin()
     @validate_request
     def read_sensors_latest_values():
-        return ReadSensorsLatestValuesRequestHandler.handle(request)
+        return ReadSensorsLatestValuesRequestHandler.handle()
 
     @blueprint.route('/project/<project>/sensor/<sensor>/parameter/<parameter>', methods=['GET'])
     @cross_origin()
