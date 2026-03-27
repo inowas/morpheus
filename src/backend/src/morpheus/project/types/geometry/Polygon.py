@@ -22,7 +22,7 @@ class Polygon:
 
     @classmethod
     def from_shapely(cls, shapely_polygon: ShapelyPolygon):
-        return cls(coordinates=[list(shapely_polygon.exterior.coords)])
+        return cls(coordinates=[[(float(x), float(y)) for x, y, *_ in shapely_polygon.exterior.coords]])
 
     def __geo_interface__(self):
         return {
