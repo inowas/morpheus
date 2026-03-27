@@ -31,8 +31,22 @@ class MultiPolygon:
             raise ValueError('Geometry Type must be a MultiPolygon')
         return cls(coordinates=obj['coordinates'])
 
+    @classmethod
+    def from_shapely(cls, shapely_multipolygon: ShapelyMultiPolygon):
+        coordinates = []
+        for polygon in shapely_multipolygon.geoms:
+            # Extract exterior ring and any interior rings (holes)
+            rings = [list(polygon.exterior.coords)]
+            for interior in polygon.interiors:
+                rings.append(list(interior.coords))
+            coordinates.append(rings)
+        return cls(coordinates=coordinates)
+
     def to_dict(self):
         return {'type': self.type, 'coordinates': self.coordinates}
 
     def as_geojson(self):
         return self.__geo_interface__()
+
+    def as_shapely(self):
+        return ShapelyMultiPolygon([ShapelyPolygon(poly_coords[0]) for poly_coords in self.coordinates])

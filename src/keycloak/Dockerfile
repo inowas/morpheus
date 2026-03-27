@@ -7,7 +7,7 @@ ENV KC_DB=postgres
 WORKDIR /opt/keycloak
 
 
-FROM builder_base as builder_development
+FROM builder_base AS builder_development
 
 ENV KC_METRICS_ENABLED=true
 RUN /opt/keycloak/bin/kc.sh build

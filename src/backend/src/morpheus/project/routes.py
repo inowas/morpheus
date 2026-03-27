@@ -6,38 +6,39 @@ from flask_cors import CORS, cross_origin
 from ..common.presentation.api.middleware.schema_validation import validate_request
 from ..common.types.ResourceCreated import ResourceCreated
 from .incoming import authenticate
-from .presentation.api.read.AssetReadRequestHandlers import (
-    DownloadAssetRequestHandler,
-    ReadAssetDataRequestHandler,
-    ReadAssetListRequestHandler,
-    ReadAssetRequestHandler,
-    ReadPreviewImageRequestHandler,
-)
-from .presentation.api.read.ProjectReadRequestHandlers import ReadProjectEventLogRequestHandler, ReadProjectListRequestHandler
-from .presentation.api.read.ReadCalculationBudgetResultsRequestHandler import ReadCalculationBudgetResultsRequestHandler
-from .presentation.api.read.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
-from .presentation.api.read.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
-from .presentation.api.read.ReadCalculationLayerResultsRequestHandler import ReadCalculationLayerResultsRequestHandler
-from .presentation.api.read.ReadCalculationObservationResultsRequestHandler import ReadCalculationObservationResultsRequestHandler
-from .presentation.api.read.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
-from .presentation.api.read.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
-from .presentation.api.read.ReadCalculationTimeSeriesResultsRequestHandler import ReadCalculationTimeSeriesResultsRequestHandler
-from .presentation.api.read.ReadMetadataRequestHandler import ReadMetadataRequestHandler
-from .presentation.api.read.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
-from .presentation.api.read.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
-from .presentation.api.read.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
-from .presentation.api.read.ReadModelCalculationDetailsRequestHandler import ReadModelCalculationDetailsRequestHandler
-from .presentation.api.read.ReadModelGridRequestHandler import ReadModelGridRequestHandler
-from .presentation.api.read.ReadModelLayerPropertyDataRequestHandler import DataOutputFormat, ReadModelLayerPropertyDataRequestHandler
-from .presentation.api.read.ReadModelLayerPropertyImageRequestHandler import ImageOutputFormat, ReadModelLayerPropertyImageRequestHandler
-from .presentation.api.read.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
-from .presentation.api.read.ReadModelObservationsRequestHandler import ReadModelHeadObservationsRequestHandler
-from .presentation.api.read.ReadModelRequestHandler import ReadModelRequestHandler
-from .presentation.api.read.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
-from .presentation.api.read.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
-from .presentation.api.read.ReadPrivilegesRequestHandler import ReadPrivilegesRequestHandler
-from .presentation.api.read.ReadSelectedCalculationProfileRequestHandler import ReadSelectedCalculationProfileRequestHandler
-from .presentation.api.write.AssetWriteRequestHandlers import DeletePreviewImageRequestHandler, UploadAssetRequestHandler, UploadPreviewImageRequestHandler
+from .presentation.api.read.assets.DownloadAssetRequestHandler import DownloadAssetRequestHandler
+from .presentation.api.read.assets.ReadAssetDataRequestHandler import ReadAssetDataRequestHandler
+from .presentation.api.read.assets.ReadAssetListRequestHandler import ReadAssetListRequestHandler
+from .presentation.api.read.assets.ReadAssetRequestHandler import ReadAssetRequestHandler
+from .presentation.api.read.assets.ReadPreviewImageRequestHandler import ReadPreviewImageRequestHandler
+from .presentation.api.read.calculations.ReadCalculationBudgetResultsRequestHandler import ReadCalculationBudgetResultsRequestHandler
+from .presentation.api.read.calculations.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
+from .presentation.api.read.calculations.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
+from .presentation.api.read.calculations.ReadCalculationLayerResultsRequestHandler import ReadCalculationLayerResultsRequestHandler
+from .presentation.api.read.calculations.ReadCalculationObservationResultsRequestHandler import ReadCalculationObservationResultsRequestHandler
+from .presentation.api.read.calculations.ReadCalculationProfilesRequestHandler import ReadCalculationProfilesRequestHandler
+from .presentation.api.read.calculations.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
+from .presentation.api.read.calculations.ReadCalculationTimeSeriesResultsRequestHandler import ReadCalculationTimeSeriesResultsRequestHandler
+from .presentation.api.read.models.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
+from .presentation.api.read.models.ReadModelBoundariesRequestHandler import ReadModelBoundariesRequestHandler
+from .presentation.api.read.models.ReadModelBoundaryAffectedCellsRequestHandler import ReadModelBoundaryAffectedCellsRequestHandler
+from .presentation.api.read.models.ReadModelCalculationDetailsRequestHandler import ReadModelCalculationDetailsRequestHandler
+from .presentation.api.read.models.ReadModelGridRequestHandler import ReadModelGridRequestHandler
+from .presentation.api.read.models.ReadModelLayerPropertyDataRequestHandler import DataOutputFormat, ReadModelLayerPropertyDataRequestHandler
+from .presentation.api.read.models.ReadModelLayerPropertyImageRequestHandler import ImageOutputFormat, ReadModelLayerPropertyImageRequestHandler
+from .presentation.api.read.models.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
+from .presentation.api.read.models.ReadModelObservationsRequestHandler import ReadModelHeadObservationsRequestHandler
+from .presentation.api.read.models.ReadModelRequestHandler import ReadModelRequestHandler
+from .presentation.api.read.models.ReadModelSpatialDiscretizationRequestHandler import ReadModelSpatialDiscretizationRequestHandler
+from .presentation.api.read.models.ReadModelTimeDiscretizationRequestHandler import ReadModelTimeDiscretizationRequestHandler
+from .presentation.api.read.projects.ReadProjectEventLogRequestHandler import ReadProjectEventLogRequestHandler
+from .presentation.api.read.projects.ReadProjectListRequestHandler import ReadProjectListRequestHandler
+from .presentation.api.read.projects.ReadProjectMetadataRequestHandler import ReadProjectMetadataRequestHandler
+from .presentation.api.read.projects.ReadProjectPrivilegesRequestHandler import ReadProjectPrivilegesRequestHandler
+from .presentation.api.read.projects.ReadProjectSelectedCalculationProfileRequestHandler import ReadProjectSelectedCalculationProfileRequestHandler
+from .presentation.api.write.assets.DeletePreviewImageRequestHandler import DeletePreviewImageRequestHandler
+from .presentation.api.write.assets.UploadAssetRequestHandler import UploadAssetRequestHandler
+from .presentation.api.write.assets.UploadPreviewImageRequestHandler import UploadPreviewImageRequestHandler
 from .presentation.api.write.MessageBoxRequestHandler import MessageBoxRequest, MessageBoxRequestHandler
 from .types.Asset import AssetId
 from .types.boundaries.Boundary import BoundaryId
@@ -157,7 +158,7 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_selected_calculation_profile(project_id: str, calculation_profile_id: str | None = None):
-        return ReadSelectedCalculationProfileRequestHandler().handle(
+        return ReadProjectSelectedCalculationProfileRequestHandler().handle(
             project_id=ProjectId.from_str(project_id), calculation_profile_id=CalculationProfileId.try_from_str(calculation_profile_id)
         )
 
@@ -191,7 +192,7 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_get_metadata(project_id: str):
-        return ReadMetadataRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        return ReadProjectMetadataRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/model', methods=['GET'])
     @cross_origin()
@@ -276,7 +277,7 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_privileges(project_id: str):
-        return ReadPrivilegesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        return ReadProjectPrivilegesRequestHandler().handle(project_id=ProjectId.from_str(project_id))
 
     @blueprint.route('/<project_id>/preview_image', methods=['GET'])
     @cross_origin()

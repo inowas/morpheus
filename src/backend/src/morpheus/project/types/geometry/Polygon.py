@@ -20,6 +20,10 @@ class Polygon:
             raise ValueError('Geometry Type must be a Polygon')
         return cls(coordinates=obj['coordinates'])
 
+    @classmethod
+    def from_shapely(cls, shapely_polygon: ShapelyPolygon):
+        return cls(coordinates=[list(shapely_polygon.exterior.coords)])
+
     def __geo_interface__(self):
         return {
             'type': self.type,
@@ -40,3 +44,7 @@ class Polygon:
 
     def as_geojson(self):
         return self.__geo_interface__()
+
+    def as_shapely(self):
+        shapely_polygon = ShapelyPolygon(self.coordinates[0])
+        return shapely_polygon
