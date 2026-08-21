@@ -3,7 +3,7 @@ name = "morpheus-backend"
 version = "1.0.0"
 description = "Morpheus groundwater modeling backend"
 readme = "README.md"
-requires-python = ">=3.13,<3.14"
+requires-python = ">=3.12,<3.13"
 dependencies = [
   "Authlib",
   "Dynaconf",
@@ -70,7 +70,7 @@ exclude = [
   "**/.pytest_cache",
   "**/notebooks/*",
 ]
-pythonVersion = "3.13"
+pythonVersion = "3.12"
 typeCheckingMode = "basic"
 ignore = []
 reportAny = false

@@ -5,7 +5,7 @@ ADD src/backend/src /src
 RUN npx @redocly/cli bundle --dereferenced --output /src/morpheus/openapi.bundle.json /src/morpheus/openapi.yml
 
 
-FROM python:3.13-bookworm AS base
+FROM python:3.12-bookworm AS base
 ARG BACKEND_APP_ROOT_PATH
 ARG FLASK_USER_ID
 ARG FLASK_GROUP_ID
@@ -26,7 +26,8 @@ COPY --from=build_openapi_spec /src/morpheus/openapi.bundle.json ${BACKEND_APP_R
 # Use system python (no venv needed in Docker)
 WORKDIR ${BACKEND_APP_ROOT_PATH}
 ENV UV_SYSTEM_PYTHON=1
-RUN uv pip install --no-cache .
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
+RUN uv sync --frozen --no-dev
 
 # prepare python environment
 ENV PYTHONUNBUFFERED 1

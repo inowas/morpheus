@@ -1,6 +1,6 @@
 ARG BACKEND_APP_ROOT_PATH=/app
 
-FROM python:3.13-bookworm AS base
+FROM python:3.12-bookworm AS base
 ARG BACKEND_APP_ROOT_PATH
 ARG CELERY_USER_ID
 ARG CELERY_GROUP_ID
@@ -18,7 +18,8 @@ ADD src/backend/README.md ${BACKEND_APP_ROOT_PATH}/README.md
 # Use system python (no venv needed in Docker)
 WORKDIR ${BACKEND_APP_ROOT_PATH}
 ENV UV_SYSTEM_PYTHON=1
-RUN uv pip install --no-cache .
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
+RUN uv sync --frozen --no-dev
 # Download MODFLOW executables using FloPy
 RUN get-modflow :python
 
