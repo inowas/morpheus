@@ -22,6 +22,16 @@ docker-compose up -d mongodb_backend
 
 ## Test Structure
 
+### Notebook-derived unit tests
+
+The following database-free tests preserve stable, executable parts of the original notebooks:
+
+- `test_spatial_notebook_workflows.py` covers grid construction, rotations, active-cell mapping, and spatial validation from `SpatialDiscretization.ipynb`.
+- `test_raster_notebook_workflows.py` covers raster expansion and raster/grid interpolation from `RasterInterpolation.ipynb` and `RasterToGridInterpolation.ipynb`.
+- `test_boundary_mapping_notebook_workflows.py` covers constant-head and well stress-period mapping from `Test_ConstantHeadBoundary.ipynb` and `Test_WellBoundary.ipynb`.
+
+Visualization cells using Folium or Matplotlib are intentionally represented by numerical and geometric assertions. They remain useful as manual notebooks, but browser rendering is not required for deterministic CI tests.
+
 ### Test Files
 
 - **`test_project_commands.py`** - Tests for project creation and management commands

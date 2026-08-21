@@ -12,6 +12,7 @@ This file tracks high-level tasks and technical debt for the Morpheus project.
 - [ ] Complete integration of all boundary types (Wells, Recharge, Rivers, etc.)
 - [x] Add integration coverage for project, model, layer, boundary, observation, and calculation command lifecycles.
 - [x] Add integration coverage for asset commands and boundary observation commands.
+- [x] Convert stable notebook workflows into database-free unit tests.
 - [ ] Implement full calculation workflow tests (real MODFLOW end-to-end)
 - [ ] Add unit tests for repositories using mocks (reduce MongoDB dependency)
 - [x] Implement robust database isolation/cleanup for integration tests

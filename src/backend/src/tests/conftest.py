@@ -64,12 +64,8 @@ def _prepare_test_database_users():
         client.close()
 
 
-_prepare_test_database_users()
-
 try:
     from morpheus.common.types.identity.Identity import UserId
-    from morpheus.project.application.read.ModelReader import ModelReader
-    from morpheus.project.application.write import project_command_bus
     from morpheus.project.types.geometry import Polygon
     from morpheus.project.types.layers.Layer import LayerId
     from morpheus.project.types.Model import ModelId
@@ -122,17 +118,27 @@ def test_polygon() -> Polygon:
 
 @pytest.fixture
 def command_bus():
+    from morpheus.project.application.write import project_command_bus
+
     return project_command_bus
 
 
 @pytest.fixture
 def model_reader():
+    from morpheus.project.application.read.ModelReader import ModelReader
+
     return ModelReader()
 
 
 @pytest.fixture(autouse=True)
-def clean_test_databases():
+def clean_test_databases(request):
     """Clean only databases configured for tests before and after each test."""
+    if request.node.get_closest_marker('integration') is None:
+        yield
+        return
+
+    _prepare_test_database_users()
+
     from pymongo import MongoClient
 
     from morpheus.settings import settings
