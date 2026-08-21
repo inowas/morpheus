@@ -57,7 +57,8 @@ deploy-simpletools:dev:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - chmod 600 "$SSH_PRIVATE_KEY_DEVELOPMENT"
+    - ssh-add "$SSH_PRIVATE_KEY_DEVELOPMENT"
   script:
     - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd $SIMPLETOOLS_DEVELOPMENT_PATH && docker compose down"
     - scp -P22 ./infrastructure/production/mfviz/docker-compose.yml inowas@$URL_DEVELOPMENT_SERVER:/$SIMPLETOOLS_DEVELOPMENT_PATH/docker-compose.yml
@@ -146,4 +147,3 @@ deploy-simpletools:prod:
       - src/frontend/package-lock.json
     refs:
       - tags
-

@@ -53,6 +53,7 @@ deploy-morpheus:dev:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - chmod 600 "$SSH_PRIVATE_KEY_DEVELOPMENT"
     - ssh-add "$SSH_PRIVATE_KEY_DEVELOPMENT"
   script:
     - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd /srv/docker/inowas-suite.development && docker compose pull"
