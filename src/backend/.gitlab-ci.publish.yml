@@ -5,6 +5,56 @@ variables:
   INOWAS_GROUP_ID: 1004
 
 
+test-morpheus-backend-integration:
+  image: python:3.12-bookworm
+  stage: test
+  services:
+    - name: mongo:7.0
+      alias: mongodb_backend
+  variables:
+    BACKEND_SECRET_KEY: test-secret-key-for-gitlab
+    BACKEND_MAX_CONTENT_LENGTH: '104857600'
+    BACKEND_KEYCLOAK_CLIENT_ID: test-client
+    BACKEND_KEYCLOAK_CLIENT_SECRET: test-secret
+    BACKEND_KEYCLOAK_REALM: test-realm
+    BACKEND_KEYCLOAK_SERVER_URL: http://keycloak.invalid
+    BACKEND_KEYCLOAK_MORPHEUS_ADMIN_ROLE: morpheus_admin
+    BACKEND_MONGO_INITDB_ROOT_USERNAME: root
+    BACKEND_MONGO_INITDB_ROOT_PASSWORD: dev-root
+    BACKEND_MONGO_HOST: mongodb_backend
+    BACKEND_MONGO_PORT: '27017'
+    BACKEND_MONGO_USER: dev
+    BACKEND_MONGO_PASSWORD: dev
+    BACKEND_MONGO_PROJECT_DATABASE: morpheus_test_project
+    BACKEND_MONGO_SENSOR_DATABASE: morpheus_test_sensor
+    BACKEND_MONGO_USER_DATABASE: morpheus_test_user
+    BACKEND_MORPHEUS_PROJECT_ASSET_DATA: /tmp/test/assets
+    BACKEND_MORPHEUS_PROJECT_CALCULATION_DATA: /tmp/test/calculations
+    BACKEND_MORPHEUS_SENSOR_LOCAL_DATA: /tmp/test/sensors
+    BACKEND_MORPHEUS_SENSORS_UIT_FTP_HOST: ftp.invalid
+    BACKEND_MORPHEUS_SENSORS_UIT_FTP_USER: test
+    BACKEND_MORPHEUS_SENSORS_UIT_FTP_PASSWORD: test
+    BACKEND_MORPHEUS_SENSORS_UIT_FTP_PATH: /test
+    BACKEND_CELERY_BROKER: memory://
+    BACKEND_CELERY_RESULT_BACKEND: cache+memory://
+    FLASK_ENV: testing
+  before_script:
+    - pip install --no-cache-dir uv
+    - uv sync --frozen --extra dev
+    - until uv run python -c "from pymongo import MongoClient; MongoClient(host='mongodb_backend', port=27017, username='root', password='dev-root', authSource='admin').admin.command('ping')"; do sleep 2; done
+  script:
+    - uv run pytest src/tests/morpheus/project -m integration
+  only:
+    changes:
+      - src/backend/src/**/*.py
+      - src/backend/pyproject.toml
+      - src/backend/pytest.ini
+      - src/backend/uv.lock
+    refs:
+      - branches
+      - tags
+
+
 
 publish-morpheus-backend-api:dev:
   stage: publish
