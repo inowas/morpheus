@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse, PlainTextResponse
 
 from morpheus.project.calculation_router import router as calculation_router
+from morpheus.project.asset_router import router as asset_router
 from morpheus.project.model_router import router as model_router
 from morpheus.project.router import router as project_router
 from morpheus.sensor.router import router as sensor_router
@@ -15,6 +16,7 @@ app = FastAPI(docs_url=None, openapi_url=None, redoc_url=None)
 app.include_router(project_router)
 app.include_router(model_router)
 app.include_router(calculation_router)
+app.include_router(asset_router)
 app.include_router(sensor_router)
 app.include_router(user_router)
 

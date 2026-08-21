@@ -5,6 +5,9 @@ from fastapi.testclient import TestClient
 
 from morpheus.asgi import app
 from morpheus.authentication.outgoing import identity_context
+from morpheus.project.presentation.api.read.assets.DownloadAssetRequestHandler import DownloadAssetRequestHandler
+from morpheus.project.presentation.api.read.assets.ReadAssetDataRequestHandler import ReadAssetDataRequestHandler
+from morpheus.project.presentation.api.read.assets.ReadAssetListRequestHandler import ReadAssetListRequestHandler
 from morpheus.project.presentation.api.read.calculations.ReadCalculationBudgetResultsRequestHandler import ReadCalculationBudgetResultsRequestHandler
 from morpheus.project.presentation.api.read.calculations.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelGridRequestHandler import ReadModelGridRequestHandler
@@ -270,3 +273,62 @@ def test_calculation_budget_passes_query_parameters(mock_handle, mock_authentica
     assert response.json() == {'result_type': 'flow'}
     assert mock_handle.call_args.kwargs['time_idx'] == 3
     assert mock_handle.call_args.kwargs['incremental'] is True
+
+
+def test_asset_reads_require_authentication():
+    paths = [
+        '/projects/project-1/assets',
+        '/projects/project-1/assets/123e4567-e89b-12d3-a456-426614174000',
+        '/projects/project-1/assets/123e4567-e89b-12d3-a456-426614174000/file',
+        '/projects/project-1/assets/123e4567-e89b-12d3-a456-426614174000/data',
+    ]
+
+    assert all(client.get(path).status_code == 401 for path in paths)
+    assert client.get('/projects/project-1/preview_image').status_code == 404
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadAssetListRequestHandler, 'handle', return_value=({'assets': []}, 200))
+def test_assets_pass_filters_and_pagination(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/assets?asset_type=geo_tiff&file_name=data.tif&description=demo&page=2&page_size=5',
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {'assets': []}
+    assert mock_handle.call_args.args[1:] == ('geo_tiff', 'data.tif', 'demo', 2, 5)
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadAssetDataRequestHandler, 'handle', return_value=({'data': []}, 200))
+def test_asset_data_passes_band(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/assets/123e4567-e89b-12d3-a456-426614174001/data?band=2',
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 200
+    assert mock_handle.call_args.args[2] == 2
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(DownloadAssetRequestHandler, 'handle')
+def test_download_asset_returns_file_response(mock_handle, mock_authenticate, tmp_path):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+    file_path = tmp_path / 'example.tif'
+    file_path.write_bytes(b'tiff-data')
+    mock_handle.return_value = (str(file_path), 'image/tiff', 'example.tif')
+
+    response = client.get(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/assets/123e4567-e89b-12d3-a456-426614174001/file',
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 200
+    assert response.headers['content-type'] == 'image/tiff'
+    assert 'example.tif' in response.headers['content-disposition']

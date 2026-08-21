@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 from flask_cors import cross_origin
 
 from ...common.presentation.api.middleware.schema_validation import validate_request
@@ -44,7 +44,10 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def download_project_asset(project_id: str, asset_id: str):
-        return DownloadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id), asset_id=AssetId.from_str(asset_id))
+        result = DownloadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id), asset_id=AssetId.from_str(asset_id))
+        if isinstance(result, tuple) and len(result) == 3:
+            return send_file(result[0], mimetype=result[1], download_name=result[2])
+        return result
 
     @blueprint.route('/<project_id>/assets/<asset_id>/data', methods=['GET'])
     @cross_origin()
@@ -66,7 +69,10 @@ def register_routes(blueprint: Blueprint):
     # @authenticate()
     @validate_request
     def project_preview_image_fetch(project_id: str):
-        return ReadPreviewImageRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        result = ReadPreviewImageRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        if isinstance(result, tuple) and len(result) == 3:
+            return send_file(result[0], mimetype=result[1], download_name=result[2])
+        return result
 
     @blueprint.route('/<project_id>/preview_image', methods=['DELETE'])
     @cross_origin()

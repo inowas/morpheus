@@ -1,7 +1,7 @@
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.ProjectReader import project_reader
-from morpheus.project.presentation.api.helpers.asset import asset_file_response, default_preview_image_response
+from morpheus.project.infrastructure.assets.AssetHandlingService import asset_handling_service
 from morpheus.project.types.Project import ProjectId
 
 
@@ -22,8 +22,8 @@ class ReadPreviewImageRequestHandler:
             asset_reader = get_asset_reader()
             preview_image_asset = asset_reader.get_preview_image(project_id)
             if preview_image_asset is None:
-                return default_preview_image_response()
+                return 'morpheus/project/resources/default_preview_image.png', 'image/png', None
 
-            return asset_file_response(preview_image_asset)
+            return asset_handling_service.get_full_path_to_asset(preview_image_asset), preview_image_asset.file.mime_type, preview_image_asset.file.file_name
         except InsufficientPermissionsException as e:
             return str(e), 403
