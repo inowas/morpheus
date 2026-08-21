@@ -41,11 +41,3 @@ cd $backendRoot
 source $backendRoot/.venv/bin/activate && get-modflow :python
 exitWithErrorIfLastCommandFailed "Error installing MODFLOW"
 outputSuccess "Successfully installed MODFLOW"
-
-
-outputHeadline "Build OpenAPI spec"
-
-cd $backendRoot
-scripts/dev/build-openapi-spec.sh
-exitWithErrorIfLastCommandFailed "Error building OpenAPI spec"
-outputSuccess "Successfully built OpenAPI spec"

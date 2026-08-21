@@ -1,23 +1,12 @@
-from flask import Request, Response, send_file
-
 from morpheus.common.types.File import FileName
-from morpheus.project.infrastructure.assets.AssetHandlingService import asset_handling_service
-from morpheus.project.types.Asset import Asset, AssetDescription, AssetFilter, AssetType
+from morpheus.project.types.Asset import AssetDescription, AssetFilter, AssetType
 from morpheus.project.types.Project import ProjectId
 
 
-def asset_file_response(asset: Asset) -> Response:
-    return send_file(asset_handling_service.get_full_path_to_asset(asset), mimetype=asset.file.mime_type, download_name=asset.file.file_name)
-
-
-def default_preview_image_response() -> Response:
-    return send_file('morpheus/project/resources/default_preview_image.png', mimetype='image/png')
-
-
-def create_filter_for_asset_list(project_id: ProjectId, request: Request) -> AssetFilter:
-    asset_type_or_none = request.args.get('asset_type', default=None, type=str)
-    file_name_or_none = request.args.get('file_name', default=None, type=str)
-    description_or_none = request.args.get('description', default=None, type=str)
+def create_filter_for_asset_list(project_id: ProjectId, asset_type: str | None, file_name: str | None, description: str | None) -> AssetFilter:
+    asset_type_or_none = asset_type
+    file_name_or_none = file_name
+    description_or_none = description
 
     if asset_type_or_none is not None:
         asset_type_or_none = asset_type_or_none.strip()

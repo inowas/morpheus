@@ -1,11 +1,11 @@
 import functools
+from collections.abc import Hashable
+from typing import Any, cast
 
 import flask
 from openapi_core import OpenAPI
 from openapi_core.contrib.flask import FlaskOpenAPIRequest
 from openapi_core.exceptions import OpenAPIError
-
-from morpheus.settings import settings
 
 
 class SchemaValidationException(Exception):
@@ -24,29 +24,25 @@ class SchemaValidationException(Exception):
         return str(self.errors)
 
 
+def validate_request_against_schema(openapi_request) -> None:
+    from morpheus.asgi import app
+
+    openapi = OpenAPI.from_dict(cast(dict[Hashable, Any], app.openapi()))
+
+    try:
+        openapi.validate_request(openapi_request)
+    except OpenAPIError as open_api_error:
+        raise SchemaValidationException(
+            'Schema Validation Error:',
+            [str(open_api_error)],
+            open_api_error,
+        ) from open_api_error
+
+
 def validate_request(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        openapi_request = FlaskOpenAPIRequest(flask.request)
-        openapi = OpenAPI.from_file_path(settings.OPENAPI_BUNDLED_SPEC_FILE)
-
-        try:
-            openapi.validate_request(openapi_request)
-
-        except OpenAPIError as open_api_error:
-            raise SchemaValidationException(
-                'Schema Validation Error:',
-                [str(open_api_error)],
-                open_api_error,
-            ) from open_api_error
-
+        validate_request_against_schema(FlaskOpenAPIRequest(flask.request))
         return f(*args, **kwargs)
 
     return decorated_function
-
-
-def parse_schema_file() -> None:
-    try:
-        OpenAPI.from_file_path(settings.OPENAPI_BUNDLED_SPEC_FILE)
-    except Exception as e:
-        raise SchemaValidationException('Schema Validation Error:', [str(e)], e) from e

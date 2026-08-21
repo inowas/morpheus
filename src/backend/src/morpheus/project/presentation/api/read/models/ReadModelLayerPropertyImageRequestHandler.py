@@ -1,6 +1,6 @@
+import dataclasses
+import io
 from enum import StrEnum
-
-from flask import send_file
 
 from morpheus.common.types.Exceptions import InsufficientPermissionsException
 from morpheus.project.application.read.ModelReader import ModelReader
@@ -22,7 +22,13 @@ class ImageOutputFormat(StrEnum):
 
     @classmethod
     def _missing_(cls, value):
-        return cls.raster
+            return cls.raster
+
+
+@dataclasses.dataclass(frozen=True)
+class GeneratedImage:
+    data: io.BytesIO
+    media_type: str
 
 
 class ReadModelLayerPropertyImageRequestHandler:
@@ -61,11 +67,11 @@ class ReadModelLayerPropertyImageRequestHandler:
             result_data = raster_interpolator.grid_data_to_grid_data_with_equal_cells(grid=grid, data=data, target_resolution_x=target_resolution_x, no_data_value=no_data_value)
 
             image = image_creation_service.create_image_from_data(data=result_data, cmap='jet_r', no_data_value=no_data_value)
-            return send_file(image, mimetype='image/png', max_age=0)
+            return GeneratedImage(image, 'image/png')
 
         if output_format == ImageOutputFormat.grid_colorbar:
             image = image_creation_service.create_colorbar_from_data(data=data, cmap='jet_r', no_data_value=-9999.0)
-            return send_file(image, mimetype='image/png', max_age=0)
+            return GeneratedImage(image, 'image/png')
 
         if output_format == ImageOutputFormat.raster:
             raster_interpolator = RasterInterpolationService()
@@ -76,10 +82,10 @@ class ReadModelLayerPropertyImageRequestHandler:
             result_data = raster_interpolator.grid_to_grid(source_grid=grid, target_grid=cartesian_grid, source_data=data, method=InterpolationMethod.linear, no_data_value=None)
 
             image = image_creation_service.create_image_from_data(data=result_data, cmap='jet_r', no_data_value=None)
-            return send_file(image, mimetype='image/png', max_age=0)
+            return GeneratedImage(image, 'image/png')
 
         if output_format == ImageOutputFormat.raster_colorbar:
             image = image_creation_service.create_colorbar_from_data(data=data, cmap='jet_r', no_data_value=-9999.0)
-            return send_file(image, mimetype='image/png', max_age=0)
+            return GeneratedImage(image, 'image/png')
 
         return {'message': f'Invalid output format: {output_format}, valid options are {ImageOutputFormat.__members__.keys()}'}, 400

@@ -3,7 +3,7 @@ from morpheus.project.application.read.PermissionsReader import permissions_read
 from morpheus.project.application.read.ProjectReader import project_reader
 from morpheus.project.exceptions import InsufficientPermissionsException
 from morpheus.project.incoming import get_identity
-from morpheus.project.presentation.api.helpers.asset import asset_file_response
+from morpheus.project.infrastructure.assets.AssetHandlingService import asset_handling_service
 from morpheus.project.types.Asset import AssetId
 from morpheus.project.types.permissions.Privilege import Privilege
 from morpheus.project.types.Project import ProjectId
@@ -26,6 +26,6 @@ class DownloadAssetRequestHandler:
             if asset is None:
                 return '', 404
 
-            return asset_file_response(asset)
+            return asset_handling_service.get_full_path_to_asset(asset), asset.file.mime_type, asset.file.file_name
         except InsufficientPermissionsException as e:
             return str(e), 403

@@ -1,6 +1,4 @@
-from flask import request
-
-from morpheus.common.presentation.api.helpers.pagination import create_pagination_parameters_from_request
+from morpheus.common.presentation.api.helpers.pagination import create_pagination_parameters
 from morpheus.project.application.read.AssetReader import get_asset_reader
 from morpheus.project.application.read.PermissionsReader import permissions_reader
 from morpheus.project.application.read.ProjectReader import project_reader
@@ -13,7 +11,15 @@ from morpheus.project.types.Project import ProjectId
 
 class ReadAssetListRequestHandler:
     @classmethod
-    def handle(cls, project_id: ProjectId):
+    def handle(
+        cls,
+        project_id: ProjectId,
+        asset_type: str | None = None,
+        file_name: str | None = None,
+        description: str | None = None,
+        page: int | None = None,
+        page_size: int | None = None,
+    ):
         identity = get_identity()
         if identity is None:
             return '', 401
@@ -24,8 +30,8 @@ class ReadAssetListRequestHandler:
         try:
             permissions_reader.assert_identity_can(Privilege.VIEW_PROJECT, identity, project_id)
             asset_reader = get_asset_reader()
-            asset_filter = create_filter_for_asset_list(project_id, request)
-            pagination = create_pagination_parameters_from_request(request)
+            asset_filter = create_filter_for_asset_list(project_id, asset_type, file_name, description)
+            pagination = create_pagination_parameters(page, page_size)
 
             if pagination is None:
                 return {'assets': [asset.to_dict() for asset in asset_reader.get_full_asset_list(filter=asset_filter)]}, 200

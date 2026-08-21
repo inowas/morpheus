@@ -3,36 +3,39 @@ name = "morpheus-backend"
 version = "1.0.0"
 description = "Morpheus groundwater modeling backend"
 readme = "README.md"
-requires-python = ">=3.13,<3.14"
+requires-python = ">=3.12,<3.13"
 dependencies = [
   "Authlib",
   "Dynaconf",
   "Flask-Cors==4.0.0",
-  "Flask==3.0.1",
+  "Flask==3.0.3",
+  "fastapi",
   "SQLAlchemy==2.0.25",
   "celery==5.3.6",
   "flopy==3.7.0",
-  "geopandas",
+  "geopandas==1.1.4",
   "geotiff",
   "gunicorn",
   "inflection",
-  "numcodecs",
-  "python-magic",
+  "numcodecs<0.16",
+  "python-magic==0.4.27",
   "openapi-core==0.19.0",
   "pandas",
   "pillow",
-  "psycopg2-binary",
+  "psycopg2-binary==2.9.12",
   "pyarrow",
-  "pydantic",
+  "pydantic==2.13.4",
   "pygeoif",
   "pymongo",
   "pyproj",
   "python-keycloak",
+  "python-multipart",
   "sentry-sdk[flask]==2.13.0",
   "scipy",
   "shapely",
   "simplejson",
   "tifffile>=2023.0.0,<2024.8.0",
+  "uvicorn",
   "zarr"
 ]
 
@@ -44,6 +47,7 @@ dev = [
   "jupyter",
   "jupyterlab",
   "matplotlib",
+  "httpx",
   "papermill",
   "pytest",
   "ruff"
@@ -70,7 +74,7 @@ exclude = [
   "**/.pytest_cache",
   "**/notebooks/*",
 ]
-pythonVersion = "3.13"
+pythonVersion = "3.12"
 typeCheckingMode = "basic"
 ignore = []
 reportAny = false
