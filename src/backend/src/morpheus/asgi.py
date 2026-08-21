@@ -12,13 +12,8 @@ from morpheus.user.router import router as user_router
 app = FastAPI(docs_url=None, openapi_url='/schema', redoc_url=None)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        'https://modflow.inowas-dev.com',
-        'https://morpheus.inowas.com',
-        'http://morpheus.inowas.localhost',
-        'http://localhost:4000',
-    ],
-    allow_credentials=True,
+    allow_origins=['*'],
+    allow_credentials=False,
     allow_methods=['*'],
     allow_headers=['*'],
 )

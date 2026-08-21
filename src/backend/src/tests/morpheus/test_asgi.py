@@ -39,18 +39,18 @@ def test_schema():
     assert response.json() == app.openapi()
 
 
-def test_cors_preflight_allows_frontend():
+def test_cors_preflight_allows_any_origin():
     response = client.options(
         '/users/me',
         headers={
-            'Origin': 'https://modflow.inowas-dev.com',
+            'Origin': 'https://any.example.com',
             'Access-Control-Request-Method': 'GET',
             'Access-Control-Request-Headers': 'authorization',
         },
     )
 
     assert response.status_code == 200
-    assert response.headers['access-control-allow-origin'] == 'https://modflow.inowas-dev.com'
+    assert response.headers['access-control-allow-origin'] == '*'
     assert 'authorization' in response.headers['access-control-allow-headers'].lower()
 
 
