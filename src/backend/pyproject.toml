@@ -12,7 +12,7 @@ dependencies = [
   "SQLAlchemy==2.0.25",
   "celery==5.3.6",
   "flopy==3.7.0",
-  "geopandas",
+  "geopandas==1.1.4",
   "geotiff",
   "gunicorn",
   "inflection",
