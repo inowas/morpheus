@@ -121,10 +121,10 @@ def calculate_bcf_package_data(model: Model, settings: BcfPackageSettings) -> Bc
             top = layer.properties.top
             if top is None:
                 raise ValueError('Top of first layer is not set')
-            transmissivity.append(layer.properties.get_transmissivity(top).get_data())
+            transmissivity.append(layer.properties.get_transmissivity(top))
             continue
 
-        transmissivity.append(layer.properties.get_transmissivity(model.layers.layers[layer_idx - 1].properties.bottom).get_data())
+        transmissivity.append(layer.properties.get_transmissivity(model.layers.layers[layer_idx - 1].properties.bottom))
 
     bcf_package_data = BcfPackageData(
         ipakcb=settings.ipakcb,

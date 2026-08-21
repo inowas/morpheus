@@ -32,6 +32,14 @@ The following database-free tests preserve stable, executable parts of the origi
 
 Visualization cells using Folium or Matplotlib are intentionally represented by numerical and geometric assertions. They remain useful as manual notebooks, but browser rendering is not required for deterministic CI tests.
 
+### FloPy/MODFLOW regression tests
+
+- `test_modflow_package_mappers.py` checks CHD, DRN, GHB, RIV, RCH, EVT, LAK, FHB, and HOB data mapping, including stress-period and cell assignments.
+- `test_modflow_package_wrappers.py` checks package-data defaults, solver/flow combinations, all active boundary-package wrappers, and FloPy package construction.
+- `test_modflow_engine_notebook_workflows.py` runs a minimal MODFLOW-2005 model and checks generated heads, budgets, files, package metadata, and reader error handling.
+
+The MODFLOW executable test is marked `modflow` and skips when `mf2005` is unavailable. The mapper and wrapper tests remain database-free and run on every backend test invocation.
+
 ### Test Files
 
 - **`test_project_commands.py`** - Tests for project creation and management commands

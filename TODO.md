@@ -13,7 +13,8 @@ This file tracks high-level tasks and technical debt for the Morpheus project.
 - [x] Add integration coverage for project, model, layer, boundary, observation, and calculation command lifecycles.
 - [x] Add integration coverage for asset commands and boundary observation commands.
 - [x] Convert stable notebook workflows into database-free unit tests.
-- [ ] Implement full calculation workflow tests (real MODFLOW end-to-end)
+- [x] Add MODFLOW-2005 package, mapper, wrapper, and minimal solver regression tests.
+- [ ] Repeat MODFLOW regression tests after FloPy upgrade and compare generated outputs.
 - [ ] Add unit tests for repositories using mocks (reduce MongoDB dependency)
 - [x] Implement robust database isolation/cleanup for integration tests
 

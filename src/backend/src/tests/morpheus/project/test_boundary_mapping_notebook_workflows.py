@@ -108,3 +108,66 @@ def test_well_notebook_distributes_pumping_over_affected_layers(test_polygon):
     assert result.data[0].values == [-1000.0]
     assert result.data[0].row >= 0
     assert result.data[0].column >= 0
+
+
+def test_boundary_mapper_outputs_round_trip_through_stress_period_data():
+    from morpheus.project.infrastructure.calculation.engines.modflow_2005.types.StressPeriodData import StressPeriodData
+
+    source = StressPeriodData()
+    source.set_value(time_step=0, layer=1, row=2, column=3, values=[10.0, 20.0])
+    source.set_value(time_step=1, layer=0, row=0, column=1, values=[30.0])
+
+    restored = StressPeriodData.from_dict(source.to_dict())
+
+    assert restored.to_dict() == source.to_dict()
+
+
+def test_well_mapper_ignores_cells_outside_model(test_polygon):
+    from morpheus.project.infrastructure.calculation.engines.modflow_2005.packages.WelPackageMapper import calculate_wel_boundary_stress_period_data
+    from morpheus.project.types.discretization.spatial.ActiveCells import ActiveCell
+
+    model, boundary = _model_with_well(pumping_rate=-100.0)
+    boundary.affected_cells.data.append(ActiveCell(row=99, col=99))
+
+    result = calculate_wel_boundary_stress_period_data(model.spatial_discretization, model.time_discretization, model.layers, boundary)
+
+    assert len(result.data) == 1
+    assert result.data[0].row < model.spatial_discretization.grid.n_rows()
+    assert result.data[0].column < model.spatial_discretization.grid.n_cols()
+
+
+def _model_with_well(pumping_rate):
+    from datetime import datetime
+
+    from morpheus.project.types.boundaries.Boundary import BoundaryId, BoundaryName, BoundaryTags, WellBoundary
+    from morpheus.project.types.boundaries.Observation import ObservationId, ObservationName
+    from morpheus.project.types.boundaries.WellObservation import PumpingRate, WellObservation, WellObservationValue
+    from morpheus.project.types.discretization.spatial import ActiveCells
+    from morpheus.project.types.discretization.time.Stressperiods import StartDateTime
+    from morpheus.project.types.geometry import Point
+    from morpheus.project.types.Model import Model
+
+    model = Model.new()
+    model = model.with_updated_spatial_discretization(
+        model.spatial_discretization.with_updated_affected_cells(ActiveCells.from_polygon(model.spatial_discretization.geometry, model.spatial_discretization.grid))
+    )
+    geometry = Point(coordinates=(0.5, 0.5))
+    start = StartDateTime.from_datetime(datetime(2020, 1, 1))
+    observation = WellObservation(
+        observation_id=ObservationId.new(),
+        observation_name=ObservationName.default(),
+        geometry=geometry,
+        data=[WellObservationValue(date_time=start, pumping_rate=PumpingRate.from_float(pumping_rate))],
+    )
+    boundary = WellBoundary(
+        id=BoundaryId.new(),
+        type=WellBoundary.type,
+        name=BoundaryName('well'),
+        interpolation='forward_fill',
+        tags=BoundaryTags.empty(),
+        geometry=geometry,
+        affected_cells=ActiveCells.from_point(geometry, model.spatial_discretization.grid),
+        affected_layers=[model.layers[0].layer_id],
+        observations=[observation],
+    )
+    return model.with_updated_boundaries(model.boundaries.with_added_boundary(boundary)), boundary
