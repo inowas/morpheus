@@ -116,9 +116,9 @@ module.exports = (env: any, argv: any) => {
       new webpack.EnvironmentPlugin({
         GIT_RELEASE: git('describe --tags --always --dirty=+'),
         GIT_RELEASE_DATE: git('log -1 --format=%aI'),
-        BASE_API_URL: env.BASE_API_URL || null,
-        KEYCLOAK_URL: env.KEYCLOAK_URL || null,
-        KEYCLOAK_REALM: env.KEYCLOAK_REALM || null,
+        BASE_API_URL: process.env.BASE_API_URL || env.BASE_API_URL || null,
+        KEYCLOAK_URL: process.env.KEYCLOAK_URL || env.KEYCLOAK_URL || null,
+        KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || env.KEYCLOAK_REALM || null,
         KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || env.KEYCLOAK_CLIENT_ID || null,
         SENTRY_ENABLED: process.env.REACT_APP_SENTRY_ENABLED || false,
         SENTRY_DSN: process.env.REACT_APP_SENTRY_DSN || null,

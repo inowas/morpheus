@@ -13,6 +13,10 @@ build-morpheus-frontend:dev:
   variables:
     REACT_APP_SENTRY_DSN: $SENTRY_DSN_FRONTEND
     REACT_APP_SENTRY_ENABLED: true
+    BASE_API_URL: https://api.modflow.inowas-dev.com
+    KEYCLOAK_URL: https://identity.inowas-dev.com
+    KEYCLOAK_REALM: inowas
+    KEYCLOAK_CLIENT_ID: morpheus-frontend
   artifacts:
     paths:
       - src/frontend/dist/morpheus
@@ -23,6 +27,8 @@ build-morpheus-frontend:dev:
       - src/frontend/src/morpheus/**/*.*
       - src/frontend/package.json
       - src/frontend/package-lock.json
+      - src/frontend/.gitlab-ci.morpheus.yml
+      - .gitlab-ci.yml
     refs:
       - main
       - tags
@@ -44,6 +50,8 @@ publish-morpheus-frontend:dev:
       - src/frontend/src/morpheus/**/*.*
       - src/frontend/package.json
       - src/frontend/package-lock.json
+      - src/frontend/.gitlab-ci.morpheus.yml
+      - .gitlab-ci.yml
     refs:
       - main
       - tags
@@ -91,4 +99,3 @@ publish-morpheus-frontend:prod:
       - src/frontend/package-lock.json
     refs:
       - tags
-

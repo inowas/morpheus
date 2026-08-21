@@ -66,7 +66,7 @@ services:
       KC_HOSTNAME: ${KEYCLOAK_HOST}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true
     command:
-      start --optimized --proxy-headers=xforwarded
+      start --optimized --import-realm --proxy-headers=xforwarded
     networks:
       - auth
       - traefik
@@ -79,6 +79,7 @@ services:
       - /tmp
     volumes:
       - keycloak-data:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.keycloak-http.entrypoints=web"
@@ -192,6 +193,8 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      - MPLCONFIGDIR=/tmp
     volumes:
       - morpheus-calculations:/mnt/project/calculations
     tmpfs:
@@ -205,7 +208,7 @@ services:
     healthcheck:
       test: [ "CMD", "celery", "-A", "task_queue", "inspect", "ping" ]
       interval: 5s
-      timeout: 5s
+      timeout: 30s
       start_period: 30s
       retries: 5
 

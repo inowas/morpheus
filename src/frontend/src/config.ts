@@ -1,6 +1,10 @@
 import * as process from 'process';
 
 const getIdentityServerUrl = () => {
+  if (process.env.KEYCLOAK_URL) {
+    return process.env.KEYCLOAK_URL;
+  }
+
   if (process.env.IDENTITY_SERVER_URL) {
     return process.env.IDENTITY_SERVER_URL;
   }

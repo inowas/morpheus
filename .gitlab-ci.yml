@@ -53,16 +53,13 @@ deploy-morpheus:dev:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - ssh-add "$SSH_PRIVATE_KEY_DEVELOPMENT"
   script:
-    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose down"
-    - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml inowas@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
-    - scp -P22 -r ./infrastructure/production/morpheus/cron inowas@$URL_DEVELOPMENT_SERVER:/$MORPHEUS_DEVELOPMENT_PATH
-    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose pull"
-    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd $MORPHEUS_DEVELOPMENT_PATH && docker compose up -d --force-recreate"
+    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd /srv/docker/inowas-suite.development && docker compose pull"
+    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd /srv/docker/inowas-suite.development && docker compose up -d --force-recreate"
   environment:
     name: development
-    url: https://api.dev.morpheus.inowas.com
+    url: https://modflow.inowas-dev.com
   only:
     - main
     - tags
