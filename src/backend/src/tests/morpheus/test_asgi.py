@@ -3,7 +3,9 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from morpheus.asgi import app
+from morpheus.authentication.outgoing import identity_context
 from morpheus.sensor.application.read.ReadSensorData import InvalidTimeResolutionException
+from morpheus.user.presentation.api.read.GetUsersRequestHandler import UserResponseItem
 
 client = TestClient(app)
 
@@ -61,3 +63,49 @@ def test_sensor_data_returns_bad_request_for_invalid_query(mock_handle):
 
     assert response.status_code == 400
     assert response.json() == {'error': 'invalid resolution'}
+
+
+def test_users_require_authentication():
+    assert client.get('/users').status_code == 401
+
+
+def test_current_user_requires_authentication():
+    assert client.get('/users/me').status_code == 401
+
+
+def test_groups_require_authentication():
+    assert client.get('/users/groups').status_code == 401
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch('morpheus.asgi.GetUsersRequestHandler.handle')
+def test_users_use_authenticated_identity(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+    mock_handle.return_value = [UserResponseItem(user_id='user-1', is_admin=False, email='user@example.com', username='user', first_name=None, last_name=None)]
+
+    response = client.get('/users', headers={'Authorization': 'Bearer valid-token'})
+
+    assert response.status_code == 200
+    assert response.json()[0]['user_id'] == 'user-1'
+    mock_authenticate.assert_called_once_with('valid-token')
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+def test_groups_forbidden_for_non_admin(mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get('/users/groups', headers={'Authorization': 'Bearer valid-token'})
+
+    assert response.status_code == 403
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch('morpheus.asgi.GetGroupsRequestHandler.handle')
+def test_groups_allowed_for_admin(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'admin-1', 'group_ids': [], 'is_admin': True}), True)[1]
+    mock_handle.return_value = []
+
+    response = client.get('/users/groups', headers={'Authorization': 'Bearer valid-token'})
+
+    assert response.status_code == 200
+    assert response.json() == []
