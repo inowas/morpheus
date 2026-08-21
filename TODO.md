@@ -3,15 +3,18 @@
 This file tracks high-level tasks and technical debt for the Morpheus project.
 
 ## ✅ Completed
+
 - [x] Create READMEs in root, backend, frontend, and infrastructure.
 - [x] Create a project-wide TODO list.
 
 ## 🚀 Core Development
 
 - [ ] Complete integration of all boundary types (Wells, Recharge, Rivers, etc.)
-- [ ] Implement full calculation workflow tests (end-to-end)
+- [x] Add integration coverage for project, model, layer, boundary, observation, and calculation command lifecycles.
+- [x] Add integration coverage for asset commands and boundary observation commands.
+- [ ] Implement full calculation workflow tests (real MODFLOW end-to-end)
 - [ ] Add unit tests for repositories using mocks (reduce MongoDB dependency)
-- [ ] Implement robust database isolation/cleanup for integration tests
+- [x] Implement robust database isolation/cleanup for integration tests
 
 ## 🛠️ Technical Debt & Refactoring
 

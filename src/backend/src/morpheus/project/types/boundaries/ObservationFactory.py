@@ -23,15 +23,24 @@ class ObservationFactory:
                 observation_id=observation_id,
             )
         if boundary_type == BoundaryType.drain:
-            return DrainObservation.new(name=observation_name, geometry=observation_geometry, data=[DrainRawDataItem.from_dict(item) for item in observation_data])
+            return DrainObservation.new(
+                name=observation_name, geometry=observation_geometry, data=[DrainRawDataItem.from_dict(item) for item in observation_data], observation_id=observation_id
+            )
         if boundary_type == BoundaryType.evapotranspiration:
             return EvapotranspirationObservation.new(
-                name=observation_name, geometry=observation_geometry, data=[EvapotranspirationObservationValue.from_dict(item) for item in observation_data]
+                name=observation_name,
+                geometry=observation_geometry,
+                data=[EvapotranspirationObservationValue.from_dict(item) for item in observation_data],
+                observation_id=observation_id,
             )
         if boundary_type == BoundaryType.flow_and_head:
-            return FlowAndHeadObservation.new(name=observation_name, geometry=observation_geometry, data=[FlowAndHeadRawDataItem.from_dict(item) for item in observation_data])
+            return FlowAndHeadObservation.new(
+                name=observation_name, geometry=observation_geometry, data=[FlowAndHeadRawDataItem.from_dict(item) for item in observation_data], observation_id=observation_id
+            )
         if boundary_type == BoundaryType.general_head:
-            return GeneralHeadObservation.new(name=observation_name, geometry=observation_geometry, data=[GeneralHeadRawDataItem.from_dict(item) for item in observation_data])
+            return GeneralHeadObservation.new(
+                name=observation_name, geometry=observation_geometry, data=[GeneralHeadRawDataItem.from_dict(item) for item in observation_data], observation_id=observation_id
+            )
         if boundary_type == BoundaryType.lake:
             return LakeObservation.new(
                 name=observation_name,
@@ -40,13 +49,20 @@ class ObservationFactory:
                 bed_leakance=BedLeakance.from_value(100),
                 initial_stage=InitialStage.from_float(1.0),
                 stage_range=StageRange(min=0.0, max=1.0),
+                observation_id=observation_id,
             )
         if boundary_type == BoundaryType.recharge:
-            return RechargeObservation.new(name=observation_name, geometry=observation_geometry, data=[RechargeObservationValue.from_dict(item) for item in observation_data])
+            return RechargeObservation.new(
+                name=observation_name, geometry=observation_geometry, data=[RechargeObservationValue.from_dict(item) for item in observation_data], observation_id=observation_id
+            )
         if boundary_type == BoundaryType.river:
-            return RiverObservation.new(name=observation_name, geometry=observation_geometry, data=[RiverObservationValue.from_dict(item) for item in observation_data])
+            return RiverObservation.new(
+                name=observation_name, geometry=observation_geometry, data=[RiverObservationValue.from_dict(item) for item in observation_data], observation_id=observation_id
+            )
         if boundary_type == BoundaryType.well:
-            return WellObservation.new(name=observation_name, geometry=observation_geometry, data=[WellObservationValue.from_dict(item) for item in observation_data])
+            return WellObservation.new(
+                name=observation_name, geometry=observation_geometry, data=[WellObservationValue.from_dict(item) for item in observation_data], observation_id=observation_id
+            )
 
         raise ValueError(f'Unknown boundary type: {boundary_type.to_str()}')
 

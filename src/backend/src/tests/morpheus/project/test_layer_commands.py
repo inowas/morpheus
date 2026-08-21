@@ -8,9 +8,12 @@ import pytest
 
 from morpheus.project.application.write.Model.General import CreateModelCommand
 from morpheus.project.application.write.Model.Layers import (
+    CloneModelLayerCommand,
     CreateModelLayerCommand,
     DeleteModelLayerCommand,
+    UpdateModelLayerConfinementCommand,
     UpdateModelLayerMetadataCommand,
+    UpdateModelLayerOrderCommand,
     UpdateModelLayerPropertyDefaultValueCommand,
 )
 from morpheus.project.application.write.Model.Layers.UpdateModelLayerPropertyZones import LayerPropertyZoneWithOptionalAffectedCells, UpdateModelLayerPropertyZonesCommand
@@ -52,11 +55,12 @@ class TestCreateModelLayerCommand:
     """Tests for CreateModelLayerCommand."""
 
     @pytest.fixture(autouse=True)
-    def setup(self, setup_project_and_model):
+    def setup(self, setup_project_and_model, model_reader):
         """Setup project and model before each test."""
         self.project_id = setup_project_and_model['project_id']
         self.model_id = setup_project_and_model['model_id']
         self.user_id = setup_project_and_model['user_id']
+        self.model_reader = model_reader
 
     def test_create_top_layer_convertible(self, command_bus):
         """Test creating a convertible top layer."""
@@ -75,8 +79,9 @@ class TestCreateModelLayerCommand:
         # Act
         command_bus.dispatch(command)
 
-        # Assert
-        assert True
+        model = self.model_reader.get_latest_model(self.project_id)
+        layer = next(layer for layer in model.layers if layer.name.to_str() == 'Top Layer')
+        assert layer.confinement == LayerConfinement.convertible()
 
     def test_create_aquitard_layer_confined(self, command_bus):
         """Test creating a confined aquitard layer."""
@@ -104,8 +109,8 @@ class TestCreateModelLayerCommand:
         # Act
         command_bus.dispatch(command)
 
-        # Assert
-        assert True
+        model = self.model_reader.get_latest_model(self.project_id)
+        assert any(layer.name.to_str() == 'Aquitard' for layer in model.layers)
 
     def test_create_aquifer_layer_confined(self, command_bus):
         """Test creating a confined aquifer layer."""
@@ -133,8 +138,8 @@ class TestCreateModelLayerCommand:
         # Act
         command_bus.dispatch(command)
 
-        # Assert
-        assert True
+        model = self.model_reader.get_latest_model(self.project_id)
+        assert any(layer.name.to_str() == 'Deep Aquifer' for layer in model.layers)
 
     def test_create_multiple_layers(self, command_bus):
         """Test creating multiple layers in sequence."""
@@ -168,8 +173,8 @@ class TestCreateModelLayerCommand:
             )
             command_bus.dispatch(command)
 
-        # Assert
-        assert True
+        model = self.model_reader.get_latest_model(self.project_id)
+        assert [layer.name.to_str() for layer in model.layers[-3:]] == ['Top Layer', 'Aquitard', 'Bottom Aquifer']
 
 
 class TestDeleteModelLayerCommand:
@@ -215,8 +220,8 @@ class TestDeleteModelLayerCommand:
         # Act
         self.command_bus.dispatch(command)
 
-        # Assert
-        assert True
+        model = self.model_reader.get_latest_model(self.project_id)
+        assert not any(layer.layer_id == self.test_layer_id for layer in model.layers)
 
     def test_delete_default_layer(self):
         """Test deleting the default layer (as shown in the notebook)."""
@@ -232,8 +237,8 @@ class TestDeleteModelLayerCommand:
         # Act
         self.command_bus.dispatch(command)
 
-        # Assert
-        assert True
+        model = self.model_reader.get_latest_model(self.project_id)
+        assert all(layer.layer_id != default_layer_id for layer in model.layers)
 
 
 class TestUpdateModelLayerMetadataCommand:
@@ -495,6 +500,48 @@ class TestUpdateModelLayerPropertyZonesCommand:
         else:
             assert isinstance(hk_data, list)
             assert len(hk_data) > 0  # Has rows
+
+
+def test_clone_layer_creates_second_layer(setup_full_model, user_id, command_bus, model_reader):
+    context = setup_full_model
+    source_id = context['layer_ids'][0]
+    clone_id = LayerId.new()
+
+    command_bus.dispatch(CloneModelLayerCommand(project_id=context['project_id'], model_id=context['model_id'], layer_id=source_id, new_layer_id=clone_id, user_id=user_id))
+
+    model = model_reader.get_latest_model(context['project_id'])
+    source = model.layers.get_layer(source_id)
+    clone = model.layers.get_layer(clone_id)
+    assert source is not None
+    assert clone is not None
+    assert clone.name.to_str() == source.name.to_str()
+    assert len(model.layers) == 5
+
+
+def test_update_layer_order(setup_full_model, user_id, command_bus, model_reader):
+    context = setup_full_model
+    current_ids = context['layer_ids']
+    reversed_ids = list(reversed(current_ids)) + [model_reader.get_latest_model(context['project_id']).layers[0].layer_id]
+
+    command_bus.dispatch(UpdateModelLayerOrderCommand(project_id=context['project_id'], model_id=context['model_id'], layer_ids=reversed_ids, user_id=user_id))
+
+    model = model_reader.get_latest_model(context['project_id'])
+    assert model.layers.get_layer_ids() == reversed_ids
+
+
+def test_update_layer_confinement(setup_full_model, user_id, command_bus, model_reader):
+    context = setup_full_model
+    layer_id = context['layer_ids'][0]
+
+    command_bus.dispatch(
+        UpdateModelLayerConfinementCommand(
+            project_id=context['project_id'], model_id=context['model_id'], layer_id=layer_id, confinement=LayerConfinement.unconfined(), user_id=user_id
+        )
+    )
+
+    layer = model_reader.get_latest_model(context['project_id']).layers.get_layer(layer_id)
+    assert layer is not None
+    assert layer.confinement == LayerConfinement.unconfined()
 
     def test_update_property_with_single_zone(self):
         """Test updating layer property with a single zone."""

@@ -21,9 +21,9 @@ class Settings:
         self.MONGO_PORT: int = int(values.MONGO_PORT)
         self.MONGO_USER: str = values.MONGO_USER
         self.MONGO_PASSWORD: str = values.MONGO_PASSWORD
-        self.MONGO_PROJECT_DATABASE: str = 'project_data'
-        self.MONGO_SENSOR_DATABASE: str = 'sensor_data'
-        self.MONGO_USER_DATABASE: str = 'user_data'
+        self.MONGO_PROJECT_DATABASE: str = values.get('MONGO_PROJECT_DATABASE', 'project_data')
+        self.MONGO_SENSOR_DATABASE: str = values.get('MONGO_SENSOR_DATABASE', 'sensor_data')
+        self.MONGO_USER_DATABASE: str = values.get('MONGO_USER_DATABASE', 'user_data')
         self.MORPHEUS_PROJECT_ASSET_DATA: str = values.MORPHEUS_PROJECT_ASSET_DATA
         self.MORPHEUS_PROJECT_CALCULATION_DATA: str = values.MORPHEUS_PROJECT_CALCULATION_DATA
         self.MORPHEUS_PROJECT_PREVIEW_IMAGE_DIMENSIONS: tuple[int, int] = (100, 100)
