@@ -15,6 +15,9 @@ publish-morpheus-backend-api:dev:
     - docker push $MORPHEUS_BACKEND_API_IMAGE:dev
   only:
     changes:
+      - .gitlab-ci.yml
+      - src/backend/.gitlab-ci.integration.yml
+      - src/backend/.gitlab-ci.publish.yml
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
@@ -35,6 +38,9 @@ publish-morpheus-backend-task-queue-worker:dev:
     - docker push $MORPHEUS_BACKEND_TASK_QUEUE_WORKER_IMAGE:dev
   only:
     changes:
+      - .gitlab-ci.yml
+      - src/backend/.gitlab-ci.integration.yml
+      - src/backend/.gitlab-ci.publish.yml
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
@@ -56,6 +62,9 @@ publish-morpheus-backend-api:prod:
     - docker push $MORPHEUS_BACKEND_API_IMAGE:latest
   only:
     changes:
+      - .gitlab-ci.yml
+      - src/backend/.gitlab-ci.integration.yml
+      - src/backend/.gitlab-ci.publish.yml
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
@@ -76,6 +85,9 @@ publish-morpheus-backend-task-queue-worker:prod:
     - docker push $MORPHEUS_BACKEND_TASK_QUEUE_WORKER_IMAGE:latest
   only:
     changes:
+      - .gitlab-ci.yml
+      - src/backend/.gitlab-ci.integration.yml
+      - src/backend/.gitlab-ci.publish.yml
       - src/infrastructure/production/**/*.*
       - src/backend/docker/**/*.*
       - src/backend/src/**/*.*
