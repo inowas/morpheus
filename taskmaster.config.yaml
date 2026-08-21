@@ -1,0 +1,23 @@
+# Taskmaster Configuration (default template)
+# Override per project via body_override in project_agent_files
+
+runner:
+  mode: local
+  model: claude-sonnet-4-5
+  language: en
+  max_tokens: 8000
+
+paths:
+  repo_root: .
+  spec_files:
+    - ./AGENTS.md
+    - ./README.md
+  output_dir: ./.taskmaster/out
+
+guardrails:
+  write_allowlist:
+    - ./src
+    - ./docs
+    - ./.taskmaster/out
+  deny_network: false
+  deny_shell: false
