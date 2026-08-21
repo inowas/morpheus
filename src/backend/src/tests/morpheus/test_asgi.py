@@ -4,6 +4,8 @@ from fastapi.testclient import TestClient
 
 from morpheus.asgi import app
 from morpheus.authentication.outgoing import identity_context
+from morpheus.project.presentation.api.read.models.ReadModelGridRequestHandler import ReadModelGridRequestHandler
+from morpheus.project.presentation.api.read.models.ReadModelRequestHandler import ReadModelRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectListRequestHandler import ReadProjectListRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectMetadataRequestHandler import ReadProjectMetadataRequestHandler
 from morpheus.sensor.application.read.ReadSensorData import InvalidTimeResolutionException
@@ -155,3 +157,48 @@ def test_project_metadata_maps_not_found(mock_handle, mock_authenticate):
 
 def test_project_privileges_requires_authentication():
     assert client.get('/projects/project-1/privileges').status_code == 401
+
+
+def test_model_reads_require_authentication():
+    paths = [
+        '/projects/project-1/model',
+        '/projects/project-1/model/calculation',
+        '/projects/project-1/model/spatial-discretization',
+        '/projects/project-1/model/spatial-discretization/affected-cells',
+        '/projects/project-1/model/spatial-discretization/grid',
+        '/projects/project-1/model/time-discretization',
+        '/projects/project-1/model/layers',
+        '/projects/project-1/model/boundaries',
+        '/projects/project-1/model/boundaries/boundary-1',
+        '/projects/project-1/model/head-observations',
+        '/projects/project-1/model/head-observations/observation-1',
+    ]
+
+    assert all(client.get(path).status_code == 401 for path in paths)
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadModelRequestHandler, 'handle', return_value={'model_id': 'model-1'})
+def test_model_returns_handler_response(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get('/projects/123e4567-e89b-12d3-a456-426614174000/model', headers={'Authorization': 'Bearer valid-token'})
+
+    assert response.status_code == 200
+    assert response.json() == {'model_id': 'model-1'}
+    mock_handle.assert_called_once()
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadModelGridRequestHandler, 'handle', return_value=({'grid': True}, 200))
+def test_model_grid_passes_query_format(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/model/spatial-discretization/grid?format=geojson',
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {'grid': True}
+    assert mock_handle.call_args.args[1] == 'geojson'
