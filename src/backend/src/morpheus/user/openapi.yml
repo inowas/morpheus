@@ -86,29 +86,6 @@ paths:
               $ref: '#/components/responses/ForbiddenError'
 
   /users/groups/{group_id}/members:
-        get:
-            operationId: readGroupMembers
-            tags:
-              - User
-            summary: Read group members
-            description: Read group members.
-            parameters:
-              - $ref: '#/components/parameters/GroupId'
-            responses:
-              200:
-                description: List of group members
-                content:
-                  application/json:
-                    schema:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/UserId'
-              401:
-                $ref: '#/components/responses/UnauthorizedError'
-              403:
-                $ref: '#/components/responses/ForbiddenError'
-              404:
-                $ref: '#/components/responses/NotFoundError'
         post:
             operationId: addGroupMembers
             tags:
@@ -128,26 +105,6 @@ paths:
             responses:
               201:
                 description: Group member was successfully added
-              401:
-                $ref: '#/components/responses/UnauthorizedError'
-              403:
-                $ref: '#/components/responses/ForbiddenError'
-              404:
-                $ref: '#/components/responses/NotFoundError'
-
-  /users/groups/{group_id}/members/{user_id}:
-        delete:
-            operationId: removeGroupMember
-            tags:
-              - User
-            summary: Remove a group member
-            description: Remove a group member.
-            parameters:
-              - $ref: '#/components/parameters/GroupId'
-              - $ref: '#/components/parameters/UserId'
-            responses:
-              204:
-                description: Group member was successfully removed
               401:
                 $ref: '#/components/responses/UnauthorizedError'
               403:

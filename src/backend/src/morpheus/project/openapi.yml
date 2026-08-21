@@ -175,6 +175,18 @@ paths:
         404:
           description: Not found
 
+  /projects/{project_id}/model/calculation:
+    get:
+      tags: [ Model ]
+      summary: Read the latest model calculation
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Latest model calculation }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
   /projects/{project_id}/model/spatial-discretization:
     get:
       tags:
@@ -198,28 +210,23 @@ paths:
         404:
           description: Not found
 
-  /projects/{project_id}/model/spatial-discretization/geometry:
+  /projects/{project_id}/model/spatial-discretization/affected-cells:
     get:
-      tags:
-        - Project
-        - Model
-      summary: Read the geometry of the spatial discretization
-      description: Read the geometry of the spatial discretization
+      tags: [ Model ]
+      summary: Read affected cells of the spatial discretization
       parameters:
         - $ref: '#/components/parameters/ProjectId'
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+            enum: [ json, geojson, geojson_outline ]
       responses:
-        200:
-          description: Geometry of the spatial discretization
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Polygon'
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
-        404:
-          description: Not found
+        '200': { description: Affected cells }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
 
   /projects/{project_id}/model/spatial-discretization/grid:
     get:
@@ -316,6 +323,329 @@ paths:
           description: Forbidden
         404:
           description: Not found
+
+  /projects/{project_id}/model/boundaries/{boundary_id}:
+    get:
+      tags: [ Model ]
+      summary: Read a model boundary
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/BoundaryId'
+      responses:
+        '200': { description: Model boundary }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/model/boundaries/{boundary_id}/affected_cells:
+    get:
+      tags: [ Model ]
+      summary: Read affected cells of a model boundary
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/BoundaryId'
+      responses:
+        '200': { description: Affected boundary cells }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/model/head-observations:
+    get:
+      tags: [ Model ]
+      summary: Read head observations
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Head observations }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/model/head-observations/{head_observation_id}:
+    get:
+      tags: [ Model ]
+      summary: Read a head observation
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: head_observation_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Head observation }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/model/layers/{layer_id}/properties/{property_name}:
+    get:
+      tags: [ Model ]
+      summary: Read a model layer property
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: layer_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: property_name
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Layer property }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/model/layers/{layer_id}/properties/{property_name}/image:
+    get:
+      tags: [ Model ]
+      summary: Read a model layer property image
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: layer_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: property_name
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Layer property image }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/event-log:
+    get:
+      tags: [ Project ]
+      summary: Read the project event log
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Project event log }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/metadata:
+    get:
+      tags: [ Project ]
+      summary: Read project metadata
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Project metadata }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/model/calculation-profile:
+    get:
+      tags: [ Model ]
+      summary: Read the selected model calculation profile
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Selected calculation profile }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculation-profiles:
+    get:
+      tags: [ Project ]
+      summary: Read project calculation profiles
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Calculation profiles }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculation-profiles/selected:
+    get:
+      tags: [ Project ]
+      summary: Read the selected project calculation profile
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Selected calculation profile }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculation-profiles/{calculation_profile_id}:
+    get:
+      tags: [ Project ]
+      summary: Read a project calculation profile
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_profile_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Calculation profile }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations:
+    get:
+      tags: [ Project ]
+      summary: Read project calculations
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200': { description: Calculations }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations/{calculation_id}:
+    get:
+      tags: [ Project ]
+      summary: Read calculation details
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Calculation details }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations/{calculation_id}/files/{file_name}:
+    get:
+      tags: [ Project ]
+      summary: Read a calculation file
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_id
+          in: path
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/FileName'
+      responses:
+        '200': { description: Calculation file }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations/{calculation_id}/results/budget/{result_type}:
+    get:
+      tags: [ Project ]
+      summary: Read calculation budget results
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: result_type
+          in: path
+          required: true
+          schema: { type: string, enum: [ flow, transport ] }
+        - name: time_idx
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+        - name: incremental
+          in: query
+          required: false
+          schema: { type: boolean, default: false }
+      responses:
+        '200': { description: Budget results }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations/{calculation_id}/results/layer/{result_type}:
+    get:
+      tags: [ Project ]
+      summary: Read calculation layer results
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: result_type
+          in: path
+          required: true
+          schema: { type: string, enum: [ head, drawdown, concentration ] }
+        - name: time_idx
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+        - name: layer
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+      responses:
+        '200': { description: Layer results }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations/{calculation_id}/results/observation/{result_type}:
+    get:
+      tags: [ Project ]
+      summary: Read calculation observation results
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: result_type
+          in: path
+          required: true
+          schema: { type: string, enum: [ head ] }
+      responses:
+        '200': { description: Observation results }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+
+  /projects/{project_id}/calculations/{calculation_id}/results/time_series/{result_type}:
+    get:
+      tags: [ Project ]
+      summary: Read calculation time series results
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: calculation_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: result_type
+          in: path
+          required: true
+          schema: { type: string, enum: [ head, drawdown, concentration ] }
+        - name: layer
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+        - name: row
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+        - name: col
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+      responses:
+        '200': { description: Time series results }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
 
   /projects/{project_id}/preview_image:
     get:
@@ -516,24 +846,6 @@ paths:
           $ref: '#/components/responses/NotFoundError'
         500:
           $ref: '#/components/responses/InternalServerError'
-    delete:
-      tags:
-        - Project
-      summary: Delete the asset
-      description: Delete the asset
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-        - $ref: '#/components/parameters/AssetId'
-      responses:
-        204:
-          description: Asset was successfully deleted
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        403:
-          $ref: '#/components/responses/ForbiddenError'
-        500:
-          $ref: '#/components/responses/InternalServerError'
-
   /projects/{project_id}/assets/{asset_id}/file:
     get:
       tags:
@@ -607,6 +919,20 @@ components:
       schema:
         type: string
         example: "0e2c2369-1955-4867-9b24-60274b0a8f33"
+    BoundaryId:
+      name: boundary_id
+      in: path
+      description: "The id of a model boundary."
+      required: true
+      schema:
+        type: string
+    FileName:
+      name: file_name
+      in: path
+      description: "The name of a calculation file."
+      required: true
+      schema:
+        type: string
     FilterAssetType:
       name: asset_type
       in: query

@@ -23,3 +23,74 @@ paths:
           description: Forbidden
         404:
           description: Not found
+
+  /sensors/latest:
+    get:
+      tags: [ Sensor ]
+      security: [ ]
+      summary: Read latest values for sensors
+      responses:
+        '200':
+          description: Latest sensor values
+        '400':
+          description: Invalid request
+
+  /sensors/project/{project}/sensor/{sensor}/parameter/{parameter}:
+    get:
+      tags: [ Sensor ]
+      security: [ ]
+      summary: Read sensor data
+      parameters:
+        - name: project
+          in: path
+          required: true
+          schema: { type: string }
+        - name: sensor
+          in: path
+          required: true
+          schema: { type: string }
+        - name: parameter
+          in: path
+          required: true
+          schema: { type: string }
+        - name: gte
+          in: query
+          required: false
+          schema: { type: number }
+        - name: gt
+          in: query
+          required: false
+          schema: { type: number }
+        - name: lte
+          in: query
+          required: false
+          schema: { type: number }
+        - name: lt
+          in: query
+          required: false
+          schema: { type: number }
+        - name: excl
+          in: query
+          required: false
+          schema: { type: number }
+        - name: start_timestamp
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: end_timestamp
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: time_resolution
+          in: query
+          required: false
+          schema: { type: string, default: 1D }
+        - name: date_format
+          in: query
+          required: false
+          schema: { type: string, default: iso }
+      responses:
+        '200':
+          description: Sensor data
+        '400':
+          description: Invalid request

@@ -28,17 +28,83 @@ paths:
   /projects/{project_id}/model:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model'
 
+  /projects/{project_id}/model/calculation:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1calculation'
+
   /projects/{project_id}/model/spatial-discretization:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization'
-
-  /projects/{project_id}/model/spatial-discretization/geometry:
-    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1geometry'
 
   /projects/{project_id}/model/spatial-discretization/grid:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1grid'
 
+  /projects/{project_id}/model/spatial-discretization/affected-cells:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1spatial-discretization~1affected-cells'
+
   /projects/{project_id}/model/time-discretization:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1time-discretization'
+
+  /projects/{project_id}/model/calculation-profile:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1calculation-profile'
+
+  /projects/{project_id}/model/layers:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1layers'
+
+  /projects/{project_id}/model/boundaries:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1boundaries'
+
+  /projects/{project_id}/model/head-observations:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1head-observations'
+
+  /projects/{project_id}/model/head-observations/{head_observation_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1head-observations~1{head_observation_id}'
+
+  /projects/{project_id}/model/layers/{layer_id}/properties/{property_name}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1layers~1{layer_id}~1properties~1{property_name}'
+
+  /projects/{project_id}/model/layers/{layer_id}/properties/{property_name}/image:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1layers~1{layer_id}~1properties~1{property_name}~1image'
+
+  /projects/{project_id}/model/boundaries/{boundary_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1boundaries~1{boundary_id}'
+
+  /projects/{project_id}/model/boundaries/{boundary_id}/affected_cells:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1model~1boundaries~1{boundary_id}~1affected_cells'
+
+  /projects/{project_id}/event-log:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1event-log'
+
+  /projects/{project_id}/metadata:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1metadata'
+
+  /projects/{project_id}/calculation-profiles:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculation-profiles'
+
+  /projects/{project_id}/calculation-profiles/selected:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculation-profiles~1selected'
+
+  /projects/{project_id}/calculation-profiles/{calculation_profile_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculation-profiles~1{calculation_profile_id}'
+
+  /projects/{project_id}/calculations:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations'
+
+  /projects/{project_id}/calculations/{calculation_id}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations~1{calculation_id}'
+
+  /projects/{project_id}/calculations/{calculation_id}/files/{file_name}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations~1{calculation_id}~1files~1{file_name}'
+
+  /projects/{project_id}/calculations/{calculation_id}/results/budget/{result_type}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations~1{calculation_id}~1results~1budget~1{result_type}'
+
+  /projects/{project_id}/calculations/{calculation_id}/results/layer/{result_type}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations~1{calculation_id}~1results~1layer~1{result_type}'
+
+  /projects/{project_id}/calculations/{calculation_id}/results/observation/{result_type}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations~1{calculation_id}~1results~1observation~1{result_type}'
+
+  /projects/{project_id}/calculations/{calculation_id}/results/time_series/{result_type}:
+    $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1calculations~1{calculation_id}~1results~1time_series~1{result_type}'
 
   /projects/{project_id}/privileges:
     $ref: './project/openapi.yml#/paths/~1projects~1{project_id}~1privileges'
@@ -61,8 +127,17 @@ paths:
   /sensors:
     $ref: './sensor/openapi.yml#/paths/~1sensors'
 
+  /sensors/latest:
+    $ref: './sensor/openapi.yml#/paths/~1sensors~1latest'
+
+  /sensors/project/{project}/sensor/{sensor}/parameter/{parameter}:
+    $ref: './sensor/openapi.yml#/paths/~1sensors~1project~1{project}~1sensor~1{sensor}~1parameter~1{parameter}'
+
   /users:
     $ref: './user/openapi.yml#/paths/~1users'
+
+  /users/me:
+    $ref: './user/openapi.yml#/paths/~1users~1me'
 
   /users/groups:
     $ref: './user/openapi.yml#/paths/~1users~1groups'
@@ -70,8 +145,23 @@ paths:
   /users/groups/{group_id}/members:
     $ref: './user/openapi.yml#/paths/~1users~1groups~1{group_id}~1members'
 
-  /users/groups/{group_id}/members/{user_id}:
-    $ref: './user/openapi.yml#/paths/~1users~1groups~1{group_id}~1members~1{user_id}'
+  /healthcheck:
+    get:
+      operationId: healthcheck
+      security: [ ]
+      responses:
+        '200':
+          description: API is healthy
+
+  /schema:
+    get:
+      operationId: readSchema
+      security: [ ]
+      responses:
+        '200':
+          description: Bundled OpenAPI schema
+        '404':
+          description: Schema is not available
 
 components:
   securitySchemes:
