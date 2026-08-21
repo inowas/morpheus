@@ -46,8 +46,15 @@ include:
 deploy-morpheus:dev:
   image: ubuntu:22.04
   stage: deploy
-  dependencies:
-    - publish-morpheus-frontend:dev
+  needs:
+    - job: test-morpheus-backend-integration
+      optional: true
+    - job: publish-morpheus-backend-api:dev
+      optional: true
+    - job: publish-morpheus-backend-task-queue-worker:dev
+      optional: true
+    - job: publish-morpheus-frontend:dev
+      optional: true
   before_script:
     - apt-get update && apt-get install rsync -y
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -70,8 +77,15 @@ deploy-morpheus:dev:
 deploy-morpheus:prod:
   image: ubuntu:22.04
   stage: deploy
-  dependencies:
-    - publish-morpheus-frontend:prod
+  needs:
+    - job: test-morpheus-backend-integration
+      optional: true
+    - job: publish-morpheus-backend-api:prod
+      optional: true
+    - job: publish-morpheus-backend-task-queue-worker:prod
+      optional: true
+    - job: publish-morpheus-frontend:prod
+      optional: true
   before_script:
     - apt-get update && apt-get install rsync -y
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
