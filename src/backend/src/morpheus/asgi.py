@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 
 from morpheus.project.asset_router import router as asset_router
@@ -9,6 +10,18 @@ from morpheus.sensor.router import router as sensor_router
 from morpheus.user.router import router as user_router
 
 app = FastAPI(docs_url=None, openapi_url='/schema', redoc_url=None)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        'https://modflow.inowas-dev.com',
+        'https://morpheus.inowas.com',
+        'http://morpheus.inowas.localhost',
+        'http://localhost:4000',
+    ],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 app.include_router(project_router)
 app.include_router(model_router)
 app.include_router(calculation_router)

@@ -39,6 +39,21 @@ def test_schema():
     assert response.json() == app.openapi()
 
 
+def test_cors_preflight_allows_frontend():
+    response = client.options(
+        '/users/me',
+        headers={
+            'Origin': 'https://modflow.inowas-dev.com',
+            'Access-Control-Request-Method': 'GET',
+            'Access-Control-Request-Headers': 'authorization',
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers['access-control-allow-origin'] == 'https://modflow.inowas-dev.com'
+    assert 'authorization' in response.headers['access-control-allow-headers'].lower()
+
+
 @patch('morpheus.sensor.router.ReadSensorListRequestHandler.handle')
 def test_sensors(mock_handle):
     mock_handle.return_value = ([{'id': 'sensor-1', 'location': [13.4, 52.5], 'project': 'BRA1', 'name': 'Sensor 1', 'parameters': ['head']}], 200)
