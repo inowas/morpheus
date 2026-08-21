@@ -5,6 +5,8 @@ from fastapi.testclient import TestClient
 
 from morpheus.asgi import app
 from morpheus.authentication.outgoing import identity_context
+from morpheus.project.presentation.api.read.calculations.ReadCalculationBudgetResultsRequestHandler import ReadCalculationBudgetResultsRequestHandler
+from morpheus.project.presentation.api.read.calculations.ReadCalculationsRequestHandler import ReadCalculationsRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelGridRequestHandler import ReadModelGridRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelLayerPropertyImageRequestHandler import GeneratedImage, ReadModelLayerPropertyImageRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelRequestHandler import ReadModelRequestHandler
@@ -226,3 +228,45 @@ def test_model_layer_property_image_returns_png(mock_handle, mock_authenticate):
     assert response.headers['cache-control'] == 'no-cache'
     assert response.content == b'png-data'
     assert mock_handle.call_args.kwargs['output_format'].value == 'grid'
+
+
+def test_calculation_reads_require_authentication():
+    paths = [
+        '/projects/project-1/calculations',
+        '/projects/project-1/calculations/calculation-1',
+        '/projects/project-1/calculations/calculation-1/files/output.dat',
+        '/projects/project-1/calculations/calculation-1/results/budget/flow',
+        '/projects/project-1/calculations/calculation-1/results/layer/head',
+        '/projects/project-1/calculations/calculation-1/results/observation/head',
+        '/projects/project-1/calculations/calculation-1/results/time_series/head',
+    ]
+
+    assert all(client.get(path).status_code == 401 for path in paths)
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadCalculationsRequestHandler, 'handle', return_value=([{'calculation_id': 'calculation-1'}], 200))
+def test_calculations_return_handler_response(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get('/projects/123e4567-e89b-12d3-a456-426614174000/calculations', headers={'Authorization': 'Bearer valid-token'})
+
+    assert response.status_code == 200
+    assert response.json() == [{'calculation_id': 'calculation-1'}]
+    mock_handle.assert_called_once()
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadCalculationBudgetResultsRequestHandler, 'handle', return_value=({'result_type': 'flow'}, 200))
+def test_calculation_budget_passes_query_parameters(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.get(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/calculations/123e4567-e89b-12d3-a456-426614174001/results/budget/flow?time_idx=3&incremental=true',
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {'result_type': 'flow'}
+    assert mock_handle.call_args.kwargs['time_idx'] == 3
+    assert mock_handle.call_args.kwargs['incremental'] is True
