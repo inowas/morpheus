@@ -1,23 +1,31 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ...application.read.ReadSensorData import ReadSensorDataQuery, ReadSensorDataQueryHandler
 
 
 class ReadSensorDataRequest(BaseModel):
-    gte: float | None = None
-    gt: float | None = None
-    lte: float | None = None
-    lt: float | None = None
-    excl: float | None = None
-    start_timestamp: int | None = None
-    end_timestamp: int | None = None
-    time_resolution: str = '1D'
-    date_format: str = 'iso'
+    gte: float | None = Field(default=None, examples=[0.0])
+    gt: float | None = Field(default=None, examples=[0.0])
+    lte: float | None = Field(default=None, examples=[100.0])
+    lt: float | None = Field(default=None, examples=[100.0])
+    excl: float | None = Field(default=None, examples=[-9999.0])
+    start_timestamp: int | None = Field(default=None, examples=[1704067200])
+    end_timestamp: int | None = Field(default=None, examples=[1704153600])
+    time_resolution: str = Field(default='1D', examples=['1D'])
+    date_format: str = Field(default='iso', examples=['iso'])
+
+
+class SensorDataResponseItem(BaseModel):
+    date_time: str = Field(..., examples=['2024-01-01T00:00:00Z'])
+    value: float | None = Field(..., examples=[12.5])
+
+
+SensorDataResponse = list[SensorDataResponseItem]
 
 
 class ReadSensorDataRequestHandler:
     @staticmethod
-    def handle(request: ReadSensorDataRequest, project: str, sensor: str, parameter: str):
+    def handle(request: ReadSensorDataRequest, project: str, sensor: str, parameter: str) -> SensorDataResponse:
         result = ReadSensorDataQueryHandler.handle(
             ReadSensorDataQuery(
                 project=project,
@@ -34,4 +42,4 @@ class ReadSensorDataRequestHandler:
                 date_format=request.date_format,
             )
         )
-        return result.to_dict()
+        return [SensorDataResponseItem(**item).model_dump() for item in result.to_dict()]
