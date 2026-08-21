@@ -57,6 +57,7 @@ deploy-mfviz:dev:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - printf '\n' >> "$SSH_PRIVATE_KEY_DEVELOPMENT"
     - chmod 600 "$SSH_PRIVATE_KEY_DEVELOPMENT"
     - ssh-add "$SSH_PRIVATE_KEY_DEVELOPMENT"
   script:
