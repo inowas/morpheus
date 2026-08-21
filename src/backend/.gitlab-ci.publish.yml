@@ -53,6 +53,7 @@ test-morpheus-backend-integration:
     - uv run pytest src/tests/morpheus/project -m integration
   only:
     changes:
+      - src/backend/.gitlab-ci.publish.yml
       - src/backend/src/**/*.py
       - src/backend/pyproject.toml
       - src/backend/pytest.ini
