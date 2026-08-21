@@ -1,6 +1,4 @@
-from flask import Response, abort, request
-
-from morpheus.common.presentation.api.helpers.file_upload import move_uploaded_files_to_tmp_dir, remove_uploaded_file
+from morpheus.common.presentation.api.helpers.file_upload import remove_uploaded_file
 from morpheus.common.types.Exceptions import InsufficientPermissionsException, NotFoundException
 
 from .....application.read.PermissionsReader import permissions_reader
@@ -17,15 +15,10 @@ from .....types.Project import ProjectId
 
 class UploadAssetRequestHandler:
     @staticmethod
-    def handle(project_id: ProjectId):
+    def handle(project_id: ProjectId, file_name, file_path, description):
         identity = get_identity()
         if identity is None:
-            abort(401, 'Unauthorized')
-
-        if request.mimetype != 'multipart/form-data':
-            abort(415, 'Request body must multipart/form-data')
-
-        file_name, file_path = move_uploaded_files_to_tmp_dir('file', 1)[0]
+            return '', 401
 
         try:
             permissions_reader.assert_identity_can(Privilege.EDIT_PROJECT, identity, project_id)
@@ -34,17 +27,17 @@ class UploadAssetRequestHandler:
                 project_id=project_id,
                 file_name=file_name,
                 file_path=file_path,
-                description=AssetDescription.try_from_str(request.form.get('description')),
+                description=AssetDescription.try_from_str(description),
             )
             UploadAssetCommandHandler.handle(command)
 
-            return Response(status=201, headers={'location': f'projects/{command.project_id.to_str()}/assets/{command.asset_id.to_str()}'})
+            return {'location': f'projects/{command.project_id.to_str()}/assets/{command.asset_id.to_str()}'}, 201
 
         except (InvalidMimeTypeException, InvalidGeoTiffException, InvalidShapefileException) as e:
-            abort(422, str(e))
+            return str(e), 422
         except NotFoundException as e:
-            abort(404, str(e))
+            return str(e), 404
         except InsufficientPermissionsException as e:
-            abort(403, str(e))
+            return str(e), 403
         finally:
             remove_uploaded_file(file_path)

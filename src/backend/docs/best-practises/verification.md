@@ -8,7 +8,6 @@ Run the relevant checks after each deployable change.
 cd src/backend
 uv run pytest
 uv run ruff check src/morpheus src/tests
-make build-openapi-spec
 ```
 
 ## API Checks

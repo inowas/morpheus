@@ -1,17 +1,19 @@
 from collections.abc import AsyncGenerator
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException
+from fastapi import Depends, HTTPException, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from morpheus.authentication.infrastructure.bearer_token import extract_bearer_token_from_header
 from morpheus.authentication.outgoing import authenticate_token, identity_context
 from morpheus.common.types.identity.Identity import Identity
 
+bearer_scheme = HTTPBearer(scheme_name='bearerAuth', bearerFormat='JWT', auto_error=False)
 
-async def require_identity(authorization: Annotated[str | None, Header()] = None) -> AsyncGenerator[Identity, None]:
+
+async def require_identity(credentials: Annotated[HTTPAuthorizationCredentials | None, Security(bearer_scheme)]) -> AsyncGenerator[Identity, None]:
     context_token = identity_context.set(None)
     try:
-        token = extract_bearer_token_from_header(authorization)
+        token = credentials.credentials if credentials is not None else None
         if token is None or not authenticate_token(token):
             raise HTTPException(status_code=401, detail='Unauthorized')
 

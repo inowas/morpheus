@@ -1,6 +1,7 @@
 from flask import Blueprint, request, send_file
 from flask_cors import cross_origin
 
+from ...common.presentation.api.helpers.file_upload import save_uploaded_file
 from ...common.presentation.api.middleware.schema_validation import validate_request
 from ..incoming import authenticate
 from ..presentation.api.read.assets.DownloadAssetRequestHandler import DownloadAssetRequestHandler
@@ -23,7 +24,11 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def upload_project_asset(project_id: str):
-        return UploadAssetRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        file_name, file_path = save_uploaded_file(request.files['file'].filename, request.files['file'].stream)
+        result = UploadAssetRequestHandler.handle(ProjectId.from_str(project_id), file_name, file_path, request.form.get('description'))
+        if isinstance(result, tuple) and len(result) == 2 and result[1] == 201:
+            return {}, 201, {'Location': result[0]['location']}
+        return result
 
     @blueprint.route('/<project_id>/assets', methods=['GET'])
     @cross_origin()
@@ -61,7 +66,8 @@ def register_routes(blueprint: Blueprint):
     @cross_origin()
     @authenticate()
     def project_preview_image_upload(project_id: str):
-        return UploadPreviewImageRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        file_name, file_path = save_uploaded_file(request.files['file'].filename, request.files['file'].stream)
+        return UploadPreviewImageRequestHandler.handle(ProjectId.from_str(project_id), file_name, file_path)
 
     @blueprint.route('/<project_id>/preview_image', methods=['GET'])
     @cross_origin()
@@ -79,4 +85,4 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     @validate_request
     def project_preview_image_deletion(project_id: str):
-        return DeletePreviewImageRequestHandler().handle(project_id=ProjectId.from_str(project_id))
+        return DeletePreviewImageRequestHandler.handle(project_id=ProjectId.from_str(project_id))

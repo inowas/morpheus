@@ -42,4 +42,4 @@ class ReadSensorDataRequestHandler:
                 date_format=request.date_format,
             )
         )
-        return [SensorDataResponseItem(**item).model_dump() for item in result.to_dict()]
+        return [SensorDataResponseItem(**item) for item in result.to_dict()]

@@ -29,6 +29,7 @@ dependencies = [
   "pymongo",
   "pyproj",
   "python-keycloak",
+  "python-multipart",
   "sentry-sdk[flask]==2.13.0",
   "scipy",
   "shapely",

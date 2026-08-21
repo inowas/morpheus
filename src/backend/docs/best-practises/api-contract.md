@@ -2,12 +2,10 @@
 
 OpenAPI is the contract for the backend API.
 
-- `src/morpheus/openapi.yml` is the bundled entry point.
-- Module contracts live in `project/openapi.yml`, `sensor/openapi.yml`, and
-  `user/openapi.yml`.
-- Every registered API operation needs a matching OpenAPI operation.
+- FastAPI's `app.openapi()` is the only API contract source.
+- `/schema` serves the generated FastAPI document.
+- Every registered API operation needs a matching FastAPI operation.
 - Trailing-slash aliases do not need separate OpenAPI paths.
-- Run `make build-openapi-spec` after contract changes.
 
 Before adding or changing a schema, inspect:
 

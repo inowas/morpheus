@@ -21,7 +21,9 @@ ProjectListResponse = list[ProjectSummaryResponse]
 
 class ReadProjectListRequestHandler:
     @staticmethod
-    def handle() -> tuple[ProjectListResponse, int]:
+    def handle(
+        search: str | None = None, public: bool | None = None, user_id: str | None = None, page: int | None = None, page_size: int | None = None
+    ) -> tuple[ProjectListResponse | str, int]:
         identity = get_identity()
         if identity is None:
             return '', 401
@@ -44,4 +46,4 @@ class ReadProjectListRequestHandler:
                 }
             )
 
-        return [ProjectSummaryResponse(**item).model_dump() for item in result], 200
+        return [ProjectSummaryResponse(**item) for item in result], 200

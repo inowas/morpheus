@@ -1,35 +1,23 @@
 import os
+import shutil
 import tempfile
 
-from flask import abort, request
 from werkzeug.utils import secure_filename
 
 from morpheus.common.types.File import FileName, FilePath
 
 
-def move_uploaded_files_to_tmp_dir(request_files_key: str, max_allowed_number_of_files: int | None = None) -> list[tuple[FileName, FilePath]]:
-    if request_files_key not in request.files:
-        abort(400, 'No file uploaded')
+def save_uploaded_file(filename: str | None, source) -> tuple[FileName, FilePath]:
+    safe_filename = secure_filename(filename) if filename is not None else ''
+    if safe_filename == '':
+        raise ValueError('Filename is empty or invalid')
 
-    files = request.files.getlist(request_files_key)
-    if max_allowed_number_of_files is not None and len(files) != max_allowed_number_of_files:
-        abort(400, f'Only {max_allowed_number_of_files} files are allowed, but {len(files)} were uploaded')
-
-    list_of_files = []
-    for file in files:
-        filename = secure_filename(file.filename) if file.filename is not None else ''
-        if filename == '':
-            abort(400, 'Filename is empty or invalid')
-
-        _, extension = os.path.splitext(filename)
-
-        handle, full_path = tempfile.mkstemp(suffix=extension)
-        os.close(handle)
-        file.save(full_path)
-
-        list_of_files.append((FileName(filename), FilePath(full_path)))
-
-    return list_of_files
+    _, extension = os.path.splitext(safe_filename)
+    handle, full_path = tempfile.mkstemp(suffix=extension)
+    os.close(handle)
+    with open(full_path, 'wb') as target:
+        shutil.copyfileobj(source, target)
+    return FileName(safe_filename), FilePath(full_path)
 
 
 def remove_uploaded_file(full_path: str):

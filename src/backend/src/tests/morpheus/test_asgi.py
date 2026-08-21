@@ -15,6 +15,9 @@ from morpheus.project.presentation.api.read.models.ReadModelLayerPropertyImageRe
 from morpheus.project.presentation.api.read.models.ReadModelRequestHandler import ReadModelRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectListRequestHandler import ReadProjectListRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectMetadataRequestHandler import ReadProjectMetadataRequestHandler
+from morpheus.project.presentation.api.write.assets.DeletePreviewImageRequestHandler import DeletePreviewImageRequestHandler
+from morpheus.project.presentation.api.write.assets.UploadAssetRequestHandler import UploadAssetRequestHandler
+from morpheus.project.presentation.api.write.assets.UploadPreviewImageRequestHandler import UploadPreviewImageRequestHandler
 from morpheus.sensor.application.read.ReadSensorData import InvalidTimeResolutionException
 from morpheus.user.presentation.api.read.GetUsersRequestHandler import UserResponseItem
 
@@ -33,6 +36,7 @@ def test_schema():
 
     assert response.status_code == 200
     assert '/healthcheck' in response.json()['paths']
+    assert response.json() == app.openapi()
 
 
 @patch('morpheus.sensor.router.ReadSensorListRequestHandler.handle')
@@ -130,17 +134,22 @@ def test_projects_require_authentication():
 @patch.object(ReadProjectListRequestHandler, 'handle')
 def test_projects_return_typed_response(mock_handle, mock_authenticate):
     mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
-    mock_handle.return_value = ([{
-        'project_id': 'project-1',
-        'name': 'Example',
-        'description': 'Description',
-        'tags': [],
-        'owner_id': 'user-1',
-        'is_public': False,
-        'created_at': '2024-01-01T00:00:00Z',
-        'updated_at': '2024-01-01T00:00:00Z',
-        'user_privileges': ['view_project'],
-    }], 200)
+    mock_handle.return_value = (
+        [
+            {
+                'project_id': 'project-1',
+                'name': 'Example',
+                'description': 'Description',
+                'tags': [],
+                'owner_id': 'user-1',
+                'is_public': False,
+                'created_at': '2024-01-01T00:00:00Z',
+                'updated_at': '2024-01-01T00:00:00Z',
+                'user_privileges': ['view_project'],
+            }
+        ],
+        200,
+    )
 
     response = client.get('/projects', headers={'Authorization': 'Bearer valid-token'})
 
@@ -332,3 +341,56 @@ def test_download_asset_returns_file_response(mock_handle, mock_authenticate, tm
     assert response.status_code == 200
     assert response.headers['content-type'] == 'image/tiff'
     assert 'example.tif' in response.headers['content-disposition']
+
+
+def test_asset_upload_requires_authentication():
+    response = client.post('/projects/project-1/assets', files={'file': ('example.tif', b'tiff-data', 'image/tiff')})
+
+    assert response.status_code == 401
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(UploadAssetRequestHandler, 'handle', return_value=({'location': 'projects/project-1/assets/asset-1'}, 201))
+def test_asset_upload_returns_location(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.post(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/assets',
+        files={'file': ('example.tif', b'tiff-data', 'image/tiff')},
+        data={'description': 'demo'},
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 201
+    assert response.headers['location'] == 'projects/project-1/assets/asset-1'
+    assert mock_handle.call_args.args[3] == 'demo'
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(UploadPreviewImageRequestHandler, 'handle', return_value=('', 204))
+def test_preview_upload_returns_no_content(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.put(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/preview_image',
+        files={'file': ('preview.png', b'png-data', 'image/png')},
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 204
+    mock_handle.assert_called_once()
+
+
+def test_preview_delete_requires_authentication():
+    assert client.delete('/projects/project-1/preview_image').status_code == 401
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(DeletePreviewImageRequestHandler, 'handle', return_value=('', 204))
+def test_preview_delete_returns_no_content(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+
+    response = client.delete('/projects/123e4567-e89b-12d3-a456-426614174000/preview_image', headers={'Authorization': 'Bearer valid-token'})
+
+    assert response.status_code == 204
+    mock_handle.assert_called_once()

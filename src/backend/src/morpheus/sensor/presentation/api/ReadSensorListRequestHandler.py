@@ -16,8 +16,8 @@ SensorListResponse = list[SensorListResponseItem]
 
 class ReadSensorListRequestHandler:
     @staticmethod
-    def handle() -> tuple[SensorListResponse, int]:
+    def handle() -> tuple[list[SensorListResponseItem], int]:
         projects = ['BRA1', 'BRA2', 'DEU1', 'KAZ', 'LFF']
         result = ReadSensorListQueryHandler.handle(ReadSensorListQuery(projects=projects))
         response = [SensorListResponseItem(**item) for item in result.to_dict()]
-        return [item.model_dump() for item in response], 200
+        return response, 200

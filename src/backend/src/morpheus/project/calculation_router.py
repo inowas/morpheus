@@ -3,6 +3,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, HTTPException, Query
 
 from morpheus.fastapi_auth import IdentityDependency
+from morpheus.fastapi_contract import NOT_FOUND_RESPONSES
 from morpheus.project.presentation.api.read.calculations.ReadCalculationBudgetResultsRequestHandler import ReadCalculationBudgetResultsRequestHandler
 from morpheus.project.presentation.api.read.calculations.ReadCalculationDetailsRequestHandler import ReadCalculationDetailsRequestHandler
 from morpheus.project.presentation.api.read.calculations.ReadCalculationFileRequestHandler import ReadCalculationFileRequestHandler
@@ -13,7 +14,7 @@ from morpheus.project.presentation.api.read.calculations.ReadCalculationTimeSeri
 from morpheus.project.types.calculation.Calculation import CalculationId
 from morpheus.project.types.Project import ProjectId
 
-router = APIRouter(prefix='/projects', tags=['Calculations'])
+router = APIRouter(prefix='/projects', tags=['Calculations'], responses=NOT_FOUND_RESPONSES)
 
 
 def _result(result):
@@ -26,26 +27,24 @@ def _result(result):
     return payload
 
 
-@router.get('/{project_id}/calculations', operation_id='read_calculations')
+@router.get('/{project_id}/calculations', operation_id='readCalculations')
 def read_calculations(project_id: str, _: IdentityDependency):
     return _result(ReadCalculationsRequestHandler().handle(ProjectId.from_str(project_id)))
 
 
-@router.get('/{project_id}/calculations/{calculation_id}', operation_id='read_calculation_details')
+@router.get('/{project_id}/calculations/{calculation_id}', operation_id='readCalculationDetails')
 def read_calculation_details(project_id: str, calculation_id: str, _: IdentityDependency):
     return _result(ReadCalculationDetailsRequestHandler().handle(ProjectId.from_str(project_id), CalculationId.from_str(calculation_id)))
 
 
-@router.get('/{project_id}/calculations/{calculation_id}/files/{file_name}', operation_id='read_calculation_file')
+@router.get('/{project_id}/calculations/{calculation_id}/files/{file_name}', operation_id='readCalculationFile')
 def read_calculation_file(project_id: str, calculation_id: str, file_name: str, _: IdentityDependency):
     return _result(
-        ReadCalculationFileRequestHandler().handle(
-            project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), file_name=file_name
-        )
+        ReadCalculationFileRequestHandler().handle(project_id=ProjectId.from_str(project_id), calculation_id=CalculationId.from_str(calculation_id), file_name=file_name)
     )
 
 
-@router.get('/{project_id}/calculations/{calculation_id}/results/budget/{result_type}', operation_id='read_calculation_budget_results')
+@router.get('/{project_id}/calculations/{calculation_id}/results/budget/{result_type}', operation_id='readCalculationBudgetResults')
 def read_calculation_budget_results(
     project_id: str,
     calculation_id: str,
@@ -65,7 +64,7 @@ def read_calculation_budget_results(
     )
 
 
-@router.get('/{project_id}/calculations/{calculation_id}/results/layer/{result_type}', operation_id='read_calculation_layer_results')
+@router.get('/{project_id}/calculations/{calculation_id}/results/layer/{result_type}', operation_id='readCalculationLayerResults')
 def read_calculation_layer_results(
     project_id: str,
     calculation_id: str,
@@ -85,7 +84,7 @@ def read_calculation_layer_results(
     )
 
 
-@router.get('/{project_id}/calculations/{calculation_id}/results/observation/{result_type}', operation_id='read_calculation_observation_results')
+@router.get('/{project_id}/calculations/{calculation_id}/results/observation/{result_type}', operation_id='readCalculationObservationResults')
 def read_calculation_observation_results(
     project_id: str,
     calculation_id: str,
@@ -99,7 +98,7 @@ def read_calculation_observation_results(
     )
 
 
-@router.get('/{project_id}/calculations/{calculation_id}/results/time_series/{result_type}', operation_id='read_calculation_time_series_results')
+@router.get('/{project_id}/calculations/{calculation_id}/results/time_series/{result_type}', operation_id='readCalculationTimeSeriesResults')
 def read_calculation_time_series_results(
     project_id: str,
     calculation_id: str,
