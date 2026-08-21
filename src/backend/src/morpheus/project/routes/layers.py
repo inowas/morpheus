@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 from flask_cors import cross_origin
 
 from ..incoming import authenticate
@@ -32,6 +32,9 @@ def register_routes(blueprint: Blueprint):
     @authenticate()
     def project_model_layer_property_image(project_id: str, layer_id: str, property_name: str):
         output_format = ImageOutputFormat(request.args.get('format', ImageOutputFormat.raster))
-        return ReadModelLayerPropertyImageRequestHandler().handle(
+        result = ReadModelLayerPropertyImageRequestHandler().handle(
             project_id=ProjectId.from_str(project_id), layer_id=LayerId.from_str(layer_id), property_name=LayerPropertyName.from_str(property_name), output_format=output_format
         )
+        if isinstance(result, tuple):
+            return result
+        return send_file(result.data, mimetype=result.media_type, max_age=0)

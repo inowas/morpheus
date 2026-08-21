@@ -1,6 +1,6 @@
-from typing import Literal
+from typing import Annotated, Literal
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 
 from morpheus.fastapi_auth import IdentityDependency
 from morpheus.project.presentation.api.read.models.ReadModelAffectedCellsRequestHandler import ReadModelAffectedCellsRequestHandler
@@ -9,6 +9,7 @@ from morpheus.project.presentation.api.read.models.ReadModelBoundaryAffectedCell
 from morpheus.project.presentation.api.read.models.ReadModelCalculationDetailsRequestHandler import ReadModelCalculationDetailsRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelGridRequestHandler import ReadModelGridRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelLayerPropertyDataRequestHandler import ReadModelLayerPropertyDataRequestHandler
+from morpheus.project.presentation.api.read.models.ReadModelLayerPropertyImageRequestHandler import GeneratedImage, ImageOutputFormat, ReadModelLayerPropertyImageRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelLayersRequestHandler import ReadModelLayersRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelObservationsRequestHandler import ReadModelHeadObservationsRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelRequestHandler import ReadModelRequestHandler
@@ -91,6 +92,26 @@ def read_model_layer_property(
             output_format=format,
         )
     )
+
+
+@router.get('/{project_id}/model/layers/{layer_id}/properties/{property_name}/image', operation_id='read_model_layer_property_image')
+def read_model_layer_property_image(
+    project_id: str,
+    layer_id: str,
+    property_name: str,
+    _: IdentityDependency,
+    format: Annotated[ImageOutputFormat, Query()] = ImageOutputFormat.raster,
+):
+    result = ReadModelLayerPropertyImageRequestHandler().handle(
+        project_id=ProjectId.from_str(project_id),
+        layer_id=LayerId.from_str(layer_id),
+        property_name=LayerPropertyName.from_str(property_name),
+        output_format=format,
+    )
+    if isinstance(result, tuple):
+        return _result(result)
+    image = result if isinstance(result, GeneratedImage) else GeneratedImage(result, 'image/png')
+    return Response(content=image.data.read(), media_type=image.media_type, headers={'Cache-Control': 'no-cache'})
 
 
 @router.get('/{project_id}/model/boundaries', operation_id='read_model_boundaries')

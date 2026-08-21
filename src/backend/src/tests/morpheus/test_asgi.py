@@ -1,3 +1,4 @@
+from io import BytesIO
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -5,6 +6,7 @@ from fastapi.testclient import TestClient
 from morpheus.asgi import app
 from morpheus.authentication.outgoing import identity_context
 from morpheus.project.presentation.api.read.models.ReadModelGridRequestHandler import ReadModelGridRequestHandler
+from morpheus.project.presentation.api.read.models.ReadModelLayerPropertyImageRequestHandler import GeneratedImage, ReadModelLayerPropertyImageRequestHandler
 from morpheus.project.presentation.api.read.models.ReadModelRequestHandler import ReadModelRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectListRequestHandler import ReadProjectListRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectMetadataRequestHandler import ReadProjectMetadataRequestHandler
@@ -202,3 +204,25 @@ def test_model_grid_passes_query_format(mock_handle, mock_authenticate):
     assert response.status_code == 200
     assert response.json() == {'grid': True}
     assert mock_handle.call_args.args[1] == 'geojson'
+
+
+def test_model_layer_property_image_requires_authentication():
+    assert client.get('/projects/project-1/model/layers/layer-1/properties/head/image').status_code == 401
+
+
+@patch('morpheus.fastapi_auth.authenticate_token')
+@patch.object(ReadModelLayerPropertyImageRequestHandler, 'handle')
+def test_model_layer_property_image_returns_png(mock_handle, mock_authenticate):
+    mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+    mock_handle.return_value = GeneratedImage(BytesIO(b'png-data'), 'image/png')
+
+    response = client.get(
+        '/projects/123e4567-e89b-12d3-a456-426614174000/model/layers/123e4567-e89b-12d3-a456-426614174001/properties/hk/image?format=grid',
+        headers={'Authorization': 'Bearer valid-token'},
+    )
+
+    assert response.status_code == 200
+    assert response.headers['content-type'] == 'image/png'
+    assert response.headers['cache-control'] == 'no-cache'
+    assert response.content == b'png-data'
+    assert mock_handle.call_args.kwargs['output_format'].value == 'grid'
