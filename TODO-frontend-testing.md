@@ -9,6 +9,7 @@ before changing architecture or state management.
 - [x] Add behavior coverage for unauthenticated login, authenticated redirect,
   and protected-route behavior.
 - [x] Add behavior coverage for project-list ownership and search filtering.
+- [x] Add behavior coverage for project-list navigation.
 - [x] Add a Storybook interaction for project metadata validation.
 
 ## Next
@@ -16,8 +17,7 @@ before changing architecture or state management.
 - [x] Add CI execution for the frontend Jest suite on every frontend change.
 - [x] Replace the incomplete Puppeteer setup with Playwright and add a
   frontend smoke test against the built application.
-- [ ] Extend project-list behavior coverage with loading, empty state, error
-  state, and project navigation.
+- [x] Add project-list loading, empty state, and error behavior coverage.
 - [ ] Add behavior coverage for model setup, layer editing, boundary editing,
   and calculation state transitions.
 - [ ] Add stories for the high-risk Morpheus screens: project list, model setup,
