@@ -47,7 +47,7 @@ test-frontend-e2e:
   stage: "test (integration)"
   script:
     - cd src/frontend
-    - make install-ci
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
     - npm run build-morpheus
     - npm run test:e2e:playwright
   artifacts:
@@ -65,7 +65,7 @@ test-frontend-visual:
   stage: "test (integration)"
   script:
     - cd src/frontend
-    - make install-ci
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
     - npm run build-storybook
     - npm run test:visual
   artifacts:
