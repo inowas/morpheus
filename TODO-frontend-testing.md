@@ -19,8 +19,9 @@ before changing architecture or state management.
 - [x] Replace the incomplete Puppeteer setup with Playwright and add a
   frontend smoke test against the built application.
 - [x] Add project-list loading, empty state, and error behavior coverage.
-- [ ] Add behavior coverage for model setup, layer editing, and boundary
-  editing.
+- [ ] Add behavior coverage for layer editing and boundary editing.
+- [x] Add behavior coverage for model setup grid properties and read-only mode.
+- [ ] Associate model setup labels with their inputs for accessible queries.
 - [x] Add behavior coverage for calculation state transitions.
 - [ ] Add stories for project list, model setup, layers, boundaries, and results.
 - [x] Add a story for calculation states.
