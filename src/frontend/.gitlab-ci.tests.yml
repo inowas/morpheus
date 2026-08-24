@@ -16,16 +16,16 @@ test-frontend-storybook:
   stage: "test (unit)"
   script:
     - cd src/frontend
-    - make install-ci
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
     - npm run build-storybook
-    - python3 -m http.server 6006 --directory dist/storybook > /tmp/storybook.log 2>&1 &
+    - python3 -m http.server 6006 --directory dist/storybook > storybook.log 2>&1 &
     - until curl --fail --silent http://127.0.0.1:6006 >/dev/null; do sleep 1; done
     - npm run test-storybook -- --url http://127.0.0.1:6006 --maxWorkers 1 --testTimeout 60000 --includeTags behavior
   artifacts:
     when: on_failure
     paths:
       - src/frontend/dist/storybook
-      - /tmp/storybook.log
+      - src/frontend/storybook.log
     expire_in: 1 day
   only:
     changes:
