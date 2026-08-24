@@ -68,7 +68,7 @@ deploy-morpheus:dev:
   script:
     - scp -P22 ./infrastructure/production/inowas-suite/docker-compose.yml inowas@$URL_DEVELOPMENT_SERVER:/srv/docker/inowas-suite.development/docker-compose.yml
     - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd /srv/docker/inowas-suite.development && docker compose pull"
-    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd /srv/docker/inowas-suite.development && docker compose up -d --force-recreate"
+    - ssh -p22 inowas@$URL_DEVELOPMENT_SERVER "cd /srv/docker/inowas-suite.development && docker compose up -d --force-recreate --remove-orphans && docker image prune -f"
   environment:
     name: development
     url: https://modflow.inowas-dev.com
@@ -96,11 +96,11 @@ deploy-morpheus:prod:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
-    - ssh -p22 inowas@$URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose down"
+    - ssh -p22 inowas@$URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose down --remove-orphans"
     - scp -P22 ./infrastructure/production/morpheus/docker-compose.yml inowas@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
     - scp -P22 -r ./infrastructure/production/morpheus/cron inowas@$URL_PRODUCTION_SERVER:/$MORPHEUS_PRODUCTION_PATH
     - ssh -p22 inowas@$URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose pull"
-    - ssh -p22 inowas@$URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose up -d --force-recreate"
+    - ssh -p22 inowas@$URL_PRODUCTION_SERVER "cd $MORPHEUS_PRODUCTION_PATH && docker compose up -d --force-recreate --remove-orphans && docker image prune -f"
   environment:
     name: production
     url: https://api.morpheus.inowas.com
