@@ -11,6 +11,7 @@ before changing architecture or state management.
 - [x] Add behavior coverage for project-list ownership and search filtering.
 - [x] Add behavior coverage for project-list navigation.
 - [x] Add a Storybook interaction for project metadata validation.
+- [x] Add a Storybook fixture for calculation states.
 
 ## Next
 
@@ -18,10 +19,11 @@ before changing architecture or state management.
 - [x] Replace the incomplete Puppeteer setup with Playwright and add a
   frontend smoke test against the built application.
 - [x] Add project-list loading, empty state, and error behavior coverage.
-- [ ] Add behavior coverage for model setup, layer editing, boundary editing,
-  and calculation state transitions.
-- [ ] Add stories for the high-risk Morpheus screens: project list, model setup,
-  layers, boundaries, calculations, and results.
+- [ ] Add behavior coverage for model setup, layer editing, and boundary
+  editing.
+- [x] Add behavior coverage for calculation state transitions.
+- [ ] Add stories for project list, model setup, layers, boundaries, and results.
+- [x] Add a story for calculation states.
 - [x] Add the Storybook test runner and run tagged interaction tests in CI with
   a browser-enabled image.
 - [ ] Add visual regression snapshots for stable screens and exclude maps,
