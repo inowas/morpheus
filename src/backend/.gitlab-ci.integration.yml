@@ -41,7 +41,7 @@ test-morpheus-backend-integration:
     - pip install --no-cache-dir uv
     - cd src/backend
     - uv sync --frozen --extra dev
-    - until uv run python -c "from pymongo import MongoClient; MongoClient(host='mongodb_backend', port=27017, username='root', password='dev-root', authSource='admin').admin.command('ping')"; do sleep 2; done
+    - uv run python src/init_mongodb.py
   script:
     - uv run pytest src/tests/morpheus/project -m integration
   only:
