@@ -8,14 +8,15 @@ before changing architecture or state management.
 - [x] Create a dedicated feature branch for frontend behavior and visual tests.
 - [x] Add behavior coverage for unauthenticated login, authenticated redirect,
   and protected-route behavior.
+- [x] Add behavior coverage for project-list ownership and search filtering.
 
 ## Next
 
 - [ ] Add CI execution for the frontend Jest suite on every frontend change.
 - [ ] Replace the incomplete Puppeteer setup with one supported browser-test
   stack and add a frontend smoke test against the built application.
-- [ ] Add behavior coverage for the project-list flow using mocked API data:
-  loading, empty state, error state, and project navigation.
+- [ ] Extend project-list behavior coverage with loading, empty state, error
+  state, and project navigation.
 - [ ] Add behavior coverage for model setup, layer editing, boundary editing,
   and calculation state transitions.
 - [ ] Add stories for the high-risk Morpheus screens: project list, model setup,
