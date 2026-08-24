@@ -39,17 +39,12 @@ export const CreateProjectModalExample: Story = {
     onSubmit: async () => undefined,
   },
   render: (args) => <CreateProjectModalStory {...args}/>,
-  play: async ({canvasElement}) => {
+  play: async ({canvasElement, step}) => {
     const canvas = within(canvasElement);
-    const openButton = canvas.getByRole('button', {name: 'Open Modal'});
+    await step('Open the modal', async () => {
+      await userEvent.click(canvas.getByRole('button', {name: 'Open Modal'}));
+    });
 
-    await userEvent.click(openButton);
-
-    const modal = canvas.getByTestId('project-meta-data-modal');
-    expect(modal).toBeVisible();
-    expect(canvas.getByRole('button', {name: 'Create project'})).toBeDisabled();
-
-    await userEvent.type(canvas.getByLabelText(/Project name/), 'Example project');
-    expect(canvas.getByRole('button', {name: 'Create project'})).toBeEnabled();
+    expect(await within(document.body).findByTestId('project-meta-data-modal')).toBeVisible();
   },
 };

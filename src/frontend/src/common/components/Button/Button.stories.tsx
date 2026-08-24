@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {Meta, StoryFn} from '@storybook/react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {expect, within} from '@storybook/test';
 
 import Button from './Button';
 import React from 'react';
@@ -13,6 +15,14 @@ export default {
   title: 'Button',
   component: Button,
 } as Meta<typeof Button>;
+
+export const Behavior: StoryFn<typeof Button> = () => <Button primary={true}>Run action</Button>;
+Behavior.tags = ['behavior'];
+Behavior.play = async ({canvasElement}) => {
+  const canvas = within(canvasElement);
+  const button = canvas.getByRole('button', {name: 'Run action'});
+  expect(button).toBeEnabled();
+};
 
 const buttonWrapper: React.CSSProperties = {
   width: 'calc(100% + 20px)',

@@ -10,3 +10,23 @@ test-frontend:
   only:
     changes:
       - src/frontend/**/*.*
+
+test-frontend-storybook:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (unit)"
+  script:
+    - cd src/frontend
+    - make install-ci
+    - npm run build-storybook
+    - python3 -m http.server 6006 --directory dist/storybook > /tmp/storybook.log 2>&1 &
+    - until curl --fail --silent http://127.0.0.1:6006 >/dev/null; do sleep 1; done
+    - npm run test-storybook -- --url http://127.0.0.1:6006 --maxWorkers 1 --testTimeout 60000 --includeTags behavior
+  artifacts:
+    when: on_failure
+    paths:
+      - src/frontend/dist/storybook
+      - /tmp/storybook.log
+    expire_in: 1 day
+  only:
+    changes:
+      - src/frontend/**/*.*

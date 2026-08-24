@@ -22,8 +22,8 @@ before changing architecture or state management.
   and calculation state transitions.
 - [ ] Add stories for the high-risk Morpheus screens: project list, model setup,
   layers, boundaries, calculations, and results.
-- [ ] Add the Storybook test runner and run interaction tests in CI with a
-  browser-enabled image.
+- [x] Add the Storybook test runner and run tagged interaction tests in CI with
+  a browser-enabled image.
 - [ ] Add visual regression snapshots for stable screens and exclude maps,
   charts, and other nondeterministic rendering until they have fixed fixtures.
 - [ ] Raise frontend coverage thresholds only after behavior coverage exists.
