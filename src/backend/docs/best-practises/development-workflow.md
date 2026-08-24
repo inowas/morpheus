@@ -15,7 +15,7 @@ make start-dev
 This starts MongoDB, RabbitMQ, Keycloak, PostgreSQL, Traefik, and Mailcatcher.
 It does not build or start the backend image.
 
-## Flask API
+## API
 
 In a second terminal:
 
@@ -23,23 +23,10 @@ In a second terminal:
 cd src/backend
 source .venv/bin/activate
 cd src
-flask run --host 127.0.0.1 --port 5000
+uvicorn morpheus.asgi:app --host 127.0.0.1 --port 5000
 ```
 
-The Flask API is available at `http://127.0.0.1:5000`.
-
-## FastAPI API
-
-The parallel ASGI slice can be started with:
-
-```bash
-cd src/backend
-source .venv/bin/activate
-cd src
-uvicorn morpheus.asgi:app --host 127.0.0.1 --port 5050
-```
-
-The FastAPI API is available at `http://127.0.0.1:5050`.
+The FastAPI API is available at `http://127.0.0.1:5000`.
 
 ## Release
 

@@ -55,10 +55,10 @@ services:
   backend:
     build:
       context: ${MORPHEUS_PROJECT_ROOT}
-      dockerfile: src/backend/docker/flask.Dockerfile
+      dockerfile: src/backend/docker/api.Dockerfile
       args:
-        - FLASK_USER_ID=${FLASK_USER_ID}
-        - FLASK_GROUP_ID=${FLASK_GROUP_ID}
+        - BACKEND_USER_ID=${BACKEND_USER_ID:-1000}
+        - BACKEND_GROUP_ID=${BACKEND_GROUP_ID:-1000}
     container_name: ${COMPOSE_PROJECT_NAME}-backend
     depends_on:
       mongodb_backend:
@@ -78,7 +78,7 @@ services:
       - /tmp:mode=777,size=200m
       - /var/cache:mode=777,size=200m
     restart: always
-    user: flask
+    user: morpheus
     read_only: true
     networks:
       - backend

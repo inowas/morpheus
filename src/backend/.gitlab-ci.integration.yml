@@ -36,7 +36,7 @@ test-morpheus-backend-integration:
     BACKEND_MORPHEUS_SENSORS_UIT_FTP_PATH: /test
     BACKEND_CELERY_BROKER: memory://
     BACKEND_CELERY_RESULT_BACKEND: cache+memory://
-    FLASK_ENV: testing
+    BACKEND_ENV: testing
   before_script:
     - pip install --no-cache-dir uv
     - cd src/backend

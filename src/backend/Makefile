@@ -49,21 +49,21 @@ run-integration-tests:
 	@echo "⚠️  Note: Integration tests require MongoDB to be running."
 	@echo "   Start MongoDB with: make start-dev"
 	@echo ""
-	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/ -v
+	BACKEND_ENV=testing uv run pytest src/tests/morpheus/project/ -v
 
 ## run integration tests with coverage - requires MongoDB
 run-integration-tests-coverage:
 	@echo "⚠️  Note: Integration tests require MongoDB to be running."
 	@echo "   Start MongoDB with: make start-dev"
 	@echo ""
-	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/ --cov=morpheus --cov-report=html --cov-report=term -v
+	BACKEND_ENV=testing uv run pytest src/tests/morpheus/project/ --cov=morpheus --cov-report=html --cov-report=term -v
 
 ## run complete workflow test only - requires MongoDB
 run-workflow-test:
 	@echo "⚠️  Note: Integration tests require MongoDB to be running."
 	@echo "   Start MongoDB with: make start-dev"
 	@echo ""
-	FLASK_ENV=testing uv run pytest src/tests/morpheus/project/test_rio_primero_workflow.py -v
+	BACKEND_ENV=testing uv run pytest src/tests/morpheus/project/test_rio_primero_workflow.py -v
 
 ## check code style
 check-code-style:
@@ -81,10 +81,10 @@ run-celery-worker:
 stop-all-celery-workers:
 	scripts/dev/stop-all-celery-workers.sh
 
-## runs flask app
-run-flask-app:
-	scripts/dev/run-flask-app.sh
+## runs FastAPI app
+run-api:
+	scripts/dev/run-api.sh
 
-## runs flask cli command (pass command as argument)
-run-flask-cli-command:
-	scripts/dev/run-flask-cli-command.sh "$(arguments)"
+## runs backend CLI command (pass command as argument)
+run-cli-command:
+	scripts/dev/run-cli-command.sh "$(arguments)"

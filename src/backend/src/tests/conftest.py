@@ -4,7 +4,7 @@ import sys
 import pytest
 
 # Set environment to testing before importing morpheus modules.
-os.environ.setdefault('FLASK_ENV', 'testing')
+os.environ.setdefault('BACKEND_ENV', 'testing')
 os.environ.setdefault('BACKEND_SECRET_KEY', 'test-secret-key-for-pytest')
 os.environ.setdefault('BACKEND_MAX_CONTENT_LENGTH', '104857600')
 os.environ.setdefault('BACKEND_KEYCLOAK_CLIENT_ID', 'test-client')

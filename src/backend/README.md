@@ -4,7 +4,7 @@ The Morpheus backend is a groundwater modeling API built with Python.
 
 ## Technology Stack
 
-- **Frameworks**: FastAPI (core API), Flask (legacy/wrapper)
+- **Framework**: FastAPI
 - **Task Queue**: Celery with RabbitMQ
 - **Database**: MongoDB (Event Store, Project/Sensor/User data)
 - **Auth**: Keycloak (OIDC/JWT)
@@ -24,7 +24,7 @@ The Morpheus backend is a groundwater modeling API built with Python.
    ```
 3. **Run API**:
    ```bash
-   make run-flask-app
+   make run-api
    ```
 
 ## Testing

@@ -125,3 +125,7 @@ def read_uit_sensor_data_from_csv_files_cli_command():
     write_success(f'Files with empty data: {file_empty_count}')
     write_success(f'Files with header errors: {file_error_count}')
     write_success(f'Total duration: {round(duration_ns / 1000000000, 3)} seconds')
+
+
+if __name__ == '__main__':
+    read_uit_sensor_data_from_csv_files_cli_command()
