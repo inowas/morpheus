@@ -132,7 +132,7 @@ def calculate_dis_package_data(model: Model, settings: DisPackageSettings) -> Di
         yul=model.spatial_discretization.grid.origin.coordinates[1],
         rotation=model.spatial_discretization.grid.rotation.to_float(),
         crs=model.spatial_discretization.grid.crs.to_str(),
-        start_datetime=model.time_discretization.start_date_time.to_str(),
+        start_datetime=model.time_discretization.start_date_time.to_datetime(),
     )
 
     return dis_package_data
