@@ -1,6 +1,6 @@
 test-frontend:
   image: node:20
-  stage: test
+  stage: "test (unit)"
 
   script:
     - cd src/frontend
