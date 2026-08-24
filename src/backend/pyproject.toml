@@ -11,7 +11,7 @@ dependencies = [
   "sqlalchemy>=2.0,<3",
   "celery>=5.3,<6",
   "fastapi>=0.115,<1",
-  "flopy==3.7",
+  "flopy>=3.8,<3.9",
   "fqdn>=1.5,<2",
   "geopandas>=1.1,<2",
   "geotiff>=0.2,<0.3",
