@@ -29,8 +29,9 @@ before changing architecture or state management.
 - [x] Add a story for calculation states.
 - [x] Add the Storybook test runner and run tagged interaction tests in CI with
   a browser-enabled image.
-- [ ] Add visual regression snapshots for stable screens and exclude maps,
-  charts, and other nondeterministic rendering until they have fixed fixtures.
+- [x] Add visual regression snapshots for stable screens; keep maps, charts,
+  and other nondeterministic rendering outside the gate until fixed fixtures
+  exist.
 - [ ] Raise frontend coverage thresholds only after behavior coverage exists.
 - [ ] Use dependency-cruiser to prevent new cross-layer imports while
   refactoring.

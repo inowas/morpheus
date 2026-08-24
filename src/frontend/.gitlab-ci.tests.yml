@@ -48,3 +48,21 @@ test-frontend-e2e:
   only:
     changes:
       - src/frontend/**/*.*
+
+test-frontend-visual:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (integration)"
+  script:
+    - cd src/frontend
+    - make install-ci
+    - npm run build-storybook
+    - npm run test:visual
+  artifacts:
+    when: on_failure
+    paths:
+      - src/frontend/test-results
+      - src/frontend/reports
+    expire_in: 1 day
+  only:
+    changes:
+      - src/frontend/**/*.*

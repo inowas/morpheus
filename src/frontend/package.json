@@ -196,6 +196,7 @@
     "test:e2e": "jest -c jest.e2e.config.ts",
     "test-storybook": "test-storybook --ci",
     "test:e2e:playwright": "playwright test",
+    "test:visual": "playwright test --config playwright.storybook.config.ts",
     "cs-check": "eslint --quiet --ext .js,.jsx,.ts,.tsx .",
     "cs-fix": "eslint --quiet --fix --ext .js,.jsx,.ts,.tsx .",
     "depcruise:app": "dependency-cruiser src/app --include-only '^(src/app)' --config",
