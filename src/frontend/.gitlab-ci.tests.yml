@@ -11,6 +11,17 @@ test-frontend:
     changes:
       - src/frontend/**/*.*
 
+test-frontend-dependencies:
+  image: node:20
+  stage: "test (unit)"
+  script:
+    - cd src/frontend
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
+    - npm run depcruise:all
+  only:
+    changes:
+      - src/frontend/**/*.*
+
 test-frontend-storybook:
   image: mcr.microsoft.com/playwright:v1.44.1-jammy
   stage: "test (unit)"

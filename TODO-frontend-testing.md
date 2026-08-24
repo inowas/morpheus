@@ -20,12 +20,17 @@ before changing architecture or state management.
   frontend smoke test against the built application.
 - [x] Add project-list loading, empty state, and error behavior coverage.
 - [x] Add behavior coverage for layer confinement editing.
+- [x] Add behavior coverage for layer property editing.
+- [x] Associate model setup labels with their inputs for accessible queries.
+- [x] Add a Storybook fixture for layer property editing.
 - [ ] Add behavior coverage for layer metadata/property editing and boundary editing.
 - [x] Add behavior coverage for model setup grid properties and read-only mode.
 - [x] Add behavior coverage for layer confinement editing.
+- [x] Add a frontend dependency-cruiser CI gate.
 - [ ] Associate model setup labels with their inputs for accessible queries.
 - [x] Add behavior coverage for calculation state transitions.
-- [ ] Add stories for project list, model setup, layers, boundaries, and results.
+- [ ] Add stories for project list, boundaries, and results.
+- [x] Add stories for model setup and layer confinement.
 - [x] Add a story for calculation states.
 - [x] Add the Storybook test runner and run tagged interaction tests in CI with
   a browser-enabled image.
