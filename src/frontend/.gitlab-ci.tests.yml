@@ -30,3 +30,21 @@ test-frontend-storybook:
   only:
     changes:
       - src/frontend/**/*.*
+
+test-frontend-e2e:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (integration)"
+  script:
+    - cd src/frontend
+    - make install-ci
+    - npm run build-morpheus
+    - npm run test:e2e:playwright
+  artifacts:
+    when: on_failure
+    paths:
+      - src/frontend/test-results
+      - src/frontend/reports
+    expire_in: 1 day
+  only:
+    changes:
+      - src/frontend/**/*.*

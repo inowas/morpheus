@@ -13,9 +13,9 @@ before changing architecture or state management.
 
 ## Next
 
-- [ ] Add CI execution for the frontend Jest suite on every frontend change.
-- [ ] Replace the incomplete Puppeteer setup with one supported browser-test
-  stack and add a frontend smoke test against the built application.
+- [x] Add CI execution for the frontend Jest suite on every frontend change.
+- [x] Replace the incomplete Puppeteer setup with Playwright and add a
+  frontend smoke test against the built application.
 - [ ] Extend project-list behavior coverage with loading, empty state, error
   state, and project navigation.
 - [ ] Add behavior coverage for model setup, layer editing, boundary editing,
