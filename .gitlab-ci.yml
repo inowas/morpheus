@@ -49,7 +49,7 @@ deploy-morpheus:dev:
   stage: deploy
   needs:
     - job: test-morpheus-backend-integration
-      optional: true
+    - job: test-morpheus-backend-unit
     - job: publish-morpheus-backend-api:dev
       optional: true
     - job: publish-morpheus-backend-task-queue-worker:dev

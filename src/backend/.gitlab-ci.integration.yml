@@ -1,6 +1,5 @@
-test-morpheus-backend-integration:
+.test-morpheus-backend:
   image: python:3.12-bookworm
-  stage: "test (integration)"
   services:
     - name: mongo:7.0
       alias: mongodb_backend
@@ -42,23 +41,35 @@ test-morpheus-backend-integration:
     - cd src/backend
     - uv sync --frozen --extra dev
     - uv run python src/init_mongodb.py
+
+test-morpheus-backend-integration:
+  extends: .test-morpheus-backend
+  stage: "test (integration)"
   script:
-    - uv run pytest src/tests/morpheus/project -m integration
-  only:
-    changes:
-      - .gitlab-ci.yml
-      - src/backend/.gitlab-ci.integration.yml
-      - src/backend/.gitlab-ci.publish.yml
-      - src/backend/src/**/*.py
-      - src/backend/pyproject.toml
-      - src/backend/pytest.ini
-      - src/backend/uv.lock
-    refs:
-      - branches
-      - tags
+    - if [ "$CI_COMMIT_BRANCH" = "main" ] || [ -n "$CI_COMMIT_TAG" ]; then uv run pytest src/tests; else uv run pytest src/tests/morpheus/project -m integration; fi
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+    - changes:
+        - .gitlab-ci.yml
+        - src/backend/.gitlab-ci.integration.yml
+        - src/backend/.gitlab-ci.publish.yml
+        - src/backend/src/**/*.py
+        - src/backend/pyproject.toml
+        - src/backend/pytest.ini
+        - src/backend/uv.lock
 
 test-morpheus-backend-unit:
-  extends: test-morpheus-backend-integration
+  extends: .test-morpheus-backend
   stage: "test (unit)"
   script:
     - uv run pytest src/tests -m unit
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+    - changes:
+        - .gitlab-ci.yml
+        - src/backend/.gitlab-ci.integration.yml
+        - src/backend/.gitlab-ci.publish.yml
+        - src/backend/src/**/*.py
+        - src/backend/pyproject.toml
+        - src/backend/pytest.ini
+        - src/backend/uv.lock
