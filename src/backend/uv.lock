@@ -651,16 +651,16 @@ wheels = [
 
 [[package]]
 name = "flopy"
-version = "3.8.2"
+version = "3.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bc/61/e9c7b9bc8ad799fc29203e25e35a07604970955ba47da3e19f660dd8a3b8/flopy-3.8.2.tar.gz", hash = "sha256:0ce2941f4095df2ca1d510f28df57224bdeb90636a3f3beeb199f09f635ddc62", size = 1203496, upload-time = "2024-10-03T13:26:38.262Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e0/f1/ba4f6d79d4d68d79474b7862ec55a551b4636417b9a288373c91e91ba14f/flopy-3.10.0.tar.gz", hash = "sha256:b2b9557d69272f988f240d1f156de394ee93be4de2b88b6dc3f4d44b6a3d63cb", size = 1185427, upload-time = "2026-02-06T23:45:53.095Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dd/72/927c68a5fc8ebf5e221076e6140378ee01dd1a3b1924f56fd18159659b2a/flopy-3.8.2-py3-none-any.whl", hash = "sha256:a89127006b467e17fe4c0f08c4996f02a772f8ef1f4a1550a50d8c98ddfbc4ab", size = 1539815, upload-time = "2024-10-03T13:26:35.897Z" },
+    { url = "https://files.pythonhosted.org/packages/72/42/2a44d88ad84c963a487a0f1691d87edd143e052c71b39ec51d3969283e31/flopy-3.10.0-py3-none-any.whl", hash = "sha256:4d19f092ac715ed81911e7eadec7aeeafb994a603d1732f612e41c5fe9d6c46a", size = 1488595, upload-time = "2026-02-06T23:45:55.484Z" },
 ]
 
 [[package]]
@@ -1437,7 +1437,7 @@ requires-dist = [
     { name = "dep-check", marker = "extra == 'dev'" },
     { name = "dynaconf", specifier = ">=3.3,<4" },
     { name = "fastapi", specifier = ">=0.115,<1" },
-    { name = "flopy", specifier = ">=3.8,<3.9" },
+    { name = "flopy", specifier = ">=3.10,<4" },
     { name = "folium", marker = "extra == 'dev'" },
     { name = "fqdn", specifier = ">=1.5,<2" },
     { name = "geopandas", specifier = ">=1.1,<2" },
