@@ -4,7 +4,7 @@ test-morpheus-backend-integration:
   services:
     - name: mongo:7.0
       alias: mongodb_backend
-      command: ['--auth']
+
       variables:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: dev-root
