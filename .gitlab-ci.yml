@@ -1,5 +1,6 @@
 stages:
-  - test
+  - "test (unit)"
+  - "test (integration)"
   - build
   - publish
   - deploy

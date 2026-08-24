@@ -1,10 +1,10 @@
 test-morpheus-backend-integration:
   image: python:3.12-bookworm
-  stage: test
+  stage: "test (integration)"
   services:
     - name: mongo:7.0
       alias: mongodb_backend
-      command: ['--auth']
+
       variables:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: dev-root
@@ -36,12 +36,12 @@ test-morpheus-backend-integration:
     BACKEND_MORPHEUS_SENSORS_UIT_FTP_PATH: /test
     BACKEND_CELERY_BROKER: memory://
     BACKEND_CELERY_RESULT_BACKEND: cache+memory://
-    FLASK_ENV: testing
+    BACKEND_ENV: testing
   before_script:
     - pip install --no-cache-dir uv
     - cd src/backend
     - uv sync --frozen --extra dev
-    - until uv run python -c "from pymongo import MongoClient; MongoClient(host='mongodb_backend', port=27017, username='root', password='dev-root', authSource='admin').admin.command('ping')"; do sleep 2; done
+    - uv run python src/init_mongodb.py
   script:
     - uv run pytest src/tests/morpheus/project -m integration
   only:
@@ -56,3 +56,9 @@ test-morpheus-backend-integration:
     refs:
       - branches
       - tags
+
+test-morpheus-backend-unit:
+  extends: test-morpheus-backend-integration
+  stage: "test (unit)"
+  script:
+    - uv run pytest src/tests -m unit

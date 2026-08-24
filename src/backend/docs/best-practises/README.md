@@ -9,7 +9,7 @@ Read the documents in this order:
 3. [Architecture](architecture.md)
 4. [Request Handlers](request-handlers.md)
 5. [API Contract](api-contract.md)
-6. [Flask/FastAPI Migration](flask-fastapi-migration.md)
+6. [FastAPI migration](flask-fastapi-migration.md)
 7. [Dependencies](dependencies.md)
 8. [Security and Git](security-and-git.md)
 

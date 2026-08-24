@@ -2,51 +2,35 @@ ARG BACKEND_APP_ROOT_PATH=/app
 
 FROM python:3.12-bookworm AS base
 ARG BACKEND_APP_ROOT_PATH
-ARG FLASK_USER_ID
-ARG FLASK_GROUP_ID
+ARG BACKEND_USER_ID=1000
+ARG BACKEND_GROUP_ID=1000
 
-# install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# add files to image
 ADD src/backend/src ${BACKEND_APP_ROOT_PATH}/src
 ADD src/backend/pyproject.toml ${BACKEND_APP_ROOT_PATH}/pyproject.toml
 ADD src/backend/uv.lock ${BACKEND_APP_ROOT_PATH}/uv.lock
 ADD src/backend/README.md ${BACKEND_APP_ROOT_PATH}/README.md
 ADD src/backend/docker/docker-entrypoint.sh ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.sh
 ADD src/backend/docker/docker-entrypoint.d ${BACKEND_APP_ROOT_PATH}/docker/docker-entrypoint.d
-# install python dependencies with uv
-# Use system python (no venv needed in Docker)
+
 WORKDIR ${BACKEND_APP_ROOT_PATH}
 ENV UV_SYSTEM_PYTHON=1
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
 RUN uv sync --frozen --no-dev
 
-# prepare python environment
-ENV PYTHONUNBUFFERED 1
-ENV FLASK_ENV production
+ENV PYTHONUNBUFFERED=1
 
-# create system user flask
-RUN addgroup --system flask && adduser --system --group flask
-RUN groupmod -g ${FLASK_GROUP_ID} flask
-RUN usermod -u ${FLASK_USER_ID} -g ${FLASK_GROUP_ID} flask
+RUN addgroup --system morpheus && adduser --system --group morpheus
+RUN groupmod -g ${BACKEND_GROUP_ID} morpheus
+RUN usermod -u ${BACKEND_USER_ID} -g ${BACKEND_GROUP_ID} morpheus
+RUN mkdir -p /mnt/project/assets /mnt/project/calculations /mnt/sensors
+RUN chown -R morpheus:morpheus /mnt
 
-# prepare mount points to be not mounted as root in the container (see https://github.com/moby/moby/issues/2259)
-# other docker containers do this as well (e.g. mongodb sets the user to mongodb for mount point /data/db)
-# so this seems to be the current best practice to solve permission errors when running containers as non-root
-RUN mkdir -p /mnt/project/assets
-RUN mkdir -p /mnt/project/calculations
-RUN mkdir -p /mnt/sensors
-RUN chown -R flask:flask /mnt
-
-
-FROM base AS flask_app
-
-
+FROM base AS api_app
 ARG BACKEND_APP_ROOT_PATH
 
-# start the FastAPI ASGI app as user flask
-USER flask
+USER morpheus
 WORKDIR ${BACKEND_APP_ROOT_PATH}/src
 ENTRYPOINT ["../docker/docker-entrypoint.sh"]
 CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "morpheus.asgi:app"]
