@@ -60,7 +60,7 @@ describe('project list page behavior', () => {
     mockUseLocation.mockReturnValue({pathname: '/projects'} as ReturnType<typeof useLocation>);
     mockUseTranslate.mockReturnValue({translate: (key: string) => key} as ReturnType<typeof useTranslate>);
     mockUseDateTimeFormat.mockReturnValue({formatISODate: (value: string) => value} as ReturnType<typeof useDateTimeFormat>);
-    mockUseUsers.mockReturnValue({users: []} as ReturnType<typeof useUsers>);
+    mockUseUsers.mockReturnValue({authenticatedUser: null, users: []});
     mockUseProjectList.mockReturnValue({
       projects: [{
         project_id: 'project-1',

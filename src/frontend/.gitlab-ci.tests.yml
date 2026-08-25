@@ -67,13 +67,34 @@ test-frontend-visual:
     - cd src/frontend
     - npm ci --legacy-peer-deps --cache .npm --prefer-offline
     - npm run build-storybook
-    - npm run test:visual
+    - if [ "${VISUAL_UPDATE_SNAPSHOTS:-0}" = "1" ]; then npm run test:visual -- --update-snapshots; else npm run test:visual; fi
   artifacts:
-    when: on_failure
+    when: always
     paths:
+      - src/frontend/storybook
       - src/frontend/test-results
       - src/frontend/reports
     expire_in: 1 day
   only:
     changes:
       - src/frontend/**/*.*
+
+update-frontend-visual-baselines:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (integration)"
+  script:
+    - cd src/frontend
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
+    - npm run build-storybook
+    - npm run test:visual -- --update-snapshots
+  artifacts:
+    when: always
+    paths:
+      - src/frontend/storybook
+    expire_in: 1 day
+  when: manual
+  allow_failure: false
+  only:
+    refs:
+      - branches
+      - main
