@@ -1,0 +1,13 @@
+[tasks.frontend-visual-baselines]
+# Regenerate Linux visual baselines in the Playwright docker image. The
+# mounted workdir is the repo root so webpack's `git describe` call works,
+# while the actual application builds from src/frontend.
+description = "Regenerate Linux visual baselines in the Playwright docker image"
+run = """
+ROOT="$(git rev-parse --show-toplevel)"
+docker run --rm -v "$ROOT":/work -w /work/src/frontend mcr.microsoft.com/playwright:v1.44.1-jammy \\
+  sh -c "npm ci --legacy-peer-deps --cache .npm --prefer-offline && npm run build-morpheus && npm run test:visual -- --update-snapshots"
+echo ""
+echo "Linux snapshots are now in src/frontend/e2e/visual.spec.ts-snapshots/."
+echo "Commit them with: git add src/frontend/e2e/visual.spec.ts-snapshots && git commit -m 'test: commit linux visual baselines'"
+"""
