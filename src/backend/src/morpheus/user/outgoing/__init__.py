@@ -1,3 +1,4 @@
+from morpheus.user.application.read.GroupReader import group_reader
 from morpheus.user.application.read.UserReader import user_reader
 from morpheus.user.application.write.CreateOrUpdateUserFromKeycloak import CreateOrUpdateUserFromKeycloakCommand, CreateOrUpdateUserFromKeycloakCommandHandler
 from morpheus.user.types.User import KeycloakUserId, UserEmail, UserFirstName, UserLastName, Username
@@ -35,6 +36,6 @@ def get_identity_by_keycloak_id(keycloak_user_id: str) -> dict | None:
 
     return {
         'user_id': user.user_id.to_str(),
-        'group_ids': [],
+        'group_ids': [group_id.to_str() for group_id in group_reader.get_groups_for_user(user.user_id)],
         'is_admin': user.is_admin,
     }

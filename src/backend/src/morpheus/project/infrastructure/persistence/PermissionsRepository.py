@@ -2,7 +2,7 @@ import dataclasses
 from typing import Literal
 
 from morpheus.common.infrastructure.persistence.mongodb import RepositoryBase, create_or_get_collection, get_database_client
-from morpheus.common.types.identity.Identity import UserId
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.settings import settings as app_settings
 
 from ...types.Permissions import GroupCollection, MemberCollection, Permissions, Role, Visibility
@@ -122,6 +122,34 @@ class PermissionsRepository(RepositoryBase):
         document = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
         if document is None:
             raise Exception(f'Permissions do not exist for project {project_id.to_str()}')
+
+        self.collection.update_one(filter={'project_id': project_id.to_str()}, update={'$set': {'groups': groups.to_dict()}})
+
+    def update_group_role(self, project_id: ProjectId, group_id: GroupId, role: Role) -> None:
+        if role is None:
+            raise Exception('Role must not be None when updating a group role')
+        if not self.has_permissions(project_id):
+            raise Exception(f'Permissions do not exist for project {project_id.to_str()}')
+
+        document = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
+        if document is None:
+            raise Exception(f'Permissions do not exist for project {project_id.to_str()}')
+
+        groups = GroupCollection.from_dict(document['groups'])
+        groups = groups.with_group_role(group_id=group_id, role=role)
+
+        self.collection.update_one(filter={'project_id': project_id.to_str()}, update={'$set': {'groups': groups.to_dict()}})
+
+    def remove_group_role(self, project_id: ProjectId, group_id: GroupId) -> None:
+        if not self.has_permissions(project_id):
+            raise Exception(f'Permissions do not exist for project {project_id.to_str()}')
+
+        document = self.collection.find_one({'project_id': project_id.to_str()}, {'_id': 0})
+        if document is None:
+            raise Exception(f'Permissions do not exist for project {project_id.to_str()}')
+
+        groups = GroupCollection.from_dict(document['groups'])
+        groups = groups.with_group_role(group_id=group_id, role=None)
 
         self.collection.update_one(filter={'project_id': project_id.to_str()}, update={'$set': {'groups': groups.to_dict()}})
 

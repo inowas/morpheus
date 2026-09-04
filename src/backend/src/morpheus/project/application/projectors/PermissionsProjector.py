@@ -2,7 +2,14 @@ from morpheus.common.infrastructure.event_sourcing.EventPublisher import EventLi
 from morpheus.common.types.event_sourcing.EventMetadata import EventMetadata
 from morpheus.project.domain.events.ProjectEvents.ProjectEvents import ProjectCreatedEvent
 
-from ...domain.events.ProjectPermissionEvents.PermissionEvents import MemberAddedEvent, MemberRemovedEvent, MemberRoleUpdatedEvent, OwnershipUpdatedEvent, VisibilityUpdatedEvent
+from ...domain.events.ProjectPermissionEvents.PermissionEvents import (
+    MemberAddedEvent,
+    MemberRemovedEvent,
+    MemberRoleUpdatedEvent,
+    OwnershipUpdatedEvent,
+    ProjectGroupRoleUpdatedEvent,
+    VisibilityUpdatedEvent,
+)
 from ...infrastructure.persistence.PermissionsRepository import PermissionsRepository, permissions_repository
 
 
@@ -26,6 +33,15 @@ class PermissionsProjector(EventListenerBase):
     @listen_to(MemberRoleUpdatedEvent)
     def on_member_role_updated(self, event: MemberRoleUpdatedEvent, metadata: EventMetadata):
         self.repository.update_member(project_id=event.get_project_id(), user_id=event.get_user_id(), role=event.get_role())
+
+    @listen_to(ProjectGroupRoleUpdatedEvent)
+    def on_group_role_updated(self, event: ProjectGroupRoleUpdatedEvent, metadata: EventMetadata):
+        role = event.get_role()
+        if role is None:
+            self.repository.remove_group_role(project_id=event.get_project_id(), group_id=event.get_group_id())
+            return
+
+        self.repository.update_group_role(project_id=event.get_project_id(), group_id=event.get_group_id(), role=role)
 
     @listen_to(OwnershipUpdatedEvent)
     def on_owner_updated(self, event: OwnershipUpdatedEvent, metadata: EventMetadata):

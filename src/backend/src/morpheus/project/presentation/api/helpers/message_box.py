@@ -12,6 +12,7 @@ from morpheus.project.application.write.Project import (
     CreateProjectCommand,
     DeleteProjectCommand,
     RemoveProjectMemberCommand,
+    UpdateProjectGroupRoleCommand,
     UpdateProjectMemberRoleCommand,
     UpdateProjectVisibilityCommand,
 )
@@ -75,6 +76,7 @@ def assert_identity_can_execute_command(identity: Identity, command: CommandBase
         AddProjectMemberCommand,
         RemoveProjectMemberCommand,
         UpdateProjectMemberRoleCommand,
+        UpdateProjectGroupRoleCommand,
         UpdateProjectVisibilityCommand,
     )
 

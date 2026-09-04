@@ -3,7 +3,7 @@ import dataclasses
 from morpheus.common.types import DateTime, Uuid
 from morpheus.common.types.event_sourcing.EventBase import EventBase
 from morpheus.common.types.event_sourcing.EventName import EventName
-from morpheus.common.types.identity.Identity import UserId
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.project.types.Permissions import Role, Visibility
 from morpheus.project.types.Project import ProjectId
 
@@ -68,6 +68,34 @@ class MemberRoleUpdatedEvent(EventBase):
     @staticmethod
     def get_event_name() -> EventName:
         return EventName.from_str(PermissionEventName.PROJECT_MEMBER_ROLE_UPDATED.to_str())
+
+    def get_project_id(self) -> ProjectId:
+        return ProjectId.from_str(self.entity_uuid.to_str())
+
+
+@dataclasses.dataclass(frozen=True)
+class ProjectGroupRoleUpdatedEvent(EventBase):
+    @classmethod
+    def from_payload(cls, project_id: ProjectId, group_id: GroupId, role: Role | None, occurred_at: DateTime):
+        return cls.create(
+            entity_uuid=Uuid.from_str(project_id.to_str()),
+            occurred_at=occurred_at,
+            payload={
+                'group_id': group_id.to_str(),
+                'role': role.to_str() if role else None,
+            },
+        )
+
+    def get_group_id(self) -> GroupId:
+        return GroupId.from_str(self.payload['group_id'])
+
+    def get_role(self) -> Role | None:
+        role = self.payload['role']
+        return Role.from_str(role) if role else None
+
+    @staticmethod
+    def get_event_name() -> EventName:
+        return EventName.from_str(PermissionEventName.PROJECT_GROUP_ROLE_UPDATED.to_str())
 
     def get_project_id(self) -> ProjectId:
         return ProjectId.from_str(self.entity_uuid.to_str())

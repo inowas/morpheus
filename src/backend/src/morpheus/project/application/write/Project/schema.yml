@@ -10,6 +10,7 @@ definitions:
       - "$ref": "#/definitions/RemoveProjectMemberCommand"
       - "$ref": "#/definitions/UpdateProjectCalculationProfileIdCommand"
       - "$ref": "#/definitions/UpdateProjectMemberRoleCommand"
+      - "$ref": "#/definitions/UpdateProjectGroupRoleCommand"
       - "$ref": "#/definitions/UpdateProjectMetadataCommand"
       - "$ref": "#/definitions/UpdateProjectVisibilityCommand"
   AddProjectMemberCommand:
@@ -149,6 +150,37 @@ definitions:
           - project_id
           - member_id
           - new_role
+  UpdateProjectGroupRoleCommand:
+    type: object
+    properties:
+      command_name:
+        type: string
+        enum:
+          - update_project_group_role_command
+        example: update_project_group_role_command
+      payload:
+        type: object
+        properties:
+          project_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          group_id:
+            type: string
+            example: e3b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+          role:
+            type:
+              - string
+              - "null"
+            enum:
+              - owner
+              - admin
+              - editor
+              - viewer
+              - null
+        required:
+          - project_id
+          - group_id
+          - role
   UpdateProjectMetadataCommand:
     type: object
     properties:

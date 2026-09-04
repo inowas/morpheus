@@ -44,6 +44,16 @@ class Role(StrEnum):
     def to_str(self):
         return self.value
 
+    def rank(self) -> int:
+        return {Role.VIEWER: 1, Role.EDITOR: 2, Role.ADMIN: 3, Role.OWNER: 4}.get(self, 0)
+
+    @staticmethod
+    def best_of(roles) -> 'Role | None':
+        roles = [role for role in roles if role is not None]
+        if not roles:
+            return None
+        return max(roles, key=lambda role: role.rank())
+
 
 @dataclasses.dataclass(frozen=True)
 class MemberCollection:
@@ -100,6 +110,17 @@ class GroupCollection:
 
     def get_groups(self):
         return self.groups
+
+    def get_group_role(self, group_id: GroupId) -> Role | None:
+        return self.groups.get(group_id)
+
+    def with_group_role(self, group_id: GroupId, role: Role | None) -> 'GroupCollection':
+        groups = self.groups.copy()
+        if role is None:
+            groups.pop(group_id, None)
+        else:
+            groups[group_id] = role
+        return dataclasses.replace(self, groups=groups)
 
 
 @dataclasses.dataclass(frozen=True)

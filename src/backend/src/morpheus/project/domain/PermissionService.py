@@ -87,13 +87,24 @@ class PermissionService:
         if permissions.owner_id == identity.user_id:
             return PermissionService.get_privileges_for_owner()
 
-        member_role = permissions.members.get_member_role(identity.user_id)
-        if member_role is None and permissions.visibility == permissions.visibility.PUBLIC:
+        role = PermissionService.get_effective_role(identity, permissions)
+        if role is None and permissions.visibility == permissions.visibility.PUBLIC:
             return PermissionService.PUBLIC_PROJECT_PRIVILEGES
-        if member_role is None:
+        if role is None:
             return []
 
-        return PermissionService._get_privileges_for_role(member_role)
+        return PermissionService._get_privileges_for_role(role)
+
+    @staticmethod
+    def get_effective_role(identity: Identity, permissions: Permissions) -> Role | None:
+        # An explicitly assigned member role is more specific than a role the
+        # user inherits through a group, so it takes precedence.
+        member_role = permissions.members.get_member_role(identity.user_id)
+        if member_role is not None:
+            return member_role
+
+        group_roles = [permissions.groups.get_group_role(group_id) for group_id in identity.group_ids]
+        return Role.best_of(group_roles)
 
     @staticmethod
     def identity_can(privilege: Privilege, identity: Identity, permissions: Permissions) -> bool:
@@ -109,8 +120,8 @@ class PermissionService:
         if required_roles is None:
             return False
 
-        member_role = permissions.members.get_member_role(identity.user_id)
-        if member_role is None:
+        effective_role = PermissionService.get_effective_role(identity, permissions)
+        if effective_role is None:
             return False
 
-        return member_role in required_roles
+        return effective_role in required_roles
