@@ -76,3 +76,30 @@ export function projectFixtures({readOnly}: IProjectFixturesOptions): IApiHandle
     getHandler(`/projects/${PROJECT_ID}/assets`, {assets: []}),
   ];
 }
+
+const GROUPS = [
+  {group_id: '33333333-3333-3333-3333-333333333333', group_name: 'Hydro Team', members: [USER_ID], admins: [USER_ID]},
+  {group_id: '44444444-4444-4444-4444-444444444444', group_name: 'External Viewers', members: [], admins: []},
+];
+
+export function settingsFixtures({readOnly}: IProjectFixturesOptions): IApiHandler[] {
+  return [
+    ...userFixtures,
+    {
+      test: (url, method) => 'GET' === method && url.pathname === `/projects/${PROJECT_ID}/privileges`,
+      respond: () => ({json: readOnly ? READ_ONLY_PRIVILEGES : EDITABLE_PRIVILEGES}),
+    },
+    getHandler(`/projects/${PROJECT_ID}/metadata`, {
+      name: 'Sandy Aquifer',
+      description: 'Deterministic project used by the visual regression suite',
+      tags: ['demo', 'benchmark'],
+    }),
+    getHandler('/users/groups', GROUPS),
+    getHandler(`/projects/${PROJECT_ID}/permissions`, {
+      owner_id: '22222222-2222-2222-2222-222222222222',
+      groups: readOnly ? {} : {'33333333-3333-3333-3333-333333333333': 'editor'},
+      members: {},
+      visibility: 'private',
+    }),
+  ];
+}

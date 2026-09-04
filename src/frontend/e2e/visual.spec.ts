@@ -1,7 +1,7 @@
 import {Page, expect, test} from '@playwright/test';
 
 import {IApiHandler, mockApi} from './visual/api-mock';
-import {PROJECT_ID, projectFixtures, projectsListFixture, userFixtures} from './visual/fixtures';
+import {PROJECT_ID, projectFixtures, projectsListFixture, settingsFixtures, userFixtures} from './visual/fixtures';
 import {mockOidc} from './visual/oidc-mock';
 
 // The built app derives its API and Keycloak base URLs from hostname at
@@ -38,4 +38,18 @@ test('model setup read-only', async ({page}) => {
   await prepare(page, `/projects/${PROJECT_ID}/model`, projectFixtures({readOnly: true}));
   await expect(page.getByText('Sandy Aquifer')).toBeVisible({timeout: 10000});
   await expect(page).toHaveScreenshot('model-setup-read-only.png');
+});
+
+test('settings group access editable', async ({page}) => {
+  await prepare(page, `/projects/${PROJECT_ID}/settings/permissions`, settingsFixtures({readOnly: false}));
+  await expect(page.getByText('Group access')).toBeVisible({timeout: 10000});
+  await expect(page.getByText('Hydro Team')).toBeVisible({timeout: 10000});
+  await expect(page).toHaveScreenshot('settings-group-access-editable.png');
+});
+
+test('settings group access read-only', async ({page}) => {
+  await prepare(page, `/projects/${PROJECT_ID}/settings/permissions`, settingsFixtures({readOnly: true}));
+  await expect(page.getByText('Group access')).toBeVisible({timeout: 10000});
+  await expect(page.getByText('Hydro Team')).toBeVisible({timeout: 10000});
+  await expect(page).toHaveScreenshot('settings-group-access-read-only.png');
 });
