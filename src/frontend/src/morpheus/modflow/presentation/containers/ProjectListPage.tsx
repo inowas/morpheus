@@ -33,6 +33,12 @@ const getProjectListNavbarItems = (translate: (key: string) => string): INavbarI
     admin: false,
     to: '/documentation',
   },
+  {
+    name: 'groups',
+    label: translate('Groups'),
+    admin: true,
+    to: '/groups',
+  },
 ]);
 
 const ProjectListPage = ({basePath}: IProps) => {
@@ -42,7 +48,7 @@ const ProjectListPage = ({basePath}: IProps) => {
   const {translate} = useTranslate();
   const {projects, error, filter, onFilterChange, filterOptions, onSearchChange, search, orderOptions, onOrderChange, onDeleteClick} = useProjectList();
   const [showCreateProjectModel, setShowCreateProjectModel] = useState<boolean>(false);
-  const {users} = useUsers();
+  const {users, authenticatedUser} = useUsers();
 
   const {formatISODate} = useDateTimeFormat();
 
@@ -75,7 +81,7 @@ const ProjectListPage = ({basePath}: IProps) => {
     <>
       <Navbar
         location={location}
-        navbarItems={getProjectListNavbarItems(translate)}
+        navbarItems={getProjectListNavbarItems(translate).filter((item) => !item.admin || !!authenticatedUser?.is_admin)}
         navigateTo={navigateTo}
       >
         <Input

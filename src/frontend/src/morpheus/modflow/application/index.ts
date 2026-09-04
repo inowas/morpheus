@@ -1,5 +1,6 @@
 import useAssets, {IAssetId} from './useAssets';
 import useCalculationResults from './useCalculationResults';
+import useGroupManagement from './useGroupManagement';
 import useGroups from './useGroups';
 import useObservations from './useObservations';
 import useModel from './useModel';
@@ -19,6 +20,7 @@ import useTranslate from './useTranslate';
 export {
   useAssets,
   useCalculationResults,
+  useGroupManagement,
   useGroups,
   useObservations,
   useModel,

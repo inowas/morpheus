@@ -18,7 +18,7 @@ interface IAuthenticatedUser {
 }
 
 interface IUseUsers {
-  authenticatedUser: IUser | null;
+  authenticatedUser: IAuthenticatedUser | null;
   users: IUser[];
 }
 

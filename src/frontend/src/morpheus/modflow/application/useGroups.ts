@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import {IError} from '../../types';
 import {useApi} from '../incoming';
@@ -14,6 +14,7 @@ interface IUseGroups {
   groups: IGroup[];
   loading: boolean;
   error: IError | null;
+  reload: () => Promise<void>;
 }
 
 const useGroups = (): IUseGroups => {
@@ -23,30 +24,32 @@ const useGroups = (): IUseGroups => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<IError | null>(null);
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      setLoading(true);
-      setError(null);
-      const result = await httpGet<IGroup[]>('/users/groups');
-      setLoading(false);
+  const fetchGroups = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const result = await httpGet<IGroup[]>('/users/groups');
+    setLoading(false);
 
-      if (result.ok) {
-        setGroups(result.val);
-      }
+    if (result.ok) {
+      setGroups(result.val);
+    }
 
-      if (result.err) {
-        setError({message: result.val.message, code: result.val.code});
-      }
-    };
-
-    fetchGroups();
+    if (result.err) {
+      setError({message: result.val.message, code: result.val.code});
+    }
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    fetchGroups();
+    // eslint-disable-next-line
+  }, [fetchGroups]);
 
   return {
     groups,
     loading,
     error,
+    reload: fetchGroups,
   };
 };
 

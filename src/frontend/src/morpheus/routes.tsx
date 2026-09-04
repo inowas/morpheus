@@ -5,6 +5,7 @@ import {NotFound} from 'common/components';
 import AboutUsPage from './application/presentation/containers/AboutUsContainer';
 import ApplicationContainer from './application/presentation/containers/ApplicationContainer';
 import {ProjectAssetsPage, ProjectBaseModelPage, ProjectScenariosPage, ProjectsSettingsPage, ProjectEventLogPage} from './modflow/presentation/containers';
+import GroupManagementContainer from './modflow/presentation/containers/GroupManagementContainer';
 import SignInPage from './authentication/presentation/containers/SignInPage';
 import PrivateRoute from './authentication/presentation/containers/PrivateRoute';
 import ProjectsPage from './modflow/presentation/containers/ProjectListPage';
@@ -36,6 +37,7 @@ const Router = () => {
       <Route path="/auth" element={wrapPublicComponent(<SignInPage/>)}/>
       <Route path="/auth/callback" element={wrapPublicComponent(<AuthCallback redirectTo="/projects"/>)}/>
       <Route path="/projects" element={wrapPrivateComponent(<ProjectsPage basePath={'/projects'}/>, true)}/>
+      <Route path="/groups" element={wrapPrivateComponent(<GroupManagementContainer/>, true)}/>
       <Route path="/projects/:projectId" element={wrapPrivateComponent(<Navigate replace={true} to="model"/>)}/>
       <Route
         path="/projects/:projectId/model/:property?/:propertyId?/:subProperty?/:subPropertyId?"
