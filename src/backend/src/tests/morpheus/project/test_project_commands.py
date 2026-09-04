@@ -6,7 +6,7 @@ using command dispatching, similar to the RioPrimeroWithCommands notebook.
 
 import pytest
 
-from morpheus.common.types.identity.Identity import UserId
+from morpheus.common.types.identity.Identity import GroupId, UserId
 from morpheus.project.application.read.PermissionsReader import PermissionsReader
 from morpheus.project.application.read.ProjectReader import get_project_reader
 from morpheus.project.application.write.Project import (
@@ -14,6 +14,7 @@ from morpheus.project.application.write.Project import (
     CreateProjectCommand,
     DeleteProjectCommand,
     RemoveProjectMemberCommand,
+    UpdateProjectGroupRoleCommand,
     UpdateProjectMemberRoleCommand,
     UpdateProjectMetadataCommand,
     UpdateProjectVisibilityCommand,
@@ -111,6 +112,18 @@ def test_project_member_lifecycle(setup_project, user_id, command_bus):
 
     command_bus.dispatch(RemoveProjectMemberCommand(project_id=setup_project, user_id=user_id, member_id=member_id))
     assert not PermissionsReader().get_permissions(setup_project).members.has_member(member_id)
+
+
+def test_project_group_role_lifecycle(setup_project, user_id, command_bus):
+    group_id = GroupId.new()
+    command_bus.dispatch(UpdateProjectGroupRoleCommand(project_id=setup_project, user_id=user_id, group_id=group_id, role=Role.EDITOR))
+    assert PermissionsReader().get_permissions(setup_project).groups.get_group_role(group_id) == Role.EDITOR
+
+    command_bus.dispatch(UpdateProjectGroupRoleCommand(project_id=setup_project, user_id=user_id, group_id=group_id, role=Role.ADMIN))
+    assert PermissionsReader().get_permissions(setup_project).groups.get_group_role(group_id) == Role.ADMIN
+
+    command_bus.dispatch(UpdateProjectGroupRoleCommand(project_id=setup_project, user_id=user_id, group_id=group_id, role=None))
+    assert PermissionsReader().get_permissions(setup_project).groups.get_group_role(group_id) is None
 
 
 def test_delete_project_removes_project_projection(setup_project, user_id, command_bus):

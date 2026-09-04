@@ -11,6 +11,7 @@ from morpheus.project.presentation.api.read.calculations.ReadCalculationProfiles
 from morpheus.project.presentation.api.read.projects.ReadProjectEventLogRequestHandler import ReadProjectEventLogRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectListRequestHandler import ProjectListResponse, ProjectSummaryResponse, ReadProjectListRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectMetadataRequestHandler import ProjectMetadataResponse, ReadProjectMetadataRequestHandler
+from morpheus.project.presentation.api.read.projects.ReadProjectPermissionsRequestHandler import ReadProjectPermissionsRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectPrivilegesRequestHandler import ReadProjectPrivilegesRequestHandler
 from morpheus.project.presentation.api.read.projects.ReadProjectSelectedCalculationProfileRequestHandler import ReadProjectSelectedCalculationProfileRequestHandler
 from morpheus.project.presentation.api.write.MessageBoxRequestHandler import MessageBoxRequest, MessageBoxRequestHandler
@@ -50,6 +51,18 @@ def read_project_metadata(project_id: str, _: IdentityDependency):
 @router.get('/{project_id}/privileges', response_model=list[str], operation_id='readProjectPrivileges')
 def read_project_privileges(project_id: str, _: IdentityDependency):
     response, status_code = ReadProjectPrivilegesRequestHandler().handle(ProjectId.from_str(project_id))
+    if status_code == 401:
+        raise HTTPException(status_code=401, detail='Unauthorized')
+    if status_code == 403:
+        raise HTTPException(status_code=403, detail=response)
+    if status_code == 404:
+        raise HTTPException(status_code=404, detail=response)
+    return response
+
+
+@router.get('/{project_id}/permissions', operation_id='readProjectPermissions')
+def read_project_permissions(project_id: str, _: IdentityDependency):
+    response, status_code = ReadProjectPermissionsRequestHandler().handle(ProjectId.from_str(project_id))
     if status_code == 401:
         raise HTTPException(status_code=401, detail='Unauthorized')
     if status_code == 403:

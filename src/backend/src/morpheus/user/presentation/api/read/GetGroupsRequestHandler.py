@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 
 from morpheus.user.application.read.GroupReader import group_reader
-from morpheus.user.exceptions.InsufficientPermissionsException import InsufficientPermissionsException
 from morpheus.user.exceptions.UnauthorizedException import UnauthorizedException
 from morpheus.user.incoming import get_identity
 
@@ -22,9 +21,6 @@ class GetGroupsRequestHandler:
         identity = get_identity()
         if identity is None:
             raise UnauthorizedException()
-
-        if not identity.is_admin:
-            raise InsufficientPermissionsException()
 
         groups = group_reader.get_all_groups()
 

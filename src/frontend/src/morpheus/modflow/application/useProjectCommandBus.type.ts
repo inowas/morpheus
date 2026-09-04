@@ -596,6 +596,15 @@ export interface IUpdateProjectMemberRoleCommand {
   }
 }
 
+export interface IUpdateProjectGroupRoleCommand {
+  command_name: 'update_project_group_role_command';
+  payload: {
+    project_id: string;
+    group_id: string;
+    role: 'viewer' | 'editor' | 'admin' | 'owner' | null;
+  }
+}
+
 export interface IUpdateProjectMetadataCommand {
   command_name: 'update_project_metadata_command';
   payload: {
@@ -619,6 +628,7 @@ export type IProjectCommand = IAddProjectMemberCommand |
   IDeleteProjectCommand |
   IRemoveProjectMemberCommand |
   IUpdateProjectMemberRoleCommand |
+  IUpdateProjectGroupRoleCommand |
   IUpdateProjectMetadataCommand |
   IUpdateProjectVisibilityCommand;
 

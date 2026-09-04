@@ -121,12 +121,15 @@ def test_users_use_authenticated_identity(mock_handle, mock_authenticate):
 
 
 @patch('morpheus.fastapi_auth.authenticate_token')
-def test_groups_forbidden_for_non_admin(mock_authenticate):
+@patch('morpheus.user.router.GetGroupsRequestHandler.handle')
+def test_groups_allowed_for_non_admin(mock_handle, mock_authenticate):
     mock_authenticate.side_effect = lambda token: (identity_context.set({'user_id': 'user-1', 'group_ids': [], 'is_admin': False}), True)[1]
+    mock_handle.return_value = []
 
     response = client.get('/users/groups', headers={'Authorization': 'Bearer valid-token'})
 
-    assert response.status_code == 403
+    assert response.status_code == 200
+    assert response.json() == []
 
 
 @patch('morpheus.fastapi_auth.authenticate_token')

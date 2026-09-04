@@ -3,7 +3,6 @@ from unittest.mock import patch
 import pytest
 
 from morpheus.common.types.identity.Identity import GroupId, Identity, UserId
-from morpheus.user.exceptions.InsufficientPermissionsException import InsufficientPermissionsException
 from morpheus.user.exceptions.UnauthorizedException import UnauthorizedException
 from morpheus.user.presentation.api.read.GetGroupsRequestHandler import GetGroupsRequestHandler
 from morpheus.user.types.Group import Group, GroupName
@@ -32,12 +31,15 @@ class TestGetGroupsRequestHandler:
         with pytest.raises(UnauthorizedException):
             GetGroupsRequestHandler.handle()
 
+    @patch('morpheus.user.presentation.api.read.GetGroupsRequestHandler.group_reader')
     @patch('morpheus.user.presentation.api.read.GetGroupsRequestHandler.get_identity')
-    def test_raises_insufficient_permissions_when_not_admin(self, mock_get_identity):
+    def test_returns_groups_for_non_admin(self, mock_get_identity, mock_group_reader):
         mock_get_identity.return_value = _make_identity(is_admin=False)
+        mock_group_reader.get_all_groups.return_value = [_make_group('group-1', 'Admins')]
 
-        with pytest.raises(InsufficientPermissionsException):
-            GetGroupsRequestHandler.handle()
+        result = GetGroupsRequestHandler.handle()
+
+        assert result[0]['group_id'] == 'group-1'
 
     @patch('morpheus.user.presentation.api.read.GetGroupsRequestHandler.group_reader')
     @patch('morpheus.user.presentation.api.read.GetGroupsRequestHandler.get_identity')
