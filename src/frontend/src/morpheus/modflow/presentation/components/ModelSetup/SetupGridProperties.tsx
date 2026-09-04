@@ -29,11 +29,13 @@ const SetupGridProperties = ({gridProperties, onChange, readOnly}: IProps) => {
     <>
       <DataGrid columns={2}>
         <Form.Field>
-          <Label className="labelSmall">
+          <Label className="labelSmall" htmlFor="grid-rows">
             <Icon name="info circle"/>
             Rows
           </Label>
           <Input
+            id="grid-rows"
+            aria-label="Rows"
             type="number"
             defaultValue={gridProperties.n_rows}
             onChange={(e) => onChange({...gridProperties, n_rows: parseInt(e.target.value)})}
@@ -42,11 +44,13 @@ const SetupGridProperties = ({gridProperties, onChange, readOnly}: IProps) => {
           />
         </Form.Field>
         <Form.Field>
-          <Label className="labelSmall">
+          <Label className="labelSmall" htmlFor="grid-columns">
             <Icon name="info circle"/>
             Columns
           </Label>
           <Input
+            id="grid-columns"
+            aria-label="Columns"
             type="number"
             defaultValue={gridProperties.n_cols}
             onChange={(e) => onChange({...gridProperties, n_cols: parseInt(e.target.value)})}
@@ -58,11 +62,13 @@ const SetupGridProperties = ({gridProperties, onChange, readOnly}: IProps) => {
       <DataGrid style={{marginTop: 20}}>
         <div className="fieldGridSlider">
           <div className="field">
-            <Label className="labelSmall">
+            <Label className="labelSmall" htmlFor="rotation-angle">
               <Icon className={'dateIcon'} name="info circle"/>
               Rotation angle (°)
             </Label>
             <Input
+              id="rotation-angle"
+              aria-label="Rotation angle (°)"
               name="rotationAngle"
               type="number"
               value={gridProperties.rotation}

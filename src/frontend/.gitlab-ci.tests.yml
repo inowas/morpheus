@@ -5,8 +5,66 @@ test-frontend:
   script:
     - cd src/frontend
     - make install-ci
+    - npm run depcruise:all
     - make test-ci
 
   only:
     changes:
       - src/frontend/**/*.*
+
+test-frontend-e2e:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (integration)"
+  script:
+    - cd src/frontend
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
+    - npm run build-morpheus
+    - npm run test:e2e:playwright
+  artifacts:
+    when: on_failure
+    paths:
+      - src/frontend/test-results
+      - src/frontend/reports
+    expire_in: 1 day
+  only:
+    changes:
+      - src/frontend/**/*.*
+
+test-frontend-visual:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (integration)"
+  script:
+    - cd src/frontend
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
+    - npm run build-morpheus
+    - if [ "${VISUAL_UPDATE_SNAPSHOTS:-0}" = "1" ]; then npm run test:visual -- --update-snapshots; else npm run test:visual; fi
+  artifacts:
+    when: always
+    paths:
+      - src/frontend/e2e
+      - src/frontend/test-results
+      - src/frontend/reports
+    expire_in: 1 day
+  only:
+    changes:
+      - src/frontend/**/*.*
+
+update-frontend-visual-baselines:
+  image: mcr.microsoft.com/playwright:v1.44.1-jammy
+  stage: "test (integration)"
+  script:
+    - cd src/frontend
+    - npm ci --legacy-peer-deps --cache .npm --prefer-offline
+    - npm run build-morpheus
+    - npm run test:visual -- --update-snapshots
+  artifacts:
+    when: always
+    paths:
+      - src/frontend/e2e
+    expire_in: 1 day
+  when: manual
+  allow_failure: false
+  only:
+    refs:
+      - branches
+      - main
