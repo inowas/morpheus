@@ -36,12 +36,12 @@ test-frontend-visual:
   script:
     - cd src/frontend
     - npm ci --legacy-peer-deps --cache .npm --prefer-offline
-    - npm run build-storybook
+    - npm run build-morpheus
     - if [ "${VISUAL_UPDATE_SNAPSHOTS:-0}" = "1" ]; then npm run test:visual -- --update-snapshots; else npm run test:visual; fi
   artifacts:
     when: always
     paths:
-      - src/frontend/storybook
+      - src/frontend/e2e
       - src/frontend/test-results
       - src/frontend/reports
     expire_in: 1 day
@@ -55,12 +55,12 @@ update-frontend-visual-baselines:
   script:
     - cd src/frontend
     - npm ci --legacy-peer-deps --cache .npm --prefer-offline
-    - npm run build-storybook
+    - npm run build-morpheus
     - npm run test:visual -- --update-snapshots
   artifacts:
     when: always
     paths:
-      - src/frontend/storybook
+      - src/frontend/e2e
     expire_in: 1 day
   when: manual
   allow_failure: false

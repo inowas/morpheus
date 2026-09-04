@@ -34,9 +34,10 @@ before changing architecture or state management.
 - [x] Add a story for calculation states.
 - [x] Add the Storybook test runner and run tagged interaction tests in CI with
   a browser-enabled image.
-- [x] Add visual regression checks for deterministic Morpheus module screens;
-  keep shared components, maps, charts, and network-dependent rendering outside
-  the gate.
+- [x] Add visual regression checks for deterministic Morpheus module screens
+      (run against the built app via Playwright with mocked OIDC + API, not
+      Storybook); keep shared components, maps, charts, and network-dependent
+      rendering outside the gate.
 - [ ] Generate and commit canonical Linux snapshots for Morpheus from the
   Playwright CI image using `VISUAL_UPDATE_SNAPSHOTS=1` once.
 - [ ] Raise frontend coverage thresholds only after behavior coverage exists.
